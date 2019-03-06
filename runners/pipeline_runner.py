@@ -54,7 +54,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # pixel-grid. To run this pipeline on our data, simply comment out / delete the lines above (lines 47-51) which run
 # the parametric souorce pipeline, and uncomment the lines below.
 
-from autolens_workspace.pipelines.examples import lens_light_and_source_inversion
+from pipelines.examples import lens_light_and_source_inversion
 
 pipeline = lens_light_and_source_inversion.make_pipeline(pipeline_path='example/' + lens_name + '/')
 
