@@ -88,5 +88,5 @@ inversion = inv.Inversion(image_1d=lens_data.image_1d, noise_map_1d=lens_data.no
 source_galaxy = g.Galaxy(pixelization=adaptive, regularization=reg.Constant(coefficients=(1.0,)))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)

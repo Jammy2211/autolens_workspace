@@ -14,7 +14,7 @@ from autolens.lens.plotters import ray_tracing_plotters
 # In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
 # 1) PyAutoLens uses Cartesian grids of (y,x) coordinates to perform ray-tracing.
-# 2) These grids are combined with light and mass profiles to compute images, surface-densities, potentials and
+# 2) These grids are combined with light and mass profiles to compute images, convergences, potentials and
 #    deflection angles.
 # 3) Profiles are combined to make galaxies.
 # 4) Collections of galaxies (at the same redshift) form a plane.
@@ -26,17 +26,17 @@ from autolens.lens.plotters import ray_tracing_plotters
 # In this summary, we'll consider how flexible the tools PyAutoLens gives you are to study every aspect of a strong
 # lens system. Lets get a 'fit' to a strong lens, by setting up an image, mask, tracer, etc.
 
-# If you are using Docker, the path you should use to output these images is (e.g. comment out this line)
-# path = '/home/user/workspace/howtolens/chapter_1_introduction'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_1_introduction/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_1_introduction'
+# The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
+data_path = chapter_path + 'data/'
 
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_1_introduction'
+ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
+                                       noise_map_path=data_path+'noise_map.fits',
+                                       psf_path=data_path + 'psf.fits', pixel_scale=0.1)
 
-ccd_data = ccd.load_ccd_data_from_fits(image_path=path + '/data/image.fits',
-                                       noise_map_path=path+'/data/noise_map.fits',
-                                       psf_path=path + '/data/psf.fits', pixel_scale=0.1)
 mask = ma.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
 lens_data = li.LensData(ccd_data=ccd_data, mask=mask)
 lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
@@ -46,7 +46,7 @@ source_galaxy = g.Galaxy(bulge=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio
                                                   intensity=1.0, effective_radius=1.0, sersic_index=1.0))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # The fit contains our tracer, which contains our planes, which contain our grids and galaxies, which contain our
 # profiles:

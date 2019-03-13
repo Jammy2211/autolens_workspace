@@ -1,3 +1,4 @@
+from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autofit.mapper import prior
 from autolens.data.array import mask as msk
@@ -21,10 +22,14 @@ from autolens.pipeline import pipeline
 # Because the pipeline assumes the lens galaxies are at (0.0", -1.0") and (0.0", 1.0"), it is not a general pipeline
 # and cannot be applied to any image of a strong lens.
 
-def make_pipeline(pipeline_path=''):
+def make_pipeline(phase_folders=None):
 
     pipeline_name = 'pipeline_x2_lens_galaxies'
-    pipeline_path = pipeline_path + pipeline_name
+
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+                                                                                pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
 
@@ -37,7 +42,7 @@ def make_pipeline(pipeline_path=''):
 
     class LeftLensPhase(ph.LensPlanePhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
             # Lets restrict the prior's on the centres around the pixel we know the galaxy's light centre peaks.
 
@@ -49,9 +54,9 @@ def make_pipeline(pipeline_path=''):
 
             self.lens_galaxies.left_lens.light.sersic_index = 4.0
 
-    phase1 = LeftLensPhase(lens_galaxies=dict(left_lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                           optimizer_class=nl.MultiNest, mask_function=mask_function,
-                           phase_name=pipeline_path + '/phase_1_left_lens_light')
+    phase1 = LeftLensPhase(phase_name='phase_1_left_lens_light', phase_folders=phase_folders, 
+                           lens_galaxies=dict(left_lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                           optimizer_class=nl.MultiNest, mask_function=mask_function)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
@@ -66,15 +71,15 @@ def make_pipeline(pipeline_path=''):
 
     class RightLensPhase(ph.LensPlanePhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
             self.lens_galaxies.right_lens.light.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.05)
             self.lens_galaxies.right_lens.light.centre_1 = prior.GaussianPrior(mean=1.0, sigma=0.05)
             self.lens_galaxies.right_lens.light.sersic_index = 4.0
 
-    phase2 = RightLensPhase(lens_galaxies=dict(right_lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                            optimizer_class=nl.MultiNest, mask_function=mask_function,
-                            phase_name=pipeline_path + '/phase_2_right_lens_light')
+    phase2 = RightLensPhase(phase_name='phase_2_right_lens_light', phase_folders=phase_folders,
+                            lens_galaxies=dict(right_lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                            optimizer_class=nl.MultiNest, mask_function=mask_function)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 30
@@ -89,17 +94,17 @@ def make_pipeline(pipeline_path=''):
         # To modify the image, we want to subtract both the left-hand and right-hand lens galaxies. To do this, we need
         # to subtract the unmasked model image of both galaxies!
 
-        def modify_image(self, image, previous_results):
+        def modify_image(self, image, results):
 
-            phase_1_results = previous_results[0]
-            phase_2_results = previous_results[1]
+            phase_1_results = results.from_phase('phase_1_left_lens_light')
+            phase_2_results = results.from_phase('phase_2_right_lens_light')
             return image - phase_1_results.unmasked_lens_plane_model_image - \
                    phase_2_results.unmasked_lens_plane_model_image
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            phase_1_results = previous_results[0]
-            phase_2_results = previous_results[1]
+            phase_1_results = results.from_phase('phase_1_left_lens_light')
+            phase_2_results = results.from_phase('phase_2_right_lens_light')
 
             # We're going to link the centres of the light profiles computed above to the centre of the lens galaxy
             # mass-profiles in this phase. Because the centres of the mass profiles were fixed in phases 1 and 2,
@@ -111,11 +116,11 @@ def make_pipeline(pipeline_path=''):
             self.lens_galaxies.right_lens.mass.centre_0 = phase_2_results.variable.right_lens.light.centre_0
             self.lens_galaxies.right_lens.mass.centre_1 = phase_2_results.variable.right_lens.light.centre_1
 
-    phase3 = LensSubtractedPhase(lens_galaxies=dict(left_lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
+    phase3 = LensSubtractedPhase(phase_name='phase_3_fit_sources', phase_folders=phase_folders,
+                                 lens_galaxies=dict(left_lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
                                                     right_lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                 optimizer_class=nl.MultiNest,
-                                 phase_name=pipeline_path + '/phase_3_fit_sources')
+                                 optimizer_class=nl.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50
@@ -127,11 +132,11 @@ def make_pipeline(pipeline_path=''):
 
     class FitAllPhase(ph.LensSourcePlanePhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            phase_1_results = previous_results[0]
-            phase_2_results = previous_results[1]
-            phase_3_results = previous_results[2]
+            phase_1_results = results.from_phase('phase_1_left_lens_light')
+            phase_2_results = results.from_phase('phase_2_right_lens_light')
+            phase_3_results = results.from_phase('phase_3_fit_sources')
 
             # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
@@ -159,16 +164,16 @@ def make_pipeline(pipeline_path=''):
 
             self.source_galaxies.source = phase_3_results.variable.source
 
-    phase4 = FitAllPhase(lens_galaxies=dict(left_lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+    phase4 = FitAllPhase(phase_name='phase_4_fit_all', phase_folders=phase_folders,
+                         lens_galaxies=dict(left_lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                       mass=mp.EllipticalIsothermal),
                                             right_lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                         mass=mp.EllipticalIsothermal)),
                          source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                         optimizer_class=nl.MultiNest,
-                         phase_name=pipeline_path + '/phase_4_fit_all')
+                         optimizer_class=nl.MultiNest)
 
     phase4.optimizer.const_efficiency_mode = True
     phase4.optimizer.n_live_points = 60
     phase4.optimizer.sampling_efficiency = 0.5
 
-    return pipeline.PipelineImaging(pipeline_path, phase1, phase2, phase3, phase4)
+    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, phase3, phase4)

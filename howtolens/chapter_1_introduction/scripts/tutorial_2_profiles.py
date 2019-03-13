@@ -64,10 +64,11 @@ print(mass_profile_deflections[5050])
 profile_plotters.plot_deflections_y(mass_profile=sis_mass_profile, grid=grid_stack.regular)
 profile_plotters.plot_deflections_x(mass_profile=sis_mass_profile, grid=grid_stack.regular)
 
-# Mass-profiles also have a surface-density and gravitational potential, which can be plotted in the same way.
-mass_profile_surface_density = sis_mass_profile.surface_density_from_grid(grid=grid_stack.regular)
+# Mass-profiles also have a convergence (dimensionless surface mass) and gravitational potential, which can be plotted
+# in the same way.
+mass_profile_convergence = sis_mass_profile.convergence_from_grid(grid=grid_stack.regular)
 mass_profile_potential = sis_mass_profile.potential_from_grid(grid=grid_stack.regular)
-profile_plotters.plot_surface_density(mass_profile=sis_mass_profile, grid=grid_stack.regular)
+profile_plotters.plot_convergence(mass_profile=sis_mass_profile, grid=grid_stack.regular)
 profile_plotters.plot_potential(mass_profile=sis_mass_profile, grid=grid_stack.regular)
 
 # Congratulations, you've completed your second PyAutoLens tutorial! Before moving on to the next one, experiment with

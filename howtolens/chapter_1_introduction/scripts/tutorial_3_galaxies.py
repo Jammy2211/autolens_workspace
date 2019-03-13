@@ -68,8 +68,8 @@ print(galaxy_with_3_mass_profiles)
 galaxy_plotters.plot_deflections_y(galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular)
 galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular)
 
-# I wonder what 3 summed surface density maps or potential's look like ;)
-galaxy_plotters.plot_surface_density(galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular)
+# I wonder what 3 summed convergence profiles or potential's look like ;)
+galaxy_plotters.plot_convergence(galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular)
 galaxy_plotters.plot_potential(galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular)
 
 # Finally, a galaxy can take both light and mass profiles, and there is no limit to how many we pass it.
@@ -93,11 +93,11 @@ galaxy_with_many_profiles = galaxy.Galaxy(light_1=light_profile_1, light_2=light
                                            mass_1=mass_profile_1, mass_2=mass_profile_2,
                                            mass_3=mass_profile_3, mass_4=mass_profile_4)
 
-# Suffice to say, the galaxy's images, surface density, potential and deflections look pretty
+# Suffice to say, the galaxy's images, convergence, potential and deflections look pretty
 # interesting.
 
 galaxy_plotters.plot_intensities(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
-galaxy_plotters.plot_surface_density(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+galaxy_plotters.plot_convergence(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
 galaxy_plotters.plot_potential(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
 galaxy_plotters.plot_deflections_y(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
 galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
@@ -105,6 +105,6 @@ galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_many_profiles, grid=grid_s
 # And we're done. Lets finished by just thinking about one question:
 
 # 1) We've learnt we can group profiles into galaxies, to essentially sum the contribution of each light profile to the
-#    galaxy image's intensity, or sum the contribution of each mass profile to the surface density, potential and
+#    galaxy image's intensity, or sum the contribution of each mass profile to the convergence, potential and
 #    deflection angles. In strong lensing, there are often multiple galaxies next to one another responsible for the
 #    lensing - how might we account for this?

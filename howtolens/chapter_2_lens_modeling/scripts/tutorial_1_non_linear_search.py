@@ -62,14 +62,12 @@ from autolens.model.profiles import mass_profiles as mp
 # This will all become clear at the end of the chapter, so for now just bare in mind that we are taking a short-cut
 # to get our non-linear search to run fast!
 
-# If you are using Docker, the paths to the chapter is as follows (e.g. comment out this line)!
-# path = '/home/user/workspace/howtolens/chapter_2_lens_modeling'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/workspace/howtolens/chapter_2_lens_modeling'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling'
-
-conf.instance = conf.Config(config_path=path+'/configs/1_non_linear_search', output_path=path+"/output")
+# This sets up the config files used by this tutorial, and the path where the output of the modeling is placed.
+conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
 
 # This function simulates the image we'll fit in this tutorial.
 def simulate():
@@ -115,10 +113,10 @@ source_galaxy_model = gm.GalaxyModel(light=lp.SphericalExponential)
 
 # (also, just ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
-phase = ph.LensSourcePlanePhase(lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+phase = ph.LensSourcePlanePhase(phase_name='1_non_linear_search',
+                                lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
                                 source_galaxies=dict(source_galaxy=source_galaxy_model),
-                                optimizer_class=non_linear.MultiNest,
-                                phase_name='1_non_linear_search')
+                                optimizer_class=non_linear.MultiNest)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.

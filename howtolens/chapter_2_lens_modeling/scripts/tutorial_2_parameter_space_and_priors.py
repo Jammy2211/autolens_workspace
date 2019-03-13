@@ -81,13 +81,12 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # Lets again setup the paths and config-overrides for this chapter, so the non-linear search runs fast.
 
-# If you are using Docker, the paths to the chapter is as follows (e.g. comment out this line)!
-# path = '/home/user/workspace/howtolens/chapter_2_lens_modeling'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_2_lens_modeling'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling'
-conf.instance = conf.Config(config_path=path+'/configs/2_parameter_space_and_priors', output_path=path+"/output")
+conf.instance = conf.Config(config_path=chapter_path+'configs/2_parameter_space_and_priors',
+                            output_path=chapter_path+"output")
 
 # This function simulates the image we'll fit in this tutorial - which is identical to the previous tutorial.
 def simulate():
@@ -122,7 +121,7 @@ source_galaxy_model = gm.GalaxyModel(light=lp.SphericalExponential)
 
 class CustomPhase(ph.LensSourcePlanePhase):
 
-    def pass_priors(self, previous_results):
+    def pass_priors(self, results):
 
         # To change priors, we use the 'prior' module of PyAutoFit. These priors link our GalaxyModel to the
         # non-linear search. Thus, it tells PyAutoLens where to search non-linear parameter space.
@@ -155,10 +154,10 @@ class CustomPhase(ph.LensSourcePlanePhase):
 # We can now create this custom phase like we did a normal phase before. When we run the phase, the pass_prior function
 # will be called automatically and thus change the priors as we specified above. If you look at the 'model.info'
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
-custom_phase = CustomPhase(lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+custom_phase = CustomPhase(phase_name='2_custom_priors',
+                           lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
                            source_galaxies=dict(source_galaxy=source_galaxy_model),
-                           optimizer_class=non_linear.MultiNest,
-                           phase_name='2_custom_priors')
+                           optimizer_class=non_linear.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors'
       'folder for live output of the results, images and lens model.'

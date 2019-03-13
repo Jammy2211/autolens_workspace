@@ -1,3 +1,4 @@
+from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
@@ -18,7 +19,7 @@ from autolens.pipeline import pipeline
 
 # Phase 3) Fit the lens's light, mass and source's light simultaneously using priors initialized from the above 2 phases.
 
-def make_pipeline(pipeline_path=''):
+def make_pipeline(phase_folders=None):
 
     # Pipelines takes a path as input, which in conjunction with the pipeline name specify the directory structure of
     # its results in the output folder. In pipeline runners we'll pass the pipeline path
@@ -33,7 +34,11 @@ def make_pipeline(pipeline_path=''):
     # using one pipeline and store all of their results in an ordered directory structure.
 
     pipeline_name = 'pipeline_light_and_source'
-    pipeline_path = pipeline_path + pipeline_name
+
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+                                                                                pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
 
@@ -65,9 +70,9 @@ def make_pipeline(pipeline_path=''):
     # We next create the phase, using the same notation we learnt before (but noting the masks function is passed to
     # this phase ensuring the anti-annular masks above is used).
 
-    phase1 = phase.LensPlanePhase(lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                  optimizer_class=nl.MultiNest, mask_function=mask_function,
-                                  phase_name=pipeline_path + '/phase_1_lens_light_only')
+    phase1 = phase.LensPlanePhase(phase_name='phase_1_lens_light_only', phase_folders=phase_folders,
+                                  lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                                  optimizer_class=nl.MultiNest, mask_function=mask_function)
 
     # We'll use the MultiNest black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
 
@@ -90,7 +95,7 @@ def make_pipeline(pipeline_path=''):
 
     # To modify an image, we call a new function, 'modify image'. This function behaves like the pass-priors functions
     # before, whereby we create a python 'class' in a Phase to set it up.  This ensures it has access to the pipeline's
-    # 'previous_results' (which you may have noticed was in the the pass_priors functions as well, but we ignored it
+    # 'results' (which you may have noticed was in the the pass_priors functions as well, but we ignored it
     # thus far).
 
     # To setup the modified image, we take the observed image data and subtract-off the model image from the
@@ -100,20 +105,25 @@ def make_pipeline(pipeline_path=''):
 
     class LensSubtractedPhase(phase.LensSourcePlanePhase):
 
-        def modify_image(self, image, previous_results):
-            phase_1_results = previous_results[0]
+        def modify_image(self, image, results):
+            phase_1_results = results.from_phase('phase_1_lens_light_only')
             return image - phase_1_results.unmasked_lens_plane_model_image
 
     # The function above demonstrates the most important thing about pipelines - that every phase has access to the
     # results of all previous phases. This means we can feed information through the pipeline and therefore use the
-    # results of previous phases to setup new phases. We'll see this again in phase 3.
+    # results of previous phases to setup new phases.
+    #
+    # You should see that this is done by using the phase_name of the phase we're interested in, which in the above
+    # code is named 'phase_1_lens_light_only' (you can check this on line 73 above).
+    #
+    # We'll do this again in phase 3, and throughout all of the pipelines in this chapter and the workspace examples.
 
     # We setup phase 2 as per usual. Note that we don't need to pass the modify image function.
 
-    phase2 = LensSubtractedPhase(lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
+    phase2 = LensSubtractedPhase(phase_name='phase_2_source_only', phase_folders=phase_folders,
+                                 lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 optimizer_class=nl.MultiNest, mask_function=mask_function,
-                                 phase_name=pipeline_path + '/phase_2_source_only')
+                                 optimizer_class=nl.MultiNest, mask_function=mask_function)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50
@@ -127,18 +137,18 @@ def make_pipeline(pipeline_path=''):
     # you can do that in PyAutoLens!), fitting the lens's light and mass simultaneously would be crucial.
 
     # We'll use the 'pass_priors' function that we all know and love to do this. However, we're going to use the
-    # 'previous_results' argument that, in chapter 2, we ignored. This stores the results of the lens model of
+    # 'results' argument that, in chapter 2, we ignored. This stores the results of the lens model of
     # phase 1 and 2, meaning we can use it to initialize phase 3's priors!
 
     class LensSourcePhase(phase.LensSourcePlanePhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
             # The previous results is a 'list' in python. The zeroth index entry of the list maps to the results of
             # phase 1, the first entry to phase 2, and so on.
 
-            phase_1_results = previous_results[0]
-            phase_2_results = previous_results[1]
+            phase_1_results = results.from_phase('phase_1_lens_light_only')
+            phase_2_results = results.from_phase('phase_2_source_only')
 
             # To link two priors together, we invoke the 'variable' attribute of the previous results. By invoking
             # 'variable', this means that:
@@ -172,13 +182,14 @@ def make_pipeline(pipeline_path=''):
             self.lens_galaxies.lens.light = phase_1_results.variable.lens.light
             self.lens_galaxies.lens.mass = phase_2_results.variable.lens.mass
 
-    phase3 = LensSourcePhase(lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+    phase3 = LensSourcePhase(phase_name='phase_3_both', phase_folders=phase_folders,
+                             lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                     mass=mp.EllipticalIsothermal)),
                              source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                             optimizer_class=nl.MultiNest, phase_name=pipeline_path + '/phase_3_both')
+                             optimizer_class=nl.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineImaging(pipeline_path, phase1, phase2, phase3)
+    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, phase3)

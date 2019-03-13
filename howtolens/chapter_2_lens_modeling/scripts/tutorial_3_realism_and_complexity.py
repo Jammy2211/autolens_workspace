@@ -32,13 +32,12 @@ from autolens.lens.plotters import lens_fit_plotters
 # The goal of this, rather short, exercise, is to fit this 'realistic' model to a simulated image, where the lens's
 # light is visible and mass is elliptical. What could go wrong?
 
-# If you are using Docker, the paths to the chapter is as follows (e.g. comment out this line)!
-# path = '/home/user/workspace/howtolens/chapter_2_lens_modeling'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_2_lens_modeling'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling'
-conf.instance = conf.Config(config_path=path+'/configs/3_realism_and_complexity', output_path=path+"/output")
+conf.instance = conf.Config(config_path=chapter_path+'configs/3_realism_and_complexity',
+                            output_path=chapter_path+"output")
 
 # Another simulate image function, albeit it generates a new image
 def simulate():
@@ -79,11 +78,11 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Nevertheless, you could try running it yourself (maybe over your lunch break?). All you need to do is change the
 # phase_name below, maybe to something like 'howtolens/3_realism_and_complexity_rerun'
-phase = ph.LensSourcePlanePhase(lens_galaxies=dict(lens_galaxy=gm.GalaxyModel(light=lp.EllipticalSersic,
+phase = ph.LensSourcePlanePhase(phase_name='3_realism_and_complexity',
+                                lens_galaxies=dict(lens_galaxy=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                                 mass=mp.EllipticalIsothermal)),
                                 source_galaxies=dict(source_galaxy=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                optimizer_class=nl.MultiNest,
-                                phase_name='3_realism_and_complexity')
+                                optimizer_class=nl.MultiNest)
 
 # Lets run the phase.
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity'
@@ -120,7 +119,7 @@ tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source
                                              image_plane_grid_stack=lens_data.grid_stack)
 
 # Now, lets fit the lensing image with the tracer and plot the fit. It looks a lot better than above, doesn't it?
-correct_fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+correct_fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=correct_fit, should_plot_mask=True,  extract_array_from_mask=True,
                                    zoom_around_mask=True)
 

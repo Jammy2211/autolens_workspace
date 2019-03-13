@@ -54,8 +54,8 @@ import os
 # We'll also put the output in 'workspace/output', which is where output goes for a normal analysis.
 
 # To setup the config and output path, we'll use the relative import below.
-path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=path+'config', output_path=path+'output')
+workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
+conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # The same simulate function we used in chapter 2.
 def simulate():
@@ -91,12 +91,14 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # '_tutorial_1_pipeline_lens_and_source.py_'. Before we check it out, lets get the pipeline running. To do this, we
 # import the module and run its 'make_pipeline' function.
 
-# When we run the make_pipeline function, we specify a pipeline_path to structure the way our output is stored -
-# this will be explained in a moment.
+# When we run the make_pipeline function, we specify a phase_folders which structure the way our output is stored -
+# for this pipeline this will output the data as:
+# 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name' (the pipeline name is specified in the
+# pipeline).
 from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
 
 pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
-    pipeline_path='howtolens/c3_t1_lens_and_source/')
+    phase_folders=['howtolens', 'c3_t1_lens_and_source'])
 
 # To run a pipeline, we simply use its 'run' function, passing it the data we want to run the pipeline on. Simple, huh?
 pipeline_lens_and_source.run(data=ccd_data)

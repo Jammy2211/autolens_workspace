@@ -78,7 +78,7 @@ def perform_fit_with_source_galaxy_mask_and_border(source_galaxy, mask, use_bord
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=lens_data.grid_stack, border=border)
-    return lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+    return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # Okay, so lets first look at our mapper without using a border, and using our annular mask.
 source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
@@ -201,7 +201,7 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(source_galaxy, mask
                                                  source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=lens_data.grid_stack, border=border)
 
-    return lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+    return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # Now, lets fit this image using the input model and perform the source reconstruction without a border. As you can see,
 # we get many demagnified image pixels which trace well beyond our source-plane border if we don't relocate them!

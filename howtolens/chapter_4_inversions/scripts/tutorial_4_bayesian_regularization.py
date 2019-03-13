@@ -56,7 +56,7 @@ def perform_fit_with_source_galaxy(source_galaxy):
         mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
-    return lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+    return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # Okay, so lets look at our fit from the previous tutorial in more detail. We'll use a higher resolution 40 x 40 grid.
 source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))

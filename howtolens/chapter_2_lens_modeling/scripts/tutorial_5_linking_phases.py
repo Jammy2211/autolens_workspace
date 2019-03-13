@@ -38,13 +38,11 @@ from autolens.lens.plotters import lens_fit_plotters
 # 2) It should also give us a pretty good fit to the lensed source galaxy. This means we'll already know where in
 #    source-plane its is located and what its intensity and effective are.
 
-# If you are using Docker, the paths to the chapter is as follows (e.g. comment out this line)!
-# path = '/home/user/workspace/howtolens/chapter_2_lens_modeling'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_2_lens_modeling'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling'
-conf.instance = conf.Config(config_path=path+'/configs/5_linking_phases', output_path=path+"/output")
+conf.instance = conf.Config(config_path=chapter_path+'configs/5_linking_phases', output_path=chapter_path+"output")
 
 # Another simulate image function, for the same image again.
 def simulate():
@@ -78,7 +76,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 class LightTracesMassPhase(ph.LensSourcePlanePhase):
 
-    def pass_priors(self, previous_results):
+    def pass_priors(self, results):
 
         # As we've eluded to before, one can look at an image and immediately identify the centre of the lens
         # galaxy. It's that bright blob of light surrounded by the lensed source galaxy! Given that we know we're going
@@ -111,11 +109,12 @@ class LightTracesMassPhase(ph.LensSourcePlanePhase):
 # convinience.
 
 # There is also an 'align_centres' method, but because we are fixing all centres to floats we have ommitted it.
-phase_1 = LightTracesMassPhase(lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+phase_1 = LightTracesMassPhase(phase_name='5_linking_phase_1',
+                               lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                        mass=mp.EllipticalIsothermal,
                                                    align_axis_ratios=True, align_orientations=True)),
                                 source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                optimizer_class=nl.MultiNest, phase_name='5_linking_phase_1')
+                                optimizer_class=nl.MultiNest)
 
 # Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum likelihood
 # with fewer MultiNest live points and a faster sampling rate?
@@ -143,7 +142,7 @@ lens_fit_plotters.plot_fit_subplot(fit=phase_1_results.most_likely_fit, should_p
 
 class CustomPriorPhase(ph.LensSourcePlanePhase):
 
-    def pass_priors(self, previous_results):
+    def pass_priors(self, results):
 
         # What I've done here is looked at the results of phase 1, and manually specified a prior for every parameter.
         # If a parameter was fixed in the previous phase, its prior is based around the previous value. Don't worry
@@ -174,10 +173,11 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
 # Lets setup and run the phase. As expected, it gives us the correct lens model. However, it does so significantly
 # faster than we're used to - I didn't have to edit the config files to get this phase to run fast!
 
-phase_2 = CustomPriorPhase(lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+phase_2 = CustomPriorPhase(phase_name='5_linking_phase_2',
+                           lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                    mass=mp.EllipticalIsothermal)),
                            source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                           optimizer_class=nl.MultiNest, phase_name='5_linking_phase_2')
+                           optimizer_class=nl.MultiNest)
 
 phase_2.optimizer.n_live_points = 30
 phase_2.optimizer.sampling_efficiency = 0.9

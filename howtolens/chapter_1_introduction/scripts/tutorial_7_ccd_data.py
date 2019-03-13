@@ -52,16 +52,14 @@ simulated_ccd = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulati
 ccd_plotters.plot_image(ccd_data=simulated_ccd)
 
 # Finally, lets output these files to.fits files, we'll begin to analyze them in the next tutorial!
-path = '/path/to/AutoLens/workspace/howtolens/chapter_1_introduction'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_1_introduction'
+chapter_path = '/path/to/AutoLens/workspace/howtolens/chapter_1_introduction'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/'
 
-# If you are using Docker, the path you should use to output these images is (e.g. comment out this line)
-# path = '/home/user/workspace/howtolens/chapter_1_introduction'
+# The data path specifies where the data is output, this time in the directory 'chapter_path/data'
+data_path = chapter_path + 'data/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_1_introduction'
-
-ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd, image_path=path+'/data/image.fits',
-                                                    noise_map_path=path+'/data/noise_map.fits',
-                                                    psf_path=path+'/data/psf.fits',
+# Now output our simulated data to hard-disk.
+ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd, image_path=data_path+'image.fits',
+                                                    noise_map_path=data_path+'noise_map.fits',
+                                                    psf_path=data_path+'psf.fits',
                           overwrite=True)

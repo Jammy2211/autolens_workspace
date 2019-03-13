@@ -14,13 +14,11 @@ from autolens.data.plotters import ccd_plotters
 # running non-linear searches this tutorial - you've spent long enough waiting for non-linear searches to run
 # (of course, you can run them yourself if you're really keen)!
 
-# If you are using Docker, the paths to the chapter is as follows (e.g. comment out this line)!
-# path = '/home/user/workspace/howtolens/chapter_2_lens_modeling'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_2_lens_modeling'
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling'
-conf.instance = conf.Config(config_path=path+'/configs/5_linking_phases', output_path=path+"/output")
+conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
 
 # Lets simulate the simple image we've used throughout this chapter again.
 def simulate():
@@ -64,10 +62,11 @@ def mask_function():
     return msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
                                      inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
 
-phase_with_custom_mask = ph.LensSourcePlanePhase(lens_galaxies=dict(lens=gm.GalaxyModel()),
+phase_with_custom_mask = ph.LensSourcePlanePhase(phase_name='phase',
+                                                 lens_galaxies=dict(lens=gm.GalaxyModel()),
                                 source_galaxies=dict(source=gm.GalaxyModel()),
                                 mask_function=mask_function, # <- We input the mask function here
-                                optimizer_class=nl.MultiNest, phase_name='phase')
+                                optimizer_class=nl.MultiNest)
 
 # So, our mask encompasses the lensed source galaxy. However, is this really the right sized mask? Do we actually want
 # a bigger mask? a smaller mask?
@@ -108,10 +107,11 @@ phase_with_custom_mask = ph.LensSourcePlanePhase(lens_galaxies=dict(lens=gm.Gala
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
 
 # We can then tell our phase to use these positions in the analysis.
-phase_with_positions = ph.LensSourcePlanePhase(lens_galaxies=dict(lens=gm.GalaxyModel()),
+phase_with_positions = ph.LensSourcePlanePhase(phase_name='phase',
+                                               lens_galaxies=dict(lens=gm.GalaxyModel()),
                                 source_galaxies=dict(source=gm.GalaxyModel()),
                                 use_positions=True, # <- We use the positionos here
-                                optimizer_class=nl.MultiNest, phase_name='phase')
+                                optimizer_class=nl.MultiNest)
 
 # The positions are passed to the phase when we run it, which is shown below by commented out.
 # phase_with_positions.run(data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
@@ -151,10 +151,11 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
-phase_with_x2_positions = ph.LensSourcePlanePhase(lens_galaxies=dict(lens=gm.GalaxyModel()),
+phase_with_x2_positions = ph.LensSourcePlanePhase(phase_name='phase',
+                                                  lens_galaxies=dict(lens=gm.GalaxyModel()),
                                 source_galaxies=dict(source=gm.GalaxyModel()),
                                 use_positions=True, # <- We use the positionos here
-                                optimizer_class=nl.MultiNest, phase_name='phase')
+                                optimizer_class=nl.MultiNest)
 
 # phase_with_x2_positions.run(data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 

@@ -100,7 +100,7 @@ plane_plotters.plot_plane_grid(plane=tracer.source_plane, axis_limits=[-0.2, 0.2
 # (This line can take a bit of time to run)
 ray_tracing_plotters.plot_ray_tracing_subplot(tracer=tracer)
 
-# In the previous example, we saw that the tracer had attributes we plotted (e.g. surface density, potential, etc.)
+# In the previous example, we saw that the tracer had attributes we plotted (e.g. convergence, potential, etc.)
 # Now we've input a cosmology and galaxy redshifts, the tracer has attributes associated with its cosmology.
 print('Image-plane arcsec-per-kpc:')
 print(tracer.image_plane.arcsec_per_kpc_proper)

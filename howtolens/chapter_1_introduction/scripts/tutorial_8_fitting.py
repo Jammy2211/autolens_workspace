@@ -12,17 +12,15 @@ from autolens.lens.plotters import lens_fit_plotters
 # In this example, we'll fit the ccd imaging data we simulated in the previous exercise. We'll do this using model
 # images generated via a tracer, and by comparing to the simulated image we'll get diagostics about the quality of the fit.
 
-# If you are using Docker, the path you should use to output these images is (e.g. comment out this line)
-# path = '/home/user/workspace/howtolens/chapter_1_introduction'
+# You need to change the path below to the chapter 1 directory.
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction'
 
-# If you arn't using docker, you need to change the path below to the chapter 2 directory and uncomment it
-# path = '/path/to/user/workspace/howtolens/chapter_1_introduction'
+# The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
+data_path = chapter_path + 'data/'
 
-path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_1_introduction'
-
-ccd_data = ccd.load_ccd_data_from_fits(image_path=path + '/data/image.fits',
-                                       noise_map_path=path+'/data/noise_map.fits',
-                                       psf_path=path + '/data/psf.fits', pixel_scale=0.1)
+ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
+                                       noise_map_path=data_path+'noise_map.fits',
+                                       psf_path=data_path + 'psf.fits', pixel_scale=0.1)
 
 # The variable ccd_data is a CCDData object, which is a 'package' of all components of the CCD data of the lens, in particular:
 
@@ -124,7 +122,7 @@ ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
 # 4) Sums up these chi-squared values and converts them to a 'likelihood', which quantities how good the tracer's fit
 #    to the data was (higher likelihood = better fit).
 
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # We can print the fit's attributes - if we don't specify where we'll get all zeros, as the edges were masked:
@@ -162,7 +160,7 @@ source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio
                                                         intensity=1.0, effective_radius=1.0, sersic_index=2.5))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # We now observe residuals to appear at the locations the source galaxy was observed, which
@@ -181,7 +179,7 @@ source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio
                                                         intensity=1.0, effective_radius=0.4, sersic_index=3.5))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # Clearly, the model provides a terrible fit, and this tracer is not a plausible representation of

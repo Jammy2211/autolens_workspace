@@ -67,26 +67,26 @@ ray_tracing_plotters.plot_ray_tracing_subplot(tracer=tracer)
 
 # Just like for a plane, these attributes can be accessed by print statements (converted to 2D NumPy
 # arrays the same dimensions as our input grid-stack!).
-print('Tracer - Surface Density - Regular-grid coordinate 1:')
-print(tracer.surface_density[0,0])
-print('Tracer - Surface Density - Regular-grid coordinate 2:')
-print(tracer.surface_density[0,1])
-print('Tracer - Surface Density - Regular-grid coordinate 3:')
-print(tracer.surface_density[0,2])
-print('Tracer - Surface Density - Regular-grid coordinate 101:')
-print(tracer.surface_density[1,0])
+print('Tracer - Convergence - Regular-grid coordinate 1:')
+print(tracer.convergence[0, 0])
+print('Tracer - Convergence - Regular-grid coordinate 2:')
+print(tracer.convergence[0, 1])
+print('Tracer - Convergence - Regular-grid coordinate 3:')
+print(tracer.convergence[0, 2])
+print('Tracer - Convergence - Regular-grid coordinate 101:')
+print(tracer.convergence[1, 0])
 
 
-# Of course, these surface densities are identical to the image-plane surface densities, as it's only the lens galaxy
+# Of course, these convergence are identical to the image-plane convergences, as it's only the lens galaxy
 # that contributes to the overall mass of the ray-tracing system.
-print('Image-Plane - Surface Density - Regular-grid coordinate 1:')
-print(tracer.image_plane.surface_density[0,0])
-print('Image-Plane - Surface Density - Regular-grid coordinate 2:')
-print(tracer.image_plane.surface_density[0,1])
-print('Image-Plane - Surface Density - Regular-grid coordinate 3:')
-print(tracer.image_plane.surface_density[0,2])
-print('Image-Plane - Surface Density - Regular-grid coordinate 101:')
-print(tracer.image_plane.surface_density[1,0])
+print('Image-Plane - Convergence - Regular-grid coordinate 1:')
+print(tracer.image_plane.convergence[0, 0])
+print('Image-Plane - Convergence - Regular-grid coordinate 2:')
+print(tracer.image_plane.convergence[0, 1])
+print('Image-Plane - Convergence - Regular-grid coordinate 3:')
+print(tracer.image_plane.convergence[0, 2])
+print('Image-Plane - Convergence - Regular-grid coordinate 101:')
+print(tracer.image_plane.convergence[1, 0])
 
 # I've left the rest below commented to avoid too many print statements, but if you're feeling adventurous go ahead
 # and uncomment the lines below!
@@ -107,7 +107,7 @@ print(tracer.image_plane.surface_density[1,0])
 
 # You can also plot the above attributes on individual figures, using appropriate ray-tracing plotter (I've left most
 # commented out again for convinience)
-ray_tracing_plotters.plot_surface_density(tracer=tracer)
+ray_tracing_plotters.plot_convergence(tracer=tracer)
 # ray_tracing_plotters.plot_potential(tracer=tracer)
 # ray_tracing_plotters.plot_deflections_y(tracer=tracer)
 #ray_tracing_plotters.plot_deflections_x(tracer=tracer)
@@ -117,9 +117,9 @@ ray_tracing_plotters.plot_surface_density(tracer=tracer)
 # / potential / deflection angles, when the two are identical'. Afterall, only mass profiles contribute to these quantities,
 # and only the image-plane has galaxies with measureable  mass profiles! There are two reasons:
 
-# 1) Convinience - You could always write 'tracer.image_plane.surface_density' and
-#                  'plane_plotters.surface_density(plane=tracer.image_plane). However, code appears neater if you can
-#                  just write 'tracer.surface_density' and 'ray_tracing_plotters.plot_surface_density(tracer=tracer).
+# 1) Convinience - You could always write 'tracer.image_plane.convergence' and
+#                  'plane_plotters.convergence(plane=tracer.image_plane). However, code appears neater if you can
+#                  just write 'tracer.convergence' and 'ray_tracing_plotters.plot_convergence(tracer=tracer).
 
 # 2) Multi-plane lensing - For now, we're focused on the simplest lensing configuratio possible, an image-plane + source-plane
 #                          configuration. However, there are strong lens system where there are more than 2 planes! In these

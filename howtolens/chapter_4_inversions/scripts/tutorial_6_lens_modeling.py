@@ -51,7 +51,7 @@ def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
-    return lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+    return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # This lens galaxy has the wrong mass-model -  I've reduced its Einstein Radius from 1.6 to 0.8.
 lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8))
@@ -142,7 +142,7 @@ tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source
 
 # This fit subtracts the lens galaxy's light from the image and fits the resulting source-only image with the inversion.
 # When we plot the image, a new panel on the sub-plot appears showing the model image of the lens galaxy.
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True,
                                    zoom_around_mask=True)
 
@@ -154,7 +154,7 @@ lens_galaxy = g.Galaxy(light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.3
                                                     einstein_radius=1.6))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
-fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True,
                                    zoom_around_mask=True)
 

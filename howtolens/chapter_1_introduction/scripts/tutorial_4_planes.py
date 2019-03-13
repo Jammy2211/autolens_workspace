@@ -39,7 +39,7 @@ from autolens.lens.plotters import plane_plotters
 # collection of galaxies at the same redshift (that is, parallel to one another down our line-of-sight). Therefore:
 
 # - If two or more lens galaxies are at the same redshift in the image-plane, they deflect light in the same way.
-#   This means we can sum the surface-densities, potentials and deflection angles of their mass-profiles.
+#   This means we can sum the convergences, potentials and deflection angles of their mass-profiles.
 
 # - If two or more source galaxies are at the same redshift in the source-plane, their light is ray-traced in the
 #   same way. Therefore, when determining their lensed images, we can sum the lensed images of each galaxy's light-profiles.

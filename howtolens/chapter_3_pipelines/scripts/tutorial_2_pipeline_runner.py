@@ -20,8 +20,8 @@ import os
 # writing a pipeline that we can generalize to many lenses isn't currently possible with PyAutoLens.
 
 # Lets setup the path to the workspace, config and output folders, as per usual.
-path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=path+'config', output_path=path+'output')
+workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
+conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # This rather long simulate function generates an image with two strong lens galaxies.
 def simulate():
@@ -83,7 +83,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
 
 pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
-    pipeline_path='/howtolens/c3_t2_x2_lens_galaxies/')
+    phase_folders=['howtolens', 'c3_t2_x2_lens_galaxies'])
 pipeline_x2_galaxies.run(data=ccd_data)
 
 # Okay, great, nows a good time to read through the '_tutorial_2_pipeline_x2_lens_galaxies.py_' pipeline, to get a

@@ -10,10 +10,9 @@ import os
 # using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a light profile, 
 # to initialize the mass model, and then switch to an inversion.
 
-# To setup the config and output paths without docker, you need to uncomment and run the command below. If you are
-# using Docker, you don't need to do anything so leave this uncommented!
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=path+'config', output_path=path+'output')
+# To setup the config and output paths without docker, you need to uncomment and run the command below.
+workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
 def simulate():
@@ -54,7 +53,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Lets import the pipeline and run it.
 from workspace.howtolens.chapter_4_inversions import tutorial_8_pipeline
 
-pipeline_inversion = tutorial_8_pipeline.make_pipeline(pipeline_name='/howtolens/c4_t7_6_inversion/')
+pipeline_inversion = tutorial_8_pipeline.make_pipeline(phase_folders=['howtolens', 'c4_t8_inversion'])
 pipeline_inversion.run(data=ccd_data)
 
 # And with that, we now have a pipeline to model strong lenses using an inversion! Checkout the example pipeline in

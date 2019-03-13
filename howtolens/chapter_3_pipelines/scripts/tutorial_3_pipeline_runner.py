@@ -23,8 +23,8 @@ import os
 # 30-40+ parameters in our non-linear search. Even with a pipeline, thats a lot of parameters to try and fit!
 
 # Lets setup the path to the workspace, as per usual.
-path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=path+'config', output_path=path+'output')
+workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
+conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # This function simulates an image with a complex source.
 def simulate():
@@ -69,7 +69,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 from workspace.howtolens.chapter_3_pipelines import tutorial_3_pipeline_complex_source
 
 pipeline_complex_source = tutorial_3_pipeline_complex_source.make_pipeline(
-    pipeline_path='/howtolens/c3_t3_complex_source/')
+    phase_folders=['howtolens', 'c3_t3_complex_source'])
 pipeline_complex_source.run(data=ccd_data)
 
 # Okay, so with 4 sources, we still couldn't get a good a fit to the source that didn't leave residuals. The thing is,
@@ -97,7 +97,7 @@ tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
                                                               source_galaxy_2, source_galaxy_3],
                                              image_plane_grid_stack=lens_data.grid_stack)
 
-true_fit = lens_fit.fit_lens_data_with_tracer(lens_data=lens_data, tracer=tracer)
+true_fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 lens_fit_plotters.plot_fit_subplot(fit=true_fit)
 
