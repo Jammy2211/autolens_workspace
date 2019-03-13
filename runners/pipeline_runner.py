@@ -60,7 +60,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # For large samples of images, we can therefore easily group lenses that are from the same sample or modeled using the
 # same pipeline.
 
-from workspace.pipelines.examples import lens_light_and_x1_source_parametric
+from autolens_workspace.pipelines.examples import lens_light_and_x1_source_parametric
 pipeline = lens_light_and_x1_source_parametric.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
 
@@ -68,10 +68,8 @@ pipeline.run(data=ccd_data)
 # pixel-grid. To run this pipeline on our data, simply comment out / delete the lines above (lines 47-51) which run
 # the parametric souorce pipeline, and uncomment the lines below.
 
-# from workspace.pipelines.examples import lens_light_and_x1_source_parametric
-
+# from autolens_workspace.pipelines.examples import lens_light_and_x1_source_parametric
 # pipeline = lens_light_and_x1_source_parametric.make_pipeline(phase_folders=[data_type, data_name])
-
 # pipeline.run(data=ccd_data)
 
 # And there we have it, the pipeline runner. For me personally, I find it easiest too manage my lens models by having

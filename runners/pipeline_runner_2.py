@@ -1,6 +1,6 @@
+from autofit.tools import path_util
 from autofit import conf
 from autolens.data import ccd
-from autolens.data.array.util import array_util
 from autolens.data.plotters import ccd_plotters
 
 import os
@@ -19,7 +19,7 @@ import os
 # expand on them for your own personal scientific needs
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
 conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
@@ -33,7 +33,8 @@ pixel_scale = 0.1
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
-data_path = array_util.make_and_return_path(path=workspace_path, folder_names=['data', data_type, data_name])
+data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
+                                                                      folder_names=['data', data_type, data_name])
 
 ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + '/image.fits',
                                        psf_path=data_path + '/psf.fits',
@@ -48,7 +49,5 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # the pipeline.
 
 from workspace.pipelines.examples import no_lens_light_and_source_inversion
-
-pipeline = no_lens_light_and_source_inversion.make_pipeline(pipeline_path='example/' + data_name + '/')
-
+pipeline = no_lens_light_and_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
