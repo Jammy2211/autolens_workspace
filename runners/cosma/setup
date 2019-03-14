@@ -5,16 +5,24 @@ Before using the Cosma pipeline runner, we need to setup a workspace on Cosma on
 is key that the parts of your laptop's workspace which store large amounts of data (e.g. the data and output folders)
 are omitted from this workspace and stored somewhere else on Cosma.
 
-To setup your cosma workspace, the following commands should work from a terminal:
+To setup your cosma autolens workspace, the following commands should work from a terminal:
 
 1) ssh -X cosma_username@login.cosma.dur.ac.uk
 
    This command ssh's you into cosma, and should be something you're familiar with. It'll login you into your home
    directory ('/cosma/home/durham/cosma_username').
 
-2) cp -r /cosma/home/durham/pdtw24/workspace .
+2) mkdir PyAutoLens
 
-   This command will copy my template cosma workspace from my cosma home directory to yours.
+   This makes the directory 'PyAutoLens' on cosma, where we'll put the workspace.
+
+3) cd PyAutoLens
+
+   This takes us into the PyAutoLens directory.
+
+2) cp -r /cosma/home/durham/pdtw24/PyAutoLens/workspace .
+
+   This command will copy my template cosma workspace from my cosma PyAutoLens directory to yours.
 
 Now we need to setup your cosma environment so that it can run PyAutoLens.
 
