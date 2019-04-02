@@ -28,7 +28,7 @@ conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=w
 # don't have to change all of the path entries in the load_ccd_data_from_fits function below.
 
 data_type = 'example'
-data_name = 'no_lens_light_and_x2_source' # An example simulated image with lens light emission and a source galaxy.
+data_name = 'lens_light_and_x1_source' # An example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
 # Create the path where the data will be loaded from, which in this case is
@@ -36,18 +36,24 @@ pixel_scale = 0.1
 data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
                                                                       folder_names=['data', data_type, data_name])
 
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + '/image.fits',
-                                       psf_path=data_path + '/psf.fits',
-                                       noise_map_path=data_path + '/noise_map.fits',
+ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
+                                       psf_path=data_path + 'psf.fits',
+                                       noise_map_path=data_path + 'noise_map.fits',
                                        pixel_scale=pixel_scale)
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
 # Below, we'll' use a 3 phase example pipeline to fit the data with a parametric lens light, mass and source light
-# profile. Checkout _workspace/pipelines/examples/lens_light_and_x1_source_parametric.py_' for a full description of
+# profile. Checkout _workspace/pipelines/examples/lens_sersic_sie_source_x1_sersic.py_' for a full description of
 # the pipeline.
 
-from workspace.pipelines.examples import no_lens_light_and_source_inversion
-pipeline = no_lens_light_and_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
+from autolens_workspace.pipelines.examples import lens_sersic_sie_source_x1_sersic
+pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
+
+# Another example pipeline is shown below, which fits the data using a pixelized inversion for the source light.
+
+# from autolens_workspace.pipelines.examples import lens_sersic_sie_source_inversion
+# pipeline = lens_sersic_sie_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
+# pipeline.run(data=ccd_data)

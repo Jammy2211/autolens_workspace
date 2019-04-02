@@ -103,7 +103,7 @@ def make_pipeline(phase_folders=None):
     phase2 = LensSubtractedPhase(phase_name='phase_2_source_parametric', phase_folders=phase_folders,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 use_positions=True,
+                                 positions_threshold=0.3,
                                  optimizer_class=nl.MultiNest)
 
     phase2.optimizer.n_live_points = 50
@@ -171,7 +171,7 @@ def make_pipeline(phase_folders=None):
                                                      los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal)),
                                   source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
                                                                              regularization=reg.Constant)),
-                                  use_positions=True,
+                                  positions_threshold=0.3,
                                   optimizer_class=nl.MultiNest)
 
     # Customize MultiNest so it runs fast
@@ -206,7 +206,7 @@ def make_pipeline(phase_folders=None):
                              los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
                              source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
                                                    regularization=reg.Constant)),
-                             use_positions=True,
+                             positions_threshold=0.3,
                              optimizer_class=nl.MultiNest)
 
     # Customize MultiNest so it runs fast

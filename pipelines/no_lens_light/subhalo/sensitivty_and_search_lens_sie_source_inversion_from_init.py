@@ -5,6 +5,7 @@ from autofit.tools import phase as autofit_ph
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
@@ -23,7 +24,7 @@ import os
 # Source Light: AdaptiveMagnification + Constant
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_source_inversion_from_pipeline.py
-# Prior Passing: Lens mass (constant -> previous pipeline), Source light (constant -> previous pipeline).
+# Prior Passing: Lens Mass constant from previous pipeline, Source Light constant from previous pipeline.
 # Notes: Uses a 3D grid of subhalo (y,x) and mass, which is set via the config.
 
 # Phase 2:
@@ -33,7 +34,7 @@ import os
 # Source Light: AdaptiveMagnification + Constant
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_source_inversion_from_pipeline.py
-# Prior Passing: Lens mass (constant -> previous pipeline), source light (variable -> previous pipeline.)
+# Prior Passing: Lens Mass constant from previous pipeline, source light variable from previous pipeline.
 # Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
 
 # Phase 3:
@@ -43,7 +44,7 @@ import os
 # Source Light: AdaptiveMagnification + Constant
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_source_inversion_from_pipeline.py
-# Prior Passing: Lens mass (variable -> previous pipeline), source light and subhalo mass (variable -> phase 2).
+# Prior Passing: Lens Mass variable from previous pipeline, source light and subhalo mass variable from phase 2.
 # Notes: None
 
 # Phase 4:
@@ -58,15 +59,14 @@ import os
 
 def make_pipeline(phase_folders=None, interp_pixel_scale=0.05, bin_up_factor=1):
 
-    if bin_up_factor == 1:
-        bin_tag = ''
-    else:
-        bin_tag = '_bin_' + str(bin_up_factor)
+    pipeline_name = 'pipeline_subhalo_sensitivity_and_search_lens_sie_source_inversion'
 
-    pipeline_name = 'pipeline_subhalo_sensitivity_and_search_lens_sie_source_inversion'  + bin_tag
+    interp_pixel_scale_tag = tag.interp_pixel_scale_tag_from_interp_pixel_scale(interp_pixel_scale=interp_pixel_scale)
+    bin_up_factor_tag = tag.bin_up_factor_tag_from_bin_up_factor(bin_up_factor=bin_up_factor)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -94,10 +94,11 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05, bin_up_factor=1):
             self.lens_galaxies.subhalo.mass.centre_0 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
             self.lens_galaxies.subhalo.mass.centre_1 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
-            self.source_galaxies.source.pixelization = results.from_phase('phase_1_inversion').constant.source.pixelization
-            self.source_galaxies.source.regularization = results.from_phase('phase_1_inversion').variable.source.regularization
+            self.source_galaxies.source.pixelization = results.from_phase('phase_2_inversion').constant.source.pixelization
+            self.source_galaxies.source.regularization = results.from_phase('phase_2_inversion').variable.source.regularization
 
     phase2 = GridPhase(phase_name='phase_2_subhalo_search', phase_folders=phase_folders,
+                       phase_tag=bin_up_factor_tag,
                        lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                               shear=mp.ExternalShear),
                                           subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
@@ -114,14 +115,15 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05, bin_up_factor=1):
 
         def pass_priors(self, results):
             
-            self.lens_galaxies.lens.mass = results.from_phase('phase_1_inversion').variable.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_1_inversion').variable.lens.shear
+            self.lens_galaxies.lens.mass = results.from_phase('phase_2_inversion').variable.lens.mass
+            self.lens_galaxies.lens.shear = results.from_phase('phase_2_inversion').variable.lens.shear
             self.lens_galaxies.lens.subhalo = results.from_phase('phase_2_subhalo_search').best_result.variable.lens.subhalo
 
-            self.source_galaxies.source.pixelization = results.from_phase('phase_1_inversion').variable.source.pixelization
+            self.source_galaxies.source.pixelization = results.from_phase('phase_2_inversion').variable.source.pixelization
             self.source_galaxies.source.regularization = results.from_phase('phase_2_subhalo_search').best_result.variable.regularization
 
     phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
+                          phase_tag=bin_up_factor_tag,
                           lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                  shear=mp.ExternalShear),
                                              subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
@@ -152,6 +154,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05, bin_up_factor=1):
             self.lens_galaxies.lens.mass.einstein_radius = prior.GaussianPrior(mean=einstein_radius_value, sigma=0.2)
 
     phase4 = SubhaloPhase(phase_name='phase_4_power_law', phase_folders=phase_folders,
+                          phase_tag=interp_pixel_scale_tag + bin_up_factor_tag,
                           lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
                                                                  shear=mp.ExternalShear),
                                              subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),

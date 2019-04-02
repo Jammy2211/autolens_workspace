@@ -5,32 +5,35 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
 
-# In this pipeline, we'll continue from the pipeline above to initialize the source galaxy fit using an adaptive
-# inversion. This pipeline uses two phases:
+# In this pipeline, we'll perform an initializer analysis which fits an image with a source galaxy and a lens light
+# component. This reconstructs the source using a pxielized inversion, and uses the light-profile source fit of a
+# previous pipeline. The pipeline is as follows:
 
 # Phase 1:
 
-# Description: Initializes the source inversion parameters.
+# Description: Initializes the inversion's pixelization and regularization hyper-parameters, using a previous lens
+#              light and mass model.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: AdaptiveMagnification + Constant
 # Previous Pipelines: initializers/lens_sie_source_sersic_from_init.py
 # Prior Passing: Lens Mass (variable -> previous pipeline).
-# Notes: None
+# Notes: Uses the lens subtracted image corresponding to the light model of a previous pipeline.
 
 # Phase 2:
 
-# Description: Refines the lens light and mass models using the source inversion.
+# Description: Refine the lens light and mass model and source inversion.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: AdaptiveMagnification + Constant
 # Previous Pipelines: initializers/lens_sie_source_sersic_from_init.py
-# Prior Passing: Lens Mass (variable -> previous pipeline), Source Inversion (constant -> phase 1)
+# Prior Passing: Lens light and mass (variable -> previous pipeline), source inversion (variable -> phase 1).
 # Notes: None
 
 def make_pipeline(phase_folders=None, positions_threshold=None):
@@ -39,6 +42,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -55,12 +59,12 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     class InversionPhase(ph.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
-            return image - results.from_phase('phase_3_lens_light_mass_and_source_light').unmasked_lens_plane_model_image
+            return image - results.from_phase('phase_3_both').unmasked_lens_plane_model_image
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass = results.from_phase('phase_3_lens_light_mass_and_source_light').constant.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_3_lens_light_mass_and_source_light').constant.lens.shear
+            self.lens_galaxies.lens.mass = results.from_phase('phase_3_both').constant.lens.mass
+            self.lens_galaxies.lens.shear = results.from_phase('phase_3_both').constant.lens.shear
 
     phase1 = InversionPhase(phase_name='phase_1_inversion_init', phase_folders=phase_folders,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
@@ -84,13 +88,14 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     class InversionPhase(ph.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
-            return image - results.from_phase('phase_3_lens_light_mass_and_source_light').unmasked_lens_plane_model_image
+            return image - results.from_phase('phase_3_both').unmasked_lens_plane_model_image
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass = results.from_phase('phase_3_lens_light_mass_and_source_light').variable.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_3_lens_light_mass_and_source_light').variable.lens.shear
-            self.source_galaxies.source = results.from_phase('phase_1_inversion_init').variable.source
+            self.lens_galaxies.lens.mass = results.from_phase('phase_3_both').variable.lens.mass
+            self.lens_galaxies.lens.shear = results.from_phase('phase_3_both').variable.lens.shear
+            self.source_galaxies.source.pixelization = results.from_phase('phase_1_inversion_init').variable.source.pixelization
+            self.source_galaxies.source.regularization = results.from_phase('phase_1_inversion_init').variable.regularization
 
     phase2 = InversionPhase(phase_name='phase_2_inversion', phase_folders=phase_folders,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,

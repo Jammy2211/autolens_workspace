@@ -116,8 +116,8 @@ ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
 
 # Running a pipeline is exactly the same as we're used to. We import it, make it, and run it, noting that we can
 # use the data_name to ensure each job outputs its results to a different directory.
-from workspace.pipelines.examples import no_lens_light_and_x2_source_parametric
-pipeline = no_lens_light_and_x2_source_parametric.make_pipeline(phase_folders=[data_name])
+from workspace.pipelines.examples import lens_sie_source_x2_sersic
+pipeline = lens_sie_source_x2_sersic.make_pipeline(phase_folders=[data_name])
 
 # Now lets run the pipeline.
 pipeline.run(data=ccd_data)

@@ -4,6 +4,7 @@ from autofit.mapper import prior
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -25,8 +26,11 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
     pipeline_name = 'pipeline_init_lens_power_law_source_sersic'
 
+    interp_pixel_scale_tag = tag.interp_pixel_scale_tag_from_interp_pixel_scale(interp_pixel_scale=interp_pixel_scale)
+
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -44,6 +48,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.3)
 
     phase1 = LensSourcePhase(phase_name='phase_1_source', phase_folders=phase_folders,
+                             phase_tag=interp_pixel_scale_tag,
                              lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
                                                                     shear=mp.ExternalShear)),
                              source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),

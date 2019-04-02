@@ -5,20 +5,55 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
-# In this pipeline, we'll perform a basic analysis which fits two source galaxies using a parametric light profile and
-# a lens galaxy where its light is not present in the image, using two phases:
+# In this pipeline, we'll demonstrate binning up - which allows us to fit a binned up version of an image in a phse of 
+# the pipeline. In this example, we will perform an initial analysis on an image binned up from a pixel scale of 0.05" 
+# to 0.01", which gives significant speed-up in run timme, and then refine the model in a second phase at the input
+# resolution.
 
-# Phase 1) Fit the lens galaxy's mass (SIE+Shear) and source galaxy's light using a single Sersic light profile.
+# Whilst bin up factors can be manually specified in the pipeline, in this example we will make the bin up factor
+# an input parameter of the pipeline. This means we can run the pipeline with different binning up factors for different
+# runners.
 
-# Phase 2) Fit the lens galaxy's mass (SIE+Shear) and source galaxy's light using two Sersic light profiles,
-#          initializing the priors of the lens and source using the results of Phase 1.
+# We will also use phase tagging to ensure phases which use binned up data have a tag in their path, so it is clear
+# that a phase uses this feature.
 
-def make_pipeline(phase_folders=None):
+# We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
+# the lens's light is omitted. This pipeline uses two phases:
 
-    pipeline_name = 'pipeline_no_lens_light_and_x2_source_parametric'
+# Phase 1:
+
+# Description: Initializes the lens mass model and source light profile using x1 source with a bin up factor of x2.
+# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Source Light: EllipticalSersic
+# Previous Pipelines: None
+# Prior Passing: None
+# Notes: Uses a bin up factor of x2
+
+# Phase 1:
+
+# Description: Fits the lens and source model using unbinned data.
+# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Source Light: EllipticalSersic
+# Previous Pipelines: None
+# Prior Passing: Lens mass (variable -> phase 1), source light (variable -> phase 1)
+# Notes: No binning up.
+
+def make_pipeline(phase_folders=None, bin_up_factor=2):
+
+    pipeline_name = 'pipeline_binning_up'
+
+    # This tag is 'added' to the phase name to make it clear what binning up is used. The bin_up_tag and phase
+    # name are shown for 3 example bin up factors:
+
+    # - bin_up_factor=1, bin_up_tag='', phase_name=phase_name
+    # - bin_up_factor=2, bin_up_tag='_bin_up_factor_2', phase_name=phase_name_bin_up_factor_2
+    # - bin_up_factor=3, bin_up_tag='_bin_up_factor_3', phase_name=phase_name_bin_up_factor_3
+
+    bin_up_tag = tag.bin_up_factor_tag_from_bin_up_factor(bin_up_factor=bin_up_factor)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -45,10 +80,11 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source',
+    phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source', phase_tag=bin_up_tag, phase_folders=phase_folders,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                               bin_up_factor=bin_up_factor,
                                mask_function=mask_function, optimizer_class=nl.MultiNest)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
@@ -78,7 +114,7 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens = results.from_phase('phase_1_x1_source').variable.lens
             self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').variable.source_0
 
-    phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source',
+    phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source', phase_folders=phase_folders,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),
