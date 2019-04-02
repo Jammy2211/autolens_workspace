@@ -94,8 +94,8 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from autolens_workspace.pipelines.with_lens_light.initializers import lens_sersic_sie_source_sersic_from_init
-from autolens_workspace.pipelines.with_lens_light.initializers import lens_sersic_sie_source_inversion_from_pl
+from pipelines.with_lens_light.initializers import lens_sersic_sie_source_sersic_from_init
+from pipelines.with_lens_light.initializers import lens_sersic_sie_source_inversion_from_pl
 
 pipeline_light_profile = lens_sersic_sie_source_sersic_from_init.make_pipeline(phase_folders=[data_type, data_name])
 pipeline_inversion = lens_sersic_sie_source_inversion_from_pl.make_pipeline(phase_folders=[data_type, data_name])
