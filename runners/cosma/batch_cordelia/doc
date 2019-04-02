@@ -7,43 +7,50 @@ This sets up the Cosma command line of the job, so we can run command line calls
 
 #SBATCH --ntasks 1
 
-This describes the number of tasks we're going to run on Cosma. A
+This describes the number of 'tasks' we're going to run on Cosma. A task corresponds to 1 node and therefore 16 CPU's.
+If you have more than 16 images, you need to increase tasks appropriate (e.g. tasks=2 for 17-32 images, tasks=3 for 33-48, etc.)
 
-#SBATCH -J pipeline_runner_cosma
+#SBATCH -J example
 
-This specifies the name of the job, which I generally make sure matches the name of the runner.
+This specifies the name of the Cosma job, which I generally make sure matches the name of the runner.
 
-#SBATCH --array=1-17
+#SBATCH --array=1-8
 
-This specieis the range of arrays we'll run on, and thus the range of array_ids we'll pass the code. You can tell Cosma
-to run just one job on a specif array by writing e.g.
+This specifies the range of arrays we'll run on, and thus the range of array_ids we'll pass the code. You can tell Cosma
+to run just one job on a specific array by writing e.g.
 
 #SBATCH --array=2
 
 You will want to edit this line of the batch script depending on the number lenses you are analysing.
 
-#SBATCH -o ../output/pipeline_runner_cosma_output.%A.%a.out
+#SBATCH -o ../output/output.%A.%a.out
 
 The Python output of the job is sent to a .out file, which I by default put in the folder
-/workspace/runners/cosma/output/ and name after your runner, e.g. pipeine_runner_cosma_output.out
+/workspace/runners/cosma/output/. It will be given the name of your unique COSMA job id.
 
-#SBATCH -e ../output/pipeline_runner_cosma_error.%A.%a.err
+#SBATCH -e ../errors/error.%A.%a.err
 
-If there is an error during the job, the error is output to .err file which is setup analogously to the output file above.
+If there is an error during the job, the error is output to .err file which is setup analogously to the output file
+above.
 
-#SBATCH -p cosma # also cordelia
+#SBATCH -p cordelia
 
-You shouldn't need to change this, its telling Cosma which queue on the super computer we want to send our job too.
+You shouldn't need to change this, its telling Cosma to use the cordelia queue.
 
 #SBATCH -A durham
 
 Again, don't change this, its just letting Cosma know this is a Durham job.
 
-#SBATCH -t 1:00:00   # longest job
+#SBATCH -t 1:00:00
 
 This is the anticipated run time of your entire batch of jobs. All jobs will end when this timer is reached, thus you
-should put run time of the job you expect to last the longest. The limit on run-times on Cosma is 72 hours, but if this
-isn't enough you can just keep resubmitting jobs after they end and PyAutoLens will resume.
+should put run time of the job you expect to last the longest. The limit on run-times is 72 hours, but if this
+isn't enough you can just keep resubmitting jobs after they end and PyAutoLens will resume them.
+
+#SBATCH --mem=30G
+
+A cordelia job will not use the maximum amount of memory (30GB) unless you tell it too. I would generally recommend
+always use 30GB.
 
 #SBATCH --mail-type=END                          # notifications for job done & fail
 
