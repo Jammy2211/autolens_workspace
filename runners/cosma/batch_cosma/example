@@ -13,6 +13,9 @@
 
 module purge
 module load python/3.6.5
-source /cosma/home/durham/pdtw24/PyAutoLens/bin/activate
+cp -r /cosma/home/durham/pdtw24/PyAutoLens /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID
+rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace
+rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace_jam
+source /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/bin/activate
 
 srun -n 14 --multi-prog example_muticonf.conf

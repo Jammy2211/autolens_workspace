@@ -12,13 +12,13 @@ from autolens.model.profiles import mass_profiles as mp
 import os
 
 # In this pipeline, we show how custom masks (generated using the tools/mask_maker.py file) can be input and used by a
-# pipeline. We will also use the inner_circular_mask_radii variable of a phase to mask the central regions of an image.
+# pipeline. We will also use the inner_mask_radii variable of a phase to mask the central regions of an image.
 
 # The inner circular mask radii will be passed to the pipeline as an input parameter, such that it can be customizmed
 # in the runner. The first phase will use the a circular mask function with a circle of radius 3.0", but mask the
-# central regions of the image via the inner_circular_mask_radii input variable.
+# central regions of the image via the inner_mask_radii input variable.
 
-# We will use phase tagging to make it clear that the inner_ciclar_mask_radii variable was used.
+# We will use phase tagging to make it clear that the inner_mask_radii variable was used.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
 # the lens's light is omitted. This pipeline uses two phases:
@@ -30,7 +30,7 @@ import os
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
 # Prior Passing: None
-# Notes: Uses a mask where the inner regions are masked via the inner_circular_mask_radii parameter.
+# Notes: Uses a mask where the inner regions are masked via the inner_mask_radii parameter.
 
 # Phase 1:
 
@@ -44,7 +44,7 @@ import os
 # Checkout the 'workspace/runners/pipeline_runner.py' script for how the custom mask and positions are loaded and used
 # in the pipeline.
 
-def make_pipeline(phase_folders=None, inner_circular_mask_radii=None):
+def make_pipeline(phase_folders=None, phase_tagging=True, inner_mask_radii=None):
 
     pipeline_name = 'pipeline_inner_mask'
 
@@ -53,43 +53,34 @@ def make_pipeline(phase_folders=None, inner_circular_mask_radii=None):
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
-    # This tag is 'added' to the phase name to make it clear what binning up is used. The inner_circular_mask_radii_tag
-    # and phase name are shown for 2 example inner mask radii values:
+    # If phase tagging is on, a tag is 'added' to the phase name to make it clear what binning up is used. Phase names
+    # with their tags are shown for 2 example inner mask radii values:
 
-    # - inner_circular_mask_radii=0.2, inner_circular_mask_radii_tag='_inner_circular_mask_radii_0.20',
-    #   phase_name=phase_name_inner_circular_mask_radii_0.20
+    # inner_mask_radii=0.2 -> phase_path='phase_name_inner_mask_0.20'
+    # inner_mask_radii=0.25 -> phase_path='phase_name_inner_mask_0.25'
 
-    # - inner_circular_mask_radii=0.25, inner_circular_mask_radii_tag='_inner_circular_mask_radii_0.25',
-    #   phase_name=phase_name_inner_circular_mask_radii_0.25
+    # If the inner_mask_radii is None, the tag is an empty string, thus not changing the phase name:
 
-    # If the inner_circular_mask_radii is None, the tag is an empty string, thus not changing the phase name:
-
-    # - inner_circular_mask_radii=None, inner_circular_mask_radii_tag='', phase_name=phase_name
-
-    inner_circular_mask_radii_tag = tag.inner_circular_mask_radii_tag_from_inner_circular_mask_radii(
-        inner_circular_mask_radii=inner_circular_mask_radii)
+    # inner_mask_radii=None -> phase_path='phase_name'
 
     ### PHASE 1 ###
 
     # In phase 1, we will:
 
     # 1) Specify a mask_function which uses a circular mask, but make the mask used in the analysis an annulus by
-    #    specifying inner_circular_mask_radii. This variable masks all pixels within its input radius. This is
+    #    specifying inner_mask_radii. This variable masks all pixels within its input radius. This is
     #    equivalent to using a circular_annular mask, however because it is a phase input variable we can turn this
     #    masking on and off for different phases.
 
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_inner_radii_input', phase_tag=inner_circular_mask_radii_tag,
+    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_inner_radii_input', phase_tagging=phase_tagging,
                                      phase_folders=phase_folders,
                                      lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                      optimizer_class=nl.MultiNest, mask_function=mask_function,
-                                     inner_circular_mask_radii=inner_circular_mask_radii)
-
-    # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
-    # non-linear parameter space faster (if you haven't already, checkout the tutorial '' in howtolens/chapter_2).
+                                     inner_mask_radii=inner_mask_radii)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30

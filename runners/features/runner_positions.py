@@ -41,6 +41,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=positions)
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the positions into the
 # 'pipeline.run() function.
 
-from pipelines.features import position_thresholding
+from workspace.pipelines.features import position_thresholding
 pipeline = position_thresholding.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data, positions=positions)

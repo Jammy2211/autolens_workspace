@@ -5,34 +5,52 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
-# In this pipeline, we'll perform a basic analysis which fits two source galaxies using a parametric light profile and
-# a lens galaxy where its light is not present in the image, using two phases:
+# In this pipeline, we'll demonstrate sub-gridding - which defines the resolution of the sub-grid that is used to 
+# oversample the computation of intensities and deflection angles. In general, a higher level of sub-gridding provides
+# numerically more precise results, at the expense of longer calculations and higher memory usage.
+
+# Whilst sub grid sizes can be manually specified in the pipeline, in this example we will make the sub grid size
+# an input parameter of the pipeline. This means we can run the pipeline with different sub grids for different
+# runners.
+
+# We will also use phase tagging to ensure phases which use different sub grid sizes gave a tag in their path, so it is
+# clear what value a phase uses.
+
+# We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
+# the lens's light is omitted. This pipeline uses two phases:
 
 # Phase 1:
 
-# Description: Initializes the lens mass model and source light profile using x1 source.
+# Description: Initializes the lens mass model and source light profile using x1 source with a sub grid size of 2.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
 # Prior Passing: None
-# Notes: None
+# Notes: Uses a sub grid size of 2
 
-# Phase 2:
+# Phase 1:
 
-# Description: Fit the lens mass model and source light profile using x2 sources.
+# Description: Refine the lens and source model using a sub grid size of 4
 # Lens Mass: EllipitcalIsothermal + ExternalShear
-# Source Galaxy 1 - Light: EllipticalSersic
-# Source Galaxy 2 - Light: EllipticalSersic
+# Source Light: EllipticalSersic
 # Previous Pipelines: None
-# Prior Passing: Lens mass (variable -> phase 1), Source Galaxy 1 Light (variable -> phase 1)
-# Notes: None
+# Prior Passing: Lens mass (variable -> phase 1), source light (variable -> phase 1)
+# Notes: Uses a sub grid size of 4.
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, sub_grid_size=2):
 
-    pipeline_name = 'pipeline_lens_sie_source_x2_sersic'
+    pipeline_name = 'pipeline_sub_gridding'
+
+    # This tag is 'added' to the phase path, to make it clear what sub-grid up is used. The sub-grid tag and phase
+    # name are shown for 3 example sub grid sizes:
+
+    # sub_grid_size=1 -> phase_path=phase_name_sub_1
+    # sub_grid_size=2 -> phase_path=phase_name_sub_2
+    # sub_grid_size=3 -> phase_path=phase_name_sub_3
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -60,19 +78,12 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source', phase_folders=phase_folders,
+                               phase_tagging=True,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                               sub_grid_size=2,
                                mask_function=mask_function, optimizer_class=nl.MultiNest)
-
-    # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
-    # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
-    # 'howtolens/chapter_2_lens_modeling'.
-
-    # Fitting the lens galaxy and source galaxy from uninitialized priors often risks MultiNest getting stuck in a
-    # local maxima, especially for the image in this example which actually has two source galaxies. Therefore, whilst
-    # I will continue to use constant efficiency mode to ensure fast run time, I've upped the number of live points
-    # and decreased the sampling efficiency from the usual values to ensure the non-linear search is robust.
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80
@@ -93,11 +104,13 @@ def make_pipeline(phase_folders=None):
             self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').variable.source_0
 
     phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source', phase_folders=phase_folders,
+                               phase_tagging=True,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),
                                                       source_1=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               optimizer_class=nl.MultiNest, mask_function=mask_function)
+                               optimizer_class=nl.MultiNest, mask_function=mask_function,
+                               sub_grid_size=sub_grid_size)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

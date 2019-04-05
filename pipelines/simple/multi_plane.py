@@ -11,6 +11,8 @@ from autolens.model.profiles import mass_profiles as mp
 
 import os
 
+############## THIS PIPELINE IS A WORK IN PROGRESS AND I DO NOT RECOMMEND YOU TRY TO USE IT TO DO LENS MODELING ########
+
 # In this pipeline, we'll perform an advanced analysis which fits a lens galaxy with three surrounding line-of-sight \
 # galaxies (which are at different redshifts and thus define a multi-plane stronog lens configuration). The source \
 # galaxy will be modeled using a parametric light profile in the initial phases, but switch to an inversion in the \

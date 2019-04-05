@@ -68,7 +68,7 @@ array_plotters.plot_array(array=chi_squared_map, title='SLACS1430+4105 Chi-Squar
 # We can also plot the results of a fit using the fit itself. To do this, we have to make the pipeline and run it
 # so as to load up all the results of the pipeline. We can then access the results of every phase.
 from autolens.data import ccd
-from workspace.pipelines.examples import lens_light_and_x1_source_parametric
+from workspace.pipelines.examples import lens_sersic_sie_source_x1_sersic
 
 image_path = data_path + '/image.fits'
 psf_path = data_path + '/psf.fits'
@@ -77,7 +77,7 @@ noise_map_path = data_path + '/noise_map.fits'
 ccd_data = ccd.load_ccd_data_from_fits(image_path=image_path, psf_path=psf_path, noise_map_path=noise_map_path,
                                        pixel_scale=0.03)
 
-pipeline = lens_light_and_x1_source_parametric.make_pipeline(pipeline_path='example/' + data_name)
+pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(pipeline_path='example/' + data_name)
 
 # Now we run the pipeline on the data to get the result. If a mask was supplied to the pipeline when it was run, it is
 # important the same mask is supplied in this run statement.

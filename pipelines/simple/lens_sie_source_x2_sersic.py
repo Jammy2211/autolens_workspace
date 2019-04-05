@@ -5,55 +5,35 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
-# In this pipeline, we'll demonstrate binning up - which allows us to fit a binned up version of an image in a phse of 
-# the pipeline. In this example, we will perform an initial analysis on an image binned up from a pixel scale of 0.05" 
-# to 0.01", which gives significant speed-up in run timme, and then refine the model in a second phase at the input
-# resolution.
-
-# Whilst bin up factors can be manually specified in the pipeline, in this example we will make the bin up factor
-# an input parameter of the pipeline. This means we can run the pipeline with different binning up factors for different
-# runners.
-
-# We will also use phase tagging to ensure phases which use binned up data have a tag in their path, so it is clear
-# that a phase uses this feature.
-
-# We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
-# the lens's light is omitted. This pipeline uses two phases:
+# In this pipeline, we'll perform a basic analysis which fits two source galaxies using a parametric light profile and
+# a lens galaxy where its light is not present in the image, using two phases:
 
 # Phase 1:
 
-# Description: Initializes the lens mass model and source light profile using x1 source with a bin up factor of x2.
+# Description: Initializes the lens mass model and source light profile using x1 source.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
 # Prior Passing: None
-# Notes: Uses a bin up factor of x2
+# Notes: None
 
-# Phase 1:
+# Phase 2:
 
-# Description: Fits the lens and source model using unbinned data.
+# Description: Fit the lens mass model and source light profile using x2 sources.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
-# Source Light: EllipticalSersic
+# Source Galaxy 1 - Light: EllipticalSersic
+# Source Galaxy 2 - Light: EllipticalSersic
 # Previous Pipelines: None
-# Prior Passing: Lens mass (variable -> phase 1), source light (variable -> phase 1)
-# Notes: No binning up.
+# Prior Passing: Lens mass (variable -> phase 1), Source Galaxy 1 Light (variable -> phase 1)
+# Notes: None
 
-def make_pipeline(phase_folders=None, bin_up_factor=2):
+def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+                  inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_binning_up'
-
-    # This tag is 'added' to the phase path, to make it clear what binning up is used. The bin_up_tag and phase
-    # name are shown for 3 example bin up factors:
-
-    # bin_up_factor=1 -> phase_path=phase_name
-    # bin_up_factor=2 -> phase_path=phase_name_bin_up_factor_2
-    # bin_up_factor=3 -> phase_path=phase_name_bin_up_factor_3
-
-    bin_up_tag = tag.bin_up_factor_tag_from_bin_up_factor(bin_up_factor=bin_up_factor)
+    pipeline_name = 'pipeline_lens_sie_source_x2_sersic'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -80,13 +60,25 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source', phase_folders=phase_folders,
-                               phase_tagging=True,
+    phase1 = LensSourceX1Phase(phase_name='phase_1_lens_sie_source_sersic', phase_folders=phase_folders,
+                               phase_tagging=phase_tagging,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               bin_up_factor=bin_up_factor,
-                               mask_function=mask_function, optimizer_class=nl.MultiNest)
+                               mask_function=mask_function,
+                               optimizer_class=nl.MultiNest,
+                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                               interp_pixel_scale=interp_pixel_scale)
+
+    # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
+    # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
+    # 'howtolens/chapter_2_lens_modeling'.
+
+    # Fitting the lens galaxy and source galaxy from uninitialized priors often risks MultiNest getting stuck in a
+    # local maxima, especially for the image in this example which actually has two source galaxies. Therefore, whilst
+    # I will continue to use constant efficiency mode to ensure fast run time, I've upped the number of live points
+    # and decreased the sampling efficiency from the usual values to ensure the non-linear search is robust.
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80
@@ -103,16 +95,20 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_x1_source').variable.lens
-            self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').variable.source_0
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sie_source_sersic').variable.lens
+            self.source_galaxies.source_0 = results.from_phase('phase_1_lens_sie_source_sersic').variable.source_0
 
-    phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source', phase_folders=phase_folders,
-                               phase_tagging=True,
+    phase2 = LensSourceX2Phase(phase_name='phase_2_lens_sie_source_x2_sersic', phase_folders=phase_folders,
+                               phase_tagging=phase_tagging,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),
                                                       source_1=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               optimizer_class=nl.MultiNest, mask_function=mask_function)
+                               mask_function=mask_function,
+                               optimizer_class=nl.MultiNest,
+                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                               interp_pixel_scale=interp_pixel_scale)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

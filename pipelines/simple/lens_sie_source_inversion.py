@@ -52,7 +52,8 @@ import os
 
 #            See runners/runner_adding_pipelines.py for more details on adding pipelines.
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+                  inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_sie_source_inversion'
 
@@ -82,10 +83,15 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(phase_name='phase_1_source', phase_folders=phase_folders,
+                               phase_tagging=phase_tagging,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               mask_function=mask_function_annular, optimizer_class=nl.MultiNest)
+                               mask_function=mask_function_annular,
+                               optimizer_class=nl.MultiNest,
+                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                               interp_pixel_scale=interp_pixel_scale)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
@@ -115,11 +121,15 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').constant.lens.shear
 
     phase2 = InversionPhase(phase_name='phase_2_inversion_init', phase_folders=phase_folders,
+                            phase_tagging=phase_tagging,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
                                                                       regularization=reg.Constant)),
-                            optimizer_class=nl.MultiNest)
+                            optimizer_class=nl.MultiNest,
+                            sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                            positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                            interp_pixel_scale=interp_pixel_scale)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 20
@@ -141,11 +151,15 @@ def make_pipeline(phase_folders=None):
             self.source_galaxies.source = results.from_phase('phase_2_inversion_init').variable.source
 
     phase3 = InversionPhase(phase_name='phase_3_inversion', phase_folders=phase_folders,
+                            phase_tagging=phase_tagging,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
                                                                       regularization=reg.Constant)),
-                            optimizer_class=nl.MultiNest)
+                            optimizer_class=nl.MultiNest,
+                            sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                            positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                            interp_pixel_scale=interp_pixel_scale)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50

@@ -16,17 +16,16 @@ import os
 # Phase 1:
 
 # Description: Initializes the lens mass model and source light profile.
-# Lens Mass: EllipitcalPowerLaw + ExternalShear
+# Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
 # Prior Passing: None
-# Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
+# Notes: None
 
-def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
+def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+                  inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_init_lens_power_law_source_sersic'
-
-    interp_pixel_scale_tag = tag.interp_pixel_scale_tag_from_interp_pixel_scale(interp_pixel_scale=interp_pixel_scale)
+    pipeline_name = 'pipeline_initializer_lens_sie_shear_source_sersic'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -47,11 +46,13 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.3)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.3)
 
-    phase1 = LensSourcePhase(phase_name='phase_1_source', phase_folders=phase_folders,
-                             phase_tag=interp_pixel_scale_tag,
-                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
+    phase1 = LensSourcePhase(phase_name='phase_1_lens_sie_shear_source_sersic', phase_folders=phase_folders,
+                             phase_tagging=phase_tagging,
+                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                     shear=mp.ExternalShear)),
                              source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                             sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                             positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
                              interp_pixel_scale=interp_pixel_scale,
                              optimizer_class=nl.MultiNest)
 

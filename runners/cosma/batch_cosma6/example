@@ -1,16 +1,15 @@
 #!/bin/bash -l
 
-#SBATCH --ntasks 1
+#SBATCH -N 1
+#SBATCH --ntasks=14
 #SBATCH -J example
-#SBATCH --array=1-8
 #SBATCH -o output/output.%A.%a.out
 #SBATCH -e error/error.%A.%a.err
-#SBATCH -p cordelia
-#SBATCH -A durham
-#SBATCH -t 6:00:00   # longest job
-#SBATCH --mem=30G
-#SBATCH --mail-type=END                          # notifications for job done & fail
-#SBATCH --mail-user=durham_email@durham.ac.uk
+#SBATCH -p cosma6
+#SBATCH -A dp004
+#SBATCH -t 48:00:00   # longest job
+#SBATCH --mail-type=END                      # notifications for job done & fail
+#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
 
 module purge
 module load python/3.6.5
@@ -19,4 +18,4 @@ rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace
 rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace_jam
 source /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/bin/activate
 
-python3 $WORKSPACE/runners/example.py $SLURM_ARRAY_TASK_ID
+srun -n 14 --multi-prog example_muticonf.conf

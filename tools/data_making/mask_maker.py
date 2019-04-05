@@ -50,4 +50,4 @@ data_plotters.plot_image(image=image, mask=mask)
 
 # Now we're happy with the mask, lets output it to the data folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-msk.output_mask_to_fits(mask=mask, mask_path=data_path + '/mask.fits', overwrite=True)
+msk.output_mask_to_fits(mask=mask, mask_path=data_path + 'mask.fits', overwrite=True)

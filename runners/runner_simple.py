@@ -48,12 +48,12 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # profile. Checkout _workspace/pipelines/examples/lens_sersic_sie_source_x1_sersic.py_' for a full description of
 # the pipeline.
 
-from pipelines.examples import lens_sersic_sie_source_x1_sersic
-pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(phase_folders=[data_type, data_name])
+from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
 
 # Another example pipeline is shown below, which fits the data using a pixelized inversion for the source light.
 
-# from autolens_workspace.pipelines.examples import lens_sersic_sie_source_inversion
+# from workspace.pipelines.examples import lens_sersic_sie_source_inversion
 # pipeline = lens_sersic_sie_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
 # pipeline.run(data=ccd_data)

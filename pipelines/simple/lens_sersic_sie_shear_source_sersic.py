@@ -41,9 +41,10 @@ from autolens.model.profiles import mass_profiles as mp
 # Prior Passing: Lens light (variable -> phase 1), lens mass and source light (variable -> phase 2).
 # Notes: None
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+                  inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_lens_sersic_sie_source_x1_sersic'
+    pipeline_name = 'pipeline_lens_sersic_sie_shear_source_x1_sersic'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -68,9 +69,12 @@ def make_pipeline(phase_folders=None):
             self.lens_galaxies.lens.light.centre_0 = mm.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.light.centre_1 = mm.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensPhase(phase_name='phase_1_lens_light_only', phase_folders=phase_folders,
+    phase1 = LensPhase(phase_name='phase_1_lens_sersic', phase_folders=phase_folders,
+                       phase_tagging=phase_tagging,
                        lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                       optimizer_class=nl.MultiNest)
+                       optimizer_class=nl.MultiNest,
+                       sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                       inner_mask_radii=inner_mask_radii)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
@@ -101,15 +105,20 @@ def make_pipeline(phase_folders=None):
         def pass_priors(self, results):
 
             self.lens_galaxies.lens.mass.centre_0 = \
-                results.from_phase('phase_1_lens_light_only').variable.lens.light.centre_0
+                results.from_phase('phase_1_lens_sersic').variable.lens.light.centre_0
             self.lens_galaxies.lens.mass.centre_1 = \
-                results.from_phase('phase_1_lens_light_only').variable.lens.light.centre_1
+                results.from_phase('phase_1_lens_sersic').variable.lens.light.centre_1
 
-    phase2 = LensSubtractedPhase(phase_name='phase_2_lens_mass_and_source_light', phase_folders=phase_folders,
+    phase2 = LensSubtractedPhase(phase_name='phase_2_lens_sie_shear_source_sersic', phase_folders=phase_folders,
+                                 phase_tagging=phase_tagging,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                         shear=mp.ExternalShear)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 optimizer_class=nl.MultiNest, mask_function=mask_function)
+                                 mask_function=mask_function,
+                                 optimizer_class=nl.MultiNest,
+                                 sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                                 positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                                 interp_pixel_scale=interp_pixel_scale)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 60
@@ -125,17 +134,21 @@ def make_pipeline(phase_folders=None):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.light = results.from_phase('phase_1_lens_light_only').variable.lens.light
-            self.lens_galaxies.lens.mass = results.from_phase('phase_2_lens_mass_and_source_light').variable.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_2_lens_mass_and_source_light').variable.lens.shear
-            self.source_galaxies.source = results.from_phase('phase_2_lens_mass_and_source_light').variable.source
+            self.lens_galaxies.lens.light = results.from_phase('phase_1_lens_sersic').variable.lens.light
+            self.lens_galaxies.lens.mass = results.from_phase('phase_2_lens_sie_shear_source_sersic').variable.lens.mass
+            self.lens_galaxies.lens.shear = results.from_phase('phase_2_lens_sie_shear_source_sersic').variable.lens.shear
+            self.source_galaxies.source = results.from_phase('phase_2_lens_sie_shear_source_sersic').variable.source
 
-    phase3 = LensSourcePhase(phase_name='phase_3_lens_mass_and_source_light', phase_folders=phase_folders,
+    phase3 = LensSourcePhase(phase_name='phase_3_lens_sersic_sie_shear_source_sersic', phase_folders=phase_folders,
+                             phase_tagging=phase_tagging,
                              lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                     mass=mp.EllipticalIsothermal,
                                                                     shear=mp.ExternalShear)),
                              source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                             optimizer_class=nl.MultiNest)
+                             optimizer_class=nl.MultiNest,
+                             sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                             positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                             interp_pixel_scale=interp_pixel_scale)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 75

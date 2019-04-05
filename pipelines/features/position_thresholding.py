@@ -52,21 +52,15 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
-    # This tag is 'added' to the phase name to make it clear what binning up is used. The positions_threshold_tag
+    # A tag is 'added' to the phase path, to make it clear what binning up is used. The positions_threshold_tag
     # and phase name are shown for 3 example inner mask radii values:
     
-    # - positions_threshold=0.2, positions_threshold_tag='_positions_threshold_0.20',
-    #   phase_name=phase_name_positions_threshold_0.20
-    
-    # - positions_threshold=0.25, positions_threshold_tag='_positions_threshold_0.25',
-    #   phase_name=phase_name_positions_threshold_0.25
+    # positions_threshold=0.2 -> phase_path='phase_name_pos_0.20'
+    # positions_threshold=0.25, -> phase_path='phase_name_pos_0.25'
 
     # If the positions_threshold is None, the tag is an empty string, thus not changing the phase name:
 
     # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name
-
-    positions_threshold_tag = \
-        tag.positions_threshold_tag_from_positions_threshold(positions_threshold=positions_threshold)
 
     ### PHASE 1 ###
 
@@ -77,15 +71,12 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_positions', phase_tag=positions_threshold_tag,
-                                     phase_folders=phase_folders,
+    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_positions', phase_folders=phase_folders,
+                                     phase_tagging=True,
                                      lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                      positions_threshold=positions_threshold,
                                      optimizer_class=nl.MultiNest, mask_function=mask_function)
-
-    # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
-    # non-linear parameter space faster (if you haven't already, checkout the tutorial '' in howtolens/chapter_2).
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
