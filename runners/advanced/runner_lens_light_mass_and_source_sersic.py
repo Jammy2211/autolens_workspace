@@ -5,9 +5,12 @@ from autolens.data.plotters import ccd_plotters
 
 import os
 
-# Welcome to the Cosma pipeline runner for adding pipelines. This script is identical to the 'runners/example.py'
-# script, except at the end when we add pipelines together. So, if you know how runners work, jump ahead to our
-# pipeline imports (the code between the dashed ---- lines is identical to runners.py).
+# Welcome to the advanced pipeline runner! This script is identical to the
+# 'runners/simple/runner_lens_light_mass_and_source.py' script, except at the end when we add pipelines together. So,
+# if you already know how the simple runners work, jump ahead to our pipeline imports. If you don't, I recommmend you
+# checout the 'simple' pipelines, before using this script.
+
+### The code between the dashed ---- lines is identical to 'runners/simple/runner_lens_light_mass_and_source.py' ###
 
 # ----------------------------------------------------------------------------------------------------------
 
@@ -25,7 +28,7 @@ import os
 # expand on them for your own personal scientific needs
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
 conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
@@ -36,7 +39,7 @@ data_path = path_util.make_and_return_path_from_path_and_folder_names(path=works
 # It is convenient to specify the data type and data name as a string, so that if the pipeline is applied to multiple
 # images we don't have to change all of the path entries in the load_ccd_data_from_fits function below.
 data_type = 'example'
-data_name = 'lens_light_and_x1_source' # Example simulated image with lens light emission and a source galaxy.
+data_name = 'lens_light_mass_and_x1_source' # Example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
 # data_name = 'slacs1430+4105' # Example HST imaging of the SLACS strong lens slacs1430+4150.
@@ -70,18 +73,18 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # --------------------------------------------------------------------------------------------------------
 
-# Okay, so in this runner, we'll going to import multiple pipelines, and add them together :O.
+# Okay, so in this, the advanced runner, we're going to import multiple pipelines, and add them together :O
 
-# What does adding two pipelines together do? Well, it means that the first pipeline will run, and then once it
+# What does adding two pipelines together do? Well, it means that the first pipeline will run, and then once it has
 # finished, the next pipeline will run, and so on. Crucially, all of the previous results of previous pipelines are
 # available to later pipelines, to pass priors and results through the pipeline. What are benefits of doing this?
 
-# - We can create generic initialization pipelines, that initialize the lens model, which pipelines with a more specific
-#   model can then continue on from. In fact, if you are running multiple pipelines already, may have noticed that you
-#   were often identical phases at the beginning of the pipeline to perform fairly general tasks (subtract the lens light,
-#   initialize the lens mass model and source light model).
+# - We can create generic initialization pipelines, that initialize the lens model. Pipelines with a more specific
+#   model can then continue on from these more general initialization results. In fact, you may have noticed that the
+#   simple pipelines you've already been running have identical phases at the beginning of them. Adding pipelines
+#   together means we don't need to repeat phases.
 
-# - The pipelines create their own output folders, which are shared by the later pipelines. This means we don't
+# - Each pipeline creates its own output folder, which is shared by the later pipelines. This means we don't
 #   duplicate output for the initializer pipelines.
 
 # - If you are working with collaborators, one can use their results / initializer pipelines to continue / tweak their
@@ -94,12 +97,12 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from workspace.pipelines.with_lens_light.initializers import lens_sersic_sie_source_sersic
-from workspace.pipelines.with_lens_light.inversion import lens_sersic_sie_shear_source_inversion_from_initializer
+from workspace.pipelines.with_lens_light.initializer import lens_sersic_sie_shear_source_sersic
+from workspace.pipelines.with_lens_light.power_law.from_initializer import lens_sersic_pl_shear_source_sersic
 
-pipeline_light_profile = lens_sersic_sie_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_inversion = lens_sersic_sie_shear_source_inversion_from_initializer.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_initializer = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_power_law = lens_sersic_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 
-pipeline = pipeline_light_profile + pipeline_inversion
+pipeline = pipeline_initializer + pipeline_power_law
 
 pipeline.run(data=ccd_data)

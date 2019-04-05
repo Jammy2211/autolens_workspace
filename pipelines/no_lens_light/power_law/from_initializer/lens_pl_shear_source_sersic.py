@@ -4,7 +4,6 @@ from autofit.mapper import prior
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -18,7 +17,7 @@ import os
 
 # Phase 1:
 
-# Description: Initializes the lens mass model and source light profile.
+# Description: Fits the lens mass model as a power-law, using a parametric Sersic light profile for the source.
 # Lens Mass: EllipitcalPowerLaw + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: no_lens_light/initializers/lens_sie_shear_source_sersic_from_init.py
@@ -28,10 +27,7 @@ import os
 def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=0.05):
 
-    pipeline_name = 'pipeline_power_law_lens_power_law_shear_source_sersic'
-
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    pipeline_name = 'pipeline_pl__lens_pl_shear_source_sersic'
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -47,28 +43,46 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
 
         def pass_priors(self, results):
 
-            einstein_radius_mean = results.from_phase('phase_1_lens_sie_shear_source_sersic').constant.lens.mass.einstein_radius
+            ### Lens Mass, SIE -> PL ###
 
-            self.lens_galaxies.lens.mass.centre = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.centre
-            self.lens_galaxies.lens.mass.axis_ratio = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.axis_ratio
-            self.lens_galaxies.lens.mass.phi = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.phi
-            self.lens_galaxies.lens.mass.einstein_radius = prior.GaussianPrior(mean=einstein_radius_mean, sigma=0.3)
+            self.lens_galaxies.lens.mass.centre = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.centre
 
-            self.lens_galaxies.lens.mass.shear = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.shear
+            self.lens_galaxies.lens.mass.axis_ratio = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.axis_ratio
 
-            centre_mean = results.from_phase('phase_1_lens_sie_shear_source_sersic').constant.source.light.centre
-            effective_radius_mean = results.from_phase('phase_1_lens_sie_shear_source_sersic').constant.source.light.effective_radius
-            sersic_index_mean = results.from_phase('phase_1_lens_sie_shear_source_sersic').constant.source.light.sersic_index
+            self.lens_galaxies.lens.mass.phi = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.mass.phi
 
-            self.source_galaxies.source.light.centre.centre_0 = prior.GaussianPrior(mean=centre_mean[0], sigma=0.3)
-            self.source_galaxies.source.light.centre.centre_1 = prior.GaussianPrior(mean=centre_mean[1], sigma=0.3)
-            self.source_galaxies.source.light.intensity = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.intensity
-            self.source_galaxies.source.light.effective_radius = prior.GaussianPrior(mean=effective_radius_mean, sigma=1.0)
-            self.source_galaxies.source.light.sersic_index = prior.GaussianPrior(mean=sersic_index_mean, sigma=1.5)
-            self.source_galaxies.source.light.axis_ratio = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.axis_ratio
-            self.source_galaxies.source.light.phi = results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.phi
+            self.lens_galaxies.lens.mass.einstein_radius = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable_absolute(a=0.3).lens.mass.einstein_radius
+
+            ### Lens Shear, Shear -> Shear ###
+
+            self.lens_galaxies.lens.mass.shear = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.lens.shear
+
+            ### Source Light, Sersic -> Sersic ###
+
+            self.source_galaxies.source.light.centre = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable_absolute(a=0.3).source.light.centre
+
+            self.source_galaxies.source.light.intensity = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.intensity
+
+            self.source_galaxies.source.light.effective_radius = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable_absolute(a=1.0).source.light.effective_radius
+
+            self.source_galaxies.source.light.sersic_index = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable_absolute(a=1.5).source.light.sersic_index
+
+            self.source_galaxies.source.light.axis_ratio = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.axis_ratio
+
+            self.source_galaxies.source.light.phi = \
+                results.from_phase('phase_1_lens_sie_shear_source_sersic').variable.source.light.phi
             
-    phase1 = LensSourcePhase(phase_name='phase_1_lens_power_law_shear_source_sersic', phase_folders=phase_folders,
+    phase1 = LensSourcePhase(phase_name='phase_1_lens_pl_shear_source_sersic', phase_folders=phase_folders,
                              phase_tagging=phase_tagging,
                              lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
                                                                     shear=mp.ExternalShear)),

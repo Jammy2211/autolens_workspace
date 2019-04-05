@@ -104,6 +104,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, inner_mask_radii=None)
             self.source_galaxies.source = results.from_phase('phase_1_use_inner_radii_input').variable.source
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_circular_mask', phase_folders=phase_folders,
+                                 phase_tagging=True,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                  optimizer_class=nl.MultiNest)

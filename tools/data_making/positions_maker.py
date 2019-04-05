@@ -16,7 +16,7 @@ workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 # The 'data name' is the name of the data folder and 'data_name' the folder the positions are stored in e.g,
 # the positions will be output as '/workspace/data/data_type/data_name/positions.dat'.
 data_type = 'example'
-data_name = 'lens_light_and_x1_source'
+data_name = 'lens_light_mass_and_x1_source'
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
@@ -32,11 +32,14 @@ image = ccd.load_image(image_path=data_path + 'image.fits', image_hdu=0, pixel_s
 # Now, create a set of positions, which is simply a python list of (y,x) values.
 positions = [[[0.8, 1.45], [1.78, -0.4], [-0.95, 1.38], [-0.83, -1.04]]]
 
+# These are the positions for the example lens 'lens_mass_and_x2_source'
+# positions = [[[2.16, -1.3], [-0.65, 0.45]]]
+
 # We can infact input multiple lists of positions (commented out below), which corresponds to pixels which are \
 # anticipated to map to different multiply imaged regions of the source-plane (e.g. you would need something like \
 # spectra to be able to do this)
                   # Images of source 1           # Images of source 2
-# positions = [[[1.0, 1.0], [2.0, 0.5]], [[-1.0, -0.1], [2.0, 2.0], [3.0, 3.0]]]]
+# positions = [[[1.0, 1.0], [2.0, 0.5]], [[-1.0, -0.1], [2.0, 2.0], [3.0, 3.0]]]
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 data_plotters.plot_image(image=image, positions=positions)

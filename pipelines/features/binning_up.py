@@ -53,8 +53,6 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # bin_up_factor=2 -> phase_path=phase_name_bin_up_factor_2
     # bin_up_factor=3 -> phase_path=phase_name_bin_up_factor_3
 
-    bin_up_tag = tag.bin_up_factor_tag_from_bin_up_factor(bin_up_factor=bin_up_factor)
-
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,

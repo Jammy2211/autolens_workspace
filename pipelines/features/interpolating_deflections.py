@@ -53,7 +53,7 @@ from autolens.model.profiles import mass_profiles as mp
 
 def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
-    pipeline_name = 'pipeline_binning_up'
+    pipeline_name = 'pipeline_interpolating_deflections'
 
     # This tag is 'added' to the phase path, to make it clear what binning up is used. The bin_up_tag and phase
     # name are shown for 3 example bin up factors:

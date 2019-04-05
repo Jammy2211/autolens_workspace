@@ -17,10 +17,10 @@ import os
 # Most of this runner repeats the command described in the 'runner.'py' file. Therefore, to make it clear where the
 # specific mask functionality is used, I have deleted all comments not related to that feature.
 
-workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 data_type = 'example'
-data_name = 'lens_light_and_x1_source'
+data_name = 'lens_light_mass_and_x1_source'
 pixel_scale = 0.1
 data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
                                                                       folder_names=['data', data_type, data_name])
@@ -46,6 +46,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, extract_array_from_m
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
 # 'pipeline.run() function.
 
-from workspace.pipelines.examples import lens_sersic_sie_source_x1_sersic
-pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(phase_folders=[data_type, data_name])
+from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data, mask=mask)

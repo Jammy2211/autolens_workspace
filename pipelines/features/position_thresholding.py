@@ -45,7 +45,7 @@ import os
 
 def make_pipeline(phase_folders=None, positions_threshold=None):
 
-    pipeline_name = 'pipeline_positions'
+    pipeline_name = 'pipeline_position_thresholding'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -75,7 +75,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
                                      phase_tagging=True,
                                      lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                     positions_threshold=positions_threshold,
+                                     positions_threshold=0.3,
                                      optimizer_class=nl.MultiNest, mask_function=mask_function)
 
     phase1.optimizer.const_efficiency_mode = True
@@ -100,9 +100,10 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
             self.source_galaxies.source = results.from_phase('phase_1_use_positions').variable.source
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_no_positions', phase_folders=phase_folders,
+                                 phase_tagging=True,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 optimizer_class=nl.MultiNest, positions_threshold=0.3)
+                                 optimizer_class=nl.MultiNest, positions_threshold=positions_threshold)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

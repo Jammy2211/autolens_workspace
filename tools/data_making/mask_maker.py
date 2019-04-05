@@ -15,7 +15,7 @@ workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 # The 'data name' is the name of the data folder and 'data_name' the folder the mask is stored in, e.g,
 # the mask will be output as '/workspace/data/data_type/data_name/mask.fits'.
 data_type = 'example'
-data_name = 'lens_light_and_x1_source'
+data_name = 'lens_light_mass_and_x1_source'
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
@@ -33,17 +33,6 @@ image = ccd.load_image(image_path=data_path + 'image.fits', image_hdu=0, pixel_s
 
 mask = msk.Mask.circular_annular(shape=image.shape, pixel_scale=image.pixel_scale,
                                  inner_radius_arcsec=0.5, outer_radius_arcsec=2.5, centre=(0.0, 0.0))
-
-# mask = msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale,
-#                          radius_arcsec=3.0, centre=(0.0, 0.0))
-
-# mask = msk.Mask.elliptical(shape=image.shape, pixel_scale=image.pixel_scale,
-#                            major_axis_radius_arcsec=3.0, axis_ratio=0.8, phi=45.0, centre=(0.0, 0.0))
-
-# mask = msk.Mask.elliptical_annular(shape=image.shape, pixel_scale=image.pixel_scale,
-#                                    inner_major_axis_radius_arcsec=1.0, inner_axis_ratio=0.8, inner_phi=45.0,
-#                                    outer_major_axis_radius_arcsec=1.0, outer_axis_ratio=0.6, outer_phi=60.0,
-#                                    centre=(0.0, 0.0))
 
 # Now lets plot the image and mask, so we can check that the mask includes the regions of the image we want.
 data_plotters.plot_image(image=image, mask=mask)

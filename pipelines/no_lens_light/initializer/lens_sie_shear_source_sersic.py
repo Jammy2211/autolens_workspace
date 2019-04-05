@@ -4,7 +4,6 @@ from autofit.mapper import prior
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -25,10 +24,7 @@ import os
 def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_initializer_lens_sie_shear_source_sersic'
-
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    pipeline_name = 'pipeline_init__lens_sie_shear_source_sersic'
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -42,6 +38,8 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
     class LensSourcePhase(ph.LensSourcePlanePhase):
 
         def pass_priors(self, results):
+
+            ## Lens Mass, move centre priors to centre of image ###
 
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.3)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.3)
