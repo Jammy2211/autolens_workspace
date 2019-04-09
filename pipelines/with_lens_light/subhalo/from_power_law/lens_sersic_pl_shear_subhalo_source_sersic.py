@@ -50,7 +50,7 @@ import os
 # Prior Passing: Lens light and mass (variable -> previous pipeline), source light and subhalo mass (variable -> phase 2).
 # Notes: None
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=0.05):
 
     pipeline_name = 'pipeline_subhalo__lens_sersic_sie_shear_subhalo_source_sersic'
@@ -78,7 +78,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
     #         self.lens_galaxies.subhalo.mass.scale_radius = 5.0
     #
     # phase2 = GridPhase(phase_name='phase_2_sensitivity', phase_folders=phase_folders,
-    #                    phase_tagging=phase_tagging,
+    #                    tag_phases=tag_phases,
     #                    lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
     #                                                           shear=mp.ExternalShear),
     #                                       subhalo=gm.GalaxyModel(mass=mp.SphericalNFW)),
@@ -139,7 +139,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
                 results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.phi
 
     phase2 = GridPhase(phase_name='phase_2_subhalo_search', phase_folders=phase_folders,
-                       phase_tagging=phase_tagging,
+                       tag_phases=tag_phases,
                        lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic, 
                                                               mass=mp.EllipticalPowerLaw,
                                                               shear=mp.ExternalShear),
@@ -177,7 +177,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_2_subhalo_search').best_result.variable.source
 
     phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
-                          phase_tagging=phase_tagging,
+                          tag_phases=tag_phases,
                           lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic, 
                                                                  mass=mp.EllipticalPowerLaw,
                                                                  shear=mp.ExternalShear),

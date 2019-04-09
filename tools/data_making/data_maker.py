@@ -134,3 +134,36 @@ ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd,
                             psf_path=data_path + 'psf.fits',
                             noise_map_path=data_path + 'noise_map.fits',
                             overwrite=True)
+
+####################################################
+
+data_type = 'example'
+data_name = 'lens_bulge_disk_mass_and_x1_source'
+
+data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
+                                                                      folder_names=['data', data_type, data_name])
+
+lens_galaxy = g.Galaxy(bulge=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.3,
+                                                 effective_radius=0.6, sersic_index=3.0),
+                       disk=lp.EllipticalExponential(centre=(0.0, 0.0), axis_ratio=0.7, phi=30.0, intensity=0.2,
+                                                     effective_radius=1.6),
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0),
+                       shear=mp.ExternalShear(magnitude=0.05, phi=90.0))
+
+source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=60.0,
+                                                   intensity=0.3, effective_radius=1.0, sersic_index=2.5))
+
+tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
+                                             image_plane_grid_stack=image_plane_grid_stack)
+
+simulated_ccd = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=pixel_scale,
+                                     exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+
+# Lets plot the simulated CCD data before we output it to files.
+ccd_plotters.plot_ccd_subplot(ccd_data=simulated_ccd)
+
+ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd,
+                            image_path=data_path + 'image.fits',
+                            psf_path=data_path + 'psf.fits',
+                            noise_map_path=data_path + 'noise_map.fits',
+                            overwrite=True)

@@ -52,7 +52,7 @@ import os
 
 #            See runners/runner_adding_pipelines.py for more details on adding pipelines.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_sie_source_inversion'
@@ -83,7 +83,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(phase_name='phase_1_source', phase_folders=phase_folders,
-                               phase_tagging=phase_tagging,
+                               tag_phases=tag_phases,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -121,7 +121,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').constant.lens.shear
 
     phase2 = InversionPhase(phase_name='phase_2_inversion_init', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -151,7 +151,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_2_inversion_init').variable.source
 
     phase3 = InversionPhase(phase_name='phase_3_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,

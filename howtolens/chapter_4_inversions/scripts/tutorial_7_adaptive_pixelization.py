@@ -10,9 +10,6 @@ from autolens.lens import plane as pl
 from autolens.model.inversion import inversions as inv
 from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
-from autolens.data.plotters import ccd_plotters
-from autolens.model.inversion.plotters import inversion_plotters
-from autolens.model.inversion.plotters import mapper_plotters
 from autolens.lens.plotters import lens_fit_plotters
 
 # In this tutorial, we'll introduce a new pixelization, called an adaptive-pixelization. This pixelization doesn't use

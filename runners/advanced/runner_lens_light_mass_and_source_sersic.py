@@ -99,10 +99,12 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 from workspace.pipelines.with_lens_light.initializer import lens_sersic_sie_shear_source_sersic
 from workspace.pipelines.with_lens_light.power_law.from_initializer import lens_sersic_pl_shear_source_sersic
+from workspace.pipelines.with_lens_light.subhalo.from_power_law import lens_sersic_pl_shear_subhalo_source_sersic
 
 pipeline_initializer = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline_power_law = lens_sersic_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_subhalo = lens_sersic_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 
-pipeline = pipeline_initializer + pipeline_power_law
+pipeline = pipeline_initializer + pipeline_power_law + pipeline_subhalo
 
 pipeline.run(data=ccd_data)

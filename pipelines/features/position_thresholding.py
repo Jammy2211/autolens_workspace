@@ -72,7 +72,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
     phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_positions', phase_folders=phase_folders,
-                                     phase_tagging=True,
+                                     tag_phases=True,
                                      lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                      positions_threshold=0.3,
@@ -100,7 +100,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
             self.source_galaxies.source = results.from_phase('phase_1_use_positions').variable.source
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_no_positions', phase_folders=phase_folders,
-                                 phase_tagging=True,
+                                 tag_phases=True,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                  optimizer_class=nl.MultiNest, positions_threshold=positions_threshold)

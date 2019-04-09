@@ -39,7 +39,7 @@ data_path = path_util.make_and_return_path_from_path_and_folder_names(path=works
 # It is convenient to specify the data type and data name as a string, so that if the pipeline is applied to multiple
 # images we don't have to change all of the path entries in the load_ccd_data_from_fits function below.
 data_type = 'example'
-data_name = 'lens_light_mass_and_x1_source' # Example simulated image with lens light emission and a source galaxy.
+data_name = 'lens_mass_and_x1_source' # Example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
 # data_name = 'slacs1430+4105' # Example HST imaging of the SLACS strong lens slacs1430+4150.
@@ -97,15 +97,15 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from workspace.pipelines.with_lens_light.initializer import lens_sersic_sie_shear_source_sersic
-from workspace.pipelines.with_lens_light.inversion.from_initializer import lens_sersic_sie_shear_source_inversion
-from workspace.pipelines.with_lens_light.power_law.from_inversion import lens_sersic_pl_shear_source_inversion
-from workspace.pipelines.with_lens_light.subhalo.from_power_law import lens_sersic_pl_shear_subhalo_source_inversion
+from workspace.pipelines.no_lens_light.initializer import lens_sie_shear_source_sersic
+from workspace.pipelines.no_lens_light.inversion.from_initializer import lens_sie_shear_source_inversion
+from workspace.pipelines.no_lens_light.power_law.from_inversion import lens_pl_shear_source_inversion
+from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
-pipeline_initializer = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_inversion = lens_sersic_sie_shear_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_power_law = lens_sersic_pl_shear_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_subhalo = lens_sersic_pl_shear_subhalo_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_inversion = lens_sie_shear_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_power_law = lens_pl_shear_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 
 pipeline = pipeline_initializer + pipeline_inversion + pipeline_power_law + pipeline_subhalo
 

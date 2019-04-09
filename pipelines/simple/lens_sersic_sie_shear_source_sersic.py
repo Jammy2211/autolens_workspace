@@ -41,7 +41,7 @@ from autolens.model.profiles import mass_profiles as mp
 # Prior Passing: Lens light (variable -> phase 1), lens mass and source light (variable -> phase 2).
 # Notes: None
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_lens_sersic_sie_shear_source_x1_sersic'
@@ -70,7 +70,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.lens_galaxies.lens.light.centre_1 = mm.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensPhase(phase_name='phase_1_lens_sersic', phase_folders=phase_folders,
-                       phase_tagging=phase_tagging,
+                       tag_phases=tag_phases,
                        lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic)),
                        optimizer_class=nl.MultiNest,
                        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
@@ -110,7 +110,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
                 results.from_phase('phase_1_lens_sersic').variable.lens.light.centre_1
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_lens_sie_shear_source_sersic', phase_folders=phase_folders,
-                                 phase_tagging=phase_tagging,
+                                 tag_phases=tag_phases,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                         shear=mp.ExternalShear)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -140,7 +140,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_2_lens_sie_shear_source_sersic').variable.source
 
     phase3 = LensSourcePhase(phase_name='phase_3_lens_sersic_sie_shear_source_sersic', phase_folders=phase_folders,
-                             phase_tagging=phase_tagging,
+                             tag_phases=tag_phases,
                              lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                     mass=mp.EllipticalIsothermal,
                                                                     shear=mp.ExternalShear)),

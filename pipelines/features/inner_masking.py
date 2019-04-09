@@ -44,7 +44,7 @@ import os
 # Checkout the 'workspace/runners/pipeline_runner.py' script for how the custom mask and positions are loaded and used
 # in the pipeline.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, inner_mask_radii=None):
+def make_pipeline(phase_folders=None, tag_phases=True, inner_mask_radii=None):
 
     pipeline_name = 'pipeline_inner_mask'
 
@@ -75,7 +75,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, inner_mask_radii=None)
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_inner_radii_input', phase_tagging=phase_tagging,
+    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_inner_radii_input', tag_phases=tag_phases,
                                      phase_folders=phase_folders,
                                      lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -104,7 +104,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, inner_mask_radii=None)
             self.source_galaxies.source = results.from_phase('phase_1_use_inner_radii_input').variable.source
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_circular_mask', phase_folders=phase_folders,
-                                 phase_tagging=True,
+                                 tag_phases=True,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                  optimizer_class=nl.MultiNest)

@@ -40,7 +40,7 @@ import os
 # Prior Passing: Lens Mass (constant -> phase 2), source inversion (variable -> phase 1 & 2).
 # Notes: Source inversion resolution varies.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_inv__lens_sie_shear_source_inversion'
@@ -64,7 +64,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.lens_galaxies.lens = results.from_phase('phase_1_lens_sie_shear_source_sersic').constant.lens
 
     phase1 = InversionPhase(phase_name='phase_1_initialize_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -102,7 +102,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
                 results.from_phase('phase_1_initialize_inversion').variable.source.regularization
 
     phase2 = InversionPhase(phase_name='phase_2_lens_sie_shear_source_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -135,7 +135,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.source
 
     phase3 = InversionPhase(phase_name='phase_3_lens_sie_shear_refine_source_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,

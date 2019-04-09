@@ -21,7 +21,7 @@ import os
 # Prior Passing: None
 # Notes: None
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_init__lens_sie_shear_source_sersic'
@@ -35,24 +35,15 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    class LensSourcePhase(ph.LensSourcePlanePhase):
-
-        def pass_priors(self, results):
-
-            ## Lens Mass, move centre priors to centre of image ###
-
-            self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.3)
-            self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.3)
-
-    phase1 = LensSourcePhase(phase_name='phase_1_lens_sie_shear_source_sersic', phase_folders=phase_folders,
-                             phase_tagging=phase_tagging,
-                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                    shear=mp.ExternalShear)),
-                             source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                             sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                             positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                             interp_pixel_scale=interp_pixel_scale,
-                             optimizer_class=nl.MultiNest)
+    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_lens_sie_shear_source_sersic', phase_folders=phase_folders,
+                                     tag_phases=tag_phases,
+                                     lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
+                                                                            shear=mp.ExternalShear)),
+                                     source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
+                                     sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+                                     positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+                                     interp_pixel_scale=interp_pixel_scale,
+                                     optimizer_class=nl.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80

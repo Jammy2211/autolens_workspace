@@ -26,7 +26,7 @@ import os
 # Prior Passing: None
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=0.05):
 
     pipeline_name = 'pipeline_pl__lens_sersic_pl_shear_source_sersic'
@@ -66,31 +66,16 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
 
             ### Lens Shear, Shear -> Shear ###
 
-            self.lens_galaxies.lens.mass.shear = \
+            self.lens_galaxies.lens.shear = \
                 results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.lens.shear
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source.light.centre = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable_absolute(a=0.3).source.light.centre
-
-            self.source_galaxies.source.light.intensity = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.source.light.intensity
-
-            self.source_galaxies.source.light.effective_radius = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable_absolute(a=1.0).source.light.effective_radius
-
-            self.source_galaxies.source.light.sersic_index = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable_absolute(a=1.5).source.light.sersic_index
-
-            self.source_galaxies.source.light.axis_ratio = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.source.light.axis_ratio
-
-            self.source_galaxies.source.light.phi = \
-                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.source.light.phi
+            self.source_galaxies.source.light = \
+                results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.source.light
             
     phase1 = LensSourcePhase(phase_name='phase_1_lens_sersic_pl_shear_source_sersic', phase_folders=phase_folders,
-                             phase_tagging=phase_tagging,
+                             tag_phases=tag_phases,
                              lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                     mass=mp.EllipticalPowerLaw,
                                                                     shear=mp.ExternalShear)),

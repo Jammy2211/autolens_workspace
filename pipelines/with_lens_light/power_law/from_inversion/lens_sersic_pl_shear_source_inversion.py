@@ -37,7 +37,7 @@ import os
 # Prior Passing: Lens Mass (constant -> phase 1), source inversion (variable -> phase 1)
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=0.05):
 
     pipeline_name = 'pipeline_pl__lens_sersic_pl_shear_source_sersic'
@@ -77,7 +77,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
 
             ### Lens Shear, Shear -> Shear ###
 
-            self.lens_galaxies.lens.mass.shear = \
+            self.lens_galaxies.lens.shear = \
                 results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.shear
 
             ### Source Inversion, Inv -> Inv ###
@@ -89,7 +89,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
                 results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').variable.source.regularization
             
     phase1 = LensSourcePhase(phase_name='phase_1_lens_sersic_pl_shear_source_inversion', phase_folders=phase_folders,
-                             phase_tagging=phase_tagging,
+                             tag_phases=tag_phases,
                              lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                     mass=mp.EllipticalPowerLaw,
                                                                     shear=mp.ExternalShear)),
@@ -124,7 +124,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').variable.source
 
     phase2 = InversionPhase(phase_name='phase_2_lens_sersic_pl_shear_refine_source_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                    mass=mp.EllipticalPowerLaw,
                                                                    shear=mp.ExternalShear)),

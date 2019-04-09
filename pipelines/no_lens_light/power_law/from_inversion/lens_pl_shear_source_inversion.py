@@ -35,7 +35,7 @@ import os
 # Prior Passing: Lens Mass (constant -> phase 1), source inversion (variable -> phase 1)
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=0.05):
 
     pipeline_name = 'pipeline_pl__lens_pl_shear_source_sersic'
@@ -54,7 +54,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
 
         def pass_priors(self, results):
 
-            ### Lens Mass, SIE -> Powerlaw ###
+            ### Lens Mass, SIE -> PL ###
 
             self.lens_galaxies.lens.mass.centre = \
                 results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.mass.centre
@@ -82,7 +82,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
                 results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').variable.source.regularization
             
     phase1 = LensSourcePhase(phase_name='phase_1_lens_pl_shear_source_inversion', phase_folders=phase_folders,
-                             phase_tagging=phase_tagging,
+                             tag_phases=tag_phases,
                              lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
                                                                     shear=mp.ExternalShear)),
                              source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -116,7 +116,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source = results.from_phase('phase_1_lens_pl_shear_source_inversion').variable.source
 
     phase2 = InversionPhase(phase_name='phase_2_lens_pl_shear_refine_source_inversion', phase_folders=phase_folders,
-                            phase_tagging=phase_tagging,
+                            tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,

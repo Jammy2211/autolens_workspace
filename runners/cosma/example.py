@@ -114,12 +114,16 @@ ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
                                        noise_map_path=data_path + 'noise_map.fits',
                                        pixel_scale=pixel_scale)
 
-# Running a pipeline is exactly the same as we're used to. We import it, make it, and run it, noting that we can
-# use the data_name to ensure each job outputs its results to a different directory.
-from workspace.pipelines.examples import lens_sie_source_x2_sersic
-pipeline = lens_sie_source_x2_sersic.make_pipeline(phase_folders=[data_name])
+from workspace.pipelines.no_lens_light.initializer import lens_sie_shear_source_sersic
+from workspace.pipelines.no_lens_light.power_law.from_initializer import lens_pl_shear_source_sersic
+from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
-# Now lets run the pipeline.
+pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+
+pipeline = pipeline_initializer + pipeline_power_law + pipeline_subhalo
+
 pipeline.run(data=ccd_data)
 
 # Finally, lets quickly look at the batch_cosma folder, for submitting jobs to cosma. There really isn't much different

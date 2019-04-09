@@ -30,7 +30,7 @@ from autolens.model.profiles import mass_profiles as mp
 # Prior Passing: Lens mass (variable -> phase 1), Source Galaxy 1 Light (variable -> phase 1)
 # Notes: None
 
-def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
+def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
                   inner_mask_radii=None, interp_pixel_scale=None):
 
     pipeline_name = 'pipeline_lens_sie_source_x2_sersic'
@@ -61,7 +61,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(phase_name='phase_1_lens_sie_source_sersic', phase_folders=phase_folders,
-                               phase_tagging=phase_tagging,
+                               tag_phases=tag_phases,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -99,7 +99,7 @@ def make_pipeline(phase_folders=None, phase_tagging=True, sub_grid_size=2, bin_u
             self.source_galaxies.source_0 = results.from_phase('phase_1_lens_sie_source_sersic').variable.source_0
 
     phase2 = LensSourceX2Phase(phase_name='phase_2_lens_sie_source_x2_sersic', phase_folders=phase_folders,
-                               phase_tagging=phase_tagging,
+                               tag_phases=tag_phases,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),

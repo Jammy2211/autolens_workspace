@@ -88,7 +88,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source', phase_folders=phase_folders,
-                               phase_tagging=True,
+                               tag_phases=True,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -114,7 +114,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
             self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').variable.source_0
 
     phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source', phase_folders=phase_folders,
-                               phase_tagging=True,
+                               tag_phases=True,
                                lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
                                                                       shear=mp.ExternalShear)),
                                source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),

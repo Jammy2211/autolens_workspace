@@ -3,6 +3,7 @@ from autofit.optimize import non_linear as nl
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
@@ -16,7 +17,7 @@ from autolens.model.inversion import regularization as reg
 
 # Description: Initializes the inversion's pixelization and regularization hyper-parameters, using a previous lens
 #              light and mass model.
-# Lens Light: EllipticalSersic
+# Lens Light: EllipticalSersic + EllipticalExponential
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: AdaptiveMagnification + Constant
 # Previous Pipelines: initializers/lens_sie_shear_source_sersic_from_init.py
@@ -26,7 +27,7 @@ from autolens.model.inversion import regularization as reg
 # Phase 2:
 
 # Description: Refine the lens light and mass model and source inversion.
-# Lens Light: EllipticalSersic
+# Lens Light: EllipticalSersic + EllipticalExponential
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: AdaptiveMagnification + Constant
 # Previous Pipelines: initializers/lens_sie_shear_source_sersic_from_init.py
@@ -36,7 +37,7 @@ from autolens.model.inversion import regularization as reg
 # Phase 3:
 
 # Description: Refine the source inversion using this lens light and mass model.
-# Lens Light: EllipticalSersic
+# Lens Light: EllipticalSersic + EllipticalExponential
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: AdaptiveMagnification + Constant
 # Previous Pipelines: None
@@ -44,9 +45,14 @@ from autolens.model.inversion import regularization as reg
 # Notes: Source inversion resolution varies.
 
 def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=None):
+                  inner_mask_radii=None, interp_pixel_scale=None, align_bulge_disk_centre=False,
+                  align_bulge_disk_axis_ratio=False, align_bulge_disk_phi=False):
 
-    pipeline_name = 'pipeline_inv__lens_sersic_sie_shear_source_inversion'
+    bulge_disk_tag = tag.bulge_disk_tag_from_align_bulge_disks(align_bulge_disk_centre=align_bulge_disk_centre,
+                                                               align_bulge_disk_axis_ratio=align_bulge_disk_axis_ratio,
+                                                               align_bulge_disk_phi=align_bulge_disk_phi)
+
+    pipeline_name = 'pipeline_inv__lens_sersic_exp_sie_shear_source_inversion' + bulge_disk_tag
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -65,13 +71,14 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
+            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
 
             self.lens_galaxies.lens = results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').constant.lens
 
     phase1 = InversionPhase(phase_name='phase_1_initialize_inversion', phase_folders=phase_folders,
                             tag_phases=tag_phases,
-                            lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+                            lens_galaxies=dict(lens=gm.GalaxyModel(bulge=lp.EllipticalSersic,
+                                                                   disk=lp.EllipticalExponential,
                                                                    mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -97,7 +104,7 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
+            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
 
             self.lens_galaxies.lens = results.from_phase('phase_3_lens_sersic_sie_shear_source_sersic').variable.lens
 
@@ -109,9 +116,10 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
             self.source_galaxies.source.regularization = \
                 results.from_phase('phase_1_initialize_inversion').variable.source.regularization
 
-    phase2 = InversionPhase(phase_name='phase_2_lens_sersic_sie_shear_source_inversion', phase_folders=phase_folders,
+    phase2 = InversionPhase(phase_name='phase_2_lens_sersic_exp_sie_shear_source_inversion', phase_folders=phase_folders,
                             tag_phases=tag_phases,
-                            lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
+                            lens_galaxies=dict(lens=gm.GalaxyModel(bulge=lp.EllipticalSersic,
+                                                                   disk=lp.EllipticalExponential,
                                                                    mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),
                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
@@ -136,18 +144,18 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
+            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
 
-            self.lens_galaxies.lens = \
-                results.from_phase('phase_2_lens_sersic_sie_shear_source_inversion').constant.lens
+            self.lens_galaxies.lens.light = \
+                results.from_phase('phase_2_lens_sersic_exp_sie_shear_source_inversion').constant.lens
 
             ### Source Inversion, Inv -> Inv ###
 
             self.source_galaxies.source = \
-                results.from_phase('phase_2_lens_sersic_sie_shear_source_inversion').variable.source
+                results.from_phase('phase_2_lens_sersic_exp_sie_shear_source_inversion').variable.source
 
-    phase3 = InversionPhase(phase_name='phase_3_lens_sersic_sie_shear_refine_source_inversion', phase_folders=phase_folders,
-                            tag_phases=tag_phases,
+    phase3 = InversionPhase(phase_name='phase_3_lens_sersic_exp_sie_shear_refine_source_inversion',
+                            phase_folders=phase_folders, tag_phases=tag_phases,
                             lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
                                                                    mass=mp.EllipticalIsothermal,
                                                                    shear=mp.ExternalShear)),

@@ -119,7 +119,7 @@ print(tracer.source_plane.angular_diameter_distance_to_earth)
 print('Angular Diameter Distance From Image To Source Plane:')
 print(tracer.angular_diameter_distance_from_image_to_source_plane)
 print('Lensing Critical Surface Density:')
-print(tracer.critical_density_kpc)
+print(tracer.critical_surface_mass_density_kpc)
 
 # And with that, we've completed tutorial 6. Try the following:
 
