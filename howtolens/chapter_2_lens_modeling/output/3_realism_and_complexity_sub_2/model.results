@@ -1,0 +1,65 @@
+Most likely model, Likelihood = 4232.882
+
+lens_galaxies_lens_galaxy_light_centre_0                    -0.008
+lens_galaxies_lens_galaxy_light_centre_1                    -0.014
+lens_galaxies_lens_galaxy_light_axis_ratio                  0.796
+lens_galaxies_lens_galaxy_light_phi                         83.915
+lens_galaxies_lens_galaxy_light_intensity                   0.007
+lens_galaxies_lens_galaxy_light_effective_radius            0.227
+lens_galaxies_lens_galaxy_light_sersic_index                3.46
+lens_galaxies_lens_galaxy_mass_centre_0                     -0.015
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.043
+lens_galaxies_lens_galaxy_mass_axis_ratio                   0.695
+lens_galaxies_lens_galaxy_mass_phi                          90.057
+lens_galaxies_lens_galaxy_mass_einstein_radius_value        0.153
+source_galaxies_source_galaxy_light_centre_0                0.009
+source_galaxies_source_galaxy_light_centre_1                -0.01
+source_galaxies_source_galaxy_light_axis_ratio              0.804
+source_galaxies_source_galaxy_light_phi                     75.84
+source_galaxies_source_galaxy_light_intensity_value         0.059
+source_galaxies_source_galaxy_light_effective_radius_value  0.594
+
+Most probable model (3.0 sigma limits)
+
+lens_galaxies_lens_galaxy_light_centre_0                    -0.009 (-0.021, 0.007)
+lens_galaxies_lens_galaxy_light_centre_1                    -0.018 (-0.048, 0.003)
+lens_galaxies_lens_galaxy_light_axis_ratio                  0.775 (0.693, 0.9)
+lens_galaxies_lens_galaxy_light_phi                         76.676 (57.516, 93.085)
+lens_galaxies_lens_galaxy_light_intensity                   0.007 (0.001, 0.014)
+lens_galaxies_lens_galaxy_light_effective_radius            0.235 (0.21, 0.279)
+lens_galaxies_lens_galaxy_light_sersic_index                3.297 (2.971, 3.602)
+lens_galaxies_lens_galaxy_mass_centre_0                     -0.027 (-0.082, -0.003)
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.026 (-0.068, 0.006)
+lens_galaxies_lens_galaxy_mass_axis_ratio                   0.707 (0.61, 0.798)
+lens_galaxies_lens_galaxy_mass_phi                          86.029 (58.807, 97.955)
+lens_galaxies_lens_galaxy_mass_einstein_radius_value        0.152 (0.138, 0.168)
+source_galaxies_source_galaxy_light_centre_0                0.013 (0.005, 0.03)
+source_galaxies_source_galaxy_light_centre_1                -0.01 (-0.028, 0.005)
+source_galaxies_source_galaxy_light_axis_ratio              0.792 (0.738, 0.909)
+source_galaxies_source_galaxy_light_phi                     74.221 (44.479, 86.132)
+source_galaxies_source_galaxy_light_intensity_value         0.059 (0.055, 0.06)
+source_galaxies_source_galaxy_light_effective_radius_value  0.593 (0.59, 0.6)
+
+Most probable model (1.0 sigma limits)
+
+lens_galaxies_lens_galaxy_light_centre_0                    -0.009 (-0.013, -0.004)
+lens_galaxies_lens_galaxy_light_centre_1                    -0.018 (-0.023, -0.012)
+lens_galaxies_lens_galaxy_light_axis_ratio                  0.775 (0.744, 0.802)
+lens_galaxies_lens_galaxy_light_phi                         76.676 (71.148, 83.567)
+lens_galaxies_lens_galaxy_light_intensity                   0.007 (0.005, 0.008)
+lens_galaxies_lens_galaxy_light_effective_radius            0.235 (0.222, 0.244)
+lens_galaxies_lens_galaxy_light_sersic_index                3.297 (3.19, 3.413)
+lens_galaxies_lens_galaxy_mass_centre_0                     -0.027 (-0.033, -0.014)
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.026 (-0.034, -0.013)
+lens_galaxies_lens_galaxy_mass_axis_ratio                   0.707 (0.681, 0.735)
+lens_galaxies_lens_galaxy_mass_phi                          86.029 (82.226, 92.439)
+lens_galaxies_lens_galaxy_mass_einstein_radius_value        0.152 (0.147, 0.157)
+source_galaxies_source_galaxy_light_centre_0                0.013 (0.009, 0.016)
+source_galaxies_source_galaxy_light_centre_1                -0.01 (-0.014, -0.006)
+source_galaxies_source_galaxy_light_axis_ratio              0.792 (0.773, 0.807)
+source_galaxies_source_galaxy_light_phi                     74.221 (71.705, 79.425)
+source_galaxies_source_galaxy_light_intensity_value         0.059 (0.058, 0.06)
+source_galaxies_source_galaxy_light_effective_radius_value  0.593 (0.592, 0.595)
+
+Constants
+

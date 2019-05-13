@@ -1,0 +1,3 @@
+source_pixelization_shape_0                                           x_{\mathrm{pix15}}
+source_pixelization_shape_1                                           y_{\mathrm{pix15}}
+source_regularization_coefficients_0                                  \lambda1_{\mathrm{reg15}}

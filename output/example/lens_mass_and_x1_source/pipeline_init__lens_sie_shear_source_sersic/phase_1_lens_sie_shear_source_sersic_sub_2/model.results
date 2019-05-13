@@ -1,0 +1,53 @@
+Most likely model, Likelihood = 4336.191
+
+lens_mass_centre_0                                          -0.003
+lens_mass_centre_1                                          -0.0
+lens_mass_axis_ratio                                        0.697
+lens_mass_phi                                               45.16
+lens_mass_einstein_radius                                   1.601
+lens_shear_magnitude                                        0.051
+lens_shear_phi                                              89.626
+source_light_centre_0                                       0.099
+source_light_centre_1                                       0.1
+source_light_axis_ratio                                     0.804
+source_light_phi                                            60.464
+source_light_intensity                                      0.309
+source_light_effective_radius                               0.981
+source_light_sersic_index                                   2.469
+
+Most probable model (3.0 sigma limits)
+
+lens_mass_centre_0                                          -0.002 (-0.005, -0.0)
+lens_mass_centre_1                                          -0.001 (-0.004, 0.002)
+lens_mass_axis_ratio                                        0.697 (0.689, 0.705)
+lens_mass_phi                                               45.001 (44.327, 45.728)
+lens_mass_einstein_radius                                   1.6 (1.597, 1.604)
+lens_shear_magnitude                                        0.05 (0.048, 0.053)
+lens_shear_phi                                              89.787 (88.344, 91.232)
+source_light_centre_0                                       0.099 (0.097, 0.101)
+source_light_centre_1                                       0.1 (0.098, 0.102)
+source_light_axis_ratio                                     0.802 (0.792, 0.811)
+source_light_phi                                            60.662 (59.164, 62.206)
+source_light_intensity                                      0.311 (0.295, 0.327)
+source_light_effective_radius                               0.978 (0.948, 1.009)
+source_light_sersic_index                                   2.463 (2.409, 2.518)
+
+Most probable model (1.0 sigma limits)
+
+lens_mass_centre_0                                          -0.002 (-0.003, -0.002)
+lens_mass_centre_1                                          -0.001 (-0.002, -0.0)
+lens_mass_axis_ratio                                        0.697 (0.695, 0.7)
+lens_mass_phi                                               45.001 (44.751, 45.23)
+lens_mass_einstein_radius                                   1.6 (1.599, 1.601)
+lens_shear_magnitude                                        0.05 (0.049, 0.051)
+lens_shear_phi                                              89.787 (89.322, 90.267)
+source_light_centre_0                                       0.099 (0.099, 0.1)
+source_light_centre_1                                       0.1 (0.099, 0.1)
+source_light_axis_ratio                                     0.802 (0.799, 0.804)
+source_light_phi                                            60.662 (60.15, 61.164)
+source_light_intensity                                      0.311 (0.305, 0.316)
+source_light_effective_radius                               0.978 (0.969, 0.989)
+source_light_sersic_index                                   2.463 (2.446, 2.482)
+
+Constants
+

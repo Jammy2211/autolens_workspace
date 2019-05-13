@@ -6,7 +6,7 @@ from autolens.model.profiles import mass_profiles as mp
 from autolens.lens import lens_data as ld
 from autolens.data.array import mask as msk
 
-from autolens.data.array.plotters import array_plotters
+from autolens.plotters import array_plotters
 
 import numpy as np
 

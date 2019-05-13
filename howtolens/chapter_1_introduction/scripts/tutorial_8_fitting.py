@@ -103,8 +103,10 @@ print(lens_data.grid_stack.regular.shape)
 # Its worth noting that below, we use the lens_data's grid-stack to setup the tracer. This ensures that our image-plane
 # image will be the same resolution and alignment as our image-data, as well as being masked appropriately.
 
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
-source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+source_galaxy = g.Galaxy(redshift=1.0,
+                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
                                                         intensity=1.0, effective_radius=1.0, sersic_index=2.5))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
@@ -155,8 +157,10 @@ print(fit.likelihood)
 # Lets change the tracer, so that it's near the correct solution, but slightly off.
 # Below, we slightly offset the lens galaxy, by 0.005"
 
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
-source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+source_galaxy = g.Galaxy(redshift=1.0,
+                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
                                                         intensity=1.0, effective_radius=1.0, sersic_index=2.5))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
@@ -174,8 +178,10 @@ print(fit.likelihood)
 # It decreases! This model was a worse fit to the data.
 
 # Lets change the tracer, one more time, to a solution that is nowhere near the correct one.
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.3, axis_ratio=0.8, phi=45.0))
-source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.7, phi=65.0,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.3, axis_ratio=0.8, phi=45.0))
+source_galaxy = g.Galaxy(redshift=1.0,
+                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.7, phi=65.0,
                                                         intensity=1.0, effective_radius=0.4, sersic_index=3.5))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)

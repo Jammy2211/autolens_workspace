@@ -38,9 +38,10 @@ grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=imag
 
 # Now lets create two galaxies, using singular isothermal spheres. We'll put the two galaxies at different redshifts,
 # and the second galaxy will be much lower mass as if it is a 'perturber' of the main lens galaxy.
-lens_galaxy = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0), redshift=0.5)
-perturber = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.5, 0.5), einstein_radius=0.1),
-                     redshift=0.2)
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0))
+perturber = g.Galaxy(redshift=0.2,
+                     mass=mp.SphericalIsothermal(centre=(0.5, 0.5), einstein_radius=0.1))
 
 # We only need the source galaxy to have a redshift - given we're not fitting an image it doens't need a light profile.
 source_galaxy  = g.Galaxy(redshift=1.0)
@@ -83,11 +84,12 @@ class DeflectionFitPhase(ph.GalaxyFitPhase):
         self.galaxies.subhalo.mass.centre_0 = prior.GaussianPrior(mean=0.5, sigma=0.3)
         self.galaxies.subhalo.mass.centre_1 = prior.GaussianPrior(mean=0.5, sigma=0.3)
 
-phase = DeflectionFitPhase(phase_name='phase_galaxy_deflections_fit',
-                           galaxies=dict(lens=gm.GalaxyModel(mass=mp.SphericalIsothermal),
-                                      subhalo=gm.GalaxyModel(mass=mp.SphericalIsothermal)), use_deflections=True,
-                          sub_grid_size=4, mask_function=mask_function_circular,
-                          optimizer_class=nl.MultiNest)
+phase = DeflectionFitPhase(
+    phase_name='phase_galaxy_deflections_fit',
+    galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal),
+                  subhalo=gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)), use_deflections=True,
+    sub_grid_size=4, mask_function=mask_function_circular,
+    optimizer_class=nl.MultiNest)
 
 
 # Finally, when we run the phase, we now pass both deflection angle data's separately.

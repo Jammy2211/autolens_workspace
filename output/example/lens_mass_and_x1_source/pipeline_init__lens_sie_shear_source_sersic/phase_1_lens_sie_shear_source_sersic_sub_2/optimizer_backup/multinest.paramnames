@@ -1,0 +1,14 @@
+lens_mass_centre_0                                                    y_{\mathrm{m6}}
+lens_mass_centre_1                                                    x_{\mathrm{m6}}
+lens_mass_axis_ratio                                                  q_{\mathrm{m6}}
+lens_mass_phi                                                         \phi_{\mathrm{m6}}
+lens_mass_einstein_radius                                             \theta_{\mathrm{m6}}
+lens_shear_magnitude                                                  \gamma_{\mathrm{sh6}}
+lens_shear_phi                                                        \phi_{\mathrm{sh6}}
+source_light_centre_0                                                 y_{\mathrm{l7}}
+source_light_centre_1                                                 x_{\mathrm{l7}}
+source_light_axis_ratio                                               q_{\mathrm{l7}}
+source_light_phi                                                      \phi_{\mathrm{l7}}
+source_light_intensity                                                I_{\mathrm{l7}}
+source_light_effective_radius                                         R_{\mathrm{l7}}
+source_light_sersic_index                                             n_{\mathrm{l7}}

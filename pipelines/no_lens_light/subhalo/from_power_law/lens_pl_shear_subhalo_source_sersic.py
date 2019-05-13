@@ -18,7 +18,7 @@ import os
 # Phase 1:
 
 # Description: Perform the sensitivity analysis for subhalo locations.
-# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Lens Mass: EllipitcalPowerLaw + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_shear_source_sersic_from_init.py
@@ -28,7 +28,7 @@ import os
 # Phase 2:
 
 # Description: Perform the subhalo detection analysis.
-# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Lens Mass: EllipitcalPowerLaw + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_shear_source_sersic_from_init.py
@@ -38,7 +38,7 @@ import os
 # Phase 3:
 
 # Description: Refine the best-fit detected subhalo from the previous phase, by varying also the lens mass model..
-# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Lens Mass: EllipitcalPowerLaw + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
 # Previous Pipelines: initializers/lens_sie_shear_source_sersic_from_init.py
@@ -55,10 +55,20 @@ import os
 # Prior Passing: Lens mass, source light and subhalo mass (variable -> phase 3).
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
 
-def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=None):
+def make_pipeline(
+        phase_folders=None, tag_phases=True,
+        redshift_lens=0.5, redshift_source=1.0,
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=0.05,
+        parallel=False):
+
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
 
     pipeline_name = 'pipeline_subhalo__lens_pl_shear_subhalo_source_sersic'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -83,7 +93,7 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
     #         self.lens_galaxies.subhalo.mass.scale_radius = 5.0
     #
     # phase2 = GridPhase(phase_name='phase_2_sensitivity', phase_folders=phase_folders,
-    #                    lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
+    #                    lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
     #                                                           shear=mp.ExternalShear),
     #                                       subhalo=gm.GalaxyModel(mass=mp.SphericalNFW)),
     #                    source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
@@ -93,96 +103,124 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
     # In phase 2, we attempt to detect subhalos, by performing a NxN grid search of MultiNest searches, where:
 
-    # 1) The lens model and source-pixelization parameters are held fixed to the best-fit values from phase 1 of the 
+    # 1) The lens model and source-pixelization parameters are held fixed to the best-fit values from phase 1 of the
     #    initialization pipeline.
     # 2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
     # 3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
 
-    class GridPhase(autofit_ph.as_grid_search(ph.LensSourcePlanePhase)):
+    class GridPhase(autofit_ph.as_grid_search(ph.LensSourcePlanePhase, parallel=parallel)):
 
         @property
         def grid_priors(self):
-            return [self.variable.subhalo.mass.centre_0, self.variable.subhalo.mass.centre_1]
+            return [self.variable.lens_galaxies.subhalo.mass.centre_0,
+                    self.variable.lens_galaxies.subhalo.mass.centre_1]
 
         def pass_priors(self, results):
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_pl_shear_source_sersic').constant.lens
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable.lens_galaxies.lens
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24)
 
-            self.lens_galaxies.subhalo.mass.kappa_s = prior.UniformPrior(lower_limit=0.0001, upper_limit=0.1)
-            self.lens_galaxies.subhalo.mass.scale_radius = prior.UniformPrior(lower_limit=0.0, upper_limit=5.0)
+            self.lens_galaxies.subhalo.mass.kappa_s = prior.UniformPrior(lower_limit=0.0005, upper_limit=0.2)
+            self.lens_galaxies.subhalo.mass.scale_radius = prior.UniformPrior(lower_limit=0.001, upper_limit=1.0)
             self.lens_galaxies.subhalo.mass.centre_0 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
             self.lens_galaxies.subhalo.mass.centre_1 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source.light.centre = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_absolute(a=0.3).source.light.centre
+            self.source_galaxies.source.light.centre = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_absolute(a=0.1).source_galaxies.source.light.centre
 
-            self.source_galaxies.source.light.intensity = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_relative(r=0.5).source.light.intensity
+            self.source_galaxies.source.light.intensity = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_relative(r=0.5).source_galaxies.source.light.intensity
 
-            self.source_galaxies.source.light.effective_radius = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_absolute(a=1.0).source.light.effective_radius
+            self.source_galaxies.source.light.effective_radius = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_relative(r=0.5).source_galaxies.source.light.effective_radius
 
-            self.source_galaxies.source.light.sersic_index = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_absolute(a=1.5).source.light.sersic_index
+            self.source_galaxies.source.light.sersic_index = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_relative(r=0.5).source_galaxies.source.light.sersic_index
 
-            self.source_galaxies.source.light.axis_ratio = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_absolute(a=0.1).source.light.axis_ratio
+            self.source_galaxies.source.light.axis_ratio = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_absolute(a=0.1).source_galaxies.source.light.axis_ratio
 
-            self.source_galaxies.source.light.phi = \
-                results.from_phase('phase_1_lens_pl_shear_source_sersic').variable_absolute(a=10.0).source.light.phi
+            self.source_galaxies.source.light.phi = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+                variable_absolute(a=20.0).source_galaxies.source.light.phi
 
 
-    phase2 = GridPhase(phase_name='phase_2_subhalo_search', phase_folders=phase_folders,
-                       tag_phases=tag_phases,
-                       lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
-                                                              shear=mp.ExternalShear),
-                                          subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
-                       source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                       optimizer_class=nl.MultiNest,
-                       sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                       positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                       interp_pixel_scale=interp_pixel_scale,
-                       number_of_steps=4)
+    phase2 = GridPhase(
+        phase_name='phase_2_subhalo_search', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalPowerLaw,
+                                               shear=mp.ExternalShear),
+                           subhalo=gm.GalaxyModel(redshift=redshift_lens, mass=mp.SphericalTruncatedNFWChallenge)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest, number_of_steps=5)
 
-    phase2.optimizer.const_efficiency_mode = True
-    phase2.optimizer.n_live_points = 50
+    phase2.optimizer.const_efficiency_mode = False
+    phase2.optimizer.n_live_points = 75
     phase2.optimizer.sampling_efficiency = 0.5
 
-    class SubhaloPhase(ph.LensSourcePlanePhase):
+    # class SubhaloPhase(ph.LensSourcePlanePhase):
+    #
+    #     def pass_priors(self, results):
+    #
+    #         ### Lens Mass, PL -> PL, Shear -> Shear ###
+    #
+    #         self.lens_galaxies.lens = results.from_phase('phase_1_lens_pl_shear_source_sersic').variable.\
+    #             lens_galaxies.lens
+    #
+    #         ### Subhalo, TruncatedNFW -> TruncatedNFW ###
+    #
+    #         self.lens_galaxies.subhalo.mass.centre = results.from_phase('phase_2_subhalo_search').best_result.\
+    #             variable_absolute(a=0.3).lens_galaxies.subhalo.mass.centre
+    #
+    #         self.lens_galaxies.subhalo.mass.kappa_s = results.from_phase('phase_2_subhalo_search').best_result.\
+    #             variable_relative(r=0.5).lens_galaxies.subhalo.mass.kappa_s
+    #
+    #         self.lens_galaxies.subhalo.mass.scale_radius = results.from_phase('phase_2_subhalo_search').best_result.\
+    #             variable_relative(r=0.5).lens_galaxies.subhalo.mass.scale_radius
+    #
+    #
+    #         ### Source Light, Sersic -> Sersic ###
+    #
+    #         self.source_galaxies.source = results.from_phase('phase_2_subhalo_search').\
+    #             best_result.source_galaxies.variable.source
+    #
+    #         self.source_galaxies.source.light.centre = results.from_phase('phase_2_subhalo_search').\
+    #             best_result.variable_absolute(a=0.05).source_galaxies.source.light.centre
+    #
+    #         self.source_galaxies.source.light.intensity = results.from_phase('phase_2_subhalo_search').\
+    #             best_result.variable_relative(r=0.5).source_galaxies.source.light.intensity
+    #
+    #         self.source_galaxies.source.light.effective_radius = results.from_phase('phase_2_subhalo_search').\
+    #             best_result.variable_relative(r=0.5).source_galaxies.source.light.effective_radius
+    #
+    #         self.source_galaxies.source.light.sersic_index = results.from_phase('phase_2_subhalo_search').\
+    #             best_result.variable_relative(r=0.5).source_galaxies.source.light.sersic_index
+    #
+    #         self.source_galaxies.source.light.axis_ratio = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+    #             variable_absolute(a=0.1).source_galaxies.source.light.axis_ratio
+    #
+    #         self.source_galaxies.source.light.phi = results.from_phase('phase_1_lens_pl_shear_source_sersic').\
+    #             variable_absolute(a=10.0).source_galaxies.source.light.phi
+    #
+    # phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
+    #                       tag_phases=tag_phases,
+    #                       lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
+    #                                                              shear=mp.ExternalShear),
+    #                                          subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
+    #                       source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
+    #                       optimizer_class=nl.MultiNest,
+    #                       sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
+    #                       positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
+    #                       interp_pixel_scale=interp_pixel_scale)
+    #
+    # phase3.optimizer.const_efficiency_mode = False
+    # phase3.optimizer.n_live_points = 80
+    # phase3.optimizer.sampling_efficiency = 0.3
 
-        def pass_priors(self, results):
-
-            ### Lens Mass, PL -> PL, Shear -> Shear ###
-
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_pl_shear_source_sersic').variable.lens
-
-            ### Subhalo, TruncatedNFW -> TruncatedNFW ###
-
-            self.lens_galaxies.subhalo = results.from_phase('phase_2_subhalo_search').best_result.variable.subhalo
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.source_galaxies.source = results.from_phase('phase_2_subhalo_search').best_result.variable.source
-
-    phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
-                          tag_phases=tag_phases,
-                          lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalPowerLaw,
-                                                                 shear=mp.ExternalShear),
-                                             subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
-                          source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                          optimizer_class=nl.MultiNest,
-                          sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                          positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                          interp_pixel_scale=interp_pixel_scale)
-
-    phase3.optimizer.const_efficiency_mode = True
-    phase3.optimizer.n_live_points = 80
-    phase3.optimizer.sampling_efficiency = 0.3
-
-    return pipeline.PipelineImaging(pipeline_name, phase2, phase3)
+    return pipeline.PipelineImaging(pipeline_name, phase2)

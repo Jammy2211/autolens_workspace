@@ -38,15 +38,24 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal( centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal( centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                          einstein_radius=1.6))
-    source_galaxy_0 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+
+    source_galaxy_0 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                          effective_radius=1.0, sersic_index=1.5))
-    source_galaxy_1 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1,
+
+    source_galaxy_1 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1,
                                                          effective_radius=0.2, sersic_index=3.0))
-    source_galaxy_2 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03,
+
+    source_galaxy_2 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03,
                                                          effective_radius=0.3, sersic_index=3.5))
-    source_galaxy_3 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03,
+
+    source_galaxy_3 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03,
                                                          effective_radius=0.1, sersic_index=4.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
@@ -81,15 +90,15 @@ pipeline_complex_source.run(data=ccd_data)
 lens_data = ld.LensData(ccd_data=ccd_data, mask=msk.Mask.circular(shape=ccd_data.shape,
                                                                   pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0))
 
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                     einstein_radius=1.6))
-source_galaxy_0 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+source_galaxy_0 = g.Galaxy(redshift=1.0, light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                      effective_radius=1.0, sersic_index=1.5))
-source_galaxy_1 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1,
+source_galaxy_1 = g.Galaxy(redshift=1.0, light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1,
                                                      effective_radius=0.2, sersic_index=3.0))
-source_galaxy_2 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03,
+source_galaxy_2 = g.Galaxy(redshift=1.0, light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03,
                                                      effective_radius=0.3, sersic_index=3.5))
-source_galaxy_3 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03,
+source_galaxy_3 = g.Galaxy(redshift=1.0, light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03,
                                                      effective_radius=0.1, sersic_index=4.0))
 
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],

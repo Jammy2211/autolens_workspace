@@ -29,10 +29,12 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5, 
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
 
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0., 0.), axis_ratio=0.8, phi=90.0, intensity=0.2,
+    source_galaxy = g.Galaxy(redshift=1.0, 
+                             light=lp.EllipticalSersic(centre=(0., 0.), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                        effective_radius=1.0, sersic_index=1.5))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
@@ -50,7 +52,10 @@ ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 # Next, lets set this image up as lens data, and setup a tracer using the input lens galaxy model (we don't need
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+
+lens_galaxy = g.Galaxy(redshift=0.5, 
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy()],
                                              image_plane_grid_stack=lens_data.grid_stack)
 
@@ -86,19 +91,33 @@ def simulate_complex_source():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
-    source_galaxy_0 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0,
+
+    source_galaxy_0 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0,
                                                          intensity=0.2, effective_radius=1.0, sersic_index=1.5))
-    source_galaxy_1 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0,
+
+    source_galaxy_1 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0,
                                                          intensity=0.1, effective_radius=0.2, sersic_index=3.0))
-    source_galaxy_2 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0,
+
+    source_galaxy_2 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0,
                                                          intensity=0.03, effective_radius=0.3, sersic_index=3.5))
-    source_galaxy_3 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0,
+
+    source_galaxy_3 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0,
                                                          intensity=0.03, effective_radius=0.1, sersic_index=4.0))
-    source_galaxy_4 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.85, -0.85), axis_ratio=0.6, phi=90.0,
+
+    source_galaxy_4 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.85, -0.85), axis_ratio=0.6, phi=90.0,
                                                          intensity=0.03, effective_radius=0.3, sersic_index=3.5))
-    source_galaxy_5 = g.Galaxy(light=lp.EllipticalSersic(centre=(-0.75, -0.1), axis_ratio=0.9, phi=140.0,
+
+    source_galaxy_5 = g.Galaxy(redshift=1.0,
+
+                               light=lp.EllipticalSersic(centre=(-0.75, -0.1), axis_ratio=0.9, phi=140.0,
                                                          intensity=0.03, effective_radius=0.1, sersic_index=4.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
@@ -179,7 +198,8 @@ mapper_plotters.plot_image_and_mapper(ccd_data=ccd_data, mapper=mapper, mask=mas
 
 # Finally, let me show you how easy it is to fit an image with an inversion using the fitting module. Instead of giving
 # the source galaxy a light profile, we give it a pixelization and regularization, and pass it to a tracer.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
 

@@ -64,7 +64,7 @@ from autolens.model.profiles import mass_profiles as mp
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 # This sets up the config files used by this tutorial, and the path where the output of the modeling is placed.
 conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
@@ -80,8 +80,8 @@ def simulate():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+    lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+    source_galaxy = g.Galaxy(redshift=1.0, light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
 
@@ -99,10 +99,10 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # these are inferred by the non-linear search.
 
 # Lets model the lens galaxy with an SIS mass profile (which is what it was simulated with).
-lens_galaxy_model = gm.GalaxyModel(mass=mp.SphericalIsothermal)
+lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
 
 # Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
-source_galaxy_model = gm.GalaxyModel(light=lp.SphericalExponential)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
 
 # A phase takes our galaxy models and fits their parameters via a non-linear search (in this case, MultiNest). In this
 # example, we have a lens-plane and source-plane, so we use a LensSourcePlanePhase.
@@ -113,10 +113,11 @@ source_galaxy_model = gm.GalaxyModel(light=lp.SphericalExponential)
 
 # (also, just ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
-phase = ph.LensSourcePlanePhase(phase_name='1_non_linear_search',
-                                lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-                                source_galaxies=dict(source_galaxy=source_galaxy_model),
-                                optimizer_class=non_linear.MultiNest)
+phase = ph.LensSourcePlanePhase(
+    phase_name='1_non_linear_search',
+    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    optimizer_class=non_linear.MultiNest)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.

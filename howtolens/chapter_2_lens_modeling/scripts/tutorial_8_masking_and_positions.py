@@ -16,7 +16,7 @@ from autolens.data.plotters import ccd_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
 
@@ -31,8 +31,11 @@ def simulate():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+    lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+
+    source_galaxy = g.Galaxy(redshift=1.0, light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2,
+                                                                         effective_radius=0.2))
+
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
 
@@ -62,11 +65,12 @@ def mask_function():
     return msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
                                      inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
 
-phase_with_custom_mask = ph.LensSourcePlanePhase(phase_name='phase',
-                                                 lens_galaxies=dict(lens=gm.GalaxyModel()),
-                                source_galaxies=dict(source=gm.GalaxyModel()),
-                                mask_function=mask_function, # <- We input the mask function here
-                                optimizer_class=nl.MultiNest)
+phase_with_custom_mask = ph.LensSourcePlanePhase(
+    phase_name='phase',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    mask_function=mask_function, # <- We input the mask function here
+    optimizer_class=nl.MultiNest)
 
 # So, our mask encompasses the lensed source galaxy. However, is this really the right sized mask? Do we actually want
 # a bigger mask? a smaller mask?
@@ -107,11 +111,12 @@ phase_with_custom_mask = ph.LensSourcePlanePhase(phase_name='phase',
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
 
 # We can then tell our phase to use these positions in the analysis.
-phase_with_positions = ph.LensSourcePlanePhase(phase_name='phase',
-                                               lens_galaxies=dict(lens=gm.GalaxyModel()),
-                                source_galaxies=dict(source=gm.GalaxyModel()),
-                                use_positions=True, # <- We use the positionos here
-                                optimizer_class=nl.MultiNest)
+phase_with_positions = ph.LensSourcePlanePhase(
+    phase_name='phase',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
+    optimizer_class=nl.MultiNest)
 
 # The positions are passed to the phase when we run it, which is shown below by commented out.
 # phase_with_positions.run(data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
@@ -151,11 +156,12 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
-phase_with_x2_positions = ph.LensSourcePlanePhase(phase_name='phase',
-                                                  lens_galaxies=dict(lens=gm.GalaxyModel()),
-                                source_galaxies=dict(source=gm.GalaxyModel()),
-                                use_positions=True, # <- We use the positionos here
-                                optimizer_class=nl.MultiNest)
+phase_with_x2_positions = ph.LensSourcePlanePhase(
+    phase_name='phase',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
+    optimizer_class=nl.MultiNest)
 
 # phase_with_x2_positions.run(data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 

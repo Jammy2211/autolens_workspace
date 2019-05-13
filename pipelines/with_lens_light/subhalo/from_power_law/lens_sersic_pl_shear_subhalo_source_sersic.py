@@ -50,10 +50,19 @@ import os
 # Prior Passing: Lens light and mass (variable -> previous pipeline), source light and subhalo mass (variable -> phase 2).
 # Notes: None
 
-def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=0.05):
+def make_pipeline(
+        phase_folders=None, tag_phases=True,
+        redshift_lens=0.5, redshift_source=1.0,
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=0.05):
+
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
 
     pipeline_name = 'pipeline_subhalo__lens_sersic_sie_shear_subhalo_source_sersic'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -98,45 +107,47 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         @property
         def grid_priors(self):
-            return [self.variable.subhalo.mass.centre_0, self.variable.subhalo.mass.centre_1]
+            return [self.variable.lens_galaxies.subhalo.mass.centre_0,
+                    self.variable.lens_galaxies.subhalo.mass.centre_1]
 
         def pass_priors(self, results):
 
             ### Lens Light, Sersic -> Sersic ###
 
-            self.lens_galaxies.lens.light = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').constant.lens.light
+            self.lens_galaxies.lens.light = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                constant.lens_galaxies.lens.light
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').constant.lens
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                constant.lens_galaxies.lens
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24) ###
 
-            self.lens_galaxies.subhalo.mass.kappa_s = prior.UniformPrior(lower_limit=0.0001, upper_limit=0.1)
-            self.lens_galaxies.subhalo.mass.scale_radius = prior.UniformPrior(lower_limit=0.0, upper_limit=5.0)
+            self.lens_galaxies.subhalo.mass.kappa_s = prior.UniformPrior(lower_limit=0.0005, upper_limit=0.2)
+            self.lens_galaxies.subhalo.mass.scale_radius = prior.UniformPrior(lower_limit=0.001, upper_limit=1.0)
             self.lens_galaxies.subhalo.mass.centre_0 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
             self.lens_galaxies.subhalo.mass.centre_1 = prior.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source.light.centre = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable_absolute(a=0.3).source.light.centre
+            self.source_galaxies.source.light.centre = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable_absolute(a=0.3).source_galaxies.source.light.centre
 
-            self.source_galaxies.source.light.intensity = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.intensity
+            self.source_galaxies.source.light.intensity = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.source_galaxies.source.light.intensity
 
-            self.source_galaxies.source.light.effective_radius = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.effective_radius
+            self.source_galaxies.source.light.effective_radius = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.source_galaxies.source.light.effective_radius
 
-            self.source_galaxies.source.light.sersic_index = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.sersic_index
+            self.source_galaxies.source.light.sersic_index = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.source_galaxies.source.light.sersic_index
 
-            self.source_galaxies.source.light.axis_ratio = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.axis_ratio
+            self.source_galaxies.source.light.axis_ratio = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.source_galaxies.source.light.axis_ratio
 
-            self.source_galaxies.source.light.phi = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.source.light.phi
+            self.source_galaxies.source.light.phi = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.source_galaxies.source.light.phi
 
     phase2 = GridPhase(phase_name='phase_2_subhalo_search', phase_folders=phase_folders,
                        tag_phases=tag_phases,
@@ -161,20 +172,23 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
             ### Lens Light, Sersic -> Sersic ###
 
-            self.lens_galaxies.lens.light = \
-                results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.lens.light
+            self.lens_galaxies.lens.light = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.lens_galaxies.lens.light
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').variable.lens
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_sersic').\
+                variable.lens_galaxies.lens
 
             ### Subhalo, TruncatedNFW -> TruncatedNFW ###
 
-            self.lens_galaxies.subhalo = results.from_phase('phase_2_subhalo_search').best_result.variable.subhalo
+            self.lens_galaxies.subhalo = results.from_phase('phase_2_subhalo_search').\
+                best_result.variable.lens_galaxies.subhalo
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source = results.from_phase('phase_2_subhalo_search').best_result.variable.source
+            self.source_galaxies.source = results.from_phase('phase_2_subhalo_search').\
+                best_result.variable.source_galaxies.source
 
     phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
                           tag_phases=tag_phases,

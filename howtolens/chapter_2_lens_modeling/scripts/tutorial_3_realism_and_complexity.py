@@ -34,7 +34,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 conf.instance = conf.Config(config_path=chapter_path+'configs/3_realism_and_complexity',
                             output_path=chapter_path+"output")
@@ -49,11 +49,13 @@ def simulate():
     psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
                                                              effective_radius=0.5, sersic_index=3.5),
                            mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
 
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
                                                        effective_radius=0.3, sersic_index=3.0))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
@@ -78,11 +80,11 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Nevertheless, you could try running it yourself (maybe over your lunch break?). All you need to do is change the
 # phase_name below, maybe to something like 'howtolens/3_realism_and_complexity_rerun'
-phase = ph.LensSourcePlanePhase(phase_name='3_realism_and_complexity',
-                                lens_galaxies=dict(lens_galaxy=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                                mass=mp.EllipticalIsothermal)),
-                                source_galaxies=dict(source_galaxy=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                optimizer_class=nl.MultiNest)
+phase = ph.LensSourcePlanePhase(
+    phase_name='3_realism_and_complexity',
+    lens_galaxies=dict(lens_galaxy=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(source_galaxy=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
 
 # Lets run the phase.
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity'
@@ -109,11 +111,13 @@ lens_data= li.LensData(ccd_data=ccd_data, mask=mask)
 ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
 
 # Make the tracer we use to simulate the image
-lens_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
                                                  effective_radius=0.5, sersic_index=3.5),
                        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
 
-source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
+source_galaxy = g.Galaxy(redshift=1.0,
+                         light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
                                                    effective_radius=0.3, sersic_index=3.0))
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)

@@ -1,0 +1,181 @@
+###### PYAUTOLENS VIRTUAL ENVIROMENT #######
+
+Before using the Cosma pipeline runner, we need to setup a workspace on Cosma on your home directory
+('/cosma/home/durham/cosma_username'). Your home directory has a limited amount of hard-disk space, so it
+is key that the parts of your laptop's workspace which store large amounts of data (e.g. the data and output folders)
+are omitted from this workspace and stored somewhere else on Cosma.
+
+To setup your cosma PyAutoLens workspace, the following commands should work from a terminal:
+
+1) ssh -X cosma_username@login.cosma.dur.ac.uk
+
+   This command ssh's you into cosma, and should be something you're familiar with. It'll log you into your home
+   directory ('/cosma/home/durham/cosma_username').
+
+2) python3 -m venv PyAutoLens
+
+   This makes the a 'PyAutoLens' virtual enviroment and directoy on your cosma home, where we'll install PyAutoLens and
+   place your workspace. You MUST name your workspace PyAutoLens to use this setup file without changing any commands.
+
+3) cd PyAutoLens
+
+   This takes us into the PyAutoLens directory.
+
+4) emacs -nw bin/activate
+
+   This opens the 'activate' script of your virtual enviroment, which we use to setup the command line enviroment
+   before running PyAutoLens.
+
+5) Copy and paste the following commands into line 47 of your activate_jam script, below the command "export PATH":
+
+   module load python/3.6.5
+   module load multinest/oct2018
+   export PYTHONPATH=$HOME/PyAutoLens/
+   export WORKSPACE=$HOME/PyAutoLens/workspace/
+   export SYMDIR="/cosma5/data/autolens/.autolens"
+
+   To paste into an emacs window, use the command "CTRL + SHIFT + V"
+   To exit and save, use the command "CTRL + SHIFT + X" -> "CTRL + SHIFT + C" and push 'y' for yes.
+
+6) source bin/activate
+
+   This activates your PyAutoLens environment. '(PyAutoLens)' should appear at the bottom left of you command line, next
+   to where you type commmands.
+
+7) pip install autolens
+
+   This installs autolens into your virtual enviroment.
+
+Whenever you log into Cosma, you will need to 'activate' your PyAutoLens enviroment by running command 6) above. If you
+want, you can make it so Cosoma does this automatically whenever you log in. To make this your default setup (e.g. if
+you're only going to be using PyAutoLens on Cosma) you can add the activate line to your .bashrc file:
+
+emacs -nw $HOME/.bashrc
+
+then copy and paste (CTRL + SHIFT + V):
+
+source $HOME/bin/activate
+
+And save and exit ("CTRL + SHIFT + X" -> "CTRL + SHIFT + C" and push 'y' for yes).
+
+
+
+###### PYAUTOLENS WORKSPACE ######
+
+Now we've set up our PyAutoLens virtual enviroment, we want to setup our workspace on Cosma, which will behave simiarly
+to the workspace you're used to using on your laptop. First, make sure you are in the PyAutoLens directory, make a
+folder called workspace and cd into it:
+
+cd $HOME/PyAutoLens
+mkdir workspace
+cd workspace
+
+We are going to need to send files from your laptop to Cosma, and visa versa. On Cosma, the data and output files of
+PyAutolens are stored in a separate directory to the workspace (we'll cover that below). Therefore, all we need to do
+is transfer your config files, pipelines and runners to a workspace folder on Cosma.
+
+Thus, we need some neat tools that allow us to upload these folders our laptop to this directory on
+Cosma, and conversely download the results of a PyAutoLens analysis on Cosma to our workspace. The command 'rsync'
+has us covered, and we'll use 3 custom options of rsync:
+
+1) --update, which only sends data which has been updated on your laptop / Cosma. Thus, it ensures we don't resend our
+    entire data-set or set of results every time we perform a file transfer. Phew!
+
+2) -v, this stands for verbose, and gives text output of the file transfer's progress.
+
+3) -r, we'll send folders full of data rather than individual files, and this r allows us to send entire folders.
+
+Before running rsync, you should navigate your command line to your laptop's PyAutoLens workspace.
+
+cd /path/to/workspace
+
+# To upload pipelines from your laptop to Cosma #
+
+rsync --update -v -r pipelines cosma_username@login.cosma.dur.ac.uk:/cosma/home/durham/cosma_username/PyAutoLens/workspace/
+
+You will also need to send your runners to Cosma. Your runners for cosma are different to those on your laptop, and it
+is good practise to keep them separate on your laptop in the 'workspace/runners/cosma' folder. The command below sends
+only your Cosma runners to Cosma.
+
+# To upload runners from your laptop to Cosma #
+
+The * symbol below is a 'wildcard', and it means all folders in the runners/cosma/ directory are sent.
+
+rsync --update -v -r runners/cosma/* cosma_username@login.cosma.dur.ac.uk:/cosma/home/durham/cosma_username/PyAutoLens/workspace/runners/
+
+Next, lets send our config files to Cosma. New versions of PyAutoLens often require new config files - I will notify you
+on SLACK when I update PyAutoLens on Cosma and new configs must be updloaded to Cosma. Furtheremore, if you edit
+configs on your laptop to customize the analysis, you will need to upload them to Cosma for them to be used.
+
+rsync --update -v -r config cosma_username@login.cosma.dur.ac.uk:/cosma/home/durham/PyAutoLens/cosma_username/workspace/
+
+
+
+###### PYAUTOLENS DATA AND OUTPUT FOLDERS ######
+
+Now, we need to setup the directories that we'll store our data and PyAutoLens output on cosma. Our data and output
+are stored in a different location to our workspace, because of the large amounts of data storage they require are kept
+at a separate location on the supercomputer to your cosma home directory. Logged into cosma (e.g. via ssh), type the
+following command to go to your data directory:
+
+cd /cosma5/data/autolens
+dir
+
+This should bring up a number of directories, named after cosma usernames (e.g. pdtw24) or 'share'. We'll discuss the
+'share' directory in a moment, for now, lets make a folder for your personal Cosma output.
+
+mkdir cosma_username
+cd cosma_username
+
+Finally, we'll make our data and output folders, which we'll next transfer our data into.
+
+mkdir data
+mkdir output
+
+Again, on your laptop you should be in your workspace, like you were when sending the config, pipelines and runners.
+The following rsync commands can be used to send your data and output to Cosma:
+
+# To upload data from your laptop to Cosma #
+
+rsync --update -v -r data/* cosma_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/data/
+
+# To upload output from your laptop to Cosma #
+
+rsync --update -v -r output/* cosma_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/output/
+
+If we wanted to just send one data or output folder, (e.g., named 'example'), we would remove the * wildcards and write:
+
+rsync --update -v -r data/example_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/data/
+rsync --update -v -r output/example cosma_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/output/
+
+The following rsync commands can be used to download your data and output from Cosma:
+
+# To download data from Cosma to your laptop #
+
+rsync --update -v -r cosma_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/data/* ./data/
+
+# To download output from Cosma to your laptop #
+
+rsync --update -v -r cosma_username@login.cosma.dur.ac.uk:/cosma5/data/autolens/cosma_username/output/* ./output/
+
+
+
+###### SHARED DATA AND OUTPUT ######
+
+We mentiond the 'share' folder above, which is found in /cosma5/data/autolens/. For big projects, it will prove
+benefitial if we are able to all share the same data and output, for the following reasons:
+
+- By sharing data and output, we reduce the amount of storage we use on Cosma.
+- Auxilary data we create (e.g. custom masks, positions) can be used by others.
+- We can build pipelines that continue an analysis of someone else, thus saving us time in how long pipelines take to
+  run.
+- It will be a lot easier to inspect the results of others for discussion.
+
+In general, I would recommend you aim to use the 'share' directory. Its important that we communicate who is doing what
+analysis when, as if pipelines that use the same shared output folder are set off on Cosma at the same time the sripts
+will crash. However, this downside is far outweighted by the flexibility it will offer us in analysing large samples of
+lens on Cosma.
+
+
+Now you're setup, we're ready to run our first PyAutoLens analysis on Cosma. go to the
+'workspace/runners/cosma/example.py' script to learn about how we submit PyAutoLens jobs to Cosma.

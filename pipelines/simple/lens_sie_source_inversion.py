@@ -5,6 +5,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
@@ -52,10 +53,19 @@ import os
 
 #            See runners/runner_adding_pipelines.py for more details on adding pipelines.
 
-def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=None):
+def make_pipeline(
+        phase_folders=None, tag_phases=True,
+        redshift_lens=0.5, redshift_source=1.0,
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_sie_source_inversion'
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
+
+    pipeline_name = 'pl__sie_source_inversion'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -82,16 +92,15 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensSourceX1Phase(phase_name='phase_1_source', phase_folders=phase_folders,
-                               tag_phases=tag_phases,
-                               lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                      shear=mp.ExternalShear)),
-                               source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               mask_function=mask_function_annular,
-                               optimizer_class=nl.MultiNest,
-                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                               interp_pixel_scale=interp_pixel_scale)
+    phase1 = LensSourceX1Phase(
+        phase_name='phase_1_source', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
+                                               shear=mp.ExternalShear)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        mask_function=mask_function_annular,
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
@@ -117,19 +126,25 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass = results.from_phase('phase_1_source').constant.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').constant.lens.shear
+            ## Lens Mass, SIE -> SIE ###
 
-    phase2 = InversionPhase(phase_name='phase_2_inversion_init', phase_folders=phase_folders,
-                            tag_phases=tag_phases,
-                            lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                   shear=mp.ExternalShear)),
-                            source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                      regularization=reg.Constant)),
-                            optimizer_class=nl.MultiNest,
-                            sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                            positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                            interp_pixel_scale=interp_pixel_scale)
+            self.lens_galaxies.lens.mass = results.from_phase('phase_1_source').\
+                constant.lens_galaxies.lens.mass
+
+            ## Lens Mass, Shear -> Shear ###
+
+            self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').\
+                constant.lens_galaxies.lens.shear
+
+    phase2 = InversionPhase(
+        phase_name='phase_2_inversion_init', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
+                                               shear=mp.ExternalShear)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                   regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 20
@@ -146,20 +161,30 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass = results.from_phase('phase_1_source').variable.lens.mass
-            self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').variable.lens.shear
-            self.source_galaxies.source = results.from_phase('phase_2_inversion_init').variable.source
+            ## Lens Mass, SIE -> SIE ###
 
-    phase3 = InversionPhase(phase_name='phase_3_inversion', phase_folders=phase_folders,
-                            tag_phases=tag_phases,
-                            lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                   shear=mp.ExternalShear)),
-                            source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                      regularization=reg.Constant)),
-                            optimizer_class=nl.MultiNest,
-                            sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                            positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                            interp_pixel_scale=interp_pixel_scale)
+            self.lens_galaxies.lens.mass = results.from_phase('phase_1_source').\
+                variable.lens_galaxies.lens.mass
+
+            ## Lens Mass, Shear -> Shear ###
+
+            self.lens_galaxies.lens.shear = results.from_phase('phase_1_source').\
+                variable.lens_galaxies.lens.shear
+
+            ### Source Inversion, Inv -> Inv ###
+
+            self.source_galaxies.source = results.from_phase('phase_2_inversion_init').\
+                variable.source_galaxies.source
+
+    phase3 = InversionPhase(
+        phase_name='phase_3_inversion', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
+                                               shear=mp.ExternalShear)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                  regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50

@@ -1,0 +1,33 @@
+EllipticalSersic
+
+lens_centre_0                                               GaussianPrior, mean = 0.0011518477432865206, sigma = 0.05
+lens_centre_1                                               GaussianPrior, mean = 0.0017884595408740665, sigma = 0.05
+lens_axis_ratio                                             GaussianPrior, mean = 0.9169976031485292, sigma = 0.2
+lens_phi                                                    GaussianPrior, mean = 59.359627573518864, sigma = 20.0
+lens_intensity                                              GaussianPrior, mean = 0.8158818027661838, sigma = 0.4079409013830919
+lens_effective_radius                                       GaussianPrior, mean = 0.903466268737177, sigma = 2.0
+lens_sersic_index                                           GaussianPrior, mean = 4.517015215446739, sigma = 1.5
+
+EllipticalPowerLaw
+
+lens_centre_0                                               GaussianPrior, mean = -0.0037102391381345877, sigma = 0.05
+lens_centre_1                                               GaussianPrior, mean = -0.004798132604731374, sigma = 0.05
+lens_axis_ratio                                             GaussianPrior, mean = 0.6810451248475913, sigma = 0.2
+lens_phi                                                    GaussianPrior, mean = 45.178324485509116, sigma = 20.0
+lens_einstein_radius                                        GaussianPrior, mean = 1.6052473726920495, sigma = 0.3
+lens_slope                                                  UniformPrior, lower_limit = 1.5, upper_limit = 2.5
+
+ExternalShear
+
+lens_magnitude                                              GaussianPrior, mean = 0.05341289817173987, sigma = 0.05
+lens_phi                                                    GaussianPrior, mean = 88.0854569223128, sigma = 20.0
+
+EllipticalSersic
+
+source_centre_0                                             GaussianPrior, mean = 0.09939052903751815, sigma = 0.05
+source_centre_1                                             GaussianPrior, mean = 0.10186460019563565, sigma = 0.05
+source_axis_ratio                                           GaussianPrior, mean = 0.8101385783395776, sigma = 0.2
+source_phi                                                  GaussianPrior, mean = 53.59063607118794, sigma = 20.0
+source_intensity                                            GaussianPrior, mean = 0.4823001412614841, sigma = 0.24115007063074206
+source_effective_radius                                     GaussianPrior, mean = 0.7374611639462056, sigma = 2.0
+source_sersic_index                                         GaussianPrior, mean = 2.039362311652108, sigma = 1.5

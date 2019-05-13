@@ -1,5 +1,5 @@
 from autolens.data.array import grids
-from autolens.data.array.plotters import grid_plotters
+from autolens.plotters import grid_plotters
 
 # In this example, we'll create grids of Cartesian (y,x) coordinates, representing the arc-second coordinate grid of
 # an observed data-set (e.g. ccd imaging).
@@ -71,6 +71,11 @@ print('(y,x) sub-pixel 3 (of regular pixel 1):')
 print(sub_grid[2])
 print('(y,x) sub-pixel 4 (of regular pixel 1):')
 print(sub_grid[3])
+
+print(sub_grid[0,1] - sub_grid[1,1])
+print(sub_grid[1,1] - sub_grid[4,1])
+stop
+
 
 # The sub-grid then continues on to the next regular-grid pixels (and so on)
 print('(y,x) sub-pixel 1 (of regular pixel 2):')

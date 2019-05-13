@@ -40,7 +40,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 conf.instance = conf.Config(config_path=chapter_path+'configs/5_linking_phases', output_path=chapter_path+"output")
 
@@ -54,11 +54,13 @@ def simulate():
     psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
                                                              effective_radius=0.5, sersic_index=3.5),
                            mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
 
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
                                                        effective_radius=0.3, sersic_index=3.0))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
@@ -109,12 +111,12 @@ class LightTracesMassPhase(ph.LensSourcePlanePhase):
 # convinience.
 
 # There is also an 'align_centres' method, but because we are fixing all centres to floats we have ommitted it.
-phase_1 = LightTracesMassPhase(phase_name='5_linking_phase_1',
-                               lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                       mass=mp.EllipticalIsothermal,
-                                                   align_axis_ratios=True, align_orientations=True)),
-                                source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                optimizer_class=nl.MultiNest)
+phase_1 = LightTracesMassPhase(
+    phase_name='5_linking_phase_1',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal,
+                                           align_axis_ratios=True, align_orientations=True)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
 
 # Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum likelihood
 # with fewer MultiNest live points and a faster sampling rate?
@@ -161,7 +163,7 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
         self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
         self.lens_galaxies.lens.mass.axis_ratio = prior.GaussianPrior(mean=0.8, sigma=0.25)
         self.lens_galaxies.lens.mass.phi = prior.GaussianPrior(mean=45.0, sigma=30.0)
-        self.lens_galaxies.lens.mass.einstein_radius = prior.GaussianPrior(mean=0.8, sigma=0.1)
+        self.lens_galaxies.lens.mass.einstein_radius_in_units = prior.GaussianPrior(mean=0.8, sigma=0.1)
 
         self.source_galaxies.source.light.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
         self.source_galaxies.source.light.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
@@ -173,11 +175,11 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
 # Lets setup and run the phase. As expected, it gives us the correct lens model. However, it does so significantly
 # faster than we're used to - I didn't have to edit the config files to get this phase to run fast!
 
-phase_2 = CustomPriorPhase(phase_name='5_linking_phase_2',
-                           lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                   mass=mp.EllipticalIsothermal)),
-                           source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                           optimizer_class=nl.MultiNest)
+phase_2 = CustomPriorPhase(
+    phase_name='5_linking_phase_2',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
 
 phase_2.optimizer.n_live_points = 30
 phase_2.optimizer.sampling_efficiency = 0.9

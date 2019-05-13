@@ -43,7 +43,14 @@ from autolens.model.profiles import mass_profiles as mp
 
 def make_pipeline(phase_folders=None, sub_grid_size=2):
 
-    pipeline_name = 'pipeline_sub_gridding'
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
+
+    pipeline_name = 'pl__sub_gridding'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This tag is 'added' to the phase path, to make it clear what sub-grid up is used. The sub-grid tag and phase
     # name are shown for 3 example sub grid sizes:
@@ -77,13 +84,13 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensSourceX1Phase(phase_name='phase_1_x1_source', phase_folders=phase_folders,
-                               tag_phases=True,
-                               lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                      shear=mp.ExternalShear)),
-                               source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               sub_grid_size=2,
-                               mask_function=mask_function, optimizer_class=nl.MultiNest)
+    phase1 = LensSourceX1Phase(
+        phase_name='phase_1_x1_source', phase_folders=phase_folders, tag_phases=True,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
+        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        mask_function=mask_function,
+        sub_grid_size=2,
+        optimizer_class=nl.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80
@@ -100,17 +107,20 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_x1_source').variable.lens
-            self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').variable.source_0
+            self.lens_galaxies.lens = results.from_phase('phase_1_x1_source').\
+                variable.lens_galaxies.lens
 
-    phase2 = LensSourceX2Phase(phase_name='phase_2_x2_source', phase_folders=phase_folders,
-                               tag_phases=True,
-                               lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                      shear=mp.ExternalShear)),
-                               source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),
-                                                      source_1=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               optimizer_class=nl.MultiNest, mask_function=mask_function,
-                               sub_grid_size=sub_grid_size)
+            self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').\
+                variable.source_galaxies.source_0
+
+    phase2 = LensSourceX2Phase(
+        phase_name='phase_2_x2_source', phase_folders=phase_folders, tag_phases=True,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
+        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+                             source_1=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        mask_function=mask_function,
+        sub_grid_size=sub_grid_size,
+        optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

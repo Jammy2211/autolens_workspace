@@ -57,20 +57,19 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, positions=positions)
 # To setup our model galaxies, we use the 'galaxy_model' module and GalaxyModel class.
 # A GalaxyModel represents a galaxy where the parameters of its associated profiles are
 # variable and fitted for by the analysis.
-lens_galaxy_model = gm.GalaxyModel(light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)
-source_galaxy_model = gm.GalaxyModel(light=lp.EllipticalSersic)
+lens_galaxy_model = gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 # To perform the analysis, we set up a phase using the 'phase' module (imported as 'ph').
 # A phase takes our galaxy models and fits their parameters using a non-linear search (in this case, MultiNest).
 
 # The phase folders and phase name mean the output of these run will be in the directory
 # 'workspace/output/example/lens_light_and_x1_source/phase_example'
-phase = ph.LensSourcePlanePhase(phase_name='phase_example', phase_folders=[data_type, data_name],
-                                lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                       mass=mp.EllipticalIsothermal,
-                                                                       shear=mp.ExternalShear)),
-                                 source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 optimizer_class=nl.MultiNest)
+phase = ph.LensSourcePlanePhase(
+    phase_name='phase_example', phase_folders=[data_type, data_name],
+    lens_galaxies=dict(lens=lens_galaxy_model),
+    source_galaxies=dict(source=source_galaxy_model),
+    optimizer_class=nl.MultiNest)
 
 # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
 # non-linear parameter space faster (if you haven't already, checkout the tutorial '' in howtolens/chapter_2).

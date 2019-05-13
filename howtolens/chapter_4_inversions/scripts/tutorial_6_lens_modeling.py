@@ -31,9 +31,12 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
                                                                   psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                          effective_radius=0.3, sersic_index=1.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
@@ -54,8 +57,10 @@ def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # This lens galaxy has the wrong mass-model -  I've reduced its Einstein Radius from 1.6 to 0.8.
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8))
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 fit = perform_fit_with_lens_and_source_galaxy(lens_galaxy=lens_galaxy, source_galaxy=source_galaxy)
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
@@ -69,9 +74,11 @@ lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array
 # This isn't necessarily problematic for lens modeling. Afterall, the source reconstruction above is extremely complex,
 # in that it requires a lot of pixels to fit the image accurately. Indeed, its Bayesian evidence is much lower than the
 # correct solution.
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                     einstein_radius=1.6))
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 correct_fit = perform_fit_with_lens_and_source_galaxy(lens_galaxy=lens_galaxy, source_galaxy=source_galaxy)
 lens_fit_plotters.plot_fit_subplot(fit=correct_fit, should_plot_mask=True, extract_array_from_mask=True,
                                    zoom_around_mask=True)
@@ -109,11 +116,13 @@ def simulate_lens_with_light_profile():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8,
                                                     sersic_index=4.0),
                            mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                          effective_radius=0.3, sersic_index=1.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
@@ -128,13 +137,15 @@ ccd_data = simulate_lens_with_light_profile()
 mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=2.5)
 
 # As I said above, performing this fit is the same as usual, we just give the lens galaxy a light profile.
-lens_galaxy = g.Galaxy(light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8,
                                                     sersic_index=4.0),
                        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                     einstein_radius=1.6))
 
 # These are all the usual things we do when setting up a fit.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
@@ -148,7 +159,8 @@ lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array
 
 # Of course if the lens subtraction is rubbish, so is our fit, so we can be sure that our lens model wants to fit the
 # lens galaxy's light accurately (below, I've increased the lens galaxy intensity from 0.2 to 0.3)!
-lens_galaxy = g.Galaxy(light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8,
                                                     sersic_index=4.0),
                        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                     einstein_radius=1.6))

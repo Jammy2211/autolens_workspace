@@ -83,7 +83,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 conf.instance = conf.Config(config_path=chapter_path+'configs/2_parameter_space_and_priors',
                             output_path=chapter_path+"output")
@@ -99,8 +99,8 @@ def simulate():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+    lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+    source_galaxy = g.Galaxy(redshift=1.0, light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
 
@@ -116,8 +116,8 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #  To change the priors on specific parameters, we create our galaxy models and use a custom-phase and its
 # 'pass_priors' function to overwrite priors on specific parameters.
 
-lens_galaxy_model = gm.GalaxyModel(mass=mp.SphericalIsothermal)
-source_galaxy_model = gm.GalaxyModel(light=lp.SphericalExponential)
+lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
 
 class CustomPhase(ph.LensSourcePlanePhase):
 
@@ -141,7 +141,7 @@ class CustomPhase(ph.LensSourcePlanePhase):
         # Lets also change the prior on the lens galaxy's einstein radius, to a GaussianPrior centred on 1.4".
         # For real lens modeling, this might be done by visually estimating the radius the lens's arcs / ring appear.
 
-        self.lens_galaxies.lens_galaxy.mass.einstein_radius = prior.GaussianPrior(mean=1.4, sigma=0.2)
+        self.lens_galaxies.lens_galaxy.mass.einstein_radius_in_units = prior.GaussianPrior(mean=1.4, sigma=0.2)
 
         # We can also customize the source galaxy - lets say we believe it is compact and limit its effective radius
 
@@ -154,10 +154,11 @@ class CustomPhase(ph.LensSourcePlanePhase):
 # We can now create this custom phase like we did a normal phase before. When we run the phase, the pass_prior function
 # will be called automatically and thus change the priors as we specified above. If you look at the 'model.info'
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
-custom_phase = CustomPhase(phase_name='2_custom_priors',
-                           lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-                           source_galaxies=dict(source_galaxy=source_galaxy_model),
-                           optimizer_class=non_linear.MultiNest)
+custom_phase = CustomPhase(
+    phase_name='2_custom_priors',
+    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    optimizer_class=non_linear.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors'
       'folder for live output of the results, images and lens model.'

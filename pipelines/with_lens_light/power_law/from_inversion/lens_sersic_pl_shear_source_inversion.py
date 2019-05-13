@@ -4,6 +4,7 @@ from autofit.mapper import prior
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
@@ -37,10 +38,19 @@ import os
 # Prior Passing: Lens Mass (constant -> phase 1), source inversion (variable -> phase 1)
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations.
 
-def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=0.05):
+def make_pipeline(
+        phase_folders=None, tag_phases=True,
+        redshift_lens=0.5, redshift_source=1.0,
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=0.05):
 
-    pipeline_name = 'pipeline_pl__lens_sersic_pl_shear_source_sersic'
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
+
+    pipeline_name = 'pipeline_pl__lens_sersic_pl_shear_source_inversion'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
@@ -58,35 +68,35 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
             ### Lens Light, Sersic -> Sersic ###
 
-            self.lens_galaxies.lens.light = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.light
+            self.lens_galaxies.lens.light = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable.lens.lens_galaxies.light
 
             ### Lens Mass, SIE -> Powerlaw ###
 
-            self.lens_galaxies.lens.mass.centre = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.mass.centre
+            self.lens_galaxies.lens.mass.centre = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable_absolute(a=0.05).lens_galaxies.lens.mass.centre
 
-            self.lens_galaxies.lens.mass.axis_ratio = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.mass.axis_ratio
+            self.lens_galaxies.lens.mass.axis_ratio = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable.lens_galaxies.lens.mass.axis_ratio
 
-            self.lens_galaxies.lens.mass.phi = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.mass.phi
+            self.lens_galaxies.lens.mass.phi = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable.lens_galaxies.lens.mass.phi
 
-            self.lens_galaxies.lens.mass.einstein_radius = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable_absolute(a=0.3).lens.mass.einstein_radius
+            self.lens_galaxies.lens.mass.einstein_radius_in_units = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable_absolute(a=0.3).lens_galaxies.lens.mass.einstein_radius_in_units
 
             ### Lens Shear, Shear -> Shear ###
 
-            self.lens_galaxies.lens.shear = \
-                results.from_phase('phase_2_lens_sie_shear_source_inversion').variable.lens.shear
+            self.lens_galaxies.lens.mass.shear = results.from_phase('phase_2_lens_sie_shear_source_inversion').\
+                variable.lens_galaxies.lens.shear
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.source_galaxies.source.pixelization = \
-                results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').constant.source.pixelization
+            self.source_galaxies.source.pixelization = results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').\
+                constant.source_galaxies.source.pixelization
 
-            self.source_galaxies.source.regularization = \
-                results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').variable.source.regularization
+            self.source_galaxies.source.regularization = results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').\
+                variable.source_galaxies.source.regularization
             
     phase1 = LensSourcePhase(phase_name='phase_1_lens_sersic_pl_shear_source_inversion', phase_folders=phase_folders,
                              tag_phases=tag_phases,
@@ -117,11 +127,13 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
             ### Lens Light & Mass, Sersic -> Sersic, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').constant.lens
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').\
+                constant.lens_galaxies.lens
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.source_galaxies.source = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').variable.source
+            self.source_galaxies.source = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').\
+                variable.source_galaxies.source
 
     phase2 = InversionPhase(phase_name='phase_2_lens_sersic_pl_shear_refine_source_inversion', phase_folders=phase_folders,
                             tag_phases=tag_phases,

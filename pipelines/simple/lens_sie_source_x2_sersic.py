@@ -5,6 +5,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline import phase as ph
 from autolens.pipeline import pipeline
+from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -30,10 +31,19 @@ from autolens.model.profiles import mass_profiles as mp
 # Prior Passing: Lens mass (variable -> phase 1), Source Galaxy 1 Light (variable -> phase 1)
 # Notes: None
 
-def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_factor=None, positions_threshold=None,
-                  inner_mask_radii=None, interp_pixel_scale=None):
+def make_pipeline(
+        phase_folders=None, tag_phases=True,
+        redshift_lens=0.5, redshift_source=1.0,
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=None):
 
-    pipeline_name = 'pipeline_lens_sie_source_x2_sersic'
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
+
+    pipeline_name = 'pl_lens_sie_source_x2_sersic'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -60,16 +70,15 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
             self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
             self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
 
-    phase1 = LensSourceX1Phase(phase_name='phase_1_lens_sie_source_sersic', phase_folders=phase_folders,
-                               tag_phases=tag_phases,
-                               lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                      shear=mp.ExternalShear)),
-                               source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               mask_function=mask_function,
-                               optimizer_class=nl.MultiNest,
-                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                               interp_pixel_scale=interp_pixel_scale)
+    phase1 = LensSourceX1Phase(
+        phase_name='phase_1_lens_sie_source_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
+                                               shear=mp.ExternalShear)),
+        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        mask_function=mask_function,
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
@@ -95,20 +104,26 @@ def make_pipeline(phase_folders=None, tag_phases=True, sub_grid_size=2, bin_up_f
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sie_source_sersic').variable.lens
-            self.source_galaxies.source_0 = results.from_phase('phase_1_lens_sie_source_sersic').variable.source_0
+            ## Lens Mass, SIE -> SIE ###
 
-    phase2 = LensSourceX2Phase(phase_name='phase_2_lens_sie_source_x2_sersic', phase_folders=phase_folders,
-                               tag_phases=tag_phases,
-                               lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal,
-                                                                      shear=mp.ExternalShear)),
-                               source_galaxies=dict(source_0=gm.GalaxyModel(light=lp.EllipticalSersic),
-                                                      source_1=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                               mask_function=mask_function,
-                               optimizer_class=nl.MultiNest,
-                               sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                               positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                               interp_pixel_scale=interp_pixel_scale)
+            self.lens_galaxies.lens = results.from_phase('phase_1_lens_sie_source_sersic').\
+                variable.lens_galaxies.lens
+
+            ## Source Light, Sersic -> Sersic ###
+
+            self.source_galaxies.source_0 = results.from_phase('phase_1_lens_sie_source_sersic').\
+                variable.source_galaxies.source_0
+
+    phase2 = LensSourceX2Phase(
+        phase_name='phase_2_lens_sie_source_x2_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
+                                               shear=mp.ExternalShear)),
+        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+                               source_1=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        mask_function=mask_function,
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

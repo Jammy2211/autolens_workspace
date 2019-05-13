@@ -29,10 +29,12 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
 
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                        effective_radius=0.3, sersic_index=1.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
@@ -68,7 +70,7 @@ def perform_fit_with_source_galaxy_mask_and_border(source_galaxy, mask, use_bord
 
     ccd_data = simulate()
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
-    lens_galaxy = g.Galaxy(
+    lens_galaxy = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
 
     if use_border:
@@ -81,7 +83,8 @@ def perform_fit_with_source_galaxy_mask_and_border(source_galaxy, mask, use_bord
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # Okay, so lets first look at our mapper without using a border, and using our annular mask.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 fit = perform_fit_with_source_galaxy_mask_and_border(source_galaxy=source_galaxy, mask=mask_annular, use_border=False)
 inversion_plotters.plot_reconstructed_pixelization(inversion=fit.inversion, should_plot_grid=True)
 
@@ -162,11 +165,14 @@ def simulate_image_x2_lenses():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(300, 300), pixel_scale=0.05, psf_shape=(11, 11))
 
-    lens_galaxy_0 = g.Galaxy(
+    lens_galaxy_0 = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07))
-    lens_galaxy_1 = g.Galaxy(
+
+    lens_galaxy_1 = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71))
-    source_galaxy_0 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.05, 0.05), axis_ratio=0.8, phi=90.0, intensity=0.2,
+
+    source_galaxy_0 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.05, 0.05), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                          effective_radius=0.3, sersic_index=1.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy_0, lens_galaxy_1],
@@ -185,11 +191,14 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask_circular, extract_arr
 
 # We need to redefine our perform fit function, to use the x2 lens galaxy model.
 def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(source_galaxy, mask, use_border):
+
     simulate_image_x2_lenses()
+
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
-    lens_galaxy_0 = g.Galaxy(
+
+    lens_galaxy_0 = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07))
-    lens_galaxy_1 = g.Galaxy(
+    lens_galaxy_1 = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71))
 
     if use_border:

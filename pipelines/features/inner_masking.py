@@ -44,9 +44,16 @@ import os
 # Checkout the 'workspace/runners/pipeline_runner.py' script for how the custom mask and positions are loaded and used
 # in the pipeline.
 
-def make_pipeline(phase_folders=None, tag_phases=True, inner_mask_radii=None):
+def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
-    pipeline_name = 'pipeline_inner_mask'
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
+    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # a pipeline does use customized tag names.
+
+    pipeline_name = 'pl__inner_mask'
+    pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -75,12 +82,13 @@ def make_pipeline(phase_folders=None, tag_phases=True, inner_mask_radii=None):
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(phase_name='phase_1_use_inner_radii_input', tag_phases=tag_phases,
-                                     phase_folders=phase_folders,
-                                     lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
-                                     source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                     optimizer_class=nl.MultiNest, mask_function=mask_function,
-                                     inner_mask_radii=inner_mask_radii)
+    phase1 = ph.LensSourcePlanePhase(
+        phase_name='phase_1_use_inner_radii_input', phase_folders=phase_folders, tag_phases=True,
+        lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
+        mask_function=mask_function,
+        inner_mask_radii=inner_mask_radii,
+        optimizer_class=nl.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
@@ -100,14 +108,17 @@ def make_pipeline(phase_folders=None, tag_phases=True, inner_mask_radii=None):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase('phase_1_use_inner_radii_input').variable.lens
-            self.source_galaxies.source = results.from_phase('phase_1_use_inner_radii_input').variable.source
+            self.lens_galaxies.lens = results.from_phase('phase_1_use_inner_radii_input').\
+                variable.lens_galaxies.lens
 
-    phase2 = LensSubtractedPhase(phase_name='phase_2_circular_mask', phase_folders=phase_folders,
-                                 tag_phases=True,
-                                 lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
-                                 source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-                                 optimizer_class=nl.MultiNest)
+            self.source_galaxies.source = results.from_phase('phase_1_use_inner_radii_input').\
+                variable.source_galaxies.source
+
+    phase2 = LensSubtractedPhase(
+        phase_name='phase_2_circular_mask', phase_folders=phase_folders, tag_phases=True,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

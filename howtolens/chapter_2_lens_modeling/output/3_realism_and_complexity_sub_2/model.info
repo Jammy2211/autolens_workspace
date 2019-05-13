@@ -1,0 +1,32 @@
+CollectionPriorModel
+
+lens_galaxies_GalaxyModel
+
+lens_galaxies_lens_galaxy_EllipticalSersic
+
+lens_galaxies_lens_galaxy_light_axis_ratio                                                  UniformPrior, lower_limit = 0.45, upper_limit = 0.95
+lens_galaxies_lens_galaxy_light_phi                                                         UniformPrior, lower_limit = 40.0, upper_limit = 95.0
+lens_galaxies_lens_galaxy_light_intensity                                                   UniformPrior, lower_limit = 0.0, upper_limit = 0.06
+lens_galaxies_lens_galaxy_light_effective_radius                                            UniformPrior, lower_limit = 0.2, upper_limit = 0.6
+lens_galaxies_lens_galaxy_light_sersic_index                                                UniformPrior, lower_limit = 2.8, upper_limit = 3.7
+lens_galaxies_lens_galaxy_EllipticalIsothermal
+
+lens_galaxies_lens_galaxy_mass_axis_ratio                                                  UniformPrior, lower_limit = 0.45, upper_limit = 0.95
+lens_galaxies_lens_galaxy_mass_phi                                                         UniformPrior, lower_limit = 40.0, upper_limit = 95.0
+lens_galaxies_lens_galaxy_mass_Length
+
+lens_galaxies_lens_galaxy_mass_einstein_radius_value                                                       UniformPrior, lower_limit = 0.0, upper_limit = 0.2
+CollectionPriorModel
+
+source_galaxies_GalaxyModel
+
+source_galaxies_source_galaxy_EllipticalExponential
+
+source_galaxies_source_galaxy_light_axis_ratio                                                  UniformPrior, lower_limit = 0.45, upper_limit = 0.95
+source_galaxies_source_galaxy_light_phi                                                         UniformPrior, lower_limit = 40.0, upper_limit = 95.0
+source_galaxies_source_galaxy_light_Luminosity
+
+source_galaxies_source_galaxy_light_intensity_value                                                       UniformPrior, lower_limit = 0.0, upper_limit = 0.06
+source_galaxies_source_galaxy_light_Length
+
+source_galaxies_source_galaxy_light_effective_radius_value                                                       UniformPrior, lower_limit = 0.2, upper_limit = 0.6

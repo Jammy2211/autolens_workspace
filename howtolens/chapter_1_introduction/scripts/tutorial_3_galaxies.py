@@ -17,7 +17,7 @@ grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(100
 # Lets make a galaxy with a Sersic light profile, by making a Sersic light profile and pasing it to a Galaxy object.
 sersic_light_profile = light_profiles.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
                                                        intensity=1.0, effective_radius=1.0, sersic_index=2.5)
-galaxy_with_light_profile = galaxy.Galaxy(light=sersic_light_profile)
+galaxy_with_light_profile = galaxy.Galaxy(redshift=0.5, light=sersic_light_profile)
 
 # We can print the galaxy to confirm its profile and its parameters
 print(galaxy_with_light_profile)
@@ -41,7 +41,8 @@ galaxy_plotters.plot_intensities(galaxy=galaxy_with_light_profile, grid=grid_sta
 light_profile_1 = light_profiles.SphericalSersic(centre=(0.0,  0.0), intensity=1.0, effective_radius=1.0, sersic_index=2.5)
 light_profile_2 = light_profiles.SphericalSersic(centre=(1.0,  1.0), intensity=1.0, effective_radius=2.0, sersic_index=3.0)
 light_profile_3 = light_profiles.SphericalSersic(centre=(1.0, -1.0), intensity=1.0, effective_radius=2.0, sersic_index=2.0)
-galaxy_with_3_light_profiles = galaxy.Galaxy(light_1=light_profile_1, light_2=light_profile_2, light_3=light_profile_3)
+galaxy_with_3_light_profiles = galaxy.Galaxy(redshift=0.5, light_1=light_profile_1, light_2=light_profile_2,
+                                             light_3=light_profile_3)
 
 # We can print the galaxy to confirm it possesses the Sersic light-profiles above.
 print(galaxy_with_3_light_profiles)
@@ -57,7 +58,8 @@ galaxy_plotters.plot_intensities_subplot(galaxy=galaxy_with_3_light_profiles, gr
 mass_profile_1 = mass_profiles.SphericalIsothermal(centre=(0.0,  0.0), einstein_radius=1.0)
 mass_profile_2 = mass_profiles.SphericalIsothermal(centre=(1.0,  1.0), einstein_radius=1.0)
 mass_profile_3 = mass_profiles.SphericalIsothermal(centre=(1.0, -1.0), einstein_radius=1.0)
-galaxy_with_3_mass_profiles = galaxy.Galaxy(mass_1=mass_profile_1, mass_2=mass_profile_2, mass_3=mass_profile_3)
+galaxy_with_3_mass_profiles = galaxy.Galaxy(redshift=0.5,
+                                            mass_1=mass_profile_1, mass_2=mass_profile_2, mass_3=mass_profile_3)
 
 # We can print a galaxy to confirm it possesses the sis mass-profiles above.
 print(galaxy_with_3_mass_profiles)
@@ -88,7 +90,8 @@ mass_profile_3 = mass_profiles.SphericalIsothermal(centre=(2.0, 2.0), einstein_r
 mass_profile_4 = mass_profiles.EllipticalIsothermal(centre=(1.0, -1.0), axis_ratio=0.5, phi=45.0,
                                                    einstein_radius=2.0)
 
-galaxy_with_many_profiles = galaxy.Galaxy(light_1=light_profile_1, light_2=light_profile_2,
+galaxy_with_many_profiles = galaxy.Galaxy(redshift=0.5,
+                                          light_1=light_profile_1, light_2=light_profile_2,
                                           light_3=light_profile_3, light_4=light_profile_4,
                                            mass_1=mass_profile_1, mass_2=mass_profile_2,
                                            mass_3=mass_profile_3, mass_4=mass_profile_4)

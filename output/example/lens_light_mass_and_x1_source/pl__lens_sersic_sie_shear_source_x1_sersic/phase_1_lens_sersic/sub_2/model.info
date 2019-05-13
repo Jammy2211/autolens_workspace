@@ -1,0 +1,11 @@
+CollectionPriorModel
+
+lens_galaxies_GalaxyModel
+
+lens_galaxies_lens_EllipticalSersic
+
+lens_galaxies_lens_light_axis_ratio                                                  UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+lens_galaxies_lens_light_phi                                                         UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+lens_galaxies_lens_light_intensity                                                   LogUniformPrior, lower_limit = 1e-06, upper_limit = 10.0
+lens_galaxies_lens_light_effective_radius                                            UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+lens_galaxies_lens_light_sersic_index                                                UniformPrior, lower_limit = 0.8, upper_limit = 8.0

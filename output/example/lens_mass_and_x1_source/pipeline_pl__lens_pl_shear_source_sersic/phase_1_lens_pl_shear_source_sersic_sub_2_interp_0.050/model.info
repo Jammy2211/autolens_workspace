@@ -1,0 +1,23 @@
+EllipticalPowerLaw
+
+lens_centre_0                                               GaussianPrior, mean = -0.002467109096308037, sigma = 0.05
+lens_centre_1                                               GaussianPrior, mean = -0.0011016628300115584, sigma = 0.05
+lens_axis_ratio                                             GaussianPrior, mean = 0.6970758871844116, sigma = 0.2
+lens_phi                                                    GaussianPrior, mean = 45.00116778757079, sigma = 20.0
+lens_einstein_radius                                        GaussianPrior, mean = 1.6004011332391435, sigma = 0.3
+lens_slope                                                  UniformPrior, lower_limit = 1.5, upper_limit = 2.5
+
+ExternalShear
+
+lens_magnitude                                              GaussianPrior, mean = 0.05032343291224213, sigma = 0.05
+lens_phi                                                    GaussianPrior, mean = 89.78722738535104, sigma = 20.0
+
+EllipticalSersic
+
+source_centre_0                                             GaussianPrior, mean = 0.09936985323497946, sigma = 0.05
+source_centre_1                                             GaussianPrior, mean = 0.09976334738341833, sigma = 0.05
+source_axis_ratio                                           GaussianPrior, mean = 0.8015497922319701, sigma = 0.2
+source_phi                                                  GaussianPrior, mean = 60.66208314165116, sigma = 20.0
+source_intensity                                            GaussianPrior, mean = 0.310750023532887, sigma = 0.1553750117664435
+source_effective_radius                                     GaussianPrior, mean = 0.9784870684786057, sigma = 2.0
+source_sersic_index                                         GaussianPrior, mean = 2.4631106919614014, sigma = 1.5

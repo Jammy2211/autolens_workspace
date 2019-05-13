@@ -1,0 +1,8 @@
+AdaptiveMagnification
+
+source_shape_0                                              UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+source_shape_1                                              UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+
+Constant
+
+source_coefficients_0                                       LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0

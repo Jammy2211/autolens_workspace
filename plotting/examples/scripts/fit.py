@@ -1,6 +1,6 @@
 from autolens.data.array import scaled_array
 from autolens.data.array.util import array_util
-from autolens.data.array.plotters import array_plotters
+from autolens.plotters import array_plotters
 
 import os
 

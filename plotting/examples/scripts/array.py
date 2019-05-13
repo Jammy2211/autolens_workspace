@@ -1,6 +1,6 @@
 from autolens.data.array import scaled_array
 from autolens.data.array.util import array_util
-from autolens.data.array.plotters import array_plotters
+from autolens.plotters import array_plotters
 
 import os
 
@@ -38,7 +38,7 @@ image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(file_path
 #    16 to 24.
 
 # 3) For the same reason, we increase the size of the colorbar ticks from the default value 10 to 20.
-array_plotters.plot_array(array=image, figsize=(12,12), title='SLACS1430+4105 Image',
+array_plotters.plot_array(array=image, figsize=(12, 12), title='SLACS1430+4105 Image',
                           titlesize=24, xlabelsize=24, ylabelsize=24, xyticksize=24,
                           cb_ticksize=20)
 

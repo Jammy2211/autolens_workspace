@@ -1,0 +1,44 @@
+Most likely model, Likelihood = 6488.792
+
+lens_galaxies_lens_light_axis_ratio                         0.891
+lens_galaxies_lens_light_phi                                43.874
+lens_galaxies_lens_light_intensity                          0.048
+lens_galaxies_lens_light_effective_radius                   0.397
+lens_galaxies_lens_mass_einstein_radius_value               0.78
+source_galaxies_source_light_centre_0                       0.003
+source_galaxies_source_light_centre_1                       -0.001
+source_galaxies_source_light_axis_ratio                     0.729
+source_galaxies_source_light_phi                            93.444
+source_galaxies_source_light_intensity_value                0.05
+source_galaxies_source_light_effective_radius_value         0.31
+
+Most probable model (3.0 sigma limits)
+
+lens_galaxies_lens_light_axis_ratio                         0.898 (0.856, 0.943)
+lens_galaxies_lens_light_phi                                47.34 (39.196, 57.384)
+lens_galaxies_lens_light_intensity                          0.043 (0.033, 0.052)
+lens_galaxies_lens_light_effective_radius                   0.429 (0.36, 0.511)
+lens_galaxies_lens_mass_einstein_radius_value               0.779 (0.769, 0.788)
+source_galaxies_source_light_centre_0                       -0.0 (-0.009, 0.009)
+source_galaxies_source_light_centre_1                       -0.0 (-0.008, 0.007)
+source_galaxies_source_light_axis_ratio                     0.72 (0.639, 0.8)
+source_galaxies_source_light_phi                            92.59 (86.451, 96.636)
+source_galaxies_source_light_intensity_value                0.05 (0.049, 0.05)
+source_galaxies_source_light_effective_radius_value         0.307 (0.291, 0.322)
+
+Most probable model (1.0 sigma limits)
+
+lens_galaxies_lens_light_axis_ratio                         0.898 (0.883, 0.913)
+lens_galaxies_lens_light_phi                                47.34 (44.192, 50.053)
+lens_galaxies_lens_light_intensity                          0.043 (0.04, 0.046)
+lens_galaxies_lens_light_effective_radius                   0.429 (0.402, 0.453)
+lens_galaxies_lens_mass_einstein_radius_value               0.779 (0.776, 0.782)
+source_galaxies_source_light_centre_0                       -0.0 (-0.003, 0.003)
+source_galaxies_source_light_centre_1                       -0.0 (-0.003, 0.002)
+source_galaxies_source_light_axis_ratio                     0.72 (0.692, 0.746)
+source_galaxies_source_light_phi                            92.59 (91.293, 94.365)
+source_galaxies_source_light_intensity_value                0.05 (0.05, 0.05)
+source_galaxies_source_light_effective_radius_value         0.307 (0.302, 0.312)
+
+Constants
+

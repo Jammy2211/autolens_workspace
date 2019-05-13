@@ -15,7 +15,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 conf.instance = conf.Config(config_path=chapter_path+'configs/4_dealing_with_failure', output_path=chapter_path+"output")
 
@@ -37,12 +37,14 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1,
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
                                                      effective_radius=0.5, sersic_index=3.5),
                            mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
                                                         einstein_radius=0.8))
 
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
                                                        effective_radius=0.3, sersic_index=3.0))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
@@ -112,7 +114,7 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
 
         # Finally, the 'ring' that the lensed source forms clearly has a radius of about 0.8". This is its Einstein
         # radius, so lets change the prior from a UniformPrior between 0.0" and 4.0".
-        self.lens_galaxies.lens.mass.einstein_radius = prior.GaussianPrior(mean=0.8, sigma=0.2)
+        self.lens_galaxies.lens.mass.einstein_radius_in_units = prior.GaussianPrior(mean=0.8, sigma=0.2)
 
         # In this exercise, I'm not going to change any priors on the source galaxy. Whilst lens modeling experts can
         # look at a strong lens and often tell you roughly where the source-galaxy is located (in the source-plane),
@@ -121,11 +123,12 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
 
 # We can now create this custom phase and run it. Our non-linear search will start in a much higher likelihood region
 # of parameter space.
-custom_prior_phase = CustomPriorPhase(phase_name='4_tuned_priors',
-                                      lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                             mass=mp.EllipticalIsothermal)),
-                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                      optimizer_class=nl.MultiNest)
+custom_prior_phase = CustomPriorPhase(
+    phase_name='4_tuned_priors',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
+
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
@@ -177,11 +180,12 @@ class LightTracesMassPhase(ph.LensSourcePlanePhase):
         self.lens_galaxies.lens.mass.phi = self.lens_galaxies.lens.light.phi
 
 # Again, we create this phase and run it. The non-linear search has a less complex parameter space to seach, and thus
-light_traces_mass_phase = LightTracesMassPhase(phase_name='4_light_traces_mass',
-                                               lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                                       mass=mp.EllipticalIsothermal)),
-                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                      optimizer_class=nl.MultiNest)
+light_traces_mass_phase = LightTracesMassPhase(
+    phase_name='4_light_traces_mass',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
+
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
@@ -220,11 +224,11 @@ lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likel
 # Lets setup a phase, and overwrite some of the non-linear search's parameters from the defaults it assumes in the
 # 'config/non_linear.ini' config file:
 
-custom_non_linear_phase = ph.LensSourcePlanePhase(phase_name='4_custom_non_linear',
-                                                  lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                                mass=mp.EllipticalIsothermal)),
-                                      source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalExponential)),
-                                      optimizer_class=nl.MultiNest)
+custom_non_linear_phase = ph.LensSourcePlanePhase(
+    phase_name='4_custom_non_linear',
+    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    optimizer_class=nl.MultiNest)
 
 # The 'optimizer' below is MultiNest, the non-linear search we're using.
 

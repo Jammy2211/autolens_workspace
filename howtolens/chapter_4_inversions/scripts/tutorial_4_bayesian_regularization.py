@@ -30,9 +30,11 @@ def simulate():
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
                                                         einstein_radius=1.6))
-    source_galaxy_0 = g.Galaxy(light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
+    source_galaxy_0 = g.Galaxy(redshift=1.0,
+                               light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
                                                          effective_radius=0.3, sersic_index=1.0))
 
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
@@ -52,21 +54,23 @@ def perform_fit_with_source_galaxy(source_galaxy):
     mask = msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
                                      inner_radius_arcsec=0.5, outer_radius_arcsec=2.2)
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
-    lens_galaxy = g.Galaxy(
+    lens_galaxy = g.Galaxy(redshift=0.5,
         mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # Okay, so lets look at our fit from the previous tutorial in more detail. We'll use a higher resolution 40 x 40 grid.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(1.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(1.0,)))
 fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 lens_fit_plotters.plot_fit_subplot(fit=fit)
 
 # It still looks pretty good! However, this is because I sneakily chose a regularization coefficient that gives a
 # good looking solution, without telling you. If we reduce this regularization coefficient to zero, our source
 # reconstruction goes extremely weird.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)), regularization=reg.Constant(coefficients=(0.0,)))
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
+                         regularization=reg.Constant(coefficients=(0.0,)))
 no_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 lens_fit_plotters.plot_fit_subplot(fit=no_regularization_fit, should_plot_mask=True, extract_array_from_mask=True,
                                    zoom_around_mask=True)
@@ -96,7 +100,7 @@ inversion_plotters.plot_reconstructed_pixelization(inversion=no_regularization_f
 # strong lens. By smoothing our source reconstruction, we ensure it doesn't fit the noise in the image. If we set a
 # really high regularization coefficient, we can completely remove over-fitting, at the expense of also fitting the
 # image less accurately.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)),
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
                          regularization=reg.Constant(coefficients=(100.0,)))
 high_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 lens_fit_plotters.plot_fit_subplot(fit=high_regularization_fit, should_plot_mask=True, extract_array_from_mask=True,
@@ -160,7 +164,7 @@ print(high_regularization_fit.evidence)
 #    changing these parameters - I've set you up with a code to do so below.
 
 # the expense of also fitting the lensed source less accurately.
-source_galaxy = g.Galaxy(pixelization=pix.Rectangular(shape=(40, 40)),
+source_galaxy = g.Galaxy(redshift=1.0, pixelization=pix.Rectangular(shape=(40, 40)),
                          regularization=reg.Constant(coefficients=(1.0,)))
 fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 print('Previous Bayesian Evidence:')

@@ -1,0 +1,8 @@
+lens_mass_centre_0                                                    y_{\mathrm{m22}}
+lens_mass_centre_1                                                    x_{\mathrm{m22}}
+lens_mass_axis_ratio                                                  q_{\mathrm{m22}}
+lens_mass_phi                                                         \phi_{\mathrm{m22}}
+lens_mass_einstein_radius                                             \theta_{\mathrm{m22}}
+lens_shear_magnitude                                                  \gamma_{\mathrm{sh22}}
+lens_shear_phi                                                        \phi_{\mathrm{sh22}}
+source_regularization_coefficients_0                                  \lambda1_{\mathrm{reg23}}

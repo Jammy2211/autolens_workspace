@@ -25,10 +25,14 @@ def simulate():
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(150, 150), pixel_scale=0.05, 
                                                                        psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
+    lens_galaxy = g.Galaxy(redshift=0.5,
+                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
                                                         einstein_radius=1.6))
-    source_galaxy = g.Galaxy(light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.7, phi=135.0, intensity=0.2,
+
+    source_galaxy = g.Galaxy(redshift=1.0,
+                             light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.7, phi=135.0, intensity=0.2,
                                                        effective_radius=0.2, sersic_index=2.5))
+
     tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                                  image_plane_grid_stack=image_plane_grid_stack)
 
@@ -39,14 +43,15 @@ ccd_data = simulate()
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Lets begin by setting up our grids (using the image we loaded above).
-image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=ccd_data.shape, 
-                                                                                  pixel_scale=ccd_data.pixel_scale,
-                                                                                  sub_grid_size=2)
+image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, sub_grid_size=2)
 
 # Our tracer will use the same lens galaxy and source galaxy that we used to simulate the image (although, becuase 
 # we're modeling the source with a pixel-grid, we don't need to supply its light profile).
-lens_galaxy = g.Galaxy(mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
                                                     einstein_radius=1.6))
+
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy()],
                                              image_plane_grid_stack=image_plane_grid_stack)
 

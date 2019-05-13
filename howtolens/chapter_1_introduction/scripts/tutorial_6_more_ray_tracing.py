@@ -34,17 +34,17 @@ print(image_plane_grid_stack.sub.shape) # Every regular-pixel is sub-gridded by 
 # 1) A light-profile, meaning its light will appear in the image-plane image.
 # 2) An external shear, which accounts for the deflection of light due to line-of-sight structures.
 # 3) A redshift, which the tracer will use to convert arc second coordinates to kpc.
-lens_galaxy = g.Galaxy(light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5,
+lens_galaxy = g.Galaxy(redshift=0.5,
+                       light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5,
                                                 sersic_index=2.5),
                        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6),
-                       shear=mp.ExternalShear(magnitude=0.05, phi=45.0),
-                       redshift=0.5)
+                       shear=mp.ExternalShear(magnitude=0.05, phi=45.0))
 print(lens_galaxy)
 
 # Lets also create a small satellite galaxy nearby the lens galaxy and at the same redshift.
-lens_satellite = g.Galaxy(light=lp.SphericalDevVaucouleurs(centre=(1.0, 0.0), intensity=2.0, effective_radius=0.2),
-                          mass=mp.SphericalIsothermal(centre=(1.0, 0.0), einstein_radius=0.4),
-                          redshift=0.5)
+lens_satellite = g.Galaxy(redshift=0.5,
+                          light=lp.SphericalDevVaucouleurs(centre=(1.0, 0.0), intensity=2.0, effective_radius=0.2),
+                          mass=mp.SphericalIsothermal(centre=(1.0, 0.0), einstein_radius=0.4))
 print(lens_satellite)
 
 # Lets have a quick look at the appearance of our lens galaxy and its satellite
@@ -59,14 +59,14 @@ galaxy_plotters.plot_deflections_x(galaxy=lens_satellite, grid=image_plane_grid_
 
 # Now, lets make two source galaxies at redshift 1.0. Lets not use the terms 'light' and 'mass' to setup the light and
 # mass profiles. Instead, lets use more descriptive names of what we think each component represents ( e.g. a 'bulge' and 'disk').
-source_galaxy_0 = g.Galaxy(bulge=lp.SphericalDevVaucouleurs(centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3),
+source_galaxy_0 = g.Galaxy(redshift=1.0,
+                           bulge=lp.SphericalDevVaucouleurs(centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3),
                            disk=lp.EllipticalExponential(centre=(0.1, 0.2), axis_ratio=0.8, phi=45.0, intensity=3.0,
-                                                       effective_radius=2.0),
-                           redshift=1.0)
+                                                       effective_radius=2.0))
 
-source_galaxy_1 = g.Galaxy(disk=lp.EllipticalExponential(centre=(-0.3, -0.5), axis_ratio=0.6, phi=80.0, intensity=8.0,
-                                                         effective_radius=1.0),
-                           redshift=1.0)
+source_galaxy_1 = g.Galaxy(redshift=1.0,
+                           disk=lp.EllipticalExponential(centre=(-0.3, -0.5), axis_ratio=0.6, phi=80.0, intensity=8.0,
+                                                         effective_radius=1.0))
 print(source_galaxy_0)
 print(source_galaxy_1)
 
@@ -103,23 +103,23 @@ ray_tracing_plotters.plot_ray_tracing_subplot(tracer=tracer)
 # In the previous example, we saw that the tracer had attributes we plotted (e.g. convergence, potential, etc.)
 # Now we've input a cosmology and galaxy redshifts, the tracer has attributes associated with its cosmology.
 print('Image-plane arcsec-per-kpc:')
-print(tracer.image_plane.arcsec_per_kpc_proper)
+print(tracer.image_plane.arcsec_per_kpc)
 print('Image-plane kpc-per-arcsec:')
-print(tracer.image_plane.kpc_per_arcsec_proper)
+print(tracer.image_plane.kpc_per_arcsec)
 print('Angular Diameter Distance to Image-plane:')
-print(tracer.image_plane.angular_diameter_distance_to_earth)
+print(tracer.image_plane.angular_diameter_distance_to_earth_in_units)
 
 print('Source-plane arcsec-per-kpc:')
-print(tracer.source_plane.arcsec_per_kpc_proper)
+print(tracer.source_plane.arcsec_per_kpc)
 print('Source-plane kpc-per-arcsec:')
-print(tracer.source_plane.kpc_per_arcsec_proper)
+print(tracer.source_plane.kpc_per_arcsec)
 print('Angular Diameter Distance to Source-plane:')
-print(tracer.source_plane.angular_diameter_distance_to_earth)
+print(tracer.source_plane.angular_diameter_distance_to_earth_in_units)
 
 print('Angular Diameter Distance From Image To Source Plane:')
-print(tracer.angular_diameter_distance_from_image_to_source_plane)
+print(tracer.angular_diameter_distance_from_image_to_source_plane_in_units)
 print('Lensing Critical Surface Density:')
-print(tracer.critical_surface_mass_density_kpc)
+print(tracer.critical_surface_density_between_planes_in_units)
 
 # And with that, we've completed tutorial 6. Try the following:
 

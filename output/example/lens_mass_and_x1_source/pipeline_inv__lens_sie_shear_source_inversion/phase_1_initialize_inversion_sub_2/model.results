@@ -1,0 +1,20 @@
+Most likely model, Likelihood = 3441.681
+
+source_pixelization_shape_0                                 23.13
+source_pixelization_shape_1                                 24.089
+source_regularization_coefficients_0                        1.082
+
+Most probable model (3.0 sigma limits)
+
+source_pixelization_shape_0                                 23.485 (22.481, 24.49)
+source_pixelization_shape_1                                 24.377 (23.504, 25.163)
+source_regularization_coefficients_0                        1.039 (0.867, 1.236)
+
+Most probable model (1.0 sigma limits)
+
+source_pixelization_shape_0                                 23.485 (23.135, 23.837)
+source_pixelization_shape_1                                 24.377 (24.105, 24.653)
+source_regularization_coefficients_0                        1.039 (0.971, 1.098)
+
+Constants
+

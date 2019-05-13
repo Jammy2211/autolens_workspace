@@ -56,9 +56,9 @@ image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_siz
 # Whereas before we called our galaxy's things like 'galaxy_with_light_profile', lets now refer to them by their role
 # in lensing, e.g. 'lens_galaxy' and 'source_galaxy'.
 mass_profile = mass_profiles.SphericalIsothermal(centre=(0.0,  0.0), einstein_radius=1.6)
-lens_galaxy = galaxy.Galaxy(mass=mass_profile)
+lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=mass_profile)
 light_profile = light_profiles.SphericalSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
-source_galaxy = galaxy.Galaxy(light=light_profile)
+source_galaxy = galaxy.Galaxy(redshift=1.0, light=light_profile)
 
 # Lets setup our image-plane. This plane takes the lens galaxy we made above and the grid-stack of
 # image-plane coordinates.

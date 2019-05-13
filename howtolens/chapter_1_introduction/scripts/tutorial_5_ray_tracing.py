@@ -15,13 +15,13 @@ image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_siz
 
 # For our lens galaxy, we'll use the same SIS mass profile as before.
 sis_mass_profile = mass_profiles.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
-lens_galaxy = galaxy.Galaxy(mass=sis_mass_profile)
+lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=sis_mass_profile)
 print(lens_galaxy)
 
 # And for our source galaxy, the same Sersic light profile
 sersic_light_profile = light_profiles.SphericalSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0,
                                                       sersic_index=1.0)
-source_galaxy = galaxy.Galaxy(light=sersic_light_profile)
+source_galaxy = galaxy.Galaxy(redshift=1.0, light=sersic_light_profile)
 print(source_galaxy)
 
 # Now, lets use the lens and source galaxies to ray-trace our grid-stack, using a 'tracer' from the ray-tracing

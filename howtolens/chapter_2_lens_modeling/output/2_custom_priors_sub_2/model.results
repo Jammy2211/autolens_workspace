@@ -1,0 +1,32 @@
+Most likely model, Likelihood = 6601.591
+
+source_galaxies_source_galaxy_light_centre_0                0.003
+source_galaxies_source_galaxy_light_centre_1                -0.001
+source_galaxies_source_galaxy_light_intensity_value         0.205
+lens_galaxies_lens_galaxy_mass_centre_0                     0.012
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.002
+lens_galaxies_lens_galaxy_mass_einstein_radius              1.601
+source_galaxies_source_galaxy_light_effective_radius        0.192
+
+Most probable model (3.0 sigma limits)
+
+source_galaxies_source_galaxy_light_centre_0                -0.0 (-0.007, 0.007)
+source_galaxies_source_galaxy_light_centre_1                -0.001 (-0.006, 0.005)
+source_galaxies_source_galaxy_light_intensity_value         0.208 (0.198, 0.219)
+lens_galaxies_lens_galaxy_mass_centre_0                     0.002 (-0.039, 0.042)
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.002 (-0.025, 0.02)
+lens_galaxies_lens_galaxy_mass_einstein_radius              1.6 (1.596, 1.604)
+source_galaxies_source_galaxy_light_effective_radius        0.191 (0.183, 0.197)
+
+Most probable model (1.0 sigma limits)
+
+source_galaxies_source_galaxy_light_centre_0                -0.0 (-0.003, 0.002)
+source_galaxies_source_galaxy_light_centre_1                -0.001 (-0.003, 0.001)
+source_galaxies_source_galaxy_light_intensity_value         0.208 (0.204, 0.211)
+lens_galaxies_lens_galaxy_mass_centre_0                     0.002 (-0.012, 0.016)
+lens_galaxies_lens_galaxy_mass_centre_1                     -0.002 (-0.01, 0.006)
+lens_galaxies_lens_galaxy_mass_einstein_radius              1.6 (1.599, 1.602)
+source_galaxies_source_galaxy_light_effective_radius        0.191 (0.188, 0.194)
+
+Constants
+
