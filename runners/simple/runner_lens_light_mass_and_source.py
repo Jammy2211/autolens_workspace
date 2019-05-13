@@ -53,7 +53,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # profile. Checkout _workspace/pipelines/examples/lens_sersic_sie_shear_source_sersic.py_' for a full description of
 # the pipeline.
 
-from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+from autolens_workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
 pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
 
