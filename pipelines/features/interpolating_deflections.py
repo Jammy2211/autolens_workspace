@@ -20,11 +20,11 @@ from autolens.model.profiles import mass_profiles as mp
 # experiences balances run-time and precision. In the 'autolens_workspace/tools/precision' folder, you can find
 # tools that allow you to experiment with the precision for different interpolation grids.
 
-# Whilst the 'nterp_pixel_scale can be manually specified in the pipeline, in this example we will make it
+# Whilst the 'interp_pixel_scale can be manually specified in the pipeline, in this example we will make it
 # an input parameter of the pipeline. This means we can run the pipeline with different pixel scales for different
 # runners.
 
-# We will also use phase tagging to ensure phases which use interpolation have a tag in their path, so it is clear
+# We will also use settings tagging to ensure phases which use interpolation have a tag in their path, so it is clear
 # that a phase uses this feature.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
@@ -62,15 +62,20 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
     pipeline_name = 'pl__interpolating_deflections'
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
-    # This tag is 'added' to the phase path, to make it clear what binning up is used. The bin_up_tag and phase
-    # name are shown for 3 example bin up factors:
+    # When a phase is passed a interp_pixel_scale, a settings tag is automatically generated and added to the phase path,
+    # to make it clear what interpolation was used. The settings tag, phase name and phase paths are shown for 3
+    # example bin up factors:
 
-    # interpolation_pixel_scale=None -> phase_path=phase_name
-    # interpolation_pixel_scale=0.1 -> phase_path=phase_name_interp_0.1
-    # interpolation_pixel_scale=0.05 -> phase_path=phase_name_interp_0.05
+    # interpolation_pixel_scale=0.1 -> phase_path=phase_name/settings_interp_0.1
+    # interpolation_pixel_scale=0.05 -> phase_path=phase_name/settings_interp_0.05
+
+    # If the interp_pixel_scalel is None, the tag is an empty string, thus not changing the settings tag:
+
+    # interpolation_pixel_scale=None -> phase_path=phase_name/settings
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -85,7 +90,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
     # In phase 1, we will fit the lens galaxy's mass and one source galaxy, where we:
 
-    # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+    # 1) Use an interpolation pixel scale of 0.1", to ensure fast deflection angle calculations.
 
     class LensSourceX1Phase(ph.LensSourcePlanePhase):
 
@@ -110,8 +115,8 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
     # In phase 2, we will fit the lens galaxy's mass and two source galaxies, where we:
 
-    # 1) Initialize the priors on the lens galaxy using the results of phase 1.
-    # 2) Initialize the priors on the first source galaxy using the results of phase 1.
+    # 1) Use the input interpolation pixel scale with (default) value 0.05", to ensure a more accurate modeling of the
+    #    mass profile.
 
     class LensSourceX2Phase(ph.LensSourcePlanePhase):
 

@@ -64,14 +64,16 @@ from autolens.model.inversion import regularization as reg
 # Prior Passing: Lens Mass (variable -> previous pipeline), Source Inversion (constant -> phase 1)
 # Notes: None
 
-# ***NOTE*** Performing this analysis in a pipeline composed of 5 consectutive phases it not ideal, and it is better to
-#            breaking the pipeline down into multiple pipelines. This is what is done in the 'pipelines/with_lens_light'
-#            folder, using the pipelines:
+# ***NOTE***
+#
+# Performing this analysis in a pipeline composed of 5 consectutive phases it not ideal, and it is better to
+# breaking the pipeline down into multiple pipelines. This is what is done in the 'pipelines/with_lens_light'
+# folder, using the pipelines:
 
-#            1) initializers/lens_sersic_sie_source_sersic_from_init.py (phases 1->3)
-#            2) initializers/lens_sersic_sie_source_inversion_from_pipeline.py (phases 4->5)
+# 1) initializers/lens_sersic_sie_source_sersic_from_init.py (phases 1->3)
+# 2) initializers/lens_sersic_sie_source_inversion_from_pipeline.py (phases 4->5)
 
-#            See runners/runner_adding_pipelines.py for more details on adding pipelines.
+# See runners/runner_adding_pipelines.py for more details on adding pipelines.
 
 def make_pipeline(
         phase_folders=None, tag_phases=True,
@@ -88,7 +90,8 @@ def make_pipeline(
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 

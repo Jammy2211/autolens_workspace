@@ -46,7 +46,8 @@ def make_pipeline(
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 

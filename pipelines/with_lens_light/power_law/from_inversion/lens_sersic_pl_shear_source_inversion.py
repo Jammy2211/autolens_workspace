@@ -98,17 +98,15 @@ def make_pipeline(
             self.source_galaxies.source.regularization = results.from_phase('phase_3_lens_sie_shear_refine_source_inversion').\
                 variable.source_galaxies.source.regularization
             
-    phase1 = LensSourcePhase(phase_name='phase_1_lens_sersic_pl_shear_source_inversion', phase_folders=phase_folders,
-                             tag_phases=tag_phases,
-                             lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                    mass=mp.EllipticalPowerLaw,
-                                                                    shear=mp.ExternalShear)),
-                             source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                      regularization=reg.Constant)),
-                             sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                             positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                             interp_pixel_scale=interp_pixel_scale,
-                             optimizer_class=nl.MultiNest)
+    phase1 = LensSourcePhase(
+        phase_name='phase_1_lens_sersic_pl_shear_source_inversion', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic,
+                                               mass=mp.EllipticalPowerLaw, shear=mp.ExternalShear)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                   regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 75
@@ -135,17 +133,15 @@ def make_pipeline(
             self.source_galaxies.source = results.from_phase('phase_1_lens_sersic_pl_shear_source_inversion').\
                 variable.source_galaxies.source
 
-    phase2 = InversionPhase(phase_name='phase_2_lens_sersic_pl_shear_refine_source_inversion', phase_folders=phase_folders,
-                            tag_phases=tag_phases,
-                            lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic,
-                                                                   mass=mp.EllipticalPowerLaw,
-                                                                   shear=mp.ExternalShear)),
-                            source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                      regularization=reg.Constant)),
-                            sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                            positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                            interp_pixel_scale=interp_pixel_scale,
-                            optimizer_class=nl.MultiNest)
+    phase2 = InversionPhase(
+        phase_name='phase_2_lens_sersic_pl_shear_refine_source_inversion', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic,
+                                               mass=mp.EllipticalPowerLaw, shear=mp.ExternalShear)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                  regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 20

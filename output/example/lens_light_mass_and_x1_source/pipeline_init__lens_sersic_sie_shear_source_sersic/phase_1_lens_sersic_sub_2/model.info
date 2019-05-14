@@ -1,9 +1,0 @@
-EllipticalSersic
-
-lens_centre_0                                               GaussianPrior, mean = 0.0, sigma = 0.3
-lens_centre_1                                               GaussianPrior, mean = 0.0, sigma = 0.3
-lens_axis_ratio                                             UniformPrior, lower_limit = 0.2, upper_limit = 1.0
-lens_phi                                                    UniformPrior, lower_limit = 0.0, upper_limit = 180.0
-lens_intensity                                              LogUniformPrior, lower_limit = 1e-06, upper_limit = 10.0
-lens_effective_radius                                       UniformPrior, lower_limit = 0.0, upper_limit = 4.0
-lens_sersic_index                                           UniformPrior, lower_limit = 0.8, upper_limit = 8.0

@@ -11,7 +11,7 @@ from autolens.model.profiles import mass_profiles as mp
 
 # In this pipeline, we'll demonstrate binning up - which allows us to fit a binned up version of an image in a phse of 
 # the pipeline. In this example, we will perform an initial analysis on an image binned up from a pixel scale of 0.05" 
-# to 0.01", which gives significant speed-up in run timme, and then refine the model in a second phase at the input
+# to 0.1", which gives significant speed-up in run timme, and then refine the model in a second phase at the input
 # resolution.
 
 # Whilst bin up factors can be manually specified in the pipeline, in this example we will make the bin up factor
@@ -19,7 +19,7 @@ from autolens.model.profiles import mass_profiles as mp
 # runners.
 
 # We will also use phase tagging to ensure phases which use binned up data have a tag in their path, so it is clear
-# that a phase uses this feature.
+# what settings a phases has when it uses this feature.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
 # the lens's light is omitted. This pipeline uses two phases:
@@ -33,7 +33,7 @@ from autolens.model.profiles import mass_profiles as mp
 # Prior Passing: None
 # Notes: Uses a bin up factor of x2
 
-# Phase 1:
+# Phase 2:
 
 # Description: Fits the lens and source model using unbinned data.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
@@ -53,15 +53,21 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     pipeline_name = 'pl__binning_up'
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
-    # This tag is 'added' to the phase path, to make it clear what binning up is used. The bin_up_tag and phase
-    # name are shown for 3 example bin up factors:
+    # When a phase is passed a bin_up_factor, a settings tag is automatically generated and added to the phase path,
+    # to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
+    # example bin up factors:
 
-    # bin_up_factor=1 -> phase_path=phase_name
-    # bin_up_factor=2 -> phase_path=phase_name_bin_up_factor_2
-    # bin_up_factor=3 -> phase_path=phase_name_bin_up_factor_3
+    # bin_up_factor=2 -> phase_path=phase_name/settings_bin_up_2
+    # bin_up_factor=3 -> phase_path=phase_name/settings_bin_up_3
+
+    # If the bin_up_facor is None or 1, the tag is an empty string, thus not changing the settings tag:
+
+    # bin_up_factor=None -> phase_path=phase_name/settings
+    # bin_up_factor=1 -> phase_path=phase_name/settings
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag/'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -76,7 +82,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # In phase 1, we will fit the lens galaxy's mass and one source galaxy, where we:
 
-    # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+    # 1) Bin up the image by the input factor specified, which is default 2.
 
     class LensSourceX1Phase(ph.LensSourcePlanePhase):
 
@@ -101,8 +107,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # In phase 2, we will fit the lens galaxy's mass and two source galaxies, where we:
 
-    # 1) Initialize the priors on the lens galaxy using the results of phase 1.
-    # 2) Initialize the priors on the first source galaxy using the results of phase 1.
+    # 1) Omit the bin up factor, thus performing the modeling at the image's native resolution.
 
     class LensSourceX2Phase(ph.LensSourcePlanePhase):
 
@@ -111,14 +116,13 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
             self.lens_galaxies.lens = results.from_phase('phase_1_x1_source').\
                 variable.lens_galaxies.lens
 
-            self.source_galaxies.source_0 = results.from_phase('phase_1_x1_source').\
-                variable.source_galaxies.source_0
+            self.source_galaxies.source = results.from_phase('phase_1_x1_source').\
+                variable.source_galaxies.source
 
     phase2 = LensSourceX2Phase(
         phase_name='phase_2_x2_source', phase_folders=phase_folders, tag_phases=True,
         lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
-        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
-                             source_1=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
         mask_function=mask_function,
         optimizer_class=nl.MultiNest)
 

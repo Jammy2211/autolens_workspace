@@ -59,15 +59,15 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
-    # A tag is 'added' to the phase path, to make it clear what binning up is used. The positions_threshold_tag
-    # and phase name are shown for 3 example inner mask radii values:
+    # A settings tag is automatically added to the phase path, making it clear the position threshold value used.
+    # The positions_threshold_tag and phase name are shown for 3 example inner mask radii values:
     
-    # positions_threshold=0.2 -> phase_path='phase_name_pos_0.20'
-    # positions_threshold=0.25, -> phase_path='phase_name_pos_0.25'
+    # positions_threshold=0.2 -> phase_path='phase_name/settings_pos_0.20'
+    # positions_threshold=0.25, -> phase_path='phase_name/settings_pos_0.25'
 
     # If the positions_threshold is None, the tag is an empty string, thus not changing the phase name:
 
-    # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name
+    # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name/settings
 
     ### PHASE 1 ###
 

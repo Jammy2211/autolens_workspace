@@ -1,3 +1,0 @@
-pipeline=pipeline_init__lens_sie_shear_source_sersic + pipeline_pl__lens_pl_shear_source_sersic + pipeline_subhalo__lens_pl_shear_subhalo_source_sersic
-phase=phase_1_lens_sie_shear_source_sersic
-data=None

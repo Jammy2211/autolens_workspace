@@ -139,19 +139,16 @@ def make_pipeline(
             self.source_galaxies.source.regularization = results.from_phase('phase_2_lens_sersic_pl_shear_refine_source_inversion').\
                 variable.source_galaxies.source.regularization
 
-    phase2 = GridPhase(phase_name='phase_2_subhalo_search', phase_folders=phase_folders,
-                       tag_phases=tag_phases,
-                       lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic, 
-                                                              mass=mp.EllipticalPowerLaw,
-                                                              shear=mp.ExternalShear),
-                                          subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
-                       source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                  regularization=reg.Constant)),
-                       optimizer_class=nl.MultiNest,
-                       sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                       positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                       interp_pixel_scale=interp_pixel_scale,
-                       number_of_steps=4)
+    phase2 = GridPhase(
+        phase_name='phase_2_subhalo_search', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic,
+                                               mass=mp.EllipticalPowerLaw, shear=mp.ExternalShear),
+                           subhalo=gm.GalaxyModel(redshift=redshift_lens, mass=mp.SphericalTruncatedNFWChallenge)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                   regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest, number_of_steps=4)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 20
@@ -184,18 +181,16 @@ def make_pipeline(
             self.source_galaxies.source.regularization = results.from_phase('phase_2_subhalo_search').\
                 best_result.variable.source_galaxies.source.regularization
 
-    phase3 = SubhaloPhase(phase_name='phase_3_subhalo_refine', phase_folders=phase_folders,
-                          tag_phases=tag_phases,
-                          lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic, 
-                                                                 mass=mp.EllipticalPowerLaw,
-                                                                 shear=mp.ExternalShear),
-                                             subhalo=gm.GalaxyModel(mass=mp.SphericalTruncatedNFWChallenge)),
-                          source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                     regularization=reg.Constant)),
-                          optimizer_class=nl.MultiNest,
-                          sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor,
-                          positions_threshold=positions_threshold, inner_mask_radii=inner_mask_radii,
-                          interp_pixel_scale=interp_pixel_scale)
+    phase3 = SubhaloPhase(
+        phase_name='phase_3_subhalo_refine', phase_folders=phase_folders, tag_phases=tag_phases,
+        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic,
+                                               mass=mp.EllipticalPowerLaw, shear=mp.ExternalShear),
+                           subhalo=gm.GalaxyModel(redshift=redshift_lens, mass=mp.SphericalTruncatedNFWChallenge)),
+        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, pixelization=pix.AdaptiveMagnification,
+                                                   regularization=reg.Constant)),
+        sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        optimizer_class=nl.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 80

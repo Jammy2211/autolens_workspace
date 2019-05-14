@@ -18,7 +18,7 @@ import os
 # in the runner. The first phase will use the a circular mask function with a circle of radius 3.0", but mask the
 # central regions of the image via the inner_mask_radii input variable.
 
-# We will use phase tagging to make it clear that the inner_mask_radii variable was used.
+# We will use settings tagging to make it clear that the inner_mask_radii variable was used.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
 # the lens's light is omitted. This pipeline uses two phases:
@@ -55,27 +55,29 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     pipeline_name = 'pl__inner_mask'
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
+    # When a phase is passed an inner_mask_radii, a settings tag is automatically generated and added to the phase
+    # path to make it clear what mask_radii was used. The settings tag, phase name and phase paths are shown for 2
+    # example inner mask radii:
+
+    # inner_mask_radii=0.2 -> phase_path='phase_name/settings_inner_mask_0.20'
+    # inner_mask_radii=0.25 -> phase_path='phase_name/settings_inner_mask_0.25'
+
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+
+    # If the inner_mask_radii is None, the tag is an empty string, thus not changing the settings tag:
+
+    # inner_mask_radii=None -> phase_path='phase_name/settings'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
-
-    # If phase tagging is on, a tag is 'added' to the phase name to make it clear what binning up is used. Phase names
-    # with their tags are shown for 2 example inner mask radii values:
-
-    # inner_mask_radii=0.2 -> phase_path='phase_name_inner_mask_0.20'
-    # inner_mask_radii=0.25 -> phase_path='phase_name_inner_mask_0.25'
-
-    # If the inner_mask_radii is None, the tag is an empty string, thus not changing the phase name:
-
-    # inner_mask_radii=None -> phase_path='phase_name'
 
     ### PHASE 1 ###
 
     # In phase 1, we will:
 
-    # 1) Specify a mask_function which uses a circular mask, but make the mask used in the analysis an annulus by
-    #    specifying inner_mask_radii. This variable masks all pixels within its input radius. This is
+    # 1) Specify a mask_function which uses a circular mask, but makes the mask used in the analysis an annulus by
+    #    specifying an inner_mask_radii. This variable masks all pixels within this input radius. This is
     #    equivalent to using a circular_annular mask, however because it is a phase input variable we can turn this
     #    masking on and off for different phases.
 
@@ -98,10 +100,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     # In phase 2, we will:
 
-    # 1) Initialize the priors on the lens galaxy's mass and source galaxy's light by linking them to those inferred
-    #    in phase 1.
-
-    # 2) Not specify a mask function to the phase, meaning that by default the custom mask passed to the pipeline when
+    # 1) Not specify a mask function to the phase, meaning that by default the custom mask passed to the pipeline when
     #    we run it will be used instead.
 
     class LensSubtractedPhase(ph.LensSourcePlanePhase):

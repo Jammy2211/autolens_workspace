@@ -9,7 +9,7 @@ from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
-# In this pipeline, we'll demonstrate sub-gridding - which defines the resolution of the sub-grid that is used to 
+# In this pipeline, we'll demonstrate sub-gridding, which defines the resolution of the sub-grid that is used to
 # oversample the computation of intensities and deflection angles. In general, a higher level of sub-gridding provides
 # numerically more precise results, at the expense of longer calculations and higher memory usage.
 
@@ -17,8 +17,8 @@ from autolens.model.profiles import mass_profiles as mp
 # an input parameter of the pipeline. This means we can run the pipeline with different sub grids for different
 # runners.
 
-# We will also use phase tagging to ensure phases which use different sub grid sizes gave a tag in their path, so it is
-# clear what value a phase uses.
+# We will also use phase tagging to ensure phases which use different sub grid sizes have a different settings tag in
+# their path, so it is clear what value a phase uses.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
 # the lens's light is omitted. This pipeline uses two phases:
@@ -52,15 +52,20 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     pipeline_name = 'pl__sub_gridding'
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
-    # This tag is 'added' to the phase path, to make it clear what sub-grid up is used. The sub-grid tag and phase
-    # name are shown for 3 example sub grid sizes:
+    # When a phase is passed a sub_grid_size, a settings tag is automatically generated and added to the phase path,
+    # to make it clear what sub-grid was used. The settings tag, phase name and phase paths are shown for 3
+    # example bin up factors:
 
-    # sub_grid_size=1 -> phase_path=phase_name_sub_1
-    # sub_grid_size=2 -> phase_path=phase_name_sub_2
-    # sub_grid_size=3 -> phase_path=phase_name_sub_3
+    # sub_grid_size=2 -> phase_path=phase_name/settings_sub_2
+    # sub_grid_size=3 -> phase_path=phase_name/settings_sub_3
+
+    # If the sub-grid size is 1, the tag is an empty string, thus not changing the settings tag:
+
+    # sub_grid_size=1 -> phase_path=phase_name/settings
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
+
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -75,7 +80,7 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # In phase 1, we will fit the lens galaxy's mass and one source galaxy, where we:
 
-    # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+    # 1) Use a sub-grid size of 2x2 in every image pixel.
 
     class LensSourceX1Phase(ph.LensSourcePlanePhase):
 
@@ -100,8 +105,7 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # In phase 2, we will fit the lens galaxy's mass and two source galaxies, where we:
 
-    # 1) Initialize the priors on the lens galaxy using the results of phase 1.
-    # 2) Initialize the priors on the first source galaxy using the results of phase 1.
+    # 1) Use a sub-grid size of 4x4 in every image pixel.
 
     class LensSourceX2Phase(ph.LensSourcePlanePhase):
 
