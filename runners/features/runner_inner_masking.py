@@ -28,6 +28,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # We simply import the inner masking pipeline and pass the inner_circular_mask_adii as an input parameter to specify
 # how large we want the inner circular mask to be (which for the pipeline below, is only used in phase 1).
 
-from workspace.pipelines.features import inner_masking
+from pipelines.features import inner_masking
 pipeline = inner_masking.make_pipeline(phase_folders=[data_type, data_name], inner_mask_radii=0.2)
 pipeline.run(data=ccd_data)

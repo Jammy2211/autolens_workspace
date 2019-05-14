@@ -46,6 +46,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, extract_array_from_m
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
 # 'pipeline.run() function.
 
-from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+from pipelines.simple import lens_sersic_sie_shear_source_sersic
 pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data, mask=mask)

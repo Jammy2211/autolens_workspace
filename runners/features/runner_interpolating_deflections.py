@@ -29,6 +29,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # We simply import the interplating deflections pipeline and pass the interpolation pixel scale up we want as an input
 # parameter (which for the pipeline below, is only used in phase 2).
 
-from workspace.pipelines.features import interpolating_deflections
+from pipelines.features import interpolating_deflections
 pipeline = interpolating_deflections.make_pipeline(phase_folders=[data_type, data_name], interp_pixel_scale=0.05)
 pipeline.run(data=ccd_data)

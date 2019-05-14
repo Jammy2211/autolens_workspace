@@ -97,7 +97,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from workspace.pipelines.with_lens_light.initialize import lens_sersic_exp_sie_shear_source_sersic
+from pipelines.with_lens_light.initialize import lens_sersic_exp_sie_shear_source_sersic
 
 pipeline_initialize = lens_sersic_exp_sie_shear_source_sersic.make_pipeline(
     pl_align_bulge_disk_centre=True, pl_align_bulge_disk_axis_ratio=True,

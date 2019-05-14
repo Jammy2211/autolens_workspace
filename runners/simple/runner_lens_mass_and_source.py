@@ -53,7 +53,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Checkout _workspace/pipelines/examples/lens_sie_shear_source_inversion.py_' for a full description of
 # the pipeline.
 
-from workspace.pipelines.simple import lens_sie_source_inversion
+from pipelines.simple import lens_sie_source_inversion
 pipeline = lens_sie_source_inversion.make_pipeline(phase_folders=[data_type, data_name])
 pipeline.run(data=ccd_data)
 

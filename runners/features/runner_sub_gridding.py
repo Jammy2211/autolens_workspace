@@ -28,6 +28,6 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # We simply import the binning up pipeline and pass the level of binning up we want as an input parameter (which
 # for the pipeline below, is only used in phase 2).
 
-from workspace.pipelines.features import sub_gridding
+from pipelines.features import sub_gridding
 pipeline = sub_gridding.make_pipeline(phase_folders=[data_type, data_name], sub_grid_size=4)
 pipeline.run(data=ccd_data)
