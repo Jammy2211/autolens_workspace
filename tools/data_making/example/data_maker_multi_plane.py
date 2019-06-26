@@ -36,7 +36,8 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.05
 
 # Simulate a simple Gaussian PSF for the image.
-psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=pixel_scale)
+psf = ccd.PSF.from_gaussian(
+    shape=(11, 11), sigma=0.05, pixel_scale=pixel_scale)
 
 # Setup the image-plane grid stack of the CCD array which will be used for generating the image-plane image of the
 # simulated strong lens.
@@ -86,11 +87,13 @@ simulated_ccd = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
     exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
 # Lets plot the simulated CCD data before we output it to files.
-ccd_plotters.plot_ccd_subplot(ccd_data=simulated_ccd)
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=simulated_ccd)
 
 # Finally, lets output our simulated data to the data path as .fits files.
-ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd,
-                            image_path=data_path + 'image.fits',
-                            psf_path=data_path + 'psf.fits',
-                            noise_map_path=data_path + 'noise_map.fits',
-                            overwrite=True)
+ccd.output_ccd_data_to_fits(
+    ccd_data=simulated_ccd,
+    image_path=data_path + 'image.fits',
+    psf_path=data_path + 'psf.fits',
+    noise_map_path=data_path + 'noise_map.fits',
+    overwrite=True)

@@ -1,0 +1,9 @@
+CollectionPriorModel
+
+galaxies_GalaxyModel
+
+galaxies_lens_SphericalIsothermal
+
+galaxies_lens_mass_Length
+
+galaxies_lens_mass_einstein_radius_value                                                       UniformPrior, lower_limit = 0.0, upper_limit = 4.0

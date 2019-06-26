@@ -25,7 +25,8 @@ tracer = ray_tracing.TracerImageSourcePlanes(
 
 # There are multiple pixelizations available in PyAutoLens, but for now we'll keep it simple and use a uniform
 # rectangular grid. As usual, the grid's 'shape' defines its (y,x) dimensions.
-rectangular = pix.Rectangular(shape=(25, 25))
+rectangular = pix.Rectangular(
+    shape=(25, 25))
 
 # By itself, a pixelization doesn't tell us much. It has no grid of coordinates, no image, and nothing which tells it
 # about the lens we're fitting. This information comes when we use the pixelization to set up a 'mapper'.

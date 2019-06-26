@@ -10,10 +10,12 @@ from autolens.plotters import grid_plotters
 # This coordinate grid is aligned with the image we analyze, such that each coordinate on a 'regular' grid maps to the
 # centre of each image-pixel. Lets make a regular grid using 100 x 100 pixels, with a pixel scale (arcsecond-to-pixel
 # conversion factor) of 0.05", giving us a a 5" x 5" grid.
-regular_grid = grids.RegularGrid.from_shape_and_pixel_scale(shape=(100, 100), pixel_scale=0.05)
+regular_grid = grids.RegularGrid.from_shape_and_pixel_scale(
+    shape=(100, 100), pixel_scale=0.05)
 
 # First, lets plot this regular grid, which shows that it is a fairly bland uniform grid of dots.
-grid_plotters.plot_grid(grid=regular_grid, title='Fairly Bland Uniform Grid Of Dots')
+grid_plotters.plot_grid(
+    grid=regular_grid, title='Fairly Bland Uniform Grid Of Dots')
 
 # We can print each coordinate of this regular grid, revealing that it consists of a set of arc-second coordinates
 # (where the spacing between each coordinate corresponds to the 'pixel_scale' of 0.05" defined above)

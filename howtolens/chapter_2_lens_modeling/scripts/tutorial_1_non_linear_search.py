@@ -76,7 +76,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
@@ -100,17 +101,23 @@ def simulate():
 
 # and this calls the function, setting us up with an image to model. Lets plot it
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # A GalaxyModel behaves analogously to the Galaxy objects we're now used to. However, whereas for a Galaxy we
 # manually specified the value of every parameter of its light-profiles and mass-profiles, for a GalaxyModel
 # these are inferred by the non-linear search.
 
 # Lets model the lens galaxy with an SIS mass profile (which is what it was simulated with).
-lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
+lens_galaxy_model = gm.GalaxyModel(
+    redshift=0.5,
+    mass=mp.SphericalIsothermal)
 
 # Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
-source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
+source_galaxy_model = gm.GalaxyModel(
+    redshift=1.0,
+    light=lp.SphericalExponential)
 
 # A phase takes our galaxy models and fits their parameters via a non-linear search (in this case, MultiNest). In this
 # example, we have a lens-plane and source-plane, so we use a LensSourcePlanePhase.
@@ -123,8 +130,12 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential
 
 phase = phase_imaging.LensSourcePlanePhase(
     phase_name='1_non_linear_search',
-    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    lens_galaxies=dict(
+        lens_galaxy=
+        lens_galaxy_model),
+    source_galaxies=dict(
+        source_galaxy=
+        source_galaxy_model),
     optimizer_class=af.MultiNest)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
@@ -143,7 +154,8 @@ print('MultiNest has finished run - you may now continue the notebook.')
 # python code to see the results.
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(
+    fit=results.most_likely_fit)
 
 # The fit looks good, and we've therefore found a model pretty close to the one we simulated the image with (you can
 # confirm this yourself if you want, by comparing the inferred parameters to those found in the simulate function above).

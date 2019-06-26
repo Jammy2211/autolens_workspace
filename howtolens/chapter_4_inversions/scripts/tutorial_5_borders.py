@@ -25,7 +25,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
@@ -49,7 +50,8 @@ def simulate():
 
 # Lets have a quick look at the image.
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # So, what is a border? In the image-plane, a border is the set of exterior pixels in a mask that are at, well, its
 # border. Lets plot the image with a circular mask, and tell our imaging plotter to plot the border as well.
@@ -79,7 +81,8 @@ def perform_fit_with_source_galaxy_mask_and_border(source_galaxy, mask, use_bord
 
     ccd_data = simulate()
 
-    lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
+    lens_data = ld.LensData(
+        ccd_data=ccd_data, mask=mask)
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,

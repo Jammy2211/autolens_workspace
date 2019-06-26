@@ -27,7 +27,9 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.1
 
 # First, load the CCD imaging data, so that the positions can be plotted over the strong lens image.
-image = ccd.load_image(image_path=data_path + 'image.fits', image_hdu=0, pixel_scale=pixel_scale)
+image = ccd.load_image(
+    image_path=data_path + 'image.fits', image_hdu=0,
+    pixel_scale=pixel_scale)
 
 # Now, create a set of positions, which is simply a python list of (y,x) values.
 positions = [[[0.8, 1.45], [1.78, -0.4], [-0.95, 1.38], [-0.83, -1.04]]]
@@ -42,11 +44,13 @@ positions = [[[0.8, 1.45], [1.78, -0.4], [-0.95, 1.38], [-0.83, -1.04]]]
 # positions = [[[1.0, 1.0], [2.0, 0.5]], [[-1.0, -0.1], [2.0, 2.0], [3.0, 3.0]]]
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
-data_plotters.plot_image(image=image, positions=positions)
+data_plotters.plot_image(
+    image=image, positions=positions)
 
 # Now we're happy with the positions, lets output them to the data folder of the lens, so that we can load them from a
 # .dat file in our pipelines!
-ccd.output_positions(positions=positions, positions_path=data_path + 'positions.dat')
+ccd.output_positions(
+    positions=positions, positions_path=data_path + 'positions.dat')
 
 
 # These commented out lines would create the positions for the example_multi_plane data.

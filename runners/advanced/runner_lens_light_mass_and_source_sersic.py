@@ -30,7 +30,8 @@ import os
 workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # Create the path to the data folder in your workspace.
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
@@ -51,10 +52,11 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=data_path, folder_names=[data_type, data_name])
 
 # This loads the CCD imaging data, as per usual.
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
-                                       psf_path=data_path + 'psf.fits',
-                                       noise_map_path=data_path + 'noise_map.fits',
-                                       pixel_scale=pixel_scale)
+ccd_data = ccd.load_ccd_data_from_fits(
+    image_path=data_path + 'image.fits',
+    psf_path=data_path + 'psf.fits',
+    noise_map_path=data_path + 'noise_map.fits',
+    pixel_scale=pixel_scale)
 
 # Plot CCD before running.
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)

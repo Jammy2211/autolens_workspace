@@ -13,14 +13,16 @@ from autolens.lens.plotters import lens_fit_plotters
 # images generated via a tracer, and by comparing to the simulated image we'll get diagostics about the quality of the fit.
 
 # You need to change the path below to the chapter 1 directory.
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/'
 
 # The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
 data_path = chapter_path + 'data/'
 
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
-                                       noise_map_path=data_path+'noise_map.fits',
-                                       psf_path=data_path + 'psf.fits', pixel_scale=0.1)
+ccd_data = ccd.load_ccd_data_from_fits(
+    image_path=data_path + 'image.fits',
+    noise_map_path=data_path+'noise_map.fits',
+    psf_path=data_path + 'psf.fits',
+    pixel_scale=0.1)
 
 # The variable ccd_data is a CCDData object, which is a 'package' of all components of the CCD data of the lens, in particular:
 
@@ -43,24 +45,29 @@ print(ccd_data.psf)
 
 # For the image we simulated, a 3" circular mask will do the job.
 
-mask = ma.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+mask = ma.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+
 print(mask) # 1 = True, which means the pixel is masked. Edge pixels are indeed masked.
 print(mask[48:53, 48:53]) # Whereas central pixels are False and therefore unmasked.
 
 # We can use a ccd_plotter to compare the mask and the image - this is useful if we really want to 'tailor' a
 # mask to the lensed source's light (which in this example, we won't).
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask)
 
 # We can also use the mask to 'zoom' our plot around the masked region only - meaning that if our image is very large,
 # we can focus-in on the lens and source galaxies.
 
 # You'll see this is an option for pretty much every plotter in PyAutoLens, and is something we'll do often throughout
 #  the tutorials.
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, zoom_around_mask=True)
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask, zoom_around_mask=True)
 
 # We can also remove all pixels output of the mask in the plot, which means that if bright pixels outside the mask
 # are messing up the color scheme and plot, they'll removed. Again, we'll do this throughout the code.
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
 
 # Now we've loaded the ccd data and created a mask, we use them to create a 'lens data' object, which we'll perform
 # using the lens_data module (imported as 'ld').
@@ -76,8 +83,11 @@ ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, extract_array_from_mask=Tr
 # 3) A grid-stack aligned to the ccd-imaging data's pixels: so the tracer's image-plane image is generated on the same
 #    (masked) grid as the image.
 
-lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
-ccd_plotters.plot_image(ccd_data=ccd_data)
+lens_data = ld.LensData(
+    ccd_data=ccd_data, mask=mask)
+
+ccd_plotters.plot_image(
+    ccd_data=ccd_data)
 
 # By printing its attribute, we can see that it does indeed contain the image, mask, psf and so on
 print('Image:')
@@ -129,8 +139,11 @@ ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
 # 4) Sums up these chi-squared values and converts them to a 'likelihood', which quantities how good the tracer's fit
 #    to the data was (higher likelihood = better fit).
 
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
-lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+fit = lens_fit.LensDataFit.for_data_and_tracer(
+    lens_data=lens_data, tracer=tracer)
+
+lens_fit_plotters.plot_fit_subplot(
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # We can print the fit's attributes - if we don't specify where we'll get all zeros, as the edges were masked:
 print('Model-Image Edge Pixels:')
@@ -174,9 +187,11 @@ source_galaxy = g.Galaxy(
 tracer = ray_tracing.TracerImageSourcePlanes(
     lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=lens_data.grid_stack)
 
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = lens_fit.LensDataFit.for_data_and_tracer(
+    lens_data=lens_data, tracer=tracer)
 
-lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+lens_fit_plotters.plot_fit_subplot(
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # We now observe residuals to appear at the locations the source galaxy was observed, which
 # corresponds to an increase in chi-squareds (which determines our goodness-of-fit).
@@ -198,10 +213,15 @@ source_galaxy = g.Galaxy(
     light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.7, phi=65.0, intensity=1.0, effective_radius=0.4,
                               sersic_index=3.5))
 
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=lens_data.grid_stack)
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
-lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
+    image_plane_grid_stack=lens_data.grid_stack)
+
+fit = lens_fit.LensDataFit.for_data_and_tracer(
+    lens_data=lens_data, tracer=tracer)
+
+lens_fit_plotters.plot_fit_subplot(
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # Clearly, the model provides a terrible fit, and this tracer is not a plausible representation of
 # the image-data  (of course, we already knew that, given that we simulated it!)

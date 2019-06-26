@@ -28,14 +28,16 @@ from autolens.lens.plotters import ray_tracing_plotters
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/'
-chapter_path = '/home/jammy/PyCharm/Projects/AutoLens/workspace/howtolens/chapter_1_introduction/'
+chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/'
 
 # The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
 data_path = chapter_path + 'data/'
 
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
-                                       noise_map_path=data_path+'noise_map.fits',
-                                       psf_path=data_path + 'psf.fits', pixel_scale=0.1)
+ccd_data = ccd.load_ccd_data_from_fits(
+    image_path=data_path + 'image.fits',
+    noise_map_path=data_path+'noise_map.fits',
+    psf_path=data_path + 'psf.fits',
+    pixel_scale=0.1)
 
 mask = ma.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
 
@@ -81,21 +83,32 @@ print()
 # Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested
 # in. For example, if we want to plot the image of the source galaxy mass profile, we can do this in a variety of
 # different ways
-ray_tracing_plotters.plot_image_plane_image(tracer=fit.tracer)
-plane_plotters.plot_image_plane_image(plane=fit.tracer.source_plane)
-galaxy_plotters.plot_intensities(galaxy=fit.tracer.source_plane.galaxies[0], grid=fit.tracer.source_plane.grids[0].regular)
+ray_tracing_plotters.plot_image_plane_image(
+    tracer=fit.tracer)
+
+plane_plotters.plot_image_plane_image(
+    plane=fit.tracer.source_plane)
+
+galaxy_plotters.plot_intensities(
+    galaxy=fit.tracer.source_plane.galaxies[0],
+    grid=fit.tracer.source_plane.grids[0].regular)
 
 # However, as our fit and ray-tracing becomes more complex, it is useful to know how to decompose their different
 # attributes to extract different things about them. For example, we made our source-galaxy above with two light
 # profiles, a 'bulge' and 'disk. We can plot the image-plane image of each component individually, if we know how to
 # break-up the different components of the fit and tracer.
-profile_plotters.plot_intensities(light_profile=fit.tracer.source_plane.galaxies[0].bulge,
-                                  grid=fit.tracer.source_plane.grid_stack.regular, title='Bulge Image-Plane Image')
-profile_plotters.plot_intensities(light_profile=fit.tracer.source_plane.galaxies[0].disk,
-                                  grid=fit.tracer.source_plane.grid_stack.regular, title='Disk Image-Plane Image')
+profile_plotters.plot_intensities(
+    light_profile=fit.tracer.source_plane.galaxies[0].bulge,
+    grid=fit.tracer.source_plane.grid_stack.regular, title='Bulge Image-Plane Image')
+
+profile_plotters.plot_intensities(
+    light_profile=fit.tracer.source_plane.galaxies[0].disk,
+    grid=fit.tracer.source_plane.grid_stack.regular,
+    title='Disk Image-Plane Image')
 
 # The fit also has the lensing image, so we can plot the image using the fit too, if we so desire
-ccd_plotters.plot_ccd_subplot(ccd_data=lens_data.ccd_data)
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=lens_data.ccd_data)
 
 # And, we're done, not just with the tutorial, but the chapter!
 

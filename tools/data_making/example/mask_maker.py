@@ -26,17 +26,22 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.1
 
 # First, load the CCD imaging data, so that the mask can be plotted over the strong lens image.
-image = ccd.load_image(image_path=data_path + 'image.fits', image_hdu=0, pixel_scale=pixel_scale)
+image = ccd.load_image(
+    image_path=data_path + 'image.fits', image_hdu=0,
+    pixel_scale=pixel_scale)
 
 # Now, create a mask for this data, using the mask function's we're used to. I'll use a circular-annular mask here,
 # but I've commented over options you might want to use (feel free to experiment!)
 
-mask = msk.Mask.circular_annular(shape=image.shape, pixel_scale=image.pixel_scale,
-                                 inner_radius_arcsec=0.5, outer_radius_arcsec=2.5, centre=(0.0, 0.0))
+mask = msk.Mask.circular_annular(
+    shape=image.shape, pixel_scale=image.pixel_scale,
+    inner_radius_arcsec=0.5, outer_radius_arcsec=2.5, centre=(0.0, 0.0))
 
 # Now lets plot the image and mask, so we can check that the mask includes the regions of the image we want.
-data_plotters.plot_image(image=image, mask=mask)
+data_plotters.plot_image(
+    image=image, mask=mask)
 
 # Now we're happy with the mask, lets output it to the data folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-msk.output_mask_to_fits(mask=mask, mask_path=data_path + 'mask.fits', overwrite=True)
+msk.output_mask_to_fits(
+    mask=mask, mask_path=data_path + 'mask.fits', overwrite=True)

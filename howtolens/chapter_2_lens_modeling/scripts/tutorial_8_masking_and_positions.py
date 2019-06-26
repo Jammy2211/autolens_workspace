@@ -55,27 +55,37 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # module and pass it to a ccd plotter. You can then check visually if the mask is an appropriate size or not.
 # Below, we choose an inner radius that cuts into our lensed source galaxy - clearly this isn't a good mask.
 mask = msk.Mask.circular_annular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, inner_radius_arcsec=1.4, outer_radius_arcsec=2.4)
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
+    inner_radius_arcsec=1.4, outer_radius_arcsec=2.4)
 
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data, mask=mask,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # So, lets decrease the inner radius to correct for this
 mask = msk.Mask.circular_annular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
+    inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
 
 ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+    ccd_data=ccd_data, mask=mask,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # When we run the phase, we don't pass it the mask as an array. Instead, we pass it the mask as a function. The reason
 # for this will become clear in the next chapter, but for now I would say you just accept this syntax.
 def mask_function():
-    return msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-                                     inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
+    return msk.Mask.circular_annular(
+        shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
+        inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
 
 phase_with_custom_mask = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0)),
     mask_function=mask_function, # <- We input the mask function here
     optimizer_class=af.MultiNest)
 
@@ -121,8 +131,12 @@ ccd_plotters.plot_ccd_subplot(
 # We can then tell our phase to use these positions in the analysis.
 phase_with_positions = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0)),
     positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
     optimizer_class=af.MultiNest)
 
@@ -140,9 +154,11 @@ def simulate_two_source_galaxies():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
@@ -167,18 +183,25 @@ def simulate_two_source_galaxies():
     return ccd_simulated
 
 ccd_data = simulate_two_source_galaxies()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # To specify the positions, we break the positions list into two cells. They will be plotted in different colours to
 # represent the fact they trace from different source galaxies.
 ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
+    ccd_data=ccd_data,
+    positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
 phase_with_x2_positions = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0)),
     positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
     optimizer_class=af.MultiNest)
 

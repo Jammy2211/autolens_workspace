@@ -18,8 +18,9 @@ psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
 # To simulate ccd data, we use a special type of grid. This grid pads its 2D dimensions relative to the PSF-shape,
 # to ensure that the edge's of our simulated image are not degraded.
-image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(100, 100), pixel_scale=0.1,
-                                                                   psf_shape=psf.shape)
+image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+    shape=(100, 100), pixel_scale=0.1, psf_shape=psf.shape)
+
 print(image_plane_grid_stack.regular.image_shape)
 print(image_plane_grid_stack.regular.padded_shape)
 
@@ -33,8 +34,9 @@ source_galaxy = g.Galaxy(
     light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
                               sersic_index=2.5))
 
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=image_plane_grid_stack)
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
+    image_plane_grid_stack=image_plane_grid_stack)
 
 # Lets look at the tracer's image-plane image - this is the image we'll be simulating.
 ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
@@ -67,7 +69,9 @@ chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapt
 data_path = chapter_path + 'data/'
 
 # Now output our simulated data to hard-disk.
-ccd.output_ccd_data_to_fits(ccd_data=simulated_ccd,
-                            image_path=data_path+'image.fits',
-                            noise_map_path=data_path+'noise_map.fits',
-                            psf_path=data_path+'psf.fits', overwrite=True)
+ccd.output_ccd_data_to_fits(
+    ccd_data=simulated_ccd,
+    image_path=data_path+'image.fits',
+    noise_map_path=data_path+'noise_map.fits',
+    psf_path=data_path+'psf.fits',
+    overwrite=True)

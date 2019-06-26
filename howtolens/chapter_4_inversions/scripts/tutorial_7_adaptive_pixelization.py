@@ -25,7 +25,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(150, 150), pixel_scale=0.05, psf_shape=(11, 11))
@@ -48,18 +49,21 @@ def simulate():
 
 # Lets quickly remind ourselves of the image, and the 3.0" circular mask we'll use to mask it.
 ccd_data = simulate()
-mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+mask = msk.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
 # ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 
 # The lines of code below do everything we're used to, that is, setup an image and its grid stack, mask it, trace it
 # via a tracer, setup the rectangular mapper, etc.
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
-                                                    einstein_radius=1.6))
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6))
 
-lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
+lens_data = ld.LensData(
+    ccd_data=ccd_data, mask=mask)
 
-adaptive = pix.VoronoiMagnification(shape=(10, 20))
+adaptive = pix.VoronoiMagnification(
+    shape=(10, 20))
 
 sparse_to_regular_grid = grids.SparseToRegularGrid.from_unmasked_2d_grid_shape_and_regular_grid(
     unmasked_sparse_shape=adaptive.shape, regular_grid=lens_data.grid_stack.regular)
@@ -67,18 +71,22 @@ sparse_to_regular_grid = grids.SparseToRegularGrid.from_unmasked_2d_grid_shape_a
 image_plane_grid_stack = lens_data.grid_stack.new_grid_stack_with_grids_added(
     pixelization_grid=sparse_to_regular_grid.sparse, regular_to_pixelization=sparse_to_regular_grid.regular_to_sparse)
 
-image_plane = pl.Plane(grid_stack=image_plane_grid_stack, galaxies=[lens_galaxy])
+image_plane = pl.Plane(
+    grid_stack=image_plane_grid_stack, galaxies=[lens_galaxy])
+
 source_plane_grid_stack = image_plane.trace_grid_stack_to_next_plane()
 
 # plt.scatter(x=pix_grid.regular_grid[:,1], y=pix_grid.regular_grid[:,0])
 # plt.show()
 
-mapper = adaptive.mapper_from_grid_stack_and_border(grid_stack=source_plane_grid_stack, border=None)
+mapper = adaptive.mapper_from_grid_stack_and_border(
+    grid_stack=source_plane_grid_stack, border=None)
 
 
-inversion = inv.Inversion(image_1d=lens_data.image_1d, noise_map_1d=lens_data.noise_map_1d,
-                          convolver=lens_data.convolver_mapping_matrix, mapper=mapper,
-                          regularization=reg.Constant(coefficients=(1.0,)))
+inversion = inv.Inversion(
+    image_1d=lens_data.image_1d, noise_map_1d=lens_data.noise_map_1d,
+    convolver=lens_data.convolver_mapping_matrix, mapper=mapper,
+    regularization=reg.Constant(coefficients=(1.0,)))
 
 # Now lets plot our rectangular mapper with the image.
 # mapper_plotters.plot_image_and_mapper(ccd_data=ccd_data, mapper=mapper, mask=mask, should_plot_grid=True)
@@ -93,8 +101,17 @@ inversion = inv.Inversion(image_1d=lens_data.image_1d, noise_map_1d=lens_data.no
 # So what is wrong with the grid? Well, first, lets think about the source reconstruction.
 # inversion_plotters.plot_reconstructed_pixelization(inversion=inversion, should_plot_centres=True)
 
-source_galaxy = g.Galaxy(redshift=1.0, pixelization=adaptive, regularization=reg.Constant(coefficients=(1.0,)))
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=image_plane_grid_stack)
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
-lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+source_galaxy = g.Galaxy(
+    redshift=1.0,
+    pixelization=adaptive,
+    regularization=reg.Constant(coefficients=(1.0,)))
+
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
+    image_plane_grid_stack=image_plane_grid_stack)
+
+fit = lens_fit.LensDataFit.for_data_and_tracer(
+    lens_data=lens_data, tracer=tracer)
+
+lens_fit_plotters.plot_fit_subplot(
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)

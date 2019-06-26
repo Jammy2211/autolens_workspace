@@ -65,7 +65,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
@@ -91,7 +92,9 @@ def simulate():
 
 # Now lets simulate the image as ccd data, which we'll fit using the pipeline.
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # To make a pipeline, we call one long function which is written in its own Python module,
 # '_tutorial_1_pipeline_lens_and_source.py_'. Before we check it out, lets get the pipeline running. To do this, we

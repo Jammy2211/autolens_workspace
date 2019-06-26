@@ -10,21 +10,25 @@ from autolens.lens.plotters import ray_tracing_plotters
 # lens configuration as the previous tutorial, but with a lot less lines of code!
 
 # Let use the same grid-stack we've all grown to know and love by now!
-image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(100, 100), pixel_scale=0.05,
-                                                                                  sub_grid_size=2)
+image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
 
 # For our lens galaxy, we'll use the same SIS mass profile as before.
 sis_mass_profile = mass_profiles.SphericalIsothermal(
     centre=(0.0, 0.0), einstein_radius=1.6)
 
-lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=sis_mass_profile)
+lens_galaxy = galaxy.Galaxy(
+    redshift=0.5, mass=sis_mass_profile)
 print(lens_galaxy)
 
 # And for our source galaxy, the same Sersic light profile
 sersic_light_profile = light_profiles.SphericalSersic(
     centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
 
-source_galaxy = galaxy.Galaxy(redshift=1.0, light=sersic_light_profile)
+source_galaxy = galaxy.Galaxy(
+    redshift=1.0,
+    light=sersic_light_profile)
+
 print(source_galaxy)
 
 # Now, lets use the lens and source galaxies to ray-trace our grid-stack, using a 'tracer' from the ray-tracing
@@ -54,9 +58,15 @@ print('Regular-grid source-plane coordinate 3')
 print(tracer.source_plane.grid_stack.regular[2])
 
 # We can use the plane_plotter to plot these grids, like we did before.
-plane_plotters.plot_plane_grid(plane=tracer.image_plane, title='Image-plane Grid')
-plane_plotters.plot_plane_grid(plane=tracer.source_plane, title='Source-plane Grid')
-plane_plotters.plot_plane_grid(plane=tracer.source_plane, axis_limits=[-0.1, 0.1, -0.1, 0.1], title='Source-plane Grid')
+plane_plotters.plot_plane_grid(
+    plane=tracer.image_plane, title='Image-plane Grid')
+
+plane_plotters.plot_plane_grid(
+    plane=tracer.source_plane, title='Source-plane Grid')
+
+plane_plotters.plot_plane_grid(
+    plane=tracer.source_plane, axis_limits=[-0.1, 0.1, -0.1, 0.1], title='Source-plane Grid')
+
 
 # PyAutoLens has tools for plotting a tracer. A ray-tracing subplot plots the following:
 
@@ -66,7 +76,8 @@ plane_plotters.plot_plane_grid(plane=tracer.source_plane, axis_limits=[-0.1, 0.1
 # 4) The image-plane gravitational potential, computed using the lens galaxy's mass profile.
 # 5) The image-plane deflection angles, computed using the lens galaxy's mass profile.
 
-ray_tracing_plotters.plot_ray_tracing_subplot(tracer=tracer)
+ray_tracing_plotters.plot_ray_tracing_subplot(
+    tracer=tracer)
 
 # Just like for a plane, these attributes can be accessed by print statements (converted to 2D NumPy
 # arrays the same dimensions as our input grid-stack!).
@@ -110,7 +121,9 @@ print(tracer.image_plane.convergence[1, 0])
 
 # You can also plot the above attributes on individual figures, using appropriate ray-tracing plotter (I've left most
 # commented out again for convinience)
-ray_tracing_plotters.plot_convergence(tracer=tracer)
+ray_tracing_plotters.plot_convergence(
+    tracer=tracer)
+
 # ray_tracing_plotters.plot_potential(tracer=tracer)
 # ray_tracing_plotters.plot_deflections_y(tracer=tracer)
 #ray_tracing_plotters.plot_deflections_x(tracer=tracer)

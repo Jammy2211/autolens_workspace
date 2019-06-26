@@ -32,7 +32,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
@@ -59,7 +60,9 @@ def simulate():
 
 # Simulate the image and plot it.
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 ### Approach 1 -  Prior Tuning ###
 
@@ -142,8 +145,15 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 # of parameter space.
 custom_prior_phase = CustomPriorPhase(
     phase_name='4_tuned_priors',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
@@ -190,19 +200,32 @@ class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
         # In the pass priors function, we can 'pair' any two parameters by setting them equal to one another. This
         # removes the parameter on the left-hand side of the pairing from the lens model, such that is always assumes
         # the same value as the parameter on the right-hand side.
-        self.lens_galaxies.lens.mass.centre_0 = self.lens_galaxies.lens.light.centre_0
+        self.lens_galaxies.lens.mass.centre_0 = \
+            self.lens_galaxies.lens.light.centre_0
 
         # Now, the mass-profile's x coordinate will only use the x coordinate of the light profile. Lets do this with
         # the remaining geometric parameters of the light and mass profiles
-        self.lens_galaxies.lens.mass.centre_1 = self.lens_galaxies.lens.light.centre_1
-        self.lens_galaxies.lens.mass.axis_ratio = self.lens_galaxies.lens.light.axis_ratio
-        self.lens_galaxies.lens.mass.phi = self.lens_galaxies.lens.light.phi
+        self.lens_galaxies.lens.mass.centre_1 = \
+            self.lens_galaxies.lens.light.centre_1
+
+        self.lens_galaxies.lens.mass.axis_ratio = \
+            self.lens_galaxies.lens.light.axis_ratio
+
+        self.lens_galaxies.lens.mass.phi = \
+            self.lens_galaxies.lens.light.phi
 
 # Again, we create this phase and run it. The non-linear search has a less complex parameter space to seach, and thus
 light_traces_mass_phase = LightTracesMassPhase(
     phase_name='4_light_traces_mass',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
@@ -247,8 +270,15 @@ lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likel
 
 custom_non_linear_phase = phase_imaging.LensSourcePlanePhase(
     phase_name='4_custom_non_linear',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 # The 'optimizer' below is MultiNest, the non-linear search we're using.

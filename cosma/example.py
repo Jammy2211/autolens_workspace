@@ -49,7 +49,8 @@ cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names
 workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Lets now use the above paths to set the config path and output path for our Cosma run.
-af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=cosma_output_path)
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + 'config', output_path=cosma_output_path)
 
 # On Cosma, there are two systems we can submit to, called 'cordelia' and 'cosma'. The similarities and differences
 # between these systems are as follows:
@@ -112,20 +113,24 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_data_path, folder_names=[data_name])
 
 # This loads the CCD imaging data, as per usual.
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
-                                       psf_path=data_path + 'psf.fits',
-                                       noise_map_path=data_path + 'noise_map.fits',
-                                       pixel_scale=pixel_scale)
+ccd_data = ccd.load_ccd_data_from_fits(
+    image_path=data_path + 'image.fits',
+    psf_path=data_path + 'psf.fits',
+    noise_map_path=data_path + 'noise_map.fits',
+    pixel_scale=pixel_scale)
 
 from workspace.pipelines.no_lens_light.initialize import lens_sie_shear_source_sersic
 from workspace.pipelines.no_lens_light.power_law.from_initialize import lens_pl_shear_source_sersic
 from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
-pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
 
-pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
 
-pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
 
 pipeline = pipeline_initializer + pipeline_power_law + pipeline_subhalo
 

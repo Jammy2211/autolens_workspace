@@ -84,8 +84,8 @@ from autolens.lens.plotters import lens_fit_plotters
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-af.conf.instance = af.conf.Config(config_path=chapter_path+'configs/2_parameter_space_and_priors',
-                            output_path=chapter_path+"output")
+af.conf.instance = af.conf.Config(
+    config_path=chapter_path+'configs/2_parameter_space_and_priors', output_path=chapter_path+"output")
 
 # This function simulates the image we'll fit in this tutorial - which is identical to the previous tutorial.
 def simulate():
@@ -94,7 +94,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
@@ -118,13 +119,20 @@ def simulate():
 
 # Again, lets setup the simulated image
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 #  To change the priors on specific parameters, we create our galaxy models and use a custom-phase and its
 # 'pass_priors' function to overwrite priors on specific parameters.
 
-lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
-source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
+lens_galaxy_model = gm.GalaxyModel(
+    redshift=0.5,
+    mass=mp.SphericalIsothermal)
+
+source_galaxy_model = gm.GalaxyModel(
+    redshift=1.0,
+    light=lp.SphericalExponential)
 
 class CustomPhase(phase_imaging.LensSourcePlanePhase):
 
@@ -168,8 +176,10 @@ class CustomPhase(phase_imaging.LensSourcePlanePhase):
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
 custom_phase = CustomPhase(
     phase_name='2_custom_priors',
-    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    lens_galaxies=dict(
+        lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(
+        source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors'
@@ -178,7 +188,8 @@ print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_
 
 results_custom = custom_phase.run(data=ccd_data)
 
-lens_fit_plotters.plot_fit_subplot(fit=results_custom.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(
+    fit=results_custom.most_likely_fit)
 
 print('MultiNest has finished run - you may now continue the notebook.')
 

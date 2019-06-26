@@ -31,7 +31,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
@@ -90,6 +91,7 @@ from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_
 
 pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
     phase_folders=['howtolens', 'c3_t2_x2_lens_galaxies'])
+
 pipeline_x2_galaxies.run(data=ccd_data)
 
 # Okay, great, nows a good time to read through the '_tutorial_2_pipeline_x2_lens_galaxies.py_' pipeline, to get a

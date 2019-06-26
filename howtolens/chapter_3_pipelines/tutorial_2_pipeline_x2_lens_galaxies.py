@@ -46,7 +46,9 @@ def make_pipeline(phase_folders=None):
     # our fit.
 
     def mask_function(image):
-        return msk.Mask.circular(image.shape, pixel_scale=image.pixel_scale, radius_arcsec=0.5, centre=(0.0, -1.0))
+        return msk.Mask.circular(
+            shape=image.shape, pixel_scale=image.pixel_scale,
+            radius_arcsec=0.5, centre=(0.0, -1.0))
 
     class LeftLensPhase(phase_imaging.LensPlanePhase):
 

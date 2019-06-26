@@ -120,11 +120,20 @@ galaxy_with_many_profiles = galaxy.Galaxy(
 # Suffice to say, the galaxy's images, convergence, potential and deflections look pretty
 # interesting.
 
-galaxy_plotters.plot_intensities(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
-galaxy_plotters.plot_convergence(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
-galaxy_plotters.plot_potential(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
-galaxy_plotters.plot_deflections_y(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
-galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+galaxy_plotters.plot_intensities(
+    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+
+galaxy_plotters.plot_convergence(
+    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+
+galaxy_plotters.plot_potential(
+    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+
+galaxy_plotters.plot_deflections_y(
+    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
+
+galaxy_plotters.plot_deflections_x(
+    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular)
 
 # And we're done. Lets finished by just thinking about one question:
 

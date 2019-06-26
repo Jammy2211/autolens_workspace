@@ -12,7 +12,9 @@ import os
 # specific sub gridding functionality is used, I have deleted all comments not related to that feature.
 
 workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+conf.instance = af.conf.Config(
+    config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+
 data_type = 'example'
 data_name = 'lens_mass_and_x1_source'
 pixel_scale = 0.1
@@ -20,10 +22,11 @@ pixel_scale = 0.1
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=['data', data_type, data_name])
 
-ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
-                                       psf_path=data_path + 'psf.fits',
-                                       noise_map_path=data_path + 'noise_map.fits',
-                                       pixel_scale=pixel_scale)
+ccd_data = ccd.load_ccd_data_from_fits(
+    image_path=data_path + 'image.fits',
+    psf_path=data_path + 'psf.fits',
+    noise_map_path=data_path + 'noise_map.fits',
+    pixel_scale=pixel_scale)
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 

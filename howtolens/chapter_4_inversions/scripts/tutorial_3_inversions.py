@@ -25,7 +25,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
@@ -53,7 +54,8 @@ mask = msk.Mask.circular_annular(
     shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
     inner_radius_arcsec=1.0, outer_radius_arcsec=2.2)
 
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask)
 
 # Next, lets set this image up as lens data, and setup a tracer using the input lens galaxy model (we don't need
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
@@ -64,7 +66,7 @@ lens_galaxy = g.Galaxy(
     mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
 
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy()],
+    lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=lens_data.grid_stack)
 
 # We'll use another rectangular pixelization and mapper to perform the reconstruction
@@ -102,7 +104,8 @@ def simulate_complex_source():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
@@ -145,7 +148,7 @@ def simulate_complex_source():
         lens_galaxies=[lens_galaxy],
         source_galaxies=[source_galaxy_0, source_galaxy_1, source_galaxy_2,
                          source_galaxy_3, source_galaxy_4, source_galaxy_5],
-    image_plane_grid_stack=image_plane_grid_stack)
+        image_plane_grid_stack=image_plane_grid_stack)
 
     return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
@@ -155,12 +158,15 @@ def simulate_complex_source():
 # but I have made the mask slightly larger for this source.
 ccd_data = simulate_complex_source()
 
-mask = msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-                                 inner_radius_arcsec=0.1, outer_radius_arcsec=3.2)
+mask = msk.Mask.circular_annular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
+    inner_radius_arcsec=0.1, outer_radius_arcsec=3.2)
 
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask)
 
-lens_data = ld.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
+lens_data = ld.LensData(
+    ccd_data=ccd_data, mask=mask, sub_grid_size=1)
 
 tracer = ray_tracing.TracerImageSourcePlanes(
     lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy(redshift=1.0)],

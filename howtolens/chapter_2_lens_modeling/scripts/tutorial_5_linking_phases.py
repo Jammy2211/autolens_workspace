@@ -50,7 +50,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
         shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
@@ -77,7 +78,9 @@ def simulate():
 
 # Simulate the image and set it up.
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # Lets use the same LightTracesMass Phase that we did previously, but we'll make it slightly less complex then before.
 
@@ -118,9 +121,17 @@ class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
 # There is also an 'align_centres' method, but because we are fixing all centres to floats we have ommitted it.
 phase_1 = LightTracesMassPhase(
     phase_name='5_linking_phase_1',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal,
-                                           align_axis_ratios=True, align_orientations=True)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal,
+            align_axis_ratios=True,
+            align_orientations=True)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 # Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum likelihood
@@ -139,8 +150,9 @@ phase_1_results = phase_1.run(data=ccd_data)
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # And indeed, we get a reasonably good model and fit to the data - in a much shorter space of time!
-lens_fit_plotters.plot_fit_subplot(fit=phase_1_results.most_likely_fit, should_plot_mask=True,
-                                   extract_array_from_mask=True, zoom_around_mask=True)
+lens_fit_plotters.plot_fit_subplot(
+    fit=phase_1_results.most_likely_fit, should_plot_mask=True,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # Now all we need to do is look at the results of phase 1 and tune our priors in phase 2 to those results. Lets
 # setup a custom phase that does exactly that.
@@ -157,6 +169,8 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
         # If a parameter was fixed in the previous phase, its prior is based around the previous value. Don't worry
         # about the sigma values for now, I've chosen values that I know will ensure reasonable sampling, but we'll
         # cover this later.
+
+        ## LENS LIGHT PRIORS ###
 
         self.lens_galaxies.lens.light.centre_0 = \
             af.prior.GaussianPrior(mean=0.0, sigma=0.1)
@@ -179,6 +193,7 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
         self.lens_galaxies.lens.light.sersic_index = \
             af.prior.GaussianPrior(mean=4.0, sigma=2.0)
 
+        ### LENS MASS PRIORS ###
 
         self.lens_galaxies.lens.mass.centre_0 = \
             af.prior.GaussianPrior(mean=0.0, sigma=0.1)
@@ -195,6 +210,7 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
         self.lens_galaxies.lens.mass.einstein_radius =\
             af.prior.GaussianPrior(mean=0.8, sigma=0.1)
 
+        ### SOURCE LIGHT PRIORS ###
 
         self.source_galaxies.source.light.centre_0 = \
             af.prior.GaussianPrior(mean=0.0, sigma=0.1)
@@ -219,8 +235,15 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 
 phase_2 = CustomPriorPhase(
     phase_name='5_linking_phase_2',
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(
+        source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 phase_2.optimizer.n_live_points = 30
@@ -229,12 +252,15 @@ phase_2.optimizer.sampling_efficiency = 0.9
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 phase_2_results = phase_2.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # Look at that, the right lens model, again!
 lens_fit_plotters.plot_fit_subplot(
-    fit=phase_2_results.most_likely_fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=phase_2_results.most_likely_fit, should_plot_mask=True,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # Our choice to link two phases together was a huge success. We managed to fit a complex and realistic model,
 # but were able to begin by making simplifying assumptions that eased our search of non-linear parameter space. We

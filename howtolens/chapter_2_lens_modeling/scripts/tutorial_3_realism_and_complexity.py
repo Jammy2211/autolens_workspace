@@ -36,8 +36,8 @@ from autolens.lens.plotters import lens_fit_plotters
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-af.conf.instance = af.conf.Config(config_path=chapter_path+'configs/3_realism_and_complexity',
-                            output_path=chapter_path+"output")
+af.conf.instance = af.conf.Config(
+    config_path=chapter_path+'configs/3_realism_and_complexity', output_path=chapter_path+"output")
 
 # Another simulate image function, albeit it generates a new image
 def simulate():
@@ -75,7 +75,8 @@ def simulate():
 ccd_data = simulate()
 
 # When we plot it, the lens light's is clealy visible in the centre of the image
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data)
 
 # Now lets fit it using a phase, noting that indeed the galaxy-model corresponds to the one above.
 
@@ -88,8 +89,15 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # phase_name below, maybe to something like 'howtolens/3_realism_and_complexity_rerun'
 phase = phase_imaging.LensSourcePlanePhase(
     phase_name='3_realism_and_complexity',
-    lens_galaxies=dict(lens_galaxy=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-    source_galaxies=dict(source_galaxy=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
+    lens_galaxies=dict(
+        lens_galaxy=gm.GalaxyModel(
+            redshift=0.5,
+            light=lp.EllipticalSersic,
+            mass=mp.EllipticalIsothermal)),
+    source_galaxies=dict(
+        source_galaxy=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalExponential)),
     optimizer_class=af.MultiNest)
 
 # Lets run the phase.
@@ -102,8 +110,9 @@ results = phase.run(data=ccd_data)
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # And lets look at the image.
-lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit, should_plot_mask=True, extract_array_from_mask=True,
-                                   zoom_around_mask=True)
+lens_fit_plotters.plot_fit_subplot(
+    fit=results.most_likely_fit, should_plot_mask=True,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # Uh-oh. That image didn't look very good, did it? If we compare our inferred parameters (look at the
 # 'workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity' folder to the actual
@@ -114,9 +123,14 @@ lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit, should_plot_mask
 # but I've put a few comments to remind you of whats happening)
 
 # Create a lens data-set to make the fit - the mask we used above was a 3" circle (we'll come back to this later)
-mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
-lens_data= li.LensData(ccd_data=ccd_data, mask=mask)
-ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+mask = msk.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+
+lens_data= li.LensData(
+    ccd_data=ccd_data, mask=mask)
+
+ccd_plotters.plot_image(
+    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
 
 # Make the tracer we use to simulate the image
 lens_galaxy = g.Galaxy(

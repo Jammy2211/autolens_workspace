@@ -27,7 +27,8 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(
+        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
 
@@ -56,10 +57,12 @@ def perform_fit_with_source_galaxy(source_galaxy):
 
     ccd_data = simulate()
 
-    mask = msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-                                     inner_radius_arcsec=0.5, outer_radius_arcsec=2.2)
+    mask = msk.Mask.circular_annular(
+        shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
+        inner_radius_arcsec=0.5, outer_radius_arcsec=2.2)
 
-    lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
+    lens_data = ld.LensData(
+        ccd_data=ccd_data, mask=mask)
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,

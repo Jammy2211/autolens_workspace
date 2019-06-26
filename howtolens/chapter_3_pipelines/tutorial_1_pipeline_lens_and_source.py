@@ -95,8 +95,9 @@ def make_pipeline(phase_folders=None):
     # We can use the mask function again, to modify the mask to an annulus. We'll use the same ring radii as before.
 
     def mask_function(image):
-        return msk.Mask.circular_annular(shape=image.shape, pixel_scale=image.pixel_scale, inner_radius_arcsec=0.5,
-                                         outer_radius_arcsec=3.)
+        return msk.Mask.circular_annular(
+            shape=image.shape, pixel_scale=image.pixel_scale,
+            inner_radius_arcsec=0.5, outer_radius_arcsec=3.)
 
     # To modify an image, we call a new function, 'modify image'. This function behaves like the pass-priors functions
     # before, whereby we create a python 'class' in a Phase to set it up.  This ensures it has access to the pipeline's
