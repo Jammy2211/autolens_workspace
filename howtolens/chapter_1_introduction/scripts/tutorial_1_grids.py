@@ -33,8 +33,8 @@ print(regular_grid.shape)
 
 # PyAutoLens uses many different types of grids, for performing many different calculations. For example, a sub-grid
 # splits each pixel on the regular grid above into a sub-pixel of size (sub_grid_size x sub_grid_size):
-sub_grid = grids.SubGrid.from_shape_pixel_scale_and_sub_grid_size(shape=(100, 100), pixel_scale=0.05,
-                                                                  sub_grid_size=2)
+sub_grid = grids.SubGrid.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
 
 # We specified a sub_grid_size of 2 above, therefore we expect 4 (2 x 2) times more sub-pixels than regular-pixels
 # (which like the regular grid are again flattened to 1D).
@@ -74,8 +74,6 @@ print(sub_grid[3])
 
 print(sub_grid[0,1] - sub_grid[1,1])
 print(sub_grid[1,1] - sub_grid[4,1])
-stop
-
 
 # The sub-grid then continues on to the next regular-grid pixels (and so on)
 print('(y,x) sub-pixel 1 (of regular pixel 2):')
@@ -90,8 +88,8 @@ print('etc.')
 # Finally, it is convenient for PyAutoLens to 'group' all of its grid into one object, which we call a 'grid-stack'.
 # A grid stack consists of a set of aligned grids, for example, the regular and sub-grids above, but also other grids
 # which we will explain throughout these tutorials. Making a grid-stack is as simple as above.
-grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(100, 100), pixel_scale=0.05,
-                                                                      sub_grid_size=2)
+grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
 
 # The grid-stack coordinates are indeed identical to the individual grids above
 print('(y,x) regular-pixel 1:')

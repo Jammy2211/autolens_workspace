@@ -1,10 +1,8 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -62,7 +60,7 @@ def make_pipeline(phase_folders=None):
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
     # In phase 1, we will:
@@ -70,25 +68,25 @@ def make_pipeline(phase_folders=None):
     # 1) Subtract the light of the main lens galaxy (located at (0.0", 0.0")) and the light of each line-of-sight
     # galaxy (located at (4.0", 4.0"), (3.6", -5.3") and (-3.1", -2.4"))
 
-    class LensPhase(ph.LensPlanePhase):
+    class LensPhase(phase_imaging.LensPlanePhase):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.light.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
-            self.lens_galaxies.lens.light.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
-            self.lens_galaxies.los0.light.centre_0 = prior.GaussianPrior(mean=4.0, sigma=0.1)
-            self.lens_galaxies.los0.light.centre_1 = prior.GaussianPrior(mean=4.0, sigma=0.1)
-            self.lens_galaxies.los1.light.centre_0 = prior.GaussianPrior(mean=3.6, sigma=0.1)
-            self.lens_galaxies.los1.light.centre_1 = prior.GaussianPrior(mean=-5.3, sigma=0.1)
-            self.lens_galaxies.los2.light.centre_0 = prior.GaussianPrior(mean=-3.1, sigma=0.1)
-            self.lens_galaxies.los2.light.centre_1 = prior.GaussianPrior(mean=-2.4, sigma=0.1)
+            self.lens_galaxies.lens.light.centre_0 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.lens.light.centre_1 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.los0.light.centre_0 = af.prior.GaussianPrior(mean=4.0, sigma=0.1)
+            self.lens_galaxies.los0.light.centre_1 = af.prior.GaussianPrior(mean=4.0, sigma=0.1)
+            self.lens_galaxies.los1.light.centre_0 = af.prior.GaussianPrior(mean=3.6, sigma=0.1)
+            self.lens_galaxies.los1.light.centre_1 = af.prior.GaussianPrior(mean=-5.3, sigma=0.1)
+            self.lens_galaxies.los2.light.centre_0 = af.prior.GaussianPrior(mean=-3.1, sigma=0.1)
+            self.lens_galaxies.los2.light.centre_1 = af.prior.GaussianPrior(mean=-2.4, sigma=0.1)
 
     phase1 = LensPhase(phase_name='phase_1_light_subtraction', phase_folders=phase_folders,
                        lens_galaxies=dict(lens=gm.GalaxyModel(light=lp.EllipticalSersic),
                                            los_0=gm.GalaxyModel(light=lp.SphericalSersic),
                                            los_1=gm.GalaxyModel(light=lp.SphericalSersic),
                                            los_2=gm.GalaxyModel(light=lp.SphericalSersic)),
-                       optimizer_class=nl.MultiNest)
+                       optimizer_class=af.MultiNest)
 
     # Customize MultiNest so it runs fast
     phase1.optimizer.n_live_points = 80
@@ -100,21 +98,21 @@ def make_pipeline(phase_folders=None):
     # 1) Fit this foreground subtracted image, using an SIE+Shear mass model and Sersic source.
     # 2) Use the input positions to resample inaccurate mass models.
 
-    class LensSubtractedPhase(ph.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
             return image - results.from_phase('phase_1_light_subtraction').unmasked_lens_plane_model_image
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
-            self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.lens.mass.centre_0 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.lens.mass.centre_1 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase2 = LensSubtractedPhase(phase_name='phase_2_source_parametric', phase_folders=phase_folders,
                                  lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
                                  source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
                                  positions_threshold=0.3,
-                                 optimizer_class=nl.MultiNest)
+                                 optimizer_class=af.MultiNest)
 
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.2
@@ -125,7 +123,7 @@ def make_pipeline(phase_folders=None):
     #  1) Fit the foreground subtracted image using a source-inversion instead of parametric source, using lens galaxy
     #     priors from phase 2.
 
-    class InversionPhase(ph.LensSourcePlanePhase):
+    class InversionPhase(phase_imaging.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
             return image - results.from_phase('phase_1_light_subtraction').unmasked_lens_plane_model_image
@@ -134,14 +132,14 @@ def make_pipeline(phase_folders=None):
 
             self.lens_galaxies.lens = results[1].constant.lens
 
-            self.source_galaxies.source.pixelization.shape_0 = prior.UniformPrior(lower_limit=20.0, upper_limit=45.0)
-            self.source_galaxies.source.pixelization.shape_1 = prior.UniformPrior(lower_limit=20.0, upper_limit=45.0)
+            self.source_galaxies.source.pixelization.shape_0 = af.prior.UniformPrior(lower_limit=20.0, upper_limit=45.0)
+            self.source_galaxies.source.pixelization.shape_1 = af.prior.UniformPrior(lower_limit=20.0, upper_limit=45.0)
 
     phase3 = InversionPhase(phase_name='phase_3_inversion_init', phase_folders=phase_folders,
                             lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
-                            source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
-                                                                      regularization=reg.Constant)),
-                            optimizer_class=nl.MultiNest)
+                            source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.VoronoiMagnification,
+                                                                       regularization=reg.Constant)),
+                            optimizer_class=af.MultiNest)
 
     # Customize MultiNest so it runs fast
     phase3.optimizer.n_live_points = 10
@@ -156,7 +154,7 @@ def make_pipeline(phase_folders=None):
     #     a single lens plane for all line-of-sight galaxies.
     #  3) Use the input positions to resample inaccurate mass models.
 
-    class SingleLensPlanePhase(ph.LensSourcePlanePhase):
+    class SingleLensPlanePhase(phase_imaging.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
             return image - results.from_phase('phase_1_light_subtraction').unmasked_lens_plane_model_image
@@ -179,10 +177,10 @@ def make_pipeline(phase_folders=None):
                                                      los_0=gm.GalaxyModel(mass=mp.SphericalIsothermal),
                                                      los_1=gm.GalaxyModel(mass=mp.SphericalIsothermal),
                                                      los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal)),
-                                  source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
+                                  source_galaxies=dict(source=gm.GalaxyModel(pixelization=pix.VoronoiMagnification,
                                                                              regularization=reg.Constant)),
                                   positions_threshold=0.3,
-                                  optimizer_class=nl.MultiNest)
+                                  optimizer_class=af.MultiNest)
 
     # Customize MultiNest so it runs fast
     phase4.optimizer.n_live_points = 60
@@ -194,7 +192,7 @@ def make_pipeline(phase_folders=None):
     # redshift of each line-of-sight galaxy is included as a free parameter (we assume the lens and source redshifts
     # are known).
 
-    class MultiPlanePhase(ph.MultiPlanePhase):
+    class MultiPlanePhase(phase_imaging.MultiPlanePhase):
 
         def modify_image(self, image, results):
             return image - results.from_phase('phase_1_light_subtraction').unmasked_lens_plane_model_image
@@ -214,10 +212,10 @@ def make_pipeline(phase_folders=None):
                              los_0=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
                              los_1=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
                              los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
-                             source=gm.GalaxyModel(pixelization=pix.AdaptiveMagnification,
+                             source=gm.GalaxyModel(pixelization=pix.VoronoiMagnification,
                                                    regularization=reg.Constant)),
                              positions_threshold=0.3,
-                             optimizer_class=nl.MultiNest)
+                             optimizer_class=af.MultiNest)
 
     # Customize MultiNest so it runs fast
     phase5.optimizer.n_live_points = 60

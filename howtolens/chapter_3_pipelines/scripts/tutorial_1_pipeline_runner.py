@@ -1,5 +1,6 @@
-from autofit import conf
+import autofit as af
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -55,7 +56,7 @@ import os
 
 # To setup the config and output path, we'll use the relative import below.
 workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # The same simulate function we used in chapter 2.
 def simulate():
@@ -64,25 +65,28 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1,
-                                                                       psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(redshift=0.5,
-                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
-                                                     effective_radius=0.5, sersic_index=3.5),
-                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0,
-                                                        einstein_radius=1.0),
-                           shear=mp.ExternalShear(magnitude=0.05, phi=90.0))
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04, effective_radius=0.5,
+                                  sersic_index=3.5),
+        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.0),
+        shear=mp.ExternalShear(magnitude=0.05, phi=90.0))
 
-    source_galaxy = g.Galaxy(redshift=1.0,
-                             light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    source_galaxy = g.Galaxy(
+        redshift=1.0,
+        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
 
-    return ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+
+    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
 
 # Now lets simulate the image as ccd data, which we'll fit using the pipeline.

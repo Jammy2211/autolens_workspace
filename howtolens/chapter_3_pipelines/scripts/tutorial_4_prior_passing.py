@@ -11,7 +11,7 @@ def pass_priors(self, previous_results):
 
 # By invoking the 'variable' attribute, the passing of priors behaves following 3 rules:
 
-# 1) The 'self.lens_galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its prior.
+# 1) The 'self.lens_galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.prior.
 
 #    A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase are easily summarized as a
 #    Gaussian.
@@ -75,7 +75,7 @@ def pass_priors(self, previous_results):
 
 # If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the
 # Sersic index width in the priors/width config file to set sigma instead. In this case, the prior config file specifies
-# that we use an absolute value of 0.8 to link this prior. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and
+# that we use an absolute value of 0.8 to link this af.prior. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and
 # sigma=0.8.
 
 # If the prior config file had specified that we use an relative value of 0.8, the GaussianPrior in phase 2 would have

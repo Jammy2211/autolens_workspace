@@ -1,8 +1,6 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging, phase_hyper
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -34,10 +32,11 @@ def make_pipeline(
     # a pipeline does use customized tag names.
 
     pipeline_name = 'pipeline_init__lens_sie_shear_source_sersic'
+
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
-                                                                                pipeline_name=pipeline_name)
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(
+        phase_folders=phase_folders, pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
 
@@ -45,14 +44,20 @@ def make_pipeline(
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    phase1 = ph.LensSourcePlanePhase(
+    phase1 = phase_imaging.LensSourcePlanePhase(
         phase_name='phase_1_lens_sie_shear_source_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
-                                               shear=mp.ExternalShear)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=redshift_lens,
+                mass=mp.EllipticalIsothermal,
+                shear=mp.ExternalShear)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=redshift_source,
+                light=lp.EllipticalSersic)),
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80

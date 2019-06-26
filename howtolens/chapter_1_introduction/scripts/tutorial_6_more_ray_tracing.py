@@ -18,8 +18,9 @@ from astropy import cosmology
 
 # To begin, lets setup the grids we 'll ray-trace using. Lets do something crazy, and use a
 # higher resolution grid then before and set the sub grid size to 4x4 per pixel!
-image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(200, 200), pixel_scale=0.025,
-                                                                      sub_grid_size=4)
+image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(200, 200), pixel_scale=0.025, sub_grid_size=4)
+
 print(image_plane_grid_stack.regular.shape)
 print(image_plane_grid_stack.sub.shape) # Every regular-pixel is sub-gridded by 4x4, so the sub-grid has x16 more coordinates.
 
@@ -34,17 +35,19 @@ print(image_plane_grid_stack.sub.shape) # Every regular-pixel is sub-gridded by 
 # 1) A light-profile, meaning its light will appear in the image-plane image.
 # 2) An external shear, which accounts for the deflection of light due to line-of-sight structures.
 # 3) A redshift, which the tracer will use to convert arc second coordinates to kpc.
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5,
-                                                sersic_index=2.5),
-                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6),
-                       shear=mp.ExternalShear(magnitude=0.05, phi=45.0))
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5, sersic_index=2.5),
+    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6),
+    shear=mp.ExternalShear(magnitude=0.05, phi=45.0))
+
 print(lens_galaxy)
 
 # Lets also create a small satellite galaxy nearby the lens galaxy and at the same redshift.
-lens_satellite = g.Galaxy(redshift=0.5,
-                          light=lp.SphericalDevVaucouleurs(centre=(1.0, 0.0), intensity=2.0, effective_radius=0.2),
-                          mass=mp.SphericalIsothermal(centre=(1.0, 0.0), einstein_radius=0.4))
+lens_satellite = g.Galaxy(
+    redshift=0.5,
+    light=lp.SphericalDevVaucouleurs(centre=(1.0, 0.0), intensity=2.0, effective_radius=0.2),
+    mass=mp.SphericalIsothermal(centre=(1.0, 0.0), einstein_radius=0.4))
 print(lens_satellite)
 
 # Lets have a quick look at the appearance of our lens galaxy and its satellite
@@ -59,14 +62,14 @@ galaxy_plotters.plot_deflections_x(galaxy=lens_satellite, grid=image_plane_grid_
 
 # Now, lets make two source galaxies at redshift 1.0. Lets not use the terms 'light' and 'mass' to setup the light and
 # mass profiles. Instead, lets use more descriptive names of what we think each component represents ( e.g. a 'bulge' and 'disk').
-source_galaxy_0 = g.Galaxy(redshift=1.0,
-                           bulge=lp.SphericalDevVaucouleurs(centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3),
-                           disk=lp.EllipticalExponential(centre=(0.1, 0.2), axis_ratio=0.8, phi=45.0, intensity=3.0,
-                                                       effective_radius=2.0))
+source_galaxy_0 = g.Galaxy(
+    redshift=1.0,
+    bulge=lp.SphericalDevVaucouleurs(centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3),
+    disk=lp.EllipticalExponential(centre=(0.1, 0.2), axis_ratio=0.8, phi=45.0, intensity=3.0, effective_radius=2.0))
 
-source_galaxy_1 = g.Galaxy(redshift=1.0,
-                           disk=lp.EllipticalExponential(centre=(-0.3, -0.5), axis_ratio=0.6, phi=80.0, intensity=8.0,
-                                                         effective_radius=1.0))
+source_galaxy_1 = g.Galaxy(
+    redshift=1.0,
+    disk=lp.EllipticalExponential(centre=(-0.3, -0.5), axis_ratio=0.6, phi=80.0, intensity=8.0, effective_radius=1.0))
 print(source_galaxy_0)
 print(source_galaxy_1)
 
@@ -83,10 +86,9 @@ galaxy_plotters.plot_intensities(galaxy=source_galaxy_1, grid=image_plane_grid_s
 # 4) The light of all source galaxies is ray-traced back forward to form our image-plane image.
 
 # Note that we've also supplied the tracer below with a Planck15 cosmology.
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy, lens_satellite],
-                                             source_galaxies=[source_galaxy_0, source_galaxy_1],
-                                             image_plane_grid_stack=image_plane_grid_stack,
-                                             cosmology=cosmology.Planck15)
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy, lens_satellite], source_galaxies=[source_galaxy_0, source_galaxy_1],
+    image_plane_grid_stack=image_plane_grid_stack, cosmology=cosmology.Planck15)
 
 # As we did previously, we can inspect each grid.
 plane_plotters.plot_plane_grid(plane=tracer.image_plane, title='Image-plane Grid')

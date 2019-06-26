@@ -14,13 +14,16 @@ image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_siz
                                                                                   sub_grid_size=2)
 
 # For our lens galaxy, we'll use the same SIS mass profile as before.
-sis_mass_profile = mass_profiles.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
+sis_mass_profile = mass_profiles.SphericalIsothermal(
+    centre=(0.0, 0.0), einstein_radius=1.6)
+
 lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=sis_mass_profile)
 print(lens_galaxy)
 
 # And for our source galaxy, the same Sersic light profile
-sersic_light_profile = light_profiles.SphericalSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0,
-                                                      sersic_index=1.0)
+sersic_light_profile = light_profiles.SphericalSersic(
+    centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
+
 source_galaxy = galaxy.Galaxy(redshift=1.0, light=sersic_light_profile)
 print(source_galaxy)
 
@@ -31,8 +34,8 @@ print(source_galaxy)
 # 2) These deflection angles are used to trace every image-plane coordinate to a source-plane coordinate.
 # 3) This creates the source-plane grid-stack of lensed coordinates.
 
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=image_plane_grid_stack)
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
 
 # The tracer is composed of an image-plane and source-plane, just like in the previous example!
 print('Regular-grid image-plane coordinate 1')

@@ -1,15 +1,13 @@
 import os
 import numpy as np
 
-from autofit import conf
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy as g, galaxy_model as gm
 from autolens.model.galaxy import galaxy_data as gd
 from autolens.lens import ray_tracing
 from autolens.data.array import grids, scaled_array
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase
 from autolens.model.profiles import mass_profiles as mp
 
 # Before reading this script, you should checkout the 'galaxy_fit_surface_density.py' script first, which shows you
@@ -28,27 +26,30 @@ from autolens.model.profiles import mass_profiles as mp
 workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # First, we'll setup the grid stack we use to simulate a deflection profile.
 pixel_scale = 0.05
 image_shape = (250, 250)
-grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=image_shape, pixel_scale=pixel_scale,
-                                                                      sub_grid_size=4)
+grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=image_shape, pixel_scale=pixel_scale, sub_grid_size=4)
 
 # Now lets create two galaxies, using singular isothermal spheres. We'll put the two galaxies at different redshifts,
 # and the second galaxy will be much lower mass as if it is a 'perturber' of the main lens galaxy.
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0))
-perturber = g.Galaxy(redshift=0.2,
-                     mass=mp.SphericalIsothermal(centre=(0.5, 0.5), einstein_radius=0.1))
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0))
+
+perturber = g.Galaxy(
+    redshift=0.2,
+    mass=mp.SphericalIsothermal(centre=(0.5, 0.5), einstein_radius=0.1))
 
 # We only need the source galaxy to have a redshift - given we're not fitting an image it doens't need a light profile.
 source_galaxy  = g.Galaxy(redshift=1.0)
 
 # We'll use a tracer to compute our multi-plane deflection angles.
-tracer = ray_tracing.TracerMultiPlanes(galaxies=[lens_galaxy, perturber, source_galaxy],
-                                       image_plane_grid_stack=grid_stack)
+tracer = ray_tracing.TracerMultiPlanes(
+    galaxies=[lens_galaxy, perturber, source_galaxy], image_plane_grid_stack=grid_stack)
 
 # We'll now extract the deflection angles from the tracer - we will extract the two deflection angle maps (y and x)
 # separately.
@@ -69,7 +70,7 @@ def mask_function_circular(image):
 # fit it with two singular isothermal spheres at the same lens-plane, thus we should see how the absence of multi-plane
 # ray tracing impacts the mass of the subhalo.
 
-class DeflectionFitPhase(ph.GalaxyFitPhase):
+class DeflectionFitPhase(phase.GalaxyFitPhase):
 
     def pass_priors(self, results):
 
@@ -81,15 +82,15 @@ class DeflectionFitPhase(ph.GalaxyFitPhase):
 
         # Adjusting the priors on the centre of galaxies away from (0.0", 0.0") is also a good idea.
 
-        self.galaxies.subhalo.mass.centre_0 = prior.GaussianPrior(mean=0.5, sigma=0.3)
-        self.galaxies.subhalo.mass.centre_1 = prior.GaussianPrior(mean=0.5, sigma=0.3)
+        self.galaxies.subhalo.mass.centre_0 = af.prior.GaussianPrior(mean=0.5, sigma=0.3)
+        self.galaxies.subhalo.mass.centre_1 = af.prior.GaussianPrior(mean=0.5, sigma=0.3)
 
 phase = DeflectionFitPhase(
     phase_name='phase_galaxy_deflections_fit',
     galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal),
                   subhalo=gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)), use_deflections=True,
     sub_grid_size=4, mask_function=mask_function_circular,
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 
 # Finally, when we run the phase, we now pass both deflection angle data's separately.

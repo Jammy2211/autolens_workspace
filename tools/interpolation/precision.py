@@ -1,5 +1,4 @@
-from autofit import conf
-from autofit.tools import path_util
+import autofit as af
 from autolens.data import ccd
 from autolens.data.array import grids
 from autolens.model.profiles import mass_profiles as mp
@@ -16,7 +15,7 @@ import os
 workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # Although we could test the deflection angles without using an image (e.g. by just making a grid), we have chosen to
 # set this test up using an image and mask. This gives run-time numbers that can be easily related to an actual lens
@@ -37,8 +36,8 @@ print()
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
-                                                                      folder_names=['data', data_type, data_name])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=workspace_path, folder_names=['data', data_type, data_name])
 
 ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + '/image.fits',
                                        psf_path=data_path + '/psf.fits',
@@ -54,9 +53,8 @@ print('Number of sub-grid points = ' + str(lens_data.grid_stack.sub.shape[0]) + 
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=sub_grid_size)
 
-interpolator = grids.Interpolator.from_mask_grid_and_interp_pixel_scales(mask=lens_data.mask,
-                                                                         grid=lens_data.grid_stack.sub,
-                                                                         interp_pixel_scale=0.1)
+interpolator = grids.Interpolator.from_mask_grid_and_interp_pixel_scales(
+    mask=lens_data.mask_2d, grid=lens_data.grid_stack.sub, interp_pixel_scale=0.1)
 
 print('Number of interpolation points = ' + str(interpolator.interp_grid.shape[0]) + '\n')
 

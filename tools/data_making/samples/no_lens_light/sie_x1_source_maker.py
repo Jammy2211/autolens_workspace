@@ -1,12 +1,8 @@
+import autofit as af
 from autolens.data import ccd
-from autofit.tools import path_util
-from autolens.data.array import grids
-from autolens.lens import ray_tracing
 from autolens.model.galaxy import galaxy as g
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
-from autolens.lens.plotters import ray_tracing_plotters
-from autolens.data.plotters import ccd_plotters
 
 import os
 
@@ -31,7 +27,7 @@ data_imaging_type = 'Euclid'
 data_lens_light = 'no_lens_light'
 data_lens_type = 'sie_shear_x1_source'
 
-data_path = path_util.make_and_return_path_from_path_and_folder_names(
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=['data', 'samples', data_lens_light, data_lens_type])
 
 # The pixel scale of the image to be simulated
@@ -41,7 +37,7 @@ sub_grid_size = 1
 plot_ccd = True
 
 # Simulate a simple Gaussian PSF for the image.
-psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=pixel_scale)
+psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=pixel_scale)
 
 ###### SIE + SHEAR LENS 1 #######
 

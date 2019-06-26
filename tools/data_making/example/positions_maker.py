@@ -1,4 +1,4 @@
-from autofit.tools import path_util
+import autofit as af
 from autolens.data import ccd
 from autolens.data.plotters import data_plotters
 
@@ -20,8 +20,8 @@ data_name = 'lens_light_mass_and_x1_source'
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
-                                                                      folder_names=['data', data_type, data_name])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=workspace_path, folder_names=['data', data_type, data_name])
 
 # If you use this tool for your own data, you *must* double check this pixel scale is correct!
 pixel_scale = 0.1

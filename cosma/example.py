@@ -1,5 +1,4 @@
-from autofit.tools import path_util
-from autofit import conf
+import autofit as af
 from autolens.data import ccd
 
 import os
@@ -28,7 +27,8 @@ data_folder_name = 'share'
 # data_folder_name = 'cosma_username'
 
 # Lets use this to setup our cosma path, which is where our data and output are stored.
-cosma_path = path_util.make_and_return_path_from_path_and_folder_names(path='/cosma5/data/autolens/', folder_names=[data_folder_name])
+cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path='/cosma5/data/autolens/', folder_names=[data_folder_name])
 
 # The data folder is the name of the folder our data is stored in, which in this case is 'example'. I would typically
 # expect this would be named after your sample of lenses (e.g. 'slacs', 'bells'). If you are modelng just one
@@ -37,17 +37,19 @@ data_type = 'example'
 
 # Next, lets use this path to setup the data path, which for this example is named 'example' and found at
 # '/cosma5/data/autolens/share/data/example/'
-cosma_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=cosma_path, folder_names=['data', data_type])
+cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=cosma_path, folder_names=['data', data_type])
 
 # We'll do the same for our output path, which is '/cosma5/data/autolens/share/output/example/'
-cosma_output_path = path_util.make_and_return_path_from_path_and_folder_names(path=cosma_path, folder_names=['output', data_type])
+cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=cosma_path, folder_names=['output', data_type])
 
 # Next, we need the path to our Cosma workspace, which can be generated using a relative path given that our runner is
 # located in our Cosma workspace.
 workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Lets now use the above paths to set the config path and output path for our Cosma run.
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=cosma_output_path)
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=cosma_output_path)
 
 # On Cosma, there are two systems we can submit to, called 'cordelia' and 'cosma'. The similarities and differences
 # between these systems are as follows:
@@ -106,7 +108,8 @@ pixel_scale = 0.2 # Make sure your pixel scale is correct!
 # We now use the data_name to load a the data-set on each job. The statement below combines
 # the cosma_data_path and and data_name to read data from the following directory:
 # '/cosma5/data/autolens/share/data/example/data_name'
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=cosma_data_path, folder_names=[data_name])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=cosma_data_path, folder_names=[data_name])
 
 # This loads the CCD imaging data, as per usual.
 ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
@@ -119,7 +122,9 @@ from workspace.pipelines.no_lens_light.power_law.from_initialize import lens_pl_
 from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
 pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+
 pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+
 pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
 
 pipeline = pipeline_initializer + pipeline_power_law + pipeline_subhalo

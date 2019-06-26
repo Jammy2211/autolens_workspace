@@ -1,9 +1,7 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -52,11 +50,12 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     # a pipeline does use customized tag names.
 
     pipeline_name = 'pl__position_thresholding'
+
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
     # A settings tag is automatically added to the phase path, making it clear the position threshold value used.
@@ -78,13 +77,18 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(
+    phase1 = phase_imaging.LensSourcePlanePhase(
         phase_name='phase_1_use_positions', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-        mask_function=mask_function,
-        positions_threshold=0.3,
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
+        mask_function=mask_function, positions_threshold=0.3,
+        optimizer_class=af.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
@@ -100,7 +104,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     # 2) Not specify a positions_threshold, such that is defaults to None in the phase and is not used to resample
 #        mass models.
 
-    class LensSubtractedPhase(ph.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
 
         def pass_priors(self, results):
 
@@ -112,11 +116,16 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
 
     phase2 = LensSubtractedPhase(
         phase_name='phase_2_no_positions', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-        mask_function=mask_function,
-        positions_threshold=positions_threshold,
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
+        mask_function=mask_function, positions_threshold=positions_threshold,
+        optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

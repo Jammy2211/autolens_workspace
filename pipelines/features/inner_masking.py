@@ -1,9 +1,7 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -53,6 +51,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # a pipeline does use customized tag names.
 
     pipeline_name = 'pl__inner_mask'
+
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # When a phase is passed an inner_mask_radii, a settings tag is automatically generated and added to the phase
@@ -69,7 +68,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     # inner_mask_radii=None -> phase_path='phase_name/settings'
 
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
@@ -84,13 +83,16 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     def mask_function(image):
         return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5)
 
-    phase1 = ph.LensSourcePlanePhase(
+    phase1 = phase_imaging.LensSourcePlanePhase(
         phase_name='phase_1_use_inner_radii_input', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(light=lp.EllipticalSersic)),
-        mask_function=mask_function,
-        inner_mask_radii=inner_mask_radii,
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(lens=gm.GalaxyModel(
+            redshift=0.5,
+            mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(source=gm.GalaxyModel(
+            redshift=1.0,
+            light=lp.EllipticalSersic)),
+        mask_function=mask_function, inner_mask_radii=inner_mask_radii,
+        optimizer_class=af.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
@@ -103,7 +105,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # 1) Not specify a mask function to the phase, meaning that by default the custom mask passed to the pipeline when
     #    we run it will be used instead.
 
-    class LensSubtractedPhase(ph.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
 
         def pass_priors(self, results):
 
@@ -115,9 +117,15 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     phase2 = LensSubtractedPhase(
         phase_name='phase_2_circular_mask', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
+        optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

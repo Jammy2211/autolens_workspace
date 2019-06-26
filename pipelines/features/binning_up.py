@@ -1,9 +1,7 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
+import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -51,6 +49,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # a pipeline does use customized tag names.
 
     pipeline_name = 'pl__binning_up'
+
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # When a phase is passed a bin_up_factor, a settings tag is automatically generated and added to the phase path,
@@ -68,7 +67,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag/'
 
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
@@ -84,20 +83,26 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # 1) Bin up the image by the input factor specified, which is default 2.
 
-    class LensSourceX1Phase(ph.LensSourcePlanePhase):
+    class LensSourceX1Phase(phase_imaging.LensSourcePlanePhase):
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass.centre_0 = prior.GaussianPrior(mean=0.0, sigma=0.1)
-            self.lens_galaxies.lens.mass.centre_1 = prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.lens.mass.centre_0 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
+            self.lens_galaxies.lens.mass.centre_1 = af.prior.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
         phase_name='phase_1_x1_source', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
-        source_galaxies=dict(source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-        mask_function=mask_function,
-        bin_up_factor=bin_up_factor,
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal,
+                shear=mp.ExternalShear)),
+        source_galaxies=dict(
+            source_0=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
+        mask_function=mask_function, bin_up_factor=bin_up_factor,
+        optimizer_class=af.MultiNest)
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 80
@@ -109,7 +114,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # 1) Omit the bin up factor, thus performing the modeling at the image's native resolution.
 
-    class LensSourceX2Phase(ph.LensSourcePlanePhase):
+    class LensSourceX2Phase(phase_imaging.LensSourcePlanePhase):
 
         def pass_priors(self, results):
 
@@ -121,10 +126,17 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     phase2 = LensSourceX2Phase(
         phase_name='phase_2_x2_source', phase_folders=phase_folders, tag_phases=True,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal,
+                shear=mp.ExternalShear)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
         mask_function=mask_function,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50

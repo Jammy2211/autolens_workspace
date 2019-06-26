@@ -1,8 +1,8 @@
-from autofit import conf
-from autofit.optimize import non_linear
+import autofit as af
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.lens.plotters import lens_fit_plotters
 from autolens.data.plotters import ccd_plotters
 from autolens.model.profiles import light_profiles as lp
@@ -67,7 +67,7 @@ chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeli
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
 # This sets up the config files used by this tutorial, and the path where the output of the modeling is placed.
-conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
+af.conf.instance = af.conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
 
 # This function simulates the image we'll fit in this tutorial.
 def simulate():
@@ -76,17 +76,25 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
-    source_galaxy = g.Galaxy(redshift=1.0, light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
 
-    image_simulated = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                           exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    source_galaxy = g.Galaxy(
+        redshift=1.0,
+        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+
+    image_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
     return image_simulated
 
@@ -113,18 +121,20 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential
 
 # (also, just ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
-phase = ph.LensSourcePlanePhase(
+phase = phase_imaging.LensSourcePlanePhase(
     phase_name='1_non_linear_search',
     lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
     source_galaxies=dict(source_galaxy=source_galaxy_model),
-    optimizer_class=non_linear.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/1_non_linear_search'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 results = phase.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # Now this has run you should checkout the 'AutoLens/workspace/howtolens/chapter_2_lens_modeling/output' folder.

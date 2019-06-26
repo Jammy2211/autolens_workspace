@@ -1,5 +1,26 @@
 Welcome to HowToLens - The PyAutoLens tutorial!
 
+### JUYPTER NOTEBOOKS ###
+
+The majority of these tutorials are supplied as Juypter Notebooks, which come with a '.ipynb' suffix. For those new to
+Python, Juypter Notebooks are a different way to write, view and use Python code. Compared to the traditional Python
+scripts, they allow:
+
+- Small blocks of code to be viewed and run at a time
+- Images and visualization from a code to be displayed directly underneath it.
+- Text script to appear between the blocks of code.
+
+This makes them an ideal way for us to present the HowToLens lecture series, therefore I recommend you get yourself
+a Juypter notebook viewer (https://jupyter.org/) if you havent't done so already.
+
+If you *really* want to use Python scripts, all tutorials are supplied a .py python files in the 'scripts' folder of
+each chapter.
+
+Finally, its worth noting that for actual PyAutoLens use, I recommend you use Pyton scripts. Therefore, as you go
+through the lecture series you will notice that we will transition you to Python scripts in the third chapter.
+
+### OVERVIEW OF CHAPTER 1 ###
+
 In this first set of tutorials, we'll learn how to use PyAutoLens. At the end, you'll be able to:
 
 1) Create uniform grids of (x,y) Cartesian coordinates.

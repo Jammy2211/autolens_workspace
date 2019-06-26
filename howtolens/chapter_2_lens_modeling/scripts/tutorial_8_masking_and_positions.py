@@ -1,12 +1,11 @@
-from autofit import conf
-from autofit.optimize import non_linear as nl
+import autofit as af
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
-from autolens.model.galaxy import galaxy as g
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.data.plotters import ccd_plotters
 
 # Now that we've learnt all the tools that we need to model strong lenses, I'm going to quickly cover how you should
@@ -18,7 +17,7 @@ from autolens.data.plotters import ccd_plotters
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-conf.instance = conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
+af.conf.instance = af.conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
 
 # Lets simulate the simple image we've used throughout this chapter again.
 def simulate():
@@ -27,22 +26,27 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
 
-    source_galaxy = g.Galaxy(redshift=1.0, light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2,
-                                                                         effective_radius=0.2))
+    source_galaxy = g.Galaxy(
+        redshift=1.0,
+        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
 
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
 
-    image_simulated = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                           exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
-    return image_simulated
+    return ccd_simulated
 
 ccd_data = simulate()
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
@@ -50,14 +54,17 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # When it comes to determining an appropriate mask for this image, the best approach is to set up a mask using the mask
 # module and pass it to a ccd plotter. You can then check visually if the mask is an appropriate size or not.
 # Below, we choose an inner radius that cuts into our lensed source galaxy - clearly this isn't a good mask.
-mask = msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-                                 inner_radius_arcsec=1.4, outer_radius_arcsec=2.4)
+mask = msk.Mask.circular_annular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, inner_radius_arcsec=1.4, outer_radius_arcsec=2.4)
+
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
 
 # So, lets decrease the inner radius to correct for this
-mask = msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-                                 inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+mask = msk.Mask.circular_annular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
+
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
 
 # When we run the phase, we don't pass it the mask as an array. Instead, we pass it the mask as a function. The reason
 # for this will become clear in the next chapter, but for now I would say you just accept this syntax.
@@ -65,12 +72,12 @@ def mask_function():
     return msk.Mask.circular_annular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
                                      inner_radius_arcsec=0.6, outer_radius_arcsec=2.4)
 
-phase_with_custom_mask = ph.LensSourcePlanePhase(
+phase_with_custom_mask = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     mask_function=mask_function, # <- We input the mask function here
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # So, our mask encompasses the lensed source galaxy. However, is this really the right sized mask? Do we actually want
 # a bigger mask? a smaller mask?
@@ -108,15 +115,16 @@ phase_with_custom_mask = ph.LensSourcePlanePhase(
 
 # We can easily check the image-positions are accurate by plotting them using our imaging_plotter (they are the magenta
 # dots on the image).
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
 
 # We can then tell our phase to use these positions in the analysis.
-phase_with_positions = ph.LensSourcePlanePhase(
+phase_with_positions = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # The positions are passed to the phase when we run it, which is shown below by commented out.
 # phase_with_positions.run(data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
@@ -132,19 +140,29 @@ def simulate_two_source_galaxies():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
-    source_galaxy_0 = g.Galaxy(light=lp.SphericalExponential(centre=(1.0, 0.0), intensity=0.2, effective_radius=0.2))
-    source_galaxy_1 = g.Galaxy(light=lp.SphericalExponential(centre=(-1.0, 0.0), intensity=0.2, effective_radius=0.2))
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy_0,
-                                                                                               source_galaxy_1],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
 
-    ccd_simulated = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                         exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    source_galaxy_0 = g.Galaxy(
+        redshift=1.0,
+        light=lp.SphericalExponential(centre=(1.0, 0.0), intensity=0.2, effective_radius=0.2))
+
+    source_galaxy_1 = g.Galaxy(
+        redshift=1.0,
+        light=lp.SphericalExponential(centre=(-1.0, 0.0), intensity=0.2, effective_radius=0.2))
+
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy_0, source_galaxy_1],
+        image_plane_grid_stack=image_plane_grid_stack)
+
+    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
     return ccd_simulated
 
@@ -153,15 +171,16 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # To specify the positions, we break the positions list into two cells. They will be plotted in different colours to
 # represent the fact they trace from different source galaxies.
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
+ccd_plotters.plot_ccd_subplot(
+    ccd_data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
-phase_with_x2_positions = ph.LensSourcePlanePhase(
+phase_with_x2_positions = phase_imaging.LensSourcePlanePhase(
     phase_name='phase',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     positions_threshold=0.5, # <- We input a positions threshold here, to signify how far pixels must trace within one another.
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # phase_with_x2_positions.run(data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 

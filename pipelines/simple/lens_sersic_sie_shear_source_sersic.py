@@ -1,9 +1,8 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
+import autofit as af
 from autofit.mapper import model_mapper as mm
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline import phase as ph
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
 from autolens.pipeline import tagging as tag
 from autolens.model.profiles import light_profiles as lp
@@ -54,12 +53,13 @@ def make_pipeline(
     # a pipeline does use customized tag names.
 
     pipeline_name = 'pl__lens_sersic_sie_shear_source_x1_sersic'
+
     pipeline_name = tag.pipeline_name_from_name_and_settings(pipeline_name=pipeline_name)
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
 
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
@@ -73,7 +73,7 @@ def make_pipeline(
     # use the default 3.0"  circular mask. In general, I haven't found the choice of mask to make a big difference,
     # albeit this does depend on how much off the lens galaxy's light the lensed source galaxy's light obstructs.
 
-    class LensPhase(ph.LensPlanePhase):
+    class LensPhase(phase_imaging.LensPlanePhase):
 
         def pass_priors(self, results):
 
@@ -82,9 +82,12 @@ def make_pipeline(
 
     phase1 = LensPhase(
         phase_name='phase_1_lens_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=redshift_lens,
+                light=lp.EllipticalSersic)),
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, inner_mask_radii=inner_mask_radii,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster (if you haven't already, checkout 'tutorial_7_multinest_black_magic' in
@@ -107,10 +110,10 @@ def make_pipeline(
         return msk.Mask.circular_annular(shape=image.shape, pixel_scale=image.pixel_scale,
                                          inner_radius_arcsec=0.3, outer_radius_arcsec=3.0)
 
-    class LensSubtractedPhase(ph.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
 
         def modify_image(self, image, results):
-            return image - results[-1].unmasked_model_image
+            return image - results[-1].unmasked_blurred_image_plane_image
 
         def pass_priors(self, results):
 
@@ -122,13 +125,19 @@ def make_pipeline(
 
     phase2 = LensSubtractedPhase(
         phase_name='phase_2_lens_sie_shear_source_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, mass=mp.EllipticalIsothermal,
-                                               shear=mp.ExternalShear)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=redshift_lens,
+                mass=mp.EllipticalIsothermal,
+                shear=mp.ExternalShear)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=redshift_source,
+                light=lp.EllipticalSersic)),
         mask_function=mask_function,
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 60
@@ -140,7 +149,7 @@ def make_pipeline(
 
     # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
 
-    class LensSourcePhase(ph.LensSourcePlanePhase):
+    class LensSourcePhase(phase_imaging.LensSourcePlanePhase):
 
         def pass_priors(self, results):
 
@@ -166,12 +175,19 @@ def make_pipeline(
 
     phase3 = LensSourcePhase(
         phase_name='phase_3_lens_sersic_sie_shear_source_sersic', phase_folders=phase_folders, tag_phases=tag_phases,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic,
-                                               mass=mp.EllipticalIsothermal, shear=mp.ExternalShear)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=redshift_lens,
+                light=lp.EllipticalSersic,
+                mass=mp.EllipticalIsothermal,
+                shear=mp.ExternalShear)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=redshift_source,
+                light=lp.EllipticalSersic)),
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 75

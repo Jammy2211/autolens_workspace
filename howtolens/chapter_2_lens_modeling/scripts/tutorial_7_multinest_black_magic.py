@@ -1,8 +1,8 @@
-from autofit import conf
-from autofit.optimize import non_linear as nl
-from autolens.pipeline import phase as ph
+import autofit as af
+from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -25,7 +25,7 @@ import os
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-conf.instance = conf.Config(config_path=chapter_path+'configs/7_multinest_black_magic',
+af.conf.instance = af.conf.Config(config_path=chapter_path+'configs/7_multinest_black_magic',
                             output_path=chapter_path+"output")
 
 # This function simulates the image we'll fit in this tutorial - which unlike previous tutorial images, also includes
@@ -36,25 +36,27 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1,
-                                                                       psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(redshift=0.5,
-                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, intensity=0.2,
-                                                     effective_radius=0.8, sersic_index=3.0),
-                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
-                                                        einstein_radius=1.6))
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, intensity=0.2, effective_radius=0.8,
+                                  sersic_index=3.0),
+        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6))
 
-    source_galaxy = g.Galaxy(redshift=1.0,
-                             light=lp.EllipticalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+    source_galaxy = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
 
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
 
-    ccd_simulated = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                         exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
     return ccd_simulated
 
@@ -68,11 +70,11 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # phase with black magic (afterall, the whole point of this tutorial is how slow MultiNest can run, so theres no harm
 # if the slow run speed bores you to tears :P).
 
-phase_normal = ph.LensSourcePlanePhase(
+phase_normal = phase_imaging.LensSourcePlanePhase(
     phase_name='7_no_black_magic',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # We're going to use the time module to time how long each MultiNest run takes. However, if you resume the MultiNest
 # run from a previous job, this time won't be accurate. Fortunately, if you look in the folder
@@ -85,7 +87,9 @@ start = time.time()
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/7_multinest_black_magic'
       ' folder for live output of the results, images and lens model.'
       ' This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 phase_normal_results = phase_normal.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # Lets check we get a reasonably good model and fit to the data.
@@ -96,11 +100,11 @@ print("Time without black magic = {}".format(time.time() - start))
 
 # Now lets run the phase with black magic on, which will hopefully run a lot faster than the previous phase.
 
-phase_black_magic = ph.LensSourcePlanePhase(
+phase_black_magic = phase_imaging.LensSourcePlanePhase(
     phase_name='7_with_black_magic',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # And herein lies the black magic. The changes to n_live_points and sampling efficiency are part of it, but its
 # the constant efficiency mode wehre the real magic lies. However, lets not worry about whats happening just let, I will
@@ -164,11 +168,11 @@ print("Time with black magic = {}".format(time.time() - start))
 # possibility that MultiNest will converge on a local maxima in parameter space and not be aware of it. We can see
 # this by aggresively increasing the sampling efficiency and reducing the number of live points.
 
-phase_too_much_black_magic = ph.LensSourcePlanePhase(
+phase_too_much_black_magic = phase_imaging.LensSourcePlanePhase(
     phase_name='7_with_too_much_black_magic',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 phase_too_much_black_magic.optimizer.n_live_points = 10
 phase_too_much_black_magic.optimizer.sampling_efficiency = 0.95
@@ -181,11 +185,14 @@ start = time.time()
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/7_multinest_black_magic'
       ' folder for live output of the results, images and lens model.'
       ' This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 phase_too_much_black_magic_results = phase_too_much_black_magic.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 
-lens_fit_plotters.plot_fit_subplot(fit=phase_too_much_black_magic_results.most_likely_fit, should_plot_mask=True,
-                                   extract_array_from_mask=True, zoom_around_mask=True)
+lens_fit_plotters.plot_fit_subplot(
+    fit=phase_too_much_black_magic_results.most_likely_fit, should_plot_mask=True, extract_array_from_mask=True,
+    zoom_around_mask=True)
 
 print("Time with too much black magic = {}".format(time.time() - start))
 

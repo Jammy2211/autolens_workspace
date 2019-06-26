@@ -38,16 +38,23 @@ ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
                                        psf_path=data_path + 'psf.fits', pixel_scale=0.1)
 
 mask = ma.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+
 lens_data = li.LensData(ccd_data=ccd_data, mask=mask)
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
-source_galaxy = g.Galaxy(redshift=1.0,
-                         bulge=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
-                                                  intensity=1.0, effective_radius=1.0, sersic_index=4.0),
-                         disk=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
-                                                  intensity=1.0, effective_radius=1.0, sersic_index=1.0))
+
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+
+source_galaxy = g.Galaxy(
+    redshift=1.0,
+    bulge=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
+                              sersic_index=4.0),
+    disk=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
+                             sersic_index=1.0))
+
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
+
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 # The fit contains our tracer, which contains our planes, which contain our grids and galaxies, which contain our

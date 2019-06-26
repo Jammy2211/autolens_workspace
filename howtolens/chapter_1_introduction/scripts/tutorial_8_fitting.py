@@ -30,7 +30,7 @@ ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
 #
 # 3) Its noise-map.
 print('Image:')
-print(ccd_data.image)
+print(ccd_data.image_2d)
 print('Noise-Map:')
 print(ccd_data.noise_map)
 print('PSF:')
@@ -81,18 +81,18 @@ ccd_plotters.plot_image(ccd_data=ccd_data)
 
 # By printing its attribute, we can see that it does indeed contain the image, mask, psf and so on
 print('Image:')
-print(lens_data.image)
+print(lens_data.unmasked_image)
 print('Noise-Map:')
-print(lens_data.noise_map)
+print(lens_data.unmasked_noise_map)
 print('PSF:')
 print(lens_data.psf)
 print('Mask')
-print(lens_data.mask)
+print(lens_data.mask_2d)
 print('Grid')
 print(lens_data.grid_stack.regular)
 
 # The image, noise-map and grids are masked using the mask and mapped to 1D arrays for fast calcuations.
-print(lens_data.image.shape) # This is the original 2D image
+print(lens_data.unmasked_image.shape) # This is the original 2D image
 print(lens_data.image_1d.shape)
 print(lens_data.noise_map_1d.shape)
 print(lens_data.grid_stack.regular.shape)
@@ -103,13 +103,18 @@ print(lens_data.grid_stack.regular.shape)
 # Its worth noting that below, we use the lens_data's grid-stack to setup the tracer. This ensures that our image-plane
 # image will be the same resolution and alignment as our image-data, as well as being masked appropriately.
 
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
-source_galaxy = g.Galaxy(redshift=1.0,
-                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
-                                                        intensity=1.0, effective_radius=1.0, sersic_index=2.5))
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=lens_data.grid_stack)
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+
+source_galaxy = g.Galaxy(
+    redshift=1.0,
+    light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
+                              sersic_index=2.5))
+
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=lens_data.grid_stack)
+
 ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
 
 # To fit the image, we pass the lens data and tracer to the fitting module. This performs the following:
@@ -129,7 +134,7 @@ lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array
 
 # We can print the fit's attributes - if we don't specify where we'll get all zeros, as the edges were masked:
 print('Model-Image Edge Pixels:')
-print(fit.model_image)
+print(fit.model_image_2d)
 print('Residuals Edge Pixels:')
 print(fit.residual_map)
 print('Chi-Squareds Edge Pixels:')
@@ -137,7 +142,7 @@ print(fit.chi_squared_map)
 
 # Of course, the central unmasked pixels have non-zero values.
 print('Model-Image Central Pixels:')
-print(fit.model_image[48:53, 48:53])
+print(fit.model_image_2d[48:53, 48:53])
 print('Residuals Central Pixels:')
 print(fit.residual_map[48:53, 48:53])
 print('Chi-Squareds Central Pixels:')
@@ -157,14 +162,20 @@ print(fit.likelihood)
 # Lets change the tracer, so that it's near the correct solution, but slightly off.
 # Below, we slightly offset the lens galaxy, by 0.005"
 
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
-source_galaxy = g.Galaxy(redshift=1.0,
-                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0,
-                                                        intensity=1.0, effective_radius=1.0, sersic_index=2.5))
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=lens_data.grid_stack)
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+
+source_galaxy = g.Galaxy(
+    redshift=1.0,
+    light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
+                              sersic_index=2.5))
+
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=lens_data.grid_stack)
+
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+
 lens_fit_plotters.plot_fit_subplot(fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
 
 # We now observe residuals to appear at the locations the source galaxy was observed, which
@@ -178,11 +189,15 @@ print(fit.likelihood)
 # It decreases! This model was a worse fit to the data.
 
 # Lets change the tracer, one more time, to a solution that is nowhere near the correct one.
-lens_galaxy = g.Galaxy(redshift=0.5,
-                       mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.3, axis_ratio=0.8, phi=45.0))
-source_galaxy = g.Galaxy(redshift=1.0,
-                         light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.7, phi=65.0,
-                                                        intensity=1.0, effective_radius=0.4, sersic_index=3.5))
+lens_galaxy = g.Galaxy(
+    redshift=0.5,
+    mass=mp.EllipticalIsothermal(centre=(0.005, 0.005), einstein_radius=1.3, axis_ratio=0.8, phi=45.0))
+
+source_galaxy = g.Galaxy(
+    redshift=1.0,
+    light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.7, phi=65.0, intensity=1.0, effective_radius=0.4,
+                              sersic_index=3.5))
+
 tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
                                              image_plane_grid_stack=lens_data.grid_stack)
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)

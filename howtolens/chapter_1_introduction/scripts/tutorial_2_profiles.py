@@ -8,13 +8,14 @@ from autolens.model.profiles.plotters import profile_plotters
 
 # Lets use the a same grids as the previous tutorial (if you skipped that
 # tutorial, I recommend you go back to it!)
-grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(100, 100), pixel_scale=0.05,
-                                                                      sub_grid_size=2)
+grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
 
 # Next, lets create a light profile using the 'light_profiles' module. We'll use a Sersic function,
 # which is a analytic function often use to depict galaxies.
-sersic_light_profile = light_profiles.EllipticalSersic(centre=(2.0, 1.0), axis_ratio=0.8, phi=45.0,
-                                                       intensity=1.0, effective_radius=1.0, sersic_index=2.5)
+sersic_light_profile = light_profiles.EllipticalSersic(
+    centre=(2.0, 1.0), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0, sersic_index=2.5)
+
 # We can print a profile to confirm its parameters.
 print(sersic_light_profile)
 

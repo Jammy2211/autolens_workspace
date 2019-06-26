@@ -1,5 +1,4 @@
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
+import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -37,8 +36,8 @@ def make_pipeline(phase_folders=None):
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
-    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
-                                                                                pipeline_name=pipeline_name)
+    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(
+        phase_folders=phase_folders, pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
 
@@ -64,17 +63,21 @@ def make_pipeline(phase_folders=None):
     # actually use on phases by themselves like in the previous chapter).
 
     def mask_function(image):
-        return msk.Mask.circular_anti_annular(shape=image.shape, pixel_scale=image.pixel_scale, inner_radius_arcsec=0.5,
-                                              outer_radius_arcsec=1.6, outer_radius_2_arcsec=2.5)
+        return msk.Mask.circular_anti_annular(
+            shape=image.shape, pixel_scale=image.pixel_scale, inner_radius_arcsec=0.5,
+            outer_radius_arcsec=1.6, outer_radius_2_arcsec=2.5)
 
     # We next create the phase, using the same notation we learnt before (but noting the masks function is passed to
     # this phase ensuring the anti-annular masks above is used).
 
     phase1 = phase.LensPlanePhase(
         phase_name='phase_1_lens_light_only', phase_folders=phase_folders,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                light=lp.EllipticalSersic)),
         mask_function=mask_function,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     # We'll use the MultiNest black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
 
@@ -124,10 +127,16 @@ def make_pipeline(phase_folders=None):
 
     phase2 = LensSubtractedPhase(
         phase_name='phase_2_source_only', phase_folders=phase_folders,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
         mask_function=mask_function,
-        optimizer_class=nl.MultiNest)
+        optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50
@@ -163,19 +172,26 @@ def make_pipeline(phase_folders=None):
 
             # We can simple link every source galaxy parameter to its phase 2 inferred value, as follows
 
-            self.source_galaxies.source.light.centre_0 = phase_2_results.variable.source_galaxies.source.light.centre_0
+            self.source_galaxies.source.light.centre_0 = \
+                phase_2_results.variable.source_galaxies.source.light.centre_0
 
-            self.source_galaxies.source.light.centre_1 = phase_2_results.variable.source_galaxies.source.light.centre_1
+            self.source_galaxies.source.light.centre_1 = \
+                phase_2_results.variable.source_galaxies.source.light.centre_1
 
-            self.source_galaxies.source.light.axis_ratio = phase_2_results.variable.source_galaxies.source.light.axis_ratio
+            self.source_galaxies.source.light.axis_ratio = \
+                phase_2_results.variable.source_galaxies.source.light.axis_ratio
 
-            self.source_galaxies.source.light.phi = phase_2_results.variable.source_galaxies.source.light.phi
+            self.source_galaxies.source.light.phi = \
+                phase_2_results.variable.source_galaxies.source.light.phi
 
-            self.source_galaxies.source.light.intensity = phase_2_results.variable.source_galaxies.source.light.intensity
+            self.source_galaxies.source.light.intensity = \
+                phase_2_results.variable.source_galaxies.source.light.intensity
 
-            self.source_galaxies.source.light.effective_radius = phase_2_results.variable.source_galaxies.source.light.effective_radius
+            self.source_galaxies.source.light.effective_radius = \
+                phase_2_results.variable.source_galaxies.source.light.effective_radius
 
-            self.source_galaxies.source.light.sersic_index = phase_2_results.variable.source_galaxies.source.light.sersic_index
+            self.source_galaxies.source.light.sersic_index = \
+                phase_2_results.variable.source_galaxies.source.light.sersic_index
 
             # However, listing every parameter like this is ugly, and is combersome if we have a lot of parameters.
 
@@ -183,20 +199,31 @@ def make_pipeline(phase_folders=None):
             # you can simply set the source galaxy equal to one another, without specifying each parameter of every
             # light and mass profile.
 
-            self.source_galaxies.source = phase_2_results.variable.source_galaxies.source # This is identical to lines 196-203 above.
+            self.source_galaxies.source = \
+                phase_2_results.variable.source_galaxies.source # This is identical to lines 196-203 above.
 
             # For the lens galaxies, we have a slightly weird circumstance where the light profiles requires the
             # results of phase 1 and the mass profile the results of phase 2. When passing these as a 'variable', we
             # can split them as follows
 
-            self.lens_galaxies.lens.light = phase_1_results.variable.lens_galaxies.lens.light
-            self.lens_galaxies.lens.mass = phase_2_results.variable.lens_galaxies.lens.mass
+            self.lens_galaxies.lens.light = \
+                phase_1_results.variable.lens_galaxies.lens.light
+
+            self.lens_galaxies.lens.mass = \
+                phase_2_results.variable.lens_galaxies.lens.mass
 
     phase3 = LensSourcePhase(
         phase_name='phase_3_both', phase_folders=phase_folders,
-        lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
-        source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)),
-        optimizer_class=nl.MultiNest)
+        lens_galaxies=dict(
+            lens=gm.GalaxyModel(
+                redshift=0.5,
+                light=lp.EllipticalSersic,
+                mass=mp.EllipticalIsothermal)),
+        source_galaxies=dict(
+            source=gm.GalaxyModel(
+                redshift=1.0,
+                light=lp.EllipticalSersic)),
+        optimizer_class=af.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50

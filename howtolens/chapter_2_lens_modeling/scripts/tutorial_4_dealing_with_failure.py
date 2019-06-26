@@ -1,9 +1,8 @@
-from autofit import conf
-from autofit.optimize import non_linear as nl
-from autofit.mapper import prior
-from autolens.pipeline import phase as ph
+import autofit as af
+from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.data.plotters import ccd_plotters
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -17,7 +16,7 @@ from autolens.lens.plotters import lens_fit_plotters
 chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
 chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
 
-conf.instance = conf.Config(config_path=chapter_path+'configs/4_dealing_with_failure', output_path=chapter_path+"output")
+af.conf.instance = af.conf.Config(config_path=chapter_path+'configs/4_dealing_with_failure', output_path=chapter_path+"output")
 
 # Even with my custom config files - the non-linear searches will take a bit of time to run in this tutorial. Whilst you
 # are waiting, I would skip ahead to the cells ahead of the phase-run cells, and sit back and think about the comments,
@@ -33,24 +32,28 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(130, 130), pixel_scale=0.1,
-                                                                       psf_shape=(11, 11))
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    lens_galaxy = g.Galaxy(redshift=0.5,
-                           light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04,
-                                                     effective_radius=0.5, sersic_index=3.5),
-                           mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0,
-                                                        einstein_radius=0.8))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
 
-    source_galaxy = g.Galaxy(redshift=1.0,
-                             light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03,
-                                                       effective_radius=0.3, sersic_index=3.0))
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04, effective_radius=0.5,
+                                  sersic_index=3.5),
+        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
 
-    ccd_simulated = ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.1,
-                                         exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    source_galaxy = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03, effective_radius=0.3,
+                                  sersic_index=3.0))
+
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+
+    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
     return ccd_simulated
 
@@ -69,7 +72,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # correct model. I've also let you know what we're changing the priors from (as initially specified by the
 # 'config/priors/default' config files.)
 
-class CustomPriorPhase(ph.LensSourcePlanePhase):
+class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 
     def pass_priors(self, results):
 
@@ -79,42 +82,56 @@ class CustomPriorPhase(ph.LensSourcePlanePhase):
         # 0.0" and sigma "1.0. However, visual inspection of our strong lens image tells us that its clearly around
         # x = 0.0" and y = 0.0", so lets reduce where non-linear search looks for these parameters.
 
-        self.lens_galaxies.lens.light.centre_0 = prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-        self.lens_galaxies.lens.light.centre_1 = prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-        self.lens_galaxies.lens.mass.centre_0 = prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-        self.lens_galaxies.lens.mass.centre_1 = prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+        self.lens_galaxies.lens.light.centre_0 = \
+            af.prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+
+        self.lens_galaxies.lens.light.centre_1 = \
+            af.prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+
+        self.lens_galaxies.lens.mass.centre_0 = \
+            af.prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+
+        self.lens_galaxies.lens.mass.centre_1 = \
+            af.prior.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
 
         # By default, the axis-ratio (ellipticity) of our lens galaxy's light profile is a UniformPrior between 0.2 and
         # 1.0. However, by looking at the image it looks fairly circular, so lets use a GaussianPrior nearer 1.0.
-        self.lens_galaxies.lens.light.axis_ratio = prior.GaussianPrior(mean=0.8, sigma=0.15)
+        self.lens_galaxies.lens.light.axis_ratio = \
+            af.prior.GaussianPrior(mean=0.8, sigma=0.15)
 
         # We'll also assume that the light profile's axis_ratio informs us of the mass-profile's axis_ratio, but
-        # because this may not strictly be true (e.g. because of dark matter) we'll use a wider prior.
-        self.lens_galaxies.lens.mass.axis_ratio = prior.GaussianPrior(mean=0.8, sigma=0.25)
+        # because this may not strictly be true (e.g. because of dark matter) we'll use a wider af.prior.
+        self.lens_galaxies.lens.mass.axis_ratio = \
+            af.prior.GaussianPrior(mean=0.8, sigma=0.25)
 
         # By default, the orientation of the galaxy's light profile, phi, uses a UniformPrior between 0.0 and
         # 180.0 degrees. However, if you look really close at the image (and maybe adjust the color-map of the plot),
         # you'll be able to notice that it is elliptical and that it is oriented around 45.0 degrees counter-clockwise
         # from the x-axis. Lets update our prior
-        self.lens_galaxies.lens.light.phi = prior.GaussianPrior(mean=45.0, sigma=15.0)
+        self.lens_galaxies.lens.light.phi = \
+            af.prior.GaussianPrior(mean=45.0, sigma=15.0)
 
         # Again, lets kind of assume that the light's orientation roughly traces that of mass.
-        self.lens_galaxies.lens.mass.phi = prior.GaussianPrior(mean=45.0, sigma=30.0)
+        self.lens_galaxies.lens.mass.phi = \
+            af.prior.GaussianPrior(mean=45.0, sigma=30.0)
 
         # The effective radius of a light profile is its 'half-light' radius, the radius at which 50% of its
         # total luminosity is internal to a circle defined within that radius. PyAutoLens assumes a
         # UniformPrior on this quantity between 0.0" and 4.0", but inspection of the image (again, using a colormap
         # scaling) shows the lens's light doesn't extend anywhere near 4.0", so lets reduce it.
-        self.lens_galaxies.lens.light.effective_radius = prior.GaussianPrior(mean=0.5, sigma=0.8)
+        self.lens_galaxies.lens.light.effective_radius = \
+            af.prior.GaussianPrior(mean=0.5, sigma=0.8)
 
         # Typically, we have some knowledge of what morphology our lens galaxy is. Infact, most strong lenses are
         # massive elliptical galaxies, and anyone who studies galaxy morphology will tell you these galaxies have a
         # Sersic index near 4. So lets change our Sersic index from a UniformPrior between 0.8 and 8.0 to reflect this.
-        self.lens_galaxies.lens.light.sersic_index = prior.GaussianPrior(mean=4.0, sigma=1.0)
+        self.lens_galaxies.lens.light.sersic_index = \
+            af.prior.GaussianPrior(mean=4.0, sigma=1.0)
 
         # Finally, the 'ring' that the lensed source forms clearly has a radius of about 0.8". This is its Einstein
         # radius, so lets change the prior from a UniformPrior between 0.0" and 4.0".
-        self.lens_galaxies.lens.mass.einstein_radius_in_units = prior.GaussianPrior(mean=0.8, sigma=0.2)
+        self.lens_galaxies.lens.mass.einstein_radius = \
+            af.prior.GaussianPrior(mean=0.8, sigma=0.2)
 
         # In this exercise, I'm not going to change any priors on the source galaxy. Whilst lens modeling experts can
         # look at a strong lens and often tell you roughly where the source-galaxy is located (in the source-plane),
@@ -127,12 +144,14 @@ custom_prior_phase = CustomPriorPhase(
     phase_name='4_tuned_priors',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 custom_prior_result = custom_prior_phase.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # Bam! We get a good model. The right model. A glorious model! We gave our non-linear search a helping hand, and it
@@ -164,7 +183,7 @@ lens_fit_plotters.plot_fit_subplot(fit=custom_prior_result.most_likely_fit)
 # aligned with its mass. This may, or may not, be a reasonable assumption, but it'll remove 4 parameters from the lens
 # model (the mass-profiles y, x, axis_ratio and phi), so its worth trying!
 
-class LightTracesMassPhase(ph.LensSourcePlanePhase):
+class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
 
     def pass_priors(self, results):
 
@@ -184,12 +203,14 @@ light_traces_mass_phase = LightTracesMassPhase(
     phase_name='4_light_traces_mass',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure'
       'folder for live output of the results, images and lens model.'
       'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+
 light_traces_mass_phase_result = light_traces_mass_phase.run(data=ccd_data)
+
 print('MultiNest has finished run - you may now continue the notebook.')
 lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likely_fit)
 
@@ -224,11 +245,11 @@ lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likel
 # Lets setup a phase, and overwrite some of the non-linear search's parameters from the defaults it assumes in the
 # 'config/non_linear.ini' config file:
 
-custom_non_linear_phase = ph.LensSourcePlanePhase(
+custom_non_linear_phase = phase_imaging.LensSourcePlanePhase(
     phase_name='4_custom_non_linear',
     lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal)),
     source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # The 'optimizer' below is MultiNest, the non-linear search we're using.
 
@@ -259,7 +280,8 @@ custom_non_linear_result = custom_non_linear_phase.run(data=ccd_data)
 print('MultiNest has finished run - you may now continue the notebook.')
 
 # Indeed, it does. Thus, we can always brute-force our way to a good lens model, if all else fails.
-lens_fit_plotters.plot_fit_subplot(fit=custom_non_linear_result.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(
+    fit=custom_non_linear_result.most_likely_fit)
 
 # Finally, lets list the advantages and disadvantages of this approach:
 

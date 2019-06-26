@@ -1,5 +1,4 @@
-from autofit import conf
-from autofit.tools import path_util
+import autofit as af
 from autolens.data import ccd
 from autolens.data.plotters import ccd_plotters
 
@@ -31,10 +30,10 @@ import os
 workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # Create the path to the data folder in your workspace.
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path, folder_names=['data'])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path, folder_names=['data'])
 
 # It is convenient to specify the data type and data name as a string, so that if the pipeline is applied to multiple
 # images we don't have to change all of the path entries in the load_ccd_data_from_fits function below.
@@ -47,7 +46,8 @@ pixel_scale = 0.1
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path, folder_names=[data_type, data_name])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=data_path, folder_names=[data_type, data_name])
 
 # This loads the CCD imaging data, as per usual.
 ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + 'image.fits',
@@ -97,13 +97,18 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from pipelines.no_lens_light.initialize import lens_sie_shear_source_sersic
-from pipelines.no_lens_light.power_law.from_initialize import lens_pl_shear_source_sersic
-from pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
+from workspace.pipelines.no_lens_light.initialize import lens_sie_shear_source_sersic
+from workspace.pipelines.no_lens_light.power_law.from_initialize import lens_pl_shear_source_sersic
+from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
-pipeline_initialize = lens_sie_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
-pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(phase_folders=[data_type, data_name])
+pipeline_initialize = lens_sie_shear_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
+
+pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
+
+pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name])
 
 pipeline = pipeline_initialize + pipeline_power_law + pipeline_subhalo
 

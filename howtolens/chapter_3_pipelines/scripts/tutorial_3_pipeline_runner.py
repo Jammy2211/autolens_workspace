@@ -1,5 +1,6 @@
-from autofit import conf
+import autofit as af
 from autolens.data import ccd
+from autolens.data import simulated_ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -24,7 +25,7 @@ import os
 
 # Lets setup the path to the workspace, as per usual.
 workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # This function simulates an image with a complex source.
 def simulate():
@@ -33,38 +34,43 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.simulate_as_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05,
-                                                                       psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
+        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
 
-    lens_galaxy = g.Galaxy(redshift=0.5,
-                           mass=mp.EllipticalIsothermal( centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0,
-                                                         einstein_radius=1.6))
+    lens_galaxy = g.Galaxy(
+        redshift=0.5,
+        mass=mp.EllipticalIsothermal( centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
 
-    source_galaxy_0 = g.Galaxy(redshift=1.0,
-                               light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2,
-                                                         effective_radius=1.0, sersic_index=1.5))
+    source_galaxy_0 = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2, effective_radius=1.0,
+                                  sersic_index=1.5))
 
-    source_galaxy_1 = g.Galaxy(redshift=1.0,
-                               light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1,
-                                                         effective_radius=0.2, sersic_index=3.0))
+    source_galaxy_1 = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(-0.25, 0.25), axis_ratio=0.7, phi=45.0, intensity=0.1, effective_radius=0.2,
+                                  sersic_index=3.0))
 
-    source_galaxy_2 = g.Galaxy(redshift=1.0,
-                               light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03,
-                                                         effective_radius=0.3, sersic_index=3.5))
+    source_galaxy_2 = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(0.45, -0.35), axis_ratio=0.6, phi=90.0, intensity=0.03, effective_radius=0.3,
+                                  sersic_index=3.5))
 
-    source_galaxy_3 = g.Galaxy(redshift=1.0,
-                               light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03,
-                                                         effective_radius=0.1, sersic_index=4.0))
+    source_galaxy_3 = g.Galaxy(
+        redshift=1.0,
+        light=lp.EllipticalSersic(centre=(-0.05, -0.0), axis_ratio=0.9, phi=140.0, intensity=0.03, effective_radius=0.1,
+                                  sersic_index=4.0))
 
-    tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy],
-                                                 source_galaxies=[source_galaxy_0, source_galaxy_1,
-                                                                  source_galaxy_2, source_galaxy_3],
-                                                 image_plane_grid_stack=image_plane_grid_stack)
+    tracer = ray_tracing.TracerImageSourcePlanes(
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy_0, source_galaxy_1, source_galaxy_2, source_galaxy_3],
+        image_plane_grid_stack=image_plane_grid_stack)
 
-    return ccd.CCDData.simulate(array=tracer.image_plane_image_for_simulation, pixel_scale=0.05,
-                               exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
 
 # Lets simulate the image.
 ccd_data = simulate()

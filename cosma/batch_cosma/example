@@ -3,8 +3,8 @@
 #SBATCH -N 1
 #SBATCH --ntasks=14
 #SBATCH -J example
-#SBATCH -o output/output.%A.%a.out
-#SBATCH -e error/error.%A.%a.err
+#SBATCH -o ../output.%A.%a.out
+#SBATCH -e ../error.%A.%a.err
 #SBATCH -p cosma
 #SBATCH -A durham
 #SBATCH -t 48:00:00   # longest job

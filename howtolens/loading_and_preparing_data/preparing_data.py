@@ -18,13 +18,13 @@ from workspace.howtolens.loading_and_preparing_data import simulate_data
 path = 'path/to/AutoLens/workspace/howtolens/loading_and_preparing_data/' # <----- You must include this slash on the end
 path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/loading_and_preparing_data/'
 
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=path, folder_names=['data'])
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=path, folder_names=['data'])
 
 simulate_data.simulate_all_ccd_data(data_path=data_path) # This will populate the 'data' path with example ccd data-sets.
 
 # First, lets load a data-set using the 'load_ccd_data_from_fits' function of the ccd module. This
 # data-set represents a good data-reduction - it conforms to all the formatting standards I describe in this tutorial!
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path, folder_names=['ccd_data'])
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path, folder_names=['ccd_data'])
 ccd_data = ccd.load_ccd_data_from_fits(image_path=ccd_data_path + 'image.fits',
                                        noise_map_path=ccd_data_path + 'noise_map.fits',
                                        psf_path=ccd_data_path + 'psf.fits', pixel_scale=0.1)
@@ -51,7 +51,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or
 # 10000's.
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
                                                                           folder_names=['ccd_data_in_counts'])
 ccd_data_in_counts = ccd.load_ccd_data_from_fits(image_path=ccd_data_path + 'image.fits', pixel_scale=0.1,
                                                  noise_map_path=ccd_data_path + 'noise_map.fits',
@@ -81,7 +81,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_converted_to_eps)
 
 #    Lets look at an example of a very large postage stamp - we can barely even see the lens and source galaxies!
 
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
                                                                           folder_names=['ccd_data_with_large_stamp'])
 
 ccd_data_large_stamp = ccd.load_ccd_data_from_fits(image_path=ccd_data_path + 'image.fits', pixel_scale=0.1,
@@ -104,7 +104,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_large_stamp_trimmed)
 #    but also the masks's 'blurring region' - which corresponds to all unmasked image pixels where light will blur into
 #    the masks after PSF convolution. Thus, we may need to pad an image to include this region.
 
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
                                                                           folder_names=['ccd_data_with_small_stamp'])
 
 #    This image is an example of a stamp which is big enough to contain the lens and source galaxies, but when we
@@ -145,7 +145,7 @@ lens_data= ld.LensData(ccd_data=ccd_data_small_stamp_padded, mask=mask) # No err
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.
 
-# ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+# ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
 #                                                                           folder_names=['ccd_data_offset_centre'])
 
 # ccd_data_offset_centre = ccd.load_ccd_data_from_fits(image_path=path+'image.fits', pixel_scale=0.1,
@@ -173,7 +173,7 @@ lens_data= ld.LensData(ccd_data=ccd_data_small_stamp_padded, mask=mask) # No err
 # common data-reductions. Currently, we have a function to convert an image from a HST WHT map, where
 # RMS SD = 1.0/ sqrt(WHT). This can be called using the 'convert_noise_map_from_weight_map' flag.
 
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
                                                                           folder_names=['ccd_data_with_large_stamp'])
 
 ccd_data_noise_from_wht = ccd.load_ccd_data_from_fits(image_path=ccd_data_path + 'image.fits',
@@ -192,7 +192,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_noise_from_wht)
 
 #    Lets look at an image where a large PSF kernel is loaded.
 
-ccd_data_path = path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
+ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=data_path,
                                                                           folder_names=['ccd_data_with_large_psf'])
 
 ccd_data_with_large_psf = ccd.load_ccd_data_from_fits(image_path=ccd_data_path + 'image.fits',

@@ -50,14 +50,19 @@ from autolens.lens.plotters import plane_plotters
 # As always, we need grids, where our grids are the coordinates we'll 'trace' from the image-plane to the source-plane
 # in the lensing configuration above. Our grid-stack is therefore no longer just a 'grid-stack', but the grid-stack
 # representing our image-plane coordinates. Thus, lets name as such.
-image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(shape=(100, 100), pixel_scale=0.05,
-                                                                                  sub_grid_size=2)
+image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
 
 # Whereas before we called our galaxy's things like 'galaxy_with_light_profile', lets now refer to them by their role
 # in lensing, e.g. 'lens_galaxy' and 'source_galaxy'.
-mass_profile = mass_profiles.SphericalIsothermal(centre=(0.0,  0.0), einstein_radius=1.6)
+mass_profile = mass_profiles.SphericalIsothermal(
+    centre=(0.0,  0.0), einstein_radius=1.6)
+
 lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=mass_profile)
-light_profile = light_profiles.SphericalSersic(centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
+
+light_profile = light_profiles.SphericalSersic(
+    centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
+
 source_galaxy = galaxy.Galaxy(redshift=1.0, light=light_profile)
 
 # Lets setup our image-plane. This plane takes the lens galaxy we made above and the grid-stack of
@@ -108,7 +113,8 @@ plane_plotters.plot_plane_grid(plane=source_plane, axis_limits=[-0.1, 0.1, -0.1,
 # (We are inputting the pixel index's into 'points' - the first set of points go from 0 -> 50, which is the top row of
 # the image-grid running from the left - as we said it would!)
 
-plane_plotters.plot_image_and_source_plane_subplot(image_plane=image_plane, source_plane=source_plane,
+plane_plotters.plot_image_and_source_plane_subplot(
+    image_plane=image_plane, source_plane=source_plane,
     points=[[range(0,50)], [range(500, 550)],
             [1550, 1650, 1750, 1850, 1950, 2050],
             [8450, 8350, 8250, 8150, 8050, 7950]])

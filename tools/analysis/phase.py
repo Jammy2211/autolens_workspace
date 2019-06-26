@@ -1,7 +1,5 @@
-from autofit import conf
-from autofit.tools import path_util
-from autofit.optimize import non_linear as nl
-from autolens.pipeline import phase as ph
+import autofit as af
+from autolens.pipeline.phase import phase_imaging
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.data import ccd
@@ -24,7 +22,7 @@ workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 # path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output papth
-conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # It is convinient to specify the lens name as a string, so that if the pipeline is applied to multiple images we \
 # don't have to change all of the path entries in the load_ccd_data_from_fits function below.
@@ -34,7 +32,7 @@ pixel_scale = 0.1
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
-data_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
                                                                       folder_names=['data', data_type, data_name])
 
 ccd_data = ccd.load_ccd_data_from_fits(image_path=data_path + '/image.fits',
@@ -65,11 +63,11 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 # The phase folders and phase name mean the output of these run will be in the directory
 # 'workspace/output/example/lens_light_and_x1_source/phase_example'
-phase = ph.LensSourcePlanePhase(
+phase = phase_imaging.LensSourcePlanePhase(
     phase_name='phase_example', phase_folders=[data_type, data_name],
     lens_galaxies=dict(lens=lens_galaxy_model),
     source_galaxies=dict(source=source_galaxy_model),
-    optimizer_class=nl.MultiNest)
+    optimizer_class=af.MultiNest)
 
 # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
 # non-linear parameter space faster (if you haven't already, checkout the tutorial '' in howtolens/chapter_2).
