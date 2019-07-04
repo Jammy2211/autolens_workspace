@@ -117,7 +117,7 @@ lens_fit_plotters.plot_fit_subplot(
 
 # If we change the 'normalization' variables of the plotter, such that the color-map is restricted to a narrower
 # range of values, we can see that even without regularization we are still reconstructing the actual source galaxy.
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=no_regularization_fit.inversion, norm_max=1.0, norm_min=-1.0)
 
 # Over-fitting is why regularization is necessary - solutions like this would completely ruin our attempts to model a

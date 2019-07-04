@@ -68,8 +68,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     # inner_mask_radii=None -> phase_path='phase_name/settings'
 
-    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
-                                                                                pipeline_name=pipeline_name)
+    phase_folders.append(pipeline_name)
 
     ### PHASE 1 ###
 

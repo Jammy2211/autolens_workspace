@@ -90,7 +90,7 @@ inversion = inv.Inversion(
 inversion_plotters.plot_reconstructed_image(
     inversion=inversion, mask=mask)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=inversion, should_plot_grid=True)
 
 # And there we have it, we've successfully reconstructed, or, *inverted*, our source using the mapper's rectangular
@@ -184,7 +184,7 @@ inversion = inv.Inversion(
 inversion_plotters.plot_reconstructed_image(
     inversion=inversion, mask=mask)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=inversion, should_plot_grid=True)
 
 # Pretty great, huh? If you ran the complex source pipeline, you'll remember that getting a model image that looked

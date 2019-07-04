@@ -55,7 +55,8 @@ def make_pipeline(
         pl_pixelization=pix.VoronoiBrightnessImage, pl_regularization=reg.AdaptiveBrightness,
         phase_folders=None, tag_phases=True,
         redshift_lens=0.5, redshift_source=1.0,
-        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=None):
+        sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=None,
+        inversion_pixel_limit=None, cluster_pixel_scale=0.1):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
@@ -70,8 +71,7 @@ def make_pipeline(
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
 
-    phase_folders = af.path_util.phase_folders_from_phase_folders_and_pipeline_name(
-        phase_folders=phase_folders, pipeline_name=pipeline_name)
+    phase_folders.append(pipeline_name)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
@@ -144,7 +144,7 @@ def make_pipeline(
                 constant.lens_galaxies.lens.shear
 
     phase2 = InversionPhase(
-        phase_name='phase_2_inversion_init', phase_folders=phase_folders, tag_phases=tag_phases,
+        phase_name='phase_2_initialize_inversion', phase_folders=phase_folders, tag_phases=tag_phases,
         lens_galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
@@ -157,11 +157,14 @@ def make_pipeline(
                 regularization=pl_regularization)),
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        inversion_pixel_limit=inversion_pixel_limit, cluster_pixel_scale=cluster_pixel_scale,
         optimizer_class=af.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 20
     phase2.optimizer.sampling_efficiency = 0.8
+
+    phase2 = phase2.extend_with_inversion_phase()
 
     ### PHASE 3 ###
 
@@ -186,7 +189,7 @@ def make_pipeline(
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.source_galaxies.source = results.from_phase('phase_2_inversion_init').\
+            self.source_galaxies.source = results.from_phase('phase_2_initialize_inversion').inversion.\
                 constant.source_galaxies.source
 
     phase3 = InversionPhase(
@@ -203,6 +206,7 @@ def make_pipeline(
                 regularization=pl_regularization)),
         sub_grid_size=sub_grid_size, bin_up_factor=bin_up_factor, positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii, interp_pixel_scale=interp_pixel_scale,
+        inversion_pixel_limit=inversion_pixel_limit, cluster_pixel_scale=cluster_pixel_scale,
         optimizer_class=af.MultiNest)
 
     phase3.optimizer.const_efficiency_mode = True

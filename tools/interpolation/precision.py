@@ -77,9 +77,9 @@ print("interpolation x error: ", np.mean(difference_x))
 print("interpolation x uncertainty: ", np.std(difference_x))
 print("interpolation x max error: ", np.max(difference_x))
 
-difference_y_2d = lens_data.grid_stack.sub.scaled_array_2d_with_sub_dimensions_from_sub_array_1d(
+difference_y_2d = lens_data.grid_stack.sub.scaled_array_2d_with_sub_dimensions_from_sub_array_1d_and_sub_grid_size(
     sub_array_1d=difference_y)
-difference_x_2d = lens_data.grid_stack.sub.scaled_array_2d_with_sub_dimensions_from_sub_array_1d(
+difference_x_2d = lens_data.grid_stack.sub.scaled_array_2d_with_sub_dimensions_from_sub_array_1d_and_sub_grid_size(
     sub_array_1d=difference_x)
 
 array_plotters.plot_array(array=difference_y_2d)

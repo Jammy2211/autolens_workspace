@@ -108,7 +108,7 @@ source_galaxy = g.Galaxy(
 fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_annular, use_border=False)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True)
 
 # Everything looks fine - we get a reconstructed source on a visually appeasing source-plane grid. So, why are we
@@ -116,7 +116,7 @@ inversion_plotters.plot_reconstructed_pixelization(
 fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=False)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True)
 
 # Woah - whats happened? There are lots of extra points on our source-plane grid, which trace to extremely large radii
@@ -159,7 +159,7 @@ mask_circular_large = msk.Mask.circular(
 fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=False)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True)
 
 #   This second point is a *huge* problem, as allowing source-pixels to fit regions of our mask in this completely
@@ -172,7 +172,7 @@ inversion_plotters.plot_reconstructed_pixelization(
 fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True)
 
 mapper_plotters.plot_image_and_mapper(
@@ -266,7 +266,7 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(source_galaxy, mask
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=False)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True, should_plot_border=True)
 
 # However, when we relocate them, we get a good-looking source-plane with a well defined border and edge, thus ensuring
@@ -274,7 +274,7 @@ inversion_plotters.plot_reconstructed_pixelization(
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True,should_plot_border=True)
 
 # Multi-galaxy modeling is rife for border effects, and if you have multiple lens galaxies I heartily recommend you
@@ -289,7 +289,7 @@ mask_circular = msk.Mask.circular(
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True, should_plot_border=True)
 
 
@@ -299,7 +299,7 @@ mask_circular = msk.Mask.circular(
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True, should_plot_border=True)
 
 
@@ -309,7 +309,7 @@ mask_circular = msk.Mask.circular(
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True, should_plot_border=True)
 
 
@@ -319,7 +319,7 @@ mask_circular = msk.Mask.circular(
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, use_border=True)
 
-inversion_plotters.plot_reconstructed_pixelization(
+inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_grid=True, should_plot_border=True)
 
 # And with that, borders are done. In truth, borders should pretty much take care of themselves when you're

@@ -1,5 +1,5 @@
 import autofit as af
-from autolens.pipeline.phase import phase_imaging, phase_hyper
+from autolens.pipeline.phase import phase_imaging, phase_extensions
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.data import ccd

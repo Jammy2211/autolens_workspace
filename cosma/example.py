@@ -121,7 +121,7 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 from workspace.pipelines.no_lens_light.initialize import lens_sie_shear_source_sersic
 from workspace.pipelines.no_lens_light.power_law.from_initialize import lens_pl_shear_source_sersic
-from workspace_jam.pipelines.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
+from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
 
 pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(
     phase_folders=[data_type, data_name])

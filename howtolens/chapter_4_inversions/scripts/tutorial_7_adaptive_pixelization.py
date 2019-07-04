@@ -82,7 +82,6 @@ source_plane_grid_stack = image_plane.trace_grid_stack_to_next_plane()
 mapper = adaptive.mapper_from_grid_stack_and_border(
     grid_stack=source_plane_grid_stack, border=None)
 
-
 inversion = inv.Inversion(
     image_1d=lens_data.image_1d, noise_map_1d=lens_data.noise_map_1d,
     convolver=lens_data.convolver_mapping_matrix, mapper=mapper,
@@ -99,7 +98,7 @@ inversion = inv.Inversion(
 # many lenses with!
 
 # So what is wrong with the grid? Well, first, lets think about the source reconstruction.
-# inversion_plotters.plot_reconstructed_pixelization(inversion=inversion, should_plot_centres=True)
+# inversion_plotters.plot_pixelization_values(inversion=inversion, should_plot_centres=True)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,

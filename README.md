@@ -4,11 +4,11 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.23.2** and **PyAutoFit v0.26.5** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.24.0** and **PyAutoFit v0.27.2** If you have any errors or issues using the workspace, try using these versions:
 
 ```
-pip install autolens==0.21.0
-pip install autofit==0.23.4
+pip install autolens==0.24.0
+pip install autofit==0.27.2
 ```
 
 # Workspace Contents

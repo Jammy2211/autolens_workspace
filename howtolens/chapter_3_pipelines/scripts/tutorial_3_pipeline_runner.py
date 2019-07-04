@@ -133,7 +133,12 @@ true_fit = lens_fit.LensDataFit.for_data_and_tracer(
     lens_data=lens_data, tracer=tracer)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=true_fit)
+    fit=true_fit,  should_plot_mask=True,
+    extract_array_from_mask=True, zoom_around_mask=True)
+
+lens_fit_plotters.plot_fit_subplot_of_planes(
+    fit=true_fit, should_plot_mask=True,
+    extract_array_from_mask=True, zoom_around_mask=True)
 
 # And indeed, we see far improved residuals, chi-squareds, etc.
 
