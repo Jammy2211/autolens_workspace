@@ -33,7 +33,7 @@ import os
 # Notes: None
 
 def make_pipeline(
-        pl_hyper_galaxies=True,
+        pl_hyper_galaxies=True, pl_hyper_background_sky=True,  pl_hyper_background_noise=True,
         phase_folders=None, tag_phases=True,
         redshift_lens=0.5, redshift_source=1.0,
         sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=0.05,
@@ -108,6 +108,16 @@ def make_pipeline(
                 self.source_galaxies.source.hyper_galaxy = results.from_phase('phase_1_lens_pl_shear_source_sersic').hyper_galaxy. \
                     constant.source_galaxies.source.hyper_galaxy
 
+            if pl_hyper_background_sky:
+
+                self.hyper_image_sky = results.last.hyper_galaxy.\
+                    constant.source_galaxies.source.hyper_image_sky
+
+            if pl_hyper_background_noise:
+
+                self.hyper_noise_background = results.last.hyper_galaxy. \
+                    constant.source_galaxies.source.hyper_noise_background
+
 
     phase1 = GridPhase(
         phase_name='phase_1_subhalo_search', phase_folders=phase_folders, tag_phases=tag_phases,
@@ -178,8 +188,18 @@ def make_pipeline(
 
             if pl_hyper_galaxies:
 
-                self.source_galaxies.source.hyper_galaxy = results.from_phase('phase_1_lens_pl_shear_source_sersic').hyper_galaxy. \
+                self.source_galaxies.source.hyper_galaxy = results.last.hyper_galaxy. \
                     constant.source_galaxies.source.hyper_galaxy
+
+            if pl_hyper_background_sky:
+
+                self.hyper_image_sky = results.last.inversion. \
+                    constant.hyper_image_sky
+
+            if pl_hyper_background_noise:
+
+                self.hyper_noise_background = results.last.inversion. \
+                    constant.hyper_noise_background
 
     phase2 = SubhaloPhase(
         phase_name='phase_2_subhalo_refine', phase_folders=phase_folders,
@@ -206,6 +226,8 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.3
 
     phase2 = phase2.extend_with_hyper_and_inversion_phases(
-        hyper_galaxy=pl_hyper_galaxies)
+        hyper_galaxy=pl_hyper_galaxies,
+        include_background_sky=pl_hyper_background_sky,
+        include_background_noise=pl_hyper_background_noise)
 
     return pipeline.PipelineImaging(pipeline_name, phase1, phase2)

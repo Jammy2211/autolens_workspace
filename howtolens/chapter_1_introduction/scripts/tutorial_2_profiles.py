@@ -14,7 +14,7 @@ grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
 # Next, lets create a light profile using the 'light_profiles' module. We'll use a Sersic function,
 # which is a analytic function often use to depict galaxies.
 sersic_light_profile = light_profiles.EllipticalSersic(
-    centre=(2.0, 1.0), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0, sersic_index=2.5)
+    centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0, sersic_index=2.5)
 
 # We can print a profile to confirm its parameters.
 print(sersic_light_profile)

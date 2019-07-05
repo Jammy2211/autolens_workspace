@@ -21,7 +21,7 @@ import os
 # Notes: None
 
 def make_pipeline(
-        pl_hyper_galaxies=True,
+        pl_hyper_galaxies=True, pl_hyper_background_sky=True,  pl_hyper_background_noise=True,
         phase_folders=None, tag_phases=True,
         redshift_lens=0.5, redshift_source=1.0,
         sub_grid_size=2, bin_up_factor=None, positions_threshold=None, inner_mask_radii=None, interp_pixel_scale=None):
@@ -64,6 +64,8 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.2
 
     phase1 = phase1.extend_with_hyper_and_inversion_phases(
-        hyper_galaxy=pl_hyper_galaxies)
+        hyper_galaxy=pl_hyper_galaxies,
+        include_background_sky=pl_hyper_background_sky,
+        include_background_noise=pl_hyper_background_noise)
 
     return pipeline.PipelineImaging(pipeline_name, phase1)

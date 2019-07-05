@@ -33,7 +33,7 @@ import os
 
 def make_pipeline(
         pl_align_bulge_dark_centre=True,
-        pl_hyper_galaxies=True,
+        pl_hyper_galaxies=True, pl_hyper_background_sky=True,  pl_hyper_background_noise=True,
         pl_pixelization=pix.VoronoiBrightnessImage, pl_regularization=reg.AdaptiveBrightness,
         phase_folders=None, tag_phases=True,
         redshift_lens=0.5, redshift_source=1.0,
@@ -101,11 +101,21 @@ def make_pipeline(
 
             if pl_hyper_galaxies:
 
-                self.lens_galaxies.lens.hyper_galaxy = results.from_phase('phase_2_lens_sersic_exp_sie_shear_source_inversion').hyper_galaxy. \
+                self.lens_galaxies.lens.hyper_galaxy = results.last.hyper_galaxy. \
                     constant.lens_galaxies.lens.hyper_galaxy
 
-                self.source_galaxies.source.hyper_galaxy = results.from_phase('phase_2_lens_sersic_exp_sie_shear_source_inversion').hyper_galaxy. \
+                self.source_galaxies.source.hyper_galaxy = results.last.hyper_galaxy. \
                     constant.source_galaxies.source.hyper_galaxy
+
+            if pl_hyper_background_sky:
+
+                self.hyper_image_sky = results.last.inversion. \
+                    constant.hyper_image_sky
+
+            if pl_hyper_background_noise:
+
+                self.hyper_noise_background = results.last.inversion. \
+                    constant.hyper_noise_background
 
     phase1 = LensSourcePhase(
         phase_name='phase_1_lens_sersic_exp_mlr_nfw_shear_source_inversion', phase_folders=phase_folders, tag_phases=tag_phases,
@@ -131,6 +141,9 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.2
 
     phase1 = phase1.extend_with_hyper_and_inversion_phases(
-        hyper_galaxy=pl_hyper_galaxies, inversion=True)
+        hyper_galaxy=pl_hyper_galaxies,
+        include_background_sky=pl_hyper_background_sky,
+        include_background_noise=pl_hyper_background_noise,
+        inversion=True)
 
     return pipeline.PipelineImaging(pipeline_name, phase1)
