@@ -114,7 +114,7 @@ phase_with_custom_mask = phase_imaging.LensSourcePlanePhase(
 
 # We can also manually specify a set of image-pixels which correspond to the multiple images of the source-galaxy(s).
 # During the analysis, PyAutoLens will first check that these pixels trace within a specified arc-second threshold of
-# one another (which is controlled by the 'position_threshold' parameter of the 'general.ini' config file). This
+# one another (which is controlled by the 'position_threshold' parameter input into a phase). This
 # provides two benefits:
 
 # 1) The analysis runs faster, as the non-linear search avoids searching regions of parameter space where the

@@ -4,12 +4,17 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.24.2** and **PyAutoFit v0.27.3** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.24.4** and **PyAutoFit v0.27.3** If you have any errors or issues using the workspace, try using these versions:
 
 ```
-pip install autolens==0.24.2
+pip install autolens==0.24.4
 pip install autofit==0.27.3
 ```
+
+## Getting Started
+
+To begin, I'd check out the 'introduction' in the quickstart folder. This will explain the best way to get started with
+**PyAutoLens**.
 
 # Workspace Contents
 
@@ -17,6 +22,7 @@ The workspace includes the following:
 
 - **Config** - Configuration files which customize the **PyAutoLens** analysis.
 - **Data** - Your data folder, including example data-sets distributed with **PyAutoLens**.
+- **Quick Start** - A quick start guide, so you can begin modeling your own lens data within hours.
 - **HowToLens** - The **HowToLens** lecture series.
 - **Output** - Where the **PyAutoLens** analysis and visualization are output.
 - **Pipelines** - Example pipelines for modeling strong lenses or to use a template for your own pipeline.

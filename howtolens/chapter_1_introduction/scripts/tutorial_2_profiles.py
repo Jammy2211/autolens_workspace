@@ -42,6 +42,11 @@ print(light_profile_intensities[5050])
 profile_plotters.plot_intensities(
     light_profile=sersic_light_profile, grid=grid_stack.regular)
 
+# To perform ray-tracing, we need to create a 'mass-profile'. A mass-profile is an analytic function that describes the
+# distribution of mass in a galaxy, and therefore can be used to derive its surface-density, gravitational potential
+# and most importantly, its deflection angles. For those unfamiliar with lensing, the deflection angles describe how
+# light is bent by the mass-profile due to the curvature of space-time.
+
 # Lets create a singular isothermal sphere (SIS) mass-profile using the 'mass-profiles' module.
 sis_mass_profile = mass_profiles.SphericalIsothermal(
     centre=(0.1, 0.1), einstein_radius=1.6)

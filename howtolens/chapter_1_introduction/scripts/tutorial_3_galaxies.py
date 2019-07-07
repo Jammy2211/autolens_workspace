@@ -4,11 +4,12 @@ from autolens.model.galaxy import galaxy
 from autolens.data.array import grids
 from autolens.model.galaxy.plotters import galaxy_plotters
 
-# In this example, we'll use 'mass_profiles' and 'light_profiles' modules introduced previously, along with the
+# In this example, we'll use the 'mass_profiles' and 'light_profiles' modules introduced previously, along with the
 # 'galaxy' module to create Galaxy objects in PyAutoLens. We'll see that:
 
-# 1) Galaxies can take multiple light-profiles / mass-profiles and are composed of multiple components.
-# 2) By taking multiple components, the combined intensities / deflection angle's of the profiles are computed.
+# 1) Galaxies can be made from multiple light-profiles and mass-profiles.
+# 2) By taking multiple components, the summed intensities / deflection angle's of the profiles are computed.
+# 3) Galaxies have redshifts, defining where they are relative to one another in lensing calculations.
 
 # Lets use an identical grid to the previous example.
 grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
@@ -49,16 +50,21 @@ light_profile_3 = light_profiles.SphericalSersic(
     centre=(1.0, -1.0), intensity=1.0, effective_radius=2.0, sersic_index=2.0)
 
 galaxy_with_3_light_profiles = galaxy.Galaxy(
-    redshift=0.5, light_1=light_profile_1, light_2=light_profile_2, light_3=light_profile_3)
+    redshift=0.5,
+    light_1=light_profile_1,
+    light_2=light_profile_2,
+    light_3=light_profile_3)
 
 # We can print the galaxy to confirm it possesses the Sersic light-profiles above.
 print(galaxy_with_3_light_profiles)
 
 # If we plot the galaxy, we see 3 blobs of light!
-galaxy_plotters.plot_intensities(galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular)
+galaxy_plotters.plot_intensities(
+    galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular)
 
 # We can also plot each individual light profile using the 'subplot' galaxy plotter.
-galaxy_plotters.plot_intensities_subplot(galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular)
+galaxy_plotters.plot_intensities_subplot(
+    galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular)
 
 # Mass profiles interact with Galaxy objects in the exact same way as light profiles.
 # Lets create a galaxy with three SIS mass profiles.
@@ -72,7 +78,10 @@ mass_profile_3 = mass_profiles.SphericalIsothermal(
     centre=(1.0, -1.0), einstein_radius=1.0)
 
 galaxy_with_3_mass_profiles = galaxy.Galaxy(
-    redshift=0.5, mass_1=mass_profile_1, mass_2=mass_profile_2, mass_3=mass_profile_3)
+    redshift=0.5,
+    mass_1=mass_profile_1,
+    mass_2=mass_profile_2,
+    mass_3=mass_profile_3)
 
 # We can print a galaxy to confirm it possesses the sis mass-profiles above.
 print(galaxy_with_3_mass_profiles)

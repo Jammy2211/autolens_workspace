@@ -3,7 +3,7 @@ from autolens.data import ccd
 from autolens.data.array import mask as ma
 from autolens.lens import lens_data as ld
 from autolens.data.plotters import ccd_plotters
-from workspace.howtolens.loading_and_preparing_data import simulate_data
+from workspace.tools.loading_and_preparing_data import simulate_data
 
 # To model data with PyAutoLens, you first need to ensure it is in a format suitable for lens modeling. This tutorial
 # takes you through what format to use, and will introduce a number of PyAutoLens's built in tools that can convert

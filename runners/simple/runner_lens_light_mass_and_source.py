@@ -1,5 +1,6 @@
 import autofit as af
 from autolens.data import ccd
+from autolens.data import mask as msk
 from autolens.data.plotters import ccd_plotters
 
 import os
@@ -44,10 +45,15 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=data_path + 'image.fits',
     psf_path=data_path + 'psf.fits',
-     noise_map_path=data_path + 'noise_map.fits',
-   pixel_scale=pixel_scale)
+    noise_map_path=data_path + 'noise_map.fits',
+    pixel_scale=pixel_scale)
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+# The example autolens_workspace data comes with a mask already, if you look in
+# workspace/data/example/lens_light_and_x1_source/ you'll see a mask.fits file!
+mask = msk.load_mask_from_fits(
+    mask_path=data_path + 'mask.fits', pixel_scale=pixel_scale)
 
 # Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
 # Below, we'll use a 3 phase example pipeline to fit the data with a parametric lens light, mass and source light

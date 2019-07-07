@@ -24,17 +24,19 @@ from autolens.model.profiles import mass_profiles as mp
 # I'll let you into a secret - this is the same lens model used to simulate the image we're going to fit (but I'm not
 # going to tell you the actual parameters I used!).
 
-# So, how do we infer these parameters? Well, we could randomly guess a lens model, corresponding to some
-# random set of parameters. We could use this lens model to create a tracer and fit the image-data, and quantify how
-# good the fit was using its likelihood (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd
-# find one that provides a good fit (i.e. high likelihood) to the data!
+# So, how do we infer the light and mass profile parameters that give a good fit to our data?
+
+# Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this lens
+# model to create a tracer and fit the image-data, and quantify how good the fit was using its likelihood
+# (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd find one that provides a good fit
+# (i.e. high likelihood) to the data!
 
 # It may sound surprising, but this is actually the basis of how lens modeling works. However, we can do a lot better
 # than random guessing. Instead, we track the likelihood of our previous guesses, and guess more models using combinations
 # of parameters that gave higher likelihood solutions previously. The idea is that if a set of parameters provided a
 # good fit to the data, another set with similar values probably will too.
 
-# This is called 'non-linear search' and its a fairly common problem faced by scientists. Over the next few tutorials,
+# This is called a 'non-linear search' and its a fairly common problem faced by scientists. Over the next few tutorials,
 # we're going to really get our heads around the concept of a non-linear search - intuition which will prove crucial
 # to being a successful lens modeler.
 
@@ -131,11 +133,9 @@ source_galaxy_model = gm.GalaxyModel(
 phase = phase_imaging.LensSourcePlanePhase(
     phase_name='1_non_linear_search',
     lens_galaxies=dict(
-        lens_galaxy=
-        lens_galaxy_model),
+        lens_galaxy=lens_galaxy_model),
     source_galaxies=dict(
-        source_galaxy=
-        source_galaxy_model),
+        source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
