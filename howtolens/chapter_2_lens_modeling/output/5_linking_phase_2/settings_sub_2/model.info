@@ -1,0 +1,30 @@
+lens_galaxies
+    lens
+        light
+            centre
+                centre_0                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+                centre_1                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+            axis_ratio                                                                              GaussianPrior, mean = 0.8, sigma = 0.15
+            phi                                                                                     GaussianPrior, mean = 45.0, sigma = 15.0
+            intensity                                                                               GaussianPrior, mean = 0.02, sigma = 0.01
+            effective_radius                                                                        GaussianPrior, mean = 0.62, sigma = 0.2
+            sersic_index                                                                            GaussianPrior, mean = 4.0, sigma = 2.0
+        mass
+            centre
+                centre_0                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+                centre_1                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+            axis_ratio                                                                              GaussianPrior, mean = 0.8, sigma = 0.25
+            phi                                                                                     GaussianPrior, mean = 45.0, sigma = 30.0
+            einstein_radius                                                                         GaussianPrior, mean = 0.8, sigma = 0.1
+        redshift                                                                                    0.5
+source_galaxies
+    source
+        light
+            centre
+                centre_0                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+                centre_1                                                                            GaussianPrior, mean = 0.0, sigma = 0.1
+            axis_ratio                                                                              GaussianPrior, mean = 0.8, sigma = 0.1
+            phi                                                                                     GaussianPrior, mean = 90.0, sigma = 10.0
+            intensity                                                                               GaussianPrior, mean = 0.14, sigma = 0.05
+            effective_radius                                                                        GaussianPrior, mean = 0.12, sigma = 0.2
+        redshift                                                                                    1.0

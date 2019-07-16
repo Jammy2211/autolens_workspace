@@ -23,34 +23,38 @@ import sys
 
 # We need to specify where our data is stored and output is placed. In this example, we'll use the 'share' folder, but
 # you can change the string below to your cosma username if you want to use your own personal directory.
-data_folder_name = 'share'
+data_folder_name = "share"
 # data_folder_name = 'cosma_username'
 
 # Lets use this to setup our cosma path, which is where our data and output are stored.
 cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path='/cosma5/data/autolens/', folder_names=[data_folder_name])
+    path="/cosma5/data/autolens/", folder_names=[data_folder_name]
+)
 
 # The data folder is the name of the folder our data is stored in, which in this case is 'example'. I would typically
 # expect this would be named after your sample of lenses (e.g. 'slacs', 'bells'). If you are modelng just one
 # lens, it may be best to omit the data_type.
-data_type = 'example'
+data_type = "example"
 
 # Next, lets use this path to setup the data path, which for this example is named 'example' and found at
 # '/cosma5/data/autolens/share/data/example/'
 cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_path, folder_names=['data', data_type])
+    path=cosma_path, folder_names=["data", data_type]
+)
 
 # We'll do the same for our output path, which is '/cosma5/data/autolens/share/output/example/'
 cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_path, folder_names=['output', data_type])
+    path=cosma_path, folder_names=["output", data_type]
+)
 
 # Next, we need the path to our Cosma workspace, which can be generated using a relative path given that our runner is
 # located in our Cosma workspace.
-workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Lets now use the above paths to set the config path and output path for our Cosma run.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + 'config', output_path=cosma_output_path)
+    config_path=workspace_path + "config", output_path=cosma_output_path
+)
 
 # On Cosma, there are two systems we can submit to, called 'cordelia' and 'cosma'. The similarities and differences
 # between these systems are as follows:
@@ -68,7 +72,7 @@ af.conf.instance = af.conf.Config(
 # Cosma and Cordelia submissions require different 'batch scripts'. A batch script basically tells Cosma the PyAutoLens
 # job your sending it, and distributes it to nodes and CPUs. Lets first look
 
-# Lets first take a look at a cordelia batch script, which can be found at 
+# Lets first take a look at a cordelia batch script, which can be found at
 # 'workspace/runners/cosma/batch_cordelia/example' (we'll cover cosma batch scripts at the end of this runner). In the
 # same folder, you should see a file 'doc', which will example what each line does.
 
@@ -90,49 +94,60 @@ cosma_array_id = int(sys.argv[1])
 # loads a different lens name based on its ID. neat, huh?
 
 data_name = []
-data_name.append('') # Task number beings at 1, so keep index 0 blank
-data_name.append('example_image_1') # Index 1
-data_name.append('example_image_2') # Index 2
-data_name.append('example_image_3') # Index 3
-data_name.append('example_image_4') # Index 4
-data_name.append('example_image_5') # Index 5
-data_name.append('example_image_6') # Index 6
-data_name.append('example_image_7') # Index 7
-data_name.append('example_image_8') # Index 8
+data_name.append("")  # Task number beings at 1, so keep index 0 blank
+data_name.append("example_image_1")  # Index 1
+data_name.append("example_image_2")  # Index 2
+data_name.append("example_image_3")  # Index 3
+data_name.append("example_image_4")  # Index 4
+data_name.append("example_image_5")  # Index 5
+data_name.append("example_image_6")  # Index 6
+data_name.append("example_image_7")  # Index 7
+data_name.append("example_image_8")  # Index 8
 
 # Lets extract the data name explicitly using our cosma_array_id (rememeber, each job has a different cosma_array_id,
 # so each will be given a different data_name string).
 data_name = data_name[cosma_array_id]
 
-pixel_scale = 0.2 # Make sure your pixel scale is correct!
+pixel_scale = 0.2  # Make sure your pixel scale is correct!
 
 # We now use the data_name to load a the data-set on each job. The statement below combines
 # the cosma_data_path and and data_name to read data from the following directory:
 # '/cosma5/data/autolens/share/data/example/data_name'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_data_path, folder_names=[data_name])
+    path=cosma_data_path, folder_names=[data_name]
+)
 
 # This loads the CCD imaging data, as per usual.
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=data_path + 'image.fits',
-    psf_path=data_path + 'psf.fits',
-    noise_map_path=data_path + 'noise_map.fits',
-    pixel_scale=pixel_scale)
+    image_path=data_path + "image.fits",
+    psf_path=data_path + "psf.fits",
+    noise_map_path=data_path + "noise_map.fits",
+    pixel_scale=pixel_scale,
+)
 
-from workspace.pipelines.no_lens_light.initialize import lens_sie_shear_source_sersic
-from workspace.pipelines.no_lens_light.power_law.from_initialize import lens_pl_shear_source_sersic
-from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import lens_pl_shear_subhalo_source_sersic
+from workspace.pipelines.advanced.no_lens_light.initialize import (
+    lens_sie_shear_source_sersic,
+)
+from workspace.pipelines.advanced.no_lens_light.power_law.from_initialize import (
+    lens_pl_shear_source_sersic,
+)
+from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import (
+    lens_pl_shear_subhalo_source_sersic,
+)
 
-pipeline_initializer = lens_sie_shear_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name])
+pipeline_initialize = lens_sie_shear_source_sersic.make_pipeline(
+    phase_folders=[data_type, data_name]
+)
 
 pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name])
+    phase_folders=[data_type, data_name]
+)
 
 pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name])
+    phase_folders=[data_type, data_name]
+)
 
-pipeline = pipeline_initializer + pipeline_power_law + pipeline_subhalo
+pipeline = pipeline_initialize + pipeline_power_law + pipeline_subhalo
 
 pipeline.run(data=ccd_data)
 

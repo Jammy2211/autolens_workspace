@@ -26,46 +26,59 @@ from autolens.model.profiles import mass_profiles as mp
 #    that arise from a lens model fit (e.g due to the source reconstruction or quality of data).
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + "config", output_path=workspace_path + "output"
+)
 
 # First, we'll setup the grid stack we use to simulate a surface density profile.
 pixel_scale = 0.05
 image_shape = (250, 250)
 grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-    shape=image_shape, pixel_scale=pixel_scale, sub_grid_size=4)
+    shape=image_shape, pixel_scale=pixel_scale, sub_grid_size=4
+)
 
 # Now lets create a galaxy, using a simple singular isothermal sphere.
-galaxy = g.Galaxy(redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0))
+galaxy = g.Galaxy(
+    redshift=0.5, mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0)
+)
 
 # Next, we'll generate its surface density profile. Note that, because we're using the galaxy_util surface density
 # function, the sub-grid of the grid-stack that is passed to this function is used to over-sample the surface density.
 # The surface density averages over this sub-grid, such that it is the shape of the image (250, 250).
-convergence = galaxy_util.convergence_of_galaxies_from_grid(galaxies=[galaxy], grid=grid_stack.sub)
-convergence = grid_stack.regular.scaled_array_2d_from_array_1d(array_1d=convergence)
+convergence = galaxy.convergence_from_grid(
+    galaxies=[galaxy], grid=grid_stack.sub, return_in_2d=True, return_binned=True
+)
 
 # Now, we'll set this surface density up as our 'galaxy-data', meaning that it is what we'll fit via a non-linear
 # search phase. To perform a fit we need a noise-map to help define our chi-squared. Given we are fitting a direct
 # lensing quantity the actual values of this noise-map arn't particularly important, so we'll just use a noise-map of
 # all 0.1's
-noise_map = scaled_array.ScaledSquarePixelArray(array=0.1*np.ones(convergence.shape), pixel_scale=pixel_scale)
+noise_map = scaled_array.ScaledSquarePixelArray(
+    array=0.1 * np.ones(convergence.shape), pixel_scale=pixel_scale
+)
 data = gd.GalaxyData(image=convergence, noise_map=noise_map, pixel_scale=pixel_scale)
 
 # The fit will use a mask, which we setup like any other fit. Lets use a circular mask of 2.0"
 def mask_function_circular(image):
-    return msk.Mask.circular(shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.0)
+    return msk.Mask.circular(
+        shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.0
+    )
+
 
 # We can now use a special phase, called a 'GalaxyFitPhase', to fit this surface density with a model galaxy the
 # mass-profiles of which we get to choose. We'll fit it with a singular isothermal sphere and should see we retrieve
 # the input model above.
 phase = phase.GalaxyFitPhase(
-    phase_name='galaxy_convergence_fit', use_convergence=True,
+    phase_name="galaxy_convergence_fit",
+    use_convergence=True,
     galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)),
     mask_function=mask_function_circular,
     sub_grid_size=4,
-    optimizer_class=af.MultiNest)
+    optimizer_class=af.MultiNest,
+)
 
 phase.run(galaxy_data=[data])
 

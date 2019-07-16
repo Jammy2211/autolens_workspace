@@ -16,10 +16,12 @@ from autolens.data.plotters import ccd_plotters
 # Point-Spread Function, which we can simulate as a Gaussian using the imaging module.
 psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-# To simulate ccd data, we use a special type of grid. This grid pads its 2D dimensions relative to the PSF-shape,
-# to ensure that the edge's of our simulated image are not degraded.
-image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-    shape=(100, 100), pixel_scale=0.1, psf_shape=psf.shape)
+# To simulate ccd data, we use the normal grid stack. However, it should be noted that when we simulate the image,
+# this will be used to generate a 'padded grid', which pads its 2D dimensions relative to the PSF-shape, to ensure that
+# the edge's of our simulated image are not degraded.
+image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.1, sub_grid_size=2
+)
 
 print(image_plane_grid_stack.regular.image_shape)
 print(image_plane_grid_stack.regular.padded_shape)
@@ -27,16 +29,28 @@ print(image_plane_grid_stack.regular.padded_shape)
 # Now, lets setup our lens galaxy, source galaxy and tracer.
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+    ),
+)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,
-    light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
-                              sersic_index=2.5))
+    light=lp.EllipticalSersic(
+        centre=(0.1, 0.1),
+        axis_ratio=0.8,
+        phi=45.0,
+        intensity=1.0,
+        effective_radius=1.0,
+        sersic_index=2.5,
+    ),
+)
 
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-    image_plane_grid_stack=image_plane_grid_stack)
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[source_galaxy],
+    image_plane_grid_stack=image_plane_grid_stack,
+)
 
 # Lets look at the tracer's image-plane image - this is the image we'll be simulating.
 ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
@@ -45,7 +59,7 @@ ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
 # which has been generated specifically for simulating an image, using the padded grid above. This ensures
 # edge-effects do not degrade our simulation's PSF convolution.
 print(tracer.profile_image_plane_image_2d.shape)
-print(tracer.profile_image_plane_image_2d_for_simulation.shape)
+print(tracer.padded_profile_image_plane_image_2d_from_psf_shape.shape)
 
 # Now, to simulate the ccd imaging data, we pass the tracer's image-plane image to the ccd module's simulate
 # function. This adds the following effects to the image:
@@ -54,24 +68,32 @@ print(tracer.profile_image_plane_image_2d_for_simulation.shape)
 # 2) The Background Sky: Although the image that is returned is automatically background sky subtracted.
 # 3) Poisson noise: Due to the background sky, lens galaxy and source galaxy Poisson photon counts.
 
-simulated_ccd = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-    image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
-    exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+simulated_ccd = simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    tracer=tracer,
+    pixel_scale=0.1,
+    exposure_time=300.0,
+    psf=psf,
+    background_sky_level=0.1,
+    add_noise=True,
+)
 
 # Lets plot the image - we can see the image has been blurred due to the telescope optics and noise has been added.
 ccd_plotters.plot_image(ccd_data=simulated_ccd)
 
 # Finally, lets output these files to.fits files, we'll begin to analyze them in the next tutorial!
-chapter_path = '/path/to/AutoLens/workspace/howtolens/chapter_1_introduction'
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/'
+chapter_path = "/path/to/AutoLens/workspace/howtolens/chapter_1_introduction"
+chapter_path = (
+    "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
+)
 
 # The data path specifies where the data is output, this time in the directory 'chapter_path/data'
-data_path = chapter_path + 'data/'
+data_path = chapter_path + "data/"
 
 # Now output our simulated data to hard-disk.
 ccd.output_ccd_data_to_fits(
     ccd_data=simulated_ccd,
-    image_path=data_path+'image.fits',
-    noise_map_path=data_path+'noise_map.fits',
-    psf_path=data_path+'psf.fits',
-    overwrite=True)
+    image_path=data_path + "image.fits",
+    noise_map_path=data_path + "noise_map.fits",
+    psf_path=data_path + "psf.fits",
+    overwrite=True,
+)

@@ -29,56 +29,89 @@ def simulate():
 
     psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        ),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2, effective_radius=0.3,
-                                  sersic_index=1.0))
+        light=lp.EllipticalSersic(
+            centre=(0.1, 0.1),
+            axis_ratio=0.8,
+            phi=90.0,
+            intensity=0.2,
+            effective_radius=0.3,
+            sersic_index=1.0,
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
-    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+        tracer=tracer,
+        pixel_scale=0.05,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
+
 
 # And the same fitting function as the last tutorial
 def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
 
     ccd_data = simulate()
     mask = msk.Mask.circular_annular(
-        shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-        inner_radius_arcsec=0.5, outer_radius_arcsec=2.2)
+        shape=ccd_data.shape,
+        pixel_scale=ccd_data.pixel_scale,
+        inner_radius_arcsec=0.5,
+        outer_radius_arcsec=2.2,
+    )
 
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-        image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=lens_data.grid_stack,
+        border=lens_data.border,
+    )
 
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+
 
 # This lens galaxy has the wrong mass-model -  I've reduced its Einstein Radius from 1.6 to 0.8.
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8))
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8
+    ),
+)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(1.0,)))
+    regularization=reg.Constant(coefficient=1.0),
+)
 
 fit = perform_fit_with_lens_and_source_galaxy(
-    lens_galaxy=lens_galaxy, source_galaxy=source_galaxy)
+    lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
+)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
+)
 
 # What happened!? This incorrect mass-model provides a really good_fit to the image! The residuals and chi-squared map
 # are as good as the ones we saw in the last tutorial.
@@ -92,22 +125,31 @@ lens_fit_plotters.plot_fit_subplot(
 # correct solution.
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+    ),
+)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(1.0,)))
+    regularization=reg.Constant(coefficient=1.0),
+)
 
 correct_fit = perform_fit_with_lens_and_source_galaxy(
-    lens_galaxy=lens_galaxy, source_galaxy=source_galaxy)
+    lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
+)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=correct_fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=correct_fit,
+    should_plot_mask=True,
+    extract_array_from_mask=True,
+    zoom_around_mask=True,
+)
 
-print('Bayesian Evidence of Incorrect Fit:')
+print("Bayesian Evidence of Incorrect Fit:")
 print(fit.evidence)
-print('Bayesian Evidence of Correct Fit:')
+print("Bayesian Evidence of Correct Fit:")
 print(correct_fit.evidence)
 
 # Indeed, its evidence *is* lower. However, the difference in evidence isn't *that large*. This is going to
@@ -129,6 +171,7 @@ print(correct_fit.evidence)
 # time. We do this when we want to simultaneously fit and subtract the light of a lens galaxy and reconstruct its lensed
 # source using an inversion. To do this, all we have to do is give the lens galaxy a light profile.
 
+
 def simulate_lens_with_light_profile():
 
     from autolens.data.array import grids
@@ -137,74 +180,115 @@ def simulate_lens_with_light_profile():
 
     psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0),
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+        light=lp.SphericalSersic(
+            centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
+        ),
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        ),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2, effective_radius=0.3,
-                                  sersic_index=1.0))
+        light=lp.EllipticalSersic(
+            centre=(0.1, 0.1),
+            axis_ratio=0.8,
+            phi=90.0,
+            intensity=0.2,
+            effective_radius=0.3,
+            sersic_index=1.0,
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
-    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+        tracer=tracer,
+        pixel_scale=0.05,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
+
 
 # When fitting such an image, we now want to include the lens's light in the analysis. thus, we should update our
 # mask to be circular, and include the central regions of the image.
 ccd_data = simulate_lens_with_light_profile()
 
 mask = msk.Mask.circular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=2.5)
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=2.5
+)
 
 # As I said above, performing this fit is the same as usual, we just give the lens galaxy a light profile.
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0),
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+    light=lp.SphericalSersic(
+        centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
+    ),
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+    ),
+)
 
 # These are all the usual things we do when setting up a fit.
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(1.0,)))
+    regularization=reg.Constant(coefficient=1.0),
+)
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-    image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[source_galaxy],
+    image_plane_grid_stack=lens_data.grid_stack,
+    border=lens_data.border,
+)
 
 # This fit subtracts the lens galaxy's light from the image and fits the resulting source-only image with the inversion.
 # When we plot the image, a new panel on the sub-plot appears showing the model image of the lens galaxy.
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
+)
 
 # Of course if the lens subtraction is rubbish, so is our fit, so we can be sure that our lens model wants to fit the
 # lens galaxy's light accurately (below, I've increased the lens galaxy intensity from 0.2 to 0.3)!
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    light=lp.SphericalSersic(centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8, sersic_index=4.0),
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+    light=lp.SphericalSersic(
+        centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8, sersic_index=4.0
+    ),
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+    ),
+)
 
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-    image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[source_galaxy],
+    image_plane_grid_stack=lens_data.grid_stack,
+    border=lens_data.border,
+)
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
+)
 
 # And with that, we're done. We've pretty much covered everything inversion related, so in the last tutorial I'll set
 # you up with a pipeline that you can use to model lenses with an inversion.

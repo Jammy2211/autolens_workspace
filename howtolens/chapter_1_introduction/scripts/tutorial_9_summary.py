@@ -14,9 +14,9 @@ from autolens.lens.plotters import ray_tracing_plotters
 # In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
 # 1) PyAutoLens uses Cartesian grids of (y,x) coordinates to perform ray-tracing.
-# 2) These grids are combined with light and mass profiles to compute images, convergences, potentials and
+# 2) These grids are hyper_combined with light and mass profiles to compute images, convergences, potentials and
 #    deflection angles.
-# 3) Profiles are combined to make galaxies.
+# 3) Profiles are hyper_combined to make galaxies.
 # 4) Collections of galaxies (at the same redshift) form a plane.
 # 5) A tracer can make an image-plane + source-plane strong lens system.
 # 6) The Universe's cosmology can be input into this tracer to convert units to physical values.
@@ -27,35 +27,59 @@ from autolens.lens.plotters import ray_tracing_plotters
 # lens system. Lets get a 'fit' to a strong lens, by setting up an image, mask, tracer, etc.
 
 # You need to change the path below to the chapter 1 directory.
-chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/'
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/'
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/"
+chapter_path = (
+    "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
+)
 
 # The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
-data_path = chapter_path + 'data/'
+data_path = chapter_path + "data/"
 
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=data_path + 'image.fits',
-    noise_map_path=data_path+'noise_map.fits',
-    psf_path=data_path + 'psf.fits',
-    pixel_scale=0.1)
+    image_path=data_path + "image.fits",
+    noise_map_path=data_path + "noise_map.fits",
+    psf_path=data_path + "psf.fits",
+    pixel_scale=0.1,
+)
 
-mask = ma.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+mask = ma.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+)
 
 lens_data = li.LensData(ccd_data=ccd_data, mask=mask)
 
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0))
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+    ),
+)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,
-    bulge=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
-                              sersic_index=4.0),
-    disk=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=45.0, intensity=1.0, effective_radius=1.0,
-                             sersic_index=1.0))
+    bulge=lp.EllipticalSersic(
+        centre=(0.1, 0.1),
+        axis_ratio=0.8,
+        phi=45.0,
+        intensity=1.0,
+        effective_radius=1.0,
+        sersic_index=4.0,
+    ),
+    disk=lp.EllipticalSersic(
+        centre=(0.1, 0.1),
+        axis_ratio=0.8,
+        phi=45.0,
+        intensity=1.0,
+        effective_radius=1.0,
+        sersic_index=1.0,
+    ),
+)
 
-tracer = ray_tracing.TracerImageSourcePlanes(lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-                                             image_plane_grid_stack=lens_data.grid_stack)
+tracer = ray_tracing.TracerImageSourcePlanes(
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[source_galaxy],
+    image_plane_grid_stack=lens_data.grid_stack,
+)
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
@@ -83,15 +107,14 @@ print()
 # Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested
 # in. For example, if we want to plot the image of the source galaxy mass profile, we can do this in a variety of
 # different ways
-ray_tracing_plotters.plot_image_plane_image(
-    tracer=fit.tracer)
+ray_tracing_plotters.plot_image_plane_image(tracer=fit.tracer)
 
-plane_plotters.plot_image_plane_image(
-    plane=fit.tracer.source_plane)
+plane_plotters.plot_image_plane_image(plane=fit.tracer.source_plane)
 
 galaxy_plotters.plot_intensities(
     galaxy=fit.tracer.source_plane.galaxies[0],
-    grid=fit.tracer.source_plane.grids[0].regular)
+    grid=fit.tracer.source_plane.grids[0].regular,
+)
 
 # However, as our fit and ray-tracing becomes more complex, it is useful to know how to decompose their different
 # attributes to extract different things about them. For example, we made our source-galaxy above with two light
@@ -99,16 +122,18 @@ galaxy_plotters.plot_intensities(
 # break-up the different components of the fit and tracer.
 profile_plotters.plot_intensities(
     light_profile=fit.tracer.source_plane.galaxies[0].bulge,
-    grid=fit.tracer.source_plane.grid_stack.regular, title='Bulge Image-Plane Image')
+    grid=fit.tracer.source_plane.grid_stack.regular,
+    title="Bulge Image-Plane Image",
+)
 
 profile_plotters.plot_intensities(
     light_profile=fit.tracer.source_plane.galaxies[0].disk,
     grid=fit.tracer.source_plane.grid_stack.regular,
-    title='Disk Image-Plane Image')
+    title="Disk Image-Plane Image",
+)
 
 # The fit also has the lensing image, so we can plot the image using the fit too, if we so desire
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=lens_data.ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=lens_data.ccd_data)
 
 # And, we're done, not just with the tutorial, but the chapter!
 

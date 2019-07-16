@@ -81,11 +81,13 @@ from autolens.lens.plotters import lens_fit_plotters
 # Lets again setup the paths and config-overrides for this chapter, so the non-linear search runs fast.
 
 # You need to change the path below to the chapter 1 directory.
-chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path+'configs/2_parameter_space_and_priors', output_path=chapter_path+"output")
+    config_path=chapter_path + "configs/2_parameter_space_and_priors",
+    output_path=chapter_path + "output",
+)
 
 # This function simulates the image we'll fit in this tutorial - which is identical to the previous tutorial.
 def simulate():
@@ -94,48 +96,56 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
-        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+        light=lp.SphericalExponential(
+            centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
     ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+        image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
+        pixel_scale=0.1,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
 
     return ccd_simulated
+
 
 # Again, lets setup the simulated image
 ccd_data = simulate()
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 #  To change the priors on specific parameters, we create our galaxy models and use a custom-phase and its
 # 'pass_priors' function to overwrite priors on specific parameters.
 
-lens_galaxy_model = gm.GalaxyModel(
-    redshift=0.5,
-    mass=mp.SphericalIsothermal)
+lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
 
-source_galaxy_model = gm.GalaxyModel(
-    redshift=1.0,
-    light=lp.SphericalExponential)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
+
 
 class CustomPhase(phase_imaging.LensSourcePlanePhase):
-
     def pass_priors(self, results):
 
         # To change priors, we use the 'prior' module of PyAutoFit. These priors link our GalaxyModel to the
@@ -150,22 +160,27 @@ class CustomPhase(phase_imaging.LensSourcePlanePhase):
 
         # The word 'mass' corresponds to the word we used when setting up the GalaxyModel above.
 
-        self.lens_galaxies.lens_galaxy.mass.centre_0 = \
-            af.prior.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
+        self.lens_galaxies.lens_galaxy.mass.centre_0 = af.UniformPrior(
+            lower_limit=-0.1, upper_limit=0.1
+        )
 
-        self.lens_galaxies.lens_galaxy.mass.centre_1 = \
-            af.prior.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
+        self.lens_galaxies.lens_galaxy.mass.centre_1 = af.UniformPrior(
+            lower_limit=-0.1, upper_limit=0.1
+        )
 
         # Lets also change the prior on the lens galaxy's einstein radius, to a GaussianPrior centred on 1.4".
         # For real lens modeling, this might be done by visually estimating the radius the lens's arcs / ring appear.
 
-        self.lens_galaxies.lens_galaxy.mass.einstein_radius_in_units = \
-            af.prior.GaussianPrior(mean=1.4, sigma=0.2)
+        self.lens_galaxies.lens_galaxy.mass.einstein_radius = af.GaussianPrior(
+            mean=1.4, sigma=0.2
+        )
 
         # We can also customize the source galaxy - lets say we believe it is compact and limit its effective radius
 
-        self.source_galaxies.source_galaxy.light.effective_radius = \
-            af.prior.UniformPrior(lower_limit=0.0, upper_limit=0.3)
+        self.source_galaxies.source_galaxy.light.effective_radius = af.UniformPrior(
+            lower_limit=0.0, upper_limit=0.3
+        )
+
 
 # (If the use of a python 'class' here, or some of the python code doesn't appear clear, don't worry about it. This
 # code is using a number of Python's object-oriented features. In general, I expect that'll you'll simply copy the code
@@ -175,23 +190,23 @@ class CustomPhase(phase_imaging.LensSourcePlanePhase):
 # will be called automatically and thus change the priors as we specified above. If you look at the 'model.info'
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
 custom_phase = CustomPhase(
-    phase_name='2_custom_priors',
-    lens_galaxies=dict(
-        lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(
-        source_galaxy=source_galaxy_model),
-    optimizer_class=af.MultiNest)
+    phase_name="2_custom_priors",
+    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    optimizer_class=af.MultiNest,
+)
 
-print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors'
-      'folder for live output of the results, images and lens model.'
-      'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+print(
+    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors"
+    "folder for live output of the results, images and lens model."
+    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+)
 
 results_custom = custom_phase.run(data=ccd_data)
 
-lens_fit_plotters.plot_fit_subplot(
-    fit=results_custom.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(fit=results_custom.most_likely_fit)
 
-print('MultiNest has finished run - you may now continue the notebook.')
+print("MultiNest has finished run - you may now continue the notebook.")
 
 # And, we're done. This tutorial had some pretty difficult concepts to wrap your head around. However, I can't
 # emphasize enough how important it is that you develop an intuition for non-linear searches and the notion of a

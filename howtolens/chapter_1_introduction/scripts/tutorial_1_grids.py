@@ -10,24 +10,24 @@ from autolens.plotters import grid_plotters
 # This coordinate grid is aligned with the image we analyze, such that each coordinate on a 'regular' grid maps to the
 # centre of each image-pixel. Lets make a regular grid using 100 x 100 pixels, with a pixel scale (arcsecond-to-pixel
 # conversion factor) of 0.05", giving us a a 5" x 5" grid.
-regular_grid = grids.RegularGrid.from_shape_and_pixel_scale(
-    shape=(100, 100), pixel_scale=0.05)
+regular_grid = grids.Grid.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05
+)
 
 # First, lets plot this regular grid, which shows that it is a fairly bland uniform grid of dots.
-grid_plotters.plot_grid(
-    grid=regular_grid, title='Fairly Bland Uniform Grid Of Dots')
+grid_plotters.plot_grid(grid=regular_grid, title="Fairly Bland Uniform Grid Of Dots")
 
 # We can print each coordinate of this regular grid, revealing that it consists of a set of arc-second coordinates
 # (where the spacing between each coordinate corresponds to the 'pixel_scale' of 0.05" defined above)
-print('(y,x) regular-pixel 1:')
+print("(y,x) regular-pixel 0:")
 print(regular_grid[0])
-print('(y,x) regular-pixel 2:')
+print("(y,x) regular-pixel 1:")
 print(regular_grid[1])
-print('(y,x) regular-pixel 3:')
+print("(y,x) regular-pixel 2:")
 print(regular_grid[2])
-print('(y,x) regular-pixel 101:')
+print("(y,x) regular-pixel 100:")
 print(regular_grid[100])
-print('etc.')
+print("etc.")
 
 # (PyAutoLens actually flattens the NumPy array to 1D to save memory, however it consists of all
 # 10000 pixel coordinates on our 2D grid)
@@ -35,8 +35,9 @@ print(regular_grid.shape)
 
 # PyAutoLens uses many different types of grids, for performing many different calculations. For example, a sub-grid
 # splits each pixel on the regular grid above into a sub-pixel of size (sub_grid_size x sub_grid_size):
-sub_grid = grids.SubGrid.from_shape_pixel_scale_and_sub_grid_size(
-    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
+sub_grid = grids.Grid.from_shape_pixel_scale_and_sub_grid_size(
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2
+)
 
 # We specified a sub_grid_size of 2 above, therefore we expect 4 (2 x 2) times more sub-pixels than regular-pixels
 # (which like the regular grid are again flattened to 1D).
@@ -65,24 +66,24 @@ print(sub_grid.shape)
 
 # The sub-pixels coordinate are spaced uniformly between the regular-pixel's edges
 # (which are at y = (2.45", 2.5") and x = (-2.5". -2.45") )
-print('(y,x) sub-pixel 1 (of regular pixel 1):')
+print("(y,x) sub-pixel 0 (of regular pixel 0):")
 print(sub_grid[0])
-print('(y,x) sub-pixel 2 (of regular pixel 1):')
+print("(y,x) sub-pixel 1 (of regular pixel 0):")
 print(sub_grid[1])
-print('(y,x) sub-pixel 3 (of regular pixel 1):')
+print("(y,x) sub-pixel 2 (of regular pixel 0):")
 print(sub_grid[2])
-print('(y,x) sub-pixel 4 (of regular pixel 1):')
+print("(y,x) sub-pixel 3 (of regular pixel 0):")
 print(sub_grid[3])
 
-print(sub_grid[0,1] - sub_grid[1,1])
-print(sub_grid[1,1] - sub_grid[4,1])
+print(sub_grid[0, 1] - sub_grid[1, 1])
+print(sub_grid[1, 1] - sub_grid[4, 1])
 
 # The sub-grid then continues on to the next regular-grid pixels (and so on)
-print('(y,x) sub-pixel 1 (of regular pixel 2):')
+print("(y,x) sub-pixel 0 (of regular pixel `):")
 print(sub_grid[4])
-print('(y,x) sub-pixel 2 (of regular pixel 2):')
+print("(y,x) sub-pixel 0 (of regular pixel `):")
 print(sub_grid[5])
-print('etc.')
+print("etc.")
 
 # This coordinate sub-sampling allows calculations to be performed a higher resolution and
 # thus greater numerical accuracy.
@@ -91,20 +92,21 @@ print('etc.')
 # A grid stack consists of a set of aligned grids, for example, the regular and sub-grids above, but also other grids
 # which we will explain throughout these tutorials. Making a grid-stack is as simple as above.
 grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2
+)
 
 # The grid-stack coordinates are indeed identical to the individual grids above
-print('(y,x) regular-pixel 1:')
+print("(y,x) regular-pixel 1:")
 print(grid_stack.regular[0])
-print('(y,x) regular-pixel 2:')
+print("(y,x) regular-pixel 2:")
 print(grid_stack.regular[1])
-print('(y,x) sub-pixel 1 (of regular pixel 1):')
+print("(y,x) sub-pixel 0 (of regular pixel 0):")
 print(grid_stack.sub[0])
-print('(y,x) sub-pixel 2 (of regular pixel 1):')
+print("(y,x) sub-pixel 1 (of regular pixel 0):")
 print(grid_stack.sub[1])
-print('(y,x) sub-pixel 3 (of regular pixel 1):')
+print("(y,x) sub-pixel 2 (of regular pixel 0):")
 print(grid_stack.sub[2])
-print('(y,x) sub-pixel 4 (of regular pixel 1):')
+print("(y,x) sub-pixel 3 (of regular pixel 0):")
 print(grid_stack.sub[3])
 
 # Congratulations, you've completed your first PyAutoLens tutorial! Before moving on to the next one, experiment with

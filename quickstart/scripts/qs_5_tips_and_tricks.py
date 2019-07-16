@@ -70,7 +70,7 @@
 #    resolution 'sub-grid'.
 
 # 2) 'pipelines/advanced' and 'runners/advanced'. These advanced pipelines and runners allow for a much broader range
-#    of complex lens models to be fitted, and allow for different pipelines to be combined together so that the early
+#    of complex lens models to be fitted, and allow for different pipelines to be hyper_combined together so that the early
 #    phases of a pipeline can be reused when fitting more complex models later on.
 
 # 3) 'pipelines/hyper' and 'runners/hyper'. Hyper functionality is where PyAutoLens adapt the model fit to the data

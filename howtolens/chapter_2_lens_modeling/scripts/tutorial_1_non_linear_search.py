@@ -65,11 +65,14 @@ from autolens.model.profiles import mass_profiles as mp
 # to get our non-linear search to run fast!
 
 # You need to change the path below to the chapter 1 directory.
-chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
 
 # This sets up the config files used by this tutorial, and the path where the output of the modeling is placed.
-af.conf.instance = af.conf.Config(config_path=chapter_path+'/configs/1_non_linear_search', output_path=chapter_path+"/output")
+af.conf.instance = af.conf.Config(
+    config_path=chapter_path + "/configs/1_non_linear_search",
+    output_path=chapter_path + "/output",
+)
 
 # This function simulates the image we'll fit in this tutorial.
 def simulate():
@@ -78,48 +81,56 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
-        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6))
+        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+        light=lp.SphericalExponential(
+            centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
     image_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+        image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
+        pixel_scale=0.1,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
 
     return image_simulated
+
 
 # and this calls the function, setting us up with an image to model. Lets plot it
 ccd_data = simulate()
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # A GalaxyModel behaves analogously to the Galaxy objects we're now used to. However, whereas for a Galaxy we
 # manually specified the value of every parameter of its light-profiles and mass-profiles, for a GalaxyModel
 # these are inferred by the non-linear search.
 
 # Lets model the lens galaxy with an SIS mass profile (which is what it was simulated with).
-lens_galaxy_model = gm.GalaxyModel(
-    redshift=0.5,
-    mass=mp.SphericalIsothermal)
+lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
 
 # Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
-source_galaxy_model = gm.GalaxyModel(
-    redshift=1.0,
-    light=lp.SphericalExponential)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
 
 # A phase takes our galaxy models and fits their parameters via a non-linear search (in this case, MultiNest). In this
 # example, we have a lens-plane and source-plane, so we use a LensSourcePlanePhase.
@@ -131,22 +142,23 @@ source_galaxy_model = gm.GalaxyModel(
 # (also, just ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
 phase = phase_imaging.LensSourcePlanePhase(
-    phase_name='1_non_linear_search',
-    lens_galaxies=dict(
-        lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(
-        source_galaxy=source_galaxy_model),
-    optimizer_class=af.MultiNest)
+    phase_name="1_non_linear_search",
+    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    optimizer_class=af.MultiNest,
+)
 
 # To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.
-print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/1_non_linear_search'
-      'folder for live output of the results, images and lens model.'
-      'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+print(
+    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/1_non_linear_search"
+    "folder for live output of the results, images and lens model."
+    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+)
 
 results = phase.run(data=ccd_data)
 
-print('MultiNest has finished run - you may now continue the notebook.')
+print("MultiNest has finished run - you may now continue the notebook.")
 
 # Now this has run you should checkout the 'AutoLens/workspace/howtolens/chapter_2_lens_modeling/output' folder.
 # This is where the results of the phase are written to your hard-disk (in the '1_non_linear_search' folder).
@@ -154,8 +166,7 @@ print('MultiNest has finished run - you may now continue the notebook.')
 # python code to see the results.
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-lens_fit_plotters.plot_fit_subplot(
-    fit=results.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit)
 
 # The fit looks good, and we've therefore found a model pretty close to the one we simulated the image with (you can
 # confirm this yourself if you want, by comparing the inferred parameters to those found in the simulate function above).

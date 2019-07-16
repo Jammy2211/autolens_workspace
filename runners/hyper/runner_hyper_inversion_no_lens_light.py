@@ -29,20 +29,24 @@ import os
 # expand on them for your own personal scientific needs
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+    config_path=workspace_path + "config", output_path=workspace_path + "output"
+)
 
 # Create the path to the data folder in your workspace.
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=['data'])
+    path=workspace_path, folder_names=["data"]
+)
 
 # It is convenient to specify the data type and data name as a string, so that if the pipeline is applied to multiple
 # images we don't have to change all of the path entries in the load_ccd_data_from_fits function below.
-data_type = 'example'
-data_name = 'lens_mass_and_x1_source' # Example simulated image with lens light emission and a source galaxy.
+data_type = "example"
+data_name = (
+    "lens_mass_and_x1_source"
+)  # Example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
 # data_name = 'slacs1430+4105' # Example HST imaging of the SLACS strong lens slacs1430+4150.
@@ -51,14 +55,16 @@ pixel_scale = 0.1
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=[data_type, data_name])
+    path=data_path, folder_names=[data_type, data_name]
+)
 
 # This loads the CCD imaging data, as per usual.
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=data_path + 'image.fits',
-    psf_path=data_path + 'psf.fits',
-    noise_map_path=data_path + 'noise_map.fits',
-    pixel_scale=pixel_scale)
+    image_path=data_path + "image.fits",
+    psf_path=data_path + "psf.fits",
+    noise_map_path=data_path + "noise_map.fits",
+    pixel_scale=pixel_scale,
+)
 
 # Plot CCD before running.
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
@@ -86,28 +92,45 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Using a hyper inversion is easy. We just pass them to our inversion pipeline and those after. In this runner, we'll
 # turn off all other hyper galaxy function, that is discussed in other hyper runners (hyper galaxies, background).
 
-from workspace.pipelines.hyper.no_lens_light.initialize import lens_sie_shear_source_sersic
-from workspace.pipelines.hyper.no_lens_light.inversion.from_initialize import lens_sie_shear_source_inversion
-from workspace.pipelines.hyper.no_lens_light.power_law.from_inversion import lens_pl_shear_source_inversion
+from workspace.pipelines.hyper.no_lens_light.initialize import (
+    lens_sie_shear_source_sersic,
+)
+from workspace.pipelines.hyper.no_lens_light.inversion.from_initialize import (
+    lens_sie_shear_source_inversion,
+)
+from workspace.pipelines.hyper.no_lens_light.power_law.from_inversion import (
+    lens_pl_shear_source_inversion,
+)
 
 pl_pixelization = pix.VoronoiBrightnessImage
 pl_regularization = reg.AdaptiveBrightness
 
 pipeline_initialize = lens_sie_shear_source_sersic.make_pipeline(
-    pl_hyper_galaxies=False, pl_hyper_background_sky=False, pl_hyper_background_noise=False,
-    phase_folders=[data_type, data_name])
+    pl_hyper_galaxies=False,
+    pl_hyper_background_sky=False,
+    pl_hyper_background_noise=False,
+    phase_folders=[data_type, data_name],
+)
 
 pipeline_inversion = lens_sie_shear_source_inversion.make_pipeline(
-    pl_hyper_galaxies=False, pl_hyper_background_sky=False, pl_hyper_background_noise=False,
-    pl_pixelization=pl_pixelization, pl_regularization=pl_regularization,
+    pl_hyper_galaxies=False,
+    pl_hyper_background_sky=False,
+    pl_hyper_background_noise=False,
+    pl_pixelization=pl_pixelization,
+    pl_regularization=pl_regularization,
     phase_folders=[data_type, data_name],
-    positions_threshold=1.0)
+    positions_threshold=1.0,
+)
 
 pipeline_power_law = lens_pl_shear_source_inversion.make_pipeline(
-    pl_hyper_galaxies=False, pl_hyper_background_sky=False, pl_hyper_background_noise=False,
-    pl_pixelization=pl_pixelization, pl_regularization=pl_regularization,
+    pl_hyper_galaxies=False,
+    pl_hyper_background_sky=False,
+    pl_hyper_background_noise=False,
+    pl_pixelization=pl_pixelization,
+    pl_regularization=pl_regularization,
     phase_folders=[data_type, data_name],
-    positions_threshold=1.0)
+    positions_threshold=1.0,
+)
 
 pipeline = pipeline_initialize + pipeline_inversion + pipeline_power_law
 

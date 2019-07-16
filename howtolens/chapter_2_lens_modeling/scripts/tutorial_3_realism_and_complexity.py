@@ -33,11 +33,13 @@ from autolens.lens.plotters import lens_fit_plotters
 # light is visible and mass is elliptical. What could go wrong?
 
 # You need to change the path below to the chapter 1 directory.
-chapter_path = '/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/'
-chapter_path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/'
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path+'configs/3_realism_and_complexity', output_path=chapter_path+"output")
+    config_path=chapter_path + "configs/3_realism_and_complexity",
+    output_path=chapter_path + "output",
+)
 
 # Another simulate image function, albeit it generates a new image
 def simulate():
@@ -48,35 +50,60 @@ def simulate():
 
     psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04, effective_radius=0.5,
-                                  sersic_index=3.5),
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
+        light=lp.EllipticalSersic(
+            centre=(0.0, 0.0),
+            axis_ratio=0.9,
+            phi=45.0,
+            intensity=0.04,
+            effective_radius=0.5,
+            sersic_index=3.5,
+        ),
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
+        ),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03, effective_radius=0.3,
-                                  sersic_index=3.0))
+        light=lp.EllipticalSersic(
+            centre=(0.0, 0.0),
+            axis_ratio=0.5,
+            phi=90.0,
+            intensity=0.03,
+            effective_radius=0.3,
+            sersic_index=3.0,
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
     ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+        image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
+        pixel_scale=0.1,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
 
     return ccd_simulated
+
 
 # Simulate the image and set it up.
 ccd_data = simulate()
 
 # When we plot it, the lens light's is clealy visible in the centre of the image
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Now lets fit it using a phase, noting that indeed the galaxy-model corresponds to the one above.
 
@@ -88,31 +115,36 @@ ccd_plotters.plot_ccd_subplot(
 # Nevertheless, you could try running it yourself (maybe over your lunch break?). All you need to do is change the
 # phase_name below, maybe to something like 'howtolens/3_realism_and_complexity_rerun'
 phase = phase_imaging.LensSourcePlanePhase(
-    phase_name='3_realism_and_complexity',
+    phase_name="3_realism_and_complexity",
     lens_galaxies=dict(
         lens_galaxy=gm.GalaxyModel(
-            redshift=0.5,
-            light=lp.EllipticalSersic,
-            mass=mp.EllipticalIsothermal)),
+            redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
+        )
+    ),
     source_galaxies=dict(
-        source_galaxy=gm.GalaxyModel(
-            redshift=1.0,
-            light=lp.EllipticalExponential)),
-    optimizer_class=af.MultiNest)
+        source_galaxy=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+    ),
+    optimizer_class=af.MultiNest,
+)
 
 # Lets run the phase.
-print('MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity'
-      'folder for live output of the results, images and lens model.'
-      'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+print(
+    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity"
+    "folder for live output of the results, images and lens model."
+    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+)
 
 results = phase.run(data=ccd_data)
 
-print('MultiNest has finished run - you may now continue the notebook.')
+print("MultiNest has finished run - you may now continue the notebook.")
 
 # And lets look at the image.
 lens_fit_plotters.plot_fit_subplot(
-    fit=results.most_likely_fit, should_plot_mask=True,
-    extract_array_from_mask=True, zoom_around_mask=True)
+    fit=results.most_likely_fit,
+    should_plot_mask=True,
+    extract_array_from_mask=True,
+    zoom_around_mask=True,
+)
 
 # Uh-oh. That image didn't look very good, did it? If we compare our inferred parameters (look at the
 # 'workspace/howtolens/chapter_2_lens_modeling/output/3_realism_and_complexity' folder to the actual
@@ -124,39 +156,65 @@ lens_fit_plotters.plot_fit_subplot(
 
 # Create a lens data-set to make the fit - the mask we used above was a 3" circle (we'll come back to this later)
 mask = msk.Mask.circular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+)
 
-lens_data= li.LensData(
-    ccd_data=ccd_data, mask=mask)
+lens_data = li.LensData(ccd_data=ccd_data, mask=mask)
 
 ccd_plotters.plot_image(
-    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True)
+    ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True
+)
 
 # Make the tracer we use to simulate the image
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04, effective_radius=0.5,
-                              sersic_index=3.5),
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8))
+    light=lp.EllipticalSersic(
+        centre=(0.0, 0.0),
+        axis_ratio=0.9,
+        phi=45.0,
+        intensity=0.04,
+        effective_radius=0.5,
+        sersic_index=3.5,
+    ),
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
+    ),
+)
 
 source_galaxy = g.Galaxy(
     redshift=1.0,
-    light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.5, phi=90.0, intensity=0.03, effective_radius=0.3,
-                              sersic_index=3.0))
+    light=lp.EllipticalSersic(
+        centre=(0.0, 0.0),
+        axis_ratio=0.5,
+        phi=90.0,
+        intensity=0.03,
+        effective_radius=0.3,
+        sersic_index=3.0,
+    ),
+)
 
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=lens_data.grid_stack)
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[source_galaxy],
+    image_plane_grid_stack=lens_data.grid_stack,
+)
 
 # Now, lets fit the lensing image with the tracer and plot the fit. It looks a lot better than above, doesn't it?
-correct_fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+correct_fit = lens_fit.LensDataFit.for_data_and_tracer(
+    lens_data=lens_data, tracer=tracer
+)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=correct_fit, should_plot_mask=True,  extract_array_from_mask=True, zoom_around_mask=True)
+    fit=correct_fit,
+    should_plot_mask=True,
+    extract_array_from_mask=True,
+    zoom_around_mask=True,
+)
 
 # Finally, just to be sure, lets compare the two likelihoods
-print('Likelihood of Non-linear Search:')
+print("Likelihood of Non-linear Search:")
 print(results.most_likely_fit.likelihood)
-print('Likelihood of Correct Model:')
+print("Likelihood of Correct Model:")
 print(correct_fit.likelihood)
 
 # Well, there we have it, the input model has a much higher likelihood than the one our non-linear search inferred.

@@ -15,37 +15,46 @@ from workspace.tools.loading_and_preparing_data import simulate_data
 # (for this tutorial, we'll use the 'AutoLens/workspace/howtolens/preparing_data' directory. The folder 'data' contains
 # the example data-sets we'll use in this tutorial).
 
-path = 'path/to/AutoLens/workspace/howtolens/loading_and_preparing_data/' # <----- You must include this slash on the end
-path = '/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/loading_and_preparing_data/'
+path = (
+    "path/to/AutoLens/workspace/howtolens/loading_and_preparing_data/"
+)  # <----- You must include this slash on the end
+path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/loading_and_preparing_data/"
 
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=path, folder_names=['data'])
+    path=path, folder_names=["data"]
+)
 
-simulate_data.simulate_all_ccd_data(data_path=data_path) # This will populate the 'data' path with example ccd data-sets.
+simulate_data.simulate_all_ccd_data(
+    data_path=data_path
+)  # This will populate the 'data' path with example ccd data-sets.
 
 # First, lets load a data-set using the 'load_ccd_data_from_fits' function of the ccd module. This
 # data-set represents a good data-reduction - it conforms to all the formatting standards I describe in this tutorial!
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data'])
+    path=data_path, folder_names=["ccd_data"]
+)
 
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
-    pixel_scale=0.1)
+    image_path=ccd_data_path + "image.fits",
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    pixel_scale=0.1,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # If your data comes in one .fits file spread across multiple hdus, you can specify the hdus of each image instead.
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'multiple_hdus.fits', image_hdu=0,
-    noise_map_path=ccd_data_path + 'multiple_hdus.fits', noise_map_hdu=1,
-    psf_path=ccd_data_path + 'multiple_hdus.fits', psf_hdu=2,
-    pixel_scale=0.1)
+    image_path=ccd_data_path + "multiple_hdus.fits",
+    image_hdu=0,
+    noise_map_path=ccd_data_path + "multiple_hdus.fits",
+    noise_map_hdu=1,
+    psf_path=ccd_data_path + "multiple_hdus.fits",
+    psf_hdu=2,
+    pixel_scale=0.1,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Now, lets think about the format and data-reduction of our data. There are numerous reasons why the image we just
 # looked at is a good data-set for lens modeling. I strongly recommend you reduce your data to conform to the
@@ -63,40 +72,42 @@ ccd_plotters.plot_ccd_subplot(
 # Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or
 # 10000's.
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data_in_counts'])
+    path=data_path, folder_names=["ccd_data_in_counts"]
+)
 
 ccd_data_in_counts = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits')
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_in_counts)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_in_counts)
 
 # If your data is in counts, you can convert it to electrons per second by supplying the function above with an
 # exposure time and using the 'convert_arrays_from_counts' boolean flag.
 ccd_data_converted_to_eps = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
     exposure_time_map_from_single_value=1000.0,
-    convert_from_electrons=True)
+    convert_from_electrons=True,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_converted_to_eps)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_converted_to_eps)
 
 # The effective exposure time in each pixel may vary. This occurs when data is reduced in a specific way, called
 # 'dithering' and 'drizzling'. If you have access to an effective exposure-time map, you can use this to convert
 # the image to electrons per second instead.
 ccd_data_converted_to_eps = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-                                                        psf_path=ccd_data_path + 'psf.fits',
-                                                        exposure_time_map_path=ccd_data_path + 'exposure_time_map.fits',
-                                                        convert_from_electrons=True)
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    exposure_time_map_path=ccd_data_path + "exposure_time_map.fits",
+    convert_from_electrons=True,
+)
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_converted_to_eps)
 
 # 2) Postage stamp size - The bigger the postage stamp cut-out of the image, the more memory it requires to store it.
@@ -105,29 +116,30 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_converted_to_eps)
 #    Lets look at an example of a very large postage stamp - we can barely even see the lens and source galaxies!
 
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data_with_large_stamp'])
+    path=data_path, folder_names=["ccd_data_with_large_stamp"]
+)
 
 ccd_data_large_stamp = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits')
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_large_stamp)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_large_stamp)
 
 #    If you have a large postage stamp, you can trim it when you load the data by specifying a new image size in pixels.
 #    This will also trim the noise_map-map, exposoure time map and other arrays which are the same dimensions / scale as
 #    the image. This trimming is centred on the image.
 ccd_data_large_stamp_trimmed = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
-    resized_ccd_shape=(101, 101))
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    resized_ccd_shape=(101, 101),
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_large_stamp_trimmed)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_large_stamp_trimmed)
 
 # 3) Postage stamp size - On the other hand, the postage stamp must have enough padding in the border that our masks can
 #    include all pixels with signal in. In fact, it isn't just the masks that must be contained within the postage stamp,
@@ -135,18 +147,19 @@ ccd_plotters.plot_ccd_subplot(
 #    the masks after PSF convolution. Thus, we may need to pad an image to include this region.
 
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data_with_small_stamp'])
+    path=data_path, folder_names=["ccd_data_with_small_stamp"]
+)
 
 #    This image is an example of a stamp which is big enough to contain the lens and source galaxies, but when we
 #    apply a sensible masks we get an error, because the masks's blurring region hits the edge of the image.
 ccd_data_small_stamp = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits')
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_small_stamp)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_small_stamp)
 
 # If we apply a masks to this image, we'll get an error when we try to use it to set up a lensing image, because its
 # blurring region hits the image edge.
@@ -154,29 +167,32 @@ ccd_plotters.plot_ccd_subplot(
 mask = ma.Mask.circular(
     shape=ccd_data_small_stamp.shape,
     pixel_scale=ccd_data_small_stamp.pixel_scale,
-    radius_arcsec=2.0)
+    radius_arcsec=2.0,
+)
 
 # lens_data = ld.LensData(ccd_data=ccd_data_small_stamp, mask=mask) # Gives an error due to the mask's blurring region hitting an edge
 
 # We can overcome this using the same input as before. However, now, the resized image shape is bigger than the image,
 # thus a padding of zeros is introduced to the edges.
 ccd_data_small_stamp_padded = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
-    resized_ccd_shape=(140, 140))
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    resized_ccd_shape=(140, 140),
+)
 
 mask = ma.Mask.circular(
     shape=ccd_data_small_stamp_padded.shape,
     pixel_scale=ccd_data_small_stamp_padded.pixel_scale,
-    radius_arcsec=2.0)
+    radius_arcsec=2.0,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_small_stamp_padded, mask=mask)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_small_stamp_padded, mask=mask)
 
-lens_data= ld.LensData(
-    ccd_data=ccd_data_small_stamp_padded, mask=mask) # No error anymore!
+lens_data = ld.LensData(
+    ccd_data=ccd_data_small_stamp_padded, mask=mask
+)  # No error anymore!
 
 ########## IVE INCLUDED THE TEXT FOR 5 BELOW SO YOU CAN BE AWARE OF CENTERING, BUT THE BUILT IN FUNCTIONALITY FOR #####
 ########## RECENTERING CURRENTLY DOES NOT WORK :( ###########
@@ -218,17 +234,18 @@ lens_data= ld.LensData(
 # RMS SD = 1.0/ sqrt(WHT). This can be called using the 'convert_noise_map_from_weight_map' flag.
 
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data_with_large_stamp'])
+    path=data_path, folder_names=["ccd_data_with_large_stamp"]
+)
 
 ccd_data_noise_from_wht = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
-    convert_noise_map_from_weight_map=True)
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    convert_noise_map_from_weight_map=True,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_noise_from_wht)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_noise_from_wht)
 
 # (I don't currently have an example image in WHT for this tutorial, but the function above will work. Above, it
 # actually converts an accurate noise_map-map to an inverse WHT map!
@@ -240,27 +257,28 @@ ccd_plotters.plot_ccd_subplot(
 #    Lets look at an image where a large PSF kernel is loaded.
 
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=data_path, folder_names=['ccd_data_with_large_psf'])
+    path=data_path, folder_names=["ccd_data_with_large_psf"]
+)
 
 ccd_data_with_large_psf = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits')
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_with_large_psf)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_with_large_psf)
 
 # We can resize a psf the same way that we resize an image.
 ccd_data_with_trimmed_psf = ccd.load_ccd_data_from_fits(
-    image_path=ccd_data_path + 'image.fits',
+    image_path=ccd_data_path + "image.fits",
     pixel_scale=0.1,
-    noise_map_path=ccd_data_path + 'noise_map.fits',
-    psf_path=ccd_data_path + 'psf.fits',
-    resized_psf_shape=(21, 21))
+    noise_map_path=ccd_data_path + "noise_map.fits",
+    psf_path=ccd_data_path + "psf.fits",
+    resized_psf_shape=(21, 21),
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data_with_trimmed_psf)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_with_trimmed_psf)
 
 # 8) The PSF dimensions are odd x odd (21 x 21). It is important that the PSF dimensions are odd, because even-sized
 #    PSF kernels introduce a half-pixel offset in the convolution routine, which can lead to systematics in the lens

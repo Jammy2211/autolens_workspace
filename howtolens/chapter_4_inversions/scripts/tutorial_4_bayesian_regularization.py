@@ -27,27 +27,46 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
-        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        ),
+    )
 
     source_galaxy_0 = g.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(centre=(0.1, 0.1), axis_ratio=0.8, phi=90.0, intensity=0.2, effective_radius=0.3,
-                                  sersic_index=1.0))
+        light=lp.EllipticalSersic(
+            centre=(0.1, 0.1),
+            axis_ratio=0.8,
+            phi=90.0,
+            intensity=0.2,
+            effective_radius=0.3,
+            sersic_index=1.0,
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy_0],
-        image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy_0],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
-    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+        tracer=tracer,
+        pixel_scale=0.05,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
+
 
 # We're going to perform a lot of fits using an inversion this tutorial. This would create a lot of code, so to keep
 # things tidy, I've setup this function which handles it all for us.
@@ -58,30 +77,39 @@ def perform_fit_with_source_galaxy(source_galaxy):
     ccd_data = simulate()
 
     mask = msk.Mask.circular_annular(
-        shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
-        inner_radius_arcsec=0.5, outer_radius_arcsec=2.2)
+        shape=ccd_data.shape,
+        pixel_scale=ccd_data.pixel_scale,
+        inner_radius_arcsec=0.5,
+        outer_radius_arcsec=2.2,
+    )
 
-    lens_data = ld.LensData(
-        ccd_data=ccd_data, mask=mask)
+    lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6))
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy],
-        image_plane_grid_stack=lens_data.grid_stack, border=lens_data.border)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=lens_data.grid_stack,
+        border=lens_data.border,
+    )
 
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+
 
 # Okay, so lets look at our fit from the previous tutorial in more detail. We'll use a higher resolution 40 x 40 grid.
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(1.0,)))
+    regularization=reg.Constant(coefficient=1.0),
+)
 
-fit = perform_fit_with_source_galaxy(
-    source_galaxy=source_galaxy)
+fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
 lens_fit_plotters.plot_fit_subplot(fit=fit)
 
@@ -91,13 +119,17 @@ lens_fit_plotters.plot_fit_subplot(fit=fit)
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(0.0,)))
+    regularization=reg.Constant(coefficient=0.0),
+)
 
-no_regularization_fit = perform_fit_with_source_galaxy(
-    source_galaxy=source_galaxy)
+no_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=no_regularization_fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=no_regularization_fit,
+    should_plot_mask=True,
+    extract_array_from_mask=True,
+    zoom_around_mask=True,
+)
 
 # So, what happening here, and why does removing regularization do this to our source reconstruction? When our inversion
 # reconstructs a source, it doesn't *just* compute the set of fluxes that best-fit the image. It is also 'regularized',
@@ -118,7 +150,8 @@ lens_fit_plotters.plot_fit_subplot(
 # If we change the 'normalization' variables of the plotter, such that the color-map is restricted to a narrower
 # range of values, we can see that even without regularization we are still reconstructing the actual source galaxy.
 inversion_plotters.plot_pixelization_values(
-    inversion=no_regularization_fit.inversion, norm_max=1.0, norm_min=-1.0)
+    inversion=no_regularization_fit.inversion, norm_max=1.0, norm_min=-1.0
+)
 
 # Over-fitting is why regularization is necessary - solutions like this would completely ruin our attempts to model a
 # strong lens. By smoothing our source reconstruction, we ensure it doesn't fit the noise in the image. If we set a
@@ -127,22 +160,26 @@ inversion_plotters.plot_pixelization_values(
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(100.0,)))
+    regularization=reg.Constant(coefficient=(100.0,)),
+)
 
-high_regularization_fit = perform_fit_with_source_galaxy(
-    source_galaxy=source_galaxy)
+high_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=high_regularization_fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=high_regularization_fit,
+    should_plot_mask=True,
+    extract_array_from_mask=True,
+    zoom_around_mask=True,
+)
 
 # So there we have it, we now understand regularization and its purpose. But there is one nagging question that remains,
 # how do I choose the regularization coefficient? We can't use our likelihood, as decreasing the regularization
 # coefficient will always increase the likelihood, because it allows the source reconstruction to fit the data better.
-print('Likelihood Without Regularization:')
+print("Likelihood Without Regularization:")
 print(no_regularization_fit.likelihood_with_regularization)
-print('Likelihood With Normal Regularization:')
+print("Likelihood With Normal Regularization:")
 print(fit.likelihood_with_regularization)
-print('Likelihood With High Regularization:')
+print("Likelihood With High Regularization:")
 print(high_regularization_fit.likelihood_with_regularization)
 
 # If we use the likelihood, we'll always choose a coefficient of 0! We need a different goodness-of-fit measure. For this,
@@ -164,11 +201,11 @@ print(high_regularization_fit.likelihood_with_regularization)
 # necessitates it.
 
 # Lets take a look at the Bayesian evidence:
-print('Bayesian Evidence Without Regularization:')
+print("Bayesian Evidence Without Regularization:")
 print(no_regularization_fit.evidence)
-print('Bayesian Evidence With Normal Regularization:')
+print("Bayesian Evidence With Normal Regularization:")
 print(fit.evidence)
-print('Bayesian Evidence With High Regularization:')
+print("Bayesian Evidence With High Regularization:")
 print(high_regularization_fit.evidence)
 
 # Great! As expected, the solution that we could see 'by-eye' was the best solution indeed corresponds to
@@ -196,18 +233,19 @@ print(high_regularization_fit.evidence)
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficients=(1.0,)))
+    regularization=reg.Constant(coefficient=1.0),
+)
 
-fit = perform_fit_with_source_galaxy(
-    source_galaxy=source_galaxy)
+fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
-print('Previous Bayesian Evidence:')
+print("Previous Bayesian Evidence:")
 print(10395.370224426646)
-print('New Bayesian Evidence:')
+print("New Bayesian Evidence:")
 print(fit.evidence)
 
 lens_fit_plotters.plot_fit_subplot(
-    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True)
+    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
+)
 
 # 2) Can you think of any other ways we might increase the evidence even further? If not - don't worry about - but
 #    you'll learn that PyAutoLens actually adapts its source reconstructions to the properties of the image that it is

@@ -2,6 +2,7 @@
 
 #SBATCH -N 1
 #SBATCH --ntasks=14
+#SBATCH --cpus-per-task=1
 #SBATCH -J example
 #SBATCH -o ../output.%A.%a.out
 #SBATCH -e ../error.%A.%a.err
@@ -13,9 +14,6 @@
 
 module purge
 module load python/3.6.5
-cp -r /cosma/home/durham/pdtw24/PyAutoLens /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID
-rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace
-rm -rf /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/workspace_jam
-source /cosma5/data/autolens/venvs/PyAutoLens.$SLURM_JOB_ID/bin/activate
+source /cosma/home/durham/pdtw24/PyAutoLens/bin/activate_jam
 
-srun -n 14 --multi-prog example_muticonf.conf
+srun -n 16 --multi-prog example_muticonf.conf

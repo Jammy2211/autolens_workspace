@@ -19,6 +19,19 @@ each chapter.
 Finally, its worth noting that for actual PyAutoLens use, I recommend you use Pyton scripts. Therefore, as you go
 through the lecture series you will notice that we will transition you to Python scripts in the third chapter.
 
+### CODE STYLE AND FORMATTING ###
+
+When you begin the notebooks, you may notice the style and formatting of our Python code looks different to what you
+are used to. For example, it is common for brackets to be placed on their own line at the end of function calls,
+the inputs of a function or class may be listed over many separate lines and the code in general takes up a lot more
+space then you are used to.
+
+This is all intentional, an is because we believe it makes the cleanest, most readable code possible. In fact - lots
+if people do, which is why we use an auto-formatter to produce the code in a standardized format. If you're interested
+in the style and would like to adapt it to your own code, check out the Python auto-code formatter 'black'.
+
+https://github.com/python/black
+
 ### OVERVIEW OF CHAPTER 1 ###
 
 In this first set of tutorials, we'll learn how to use PyAutoLens. At the end, you'll be able to:

@@ -4,14 +4,17 @@
 
 # Lets say I link two parameters in pass priors (don't run this code its just a demo)
 
+
 def pass_priors(self, previous_results):
 
-    self.lens_galaxies.galaxy_name.profile_name.parameter_name = \
-        previous_results[0].variable.galaxy_name.profile_name.parameter_name
+    self.lens_galaxies.galaxy_name.profile_name.parameter_name = previous_results[
+        0
+    ].variable.galaxy_name.profile_name.parameter_name
+
 
 # By invoking the 'variable' attribute, the passing of priors behaves following 3 rules:
 
-# 1) The 'self.lens_galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.prior.
+# 1) The 'self.lens_galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.
 
 #    A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase are easily summarized as a
 #    Gaussian.
@@ -66,16 +69,20 @@ def pass_priors(self, previous_results):
 # elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0. To pass this as a prior to
 # phase 2, we would write:
 
+
 def pass_priors(self, previous_results):
 
-    self.lens_galaxies.lens.light.sersic_index = previous_results[0].variable.lens.light.sersic
+    self.lens_galaxies.lens.light.sersic_index = previous_results[
+        0
+    ].variable.lens.light.sersic
+
 
 # The prior on the lens galaxy's sersic light profile would thus be a GaussianPrior in phase 2, with mean=4.0 and
 # sigma=2.0.
 
 # If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the
 # Sersic index width in the priors/width config file to set sigma instead. In this case, the prior config file specifies
-# that we use an absolute value of 0.8 to link this af.prior. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and
+# that we use an absolute value of 0.8 to link this af. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and
 # sigma=0.8.
 
 # If the prior config file had specified that we use an relative value of 0.8, the GaussianPrior in phase 2 would have

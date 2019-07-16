@@ -10,63 +10,74 @@ from autolens.model.inversion.plotters import mapper_plotters
 
 # Lets setup a lensed source-plane grid, using a lens galaxy and tracer.
 image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2
+)
 
 lens_galaxy = g.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6))
+    mass=mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6
+    ),
+)
 
 # (Our source galaxy doesn't have a light profile from here on, as we're reconstructing its light using a pixelization).
 tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy], source_galaxies=[g.Galaxy(redshift=1.0)],
-    image_plane_grid_stack=image_plane_grid_stack)
+    lens_galaxies=[lens_galaxy],
+    source_galaxies=[g.Galaxy(redshift=1.0)],
+    image_plane_grid_stack=image_plane_grid_stack,
+)
 
 # Next, lets set up a pixelization using the 'pixelizations' module, which we've imported as 'pix'.
 
 # There are multiple pixelizations available in PyAutoLens, but for now we'll keep it simple and use a uniform
 # rectangular grid. As usual, the grid's 'shape' defines its (y,x) dimensions.
-rectangular = pix.Rectangular(
-    shape=(25, 25))
+rectangular = pix.Rectangular(shape=(25, 25))
 
 # By itself, a pixelization doesn't tell us much. It has no grid of coordinates, no image, and nothing which tells it
 # about the lens we're fitting. This information comes when we use the pixelization to set up a 'mapper'.
 # (The 'border=None' will be covered in tutorial 5, so just ignore it for now!)
 mapper = rectangular.mapper_from_grid_stack_and_border(
-    grid_stack=tracer.source_plane.grid_stack, border=None)
+    grid_stack=tracer.source_plane.grid_stack, border=None
+)
 
 # This mapper is a 'RectangularMapper' - every pixelization generates it owns mapper.
 print(type(mapper))
 
 # By plotting our mapper, we now see our pixelization. Its a fairly boring grid of rectangular pixels.
 mapper_plotters.plot_rectangular_mapper(
-    mapper=mapper, should_plot_grid=False, title='Fairly Boring Grid of Rectangular Pixels')
+    mapper=mapper,
+    should_plot_grid=False,
+    title="Fairly Boring Grid of Rectangular Pixels",
+)
 
 # However, the mapper does contain lots of interesting information about our pixelization, for example its geometry
 # attribute tells us where the pixel centers are located
-print('Rectangular Grid Pixel Centre 1:')
+print("Rectangular Grid Pixel Centre 1:")
 print(mapper.geometry.pixel_centres[0])
-print('Rectangular Grid Pixel Centre 2:')
+print("Rectangular Grid Pixel Centre 2:")
 print(mapper.geometry.pixel_centres[1])
-print('Rectangular Grid Pixel Centre 3:')
+print("Rectangular Grid Pixel Centre 3:")
 print(mapper.geometry.pixel_centres[2])
-print('etc.')
+print("etc.")
 
 # Infact, we can plot these centre on our grid - to make it look slightly less boring!
 mapper_plotters.plot_rectangular_mapper(
-    mapper=mapper, should_plot_grid=False, should_plot_centres=True)
+    mapper=mapper, should_plot_grid=False, should_plot_centres=True
+)
 
 # The mapper also has the (source-plane) grid sack that we passed when we set it up. Lets check they're the same.
-print('Source Grid Pixel 1')
+print("Source Grid Pixel 1")
 print(tracer.source_plane.grid_stack.regular[0])
 print(mapper.grid_stack.regular[0])
-print('Source Grid Pixel 2')
+print("Source Grid Pixel 2")
 print(tracer.source_plane.grid_stack.regular[1])
 print(mapper.grid_stack.regular[1])
-print('etc.')
+print("etc.")
 
 # We can over-lay the regular grid on top. Its starting too look a bit less boring now!
 mapper_plotters.plot_rectangular_mapper(
-    mapper=mapper, should_plot_centres=True, should_plot_grid=True)
+    mapper=mapper, should_plot_centres=True, should_plot_grid=True
+)
 
 
 # Finally, the mapper and its geometry has lots more information about the pixelization, for example, the arc-second

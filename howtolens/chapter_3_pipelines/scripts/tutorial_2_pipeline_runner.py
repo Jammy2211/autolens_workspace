@@ -21,8 +21,10 @@ import os
 # writing a pipeline that we can generalize to many lenses isn't currently possible with PyAutoLens.
 
 # Lets setup the path to the workspace, config and output folders, as per usual.
-workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + "config", output_path=workspace_path + "output"
+)
 
 # This rather long simulate function generates an image with two strong lens galaxies.
 def simulate():
@@ -31,35 +33,64 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
-        shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+    )
 
     lens_galaxy_0 = g.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(centre=(0.0, -1.0), axis_ratio=0.8, phi=55.0, intensity=0.1, effective_radius=0.8,
-                                  sersic_index=2.5),
-        mass=mp.EllipticalIsothermal(centre=(1.0, 0.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0))
+        light=lp.EllipticalSersic(
+            centre=(0.0, -1.0),
+            axis_ratio=0.8,
+            phi=55.0,
+            intensity=0.1,
+            effective_radius=0.8,
+            sersic_index=2.5,
+        ),
+        mass=mp.EllipticalIsothermal(
+            centre=(1.0, 0.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0
+        ),
+    )
 
     lens_galaxy_1 = g.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(centre=(0.0, 1.0), axis_ratio=0.8, phi=100.0, intensity=0.1, effective_radius=0.6,
-                                  sersic_index=3.0),
-        mass=mp.EllipticalIsothermal(centre=(-1.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8))
+        light=lp.EllipticalSersic(
+            centre=(0.0, 1.0),
+            axis_ratio=0.8,
+            phi=100.0,
+            intensity=0.1,
+            effective_radius=0.6,
+            sersic_index=3.0,
+        ),
+        mass=mp.EllipticalIsothermal(
+            centre=(-1.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8
+        ),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(centre=(0.05, 0.15), intensity=0.2, effective_radius=0.5))
+        light=lp.SphericalExponential(
+            centre=(0.05, 0.15), intensity=0.2, effective_radius=0.5
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy_0, lens_galaxy_1], source_galaxies=[source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy_0, lens_galaxy_1],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
-    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.05,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+        tracer=tracer,
+        pixel_scale=0.05,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
+
 
 # Lets simulate the image we'll fit, which is a new image, finally!
 ccd_data = simulate()
@@ -90,7 +121,8 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
 
 pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
-    phase_folders=['howtolens', 'c3_t2_x2_lens_galaxies'])
+    phase_folders=["howtolens", "c3_t2_x2_lens_galaxies"]
+)
 
 pipeline_x2_galaxies.run(data=ccd_data)
 

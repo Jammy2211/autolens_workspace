@@ -12,23 +12,27 @@ import os
 # applied to the plotting of noise-maps, PSF's, residual maps, chi-squared maps, etc.
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # We have included the .fits data required for this example in the directory
 # 'workspace/output/data/example/slacs1430+4105/'.
 
 # First, lets setup the path to the .fits file of the image.
-data_type = 'example'
-data_name = 'slacs1430+4105'
+data_type = "example"
+data_name = "slacs1430+4105"
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
-data_path = array_util.make_and_return_path(path=workspace_path, folder_names=['data', data_type, data_name])
-image_path = data_path + 'image.fits'
+data_path = array_util.make_and_return_path(
+    path=workspace_path, folder_names=["data", data_type, data_name]
+)
+image_path = data_path + "image.fits"
 
 # Now, lets load this array as a scaled array. A scaled array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
-image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(file_path=image_path, hdu=0, pixel_scale=0.03)
+image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
+    file_path=image_path, hdu=0, pixel_scale=0.03
+)
 
 # We can now use an array plotter to plot the array. We customize the plot as follows:
 
@@ -38,21 +42,39 @@ image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(file_path
 #    16 to 24.
 
 # 3) For the same reason, we increase the size of the colorbar ticks from the default value 10 to 20.
-array_plotters.plot_array(array=image, figsize=(12, 12), title='SLACS1430+4105 Image',
-                          titlesize=24, xlabelsize=24, ylabelsize=24, xyticksize=24,
-                          cb_ticksize=20)
+array_plotters.plot_array(
+    array=image,
+    figsize=(12, 12),
+    title="SLACS1430+4105 Image",
+    titlesize=24,
+    xlabelsize=24,
+    ylabelsize=24,
+    xyticksize=24,
+    cb_ticksize=20,
+)
 
 # The colormap of the array can be changed to any of the standard matplotlib colormaps.
-array_plotters.plot_array(array=image, title='SLACS1430+4105 Image', cmap='spring')
+array_plotters.plot_array(array=image, title="SLACS1430+4105 Image", cmap="spring")
 
 # We can change the x / y axis units from arc-seconds to kiloparsec, by inputting a kiloparsec to arcsecond conversion
 # factor (for SLACS1430+4105, the lens galaxy is at redshift 0.285, corresponding to the conversion factor below).
-array_plotters.plot_array(array=image, title='SLACS1430+4105 Image', units='kpc', kpc_per_arcsec=4.335)
+array_plotters.plot_array(
+    array=image, title="SLACS1430+4105 Image", units="kpc", kpc_per_arcsec=4.335
+)
 
 # The matplotlib figure can be output to the hard-disk as a png, as follows.
-array_plotters.plot_array(array=image, title='SLACS1430+4105 Image',
-                          output_path=workspace_path + '/plotting/plots/', output_filename='array', output_format='png')
+array_plotters.plot_array(
+    array=image,
+    title="SLACS1430+4105 Image",
+    output_path=workspace_path + "/plotting/plots/",
+    output_filename="array",
+    output_format="png",
+)
 
 # The array itself can be output to the hard-disk as a .fits file.
-array_plotters.plot_array(array=image,
-                          output_path=workspace_path + '/plotting/plots/', output_filename='array', output_format='fits')
+array_plotters.plot_array(
+    array=image,
+    output_path=workspace_path + "/plotting/plots/",
+    output_filename="array",
+    output_format="fits",
+)

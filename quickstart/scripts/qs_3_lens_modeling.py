@@ -50,18 +50,18 @@ from autolens.pipeline.phase import phase_imaging
 
 # Firstly, we need to load the CCD data we're going to it, so you'll again need to change the path below to that of
 # your workspace.
-workspace_path = '/path/to/user/autolens_workspace/'
+workspace_path = "/path/to/user/autolens_workspace/"
 
-data_path = workspace_path + 'data/example/lens_mass_and_x1_source'
+data_path = workspace_path + "data/example/lens_mass_and_x1_source"
 
 ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=data_path + 'image.fits',
-    noise_map_path=data_path+'noise_map.fits',
-    psf_path=data_path + 'psf.fits',
-    pixel_scale=0.1)
+    image_path=data_path + "image.fits",
+    noise_map_path=data_path + "noise_map.fits",
+    psf_path=data_path + "psf.fits",
+    pixel_scale=0.1,
+)
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # To set up a non-linear search, we use a GalaxyModel, which behaves analogously to the Galaxy objects we've seen before.
 # However, whereas with a Galaxy we manually specified the value of every parameter of its light-profiles and
@@ -69,14 +69,11 @@ ccd_plotters.plot_ccd_subplot(
 
 # Lets model the lens galaxy with an SIE mass profile and External Shear (which is what it was simulated with).
 lens_galaxy_model = gm.GalaxyModel(
-    redshift=0.5,
-    mass=mp.EllipticalIsothermal,
-    shear=mp.ExternalShear)
+    redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+)
 
 # Lets model the source galaxy with an Elliptical Sersic light profile (again, what it was simulated with).
-source_galaxy_model = gm.GalaxyModel(
-    redshift=1.0,
-    light=lp.EllipticalSersic)
+source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 # A phase takes our galaxy models and fits their parameters via a non-linear search (in this case, MultiNest). In this
 # example, we have a lens-plane and source-plane, so we use a LensSourcePlanePhase.
@@ -84,12 +81,11 @@ source_galaxy_model = gm.GalaxyModel(
 # (ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
 phase = phase_imaging.LensSourcePlanePhase(
-    phase_name='quick_start_non_linear_search',
-    lens_galaxies=dict(
-        lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(
-        source_galaxy=source_galaxy_model),
-    optimizer_class=af.MultiNest)
+    phase_name="quick_start_non_linear_search",
+    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
+    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    optimizer_class=af.MultiNest,
+)
 
 # Below, we manually set some of the MultiNest settings to speed up the lens modeling process. For now, I'd just ignore
 # these, but note that it could be worth checking out the 'multinest_black_magic' tutorial in chapter 2 of the
@@ -122,16 +118,17 @@ phase.optimizer.sampling_efficiency = 0.5
 #    in PyAutoLens, such as simuating strong lens imaging, drawing custom masks for lens modeling and marking the
 #    brightest lensed source pixels in an image.
 
-print('MultiNest has begun running'
-      'This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!')
+print(
+    "MultiNest has begun running"
+    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+)
 
 results = phase.run(data=ccd_data)
 
-print('MultiNest has finished run - you may now continue the notebook.')
+print("MultiNest has finished run - you may now continue the notebook.")
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-lens_fit_plotters.plot_fit_subplot(
-    fit=results.most_likely_fit)
+lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit)
 
 # And with that you've modeled your first lens with PyAutoLens! For the quick-start tutorial, that is the extent to
 # which we're going to describe how lens modeling works in PyAutoLens. From here, we're simply going to use

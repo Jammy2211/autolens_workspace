@@ -55,8 +55,10 @@ import os
 # We'll also put the output in 'workspace/output', which is where output goes for a normal analysis.
 
 # To setup the config and output path, we'll use the relative import below.
-workspace_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
-af.conf.instance = af.conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
+workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + "config", output_path=workspace_path + "output"
+)
 
 # The same simulate function we used in chapter 2.
 def simulate():
@@ -65,36 +67,55 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
-        shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.grid_stack_for_simulation(
-        shape=(130, 130), pixel_scale=0.1, psf_shape=(11, 11))
+    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
+    )
 
     lens_galaxy = g.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, intensity=0.04, effective_radius=0.5,
-                                  sersic_index=3.5),
-        mass=mp.EllipticalIsothermal(centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.0),
-        shear=mp.ExternalShear(magnitude=0.05, phi=90.0))
+        light=lp.EllipticalSersic(
+            centre=(0.0, 0.0),
+            axis_ratio=0.9,
+            phi=45.0,
+            intensity=0.04,
+            effective_radius=0.5,
+            sersic_index=3.5,
+        ),
+        mass=mp.EllipticalIsothermal(
+            centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.0
+        ),
+        shear=mp.ExternalShear(magnitude=0.05, phi=90.0),
+    )
 
     source_galaxy = g.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2))
+        light=lp.SphericalExponential(
+            centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
+        ),
+    )
 
     tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy], source_galaxies=[source_galaxy], image_plane_grid_stack=image_plane_grid_stack)
+        lens_galaxies=[lens_galaxy],
+        source_galaxies=[source_galaxy],
+        image_plane_grid_stack=image_plane_grid_stack,
+    )
 
-    return simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.profile_image_plane_image_2d_for_simulation, pixel_scale=0.1,
-        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_noise=True)
+    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+        tracer=tracer,
+        pixel_scale=0.1,
+        exposure_time=300.0,
+        psf=psf,
+        background_sky_level=0.1,
+        add_noise=True,
+    )
 
 
 # Now lets simulate the image as ccd data, which we'll fit using the pipeline.
 ccd_data = simulate()
 
-ccd_plotters.plot_ccd_subplot(
-    ccd_data=ccd_data)
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # To make a pipeline, we call one long function which is written in its own Python module,
 # '_tutorial_1_pipeline_lens_and_source.py_'. Before we check it out, lets get the pipeline running. To do this, we
@@ -107,7 +128,8 @@ ccd_plotters.plot_ccd_subplot(
 from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
 
 pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
-    phase_folders=['howtolens', 'c3_t1_lens_and_source'])
+    phase_folders=["howtolens", "c3_t1_lens_and_source"]
+)
 
 # To run a pipeline, we simply use its 'run' function, passing it the data we want to run the pipeline on. Simple, huh?
 pipeline_lens_and_source.run(data=ccd_data)
@@ -116,7 +138,6 @@ pipeline_lens_and_source.run(data=ccd_data)
 # out, now go to the module '_tutorial_1_pipeline_lens_and_source.py_', which contains a full description of the pipeline,
 # as well as an overview of some tools we use to write the best, most general pipelines possible. Once you're done,
 # come back to this pipeline runner script and we'll wrap up tutorial 1.
-
 
 
 # And there we have it, a pipeline that breaks the analysis of the lens and source galaxy into 3 simple phases. This

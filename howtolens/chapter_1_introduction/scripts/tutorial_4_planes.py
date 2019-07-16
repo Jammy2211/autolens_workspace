@@ -51,25 +51,24 @@ from autolens.lens.plotters import plane_plotters
 # in the lensing configuration above. Our grid-stack is therefore no longer just a 'grid-stack', but the grid-stack
 # representing our image-plane coordinates. Thus, lets name as such.
 image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2)
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=2
+)
 
 # Whereas before we called our galaxy's things like 'galaxy_with_light_profile', lets now refer to them by their role
 # in lensing, e.g. 'lens_galaxy' and 'source_galaxy'.
-mass_profile = mass_profiles.SphericalIsothermal(
-    centre=(0.0,  0.0), einstein_radius=1.6)
+mass_profile = mass_profiles.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
 
 lens_galaxy = galaxy.Galaxy(redshift=0.5, mass=mass_profile)
 
 light_profile = light_profiles.SphericalSersic(
-    centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0)
+    centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
+)
 
-source_galaxy = galaxy.Galaxy(
-    redshift=1.0, light=light_profile)
+source_galaxy = galaxy.Galaxy(redshift=1.0, light=light_profile)
 
 # Lets setup our image-plane. This plane takes the lens galaxy we made above and the grid-stack of
 # image-plane coordinates.
-image_plane = plane.Plane(
-    galaxies=[lens_galaxy], grid_stack=image_plane_grid_stack)
+image_plane = plane.Plane(galaxies=[lens_galaxy], grid_stack=image_plane_grid_stack)
 
 # Up to now, we've kept our galaxies and grids separate, and passed the grid to a galaxy object to compute
 # its quantities (e.g. to compute light-profile intensities, we'd write galaxy.intensities_from_grid(grid=grid)).
@@ -77,19 +76,22 @@ image_plane = plane.Plane(
 # Plane's combine the galaxies and grids into one object, thus once we've setup a plane there is no longer any need
 # have to pass it a grid to compute its quantities. Furthermore, once these quantities are in a plane, they are
 # automatically mapped back to their original 2D grid-arrays.
-print('deflection-angles of planes regular-grid pixel 1:')
-print(image_plane.deflections_y[0,0])
-print(image_plane.deflections_x[0,0])
-print('deflection-angles of planes regular-grid pixel 2:')
-print(image_plane.deflections_y[0,1])
-print(image_plane.deflections_x[0,1])
+
+deflections_y = image_plane.deflections_y(return_in_2d=True)
+deflections_x = image_plane.deflections_x(return_in_2d=True)
+
+print("deflection-angles of planes regular-grid pixel 0:")
+print(deflections_y[0, 0])
+print(deflections_x[0, 0])
+
+print("deflection-angles of planes regular-grid pixel 1:")
+print(deflections_y[0, 1])
+print(deflections_x[0, 1])
 
 # Plane plotters also don't need grids passed to them anymore - just the plane itself.
-plane_plotters.plot_deflections_y(
-    plane=image_plane)
+plane_plotters.plot_deflections_y(plane=image_plane)
 
-plane_plotters.plot_deflections_x(
-    plane=image_plane)
+plane_plotters.plot_deflections_x(plane=image_plane)
 
 # Throughout this chapter, we plotted lots of deflection angles. However, if you arn't familiar with strong
 # lensing, you probably weren't entirely sure what they are actually used for.
@@ -103,19 +105,17 @@ plane_plotters.plot_deflections_x(
 source_plane_grid_stack = image_plane.trace_grid_stack_to_next_plane()
 
 # ... and use this grid-stack to setup the source-plane
-source_plane = plane.Plane(
-    galaxies=[source_galaxy], grid_stack=source_plane_grid_stack)
+source_plane = plane.Plane(galaxies=[source_galaxy], grid_stack=source_plane_grid_stack)
 
 # Lets inspect our regular grids - I bet our source-plane isn't the boring uniform grid we plotted in the first tutorial!
-plane_plotters.plot_plane_grid(
-    plane=image_plane, title='Image-plane Grid')
+plane_plotters.plot_plane_grid(plane=image_plane, title="Image-plane Grid")
 
-plane_plotters.plot_plane_grid(
-    plane=source_plane, title='Source-plane Grid')
+plane_plotters.plot_plane_grid(plane=source_plane, title="Source-plane Grid")
 
 # We can zoom in on the 'centre' of the source-plane (remembering the lens galaxy was centred at (0.0", 0.0")
 plane_plotters.plot_plane_grid(
-    plane=source_plane, axis_limits=[-0.1, 0.1, -0.1, 0.1], title='Source-plane Grid')
+    plane=source_plane, axis_limits=[-0.1, 0.1, -0.1, 0.1], title="Source-plane Grid"
+)
 
 # We can also plot both planes next to one another, and highlight specific points on the grids. This means we can see
 # how different image pixels map to the source-plane (and visa versa).
@@ -124,10 +124,15 @@ plane_plotters.plot_plane_grid(
 # the image-grid running from the left - as we said it would!)
 
 plane_plotters.plot_image_and_source_plane_subplot(
-    image_plane=image_plane, source_plane=source_plane,
-    points=[[range(0,50)], [range(500, 550)],
-            [1550, 1650, 1750, 1850, 1950, 2050],
-            [8450, 8350, 8250, 8150, 8050, 7950]])
+    image_plane=image_plane,
+    source_plane=source_plane,
+    points=[
+        [range(0, 50)],
+        [range(500, 550)],
+        [1550, 1650, 1750, 1850, 1950, 2050],
+        [8450, 8350, 8250, 8150, 8050, 7950],
+    ],
+)
 
 # Clearly, the source-plane's regular-grid is very different to the image-planes! It's not uniform and its centrainly
 # not boring!
@@ -154,13 +159,11 @@ plane_plotters.plot_image_plane_image(plane=source_plane)
 # the source intrinsically appears in the source-plane (e.g. without lensing). This is a useful thing to know, because
 # the source-s light is highly magnified, meaning astronomers can study it in a lot more detail than would
 # otherwise be possible!
-plane_plotters.plot_plane_image(
-    plane=source_plane, plot_grid=True)
+plane_plotters.plot_plane_image(plane=source_plane, plot_grid=True)
 
 # Plotting the grid over the plane image obscures its appearance, which isn't ideal. We can of course tell
 # PyAutoLens not to plot the grid.
-plane_plotters.plot_plane_image(
-    plane=source_plane, plot_grid=False)
+plane_plotters.plot_plane_image(plane=source_plane, plot_grid=False)
 
 # And, we're done. This is the first tutorial covering strong-lensing and I highly recommend you take a moment
 # to really mess about with the code above to see what sort of lensed images you can form. Pay attention to the
