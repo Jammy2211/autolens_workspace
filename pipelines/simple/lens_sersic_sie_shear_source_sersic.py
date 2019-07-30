@@ -4,7 +4,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -61,9 +61,9 @@ def make_pipeline(
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__lens_sersic_sie_shear_source_x1_sersic"
+    pipeline_name = "pl__lens_sersic_sie_source_x1_sersic"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -83,21 +83,17 @@ def make_pipeline(
     # use the default 3.0"  circular mask. In general, I haven't found the choice of mask to make a big difference,
     # albeit this does depend on how much off the lens galaxy's light the lensed source galaxy's light obstructs.
 
-    class LensPhase(phase_imaging.LensPlanePhase):
+    class LensPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.light.centre_0 = mm.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
-            self.lens_galaxies.lens.light.centre_1 = mm.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
+            self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+            self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensPhase(
         phase_name="phase_1_lens_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic)
         ),
         sub_grid_size=sub_grid_size,
@@ -131,33 +127,31 @@ def make_pipeline(
             outer_radius_arcsec=3.0,
         )
 
-    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.PhaseImaging):
         def modify_image(self, image, results):
-            return image - results[-1].unmasked_blurred_profile_image_plane_image
+            return image - results[-1].unmasked_model_image_of_planes[0]
 
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass.centre_0 = results.from_phase(
+            self.galaxies.lens.mass.centre_0 = results.from_phase(
                 "phase_1_lens_sersic"
-            ).variable.lens_galaxies.lens.light.centre_0
+            ).variable.galaxies.lens.light.centre_0
 
-            self.lens_galaxies.lens.mass.centre_1 = results.from_phase(
+            self.galaxies.lens.mass.centre_1 = results.from_phase(
                 "phase_1_lens_sersic"
-            ).variable.lens_galaxies.lens.light.centre_1
+            ).variable.galaxies.lens.light.centre_1
 
     phase2 = LensSubtractedPhase(
-        phase_name="phase_2_lens_sie_shear_source_sersic",
+        phase_name="phase_2_lens_sie_source_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 mass=mp.EllipticalIsothermal,
                 shear=mp.ExternalShear,
-            )
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+            ),
+            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         sub_grid_size=sub_grid_size,
@@ -178,47 +172,45 @@ def make_pipeline(
 
     # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
 
-    class LensSourcePhase(phase_imaging.LensSourcePlanePhase):
+    class LensSourcePhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
             ## Lens Light, Sersic -> Sersic ###
 
-            self.lens_galaxies.lens.light = results.from_phase(
+            self.galaxies.lens.light = results.from_phase(
                 "phase_1_lens_sersic"
-            ).variable.lens_galaxies.lens.light
+            ).variable.galaxies.lens.light
 
             ## Lens Mass, SIE -> SIE ###
 
-            self.lens_galaxies.lens.mass = results.from_phase(
-                "phase_2_lens_sie_shear_source_sersic"
-            ).variable.lens_galaxies.lens.mass
+            self.galaxies.lens.mass = results.from_phase(
+                "phase_2_lens_sie_source_sersic"
+            ).variable.galaxies.lens.mass
 
             ## Lens Mass, Shear -> Shear ###
 
-            self.lens_galaxies.lens.shear = results.from_phase(
-                "phase_2_lens_sie_shear_source_sersic"
-            ).variable.lens_galaxies.lens.shear
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_2_lens_sie_source_sersic"
+            ).variable.galaxies.lens.shear
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.source_galaxies.source = results.from_phase(
-                "phase_2_lens_sie_shear_source_sersic"
-            ).variable.source_galaxies.source
+            self.galaxies.source = results.from_phase(
+                "phase_2_lens_sie_source_sersic"
+            ).variable.galaxies.source
 
     phase3 = LensSourcePhase(
-        phase_name="phase_3_lens_sersic_sie_shear_source_sersic",
+        phase_name="phase_3_lens_sersic_sie_source_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 light=lp.EllipticalSersic,
                 mass=mp.EllipticalIsothermal,
                 shear=mp.ExternalShear,
-            )
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+            ),
+            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,

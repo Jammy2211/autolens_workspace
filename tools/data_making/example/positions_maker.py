@@ -16,7 +16,7 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 # The 'data name' is the name of the data folder and 'data_name' the folder the positions are stored in e.g,
 # the positions will be output as '/workspace/data/data_type/data_name/positions.dat'.
 data_type = "example"
-data_name = "lens_light_mass_and_x1_source"
+data_name = "lens_light_mass_and_x1_source_2"
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
@@ -34,6 +34,12 @@ image = ccd.load_image(
 
 # Now, create a set of positions, which is simply a python list of (y,x) values.
 positions = [[[0.8, 1.45], [1.78, -0.4], [-0.95, 1.38], [-0.83, -1.04]]]
+
+# These are the positions for the example lens 'lens_light_mass_and_x1_source_2'
+# positions = [[[0.44, 0.60], [-1.4, -0.41], [0.15, -1.45]]]
+
+# These are the positions for the example lens 'lens_mass_and_x1_source_2'
+# positions = [[[1.28, -1.35], [-0.5, 0.7]]]
 
 # These are the positions for the example lens 'lens_mass_and_x2_source'
 # positions = [[[2.16, -1.3], [-0.65, 0.45]]]

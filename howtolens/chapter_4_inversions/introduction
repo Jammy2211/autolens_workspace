@@ -6,8 +6,18 @@ was just too complex, and even a well crafted pipeline couldn't fix the problem 
 
 In this chapter, we'll learn about pixelizations, mappers and inversions. These tools allow us to reconstruct the
 source galaxy's without an analytic light profile, but instead a pixel-grid. In doing so, we make no assumption about
-the source's morphology, breaking the simpliying assumptions inherent to analytic light profiles (e.g. symmetry).
+the source's morphology, breaking the simplifying assumptions inherent to analytic light profiles (e.g. symmetry).
 Remarkably, pixels grid use just a couple of non-linear parameters, meaning the 30+ non-linear parameters we required
 to fit complex-sources before are going to be reduced to just 3 or 4!
+
+In particular, you'll learn how we:
+
+1) Pixelize our source-plane into a set of source-plane pixels that define mappings to image pixels.
+2) Invert this source-plane pixelization to fit the strongly lensed source and thus reconstruct its light.
+3) Apply a smoothness prior on our source reconstruction, called 'regularization', to ensure our solution is physical.
+4) Apply this prior in a Bayesian framework to objectively quantify our source reconstruction's likelihood.
+5) Define a border in the source-plane to prevent pixels tracing outside the source reconstruction.
+6) Can use alternative pixelizations that use irregular Voronoi pixels adapted to the lens's mass model.
+7) Use these features in PyAutoLelns pipelines.
 
 Sound good? I agree, so lets get on with it.

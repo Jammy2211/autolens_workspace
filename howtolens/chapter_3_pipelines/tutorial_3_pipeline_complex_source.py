@@ -4,7 +4,7 @@ from autolens.model.profiles import mass_profiles as mp
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 
 
 def make_pipeline(phase_folders=None):
@@ -17,7 +17,7 @@ def make_pipeline(phase_folders=None):
 
     pipeline_name = "pl__complex_source"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -33,14 +33,12 @@ def make_pipeline(phase_folders=None):
     # can be confident MultiNest will fit without much issue, especially when the lens galaxy's light isn't included
     # such that the parameter space is just 12 parameters.
 
-    phase1 = phase_imaging.LensSourcePlanePhase(
+    phase1 = phase_imaging.PhaseImaging(
         phase_name="phase_1_simple_source",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=1.0, light_0=lp.EllipticalSersic)
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
+            source=gm.GalaxyModel(redshift=1.0, light_0=lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -52,14 +50,14 @@ def make_pipeline(phase_folders=None):
     # Now lets add another source component, using the previous model as the initialization on the lens / source
     # parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the fit.
 
-    class X2SourcePhase(phase_imaging.LensSourcePlanePhase):
+    class X2SourcePhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_1_simple_source"
             ).variable.lens
 
-            self.source_galaxies.source.light_0 = results.from_phase(
+            self.galaxies.source.light_0 = results.from_phase(
                 "phase_1_simple_source"
             ).variable.source.light_0
 
@@ -69,15 +67,13 @@ def make_pipeline(phase_folders=None):
     phase2 = X2SourcePhase(
         phase_name="phase_2_x2_source",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(
                 redshift=1.0,
                 light_0=lp.EllipticalExponential,
                 light_1=lp.EllipticalSersic,
-            )
+            ),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -88,34 +84,32 @@ def make_pipeline(phase_folders=None):
 
     # Now lets do the same again, but with 3 source galaxy components.
 
-    class X3SourcePhase(phase_imaging.LensSourcePlanePhase):
+    class X3SourcePhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_2_x2_source"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            self.source_galaxies.source.light_0 = results.from_phase(
+            self.galaxies.source.light_0 = results.from_phase(
                 "phase_2_x2_source"
-            ).variable.source_galaxies.source.light_0
+            ).variable.galaxies.source.light_0
 
-            self.source_galaxies.source.light_1 = results.from_phase(
+            self.galaxies.source.light_1 = results.from_phase(
                 "phase_2_x2_source"
-            ).variable.source_galaxies.source.light_1
+            ).variable.galaxies.source.light_1
 
     phase3 = X3SourcePhase(
         phase_name="phase_3_x3_source",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(
                 redshift=1.0,
                 light_0=lp.EllipticalExponential,
                 light_1=lp.EllipticalSersic,
                 light_2=lp.EllipticalSersic,
-            )
+            ),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -126,39 +120,37 @@ def make_pipeline(phase_folders=None):
 
     # And one more for luck!
 
-    class X4SourcePhase(phase_imaging.LensSourcePlanePhase):
+    class X4SourcePhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_3_x3_source"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            self.source_galaxies.source.light_0 = results.from_phase(
+            self.galaxies.source.light_0 = results.from_phase(
                 "phase_3_x3_source"
-            ).variable.source_galaxies.source.light_0
+            ).variable.galaxies.source.light_0
 
-            self.source_galaxies.source.light_1 = results.from_phase(
+            self.galaxies.source.light_1 = results.from_phase(
                 "phase_3_x3_source"
-            ).variable.source_galaxies.source.light_1
+            ).variable.galaxies.source.light_1
 
-            self.source_galaxies.source.light_2 = results.from_phase(
+            self.galaxies.source.light_2 = results.from_phase(
                 "phase_3_x3_source"
-            ).variable.source_galaxies.source.light_2
+            ).variable.galaxies.source.light_2
 
     phase4 = X4SourcePhase(
         phase_name="phase_4_x4_source",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(
                 redshift=1.0,
                 light_0=lp.EllipticalExponential,
                 light_1=lp.EllipticalSersic,
                 light_2=lp.EllipticalSersic,
                 light_3=lp.EllipticalSersic,
-            )
+            ),
         ),
         optimizer_class=af.MultiNest,
     )

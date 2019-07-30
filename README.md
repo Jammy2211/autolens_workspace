@@ -4,11 +4,11 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.25.2** and **PyAutoFit v0.29.3** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.25.8** and **PyAutoFit v0.30.5** If you have any errors or issues using the workspace, try using these versions:
 
 ```
-pip install autolens==0.25.2
-pip install autofit==0.29.3
+pip install autolens==0.25.8
+pip install autofit==030.5
 ```
 
 ## Getting Started
@@ -20,6 +20,7 @@ To begin, I'd check out the 'introduction' in the quickstart folder. This will e
 
 The workspace includes the following:
 
+- **Aggregator** - Manipulate large suites of model-fits via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
 - **Config** - Configuration files which customize the **PyAutoLens** analysis.
 - **Data** - Your data folder, including example data-sets distributed with **PyAutoLens**.
 - **Quick Start** - A quick start guide, so you can begin modeling your own lens data within hours.

@@ -5,7 +5,6 @@ import autofit as af
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy as g, galaxy_model as gm
 from autolens.model.galaxy import galaxy_data as gd
-from autolens.model.galaxy.util import galaxy_util
 from autolens.data.array import grids, scaled_array
 from autolens.pipeline.phase import phase
 from autolens.model.profiles import mass_profiles as mp

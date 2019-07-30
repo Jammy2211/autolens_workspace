@@ -1,4 +1,4 @@
-lens_galaxies
+galaxies
     lens
         light
             centre
@@ -17,7 +17,7 @@ lens_galaxies
             phi                                                                                     UniformPrior, lower_limit = 40.0, upper_limit = 95.0
             einstein_radius                                                                         UniformPrior, lower_limit = 0.0, upper_limit = 0.2
         redshift                                                                                    0.5
-source_galaxies
+galaxies
     source
         light
             centre

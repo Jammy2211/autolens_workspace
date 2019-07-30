@@ -52,9 +52,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -81,9 +80,8 @@ def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
 
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=lens_data.grid_stack,
         border=lens_data.border,
     )
@@ -206,9 +204,8 @@ def simulate_lens_with_light_profile():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -250,9 +247,8 @@ source_galaxy = g.Galaxy(
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy],
     image_plane_grid_stack=lens_data.grid_stack,
     border=lens_data.border,
 )
@@ -277,9 +273,8 @@ lens_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy],
     image_plane_grid_stack=lens_data.grid_stack,
     border=lens_data.border,
 )

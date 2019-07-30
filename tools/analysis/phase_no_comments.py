@@ -1,5 +1,5 @@
 import autofit as af
-from autolens.pipeline.phase import phase_imaging, phase_extensions
+from autolens.pipeline.phase import phase_imaging
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.data import ccd
@@ -38,9 +38,8 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 # To perform the analysis, we set up a phase using the 'phase' module (imported as 'ph').
 # A phase takes our galaxy models and fits their parameters using a non-linear search
 # (in this case, MultiNest).
-phase = phase_imaging.LensSourcePlanePhase(
-    lens_galaxies=dict(lens=lens_galaxy_model),
-    source_galaxies=dict(source=source_galaxy_model),
+phase = phase_imaging.PhaseImaging(
+    galaxies=dict(lens=lens_galaxy_model, source=source_galaxy_model),
     phase_name="example/phase_example",
     optimizer_class=af.MultiNest,
 )

@@ -15,7 +15,7 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 # The 'data name' is the name of the data folder and 'data_name' the folder the mask is stored in, e.g,
 # the mask will be output as '/workspace/data/data_type/data_name/mask.fits'.
 data_type = "example"
-data_name = "lens_light_mass_and_x1_source"
+data_name = "lens_mass_and_x1_source"
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'

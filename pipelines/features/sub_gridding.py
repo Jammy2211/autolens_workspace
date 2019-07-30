@@ -3,7 +3,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -51,7 +51,7 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     pipeline_name = "pl__sub_gridding"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -88,27 +88,21 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # 1) Use a sub-grid size of 2x2 in every image pixel.
 
-    class LensSourceX1Phase(phase_imaging.LensSourcePlanePhase):
+    class LensSourceX1Phase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass.centre_0 = af.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
-            self.lens_galaxies.lens.mass.centre_1 = af.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
+            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
         phase_name="phase_1_x1_source",
         phase_folders=phase_folders,
         tag_phases=True,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
-            )
-        ),
-        source_galaxies=dict(
-            source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+            ),
+            source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         sub_grid_size=2,
@@ -125,27 +119,25 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # 1) Use a sub-grid size of 4x4 in every image pixel.
 
-    class LensSourceX2Phase(phase_imaging.LensSourcePlanePhase):
+    class LensSourceX2Phase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_1_x1_source"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            self.source_galaxies.source_0 = results.from_phase(
+            self.galaxies.source_0 = results.from_phase(
                 "phase_1_x1_source"
-            ).variable.source_galaxies.source_0
+            ).variable.galaxies.source_0
 
     phase2 = LensSourceX2Phase(
         phase_name="phase_2_x2_source",
         phase_folders=phase_folders,
         tag_phases=True,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
-            )
-        ),
-        source_galaxies=dict(
+            ),
             source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
             source_1=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),

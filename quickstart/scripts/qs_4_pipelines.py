@@ -9,7 +9,7 @@
 # break the fit down by initially fitting simple lens models, and then gradually make the model more complex, using
 # the results of the earlier phases to initialize the non-linear sampler.
 
-# Lets look at an example. Go to 'autolens_workspace/pipelines/simple/lens_sersic_sie_shear_source_sersic.py'
+# Lets look at an example. Go to 'autolens_workspace/pipelines/simple/lens_sersic_sie_source_sersic.py'
 # First, have a skim read of the pipeline - you'll see it uses phases like the one we made above, but introduces a
 # number of other concepts (e.g. prior passing, image modification) that we haven't covered in the quick-start tutorial.
 

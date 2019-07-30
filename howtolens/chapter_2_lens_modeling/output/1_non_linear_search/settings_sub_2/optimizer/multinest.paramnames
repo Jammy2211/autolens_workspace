@@ -1,7 +1,7 @@
-lens_galaxies_lens_galaxy_mass_centre_0                               y_{\mathrm{m24}}
-lens_galaxies_lens_galaxy_mass_centre_1                               x_{\mathrm{m24}}
-lens_galaxies_lens_galaxy_mass_einstein_radius_value                  \theta_{\mathrm{m24}}
-source_galaxies_source_galaxy_light_centre_0                          y_{\mathrm{l26}}
-source_galaxies_source_galaxy_light_centre_1                          x_{\mathrm{l26}}
-source_galaxies_source_galaxy_light_intensity_value                   I_{\mathrm{l26}}
-source_galaxies_source_galaxy_light_effective_radius_value            R_{\mathrm{l26}}
+galaxies_lens_galaxy_mass_centre_0                               y_{\mathrm{m24}}
+galaxies_lens_galaxy_mass_centre_1                               x_{\mathrm{m24}}
+galaxies_lens_galaxy_mass_einstein_radius_value                  \theta_{\mathrm{m24}}
+galaxies_source_galaxy_light_centre_0                          y_{\mathrm{l26}}
+galaxies_source_galaxy_light_centre_1                          x_{\mathrm{l26}}
+galaxies_source_galaxy_light_intensity_value                   I_{\mathrm{l26}}
+galaxies_source_galaxy_light_effective_radius_value            R_{\mathrm{l26}}

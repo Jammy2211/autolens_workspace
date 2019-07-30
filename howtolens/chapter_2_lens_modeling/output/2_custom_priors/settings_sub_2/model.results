@@ -1,6 +1,6 @@
 Most likely model, Likelihood = 6491.15817435
 
-source_galaxies
+galaxies
     source_galaxy
         light
             centre
@@ -8,7 +8,7 @@ source_galaxies
                 centre_1                                                                            0.001
             intensity                                                                               0.211
             effective_radius                                                                        0.190
-lens_galaxies
+galaxies
     lens_galaxy
         mass
             centre
@@ -19,7 +19,7 @@ lens_galaxies
 
 Most probable model (3.0 sigma limits)
 
-source_galaxies
+galaxies
     source_galaxy
         light
             centre
@@ -27,7 +27,7 @@ source_galaxies
                 centre_1                                                                            -0.001 (-0.008, 0.007)
             intensity                                                                               0.210 (0.198, 0.221)
             effective_radius                                                                        0.190 (0.176, 0.210)
-lens_galaxies
+galaxies
     lens_galaxy
         mass
             centre
@@ -37,7 +37,7 @@ lens_galaxies
 
 Most probable model (1.0 sigma limits)
 
-source_galaxies
+galaxies
     source_galaxy
         light
             centre
@@ -45,7 +45,7 @@ source_galaxies
                 centre_1                                                                            -0.001 (-0.003, 0.002)
             intensity                                                                               0.210 (0.206, 0.213)
             effective_radius                                                                        0.190 (0.176, 0.195)
-lens_galaxies
+galaxies
     lens_galaxy
         mass
             centre
@@ -56,9 +56,9 @@ lens_galaxies
 Constants
 
 
-lens_galaxies
+galaxies
     lens_galaxy
         redshift                                                                                    0.5
-source_galaxies
+galaxies
     source_galaxy
         redshift                                                                                    1.0

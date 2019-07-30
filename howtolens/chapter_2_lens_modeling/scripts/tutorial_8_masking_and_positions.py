@@ -47,9 +47,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -105,10 +104,10 @@ def mask_function():
     )
 
 
-phase_with_custom_mask = phase_imaging.LensSourcePlanePhase(
+phase_with_custom_mask = phase_imaging.PhaseImaging(
     phase_name="phase",
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     mask_function=mask_function,  # <- We input the mask function here
     optimizer_class=af.MultiNest,
 )
@@ -154,10 +153,10 @@ ccd_plotters.plot_ccd_subplot(
 )
 
 # We can then tell our phase to use these positions in the analysis.
-phase_with_positions = phase_imaging.LensSourcePlanePhase(
+phase_with_positions = phase_imaging.PhaseImaging(
     phase_name="phase",
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     positions_threshold=0.5,  # <- We input a positions threshold here, to signify how far pixels must trace within one another.
     optimizer_class=af.MultiNest,
 )
@@ -171,7 +170,7 @@ phase_with_positions = phase_imaging.LensSourcePlanePhase(
 # model to be accepted.
 
 
-def simulate_two_source_galaxies():
+def simulate_two_galaxies():
 
     from autolens.data.array import grids
     from autolens.model.galaxy import galaxy as g
@@ -202,9 +201,9 @@ def simulate_two_source_galaxies():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy_0, source_galaxy_1],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy],
+        galaxies=[source_galaxy_0, source_galaxy_1],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -220,7 +219,7 @@ def simulate_two_source_galaxies():
     return ccd_simulated
 
 
-ccd_data = simulate_two_source_galaxies()
+ccd_data = simulate_two_galaxies()
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
@@ -232,10 +231,10 @@ ccd_plotters.plot_ccd_subplot(
 )
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
-phase_with_x2_positions = phase_imaging.LensSourcePlanePhase(
+phase_with_x2_positions = phase_imaging.PhaseImaging(
     phase_name="phase",
-    lens_galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
-    source_galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
+    galaxies=dict(lens=gm.GalaxyModel(redshift=0.5)),
+    galaxies=dict(source=gm.GalaxyModel(redshift=1.0)),
     positions_threshold=0.5,  # <- We input a positions threshold here, to signify how far pixels must trace within one another.
     optimizer_class=af.MultiNest,
 )

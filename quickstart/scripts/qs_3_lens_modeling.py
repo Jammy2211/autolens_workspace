@@ -80,10 +80,10 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 # (ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
-phase = phase_imaging.LensSourcePlanePhase(
+phase = phase_imaging.PhaseImaging(
     phase_name="quick_start_non_linear_search",
-    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    galaxies=dict(lens_galaxy=lens_galaxy_model),
+    galaxies=dict(source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 

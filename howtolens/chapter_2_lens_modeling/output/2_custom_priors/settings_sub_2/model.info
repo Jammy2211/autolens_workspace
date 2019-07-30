@@ -1,4 +1,4 @@
-source_galaxies
+galaxies
     source_galaxy
         light
             centre
@@ -7,7 +7,7 @@ source_galaxies
             intensity                                                                               GaussianPrior, mean = 0.2, sigma = 0.01
             effective_radius                                                                        UniformPrior, lower_limit = 0.0, upper_limit = 0.3
         redshift                                                                                    1.0
-lens_galaxies
+galaxies
     lens_galaxy
         mass
             centre

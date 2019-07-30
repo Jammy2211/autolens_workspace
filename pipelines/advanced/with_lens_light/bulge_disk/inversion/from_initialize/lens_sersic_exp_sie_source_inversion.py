@@ -1,8 +1,8 @@
 import autofit as af
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging, phase_extensions
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.model.inversion import pixelizations as pix
@@ -17,7 +17,7 @@ from autolens.model.inversion import regularization as reg
 # Description: initialize the inversion's pixelization and regularization hyper-parameters, using a previous lens
 #              light and mass model.
 # Lens Light: EllipticalSersic + EllipticalExponential
-# Lens Mass: EllipitcalIsothermal
+# Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiMagnification + Constant
 # Previous Pipelines: initialize/lens_sie_source_sersic_from_init.py
 # Prior Passing: Lens Mass (variable -> previous pipeline).
@@ -27,7 +27,7 @@ from autolens.model.inversion import regularization as reg
 
 # Description: Refine the lens light and mass model and source inversion.
 # Lens Light: EllipticalSersic + EllipticalExponential
-# Lens Mass: EllipitcalIsothermal
+# Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiMagnification + Constant
 # Previous Pipelines: initialize/lens_sie_source_sersic_from_init.py
 # Prior Passing: Lens light and mass (variable -> previous pipeline), source inversion (variable -> phase 1).
@@ -37,7 +37,7 @@ from autolens.model.inversion import regularization as reg
 
 # Description: Refine the source inversion using this lens light and mass model.
 # Lens Light: EllipticalSersic + EllipticalExponential
-# Lens Mass: EllipitcalIsothermal
+# Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiMagnification + Constant
 # Previous Pipelines: None
 # Prior Passing: Lens light and mass (constant -> phase 2), source inversion (variable -> phase 1 & 2).
@@ -45,12 +45,7 @@ from autolens.model.inversion import regularization as reg
 
 
 def make_pipeline(
-    pl_fix_lens_light=False,
-    pl_align_bulge_disk_centre=False,
-    pl_align_bulge_disk_axis_ratio=False,
-    pl_align_bulge_disk_phi=False,
-    pl_pixelization=pix.VoronoiMagnification,
-    pl_regularization=reg.AdaptiveBrightness,
+    pipeline_settings,
     phase_folders=None,
     tag_phases=True,
     redshift_lens=0.5,
@@ -60,18 +55,28 @@ def make_pipeline(
     positions_threshold=None,
     inner_mask_radii=None,
     interp_pixel_scale=None,
+    use_inversion_border=True,
     inversion_pixel_limit=None,
     cluster_pixel_scale=0.1,
 ):
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
-        pipeline_name="pipeline_inv__lens_sersic_exp_sie_source_inversion",
-        fix_lens_light=pl_fix_lens_light,
-        pixelization=pl_pixelization,
-        regularization=pl_regularization,
-        align_bulge_disk_centre=pl_align_bulge_disk_centre,
-        align_bulge_disk_axis_ratio=pl_align_bulge_disk_axis_ratio,
-        align_bulge_disk_phi=pl_align_bulge_disk_phi,
+    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+
+    # We setup the pipeline name using the tagging module. In this case, the pipeline name is tagged according to
+    # whether the lens light model is fixed throughout the pipeline and if certain components of the lens light's
+    # bulge-disk model are aligned.
+
+    pipeline_name = "pipeline_inv__lens_sersic_exp_sie_source_inversion"
+
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
+        pipeline_name=pipeline_name,
+        include_shear=pipeline_settings.include_shear,
+        fix_lens_light=pipeline_settings.fix_lens_light,
+        pixelization=pipeline_settings.pixelization,
+        regularization=pipeline_settings.regularization,
+        align_bulge_disk_centre=pipeline_settings.align_bulge_disk_centre,
+        align_bulge_disk_axis_ratio=pipeline_settings.align_bulge_disk_axis_ratio,
+        align_bulge_disk_phi=pipeline_settings.align_bulge_disk_phi,
     )
 
     phase_folders.append(pipeline_name)
@@ -85,38 +90,38 @@ def make_pipeline(
     # 2) Fix our mass model to the lens galaxy mass-model from phase 3 of the initialize pipeline.
     # 3) Use a circular mask which includes all of the source-galaxy light.
 
-    class InversionPhase(phase_imaging.LensSourcePlanePhase):
+    class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE ###
+            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_3_lens_sersic_exp_sie_source_sersic"
-            ).constant.lens_galaxies.lens
+            ).constant.galaxies.lens
 
     phase1 = InversionPhase(
         phase_name="phase_1_initialize_inversion",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 bulge=lp.EllipticalSersic,
                 disk=lp.EllipticalExponential,
                 mass=mp.EllipticalIsothermal,
-            )
-        ),
-        source_galaxies=dict(
+                shear=mp.ExternalShear,
+            ),
             source=gm.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pl_pixelization,
-                regularization=pl_regularization,
-            )
+                pixelization=pipeline_settings.pixelization,
+                regularization=pipeline_settings.regularization,
+            ),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
+        use_inversion_border=use_inversion_border,
         interp_pixel_scale=interp_pixel_scale,
         inversion_pixel_limit=inversion_pixel_limit,
         cluster_pixel_scale=cluster_pixel_scale,
@@ -137,55 +142,57 @@ def make_pipeline(
     #    of this pipeline.
     # 2) Use a circular mask including both the lens and source galaxy light.
 
-    class InversionPhase(phase_imaging.LensSourcePlanePhase):
+    class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE ###
+            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_3_lens_sersic_exp_sie_source_sersic"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            if pl_fix_lens_light:
+            # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
 
-                self.lens_galaxies.lens.bulge = results.from_phase(
+            if pipeline_settings.fix_lens_light:
+
+                self.galaxies.lens.bulge = results.from_phase(
                     "phase_3_lens_sersic_exp_sie_source_sersic"
-                ).constant.lens_galaxies.lens.bulge
+                ).constant.galaxies.lens.bulge
 
-                self.lens_galaxies.lens.disk = results.from_phase(
+                self.galaxies.lens.disk = results.from_phase(
                     "phase_3_lens_sersic_exp_sie_source_sersic"
-                ).constant.lens_galaxies.lens.disk
+                ).constant.galaxies.lens.disk
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.source_galaxies.source.pixelization = results.from_phase(
+            self.galaxies.source = results.from_phase(
                 "phase_1_initialize_inversion"
-            ).inversion.constant.source_galaxies.source
+            ).inversion.constant.galaxies.source
 
     phase2 = InversionPhase(
         phase_name="phase_2_lens_sersic_exp_sie_source_inversion",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 bulge=lp.EllipticalSersic,
                 disk=lp.EllipticalExponential,
                 mass=mp.EllipticalIsothermal,
-            )
-        ),
-        source_galaxies=dict(
+                shear=mp.ExternalShear,
+            ),
             source=gm.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pl_pixelization,
-                regularization=pl_regularization,
-            )
+                pixelization=pipeline_settings.pixelization,
+                regularization=pipeline_settings.regularization,
+            ),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
         interp_pixel_scale=interp_pixel_scale,
+        use_inversion_border=use_inversion_border,
         inversion_pixel_limit=inversion_pixel_limit,
         cluster_pixel_scale=cluster_pixel_scale,
         optimizer_class=af.MultiNest,

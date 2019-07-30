@@ -99,9 +99,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -141,10 +140,10 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential
 
 # (also, just ignore the 'dict' - its necessary syntax but not something you need to concern yourself with)
 
-phase = phase_imaging.LensSourcePlanePhase(
+phase = phase_imaging.PhaseImaging(
     phase_name="1_non_linear_search",
-    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    galaxies=dict(lens_galaxy=lens_galaxy_model),
+    galaxies=dict(source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 

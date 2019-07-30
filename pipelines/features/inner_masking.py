@@ -3,7 +3,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -53,7 +53,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     pipeline_name = "pl__inner_mask"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -87,15 +87,13 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
             shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5
         )
 
-    phase1 = phase_imaging.LensSourcePlanePhase(
+    phase1 = phase_imaging.PhaseImaging(
         phase_name="phase_1_use_inner_radii_input",
         phase_folders=phase_folders,
         tag_phases=True,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
+            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         inner_mask_radii=inner_mask_radii,
@@ -113,26 +111,24 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # 1) Not specify a mask function to the phase, meaning that by default the custom mask passed to the pipeline when
     #    we run it will be used instead.
 
-    class LensSubtractedPhase(phase_imaging.LensSourcePlanePhase):
+    class LensSubtractedPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_1_use_inner_radii_input"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            self.source_galaxies.source = results.from_phase(
+            self.galaxies.source = results.from_phase(
                 "phase_1_use_inner_radii_input"
-            ).variable.source_galaxies.source
+            ).variable.galaxies.source
 
     phase2 = LensSubtractedPhase(
         phase_name="phase_2_circular_mask",
         phase_folders=phase_folders,
         tag_phases=True,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
+            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
     )

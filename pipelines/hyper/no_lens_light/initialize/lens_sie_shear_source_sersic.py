@@ -1,8 +1,8 @@
 import autofit as af
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging, phase_extensions
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -22,9 +22,7 @@ import os
 
 
 def make_pipeline(
-    pl_hyper_galaxies=True,
-    pl_hyper_background_sky=True,
-    pl_hyper_background_noise=True,
+    pipeline_settings,
     phase_folders=None,
     tag_phases=True,
     redshift_lens=0.5,
@@ -42,13 +40,25 @@ def make_pipeline(
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_init__lens_sie_shear_source_sersic"
+    pipeline_name = "pipeline_init__lens_sie_source_sersic"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
+        pipeline_name=pipeline_name, include_shear=pipeline_settings.include_shear
     )
 
     phase_folders.append(pipeline_name)
+
+    ### SETUP SHEAR ###
+
+    # If the pipeline should include shear, add this class below so that it enters the phase.
+
+    # After this pipeline this shear class is passed to all subsequent pipelines, such that the shear is either
+    # included or omitted throughout the entire pipeline.
+
+    if pipeline_settings.include_shear:
+        shear = mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -56,19 +66,15 @@ def make_pipeline(
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    phase1 = phase_imaging.LensSourcePlanePhase(
-        phase_name="phase_1_lens_sie_shear_source_sersic",
+    phase1 = phase_imaging.PhaseImaging(
+        phase_name="phase_1_lens_sie_source_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
-                redshift=redshift_lens,
-                mass=mp.EllipticalIsothermal,
-                shear=mp.ExternalShear,
-            )
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+                redshift=redshift_lens, mass=mp.EllipticalIsothermal, shear=shear
+            ),
+            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,
@@ -83,9 +89,9 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.2
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pl_hyper_galaxies,
-        include_background_sky=pl_hyper_background_sky,
-        include_background_noise=pl_hyper_background_noise,
+        hyper_galaxy=pipeline_settings.hyper_galaxies,
+        include_background_sky=pipeline_settings.hyper_background_sky,
+        include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return pipeline.PipelineImaging(pipeline_name, phase1)
+    return pipeline.PipelineImaging(pipeline_name, phase1, hyper_mode=True)

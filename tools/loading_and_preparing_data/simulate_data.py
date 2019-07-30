@@ -33,9 +33,8 @@ def simulate_ccd_data():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -80,9 +79,8 @@ def simulate_ccd_data_in_counts():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -121,9 +119,8 @@ def simulate_ccd_data_with_large_stamp():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -162,9 +159,8 @@ def simulate_ccd_data_with_small_stamp():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -203,9 +199,8 @@ def simulate_ccd_data_with_offset_centre():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -244,9 +239,8 @@ def simulate_ccd_data_with_large_psf():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -287,9 +281,8 @@ def simulate_ccd_data_with_psf_with_offset_centre():
         )
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 

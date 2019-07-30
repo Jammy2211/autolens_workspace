@@ -76,9 +76,9 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy_0, lens_galaxy_1],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy_0, lens_galaxy_1],
+        galaxies=[source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -118,15 +118,15 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 
 # Again, before we checkout the pipeline, lets import it, and get it running.
-from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
+from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_galaxies
 
-pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
-    phase_folders=["howtolens", "c3_t2_x2_lens_galaxies"]
+pipeline_x2_galaxies = tutorial_2_pipeline_x2_galaxies.make_pipeline(
+    phase_folders=["howtolens", "c3_t2_x2_galaxies"]
 )
 
 pipeline_x2_galaxies.run(data=ccd_data)
 
-# Okay, great, nows a good time to read through the '_tutorial_2_pipeline_x2_lens_galaxies.py_' pipeline, to get a
+# Okay, great, nows a good time to read through the '_tutorial_2_pipeline_x2_galaxies.py_' pipeline, to get a
 # complete view of how it works. Once you've done that, come back here and we'll wrap up this tutorial.
 
 

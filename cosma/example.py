@@ -1,5 +1,6 @@
 import autofit as af
 from autolens.data import ccd
+from autolens.pipeline import pipeline as pl
 
 import os
 import sys
@@ -125,26 +126,28 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=pixel_scale,
 )
 
-from workspace.pipelines.advanced.no_lens_light.initialize import (
-    lens_sie_shear_source_sersic,
-)
+### PIPELINE SETTINGS ###
+
+pipeline_settings = pl.PipelineSettings(include_shear=True)
+
+from workspace.pipelines.advanced.no_lens_light.initialize import lens_sie_source_sersic
 from workspace.pipelines.advanced.no_lens_light.power_law.from_initialize import (
-    lens_pl_shear_source_sersic,
+    lens_pl_source_sersic,
 )
 from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import (
-    lens_pl_shear_subhalo_source_sersic,
+    lens_pl_subhalo_source_sersic,
 )
 
-pipeline_initialize = lens_sie_shear_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name]
+pipeline_initialize = lens_sie_source_sersic.make_pipeline(
+    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_power_law = lens_pl_shear_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name]
+pipeline_power_law = lens_pl_source_sersic.make_pipeline(
+    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_subhalo = lens_pl_shear_subhalo_source_sersic.make_pipeline(
-    phase_folders=[data_type, data_name]
+pipeline_subhalo = lens_pl_subhalo_source_sersic.make_pipeline(
+    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
 pipeline = pipeline_initialize + pipeline_power_law + pipeline_subhalo

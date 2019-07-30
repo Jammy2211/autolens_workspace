@@ -19,7 +19,7 @@ from autolens.lens.plotters import ray_tracing_plotters
 # pixel-to-arcsecond conversion scale of 0.05".
 
 image_plane_grid = grids.Grid.from_shape_pixel_scale_and_sub_grid_size(
-    shape=(100, 100), pixel_scale=0.05
+    shape=(100, 100), pixel_scale=0.05, sub_grid_size=1
 )
 
 grid_plotters.plot_grid(grid=image_plane_grid, title="Image-Plane Uniform Grid")
@@ -141,10 +141,8 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
-    image_plane_grid_stack=image_plane_grid_stack,
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 
 ray_tracing_plotters.plot_ray_tracing_subplot(tracer=tracer)

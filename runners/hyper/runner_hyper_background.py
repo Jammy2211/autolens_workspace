@@ -1,6 +1,9 @@
 import autofit as af
 from autolens.data import ccd
 from autolens.data.plotters import ccd_plotters
+from autolens.pipeline import pipeline as pl
+from autolens.model.inversion import pixelizations as pix
+from autolens.model.inversion import regularization as reg
 
 import os
 
@@ -82,55 +85,72 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # --------------------------------------------------------------------------------------------------------
 
-# Okay, so in this, the hyper runner, we're going to use hyper-galaxies and hyper background scaling. If you haven't
-# already, checkout the 'autolens_workspace/runners/hyper/runner_hyper_galaxies.py' script for a description of
-# what hyper-galaxies are.
+### HYPER FITTING ###
 
-# Hyper background scaling is straight forward, we basically do two things:
+# Okay, so in this, the hyper runner, we're going to use hyper-galaxies. Whats a hyper-galaxy? It's a galaxy which is
+# also used to scale the noise-map of the observed image. This is necessary when there are regions of the image that
+# are poorly fitted by the model, for example, because:
 
+# - The lens galaxy's light has complex structures (nuclear star emission, a bar, etc.) that our analytic light profiles
+#   cannot fit. This is often very problematic for the fitting, as these pixels are typically *very* high S/N, and
+#   therefore overwhelm the chi-squared contribution (it is common to have single pixels with chi-squareds > 100s).
+#   By increasing the noise, we bring this chi-squared down, and thus fit the image more equally.
 
-# 1) Scale the background sky subtraction of the image. This means that if the background sky subtraction of the our
-#    data reduction was sub-optimal, we'll account for and correct for this in our model fitting.
+# - The lens's' mass model is more complex than our simple analytic mass profiles, which means there are residuals in
+#   the source reconstruction. Along a similar line to the lens light profile, these residuals will overwhelm the
+#   model fitting if the noise isn't increased.
 
-# 2) Scale the background value of noise used in the noise-map. Again, this helps account for a sub-optimal background
-#    sky map.
+### HYPER PIPELINE SETTINGS ###
 
-# Turning these features on is simple, we simply flag them as True in our make_pipeline functions.
+# In the advanced pipelines, we defined pipeline settings which controlled various aspects of the pipelines, such as
+# the model complexity and assumtpions we made about the lens and source galaxy models.
+
+# The pipeline settings we used in the advanced runners all still apply, but hyper-fitting brings with it the following
+# new settings:
+
+# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+
+# - If the background sky is modeled throughout the pipeline (default False)
+
+# - If the level of background noise is scaled throughout the pipeline (default True)
+
+# - The default Pixelization and Regularization are also now changed to VoronoiBrightnessImage and AdaptiveBrightness.
+
+pipeline_settings = pl.PipelineSettingsHyper(
+    hyper_galaxies=True,
+    hyper_background_sky=True,
+    hyper_background_noise=False,
+    include_shear=True,
+    fix_lens_light=False,
+    align_bulge_disk_centre=False,
+    align_bulge_disk_phi=False,
+    align_bulge_disk_axis_ratio=False,
+    pixelization=pix.VoronoiBrightnessImage,
+    regularization=reg.AdaptiveBrightness,
+)
 
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.initialize import (
-    lens_sersic_exp_sie_shear_source_sersic,
+    lens_sersic_exp_sie_source_sersic,
 )
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.inversion.from_initialize import (
-    lens_sersic_exp_sie_shear_source_inversion,
+    lens_sersic_exp_sie_source_inversion,
 )
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.power_law.from_inversion import (
-    lens_sersic_exp_pl_shear_source_inversion,
+    lens_sersic_exp_pl_source_inversion,
 )
 
-pipeline_initialize = lens_sersic_exp_sie_shear_source_sersic.make_pipeline(
-    pl_hyper_galaxies=True,
-    pl_hyper_background_sky=True,
-    pl_hyper_background_noise=True,
-    pl_align_bulge_disk_centre=True,
-    pl_align_bulge_disk_axis_ratio=True,
-    pl_align_bulge_disk_phi=True,
-    phase_folders=[data_type, data_name],
+pipeline_initialize = lens_sersic_exp_sie_source_sersic.make_pipeline(
+    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_inversion = lens_sersic_exp_sie_shear_source_inversion.make_pipeline(
-    pl_hyper_galaxies=True,
-    pl_hyper_background_sky=True,
-    pl_hyper_background_noise=True,
-    pl_fix_lens_light=True,
-    pl_align_bulge_disk_centre=True,
+pipeline_inversion = lens_sersic_exp_sie_source_inversion.make_pipeline(
+    pipeline_settings=pipeline_settings,
     phase_folders=[data_type, data_name],
     positions_threshold=1.0,
 )
 
-pipeline_power_law = lens_sersic_exp_pl_shear_source_inversion.make_pipeline(
-    pl_hyper_galaxies=True,
-    pl_hyper_background_sky=True,
-    pl_hyper_background_noise=True,
+pipeline_power_law = lens_sersic_exp_pl_source_inversion.make_pipeline(
+    pipeline_settings=pipeline_settings,
     phase_folders=[data_type, data_name],
     positions_threshold=1.0,
 )

@@ -1,4 +1,4 @@
-lens_galaxies
+galaxies
     lens
         light
             centre
@@ -17,7 +17,7 @@ lens_galaxies
             phi                                                                                     GaussianPrior, mean = 45.0, sigma = 30.0
             einstein_radius                                                                         GaussianPrior, mean = 0.8, sigma = 0.1
         redshift                                                                                    0.5
-source_galaxies
+galaxies
     source
         light
             centre

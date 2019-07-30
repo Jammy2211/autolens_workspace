@@ -3,7 +3,7 @@ from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -51,7 +51,7 @@ def make_pipeline(
 
     pipeline_name = "pl_lens_sie_source_x2_sersic"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -77,29 +77,25 @@ def make_pipeline(
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    class LensSourceX1Phase(phase_imaging.LensSourcePlanePhase):
+    class LensSourceX1Phase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            self.lens_galaxies.lens.mass.centre_0 = af.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
-            self.lens_galaxies.lens.mass.centre_1 = af.GaussianPrior(
-                mean=0.0, sigma=0.1
-            )
+            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
         phase_name="phase_1_lens_sie_source_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 mass=mp.EllipticalIsothermal,
                 shear=mp.ExternalShear,
-            )
-        ),
-        source_galaxies=dict(
-            source_0=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+            ),
+            source_0=gm.GalaxyModel(
+                redshift=redshift_source, light=lp.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
         sub_grid_size=sub_grid_size,
@@ -130,33 +126,31 @@ def make_pipeline(
     # 1) Initialize the priors on the lens galaxy using the results of phase 1.
     # 2) Initialize the priors on the first source galaxy using the results of phase 1.
 
-    class LensSourceX2Phase(phase_imaging.LensSourcePlanePhase):
+    class LensSourceX2Phase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
             ## Lens Mass, SIE -> SIE ###
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_1_lens_sie_source_sersic"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
             ## Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source_0 = results.from_phase(
+            self.galaxies.source_0 = results.from_phase(
                 "phase_1_lens_sie_source_sersic"
-            ).variable.source_galaxies.source_0
+            ).variable.galaxies.source_0
 
     phase2 = LensSourceX2Phase(
         phase_name="phase_2_lens_sie_source_x2_sersic",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 mass=mp.EllipticalIsothermal,
                 shear=mp.ExternalShear,
-            )
-        ),
-        source_galaxies=dict(
+            ),
             source_0=gm.GalaxyModel(
                 redshift=redshift_source, light=lp.EllipticalSersic
             ),

@@ -46,3 +46,19 @@ If you *really* want to use Python scripts, all tutorials are supplied a .py pyt
 
 Finally, its worth noting that for actual PyAutoLens use, I recommend you use Pyton scripts. Therefore, at the end of
 the quick start series you will notice that we will transition you to Python scripts.
+
+### BUG WITH CONFIG FILE ###
+
+If, when running the first notebook, you get an error related to config files. For example, it may state that the
+label 'numba' could not be found in a config file, or something else related to configs, this means that you have
+not set up your WORKSPACE path correctly to point to the folder autolens_workspace/config. To fix this, you can
+manually add the config path to each notebook, using the following code:
+
+import autofit as af
+
+workspace_path = "/path/to/user/autolens_workspace/"
+
+af.conf.instance = af.conf.Config(
+    config_path=workspace_path + "config/",
+    output_path=workspace_path + "output/",
+)

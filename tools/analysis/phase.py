@@ -73,11 +73,10 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 # The phase folders and phase name mean the output of these run will be in the directory
 # 'workspace/output/example/lens_light_and_x1_source/phase_example'
-phase = phase_imaging.LensSourcePlanePhase(
+phase = phase_imaging.PhaseImaging(
     phase_name="phase_example",
     phase_folders=[data_type, data_name],
-    lens_galaxies=dict(lens=lens_galaxy_model),
-    source_galaxies=dict(source=source_galaxy_model),
+    galaxies=dict(lens=lens_galaxy_model, source=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 

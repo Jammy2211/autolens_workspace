@@ -46,3 +46,12 @@ If you *really* want to use Python scripts, all tutorials are supplied a .py pyt
 
 Finally, its worth noting that for actual PyAutoLens use, I recommend you use Pyton scripts. Therefore, at the end of
 the quick start series you will notice that we will transition you to Python scripts.
+
+### HYPER MODE ###
+
+In the pipelines and runners folder, you'll notice a folder called 'hyper'. Hyper mode is PyAutoLens's most advanced
+feature-set, which adapts various aspects of the lens modeling procedure to the data it fits. I would recommend you
+only begin to look at these files once you are very familiar with PyAutoLens and lens modeling in general; the concepts
+in hyper-mode require some experience and knowledge of strong lens model to properly grasp!
+
+Hyper mode is explained in chapter 5 of the HowToLens lecture series.

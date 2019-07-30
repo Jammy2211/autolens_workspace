@@ -97,9 +97,9 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[
+            lens_galaxy,
             source_galaxy_0,
             source_galaxy_1,
             source_galaxy_2,
@@ -203,9 +203,9 @@ source_galaxy_3 = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[
+        lens_galaxy,
         source_galaxy_0,
         source_galaxy_1,
         source_galaxy_2,

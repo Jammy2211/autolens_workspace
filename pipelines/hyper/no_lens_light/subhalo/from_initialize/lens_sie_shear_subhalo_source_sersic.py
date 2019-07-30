@@ -1,8 +1,8 @@
 import autofit as af
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging, phase_extensions
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -18,7 +18,7 @@ import os
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
-# Previous Pipelines: initialize/lens_sie_shear_source_sersic_from_init.py
+# Previous Pipelines: initialize/lens_sie_source_sersic_from_init.py
 # Prior Passing: Lens mass (constant -> previous pipeline), source light (variable -> previous pipeline).
 # Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
 
@@ -28,15 +28,13 @@ import os
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
-# Previous Pipelines: initialize/lens_sie_shear_source_sersic_from_init.py
+# Previous Pipelines: initialize/lens_sie_source_sersic_from_init.py
 # Prior Passing: Lens mass (variable -> previous pipeline), source light and subhalo mass (variable -> phase 2).
 # Notes: None
 
 
 def make_pipeline(
-    pl_hyper_galaxies=True,
-    pl_hyper_background_sky=True,
-    pl_hyper_background_noise=True,
+    pipeline_settings,
     phase_folders=None,
     tag_phases=True,
     redshift_lens=0.5,
@@ -55,10 +53,10 @@ def make_pipeline(
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_subhalo__lens_sie_shear_subhalo_source_sersic_mass"
+    pipeline_name = "pipeline_subhalo__lens_sie_subhalo_source_sersic_mass"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
+        pipeline_name=pipeline_name, include_shear=pipeline_settings.include_shear
     )
 
     phase_folders.append(pipeline_name)
@@ -72,92 +70,90 @@ def make_pipeline(
     # 2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
     # 3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
 
-    class GridPhase(
-        af.phase.as_grid_search(phase_imaging.LensSourcePlanePhase, parallel=parallel)
-    ):
+    class GridPhase(af.as_grid_search(phase_imaging.PhaseImaging, parallel=parallel)):
         @property
         def grid_priors(self):
             return [
-                self.variable.lens_galaxies.subhalo.mass.centre_0,
-                self.variable.lens_galaxies.subhalo.mass.centre_1,
+                self.variable.galaxies.subhalo.mass.centre_0,
+                self.variable.galaxies.subhalo.mass.centre_1,
             ]
 
         def pass_priors(self, results):
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase(
-                "phase_1_lens_sie_shear_source_sersic"
-            ).constant.lens_galaxies.lens
+            self.galaxies.lens = results.from_phase(
+                "phase_1_lens_sie_source_sersic"
+            ).constant.galaxies.lens
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24)
 
-            self.lens_galaxies.subhalo.mass.kappa_s = af.UniformPrior(
+            self.galaxies.subhalo.mass.kappa_s = af.UniformPrior(
                 lower_limit=0.0, upper_limit=1.0
             )
-            self.lens_galaxies.subhalo.mass.scale_radius = af.UniformPrior(
+            self.galaxies.subhalo.mass.scale_radius = af.UniformPrior(
                 lower_limit=0.001, upper_limit=1.0
             )
-            self.lens_galaxies.subhalo.mass.centre_0 = af.UniformPrior(
+            self.galaxies.subhalo.mass.centre_0 = af.UniformPrior(
                 lower_limit=-2.0, upper_limit=2.0
             )
-            self.lens_galaxies.subhalo.mass.centre_1 = af.UniformPrior(
+            self.galaxies.subhalo.mass.centre_1 = af.UniformPrior(
                 lower_limit=-2.0, upper_limit=2.0
             )
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source.light.centre = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.centre = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_absolute(a=0.1)
-                .source_galaxies.source.light.centre
+                .galaxies.source.light.centre
             )
 
-            self.source_galaxies.source.light.intensity = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.intensity = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_relative(r=0.5)
-                .source_galaxies.source.light.intensity
+                .galaxies.source.light.intensity
             )
 
-            self.source_galaxies.source.light.effective_radius = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.effective_radius = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_relative(r=0.5)
-                .source_galaxies.source.light.effective_radius
+                .galaxies.source.light.effective_radius
             )
 
-            self.source_galaxies.source.light.sersic_index = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.sersic_index = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_relative(r=0.5)
-                .source_galaxies.source.light.sersic_index
+                .galaxies.source.light.sersic_index
             )
 
-            self.source_galaxies.source.light.axis_ratio = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.axis_ratio = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_absolute(a=0.1)
-                .source_galaxies.source.light.axis_ratio
+                .galaxies.source.light.axis_ratio
             )
 
-            self.source_galaxies.source.light.phi = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.phi = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_absolute(a=20.0)
-                .source_galaxies.source.light.phi
+                .galaxies.source.light.phi
             )
 
             ## Set all hyper-galaxies if feature is turned on ##
 
-            if pl_hyper_galaxies:
+            if pipeline_settings.hyper_galaxies:
 
-                self.source_galaxies.source.hyper_galaxy = (
-                    results.last.hyper_combined.constant.source_galaxies.source.hyper_galaxy
+                self.galaxies.source.hyper_galaxy = (
+                    results.last.hyper_combined.constant.galaxies.source.hyper_galaxy
                 )
 
-            if pl_hyper_background_sky:
+            if pipeline_settings.hyper_background_sky:
 
                 self.hyper_image_sky = (
                     results.last.hyper_combined.constant.hyper_image_sky
                 )
 
-            if pl_hyper_background_noise:
+            if pipeline_settings.hyper_background_noise:
 
                 self.hyper_noise_background = (
                     results.last.hyper_combined.constant.hyper_noise_background
@@ -167,7 +163,7 @@ def make_pipeline(
         phase_name="phase_1_subhalo_search",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 mass=mp.EllipticalIsothermal,
@@ -176,9 +172,7 @@ def make_pipeline(
             subhalo=gm.GalaxyModel(
                 redshift=redshift_lens, mass=mp.SphericalTruncatedNFWChallenge
             ),
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,
@@ -193,88 +187,88 @@ def make_pipeline(
     phase1.optimizer.n_live_points = 75
     phase1.optimizer.sampling_efficiency = 0.5
 
-    class SubhaloPhase(phase_imaging.LensSourcePlanePhase):
+    class SubhaloPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.lens_galaxies.lens = results.from_phase(
-                "phase_1_lens_sie_shear_source_sersic"
-            ).variable.lens_galaxies.lens
+            self.galaxies.lens = results.from_phase(
+                "phase_1_lens_sie_source_sersic"
+            ).variable.galaxies.lens
 
             ### Subhalo, TruncatedNFW -> TruncatedNFW ###
 
-            self.lens_galaxies.subhalo = results.from_phase(
+            self.galaxies.subhalo = results.from_phase(
                 "phase_1_subhalo_search"
-            ).best_result.variable.lens_galaxies.subhalo
+            ).best_result.variable.galaxies.subhalo
 
             ### Source Light, Sersic -> Sersic ###
 
-            self.source_galaxies.source = results.from_phase(
+            self.galaxies.source = results.from_phase(
                 "phase_1_subhalo_search"
-            ).best_result.variable.source_galaxies.source
+            ).best_result.variable.galaxies.source
 
-            self.source_galaxies.source.light.centre = (
+            self.galaxies.source.light.centre = (
                 results.from_phase("phase_1_subhalo_search")
                 .best_result.variable_absolute(a=0.05)
-                .source_galaxies.source.light.centre
+                .galaxies.source.light.centre
             )
 
-            self.source_galaxies.source.light.intensity = (
+            self.galaxies.source.light.intensity = (
                 results.from_phase("phase_1_subhalo_search")
                 .best_result.variable_relative(r=0.5)
-                .source_galaxies.source.light.intensity
+                .galaxies.source.light.intensity
             )
 
-            self.source_galaxies.source.light.effective_radius = (
+            self.galaxies.source.light.effective_radius = (
                 results.from_phase("phase_1_subhalo_search")
                 .best_result.variable_relative(r=0.5)
-                .source_galaxies.source.light.effective_radius
+                .galaxies.source.light.effective_radius
             )
 
-            self.source_galaxies.source.light.sersic_index = (
+            self.galaxies.source.light.sersic_index = (
                 results.from_phase("phase_1_subhalo_search")
                 .best_result.variable_relative(r=0.5)
-                .source_galaxies.source.light.sersic_index
+                .galaxies.source.light.sersic_index
             )
 
-            self.source_galaxies.source.light.axis_ratio = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.axis_ratio = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_absolute(a=0.1)
-                .source_galaxies.source.light.axis_ratio
+                .galaxies.source.light.axis_ratio
             )
 
-            self.source_galaxies.source.light.phi = (
-                results.from_phase("phase_1_lens_sie_shear_source_sersic")
+            self.galaxies.source.light.phi = (
+                results.from_phase("phase_1_lens_sie_source_sersic")
                 .variable_absolute(a=10.0)
-                .source_galaxies.source.light.phi
+                .galaxies.source.light.phi
             )
 
             ## Set all hyper-galaxies if feature is turned on ##
 
-            if pl_hyper_galaxies:
+            if pipeline_settings.hyper_galaxies:
 
-                self.source_galaxies.source.hyper_galaxy = results.from_phase(
-                    "phase_1_lens_sie_shear_source_sersic"
-                ).hyper_combined.constant.source_galaxies.source.hyper_galaxy
+                self.galaxies.source.hyper_galaxy = results.from_phase(
+                    "phase_1_lens_sie_source_sersic"
+                ).hyper_combined.constant.galaxies.source.hyper_galaxy
 
-            if pl_hyper_background_sky:
+            if pipeline_settings.hyper_background_sky:
 
                 self.hyper_image_sky = results.from_phase(
-                    "phase_1_lens_sie_shear_source_sersic"
-                ).hyper_combined.constant.source_galaxies.source.hyper_image_sky
+                    "phase_1_lens_sie_source_sersic"
+                ).hyper_combined.constant.galaxies.source.hyper_image_sky
 
-            if pl_hyper_background_noise:
+            if pipeline_settings.hyper_background_noise:
 
                 self.hyper_noise_background = results.from_phase(
-                    "phase_1_lens_sie_shear_source_sersic"
-                ).hyper_combined.constant.source_galaxies.source.hyper_noise_background
+                    "phase_1_lens_sie_source_sersic"
+                ).hyper_combined.constant.galaxies.source.hyper_noise_background
 
     phase2 = SubhaloPhase(
         phase_name="phase_2_subhalo_refine",
         phase_folders=phase_folders,
         tag_phases=tag_phases,
-        lens_galaxies=dict(
+        galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
                 mass=mp.EllipticalIsothermal,
@@ -283,9 +277,7 @@ def make_pipeline(
             subhalo=gm.GalaxyModel(
                 redshift=redshift_lens, mass=mp.SphericalTruncatedNFWChallenge
             ),
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic)
+            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
         bin_up_factor=bin_up_factor,
@@ -300,9 +292,9 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.3
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pl_hyper_galaxies,
-        include_background_sky=pl_hyper_background_sky,
-        include_background_noise=pl_hyper_background_noise,
+        hyper_galaxy=pipeline_settings.hyper_galaxies,
+        include_background_sky=pipeline_settings.hyper_background_sky,
+        include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, hyper_mode=True)

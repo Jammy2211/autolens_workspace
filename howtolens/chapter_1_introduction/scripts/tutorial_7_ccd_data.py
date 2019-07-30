@@ -46,10 +46,8 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
-    image_plane_grid_stack=image_plane_grid_stack,
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 
 # Lets look at the tracer's image-plane image - this is the image we'll be simulating.

@@ -66,9 +66,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -94,15 +93,13 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # phase with black magic (afterall, the whole point of this tutorial is how slow MultiNest can run, so theres no harm
 # if the slow run speed bores you to tears :P).
 
-phase_normal = phase_imaging.LensSourcePlanePhase(
+phase_normal = phase_imaging.PhaseImaging(
     phase_name="7_no_black_magic",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -137,15 +134,13 @@ print("Time without black magic = {}".format(time.time() - start))
 
 # Now lets run the phase with black magic on, which will hopefully run a lot faster than the previous phase.
 
-phase_black_magic = phase_imaging.LensSourcePlanePhase(
+phase_black_magic = phase_imaging.PhaseImaging(
     phase_name="7_with_black_magic",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -220,15 +215,13 @@ print("Time with black magic = {}".format(time.time() - start))
 # possibility that MultiNest will converge on a local maxima in parameter space and not be aware of it. We can see
 # this by aggresively increasing the sampling efficiency and reducing the number of live points.
 
-phase_too_much_black_magic = phase_imaging.LensSourcePlanePhase(
+phase_too_much_black_magic = phase_imaging.PhaseImaging(
     phase_name="7_with_too_much_black_magic",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
     ),
     optimizer_class=af.MultiNest,
 )

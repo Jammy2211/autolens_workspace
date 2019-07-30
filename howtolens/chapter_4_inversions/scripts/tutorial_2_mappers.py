@@ -46,9 +46,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -79,9 +78,9 @@ lens_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[g.Galaxy(redshift=1.0)],
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy],
+    galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=image_plane_grid_stack,
 )
 
@@ -151,9 +150,9 @@ ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 # As usual, we setup our image and mask up as lens data and create a tracer using its (now masked) grids.
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[g.Galaxy(redshift=1.0)],
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy],
+    galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=lens_data.grid_stack,
 )
 

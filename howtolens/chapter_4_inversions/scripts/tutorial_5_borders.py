@@ -50,9 +50,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -118,9 +117,8 @@ def perform_fit_with_source_galaxy_mask_and_border(source_galaxy, mask, use_bord
     else:
         border = None
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=lens_data.grid_stack,
         border=border,
     )
@@ -287,9 +285,9 @@ def simulate_image_x2_lenses():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy_0, lens_galaxy_1],
-        source_galaxies=[source_galaxy_0],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy_0, lens_galaxy_1],
+        galaxies=[source_galaxy_0],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -347,9 +345,9 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     else:
         border = None
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy_0, lens_galaxy_1],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy_0, lens_galaxy_1],
+        galaxies=[source_galaxy],
         image_plane_grid_stack=lens_data.grid_stack,
         border=border,
     )

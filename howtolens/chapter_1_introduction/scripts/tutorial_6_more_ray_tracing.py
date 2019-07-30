@@ -134,9 +134,9 @@ galaxy_plotters.plot_intensities(
 # 4) The light of all source galaxies is ray-traced back forward to form our image-plane image.
 
 # Note that we've also supplied the tracer below with a Planck15 cosmology.
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy, lens_satellite],
-    source_galaxies=[source_galaxy_0, source_galaxy_1],
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, lens_satellite],
+    galaxies=[source_galaxy_0, source_galaxy_1],
     image_plane_grid_stack=image_plane_grid_stack,
     cosmology=cosmology.Planck15,
 )

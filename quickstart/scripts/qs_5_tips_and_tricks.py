@@ -51,7 +51,7 @@
 # benefits from reconstructing the source using a more general approach, called an 'inversion'. This basically
 # reconstructs the source's light using a pixelized-grid.
 
-# To use an inversion, checkout the pipeline 'pipelines/simple/lens_sersic_sie_shear_source_inversion.py'
+# To use an inversion, checkout the pipeline 'pipelines/simple/lens_sersic_sie_source_inversion.py'
 # and the runner 'runners/simple/runner_lens_light_mass_and_source_inversion.py'. By default, these pipelines use
 # an adaptive pixelization whereby the inversion's pixels adapt to the surface brightness of the source.
 

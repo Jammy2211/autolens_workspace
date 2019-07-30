@@ -68,9 +68,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -103,7 +102,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # 'config/priors/default' config files.)
 
 
-class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
+class CustomPriorPhase(phase_imaging.PhaseImaging):
     def pass_priors(self, results):
 
         # We've called our lens galaxy 'lens' this time, for shorter more readable code.
@@ -112,61 +111,55 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
         # 0.0" and sigma "1.0. However, visual inspection of our strong lens image tells us that its clearly around
         # x = 0.0" and y = 0.0", so lets reduce where non-linear search looks for these parameters.
 
-        self.lens_galaxies.lens.light.centre_0 = af.UniformPrior(
+        self.galaxies.lens.light.centre_0 = af.UniformPrior(
             lower_limit=-0.05, upper_limit=0.05
         )
 
-        self.lens_galaxies.lens.light.centre_1 = af.UniformPrior(
+        self.galaxies.lens.light.centre_1 = af.UniformPrior(
             lower_limit=-0.05, upper_limit=0.05
         )
 
-        self.lens_galaxies.lens.mass.centre_0 = af.UniformPrior(
+        self.galaxies.lens.mass.centre_0 = af.UniformPrior(
             lower_limit=-0.05, upper_limit=0.05
         )
 
-        self.lens_galaxies.lens.mass.centre_1 = af.UniformPrior(
+        self.galaxies.lens.mass.centre_1 = af.UniformPrior(
             lower_limit=-0.05, upper_limit=0.05
         )
 
         # By default, the axis-ratio (ellipticity) of our lens galaxy's light profile is a UniformPrior between 0.2 and
         # 1.0. However, by looking at the image it looks fairly circular, so lets use a GaussianPrior nearer 1.0.
-        self.lens_galaxies.lens.light.axis_ratio = af.GaussianPrior(
-            mean=0.8, sigma=0.15
-        )
+        self.galaxies.lens.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.15)
 
         # We'll also assume that the light profile's axis_ratio informs us of the mass-profile's axis_ratio, but
         # because this may not strictly be true (e.g. because of dark matter) we'll use a wider af.
-        self.lens_galaxies.lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
+        self.galaxies.lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
 
         # By default, the orientation of the galaxy's light profile, phi, uses a UniformPrior between 0.0 and
         # 180.0 degrees. However, if you look really close at the image (and maybe adjust the color-map of the plot),
         # you'll be able to notice that it is elliptical and that it is oriented around 45.0 degrees counter-clockwise
         # from the x-axis. Lets update our prior
-        self.lens_galaxies.lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
+        self.galaxies.lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
 
         # Again, lets kind of assume that the light's orientation roughly traces that of mass.
-        self.lens_galaxies.lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
+        self.galaxies.lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
 
         # The effective radius of a light profile is its 'half-light' radius, the radius at which 50% of its
         # total luminosity is internal to a circle defined within that radius. PyAutoLens assumes a
         # UniformPrior on this quantity between 0.0" and 4.0", but inspection of the image (again, using a colormap
         # scaling) shows the lens's light doesn't extend anywhere near 4.0", so lets reduce it.
-        self.lens_galaxies.lens.light.effective_radius = af.GaussianPrior(
+        self.galaxies.lens.light.effective_radius = af.GaussianPrior(
             mean=0.5, sigma=0.8
         )
 
         # Typically, we have some knowledge of what morphology our lens galaxy is. Infact, most strong lenses are
         # massive elliptical galaxies, and anyone who studies galaxy morphology will tell you these galaxies have a
         # Sersic index near 4. So lets change our Sersic index from a UniformPrior between 0.8 and 8.0 to reflect this.
-        self.lens_galaxies.lens.light.sersic_index = af.GaussianPrior(
-            mean=4.0, sigma=1.0
-        )
+        self.galaxies.lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=1.0)
 
         # Finally, the 'ring' that the lensed source forms clearly has a radius of about 0.8". This is its Einstein
         # radius, so lets change the prior from a UniformPrior between 0.0" and 4.0".
-        self.lens_galaxies.lens.mass.einstein_radius = af.GaussianPrior(
-            mean=0.8, sigma=0.2
-        )
+        self.galaxies.lens.mass.einstein_radius = af.GaussianPrior(mean=0.8, sigma=0.2)
 
         # In this exercise, I'm not going to change any priors on the source galaxy. Whilst lens modeling experts can
         # look at a strong lens and often tell you roughly where the source-galaxy is located (in the source-plane),
@@ -178,13 +171,11 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 # of parameter space.
 custom_prior_phase = CustomPriorPhase(
     phase_name="4_tuned_priors",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -229,35 +220,31 @@ lens_fit_plotters.plot_fit_subplot(fit=custom_prior_result.most_likely_fit)
 # model (the mass-profiles y, x, axis_ratio and phi), so its worth trying!
 
 
-class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
+class LightTracesMassPhase(phase_imaging.PhaseImaging):
     def pass_priors(self, results):
 
         # In the pass priors function, we can 'pair' any two parameters by setting them equal to one another. This
         # removes the parameter on the left-hand side of the pairing from the lens model, such that is always assumes
         # the same value as the parameter on the right-hand side.
-        self.lens_galaxies.lens.mass.centre_0 = self.lens_galaxies.lens.light.centre_0
+        self.galaxies.lens.mass.centre_0 = self.galaxies.lens.light.centre_0
 
         # Now, the mass-profile's x coordinate will only use the x coordinate of the light profile. Lets do this with
         # the remaining geometric parameters of the light and mass profiles
-        self.lens_galaxies.lens.mass.centre_1 = self.lens_galaxies.lens.light.centre_1
+        self.galaxies.lens.mass.centre_1 = self.galaxies.lens.light.centre_1
 
-        self.lens_galaxies.lens.mass.axis_ratio = (
-            self.lens_galaxies.lens.light.axis_ratio
-        )
+        self.galaxies.lens.mass.axis_ratio = self.galaxies.lens.light.axis_ratio
 
-        self.lens_galaxies.lens.mass.phi = self.lens_galaxies.lens.light.phi
+        self.galaxies.lens.mass.phi = self.galaxies.lens.light.phi
 
 
 # Again, we create this phase and run it. The non-linear search has a less complex parameter space to seach, and thus
 light_traces_mass_phase = LightTracesMassPhase(
     phase_name="4_light_traces_mass",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -304,15 +291,13 @@ lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likel
 # Lets setup a phase, and overwrite some of the non-linear search's parameters from the defaults it assumes in the
 # 'config/non_linear.ini' config file:
 
-custom_non_linear_phase = phase_imaging.LensSourcePlanePhase(
+custom_non_linear_phase = phase_imaging.PhaseImaging(
     phase_name="4_custom_non_linear",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )

@@ -81,9 +81,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -114,15 +113,13 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Nevertheless, you could try running it yourself (maybe over your lunch break?). All you need to do is change the
 # phase_name below, maybe to something like 'howtolens/3_realism_and_complexity_rerun'
-phase = phase_imaging.LensSourcePlanePhase(
+phase = phase_imaging.PhaseImaging(
     phase_name="3_realism_and_complexity",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens_galaxy=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source_galaxy=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source_galaxy=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -193,10 +190,8 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
-    image_plane_grid_stack=lens_data.grid_stack,
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=lens_data.grid_stack
 )
 
 # Now, lets fit the lensing image with the tracer and plot the fit. It looks a lot better than above, doesn't it?

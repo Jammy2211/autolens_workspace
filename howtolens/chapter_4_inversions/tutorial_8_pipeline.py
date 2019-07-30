@@ -4,9 +4,9 @@ from autolens.model.profiles import mass_profiles as mp
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
-from autolens.pipeline.phase import phase_imaging, phase_extensions
+from autolens.pipeline.phase import phase_imaging
 from autolens.pipeline import pipeline
-from autolens.pipeline import tagging as tag
+from autolens.pipeline import pipeline_tagging
 
 # In this pipeline, we'll perform a basic analysis which fits a source galaxy using an inversion and a
 # lens galaxy where its light is not included and fitted, using two phases:
@@ -31,7 +31,7 @@ def make_pipeline(phase_folders=None):
 
     pipeline_name = "pl__inversion"
 
-    pipeline_name = tag.pipeline_name_from_name_and_settings(
+    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name
     )
 
@@ -42,14 +42,12 @@ def make_pipeline(phase_folders=None):
     # This is the same phase 1 as the complex source pipeline, which we saw gave a good fit to the overall
     # structure of the lensed source and provided an accurate lens mass model.
 
-    phase1 = phase_imaging.LensSourcePlanePhase(
+    phase1 = phase_imaging.PhaseImaging(
         phase_name="phase_1_initialize",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
+            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -59,20 +57,20 @@ def make_pipeline(phase_folders=None):
 
     # Now, in phase 2, lets use the lens mass model to fit the source with an inversion.
 
-    class InversionPhase(phase_imaging.LensSourcePlanePhase):
+    class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
             # We can customize the inversion's priors like we do our light and mass profiles.
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_1_initialize"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
-            self.source_galaxies.source.pixelization.shape_0 = af.UniformPrior(
+            self.galaxies.source.pixelization.shape_0 = af.UniformPrior(
                 lower_limit=20.0, upper_limit=40.0
             )
 
-            self.source_galaxies.source.pixelization.shape_1 = af.UniformPrior(
+            self.galaxies.source.pixelization.shape_1 = af.UniformPrior(
                 lower_limit=20.0, upper_limit=40.0
             )
 
@@ -80,22 +78,20 @@ def make_pipeline(phase_folders=None):
             # source galaxy. A broad log-uniform prior is thus an appropriate way to sample the large range of
             # possible values.
 
-            self.source_galaxies.source.regularization.coefficient = af.LogUniformPrior(
+            self.galaxies.source.regularization.coefficient = af.LogUniformPrior(
                 lower_limit=1.0e-6, upper_limit=10000.0
             )
 
     phase2 = InversionPhase(
         phase_name="phase_2_inversion_initial",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(
                 redshift=1.0,
                 pixelization=pix.VoronoiMagnification,
                 regularization=reg.Constant,
-            )
+            ),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -114,32 +110,30 @@ def make_pipeline(phase_folders=None):
 
     # Now, in phase 3, lets use the refined source inversion to fit the lens mass model again.
 
-    class InversionPhase(phase_imaging.LensSourcePlanePhase):
+    class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
             # We can customize the inversion's priors like we do our light and mass profiles.
 
-            self.lens_galaxies.lens = results.from_phase(
+            self.galaxies.lens = results.from_phase(
                 "phase_2_inversion_initial"
-            ).variable.lens_galaxies.lens
+            ).variable.galaxies.lens
 
             # Note the use of the 'inversion' result attribute below, which uses the extended inversion phase results.
 
-            self.source_galaxies.source = results.from_phase(
+            self.galaxies.source = results.from_phase(
                 "phase_2_inversion_initial"
-            ).inversion.constant.source_galaxies.source
+            ).inversion.constant.galaxies.source
 
     phase3 = InversionPhase(
         phase_name="phase_3_inversion_final",
         phase_folders=phase_folders,
-        lens_galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal)
-        ),
-        source_galaxies=dict(
+        galaxies=dict(
+            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(
                 redshift=1.0,
                 pixelization=pix.VoronoiMagnification,
                 regularization=reg.Constant,
-            )
+            ),
         ),
         optimizer_class=af.MultiNest,
     )

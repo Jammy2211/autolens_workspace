@@ -7,14 +7,14 @@
 
 def pass_priors(self, previous_results):
 
-    self.lens_galaxies.galaxy_name.profile_name.parameter_name = previous_results[
+    self.galaxies.galaxy_name.profile_name.parameter_name = previous_results[
         0
     ].variable.galaxy_name.profile_name.parameter_name
 
 
 # By invoking the 'variable' attribute, the passing of priors behaves following 3 rules:
 
-# 1) The 'self.lens_galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.
+# 1) The 'self.galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.
 
 #    A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase are easily summarized as a
 #    Gaussian.
@@ -72,7 +72,7 @@ def pass_priors(self, previous_results):
 
 def pass_priors(self, previous_results):
 
-    self.lens_galaxies.lens.light.sersic_index = previous_results[
+    self.galaxies.lens.light.sersic_index = previous_results[
         0
     ].variable.lens.light.sersic
 

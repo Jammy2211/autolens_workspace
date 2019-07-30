@@ -114,9 +114,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -145,7 +144,7 @@ lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
 source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
 
 
-class CustomPhase(phase_imaging.LensSourcePlanePhase):
+class CustomPhase(phase_imaging.PhaseImaging):
     def pass_priors(self, results):
 
         # To change priors, we use the 'prior' module of PyAutoFit. These priors link our GalaxyModel to the
@@ -160,24 +159,24 @@ class CustomPhase(phase_imaging.LensSourcePlanePhase):
 
         # The word 'mass' corresponds to the word we used when setting up the GalaxyModel above.
 
-        self.lens_galaxies.lens_galaxy.mass.centre_0 = af.UniformPrior(
+        self.galaxies.lens_galaxy.mass.centre_0 = af.UniformPrior(
             lower_limit=-0.1, upper_limit=0.1
         )
 
-        self.lens_galaxies.lens_galaxy.mass.centre_1 = af.UniformPrior(
+        self.galaxies.lens_galaxy.mass.centre_1 = af.UniformPrior(
             lower_limit=-0.1, upper_limit=0.1
         )
 
         # Lets also change the prior on the lens galaxy's einstein radius, to a GaussianPrior centred on 1.4".
         # For real lens modeling, this might be done by visually estimating the radius the lens's arcs / ring appear.
 
-        self.lens_galaxies.lens_galaxy.mass.einstein_radius = af.GaussianPrior(
+        self.galaxies.lens_galaxy.mass.einstein_radius = af.GaussianPrior(
             mean=1.4, sigma=0.2
         )
 
         # We can also customize the source galaxy - lets say we believe it is compact and limit its effective radius
 
-        self.source_galaxies.source_galaxy.light.effective_radius = af.UniformPrior(
+        self.galaxies.source_galaxy.light.effective_radius = af.UniformPrior(
             lower_limit=0.0, upper_limit=0.3
         )
 
@@ -191,8 +190,8 @@ class CustomPhase(phase_imaging.LensSourcePlanePhase):
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
 custom_phase = CustomPhase(
     phase_name="2_custom_priors",
-    lens_galaxies=dict(lens_galaxy=lens_galaxy_model),
-    source_galaxies=dict(source_galaxy=source_galaxy_model),
+    galaxies=dict(lens_galaxy=lens_galaxy_model),
+    galaxies=dict(source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 

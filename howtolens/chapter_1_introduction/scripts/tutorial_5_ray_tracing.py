@@ -38,10 +38,8 @@ print(source_galaxy)
 # 2) These deflection angles are used to trace every image-plane coordinate to a source-plane coordinate.
 # 3) This creates the source-plane grid-stack of lensed coordinates.
 
-tracer = ray_tracing.TracerImageSourcePlanes(
-    lens_galaxies=[lens_galaxy],
-    source_galaxies=[source_galaxy],
-    image_plane_grid_stack=image_plane_grid_stack,
+tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 
 # The tracer is composed of an image-plane and source-plane, just like in the previous example!

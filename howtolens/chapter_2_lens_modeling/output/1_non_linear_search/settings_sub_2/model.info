@@ -1,4 +1,4 @@
-lens_galaxies
+galaxies
     lens_galaxy
         mass
             centre
@@ -6,7 +6,7 @@ lens_galaxies
                 centre_1                                                                            GaussianPrior, mean = 0.0, sigma = 0.02
             einstein_radius                                                                         GaussianPrior, mean = 1.6, sigma = 0.01
         redshift                                                                                    0.5
-source_galaxies
+galaxies
     source_galaxy
         light
             centre

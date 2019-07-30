@@ -86,9 +86,8 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.TracerImageSourcePlanes(
-        lens_galaxies=[lens_galaxy],
-        source_galaxies=[source_galaxy],
+    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+        galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -112,7 +111,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Lets use the same LightTracesMass Phase that we did previously, but we'll make it slightly less complex then before.
 
 
-class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
+class LightTracesMassPhase(phase_imaging.PhaseImaging):
     def pass_priors(self, results):
 
         # As we've eluded to before, one can look at an image and immediately identify the centre of the lens
@@ -122,10 +121,10 @@ class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
 
         # You haven't actually seen a line like this one before. By setting a parameter to a number (and not a prior),
         # it is be removed from non-linear parameter space and always fixed to that value. Pretty neat, huh?
-        self.lens_galaxies.lens.light.centre_0 = 0.0
-        self.lens_galaxies.lens.light.centre_1 = 0.0
-        self.lens_galaxies.lens.mass.centre_0 = 0.0
-        self.lens_galaxies.lens.mass.centre_1 = 0.0
+        self.galaxies.lens.light.centre_0 = 0.0
+        self.galaxies.lens.light.centre_1 = 0.0
+        self.galaxies.lens.mass.centre_0 = 0.0
+        self.galaxies.lens.mass.centre_1 = 0.0
 
         # Now, you might be thinking, doesn't this prevent our phase from generalizing to other strong lenses?
         # What if the centre of their lens galaxy isn't at (0.0", 0.0")?
@@ -137,7 +136,7 @@ class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
         # We also discussed that the Sersic index of most lens galaxies is around 4. Lets be liberal and fix it to
         # 4 this time.
 
-        self.lens_galaxies.lens.light.sersic_index = 4.0
+        self.galaxies.lens.light.sersic_index = 4.0
 
 
 # Now lets create the phase. You'll notice two new inputs to the lens galaxy's model - 'align_axis_ratios' and
@@ -149,17 +148,15 @@ class LightTracesMassPhase(phase_imaging.LensSourcePlanePhase):
 # There is also an 'align_centres' method, but because we are fixing all centres to floats we have ommitted it.
 phase_1 = LightTracesMassPhase(
     phase_name="5_linking_phase_1",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5,
             light=lp.EllipticalSersic,
             mass=mp.EllipticalIsothermal,
             align_axis_ratios=True,
             align_orientations=True,
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -197,7 +194,7 @@ lens_fit_plotters.plot_fit_subplot(
 # values a parameter can or can't take - it makes it more likely we'll accidently cut-out the global likelihood solution.
 
 
-class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
+class CustomPriorPhase(phase_imaging.PhaseImaging):
     def pass_priors(self, results):
 
         # What I've done here is looked at the results of phase 1, and manually specified a prior for every parameter.
@@ -207,63 +204,47 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 
         ## LENS LIGHT PRIORS ###
 
-        self.lens_galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+        self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.lens_galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+        self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.lens_galaxies.lens.light.axis_ratio = af.GaussianPrior(
-            mean=0.8, sigma=0.15
-        )
+        self.galaxies.lens.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.15)
 
-        self.lens_galaxies.lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
+        self.galaxies.lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
 
-        self.lens_galaxies.lens.light.intensity = af.GaussianPrior(
-            mean=0.02, sigma=0.01
-        )
+        self.galaxies.lens.light.intensity = af.GaussianPrior(mean=0.02, sigma=0.01)
 
-        self.lens_galaxies.lens.light.effective_radius = af.GaussianPrior(
+        self.galaxies.lens.light.effective_radius = af.GaussianPrior(
             mean=0.62, sigma=0.2
         )
 
-        self.lens_galaxies.lens.light.sersic_index = af.GaussianPrior(
-            mean=4.0, sigma=2.0
-        )
+        self.galaxies.lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
 
         ### LENS MASS PRIORS ###
 
-        self.lens_galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+        self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.lens_galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+        self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.lens_galaxies.lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
+        self.galaxies.lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
 
-        self.lens_galaxies.lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
+        self.galaxies.lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
 
-        self.lens_galaxies.lens.mass.einstein_radius = af.GaussianPrior(
-            mean=0.8, sigma=0.1
-        )
+        self.galaxies.lens.mass.einstein_radius = af.GaussianPrior(mean=0.8, sigma=0.1)
 
         ### SOURCE LIGHT PRIORS ###
 
-        self.source_galaxies.source.light.centre_0 = af.GaussianPrior(
-            mean=0.0, sigma=0.1
-        )
+        self.galaxies.source.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.source_galaxies.source.light.centre_1 = af.GaussianPrior(
-            mean=0.0, sigma=0.1
-        )
+        self.galaxies.source.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-        self.source_galaxies.source.light.axis_ratio = af.GaussianPrior(
-            mean=0.8, sigma=0.1
-        )
+        self.galaxies.source.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.1)
 
-        self.source_galaxies.source.light.phi = af.GaussianPrior(mean=90.0, sigma=10.0)
+        self.galaxies.source.light.phi = af.GaussianPrior(mean=90.0, sigma=10.0)
 
-        self.source_galaxies.source.light.intensity = af.GaussianPrior(
-            mean=0.14, sigma=0.05
-        )
+        self.galaxies.source.light.intensity = af.GaussianPrior(mean=0.14, sigma=0.05)
 
-        self.source_galaxies.source.light.effective_radius = af.GaussianPrior(
+        self.galaxies.source.light.effective_radius = af.GaussianPrior(
             mean=0.12, sigma=0.2
         )
 
@@ -273,13 +254,11 @@ class CustomPriorPhase(phase_imaging.LensSourcePlanePhase):
 
 phase_2 = CustomPriorPhase(
     phase_name="5_linking_phase_2",
-    lens_galaxies=dict(
+    galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
-        )
-    ),
-    source_galaxies=dict(
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential)
+        ),
+        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
     ),
     optimizer_class=af.MultiNest,
 )
