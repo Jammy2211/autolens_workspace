@@ -39,6 +39,7 @@ def make_pipeline(
     redshift_lens=0.5,
     redshift_source=1.0,
     sub_grid_size=2,
+    signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
@@ -59,6 +60,10 @@ def make_pipeline(
     pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name,
         include_shear=pipeline_settings.include_shear,
+        align_bulge_disk_centre=pipeline_settings.align_bulge_disk_centre,
+        align_bulge_disk_phi=pipeline_settings.align_bulge_disk_phi,
+        align_bulge_disk_axis_ratio=pipeline_settings.align_bulge_disk_axis_ratio,
+        align_bulge_dark_centre=pipeline_settings.align_bulge_dark_centre,
         pixelization=pipeline_settings.pixelization,
         regularization=pipeline_settings.regularization,
     )
@@ -196,6 +201,7 @@ def make_pipeline(
             ),
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,

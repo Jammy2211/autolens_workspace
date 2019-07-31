@@ -47,6 +47,7 @@ def make_pipeline(
     redshift_lens=0.5,
     redshift_source=1.0,
     sub_grid_size=2,
+    signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
@@ -93,6 +94,7 @@ def make_pipeline(
             lens=gm.GalaxyModel(redshift=redshift_lens, light=lp.EllipticalSersic)
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         optimizer_class=af.MultiNest,
     )
@@ -170,6 +172,7 @@ def make_pipeline(
             source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
@@ -253,6 +256,7 @@ def make_pipeline(
             source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         interp_pixel_scale=interp_pixel_scale,

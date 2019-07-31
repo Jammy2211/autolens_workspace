@@ -60,10 +60,10 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
     # example bin up factors:
 
-    # bin_up_factor=2 -> phase_path=phase_name/settings_bin_up_2
-    # bin_up_factor=3 -> phase_path=phase_name/settings_bin_up_3
+    # bin_up_factor=2 -> phase_path=phase_name/settings_bin_2
+    # bin_up_factor=3 -> phase_path=phase_name/settings_bin_3
 
-    # If the bin_up_facor is None or 1, the tag is an empty string, thus not changing the settings tag:
+    # If the bin_up_factor is None or 1, the tag is an empty string, thus not changing the settings tag:
 
     # bin_up_factor=None -> phase_path=phase_name/settings
     # bin_up_factor=1 -> phase_path=phase_name/settings
@@ -104,7 +104,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
             ),
-            source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         bin_up_factor=bin_up_factor,

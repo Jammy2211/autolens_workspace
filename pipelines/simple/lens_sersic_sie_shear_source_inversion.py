@@ -75,11 +75,14 @@ from autolens.model.inversion import regularization as reg
 
 
 def make_pipeline(
+    pixelization=pix.VoronoiMagnification,
+    regularization=reg.Constant,
     phase_folders=None,
     tag_phases=True,
     redshift_lens=0.5,
     redshift_source=1.0,
     sub_grid_size=2,
+    signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
@@ -99,8 +102,8 @@ def make_pipeline(
 
     pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
         pipeline_name=pipeline_name,
-        pixelization=pipeline_settings.pixelization,
-        regularization=pipeline_settings.regularization,
+        pixelization=pixelization,
+        regularization=regularization,
     )
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
@@ -145,6 +148,7 @@ def make_pipeline(
         ),
         mask_function=mask_function_circular,
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         optimizer_class=af.MultiNest,
     )
@@ -198,6 +202,7 @@ def make_pipeline(
         ),
         mask_function=mask_function_annular,
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
@@ -257,6 +262,7 @@ def make_pipeline(
         ),
         mask_function=mask_function_circular,
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
@@ -311,12 +317,13 @@ def make_pipeline(
             ),
             source=gm.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_settings.pixelization,
-                regularization=pipeline_settings.regularization,
+                pixelization=pixelization,
+                regularization=regularization,
             ),
         ),
         mask_function=mask_function_annular,
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
@@ -380,12 +387,13 @@ def make_pipeline(
             ),
             source=gm.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_settings.pixelization,
-                regularization=pipeline_settings.regularization,
+                pixelization=pixelization,
+                regularization=regularization,
             ),
         ),
         mask_function=mask_function_circular,
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,

@@ -105,7 +105,7 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
             ),
-            source_0=gm.GalaxyModel(
+            source=gm.GalaxyModel(
                 redshift=1.0,
                 pixelization=pix.VoronoiMagnification,
                 regularization=reg.Constant,

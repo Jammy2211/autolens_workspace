@@ -43,6 +43,7 @@ def make_pipeline(
     redshift_lens=0.5,
     redshift_source=1.0,
     sub_grid_size=2,
+    signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
@@ -57,7 +58,8 @@ def make_pipeline(
 
     pipeline_name = "pipeline_subhalo__lens_sersic_sie_subhalo_source_sersic"
     pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name, include_shear=pipeline_settings.include_shear
+        pipeline_name=pipeline_name, include_shear=pipeline_settings.include_shear,
+        fix_lens_light=pipeline_settings.fix_lens_light,
     )
 
     phase_folders.append(pipeline_name)
@@ -153,6 +155,7 @@ def make_pipeline(
             source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
@@ -209,6 +212,7 @@ def make_pipeline(
             source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
         ),
         sub_grid_size=sub_grid_size,
+        signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
