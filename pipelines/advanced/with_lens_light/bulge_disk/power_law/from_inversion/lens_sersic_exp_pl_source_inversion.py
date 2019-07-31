@@ -52,7 +52,7 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=0.05,
+    interp_pixel_scale=None,
     use_inversion_border=True,
     inversion_pixel_limit=None,
     cluster_pixel_scale=0.1,
