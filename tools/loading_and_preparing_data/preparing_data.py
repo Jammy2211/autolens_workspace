@@ -1,18 +1,19 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as ma
 from autolens.lens import lens_data as ld
 from autolens.data.plotters import ccd_plotters
 from workspace.tools.loading_and_preparing_data import simulate_data
 
-# To model data with PyAutoLens, you first need to ensure it is in a format suitable for lens modeling. This tutorial
+# To model instrument with PyAutoLens, you first need to ensure it is in a format suitable for lens modeling. This tutorial
 # takes you through what format to use, and will introduce a number of PyAutoLens's built in tools that can convert
-# data from an unsuitable format.
+# instrument from an unsuitable format.
 
 # First, lets setup the path to our current working directory. I recommend you use the 'AutoLens/workspace' directory
-# and that you place your data in the 'AutoLens/workspace/data' directory.
+# and that you place your instrument in the 'AutoLens/workspace/instrument' directory.
 
-# (for this tutorial, we'll use the 'AutoLens/workspace/howtolens/preparing_data' directory. The folder 'data' contains
+# (for this tutorial, we'll use the 'AutoLens/workspace/howtolens/preparing_data' directory. The folder 'instrument' contains
 # the example data-sets we'll use in this tutorial).
 
 path = (
@@ -26,10 +27,10 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 
 simulate_data.simulate_all_ccd_data(
     data_path=data_path
-)  # This will populate the 'data' path with example ccd data-sets.
+)  # This will populate the 'instrument' path with example ccd data-sets.
 
-# First, lets load a data-set using the 'load_ccd_data_from_fits' function of the ccd module. This
-# data-set represents a good data-reduction - it conforms to all the formatting standards I describe in this tutorial!
+# First, lets load a instrument-set using the 'load_ccd_data_from_fits' function of the ccd module. This
+# instrument-set represents a good instrument-reduction - it conforms to all the formatting standards I describe in this tutorial!
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=data_path, folder_names=["ccd_data"]
 )
@@ -43,7 +44,7 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# If your data comes in one .fits file spread across multiple hdus, you can specify the hdus of each image instead.
+# If your instrument comes in one .fits file spread across multiple hdus, you can specify the hdus of each image instead.
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=ccd_data_path + "multiple_hdus.fits",
     image_hdu=0,
@@ -56,12 +57,12 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# Now, lets think about the format and data-reduction of our data. There are numerous reasons why the image we just
-# looked at is a good data-set for lens modeling. I strongly recommend you reduce your data to conform to the
+# Now, lets think about the format and instrument-reduction of our instrument. There are numerous reasons why the image we just
+# looked at is a good instrument-set for lens modeling. I strongly recommend you reduce your instrument to conform to the
 # standards discussed below - it'll make your time using PyAutoLens a lot simpler.
 
-# However, you may not have access to the data-reduction tools that made the data, so we've included a number of
-# in-built functions in PyAutoLens to convert the data to a good format for you. However, your life will be much easier
+# However, you may not have access to the instrument-reduction tools that made the instrument, so we've included a number of
+# in-built functions in PyAutoLens to convert the instrument to a good format for you. However, your life will be much easier
 # if you can just reduce it this way in the first place!
 
 # 1) Brightness units - the image's flux and noise_map-map values are in units of electrons per second (and not electrons,
@@ -84,7 +85,7 @@ ccd_data_in_counts = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_in_counts)
 
-# If your data is in counts, you can convert it to electrons per second by supplying the function above with an
+# If your instrument is in counts, you can convert it to electrons per second by supplying the function above with an
 # exposure time and using the 'convert_arrays_from_counts' boolean flag.
 ccd_data_converted_to_eps = ccd.load_ccd_data_from_fits(
     image_path=ccd_data_path + "image.fits",
@@ -97,7 +98,7 @@ ccd_data_converted_to_eps = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_converted_to_eps)
 
-# The effective exposure time in each pixel may vary. This occurs when data is reduced in a specific way, called
+# The effective exposure time in each pixel may vary. This occurs when instrument is reduced in a specific way, called
 # 'dithering' and 'drizzling'. If you have access to an effective exposure-time map, you can use this to convert
 # the image to electrons per second instead.
 ccd_data_converted_to_eps = ccd.load_ccd_data_from_fits(
@@ -128,7 +129,7 @@ ccd_data_large_stamp = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data_large_stamp)
 
-#    If you have a large postage stamp, you can trim it when you load the data by specifying a new image size in pixels.
+#    If you have a large postage stamp, you can trim it when you load the instrument by specifying a new image size in pixels.
 #    This will also trim the noise_map-map, exposoure time map and other arrays which are the same dimensions / scale as
 #    the image. This trimming is centred on the image.
 ccd_data_large_stamp_trimmed = ccd.load_ccd_data_from_fits(
@@ -230,7 +231,7 @@ lens_data = ld.LensData(
 #    be incorrect.
 
 # There are many different ways the noise_map-map can be reduced. We are aiming to include conversion functions for all
-# common data-reductions. Currently, we have a function to convert an image from a HST WHT map, where
+# common instrument-reductions. Currently, we have a function to convert an image from a HST WHT map, where
 # RMS SD = 1.0/ sqrt(WHT). This can be called using the 'convert_noise_map_from_weight_map' flag.
 
 ccd_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(

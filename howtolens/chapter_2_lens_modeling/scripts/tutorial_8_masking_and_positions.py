@@ -1,6 +1,6 @@
 import autofit as af
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -29,7 +29,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -52,7 +52,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    ccd_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -119,7 +119,7 @@ phase_with_custom_mask = phase_imaging.PhaseImaging(
 # bigger masks would *always* be better, for two reasons:
 
 # 1) The lensed source galaxy may have very faint emission that when you look at the plot above you don't notice.
-#    Overly aggressive masking risks you masking out some of that light - data which would better constrain your
+#    Overly aggressive masking risks you masking out some of that light - instrument which would better constrain your
 #    lens model!
 
 # 2) When you fit an image with a model image, the fit is performed only within the masked region. Outside of the
@@ -162,10 +162,10 @@ phase_with_positions = phase_imaging.PhaseImaging(
 )
 
 # The positions are passed to the phase when we run it, which is shown below by commented out.
-# phase_with_positions.run(data=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
+# phase_with_positions.run(instrument=ccd_data, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]])
 
 # You may observe multiple source-galaxies each with their own set of multiple-images. If you have a means by
-# which to pair different positions to the same source galaxies (for example, spectroscopic data), you can set up
+# which to pair different positions to the same source galaxies (for example, spectroscopic instrument), you can set up
 # multiple sets of positions, which each have to trace to within the position threshold of one another for the lens
 # model to be accepted.
 
@@ -176,7 +176,7 @@ def simulate_two_galaxies():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -207,7 +207,7 @@ def simulate_two_galaxies():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    ccd_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -239,7 +239,7 @@ phase_with_x2_positions = phase_imaging.PhaseImaging(
     optimizer_class=af.MultiNest,
 )
 
-# phase_with_x2_positions.run(data=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
+# phase_with_x2_positions.run(instrument=ccd_data, positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]])
 
 # At this point, I recommend that you checkout the 'workspace/tools/mask_maker.py' and 'workspace/tools/positions_maker.py'
 # scripts. These tools allow you create custom masks and positions for a specific strong lens and output them to .fits / .dat

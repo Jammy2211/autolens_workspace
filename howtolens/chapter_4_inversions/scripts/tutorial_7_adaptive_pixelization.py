@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -25,7 +25,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -55,7 +55,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -117,17 +117,17 @@ inversion_plotters.plot_pixelization_values(
 
 # There is one clear problem - we are using just a small number of source pixels to reconstruct the source. Think about
 # it - the majority of source pixels are located away from the source. By my estimate, we're using just 16 pixels (the
-# central 4x4 grid) out of the 1600 pixels to actually fit the data! The remaining ~1500 pixels are doing *nothing*
+# central 4x4 grid) out of the 1600 pixels to actually fit the instrument! The remaining ~1500 pixels are doing *nothing*
 # but fit noise.
 
 # This is a complete waste of processing, meaning that our analysis will take longer to run than necessary. However,
 # more importantly, it means that our Bayesian regularization scheme is sub-optimal. In tutorial 4, we discussed how
 # the Bayesian evidence of the regularization wants to obtain the *simplest* source solution possible. That is,
-# the solution which fits the data well, using the fewest source pixels. Clearly, we're dedicating a huge number of
+# the solution which fits the instrument well, using the fewest source pixels. Clearly, we're dedicating a huge number of
 # source pixels to doing *nothing*, making our source reconstruction more complex (and therefore of a
 # lower evidence) than necessary.
 
-# If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions
+# If our pixelization could 'focus' its pixels where we actually have more instrument, e.g. the highly magnified regions
 # of the source-plane, we could reconstruct the source using far fewer pixels. That'd be great both for computational
 # efficiency and increasing the Bayesian evidence, and that is exactly what our Voronoi grid does.
 

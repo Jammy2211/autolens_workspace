@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import grids
 from autolens.lens import ray_tracing
 from autolens.model.galaxy import galaxy as g
@@ -14,9 +14,9 @@ from autolens.data.plotters import ccd_plotters
 
 # To simulate an image, we need to model the telescope's optics. We'll do this by convolving the image with a
 # Point-Spread Function, which we can simulate as a Gaussian using the imaging module.
-psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-# To simulate ccd data, we use the normal grid stack. However, it should be noted that when we simulate the image,
+# To simulate ccd instrument, we use the normal grid stack. However, it should be noted that when we simulate the image,
 # this will be used to generate a 'padded grid', which pads its 2D dimensions relative to the PSF-shape, to ensure that
 # the edge's of our simulated image are not degraded.
 image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
@@ -66,7 +66,7 @@ print(tracer.padded_profile_image_plane_image_2d_from_psf_shape.shape)
 # 2) The Background Sky: Although the image that is returned is automatically background sky subtracted.
 # 3) Poisson noise: Due to the background sky, lens galaxy and source galaxy Poisson photon counts.
 
-simulated_ccd = simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+ccd = ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
     tracer=tracer,
     pixel_scale=0.1,
     exposure_time=300.0,
@@ -76,7 +76,7 @@ simulated_ccd = simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
 )
 
 # Lets plot the image - we can see the image has been blurred due to the telescope optics and noise has been added.
-ccd_plotters.plot_image(ccd_data=simulated_ccd)
+ccd_plotters.plot_image(ccd_data=ccd)
 
 # Finally, lets output these files to.fits files, we'll begin to analyze them in the next tutorial!
 chapter_path = "/path/to/AutoLens/workspace/howtolens/chapter_1_introduction"
@@ -84,12 +84,12 @@ chapter_path = (
     "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
 )
 
-# The data path specifies where the data is output, this time in the directory 'chapter_path/data'
-data_path = chapter_path + "data/"
+# The instrument path specifies where the instrument is output, this time in the directory 'chapter_path/instrument'
+data_path = chapter_path + "instrument/"
 
-# Now output our simulated data to hard-disk.
+# Now output our simulated instrument to hard-disk.
 ccd.output_ccd_data_to_fits(
-    ccd_data=simulated_ccd,
+    ccd_data=ccd,
     image_path=data_path + "image.fits",
     noise_map_path=data_path + "noise_map.fits",
     psf_path=data_path + "psf.fits",

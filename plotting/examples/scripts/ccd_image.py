@@ -5,7 +5,7 @@ from autolens.plotters import array_plotters
 import os
 
 # In this example, we will load the image of a strong lens from a .fits file and plot it using the
-# function autolens.data.plotters.array_plotters.plot_array. We will customize the appearance of this figure to
+# function autolens.instrument.plotters.array_plotters.plot_array. We will customize the appearance of this figure to
 # highlight the features of the image. For more generical plotting tools (e.g. changing the figure size, axis units,
 # outputting the image to the hard-disk, etc.) checkout the example in 'workspace/plotting/examples/arrays/array.py'.
 
@@ -14,14 +14,14 @@ import os
 # Setup the path to the workspace, using a relative directory name.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-# We have included the .fits data required for this example in the directory
+# We have included the .fits instrument required for this example in the directory
 # 'workspace/output/data/example/slacs1430+4105/'.
 
 # First, lets setup the path to the .fits file of the image.
 data_type = "example"
 data_name = "slacs1430+4105"
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
 data_path = array_util.make_and_return_path(
     path=workspace_path, folder_names=["data", data_type, data_name]
@@ -54,8 +54,9 @@ array_plotters.plot_array(
     array=image, title="SLACS1430+4105 Image", norm="linear", norm_min=0.0, norm_max=0.3
 )
 
-# We can also load the full set of ccd data (image, noise-map, PSF) and use the ccd_plotters to make the figures above.
-from autolens.data import ccd
+# We can also load the full set of ccd instrument (image, noise-map, PSF) and use the ccd_plotters to make the figures above.
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.plotters import ccd_plotters
 
 psf_path = workspace_path + "/data/example/" + data_name + "/psf.fits"
@@ -73,7 +74,7 @@ ccd_plotters.plot_noise_map(
     ccd_data=ccd_data, title="SLACS1430+4105 Noise-Map", norm="log"
 )
 
-# Of course, as we've seen in many other examples, a sub-plot of the ccd data can be plotted. This can also take the
+# Of course, as we've seen in many other examples, a sub-plot of the ccd instrument can be plotted. This can also take the
 # customization inputs above, but it should be noted that the options are applied to all images, and thus will most
 # likely degrade a number of the sub-plot images.
 ccd_plotters.plot_ccd_subplot(

@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.galaxy import galaxy as g
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -13,7 +14,7 @@ from workspace.tools.data_making.samples import tools
 # This tool creates a sample of strong lenses with no lens light component. These lenses use a SIE mass profile and a
 # source galaxy generated with x1 Sersic profile. This sample is used to test pipelines and runners.
 
-# The 'data name' is the name of the data folder and 'data_name' the folder the data is stored in, e.g:
+# The 'data name' is the name of the data folder and 'data_name' the folder the instrument is stored in, e.g:
 
 # The image will be output as '/workspace/data/data_type/data_name/image.fits'.
 # The noise-map will be output as '/workspace/data/data_type/data_name/lens_name/noise_map.fits'.
@@ -39,7 +40,9 @@ sub_grid_size = 1
 plot_ccd = True
 
 # Simulate a simple Gaussian PSF for the image.
-psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=pixel_scale)
+psf = abstract_data.PSF.from_gaussian(
+    shape=(11, 11), sigma=0.1, pixel_scale=pixel_scale
+)
 
 ###### SIE + SHEAR LENS 1 #######
 

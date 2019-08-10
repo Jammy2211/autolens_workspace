@@ -1,8 +1,8 @@
 import autofit as af
 from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -53,7 +53,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -91,7 +91,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    image_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    image_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -129,7 +129,7 @@ class LightTracesMassPhase(phase_imaging.PhaseImaging):
         # Now, you might be thinking, doesn't this prevent our phase from generalizing to other strong lenses?
         # What if the centre of their lens galaxy isn't at (0.0", 0.0")?
 
-        # Well, this is true if our data reduction centres the lens galaxy somewhere else. But we get to choose where
+        # Well, this is true if our instrument reduction centres the lens galaxy somewhere else. But we get to choose where
         # we centre it when we make the image. Therefore, I'd recommend you always centre the lens galaxy at the same
         # location, and (0.0", 0.0") seems the best choice!
 
@@ -178,7 +178,7 @@ phase_1_results = phase_1.run(data=ccd_data)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-# And indeed, we get a reasonably good model and fit to the data - in a much shorter space of time!
+# And indeed, we get a reasonably good model and fit to the instrument - in a much shorter space of time!
 lens_fit_plotters.plot_fit_subplot(
     fit=phase_1_results.most_likely_fit,
     should_plot_mask=True,

@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import grids
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
@@ -21,7 +21,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -51,7 +51,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -147,7 +147,7 @@ mask = msk.Mask.circular_annular(
 # Lets quickly confirm the annuli radii capture the source's light
 ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 
-# As usual, we setup our image and mask up as lens data and create a tracer using its (now masked) grids.
+# As usual, we setup our image and mask up as lens instrument and create a tracer using its (now masked) grids.
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
 tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(

@@ -5,12 +5,12 @@ from autolens.plotters import array_plotters
 import os
 
 # In this example, we will load the residual map of a fit from a .fits file and plot it using the function
-# autolens.data.plotters.array_plotters.plot_array.
+# autolens.instrument.plotters.array_plotters.plot_array.
 
 # We will use the residuals of a fit to slacs1430+4105, which comes from running the example pipeline
 # 'workspacde/pipelines/examples/lens_light_and_x1_source_parametric.py.
 
-# We have included the .fits data required for this example in the directory
+# We have included the .fits instrument required for this example in the directory
 # 'workspace/output/example/slacs1430+4105/pipeline_light_and_x1_source_parametric/phase_3_both/image/fits'.
 
 # However, the complete set of optimizer results for the pipeline are not included, as the large file sizes prohibit
@@ -25,7 +25,7 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 data_type = "example"
 data_name = "slacs1430+4105"
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
 data_path = array_util.make_and_return_path(
     path=workspace_path, folder_names=["data", data_type, data_name]
@@ -94,7 +94,8 @@ array_plotters.plot_array(
 
 # We can also plot the results of a fit using the fit itself. To do this, we have to make the pipeline and run it
 # so as to load up all the results of the pipeline. We can then access the results of every phase.
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from workspace.pipelines.examples import lens_sersic_sie_source_x1_sersic
 
 image_path = data_path + "/image.fits"
@@ -112,7 +113,7 @@ pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(
     pipeline_path="example/" + data_name
 )
 
-# Now we run the pipeline on the data to get the result. If a mask was supplied to the pipeline when it was run, it is
+# Now we run the pipeline on the instrument to get the result. If a mask was supplied to the pipeline when it was run, it is
 # important the same mask is supplied in this run statement.
 
 # The skip_optimizer boolean flag means that the non-linear searches will not run, and visualization will be skipped.

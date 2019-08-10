@@ -1,7 +1,7 @@
 import autofit as af
 from autolens.pipeline.phase import phase_imaging
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.lens import ray_tracing
 from autolens.lens import lens_fit
@@ -48,7 +48,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -86,7 +86,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    ccd_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -151,7 +151,7 @@ lens_fit_plotters.plot_fit_subplot(
 # likelihood than the correct solution? Lets make absolutely sure it doesnt: (you've seen all this code below before,
 # but I've put a few comments to remind you of whats happening)
 
-# Create a lens data-set to make the fit - the mask we used above was a 3" circle (we'll come back to this later)
+# Create a lens instrument-set to make the fit - the mask we used above was a 3" circle (we'll come back to this later)
 mask = msk.Mask.circular(
     shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
 )

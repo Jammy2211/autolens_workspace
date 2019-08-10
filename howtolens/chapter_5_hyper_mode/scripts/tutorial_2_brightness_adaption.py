@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -36,7 +36,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -66,7 +66,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -77,7 +77,7 @@ def simulate():
     )
 
 
-# Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
+# Lets simulate the instrument, draw a 3.0" mask and set up the lens instrument that we'll fit.
 
 ccd_data = simulate()
 mask = msk.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
@@ -124,7 +124,7 @@ def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 
-# Great, so now lets fit the data using our magnification based pixelizatioin and have a quick look to make sure it
+# Great, so now lets fit the instrument using our magnification based pixelizatioin and have a quick look to make sure it
 # has the same residuals we saw in tutorial 1.
 
 fit = fit_lens_data_with_source_galaxy(
@@ -149,7 +149,7 @@ inversion_plotters.plot_pixelization_values(
 hyper_image_1d = fit.model_image(return_in_2d=False)
 
 # Okay, so now lets take a look at our brightness based adaption in action! Below, we define a source-galaxy using
-# our new 'VoronoiBrightnessImage' pixelization and use this to fit the lens-data. One should note that we also
+# our new 'VoronoiBrightnessImage' pixelization and use this to fit the lens-instrument. One should note that we also
 # attach the hyper-image to this galaxy. This is because it's pixelization uses this hyper-image to adapt, thus the
 # galaxy needs to know what hyper-image it should use!
 
@@ -196,20 +196,20 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 # Okay, so we can now adapt our pixelization to the morphology of our lensed source galaxy. To my knowledge,
 # this is the *best* approach one can take the lens modeling. Its more tricky to implement (as I'll explain next)
 # and introduces a few extra hyper-parameters that we'll fit for. But, the pay-off is more than worth it, as we fit
-# our imaging data better and (typically) end up using far fewer source pixels to fit the data, as we don't 'waste'
+# our imaging data better and (typically) end up using far fewer source pixels to fit the instrument, as we don't 'waste'
 # pixels reconstructing regions of the source-plane where there is no signal.
 
 
 # Okay, so how does the hyper_image actually adapt our pixelization to the source's brightness? We derive the
-# pixelization using a 'weighted KMeans clustering algorithm', which is a standard algorithm for partioning data in
+# pixelization using a 'weighted KMeans clustering algorithm', which is a standard algorithm for partioning instrument in
 # statistics.
 
 # In simple terms, this algorithm works as follows:
 
-# 1) Give the KMeans algorithm a set of weighted data (e.g. determined from the hyper image).
+# 1) Give the KMeans algorithm a set of weighted instrument (e.g. determined from the hyper image).
 
 # 2) For a given number of clusters, this algorithm will find a set of (y,x) coordinates or 'clusters' that are equally
-#    distributed over the weighted data. Where the data is weighted higher, more clusters will congregate, and visa
+#    distributed over the weighted instrument. Where the instrument is weighted higher, more clusters will congregate, and visa
 #    versa.
 
 # 3) The returned (y,x) 'clusters' then make up our source-pixel centres and, as described, there will be more
@@ -224,7 +224,7 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 
 # Okay, so we now have a sense of how our VoronoiBrightnessImage pixelization is computed. Now, lets look at how we
-# create the weighted data the KMeans algorithm clusters.
+# create the weighted instrument the KMeans algorithm clusters.
 
 # This image, called the 'cluster_weight_map'  is generated using the 'weight_floor' and 'weight_power' parameters
 # of the VoronoiBrightness pixelization. The cluster weight map is generated following 4 steps:
@@ -386,7 +386,7 @@ inversion_plotters.plot_pixelization_values(
 
 # So, why do you think why adapting to the source's brightness increases the evidence?
 
-# Its because, by adapting to the source's morphology, we can now access solutions that fit the data really well
+# Its because, by adapting to the source's morphology, we can now access solutions that fit the instrument really well
 # (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other grids. For instance, a
 # typical magnification based grid uses resolutions of 40 x 40, or 1600 pixels. In contrast, a morphology based grid
 # typically uses just 300-800 pixels (depending on the source itself). Clearly, the easiest way to make our source

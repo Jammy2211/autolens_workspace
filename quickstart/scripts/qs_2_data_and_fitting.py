@@ -1,4 +1,5 @@
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.lens import lens_data as ld
 from autolens.model.profiles import light_profiles as lp
@@ -11,7 +12,7 @@ from autolens.lens.plotters import ray_tracing_plotters
 from autolens.lens.plotters import lens_fit_plotters
 
 # Next, we'll look at how we fit imaging of a strong lens in PyAutoLens, using the mass-profiles, light-profiles,
-# galaxies and ray-tracing modules introduced previously. First, we'll need some data. We'll usse an example image that
+# galaxies and ray-tracing modules introduced previously. First, we'll need some instrument. We'll usse an example image that
 # comes prepacked with PyAutoLens and can be loaded from a fits file (you'll need to change your path to the workspace
 # path on your computer).
 
@@ -19,9 +20,9 @@ from autolens.lens.plotters import lens_fit_plotters
 workspace_path = "/path/to/user/autolens_workspace/"
 workspace_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/"
 
-# The data path specifies where the data is located and loaded from. Its worth noting we're using a strong lens where
+# The instrument path specifies where the instrument is located and loaded from. Its worth noting we're using a strong lens where
 # the light profile of the lens galaxy is omitted.
-data_path = workspace_path + "data/example/lens_mass_and_x1_source/"
+data_path = workspace_path + "instrument/example/lens_sie__source_sersic/"
 
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
@@ -30,13 +31,13 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=0.1,
 )
 
-# There are four components of the data we need for lens modeling:
+# There are four components of the instrument we need for lens modeling:
 
 # 1) The image of the strong lens.
 
 # 2) A noise-map, which weights how much each image pixels contributes to the fit (e.g. the likelihood function).
 
-# 3) The PSF, which defines how the image is blurred during data accquization. The PSF is used by PyAutoLens to model
+# 3) The PSF, which defines how the image is blurred during instrument accquization. The PSF is used by PyAutoLens to model
 #    this blurring during the fitting process.
 
 # 4) The pixel-scale of the image, which defines the arcsecond to pixel conversion.
@@ -56,22 +57,22 @@ ccd_plotters.plot_ccd_subplot(
     ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True
 )
 
-# Now we've loaded the ccd data and created a mask, we use them to create a 'lens data' object, which we'll perform
+# Now we've loaded the ccd instrument and created a mask, we use them to create a 'lens instrument' object, which we'll perform
 # using the lens_data module (imported as 'ld').
 
-# A lens data object is a 'package' of all parts of a data-set we need in order to fit it with a lens model:
+# A lens instrument object is a 'package' of all parts of a instrument-set we need in order to fit it with a lens model:
 
-# 1) The ccd-data, e.g. the image, PSF and noise-map.
+# 1) The ccd-instrument, e.g. the image, PSF and noise-map.
 # 2) The mask, so that only the regions of the image with a signal are fitted.
 # 3) A grid-stack aligned to the ccd-imaging data's pixels: so our ray-tracing using the same (masked) grid as the image.
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
 # To fit an image, we need to create an image-plane image using a tracer. We'll use the same galaxies that I used to
-# simulate the ccd data, so our fit should be 'perfect'.
+# simulate the ccd instrument, so our fit should be 'perfect'.
 
 # Its worth noting that below, we use the lens_data's grid-stack to setup the tracer. This ensures that our
-# image-plane image will be the same resolution and alignment as our image-data, as well as being masked appropriately.
+# image-plane image will be the same resolution and alignment as our image-instrument, as well as being masked appropriately.
 
 lens_galaxy = g.Galaxy(
     redshift=0.5,
@@ -99,17 +100,17 @@ tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
 
 ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
 
-# To fit the image, we pass the lens data and tracer to the lens_fit module. This performs the following:
+# To fit the image, we pass the lens instrument and tracer to the lens_fit module. This performs the following:
 
-# 1) Blurs the tracer's image-plane image with the lens data's PSF, ensuring that the telescope optics are accounted
+# 1) Blurs the tracer's image-plane image with the lens instrument's PSF, ensuring that the telescope optics are accounted
 #    for by the fit. This creates the fit's 'model_image'.
 
-# 2) Computes the difference between this model_image and the observed image-data, creating the fit's 'residual_map'.
+# 2) Computes the difference between this model_image and the observed image-instrument, creating the fit's 'residual_map'.
 
 # 3) Divides the residuals by the noise-map and squares each value, creating the fit's 'chi_squared_map'.
 
 # 4) Sums up these chi-squared values and converts them to a 'likelihood', which quantifies how good the tracer's
-#    fit to the data was (higher likelihood = better fit).
+#    fit to the instrument was (higher likelihood = better fit).
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
@@ -187,8 +188,8 @@ print(11697.24)
 print("New Likelihood:")
 print(fit.likelihood)
 
-# It decreases! This model was a worse fit to the data.
+# It decreases! This model was a worse fit to the instrument.
 
-# So, lens modeling in PyAutolens boils down to one simple task - given data of a strong lens, find the combination of
+# So, lens modeling in PyAutolens boils down to one simple task - given instrument of a strong lens, find the combination of
 # light profiles and mass profiles that create a model image which looks like our observed strong lens! For a
 # real strong we have no idea what values we should use for these profiles, which is where lens modeling comes in!

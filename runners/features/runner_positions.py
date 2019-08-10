@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.plotters import ccd_plotters
 
 import os
@@ -18,7 +19,7 @@ af.conf.instance = af.conf.Config(
 )
 
 data_type = "example"
-data_name = "lens_mass_and_x1_source"
+data_name = "lens_sie__source_sersic"
 pixel_scale = 0.1
 
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
@@ -36,11 +37,11 @@ ccd_data = ccd.load_ccd_data_from_fits(
 # for an image, checkout the files
 # 'workspace/tools/data_making/positions_maker.py'
 
-# The example autolens_workspace data comes with positions already, if you look in
+# The example autolens_workspace instrument comes with positions already, if you look in
 # workspace/data/example/lens_light_and_x1_source/ you'll see a positions file!
-positions = ccd.load_positions(positions_path=data_path + "positions.dat")
+positions = abstract_data.load_positions(positions_path=data_path + "positions.dat")
 
-# When we plot the ccd data, we can:
+# When we plot the ccd instrument, we can:
 # - Pass the positions to show them on the image.
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, positions=positions)
 

@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -29,7 +29,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -59,7 +59,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -70,14 +70,14 @@ def simulate():
     )
 
 
-# Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
+# Lets simulate the instrument, draw a 3.0" mask and set up the lens instrument that we'll fit.
 
 ccd_data = simulate()
 mask = msk.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fits, we'll use another
-# convenience function to fit the lens data we simulated above.
+# convenience function to fit the lens instrument we simulated above.
 
 
 def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
@@ -108,7 +108,7 @@ def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 
-# And now, we'll use the same magnification based source to fit this data.
+# And now, we'll use the same magnification based source to fit this instrument.
 
 source_magnification = g.Galaxy(
     redshift=1.0,
@@ -178,7 +178,7 @@ print("Evidence using adaptive regularization = ", fit.evidence)
 # will only further benefit our lens modeling!
 
 # However, as shown below, we don't fit the source as well as the morphology based pixelization did in the last
-# chapter. This is because although the adaptive regularization scheme does help us better fit the data, it cannot
+# chapter. This is because although the adaptive regularization scheme does help us better fit the instrument, it cannot
 # change the fact we simply *do not* have sufficient resoluton to resolve its cuspy central light profile when using a
 # magnification based grid.
 
@@ -275,7 +275,7 @@ print("Evidence using adaptive regularization = ", fit.evidence)
 
 # To end, lets consider what this adaptive regularization scheme means in the context of maximizing the Bayesian
 # evidence. In the previous tutorial, we noted that by using a brightness-based adaptive pixelization we
-# increased the Bayesian evidence by allowing for new solutions which fit the data user fewer source pixels; the
+# increased the Bayesian evidence by allowing for new solutions which fit the instrument user fewer source pixels; the
 # key criteria in making a source reconstruction 'more simple' and 'less complex'.
 
 # As you might of guessed, adaptive regularization again increases the Bayesian evidence by making the source

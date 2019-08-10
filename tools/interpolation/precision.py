@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import grids
 from autolens.model.profiles import mass_profiles as mp
 from autolens.lens import lens_data as ld
@@ -38,7 +39,7 @@ print("annular outer mask radius = " + str(outer_radius_arcsec) + "\n")
 
 print()
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]

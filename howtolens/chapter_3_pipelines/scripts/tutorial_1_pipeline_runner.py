@@ -1,6 +1,6 @@
 import autofit as af
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -8,8 +8,8 @@ from autolens.data.plotters import ccd_plotters
 import os
 
 # Welcome to your first pipeline runner - the module we'll use to run the tutorial 1 pipeline. In PyAutoLens,
-# we want every pipeline to be a standalone function that we use to 'make' the pipeline, which we then pass to data and
-# run in a pipeline runner. Keeping the pipelines separate from the data is very good practise, as it will encourage us
+# we want every pipeline to be a standalone function that we use to 'make' the pipeline, which we then pass to instrument and
+# run in a pipeline runner. Keeping the pipelines separate from the instrument is very good practise, as it will encourage us
 # to write the most general pipelines possible!
 
 # So, lets start discussing our tutorial 1 pipeline, which fits the lens and source galaxy of a strong lens.
@@ -67,7 +67,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -101,7 +101,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -111,7 +111,7 @@ def simulate():
     )
 
 
-# Now lets simulate the image as ccd data, which we'll fit using the pipeline.
+# Now lets simulate the image as ccd instrument, which we'll fit using the pipeline.
 ccd_data = simulate()
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
@@ -121,7 +121,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # import the module and run its 'make_pipeline' function.
 
 # When we run the make_pipeline function, we specify a phase_folders which structure the way our output is stored -
-# for this pipeline this will output the data as:
+# for this pipeline this will output the instrument as:
 # 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name' (the pipeline name is specified in the
 # pipeline).
 from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
@@ -130,7 +130,7 @@ pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
     phase_folders=["howtolens", "c3_t1_lens_and_source"]
 )
 
-# To run a pipeline, we simply use its 'run' function, passing it the data we want to run the pipeline on. Simple, huh?
+# To run a pipeline, we simply use its 'run' function, passing it the instrument we want to run the pipeline on. Simple, huh?
 pipeline_lens_and_source.run(data=ccd_data)
 
 # Okay, good job, we're running out first pipeline in PyAutoLens! But what does it *actually* do? Well, to find that

@@ -2,7 +2,7 @@ from autolens.data.array import grids
 from autolens.plotters import grid_plotters
 
 # In this example, we'll create grids of Cartesian (y,x) coordinates, representing the arc-second coordinate grid of
-# an observed data-set (e.g. ccd imaging).
+# an observed instrument-set (e.g. ccd imaging).
 
 # In PyAutoLens, a grid is a set of two-dimensional (y,x) coordinates (in arc-seconds) that are deflected
 # and traced by a strong lensing system.

@@ -29,11 +29,7 @@ def make_pipeline(phase_folders=None):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__inversion"
-
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_name = "pipeline__inversion"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -43,7 +39,7 @@ def make_pipeline(phase_folders=None):
     # structure of the lensed source and provided an accurate lens mass model.
 
     phase1 = phase_imaging.PhaseImaging(
-        phase_name="phase_1_initialize",
+        phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -63,7 +59,7 @@ def make_pipeline(phase_folders=None):
             # We can customize the inversion's priors like we do our light and mass profiles.
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_initialize"
+                "phase_1__lens_sie__source_sersic"
             ).variable.galaxies.lens
 
             self.galaxies.source.pixelization.shape_0 = af.UniformPrior(
@@ -74,7 +70,7 @@ def make_pipeline(phase_folders=None):
                 lower_limit=20.0, upper_limit=40.0
             )
 
-            # The expected value of the regularization coefficient depends on the details of the data reduction and
+            # The expected value of the regularization coefficient depends on the details of the instrument reduction and
             # source galaxy. A broad log-uniform prior is thus an appropriate way to sample the large range of
             # possible values.
 
@@ -83,7 +79,7 @@ def make_pipeline(phase_folders=None):
             )
 
     phase2 = InversionPhase(
-        phase_name="phase_2_inversion_initial",
+        phase_name="phase_2__source_inversion_initialize",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -115,17 +111,17 @@ def make_pipeline(phase_folders=None):
             # We can customize the inversion's priors like we do our light and mass profiles.
 
             self.galaxies.lens = results.from_phase(
-                "phase_2_inversion_initial"
+                "phase_2__source_inversion_initialize"
             ).variable.galaxies.lens
 
             # Note the use of the 'inversion' result attribute below, which uses the extended inversion phase results.
 
             self.galaxies.source = results.from_phase(
-                "phase_2_inversion_initial"
+                "phase_2__source_inversion_initialize"
             ).inversion.constant.galaxies.source
 
     phase3 = InversionPhase(
-        phase_name="phase_3_inversion_final",
+        phase_name="phase_3__lens_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),

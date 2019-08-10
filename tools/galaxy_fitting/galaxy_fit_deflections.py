@@ -112,7 +112,7 @@ phase = DeflectionFitPhase(
 )
 
 
-# Finally, when we run the phase, we now pass both deflection angle data's separately.
+# Finally, when we run the phase, we now pass both deflection angle instrument's separately.
 phase.run(galaxy_data=[data_y, data_x])
 
 # If you check your output folder, you should see that this fit has been performed and visualization specific to a

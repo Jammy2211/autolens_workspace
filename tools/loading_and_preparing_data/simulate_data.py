@@ -2,8 +2,8 @@ import autofit as af
 from astropy.io import fits
 import os
 
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
@@ -14,7 +14,7 @@ def simulate_ccd_data():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
@@ -38,7 +38,7 @@ def simulate_ccd_data():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -54,7 +54,7 @@ def simulate_ccd_data_in_counts():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
@@ -84,7 +84,7 @@ def simulate_ccd_data_in_counts():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -100,7 +100,7 @@ def simulate_ccd_data_with_large_stamp():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(500, 500), pixel_scale=0.1, psf_shape=(21, 21)
@@ -124,7 +124,7 @@ def simulate_ccd_data_with_large_stamp():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -140,7 +140,7 @@ def simulate_ccd_data_with_small_stamp():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(50, 50), pixel_scale=0.1, psf_shape=(21, 21)
@@ -164,7 +164,7 @@ def simulate_ccd_data_with_small_stamp():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -180,7 +180,7 @@ def simulate_ccd_data_with_offset_centre():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
@@ -204,7 +204,7 @@ def simulate_ccd_data_with_offset_centre():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -220,7 +220,7 @@ def simulate_ccd_data_with_large_psf():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(101, 101), sigma=0.05, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(101, 101), sigma=0.05, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(100, 100), pixel_scale=0.1, psf_shape=(101, 101)
@@ -244,7 +244,7 @@ def simulate_ccd_data_with_large_psf():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -260,7 +260,7 @@ def simulate_ccd_data_with_psf_with_offset_centre():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(
+    psf = abstract_data.PSF.from_gaussian(
         shape=(21, 21), sigma=0.05, pixel_scale=0.1, centre=(0.1, 0.1)
     )
 
@@ -286,7 +286,7 @@ def simulate_ccd_data_with_psf_with_offset_centre():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,

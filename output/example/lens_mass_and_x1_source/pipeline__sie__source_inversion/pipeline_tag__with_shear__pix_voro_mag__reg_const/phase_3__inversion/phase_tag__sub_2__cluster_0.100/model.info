@@ -1,0 +1,17 @@
+galaxies
+    lens
+        mass
+            axis_ratio                                                                    GaussianPrior, mean = 0.6998777256617452, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 44.932135188166356, sigma = 20.0
+            einstein_radius                                                               GaussianPrior, mean = 1.5989715748398161, sigma = 0.07994857874199081
+            centre
+                centre_0                                                                  GaussianPrior, mean = -0.0003079723000787864, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = -0.00100550657237004, sigma = 0.05
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.05007751760170872, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 90.2356915639434, sigma = 20.0
+        redshift                                                                          0.5
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   0.9284519108495332

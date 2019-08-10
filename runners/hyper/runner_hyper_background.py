@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.array import mask as msk
+from autolens.data.instrument import ccd
 from autolens.data.plotters import ccd_plotters
 from autolens.pipeline import pipeline as pl
 from autolens.model.inversion import pixelizations as pix
@@ -8,16 +9,16 @@ from autolens.model.inversion import regularization as reg
 import os
 
 # Welcome to the hyper pipeline runner! This script is identical to the
-# 'runners/simple/runner_lens_light_mass_and_source.py' script, except at the end when we add pipelines together. So,
+# 'runners/simple/runner__lens_sersic_sie__source_sersic.py' script, except at the end when we add pipelines together. So,
 # if you already know how the simple runners work, jump ahead to our pipeline imports. If you don't, I recommmend you
 # checout the 'simple' pipelines, before using this script.
 
-### The code between the dashed ---- lines is identical to 'runners/simple/runner_lens_light_mass_and_source.py' ###
+### The code between the dashed ---- lines is identical to 'runners/simple/runner__lens_sersic_sie__source_sersic.py' ###
 
 # ----------------------------------------------------------------------------------------------------------
 
-# Welcome to the pipeline runner. This tool allows you to load strong lens data, and pass it to pipelines for a
-# PyAutoLens analysis. To show you around, we'll load up some example data and run it through some of the example
+# Welcome to the pipeline runner. This tool allows you to load strong lens instrument, and pass it to pipelines for a
+# PyAutoLens analysis. To show you around, we'll load up some example instrument and run it through some of the example
 # pipelines that come distributed with PyAutoLens.
 
 # The runner is supplied as both this Python script and a Juypter notebook. Its up to you which you use - I personally
@@ -42,18 +43,18 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data"]
 )
 
-# It is convenient to specify the data type and data name as a string, so that if the pipeline is applied to multiple
+# It is convenient to specify the instrument type and data name as a string, so that if the pipeline is applied to multiple
 # images we don't have to change all of the path entries in the load_ccd_data_from_fits function below.
 data_type = "example"
 data_name = (
-    "lens_bulge_disk_mass_and_x1_source"
+    "lens_bulge_disk_sie__source_sersic"
 )  # Example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
 # data_name = 'slacs1430+4105' # Example HST imaging of the SLACS strong lens slacs1430+4150.
 # pixel_scale = 0.03
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=data_path, folder_names=[data_type, data_name]
@@ -67,11 +68,15 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=pixel_scale,
 )
 
-# Plot CCD before running.
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+# We need to define and pass our mask to the hyper pipeline from the beginning.
+mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
 
-# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
-# Below, we'll' use a 3 phase example pipeline to fit the data with a parametric lens light, mass and source light
+# Plot CCD before running.
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
+
+
+# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens instrument to its run function.
+# Below, we'll' use a 3 phase example pipeline to fit the instrument with a parametric lens light, mass and source light
 # profile. Checkout 'workspace/pipelines/examples/lens_light_and_x1_source_parametric.py' for a full description of
 # the pipeline.
 
@@ -118,8 +123,8 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 pipeline_settings = pl.PipelineSettingsHyper(
     hyper_galaxies=True,
-    hyper_background_sky=True,
-    hyper_background_noise=False,
+    hyper_image_sky=False,
+    hyper_background_noise=True,
     include_shear=True,
     fix_lens_light=False,
     align_bulge_disk_centre=False,
@@ -130,26 +135,26 @@ pipeline_settings = pl.PipelineSettingsHyper(
 )
 
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.initialize import (
-    lens_sersic_exp_sie_source_sersic,
+    lens_bulge_disk_sie__source_sersic,
 )
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.inversion.from_initialize import (
-    lens_sersic_exp_sie_source_inversion,
+    lens_bulge_disk_sie__source_inversion,
 )
 from workspace.pipelines.hyper.with_lens_light.bulge_disk.power_law.from_inversion import (
-    lens_sersic_exp_pl_source_inversion,
+    lens_bulge_disk_power_law__source_inversion,
 )
 
-pipeline_initialize = lens_sersic_exp_sie_source_sersic.make_pipeline(
+pipeline_initialize = lens_bulge_disk_sie__source_sersic.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_inversion = lens_sersic_exp_sie_source_inversion.make_pipeline(
+pipeline_inversion = lens_bulge_disk_sie__source_inversion.make_pipeline(
     pipeline_settings=pipeline_settings,
     phase_folders=[data_type, data_name],
     positions_threshold=1.0,
 )
 
-pipeline_power_law = lens_sersic_exp_pl_source_inversion.make_pipeline(
+pipeline_power_law = lens_bulge_disk_power_law__source_inversion.make_pipeline(
     pipeline_settings=pipeline_settings,
     phase_folders=[data_type, data_name],
     positions_threshold=1.0,

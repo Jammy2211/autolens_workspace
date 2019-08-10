@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.plotters import ccd_plotters
 
 import os
@@ -17,7 +18,7 @@ af.conf.instance = af.conf.Config(
 )
 
 data_type = "example"
-data_name = "lens_mass_and_x1_source"
+data_name = "lens_sie__source_sersic"
 pixel_scale = 0.1
 
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(

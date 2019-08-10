@@ -22,7 +22,7 @@ from autolens.model.profiles import mass_profiles as mp
 #    properties.
 
 # 2) By bypassing the lens modeling process, we can test what results we get whilst bypass the potential systematics
-#    that arise from a lens model fit (e.g due to the source reconstruction or quality of data).
+#    that arise from a lens model fit (e.g due to the source reconstruction or quality of instrument).
 
 # Setup the path to the workspace, using a relative directory name.
 workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
@@ -51,7 +51,7 @@ convergence = galaxy.convergence_from_grid(
     galaxies=[galaxy], grid=grid_stack.sub, return_in_2d=True, return_binned=True
 )
 
-# Now, we'll set this surface density up as our 'galaxy-data', meaning that it is what we'll fit via a non-linear
+# Now, we'll set this surface density up as our 'galaxy-instrument', meaning that it is what we'll fit via a non-linear
 # search phase. To perform a fit we need a noise-map to help define our chi-squared. Given we are fitting a direct
 # lensing quantity the actual values of this noise-map arn't particularly important, so we'll just use a noise-map of
 # all 0.1's

@@ -1,6 +1,6 @@
 import autofit as af
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 from autolens.lens.plotters import lens_fit_plotters
@@ -24,17 +24,17 @@ from autolens.model.profiles import mass_profiles as mp
 # I'll let you into a secret - this is the same lens model used to simulate the image we're going to fit (but I'm not
 # going to tell you the actual parameters I used!).
 
-# So, how do we infer the light and mass profile parameters that give a good fit to our data?
+# So, how do we infer the light and mass profile parameters that give a good fit to our instrument?
 
 # Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this lens
-# model to create a tracer and fit the image-data, and quantify how good the fit was using its likelihood
+# model to create a tracer and fit the image-instrument, and quantify how good the fit was using its likelihood
 # (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd find one that provides a good fit
-# (i.e. high likelihood) to the data!
+# (i.e. high likelihood) to the instrument!
 
 # It may sound surprising, but this is actually the basis of how lens modeling works. However, we can do a lot better
 # than random guessing. Instead, we track the likelihood of our previous guesses, and guess more models using combinations
 # of parameters that gave higher likelihood solutions previously. The idea is that if a set of parameters provided a
-# good fit to the data, another set with similar values probably will too.
+# good fit to the instrument, another set with similar values probably will too.
 
 # This is called a 'non-linear search' and its a fairly common problem faced by scientists. Over the next few tutorials,
 # we're going to really get our heads around the concept of a non-linear search - intuition which will prove crucial
@@ -81,7 +81,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -104,7 +104,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    image_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    image_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -147,7 +147,7 @@ phase = phase_imaging.PhaseImaging(
     optimizer_class=af.MultiNest,
 )
 
-# To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
+# To run the phase, we simply pass it the image instrument we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.
 print(
     "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/1_non_linear_search"

@@ -14,7 +14,7 @@ import os
 
 # In this pipeline, we'll perform an analysis which fits an image with the lens light included, and a source galaxy
 # using an inversion, using a decomposed light and dark matter profile. The pipeline follows on from the
-# inversion pipeline 'pipelines/with_lens_light/inversion/from_initialize/lens_sie_source_inversion.py'.
+# inversion pipeline 'pipelines/with_lens_light/inversion/from_initialize/lens_sie__source_inversion.py'.
 
 # The pipeline is two phases, as follows:
 
@@ -24,7 +24,7 @@ import os
 # Lens Light & Mass: EllipticalSersic
 # Lens Mass: SphericalNFW + ExternalShear
 # Source Light: VoronoiMagnification + Constant
-# Previous Pipelines: with_lens_light/inversion/from_initialize/lens_sie_source_inversion.py
+# Previous Pipelines: with_lens_light/inversion/from_initialize/lens_sie__source_inversion.py
 # Prior Passing: Lens Light (variable -> previous pipeline), Lens Mass (default),
 #                Source Inversion (variable / constant -> previous pipeline)
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
@@ -43,7 +43,6 @@ import os
 def make_pipeline(
     pipeline_settings,
     phase_folders=None,
-    tag_phases=True,
     redshift_lens=0.5,
     redshift_source=1.0,
     sub_grid_size=2,
@@ -63,9 +62,8 @@ def make_pipeline(
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_ldm__lens_sersic_mlr_nfw_source_inversion"
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name,
+    pipeline_name = "pipeline_ldm__lens_sersic_mlr_nfw__source_inversion"
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=pipeline_settings.include_shear,
         align_light_dark_centre=pipeline_settings.align_light_dark_centre,
         pixelization=pipeline_settings.pixelization,
@@ -73,6 +71,7 @@ def make_pipeline(
     )
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     ### PHASE 1 ###
 
@@ -90,27 +89,27 @@ def make_pipeline(
             ### Lens Light to Light + Mass, Sersic -> Sersic ###
 
             self.galaxies.lens.light_mass.centre = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.centre
 
             self.galaxies.lens.light_mass.axis_ratio = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.axis_ratio
 
             self.galaxies.lens.light_mass.phi = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.phi
 
             self.galaxies.lens.light_mass.intensity = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.intensity
 
             self.galaxies.lens.light_mass.effective_radius = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.effective_radius
 
             self.galaxies.lens.light_mass.sersic_index = results.from_phase(
-                "phase_3_lens_sersic_sie_source_sersic"
+                "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.lens.light.sersic_index
 
             ### Lens Mass, SIE ->  NFW ###
@@ -122,7 +121,7 @@ def make_pipeline(
             elif not pipeline_settings.align_light_dark_centre:
 
                 self.galaxies.lens.dark.centre = (
-                    results.from_phase("phase_3_lens_sersic_sie_source_sersic")
+                    results.from_phase("phase_3__lens_sersic_sie__source_sersic")
                     .variable_absolute(a=0.05)
                     .galaxies.lens.light_mass.centre
                 )
@@ -130,19 +129,18 @@ def make_pipeline(
             ### Lens Shear, Shear -> Shear ###
 
             self.galaxies.lens.shear = results.from_phase(
-                "phase_2_lens_sie_source_inversion"
+                "phase_2__lens_sie__source_inversion"
             ).variable.galaxies.lens.shear
 
             ### Source Inversion, Inv -> Inv ###
 
             self.galaxies.source = results.from_phase(
-                "phase_2_lens_sie_source_inversion"
+                "phase_2__lens_sie__source_inversion"
             ).inversion.constant.galaxies.source
 
     phase1 = LensSourcePhase(
-        phase_name="phase_1_lens_sersic_mlr_nfw_source_inversion",
+        phase_name="phase_1__lens_sersic_mlr_nfw__source_inversion",
         phase_folders=phase_folders,
-        tag_phases=tag_phases,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,

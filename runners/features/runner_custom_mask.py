@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.data.plotters import ccd_plotters
 
@@ -22,7 +23,7 @@ af.conf.instance = af.conf.Config(
 )
 
 data_type = "example"
-data_name = "lens_light_mass_and_x1_source"
+data_name = "lens_sersic_sie__source_sersic"
 pixel_scale = 0.1
 
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
@@ -38,15 +39,15 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 # Okay, we need to load the mask from a .fits file, in the same fashion as the ccd_data above. To draw a mask for an
 # image, checkout the files
-# 'workspace/tools/data_making/mask_maker.py and workspace/tools/data_making/mask_maker_irregular.py'
+# 'workspace/tools/data_making/mask_maker.py and workspace/tools/data_making/mask_maker__irregular.py'
 
-# The example autolens_workspace data comes with a mask already, if you look in
+# The example autolens_workspace instrument comes with a mask already, if you look in
 # workspace/data/example/lens_light_and_x1_source/ you'll see a mask.fits file!
 mask = msk.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
-# When we plot the ccd data, we can:
+# When we plot the ccd instrument, we can:
 # - Pass the mask to show it on the image.
 # - Extract only the regions of the image in the mask, to remove contaminating bright sources away from the lens.
 # - zoom in around the mask to emphasize the lens.
@@ -57,9 +58,9 @@ ccd_plotters.plot_ccd_subplot(
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
 # 'pipeline.run() function.
 
-from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+from workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
-pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]
 )
 

@@ -1,0 +1,7 @@
+galaxies_lens_mass_axis_ratio                                         q_{\mathrm{m62}}
+galaxies_lens_mass_phi                                                \phi_{\mathrm{m62}}
+galaxies_lens_mass_einstein_radius_value                              \theta_{\mathrm{m62}}
+galaxies_lens_shear_magnitude                                         \gamma_{\mathrm{sh62}}
+galaxies_lens_shear_phi                                               \phi_{\mathrm{sh62}}
+galaxies_lens_mass_centre_0                                           y_{\mathrm{m62}}
+galaxies_lens_mass_centre_1                                           x_{\mathrm{m62}}

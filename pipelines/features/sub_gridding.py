@@ -49,11 +49,15 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__sub_gridding"
+    pipeline_name = "pipeline_feature__sub_gridding"
 
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag/'
+
+    phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     # When a phase is passed a sub_grid_size, a settings tag is automatically generated and added to the phase path,
     # to make it clear what sub-grid was used. The settings tag, phase name and phase paths are shown for 3
@@ -65,11 +69,6 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     # If the sub-grid size is 1, the tag is an empty string, thus not changing the settings tag:
 
     # sub_grid_size=1 -> phase_path=phase_name/settings
-
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag'
-
-    phase_folders.append(pipeline_name)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
@@ -95,9 +94,8 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
-        phase_name="phase_1_x1_source",
+        phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
@@ -123,17 +121,16 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.lens
 
             self.galaxies.source_0 = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.source_0
 
     phase2 = LensSourceX2Phase(
-        phase_name="phase_2_x2_source",
+        phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear

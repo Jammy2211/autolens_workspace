@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -25,7 +25,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
@@ -55,7 +55,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -77,7 +77,7 @@ mask = msk.Mask.circular_annular(
 
 ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 
-# Next, lets set this image up as lens data, and setup a tracer using the input lens galaxy model (we don't need
+# Next, lets set this image up as lens instrument, and setup a tracer using the input lens galaxy model (we don't need
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
 
@@ -133,7 +133,7 @@ def simulate_complex_source():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
@@ -231,7 +231,7 @@ def simulate_complex_source():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,

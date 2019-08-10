@@ -30,11 +30,7 @@ def make_pipeline(phase_folders=None):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__x2_galaxies"
-
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_name = "pipeline__x2_galaxies"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -74,7 +70,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.left_lens.light.sersic_index = 4.0
 
     phase1 = LeftLensPhase(
-        phase_name="phase_1_left_lens_light",
+        phase_name="phase_1__left_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(
             left_lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic)
@@ -113,7 +109,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.right_lens.light.sersic_index = 4.0
 
     phase2 = RightLensPhase(
-        phase_name="phase_2_right_lens_light",
+        phase_name="phase_2__right_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(
             right_lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic)
@@ -137,8 +133,8 @@ def make_pipeline(phase_folders=None):
 
         def modify_image(self, image, results):
 
-            phase_1_results = results.from_phase("phase_1_left_lens_light")
-            phase_2_results = results.from_phase("phase_2_right_lens_light")
+            phase_1_results = results.from_phase("phase_1__left_lens_light")
+            phase_2_results = results.from_phase("phase_2__right_lens_light")
 
             return (
                 image
@@ -148,8 +144,8 @@ def make_pipeline(phase_folders=None):
 
         def pass_priors(self, results):
 
-            phase_1_results = results.from_phase("phase_1_left_lens_light")
-            phase_2_results = results.from_phase("phase_2_right_lens_light")
+            phase_1_results = results.from_phase("phase_1__left_lens_light")
+            phase_2_results = results.from_phase("phase_2__right_lens_light")
 
             # We're going to link the centres of the light profiles computed above to the centre of the lens galaxy
             # mass-profiles in this phase. Because the centres of the mass profiles were fixed in phases 1 and 2,
@@ -172,7 +168,7 @@ def make_pipeline(phase_folders=None):
             )
 
     phase3 = LensSubtractedPhase(
-        phase_name="phase_3_fit_sources",
+        phase_name="phase_3__fit_sources",
         phase_folders=phase_folders,
         galaxies=dict(
             left_lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -193,9 +189,9 @@ def make_pipeline(phase_folders=None):
     class FitAllPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            phase_1_results = results.from_phase("phase_1_left_lens_light")
-            phase_2_results = results.from_phase("phase_2_right_lens_light")
-            phase_3_results = results.from_phase("phase_3_fit_sources")
+            phase_1_results = results.from_phase("phase_1__left_lens_light")
+            phase_2_results = results.from_phase("phase_2__right_lens_light")
+            phase_3_results = results.from_phase("phase_3__fit_sources")
 
             # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
@@ -251,7 +247,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.source = phase_3_results.variable.source
 
     phase4 = FitAllPhase(
-        phase_name="phase_4_fit_all",
+        phase_name="phase_4__fit_all",
         phase_folders=phase_folders,
         galaxies=dict(
             left_lens=gm.GalaxyModel(

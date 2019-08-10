@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -19,11 +19,11 @@ from autolens.plotters import array_plotters
 # the image, which isn't ideal, as we would prefer that our lens model provides a global fit to the entire lensed
 # source galaxy.
 
-# With our adaptive pixelization and regularization, we were able to fit the data to the noise-limit and remove this
+# With our adaptive pixelization and regularization, we were able to fit the instrument to the noise-limit and remove this
 # skewed chi-squared distribution, so why do we need to introduce noise-map scaling? Well, we achieve a good fit when
 # our lens's mass model is accurate. In the previous tutorials we used the *correct* lens mass model to demonstrate
 # these features. But, what if our lens mass model isn't perfect? Well, we're gonna have residuals, and those residuals
-# will cause the same problem as before; a skewed chi-squared distribution and an inability to fit the data to the
+# will cause the same problem as before; a skewed chi-squared distribution and an inability to fit the instrument to the
 # noise level.
 
 # So, lets simulate an image and fit it with a slightly incorrect mass model.
@@ -37,7 +37,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -67,7 +67,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -78,17 +78,17 @@ def simulate():
     )
 
 
-# Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
+# Lets simulate the instrument, draw a 3.0" mask and set up the lens instrument that we'll fit.
 
 ccd_data = simulate()
 mask = msk.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fits, we'll use a
-# convenience function to fit the lens data we simulated above.
+# convenience function to fit the lens instrument we simulated above.
 
 # In this fitting function, we have changed the lens galaxy's einstein radius to 1.55 from the 'true' simulated value
-# of 1.6. Thus, we are going to fit the data with an *incorrect* mass model.
+# of 1.6. Thus, we are going to fit the instrument with an *incorrect* mass model.
 
 
 def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
@@ -119,7 +119,7 @@ def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 
-# And now, we'll use the same magnification based source to fit this data.
+# And now, we'll use the same magnification based source to fit this instrument.
 
 source_magnification = g.Galaxy(
     redshift=1.0,
@@ -148,7 +148,7 @@ inversion_plotters.plot_pixelization_values(
 # central structure was the problem). So, the obvious question is can our adaptive pixelization and regularization
 # schemes address the problem?
 
-# Lets find out, using this solution as our hyper-image. In this case, our hyper-image isn't a perfect fit to the data.
+# Lets find out, using this solution as our hyper-image. In this case, our hyper-image isn't a perfect fit to the instrument.
 # This isn't ideal, but shouldn't be to problematic either. Although the solution leaves residuals it still
 # captures the source's overall structure. The pixelization / regularization hyper-parameters have enough flexibility
 # in how they use this image to adapt themselves, so the hyper-image doesn't *need* to be perfect.
@@ -189,12 +189,12 @@ inversion_plotters.plot_pixelization_values(
 print("Evidence = ", fit.evidence)
 
 # Okay, so the solution is better, but its far from perfect. Furthermore, this solution maximizes the Bayesian evidence.
-# This means there is no reasonable way to change our source pixelization or regularization to better fit the data.
+# This means there is no reasonable way to change our source pixelization or regularization to better fit the instrument.
 # There is a fundamental problem with our lens's mass model!
 
 # To remind you of what we discussed in tutorial 1, this poses a major problem for our model-fitting. Because a small
-# subset of our data has such large chi-squared values, the non-linear search is going to seek solutions which reduce
-# only these chi-squared values. For the image above, this means that a small subset of our data (e.g. < 5% of pixels)
+# subset of our instrument has such large chi-squared values, the non-linear search is going to seek solutions which reduce
+# only these chi-squared values. For the image above, this means that a small subset of our instrument (e.g. < 5% of pixels)
 # contributes to the majority of our likelihood (e.g. > 95% of the overall chi-squared). This is *not* what we want,
 # as it means that instead of using the entire surface brightness profile of the lensed source galaxy to constrain our
 # lens model, we end up using only a small subset of its brightest pixels.
@@ -202,7 +202,7 @@ print("Evidence = ", fit.evidence)
 # This is even more problematic when we try and use the Bayesian evidence to objectively quantify the quality of the
 # fit, as it means it cannot obtain a solution that provides a reduced chi-squared of 1.
 
-# So, you're probably wondering, whats the problem? Can't we just change the mass model to fit the data better? Surely
+# So, you're probably wondering, whats the problem? Can't we just change the mass model to fit the instrument better? Surely
 # if we actually modeled this lens with PyAutoLens, it wouldn't go to this solution anyway, but instead infer the
 # correct Einstein radius of 1.6?
 
@@ -252,7 +252,7 @@ print("Evidence using baseline variances = ", 8911.66)
 
 print("Evidence using variances scaled by hyper galaxy = ", fit.evidence)
 
-# Yep, a huge increase in the 1000's! Clearly, if our model doesn't fit the data well, we *need* to increase the noise
+# Yep, a huge increase in the 1000's! Clearly, if our model doesn't fit the instrument well, we *need* to increase the noise
 # wherever the fit is poor to ensure that our use of the Bayesian evidence is well defined.
 
 # So, how does the HyperGalaxy that we attached to the source-galaxy above actually scale the noise?
@@ -341,7 +341,7 @@ array_plotters.plot_array(
 # to scale how we allocate contributions to the source galaxy. Now, we're going to use this contribution map to
 # scale the noise-map, as follows:
 
-# 1) Multiply the baseline (e.g. unscaled) noise-map of the image-data by the contribution map made in step 3) above.
+# 1) Multiply the baseline (e.g. unscaled) noise-map of the image-instrument by the contribution map made in step 3) above.
 #    This means that only noise-map values where the contribution map has large values (e.g. near 1.0) are going to
 #    remain in this image, with the majority of values multiplied by contribution map values near 0.0.
 
@@ -416,10 +416,10 @@ print("Evidence using variances scaled by hyper galaxy = ", fit.evidence)
 # What else might cause residuals? I'll give you a couple below;
 
 # 1) A mismatch between our model of the imaging data's Point Spread Function (PSF) and the true PSF of the telescope
-#    optics of the data.
+#    optics of the instrument.
 
-# 2) Unaccounted for effects in our data-reduction for the image, in particular the presense of correlated signal and
-#    noise during the image's data reduction.
+# 2) Unaccounted for effects in our instrument-reduction for the image, in particular the presense of correlated signal and
+#    noise during the image's instrument reduction.
 
 # 3) A sub-optimal background sky subtraction of the image, which can leave large levels of signal in the outskirts of
 #    the image that are not due to the strong lens system itself.

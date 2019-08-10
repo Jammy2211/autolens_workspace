@@ -17,7 +17,7 @@ from autolens.model.profiles import mass_profiles as mp
 # an input parameter of the pipeline. This means we can run the pipeline with different binning up factors for different
 # runners.
 
-# We will also use phase tagging to ensure phases which use binned up data have a tag in their path, so it is clear
+# We will also use phase tagging to ensure phases which use binned up instrument have a tag in their path, so it is clear
 # what settings a phases has when it uses this feature.
 
 # We'll perform a basic analysis which fits a lensed source galaxy using a parametric light profile where
@@ -34,7 +34,7 @@ from autolens.model.profiles import mass_profiles as mp
 
 # Phase 2:
 
-# Description: Fits the lens and source model using unbinned data.
+# Description: Fits the lens and source model using unbinned instrument.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
@@ -50,11 +50,9 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__binning_up"
+    pipeline_name = "pipeline_feature__binning_up"
 
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed a bin_up_factor, a settings tag is automatically generated and added to the phase path,
     # to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
@@ -69,9 +67,10 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # bin_up_factor=1 -> phase_path=phase_name/settings
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag/'
+    # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
@@ -97,9 +96,8 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
-        phase_name="phase_1_x1_source",
+        phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
@@ -125,17 +123,16 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.lens
 
             self.galaxies.source = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.source
 
     phase2 = LensSourceX2Phase(
-        phase_name="phase_2_x2_source",
+        phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear

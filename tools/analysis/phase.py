@@ -2,7 +2,8 @@ import autofit as af
 from autolens.pipeline.phase import phase_imaging
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -32,7 +33,7 @@ data_type = "example"
 data_name = "lens_light_and_x1_source"
 pixel_scale = 0.1
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
@@ -51,7 +52,7 @@ mask = msk.Mask.circular(
 )
 
 # We can also specify a set of positions, which must be traced within a threshold value or else the mass model is
-positions = ccd.load_positions(positions_path=data_path + "/positions.dat")
+positions = abstract_data.load_positions(positions_path=data_path + "/positions.dat")
 
 # resampled (see howtolens/chapter_2_lens_modeling/tutorial_7_masking_and_positions.ipynb)
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask, positions=positions)

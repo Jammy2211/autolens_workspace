@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -17,7 +17,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # In the previous chapter, we investigated two pixelizations; Rectanguar and VoronoiMagnification. We learnt that the
 # latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where
-# we had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
+# we had more instrument, e.g, the high-magnification regions. Therefore, we could fit the instrument using fewer source pixels,
 # which was great for computational efficiency and increasing the Bayesian evidence of our fits.
 
 # So far, we've used just one regularization scheme; Constant. As the name suggests, this regularization scheme
@@ -93,7 +93,7 @@ source_galaxy_super_compact = g.Galaxy(
     ),
 )
 
-# The function below uses each source galaxy to simulate ccd data. It performs the usual tasks we are used to seeing
+# The function below uses each source galaxy to simulate ccd instrument. It performs the usual tasks we are used to seeing
 # (make the PSF, galaxies, tracer, etc.).
 
 
@@ -103,7 +103,7 @@ def simulate_for_source_galaxy(source_galaxy):
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -121,7 +121,7 @@ def simulate_for_source_galaxy(source_galaxy):
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -331,10 +331,10 @@ lens_fit_plotters.plot_fit_subplot(
     zoom_around_mask=True,
 )
 
-# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a very small subset of our data
+# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a very small subset of our instrument
 # have extremely large chi-squared values. This means our non-linear search, which is trying minimize chi-squared,
 # is going to seek solutions which primarily only reduce these chi-squared values. For the image above this means that
-# a small subset of our data (e.g. < 5% of pixels) contribute to the majority of our likelihood (e.g. > 95% of the
+# a small subset of our instrument (e.g. < 5% of pixels) contribute to the majority of our likelihood (e.g. > 95% of the
 # overall chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness
 # profile of the lensed source galaxy to fit our lens model, we end up using only a small subset of its brightest pixels.
 #

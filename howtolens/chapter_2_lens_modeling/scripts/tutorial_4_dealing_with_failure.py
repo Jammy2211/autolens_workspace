@@ -1,15 +1,15 @@
 import autofit as af
 from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.plotters import ccd_plotters
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.lens.plotters import lens_fit_plotters
 
 # We finished the last tutorial on a sour note. Our non-linear search failed miserably, and we were unable to infer a
-# lens model which fitted our realistic data-set well. In this tutorial, we're going to right our past wrongs and infer
+# lens model which fitted our realistic instrument-set well. In this tutorial, we're going to right our past wrongs and infer
 # the correct model - not just once, but three times!
 
 # You need to change the path below to the chapter 1 directory.
@@ -35,7 +35,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -73,7 +73,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    ccd_simulated = simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    ccd_simulated = ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -260,7 +260,7 @@ light_traces_mass_phase_result = light_traces_mass_phase.run(data=ccd_data)
 print("MultiNest has finished run - you may now continue the notebook.")
 lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likely_fit)
 
-# The results look pretty good. Our source galaxy fits the data pretty well, and we've clearly inferred a model that
+# The results look pretty good. Our source galaxy fits the instrument pretty well, and we've clearly inferred a model that
 # looks similar to the one above. However, inspection of the residuals shows that the fit wasn't quite as good as the
 # custom-phase above.
 
@@ -270,7 +270,7 @@ lens_fit_plotters.plot_fit_subplot(fit=light_traces_mass_phase_result.most_likel
 #
 # Herein lies the pitfalls of making assumptions in science - they may make your model less realistic and your results
 # worse! Nevertheless, our lens model is clearly much better than it was in the previous tutorial, so making
-# assumptions isn't a bad idea if you're struggling to fit the data t all.
+# assumptions isn't a bad idea if you're struggling to fit the instrument t all.
 
 # Again, lets consider the advantages and disadvantages of this approach:
 

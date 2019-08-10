@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -13,7 +13,7 @@ from autolens.lens.plotters import lens_fit_plotters
 from autolens.plotters import array_plotters
 
 # Okay, so noise-map scaling is important when our mass model means our source reconstruction is inaccurate. However,
-# it serves an even more important use, when some other component of our lens model doesn't fit the data well.
+# it serves an even more important use, when some other component of our lens model doesn't fit the instrument well.
 # Can you think what it is? What could leave significant residuals in our model-fit? And what might happen to also be
 # the highest S/N values in our image, meaning these residuals contribute *even more* to the chi-squared distribution?
 
@@ -21,7 +21,7 @@ from autolens.plotters import array_plotters
 # mass profile's mean we can't perfectly reconstruct the source's light, the same holds true of the Sersic profiles
 # we use to fit the lens galaxy's light. Lets take a look.
 
-# This simulates the exact same data as the previous tutorial, but with the lens light included.
+# This simulates the exact same instrument as the previous tutorial, but with the lens light included.
 
 
 def simulate():
@@ -30,7 +30,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
@@ -68,7 +68,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -79,13 +79,13 @@ def simulate():
     )
 
 
-# Lets simulate the data with lens light, draw a 3.0" mask and set up the lens data that we'll fit.
+# Lets simulate the instrument with lens light, draw a 3.0" mask and set up the lens instrument that we'll fit.
 
 ccd_data = simulate()
 mask = msk.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-# Again, we'll use a convenience function to fit the lens data we simulated above.
+# Again, we'll use a convenience function to fit the lens instrument we simulated above.
 
 
 def fit_lens_data_with_lens_and_source_galaxy(lens_data, lens_galaxy, source_galaxy):
@@ -109,7 +109,7 @@ def fit_lens_data_with_lens_and_source_galaxy(lens_data, lens_galaxy, source_gal
     return lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
 
-# Now, lets use this function to fit the lens data. We'll use a lens model with the correct mass model, but an
+# Now, lets use this function to fit the lens instrument. We'll use a lens model with the correct mass model, but an
 # incorrect lens light profile. The source will use a magnification based grid.
 
 lens_galaxy = g.Galaxy(
@@ -281,27 +281,27 @@ print("Evidence using hyper-galaxy scaled variances = ", fit.evidence)
 # scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of the image
 # require different levels of noise-map scaling.
 
-# Finally, I want to quickly mention two more ways that we change our data during th fitting process, one which scales
+# Finally, I want to quickly mention two more ways that we change our instrument during th fitting process, one which scales
 # the background noise and one which scales the background sky in the image. To do this, we use the 'hyper_data'
 # module in PyAutoLens.
 
 from autolens.model.hyper import hyper_data as hd
 
-# This module includes all components of the model that scale parts of the data. To scale the background sky in the
-# image we use the HyperImageSky class, and input a 'background_sky_scale'.
+# This module includes all components of the model that scale parts of the instrument. To scale the background sky in the
+# image we use the HyperImageSky class, and input a 'sky_scale'.
 
-hyper_image_sky = hd.HyperImageSky(background_sky_scale=1.0)
+hyper_image_sky = hd.HyperImageSky(sky_scale=1.0)
 
-# The background_sky_scale is literally just a constant value we add to every pixel of the observed image before
+# The sky_scale is literally just a constant value we add to every pixel of the observed image before
 # fitting it, therefore increasing or decreasing the background sky level in the image .This means we can account for
-# an inaccurate background sky subtraction in our data reduction during the PyAutoLens model fitting.
+# an inaccurate background sky subtraction in our instrument reduction during the PyAutoLens model fitting.
 
-# We can also scale the background noise in an analogous fashion, using the HyperNoiseBackground class and the
-# 'background_noise_scale' hyper-parameter. This value is added to every pixel in the noise-map.
+# We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the
+# 'noise_scale' hyper-parameter. This value is added to every pixel in the noise-map.
 
-hyper_noise_background = hd.HyperNoiseBackground(background_noise_scale=1.0)
+hyper_background_noise = hd.HyperBackgroundNoise(noise_scale=1.0)
 
-# To use these hyper-data parameters, we pass them to a lens-fit just like we do our tracer.
+# To use these hyper-instrument parameters, we pass them to a lens-fit just like we do our tracer.
 
 pixelization_grid = source_magnification_hyper.pixelization.pixelization_grid_from_grid_stack(
     grid_stack=lens_data.grid_stack,
@@ -323,7 +323,7 @@ lens_fit.LensDataFit.for_data_and_tracer(
     lens_data=lens_data,
     tracer=tracer,
     hyper_image_sky=hyper_image_sky,
-    hyper_noise_background=hyper_noise_background,
+    hyper_background_noise=hyper_background_noise,
 )
 
 lens_fit_plotters.plot_fit_subplot(
@@ -343,12 +343,12 @@ lens_fit_plotters.plot_fit_subplot(
 # method still dedicates a lot of source-pixels to fit these regions of the image, _even though they have no source_.
 # Why is this? Well, its because although these pixels have no source, they still have a relatively high S/N value
 # (of order 5-10) due to the lens galaxy (e.g. its flux before it is subtracted). The inversion when reconstructing
-# the data 'sees' pixels with a S/N > 1 and achieves a higher Bayesian evidence by fitting these pixel's flux.
+# the instrument 'sees' pixels with a S/N > 1 and achieves a higher Bayesian evidence by fitting these pixel's flux.
 
 # But, if we increase the background noise, then these pixels will go to much lower S/N values (<  1). Then, the
 # adaptive pixelization will feel no need to fit them properly, and begin to fit these regions of the source-plane
 # with far fewer, much bigger source pixels! This will again give us a net increase in Bayesian evidence, but more
-# importantly, it will dramatically reduce the number of source pixels we use to fit the data. And what does fewer
+# importantly, it will dramatically reduce the number of source pixels we use to fit the instrument. And what does fewer
 # soruce-pixels mean? Much, much faster run times. Yay!
 
 # With that, we have introduced every feature of hyper-mode. The only thing left for us to do is to bring it all

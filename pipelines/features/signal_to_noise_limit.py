@@ -8,9 +8,9 @@ from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 
 
-# In this pipeline, we'll demonstrate signal-to-noise limiting - which allows us to fit ccd data where the noise-map 
+# In this pipeline, we'll demonstrate signal-to-noise limiting - which allows us to fit ccd instrument where the noise-map
 # has been increased to cap the maximum signal-to-noise value in the image in a phase of the pipeline. In this example,
-# we will perform an initial analysis on an image with a signal-to-noise limit of 20.0, and then fit the image using 
+# we will perform an initial analysis on an image with a signal-to-noise limit of 20.0, and then fit the image using
 # the unscaled signal-to-noise map.
 
 # Why would you want to limit the signal to noise? There are two reasons :
@@ -24,7 +24,7 @@ from autolens.model.profiles import mass_profiles as mp
 
 #    To learn more about this over-fitting problem, checkout chapter 5 of the 'HowToLens' lecture series.
 
-# 2) If the model-fit has extremely large chi-squared values due to the high S/N of the data, this means the non-linear
+# 2) If the model-fit has extremely large chi-squared values due to the high S/N of the instrument, this means the non-linear
 #    search will take a long time mapping out this 'extreme' parameter space. In the early phases of a pipeline this
 #    often isn't necessary, therefore a signal-to-noise limit can reduce the time an analysis takes to converge.
 
@@ -65,11 +65,9 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__signal_to_noise_limit"
+    pipeline_name = "pipeline_feature__signal_to_noise_limit"
 
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed a signal_to_noise_limit, a settings tag is automatically generated and added to the phase
     # path,to make it clear what signal-to-noise limit was used. The settings tag, phase name and phase paths are shown
@@ -83,9 +81,10 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     # signal_to_noise_limit=None -> phase_path=phase_name/settings
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag/'
+    # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
@@ -111,9 +110,8 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
-        phase_name="phase_1_x1_source",
+        phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
@@ -139,17 +137,16 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.lens
 
             self.galaxies.source = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.source
 
     phase2 = LensSourceX2Phase(
-        phase_name="phase_2_x2_source",
+        phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear

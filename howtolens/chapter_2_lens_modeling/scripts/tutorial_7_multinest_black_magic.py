@@ -1,8 +1,8 @@
 import autofit as af
 from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -38,7 +38,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
@@ -71,7 +71,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    ccd_simulated = simulated_ccd.SimulatedCCDData.from_image_and_exposure_arrays(
+    ccd_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
         image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
         pixel_scale=0.1,
         exposure_time=300.0,
@@ -122,7 +122,7 @@ phase_normal_results = phase_normal.run(data=ccd_data)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-# Lets check we get a reasonably good model and fit to the data.
+# Lets check we get a reasonably good model and fit to the instrument.
 lens_fit_plotters.plot_fit_subplot(
     fit=phase_normal_results.most_likely_fit,
     should_plot_mask=True,
@@ -166,7 +166,7 @@ phase_black_magic_results = phase_black_magic.run(data=ccd_data)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-# Of course the key question is, does our use of black magic impact the quality of our fit to the data?
+# Of course the key question is, does our use of black magic impact the quality of our fit to the instrument?
 lens_fit_plotters.plot_fit_subplot(
     fit=phase_black_magic_results.most_likely_fit,
     should_plot_mask=True,

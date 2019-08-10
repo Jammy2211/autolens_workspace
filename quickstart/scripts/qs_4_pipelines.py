@@ -1,6 +1,6 @@
 ### PIPELINES ###
 
-# Above, we used the phase module to create a phase, which fitted a lens and source galaxy model to some CCD data using
+# Above, we used the phase module to create a phase, which fitted a lens and source galaxy model to some CCD instrument using
 # MultiNest. In PyAutoLens, a pipeline is effectively a series of phases that are linked together, which ultimately
 # fit a lens model. Why do we break the analysis down into multiple phases, instead of using just 1 phase?
 
@@ -9,7 +9,7 @@
 # break the fit down by initially fitting simple lens models, and then gradually make the model more complex, using
 # the results of the earlier phases to initialize the non-linear sampler.
 
-# Lets look at an example. Go to 'autolens_workspace/pipelines/simple/lens_sersic_sie_source_sersic.py'
+# Lets look at an example. Go to 'autolens_workspace/pipelines/simple/lens_sersic_sie__source_sersic.py'
 # First, have a skim read of the pipeline - you'll see it uses phases like the one we made above, but introduces a
 # number of other concepts (e.g. prior passing, image modification) that we haven't covered in the quick-start tutorial.
 
@@ -24,15 +24,15 @@
 # By breaking the analysis down in this way, we achieve much faster lens modeling and will avoid inferred an incorrect
 # lens model.
 #
-# Lets load some simulated lens data (which now includes the lens galaxy's light) and fit it using this pipeline. To do
+# Lets load some simulated lens instrument (which now includes the lens galaxy's light) and fit it using this pipeline. To do
 # this, we won't use this Juypter notebook! Instead, go to the script
-# 'autolens_workspace/runners/simple/runner_lens_light_mass_and_source.py'. This runner script does everything
+# 'autolens_workspace/runners/simple/runner__lens_sersic_sie__source_sersic.py'. This runner script does everything
 # we need to set off the pipeline, in particular, it:
 
 # 1) Loads the CCD imaging data from .fits files.
-# 2) Loads the mask of this example data from a .fits file.
+# 2) Loads the mask of this example instrument from a .fits file.
 # 3) Imports and creates the pipeline.
-# 4) Uses this pipeline to fit the data.
+# 4) Uses this pipeline to fit the instrument.
 
 # The results of this pipeline will appear in the 'output' folder of the autolens workspace. It should take half an
 # hour or so to run from start to end. Of course, you can check out the results on-the-fly in the output folder.

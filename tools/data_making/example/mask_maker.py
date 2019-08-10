@@ -1,5 +1,5 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
 from autolens.data.array import mask as msk
 from autolens.data.plotters import data_plotters
 
@@ -15,7 +15,7 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 # The 'data name' is the name of the data folder and 'data_name' the folder the mask is stored in, e.g,
 # the mask will be output as '/workspace/data/data_type/data_name/mask.fits'.
 data_type = "example"
-data_name = "lens_mass_and_x1_source"
+data_name = "lens_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'
@@ -23,15 +23,15 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 
-# If you use this tool for your own data, you *must* double check this pixel scale is correct!
+# If you use this tool for your own instrument, you *must* double check this pixel scale is correct!
 pixel_scale = 0.1
 
 # First, load the CCD imaging data, so that the mask can be plotted over the strong lens image.
-image = ccd.load_image(
+image = abstract_data.load_image(
     image_path=data_path + "image.fits", image_hdu=0, pixel_scale=pixel_scale
 )
 
-# Now, create a mask for this data, using the mask function's we're used to. I'll use a circular-annular mask here,
+# Now, create a mask for this instrument, using the mask function's we're used to. I'll use a circular-annular mask here,
 # but I've commented over options you might want to use (feel free to experiment!)
 
 mask = msk.Mask.circular_annular(

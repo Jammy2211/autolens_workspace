@@ -2,7 +2,8 @@ import autofit as af
 from autolens.pipeline.phase import phase_imaging
 from autolens.data.array import mask as msk
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.lens.plotters import lens_fit_plotters
@@ -20,7 +21,7 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=0.1,
 )
 
-# Create a mask for the data, which we setup as a 3.0" circle.
+# Create a mask for the instrument, which we setup as a 3.0" circle.
 mask = msk.Mask.circular(
     shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
 )
@@ -44,6 +45,6 @@ phase = phase_imaging.PhaseImaging(
     optimizer_class=af.MultiNest,
 )
 
-# We run the phase on the ccd data, print the results and plot the fit.
+# We run the phase on the ccd instrument, print the results and plot the fit.
 result = phase.run(data=ccd_data)
 lens_fit_plotters.plot_fit_subplot(fit=result.most_likely_fit)

@@ -1,6 +1,6 @@
 import autofit as af
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -36,7 +36,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
@@ -108,7 +108,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -139,7 +139,7 @@ pipeline_complex_source.run(data=ccd_data)
 # I did infact simulate the lens with 4 sources. This means that there is a 'perfect fit', somewhere in that parameter
 # space, that we unfortunately missed using the pipeline above.
 #
-# Lets confirm this, by manually fitting the ccd data with the true input model.
+# Lets confirm this, by manually fitting the ccd instrument with the true input model.
 
 lens_data = ld.LensData(
     ccd_data=ccd_data,
@@ -233,7 +233,7 @@ lens_fit_plotters.plot_fit_subplot_of_planes(
 # And indeed, we see far improved residuals, chi-squareds, etc.
 
 # The morale of this story is that, if the source morphology is complex, there is no way we can build a pipeline to
-# fit it. For this tutorial, this was true even though our source model could actually fit the data perfectly. For
+# fit it. For this tutorial, this was true even though our source model could actually fit the instrument perfectly. For
 # real lenses, the source will be *even more complex* and there is even less hope of getting a good fit :(
 
 # But fear not, PyAutoLens has you covered. In chapter 4, we'll introduce a completely new way to model the source

@@ -30,10 +30,10 @@ def make_pipeline(phase_folders=None):
     # directory 'output/pipeline_name', which in this case would be 'output/pipeline_light_and_source'.
 
     # In the example pipelines supplied with PyAutoLens in the workspace/pipeline/examples folder, you'll see that
-    # we pass the name of our strong lens data to the pipeline path. This allows us to fit a large sample of lenses
+    # we pass the name of our strong lens instrument to the pipeline path. This allows us to fit a large sample of lenses
     # using one pipeline and store all of their results in an ordered directory structure.
 
-    pipeline_name = "pl__light_and_source"
+    pipeline_name = "pipeline__light_and_source"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -41,7 +41,7 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 1 ###
 
-    # In chapter 2, we learnt how to mask data for a phase. For pipelines, we are probably going to want to change our
+    # In chapter 2, we learnt how to mask instrument for a phase. For pipelines, we are probably going to want to change our
     # mask between phases. Afterall, the bigger the mask, the slower the run-time, so during the early phases of most
     # pipelines we're probably not too bothered about fitting all of the image. Aggresive masking (which removes lots
     # of image-pixels) is thus an appealing way to get things running fast.
@@ -57,7 +57,7 @@ def make_pipeline(phase_folders=None):
     # But wait, we actually want the opposite of this. We want a masks where the pixels between 0.5" and 2.0" are not
     # included! They're the pixels the source is actually located. Therefore, we're going to use an 'anti-annular
     # mask', where the inner and outer radii are the regions we omit from the analysis. This means we need to specify
-    # a third ring of the masks, even further out, such that data at these exterior edges of the image are also masked.
+    # a third ring of the masks, even further out, such that instrument at these exterior edges of the image are also masked.
 
     # We can change a mask using the 'mask_function', which basically returns the new masks we want to use (you can
     # actually use on phases by themselves like in the previous chapter).
@@ -75,7 +75,7 @@ def make_pipeline(phase_folders=None):
     # this phase ensuring the anti-annular masks above is used).
 
     phase1 = phase.PhaseImaging(
-        phase_name="phase_1_lens_light_only",
+        phase_name="phase_1__lens_light_only",
         phase_folders=phase_folders,
         galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic)),
         mask_function=mask_function,
@@ -110,14 +110,14 @@ def make_pipeline(phase_folders=None):
     # 'results' (which you may have noticed was in the the pass_priors functions as well, but we ignored it
     # thus far).
 
-    # To setup the modified image, we take the observed image data and subtract-off the model image from the
+    # To setup the modified image, we take the observed image instrument and subtract-off the model image from the
     # previous phase, which, if you're keeping track, is an image of the lens galaxy. However, if we just used the
     # 'model_image' in the fit, this would only include pixels that were masked. We want to subtract the lens off the
     # entire image - fortunately, PyAutoLens automatically generates a 'unmasked_lens_plane_model_image' as well!
 
     class LensSubtractedPhase(phase.PhaseImaging):
         def modify_image(self, image, results):
-            phase_1_results = results.from_phase("phase_1_lens_light_only")
+            phase_1_results = results.from_phase("phase_1__lens_light_only")
             return image - phase_1_results.unmasked_lens_plane_model_image
 
     # The function above demonstrates the most important thing about pipelines - that every phase has access to the
@@ -132,7 +132,7 @@ def make_pipeline(phase_folders=None):
     # We setup phase 2 as per usual. Note that we don't need to pass the modify image function.
 
     phase2 = LensSubtractedPhase(
-        phase_name="phase_2_source_only",
+        phase_name="phase_2__source_only",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -163,8 +163,8 @@ def make_pipeline(phase_folders=None):
             # The previous results is a 'list' in python. The zeroth index entry of the list maps to the results of
             # phase 1, the first entry to phase 2, and so on.
 
-            phase_1_results = results.from_phase("phase_1_lens_light_only")
-            phase_2_results = results.from_phase("phase_2_source_only")
+            phase_1_results = results.from_phase("phase_1__lens_light_only")
+            phase_2_results = results.from_phase("phase_2__source_only")
 
             # To link two priors together, we invoke the 'variable' attribute of the previous results. By invoking
             # 'variable', this means that:
@@ -222,7 +222,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.lens.mass = phase_2_results.variable.galaxies.lens.mass
 
     phase3 = LensSourcePhase(
-        phase_name="phase_3_both",
+        phase_name="phase_3__both",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(

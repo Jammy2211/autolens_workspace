@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.pipeline import pipeline as pl
 
 import os
@@ -16,28 +17,28 @@ import sys
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The data path is over-written to the path '/cosma5/data/autolens/cosma_username/data' as opposed to the
-#    workspace. As we discussed in the setup, on cosma we don't store our data in our workspace.
+# 1) The instrument path is over-written to the path '/cosma5/data/autolens/cosma_username/instrument' as opposed to the
+#    workspace. As we discussed in the setup, on cosma we don't store our instrument in our workspace.
 
 # 2) The output path is over-written to the path '/cosma5/data/autolens/cosma_username/output' as opposed to
-#    the workspace. This is for the same reason as the data.
+#    the workspace. This is for the same reason as the instrument.
 
-# We need to specify where our data is stored and output is placed. In this example, we'll use the 'share' folder, but
+# We need to specify where our instrument is stored and output is placed. In this example, we'll use the 'share' folder, but
 # you can change the string below to your cosma username if you want to use your own personal directory.
 data_folder_name = "share"
 # data_folder_name = 'cosma_username'
 
-# Lets use this to setup our cosma path, which is where our data and output are stored.
+# Lets use this to setup our cosma path, which is where our instrument and output are stored.
 cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path="/cosma5/data/autolens/", folder_names=[data_folder_name]
 )
 
-# The data folder is the name of the folder our data is stored in, which in this case is 'example'. I would typically
+# The data folder is the name of the folder our instrument is stored in, which in this case is 'example'. I would typically
 # expect this would be named after your sample of lenses (e.g. 'slacs', 'bells'). If you are modelng just one
 # lens, it may be best to omit the data_type.
 data_type = "example"
 
-# Next, lets use this path to setup the data path, which for this example is named 'example' and found at
+# Next, lets use this path to setup the instrument path, which for this example is named 'example' and found at
 # '/cosma5/data/autolens/share/data/example/'
 cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["data", data_type]
@@ -111,8 +112,8 @@ data_name = data_name[cosma_array_id]
 
 pixel_scale = 0.2  # Make sure your pixel scale is correct!
 
-# We now use the data_name to load a the data-set on each job. The statement below combines
-# the cosma_data_path and and data_name to read data from the following directory:
+# We now use the data_name to load a the instrument-set on each job. The statement below combines
+# the cosma_data_path and and data_name to read instrument from the following directory:
 # '/cosma5/data/autolens/share/data/example/data_name'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_data_path, folder_names=[data_name]
@@ -130,19 +131,21 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 pipeline_settings = pl.PipelineSettings(include_shear=True)
 
-from workspace.pipelines.advanced.no_lens_light.initialize import lens_sie_source_sersic
+from workspace.pipelines.advanced.no_lens_light.initialize import (
+    lens_sie__source_sersic,
+)
 from workspace.pipelines.advanced.no_lens_light.power_law.from_initialize import (
-    lens_pl_source_sersic,
+    lens_power_law__source_sersic,
 )
 from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import (
     lens_pl_subhalo_source_sersic,
 )
 
-pipeline_initialize = lens_sie_source_sersic.make_pipeline(
+pipeline_initialize = lens_sie__source_sersic.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_power_law = lens_pl_source_sersic.make_pipeline(
+pipeline_power_law = lens_power_law__source_sersic.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 

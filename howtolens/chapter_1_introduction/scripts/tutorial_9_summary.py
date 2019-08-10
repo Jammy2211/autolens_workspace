@@ -1,4 +1,5 @@
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as ma
 from autolens.lens import ray_tracing, lens_fit
 from autolens.model.galaxy import galaxy as g
@@ -21,7 +22,7 @@ from autolens.lens.plotters import ray_tracing_plotters
 # 5) A tracer can make an image-plane + source-plane strong lens system.
 # 6) The Universe's cosmology can be input into this tracer to convert units to physical values.
 # 7) The tracer's image-plane image can be used to simulate strong lens imaging observed on a real telescope.
-# 8) This data can be fitted, so to as quantify how well a model strong lens system represents the observed image.
+# 8) This instrument can be fitted, so to as quantify how well a model strong lens system represents the observed image.
 
 # In this summary, we'll consider how flexible the tools PyAutoLens gives you are to study every aspect of a strong
 # lens system. Lets get a 'fit' to a strong lens, by setting up an image, mask, tracer, etc.
@@ -32,8 +33,8 @@ chapter_path = (
     "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
 )
 
-# The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
-data_path = chapter_path + "data/"
+# The instrument path specifies where the instrument was output in the last tutorial, this time in the directory 'chapter_path/instrument'
+data_path = chapter_path + "instrument/"
 
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",

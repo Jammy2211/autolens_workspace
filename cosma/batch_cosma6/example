@@ -10,7 +10,7 @@
 #SBATCH -A dp004
 #SBATCH -t 48:00:00   # longest job
 #SBATCH --mail-type=END                      # notifications for job done & fail
-#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+#SBATCH --mail-user=your_name@durham.ac.uk
 
 module purge
 module load python/3.6.5

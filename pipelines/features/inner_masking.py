@@ -51,11 +51,9 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__inner_mask"
+    pipeline_name = "pipeline_feature__inner_mask"
 
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed an inner_mask_radii, a settings tag is automatically generated and added to the phase
     # path to make it clear what mask_radii was used. The settings tag, phase name and phase paths are shown for 2
@@ -72,6 +70,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # inner_mask_radii=None -> phase_path='phase_name/settings'
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     ### PHASE 1 ###
 
@@ -88,9 +87,8 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
         )
 
     phase1 = phase_imaging.PhaseImaging(
-        phase_name="phase_1_use_inner_radii_input",
+        phase_name="phase_1__use_inner_radii_input",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
@@ -115,17 +113,16 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_use_inner_radii_input"
+                "phase_1__use_inner_radii_input"
             ).variable.galaxies.lens
 
             self.galaxies.source = results.from_phase(
-                "phase_1_use_inner_radii_input"
+                "phase_1__use_inner_radii_input"
             ).variable.galaxies.source
 
     phase2 = LensSubtractedPhase(
-        phase_name="phase_2_circular_mask",
+        phase_name="phase_2__circular_mask",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
             source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),

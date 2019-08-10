@@ -47,11 +47,9 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl__redshifts_lens_and_source"
+    pipeline_name = "pipeline_feature__redshifts_lens_and_source"
 
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # Unlike other features, the redshifts of the lens and source do not change the settings tag and phase path. Thus,
     # our output will simply go to the phase path:
@@ -59,9 +57,10 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # phase_path = 'phase_name/settings'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/settings_tag/'
+    # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
@@ -87,9 +86,8 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = LensSourceX1Phase(
-        phase_name="phase_1_x1_source",
+        phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=redshift_lens,
@@ -118,17 +116,16 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.lens
 
             self.galaxies.source = results.from_phase(
-                "phase_1_x1_source"
+                "phase_1__x1_source"
             ).variable.galaxies.source
 
     phase2 = LensSourceX2Phase(
-        phase_name="phase_2_x2_source",
+        phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
-        tag_phases=True,
         galaxies=dict(
             lens=gm.GalaxyModel(
                 redshift=1.0, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear

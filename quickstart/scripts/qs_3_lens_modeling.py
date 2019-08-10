@@ -1,5 +1,6 @@
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
 from autolens.data.plotters import ccd_plotters
@@ -8,7 +9,7 @@ from autolens.model.galaxy import galaxy_model as gm
 from autolens.pipeline.phase import phase_imaging
 
 # So, we want to fit an image with a lens model - and we want the combination of light profiles and mass profiles
-# which fit the data well. How do we go about doing this?
+# which fit the instrument well. How do we go about doing this?
 
 # To begin, we have to choose the parametrization of our lens model. We don't need to specify the values of its light
 # and mass profiles (e.g. the centre, einstein_radius, etc.) - only the profiles themselves. In this example, we'll use
@@ -20,16 +21,16 @@ from autolens.pipeline.phase import phase_imaging
 
 # I'll let you into a secret - this is the same lens model I used to simulate the image we're going to fit.
 
-# So, how do we infer the light and mass profile parameters that give a good fit to our data?
+# So, how do we infer the light and mass profile parameters that give a good fit to our instrument?
 
 # Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this lens
-# model to create a tracer and fit the image-data, and quantify how good the fit was using its likelihood. If we keep
-# guessing lens models, eventually we'd find one that provides a good fit (i.e. high likelihood) to the data!
+# model to create a tracer and fit the image-instrument, and quantify how good the fit was using its likelihood. If we keep
+# guessing lens models, eventually we'd find one that provides a good fit (i.e. high likelihood) to the instrument!
 
 # It may sound surprising, but this is actually the basis of how lens modeling works. However, we can do a lot better
 # than random guessing. Instead, we track the likelihood of our previous guesses, and guess more models using combinations
 # of parameters that gave higher likelihood solutions previously. The idea is that if a set of parameters provided a
-# good fit to the data, another set with similar values probably will too.
+# good fit to the instrument, another set with similar values probably will too.
 
 # This is called a 'non-linear search' and its a fairly common problem faced by scientists. In the howtolens lectures,
 # we go fully into the details of how a non-linear search works. For the quick-start tutorial, we'll keep things
@@ -48,11 +49,11 @@ from autolens.pipeline.phase import phase_imaging
 # 3) Repeat this many times, using the likelihoods of previous fits (typically those with a high likelihood) to
 #    guide us to the lens models with the highest liikelihood.
 
-# Firstly, we need to load the CCD data we're going to it, so you'll again need to change the path below to that of
+# Firstly, we need to load the CCD instrument we're going to it, so you'll again need to change the path below to that of
 # your workspace.
 workspace_path = "/path/to/user/autolens_workspace/"
 
-data_path = workspace_path + "data/example/lens_mass_and_x1_source"
+data_path = workspace_path + "instrument/example/lens_sie__source_sersic"
 
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
@@ -82,8 +83,7 @@ source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic)
 
 phase = phase_imaging.PhaseImaging(
     phase_name="quick_start_non_linear_search",
-    galaxies=dict(lens_galaxy=lens_galaxy_model),
-    galaxies=dict(source_galaxy=source_galaxy_model),
+    galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 
@@ -95,10 +95,10 @@ phase.optimizer.const_efficiency_mode = True
 phase.optimizer.n_live_points = 50
 phase.optimizer.sampling_efficiency = 0.5
 
-# To run the phase, we simply pass it the image data we want to fit, and the non-linear search begins! As the phase
+# To run the phase, we simply pass it the image instrument we want to fit, and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.
 
-# Depending on the complexity of the model being fitted (e.g. the number of parameters) and resolution of the data,
+# Depending on the complexity of the model being fitted (e.g. the number of parameters) and resolution of the instrument,
 # a non-linear search can take a while to run. Maybe minutes, maybe hours, maybe days! The image below should only
 # take 10 minutes or so. Whilst you wait, lets explore the workspace a bit:
 
@@ -111,8 +111,8 @@ phase.optimizer.sampling_efficiency = 0.5
 #    settings, what PyAutoLens visualizes, the default MultiNest settings and the priors we associated to the different
 #    parameters of different light and mass profiles.
 
-# 3) The next folder is autolens_workspace/data. Not much to say here - before you begin modeling your own lenses, you
-#    put their data here (e.g. .fits files of the image, noise-map and PSF).
+# 3) The next folder is autolens_workspace/instrument. Not much to say here - before you begin modeling your own lenses, you
+#    put their instrument here (e.g. .fits files of the image, noise-map and PSF).
 
 # 4) Finally, checkout the autolens_workspace/tools folder. This contains some Python scripts for doing standard tasks
 #    in PyAutoLens, such as simuating strong lens imaging, drawing custom masks for lens modeling and marking the

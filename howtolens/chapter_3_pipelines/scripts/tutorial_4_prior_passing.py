@@ -36,7 +36,7 @@ def pass_priors(self, previous_results):
 
 #    Unfortunately, this doesn't always work. Lens modeling is prone to an effect called 'over-fitting' where we
 #    underestimate the errors on our lens model parameters. This is especially true when we take the shortcuts we're
-#    used to in early phases - aggresive masking, reduced data, simplified lens models, constant efficiency mode, etc.
+#    used to in early phases - aggresive masking, reduced instrument, simplified lens models, constant efficiency mode, etc.
 
 #    Therefore, the priors/widths file is our fallback. If the error on a parameter is suspiciously small, we instead
 #    use the value specified in the widths file. These values are chosen based on our experience as being a good

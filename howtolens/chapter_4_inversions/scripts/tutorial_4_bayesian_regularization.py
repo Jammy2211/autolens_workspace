@@ -1,5 +1,5 @@
-from autolens.data import ccd
-from autolens.data import simulated_ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 from autolens.model.profiles import light_profiles as lp
 from autolens.model.profiles import mass_profiles as mp
@@ -27,7 +27,7 @@ def simulate():
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = ccd.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
         shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
@@ -58,7 +58,7 @@ def simulate():
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
-    return simulated_ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
         tracer=tracer,
         pixel_scale=0.05,
         exposure_time=300.0,
@@ -173,7 +173,7 @@ lens_fit_plotters.plot_fit_subplot(
 
 # So there we have it, we now understand regularization and its purpose. But there is one nagging question that remains,
 # how do I choose the regularization coefficient? We can't use our likelihood, as decreasing the regularization
-# coefficient will always increase the likelihood, because it allows the source reconstruction to fit the data better.
+# coefficient will always increase the likelihood, because it allows the source reconstruction to fit the instrument better.
 print("Likelihood Without Regularization:")
 print(no_regularization_fit.likelihood_with_regularization)
 print("Likelihood With Normal Regularization:")
@@ -189,14 +189,14 @@ print(high_regularization_fit.likelihood_with_regularization)
 #   over-fitted. Thus, the Bayesian evidence decreases. Obviously, if the image is poorly fitted, the residuals don't
 #   appear Gaussian either, but the poor fit will lead to a decrease in Bayesian evidence decreases all the same!
 
-# - This leaves us with a large number of solutions which all fit the data equally well (e.g., to the noise level). To
+# - This leaves us with a large number of solutions which all fit the instrument equally well (e.g., to the noise level). To
 #   determine the best-fit from these solutions, the Bayesian evidence quantifies the complexity of each solution's
 #   source reconstruction. If the inversion requires lots of pixels and a low level of regularization to achieve a good
 #   fit, the Bayesian evidence decreases. It penalizes solutions which are complex, which, in a Bayesian sense, are less
 #   probable (you may want to look up 'Occam's Razor').
 
 # If a really complex source reconstruction is paramount to fitting the image accurately, than that is probably the
-# correct solution. However, the Bayesian evidence ensures we only invoke this more complex solution when the data
+# correct solution. However, the Bayesian evidence ensures we only invoke this more complex solution when the instrument
 # necessitates it.
 
 # Lets take a look at the Bayesian evidence:

@@ -8,7 +8,8 @@
 ######################################
 
 import autofit as af
-from autolens.data import ccd
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
 from autolens.data.array import mask as msk
 
 import os
@@ -26,11 +27,11 @@ af.conf.instance = af.conf.Config(
 
 data_type = "example"
 data_name = (
-    "lens_light_mass_and_x1_source"
+    "lens_sersic_sie__source_sersic"
 )  # An example simulated image without any lens light and a source galaxy.
 pixel_scale = 0.1
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_mass_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
@@ -47,21 +48,21 @@ mask = msk.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
-# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
-# Below, we'll use a 3 phase example pipeline to fit the data with a mass model and pixelized source reconstruction.
-# Checkout _workspace/pipelines/examples/lens_sie_shear_source_inversion.py_' for a full description of
+# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens instrument to its run function.
+# Below, we'll use a 3 phase example pipeline to fit the instrument with a mass model and pixelized source reconstruction.
+# Checkout _workspace/pipelines/examples/lens_sie__source_inversion.py' for a full description of
 # the pipeline.
 
-from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+from workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
-pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]
 )
 
 pipeline.run(data=ccd_data, mask=mask)
 
 data_type = "example"
-data_name = "lens_light_mass_and_x1_source_2"
+data_name = "lens_sersic_sie__source_sersic__2"
 pixel_scale = 0.1
 
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
@@ -79,9 +80,9 @@ mask = msk.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
-from workspace.pipelines.simple import lens_sersic_sie_shear_source_sersic
+from workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
-pipeline = lens_sersic_sie_shear_source_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]
 )
 

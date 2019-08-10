@@ -6,22 +6,22 @@ import os
 
 # In this example, we will demonstrate how the appearance of figures in PyAutoLens can be customized. To do this, we
 # will use the the image of the strong lens slacs1430+4105 from a .fits file and plot it using the
-# function autolens.data.plotters.array_plotters.plot_array.
+# function autolens.instrument.plotters.array_plotters.plot_array.
 
-# The customization functions demonstrated in this example are generic to any 2D array of data, and can therefore be
+# The customization functions demonstrated in this example are generic to any 2D array of instrument, and can therefore be
 # applied to the plotting of noise-maps, PSF's, residual maps, chi-squared maps, etc.
 
 # Setup the path to the workspace, using a relative directory name.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-# We have included the .fits data required for this example in the directory
+# We have included the .fits instrument required for this example in the directory
 # 'workspace/output/data/example/slacs1430+4105/'.
 
 # First, lets setup the path to the .fits file of the image.
 data_type = "example"
 data_name = "slacs1430+4105"
 
-# Create the path where the data will be loaded from, which in this case is
+# Create the path where the instrument will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
 data_path = array_util.make_and_return_path(
     path=workspace_path, folder_names=["data", data_type, data_name]

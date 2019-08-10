@@ -56,15 +56,14 @@ def make_pipeline(phase_folders=None):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pl_multi_plane"
-    pipeline_name = pipeline_tagging.pipeline_name_from_name_and_settings(
-        pipeline_name=pipeline_name
-    )
+    pipeline_name = "pipeline_multi_plane"
+    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(pipeline_tag)
 
     # In phase 1, we will:
 
@@ -84,7 +83,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.los2.light.centre_1 = af.GaussianPrior(mean=-2.4, sigma=0.1)
 
     phase1 = LensPhase(
-        phase_name="phase_1_light_subtraction",
+        phase_name="phase_1__light_subtraction",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(light=lp.EllipticalSersic),
@@ -110,8 +109,8 @@ def make_pipeline(phase_folders=None):
             return (
                 image
                 - results.from_phase(
-                    "phase_1_light_subtraction"
-                ).unmasked_lens_plane_model_image
+                    "phase_1__light_subtraction"
+                ).unmasked_lens_power_lawane_model_image
             )
 
         def pass_priors(self, results):
@@ -120,7 +119,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase2 = LensSubtractedPhase(
-        phase_name="phase_2_source_parametric",
+        phase_name="phase_2__source_parametric",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
@@ -144,8 +143,8 @@ def make_pipeline(phase_folders=None):
             return (
                 image
                 - results.from_phase(
-                    "phase_1_light_subtraction"
-                ).unmasked_lens_plane_model_image
+                    "phase_1__light_subtraction"
+                ).unmasked_lens_power_lawane_model_image
             )
 
         def pass_priors(self, results):
@@ -160,7 +159,7 @@ def make_pipeline(phase_folders=None):
             )
 
     phase3 = InversionPhase(
-        phase_name="phase_3_inversion_init",
+        phase_name="phase_3__inversion_init",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
@@ -189,14 +188,14 @@ def make_pipeline(phase_folders=None):
             return (
                 image
                 - results.from_phase(
-                    "phase_1_light_subtraction"
-                ).unmasked_lens_plane_model_image
+                    "phase_1__light_subtraction"
+                ).unmasked_lens_power_lawane_model_image
             )
 
         def pass_priors(self, results):
 
             self.galaxies.lens.mass = results.from_phase(
-                "phase_3_inversion_init"
+                "phase_3__inversion_init"
             ).variable.lens.mass
 
             self.galaxies.los_0.mass.centre_0 = results[0].constant.los_0.light.centre_0
@@ -207,11 +206,11 @@ def make_pipeline(phase_folders=None):
             self.galaxies.los_2.mass.centre_1 = results[0].constant.los_2.light.centre_1
 
             self.galaxies.source = results.from_phase(
-                "phase_3_inversion_init"
+                "phase_3__inversion_init"
             ).variable.source
 
     phase4 = SingleLensPlanePhase(
-        phase_name="phase_4_single_plane",
+        phase_name="phase_4__single_plane",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
@@ -240,28 +239,28 @@ def make_pipeline(phase_folders=None):
             return (
                 image
                 - results.from_phase(
-                    "phase_1_light_subtraction"
-                ).unmasked_lens_plane_model_image
+                    "phase_1__light_subtraction"
+                ).unmasked_lens_power_lawane_model_image
             )
 
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_4_single_plane"
+                "phase_4__single_plane"
             ).variable.lens
 
             self.galaxies.los_0.mass = results.from_phase(
-                "phase_4_single_plane"
+                "phase_4__single_plane"
             ).variable.los_0.mass
             self.galaxies.los_1.mass = results.from_phase(
-                "phase_4_single_plane"
+                "phase_4__single_plane"
             ).variable.los_1.mass
             self.galaxies.los_2.mass = results.from_phase(
-                "phase_4_single_plane"
+                "phase_4__single_plane"
             ).variable.los_2.mass
 
             self.galaxies.source = results.from_phase(
-                "phase_4_single_plane"
+                "phase_4__single_plane"
             ).variable.source
 
     phase5 = MultiPlanePhase(
