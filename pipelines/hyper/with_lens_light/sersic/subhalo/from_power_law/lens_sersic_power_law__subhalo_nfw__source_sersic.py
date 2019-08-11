@@ -97,9 +97,15 @@ def make_pipeline(
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.mass = results.from_phase(
                 "phase_1__lens_sersic_power_law__source_sersic"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.mass
+
+            if pipeline_settings.include_shear:
+
+                self.galaxies.lens.shear = results.from_phase(
+                    "phase_1__lens_sersic_power_law__source_sersic"
+                ).constant.galaxies.lens.shear
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24) ###
 

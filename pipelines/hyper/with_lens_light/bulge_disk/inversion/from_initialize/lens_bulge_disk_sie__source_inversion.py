@@ -132,9 +132,11 @@ def make_pipeline(
                 "phase_4__lens_bulge_disk_sie__source_sersic"
             ).constant.galaxies.lens.mass
 
-            self.galaxies.lens.shear = results.from_phase(
-                "phase_4__lens_bulge_disk_sie__source_sersic"
-            ).constant.galaxies.lens.shear
+            if pipeline_settings.include_shear:
+
+                self.galaxies.lens.shear = results.from_phase(
+                    "phase_4__lens_bulge_disk_sie__source_sersic"
+                ).constant.galaxies.lens.shear
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
@@ -309,9 +311,11 @@ def make_pipeline(
                 "phase_2__lens_bulge_disk_sie__source_inversion_magnification"
             ).constant.galaxies.lens.mass
 
-            self.galaxies.lens.shear = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion_magnification"
-            ).constant.galaxies.lens.shear
+            if pipeline_settings.include_shear:
+
+                self.galaxies.lens.shear = results.from_phase(
+                    "phase_2__lens_bulge_disk_sie__source_inversion_magnification"
+                ).constant.galaxies.lens.shear
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
