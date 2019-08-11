@@ -371,9 +371,17 @@ def make_pipeline(pipeline_settings, phase_folders=None):
         def pass_priors(self, results):
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.light = results.from_phase(
                 "phase_3__lens_sersic_sie__source_sersic"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.light
+
+            self.galaxies.lens.mass = results.from_phase(
+                "phase_3__lens_sersic_sie__source_sersic"
+            ).constant.galaxies.lens.mass
+
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_3__lens_sersic_sie__source_sersic"
+            ).constant.galaxies.lens.shear
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
@@ -444,9 +452,13 @@ def make_pipeline(pipeline_settings, phase_folders=None):
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_4__source_inversion_initialize_magnification"
-            ).constant.galaxies.source
+            ).constant.galaxies.source.pixelization
+
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_4__source_inversion_initialize_magnification"
+            ).constant.galaxies.source.regularization
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
@@ -508,9 +520,17 @@ def make_pipeline(pipeline_settings, phase_folders=None):
         def pass_priors(self, results):
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.light = results.from_phase(
                 "phase_5__lens_sersic_sie__source_inversion_magnification"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.light
+
+            self.galaxies.lens.mass = results.from_phase(
+                "phase_5__lens_sersic_sie__source_inversion_magnification"
+            ).constant.galaxies.lens.mass
+
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_5__lens_sersic_sie__source_inversion_magnification"
+            ).constant.galaxies.lens.shear
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
@@ -579,9 +599,13 @@ def make_pipeline(pipeline_settings, phase_folders=None):
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_6__source_inversion_initialize"
-            ).hyper_combined.constant.galaxies.source
+            ).hyper_combined.constant.galaxies.source.pixelization
+
+            self.galaxies.source.regularization= results.from_phase(
+                "phase_6__source_inversion_initialize"
+            ).hyper_combined.constant.galaxies.source.regularization
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 

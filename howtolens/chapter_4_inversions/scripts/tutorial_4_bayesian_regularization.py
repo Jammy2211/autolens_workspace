@@ -30,7 +30,7 @@ def simulate():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+        shape=(180, 180), pixel_scale=0.05,
     )
 
     lens_galaxy = g.Galaxy(
@@ -53,8 +53,7 @@ def simulate():
     )
 
     tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
-        galaxies=[lens_galaxy],
-        galaxies=[source_galaxy_0],
+        galaxies=[lens_galaxy, source_galaxy_0],
         image_plane_grid_stack=image_plane_grid_stack,
     )
 
@@ -159,7 +158,7 @@ inversion_plotters.plot_pixelization_values(
 source_galaxy = g.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficient=(100.0,)),
+    regularization=reg.Constant(coefficient=100.0),
 )
 
 high_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)

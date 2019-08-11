@@ -27,7 +27,7 @@ def simulate():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+        shape=(180, 180), pixel_scale=0.05,
     )
 
     lens_galaxy = g.Galaxy(

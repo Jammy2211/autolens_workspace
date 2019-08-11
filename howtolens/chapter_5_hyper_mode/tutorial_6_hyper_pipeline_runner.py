@@ -32,7 +32,7 @@ def simulate():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05, psf_shape=(11, 11)
+        shape=(180, 180), pixel_scale=0.05,
     )
 
     lens_galaxy = g.Galaxy(
@@ -121,12 +121,13 @@ def simulate():
 
 # Plot CCD before running.
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Remember, we need to define and pass our mask to the hyper_galaxy pipeline from the beginning.
 mask = msk.Mask.circular(
     shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
 )
+
+ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 
 ### HYPER PIPELINE SETTINGS ###
 
@@ -154,7 +155,7 @@ pipeline_settings = pl.PipelineSettingsHyper(
 from workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t4_hyper"]
+    pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t6_hyper"]
 )
 
-pipeline_hyper.run(data=ccd_data)
+pipeline_hyper.run(data=ccd_data, mask=mask)
