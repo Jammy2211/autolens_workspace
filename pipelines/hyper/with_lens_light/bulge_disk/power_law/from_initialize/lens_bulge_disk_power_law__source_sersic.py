@@ -75,7 +75,7 @@ def make_pipeline(
     class LensSourcePhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ### Lens Light, Sersic -> Sersic, Exp -> Exp ###
+            ### Lens Light, Bulge -> Bulge, Disk -> Disk ###
 
             self.galaxies.lens.bulge = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_sersic"
@@ -121,7 +121,7 @@ def make_pipeline(
                 "phase_4__lens_bulge_disk_sie__source_sersic"
             ).variable.galaxies.source
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

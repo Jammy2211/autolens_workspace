@@ -73,7 +73,7 @@
 #    of complex lens models to be fitted, and allow for different pipelines to be hyper_combined together so that the early
 #    phases of a pipeline can be reused when fitting more complex models later on.
 
-# 3) 'pipelines/hyper' and 'runners/hyper'. Hyper functionality is where PyAutoLens adapt the model fit to the instrument
+# 3) 'pipelines/hyper_galaxy' and 'runners/hyper_galaxy'. Hyper functionality is where PyAutoLens adapt the model fit to the instrument
 #     its fitting. This includes fitting for the background sky subtracton in the image and scaling the noise-map to
 #     prevent over-fitting small portions of the instrument. Only once you're confident with PyAutoLens would I
 #    recommend that you start experimenting with this functionality!

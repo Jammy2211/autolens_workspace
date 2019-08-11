@@ -345,7 +345,7 @@ lens_fit_plotters.plot_fit_subplot(
 # Thus, we quickly end up in a regime where the choice of regularization coefficient is ill defined. There is no hope
 # that we achieve an average chi-squared of 1 in evwry pixel, when a sub-set of pixels have such large values.
 
-# With that, we have motivated hyper-mode. To put it simply, if we don't adapt our pixelizations, regularization and
+# With that, we have motivated hyper_galaxy-mode. To put it simply, if we don't adapt our pixelizations, regularization and
 # noise-map, we will get solutions which fit the image poorly, regularizate the source sub-optimally and over-fit a
 # small sub-set of image pixels instead of providing a global fit to the lensed source. Clearly, what we want are
 # an adaptive pixelization, regularization scheme and noise-map, which is exaclty what I'm going to show you in

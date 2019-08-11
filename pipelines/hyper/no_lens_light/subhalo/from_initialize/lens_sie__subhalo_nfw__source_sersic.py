@@ -59,7 +59,7 @@ def make_pipeline(
         hyper_galaxies=pipeline_settings.hyper_galaxies,
         hyper_image_sky=pipeline_settings.hyper_image_sky,
         hyper_background_noise=pipeline_settings.hyper_background_noise,
-        include_shear=pipeline_settings.include_shear
+        include_shear=pipeline_settings.include_shear,
     )
 
     phase_folders.append(pipeline_name)
@@ -86,9 +86,13 @@ def make_pipeline(
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.mass = results.from_phase(
                 "phase_1__lens_sie__source_sersic"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.mass
+
+            self.galaxies.shear = results.from_phase(
+                "phase_1__lens_sie__source_sersic"
+            ).constant.galaxies.shear
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24)
 
@@ -143,7 +147,7 @@ def make_pipeline(
                 .galaxies.source.light.phi
             )
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -248,7 +252,7 @@ def make_pipeline(
                 .galaxies.source.light.phi
             )
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

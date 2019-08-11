@@ -8,7 +8,7 @@ from autolens.model.inversion import regularization as reg
 
 import os
 
-# Welcome to the hyper pipeline runner! This script is identical to the
+# Welcome to the hyper_galaxy pipeline runner! This script is identical to the
 # 'runners/simple/runner__lens_sersic_sie__source_sersic.py' script, except at the end when we add pipelines together. So,
 # if you already know how the simple runners work, jump ahead to our pipeline imports. If you don't, I recommmend you
 # checout the 'simple' pipelines, before using this script.
@@ -68,8 +68,10 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=pixel_scale,
 )
 
-# We need to define and pass our mask to the hyper pipeline from the beginning.
-mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+# We need to define and pass our mask to the hyper_galaxy pipeline from the beginning.
+mask = msk.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+)
 
 # Plot CCD before running.
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
@@ -92,7 +94,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 
 ### HYPER FITTING ###
 
-# Okay, so in this, the hyper runner, we're going to use hyper-galaxies. Whats a hyper-galaxy? It's a galaxy which is
+# Okay, so in this, the hyper_galaxy runner, we're going to use hyper_galaxy-galaxies. Whats a hyper_galaxy-galaxy? It's a galaxy which is
 # also used to scale the noise-map of the observed image. This is necessary when there are regions of the image that
 # are poorly fitted by the model, for example, because:
 
@@ -110,14 +112,14 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 # In the advanced pipelines, we defined pipeline settings which controlled various aspects of the pipelines, such as
 # the model complexity and assumtpions we made about the lens and source galaxy models.
 
-# The pipeline settings we used in the advanced runners all still apply, but hyper-fitting brings with it the following
+# The pipeline settings we used in the advanced runners all still apply, but hyper_galaxy-fitting brings with it the following
 # new settings:
 
-# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+# - If hyper_galaxy-galaxies are used to scale the noise in each component of the image (default True)
 
 # - If the background sky is modeled throughout the pipeline (default False)
 
-# - If the level of background noise is scaled throughout the pipeline (default True)
+# - If the level of background noise is normal throughout the pipeline (default True)
 
 pipeline_settings = pl.PipelineSettingsHyper(
     hyper_galaxies=True,

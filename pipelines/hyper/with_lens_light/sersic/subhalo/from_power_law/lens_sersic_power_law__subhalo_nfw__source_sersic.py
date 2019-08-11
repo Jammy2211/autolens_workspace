@@ -144,7 +144,7 @@ def make_pipeline(
                 "phase_1__lens_sersic_power_law__source_sersic"
             ).variable.galaxies.source.light.phi
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -224,7 +224,7 @@ def make_pipeline(
                 "phase_1__subhalo_search"
             ).best_result.variable.galaxies.source
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

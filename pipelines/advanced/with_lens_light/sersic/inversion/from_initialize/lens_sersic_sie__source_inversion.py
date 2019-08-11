@@ -14,7 +14,7 @@ from autolens.model.inversion import regularization as reg
 
 # Phase 1:
 
-# Description: initialize the inversion's pixelization and regularization hyper-parameters, using a previous lens
+# Description: initialize the inversion's pixelization and regularization hyper_galaxy-parameters, using a previous lens
 #              light and mass model.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear

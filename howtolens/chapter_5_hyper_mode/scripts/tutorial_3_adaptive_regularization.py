@@ -18,7 +18,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # Just like the last tutorial, this raises a question, how do we adapt our regularization scheme to the source, before
 # we've recontructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from
-# a previous phase of the pipeline, that we've begun calling the 'hyper-image'.
+# a previous phase of the pipeline, that we've begun calling the 'hyper_galaxy-image'.
 
 # This is the usual simulate function, using the compact source of the previous tutorials.
 
@@ -140,8 +140,8 @@ inversion_plotters.plot_pixelization_regularization_weights(
     inversion=fit.inversion, should_plot_centres=True
 )
 
-# Okay, so now lets look at adaptive regularization in action, by setting up a hyper-image and using the
-# 'AdaptiveBrightness' regularization scheme. This introduces additional hyper-parameters, that I'll explain next.
+# Okay, so now lets look at adaptive regularization in action, by setting up a hyper_galaxy-image and using the
+# 'AdaptiveBrightness' regularization scheme. This introduces additional hyper_galaxy-parameters, that I'll explain next.
 
 hyper_image_1d = fit.model_image(return_in_2d=False)
 
@@ -192,8 +192,8 @@ lens_fit_plotters.plot_fit_subplot(
 
 # Okay, so how does this adaptive regularization scheme work?
 
-# For every source-pixel, we have a mapping between that pixel and a set of pixels in the hyper-image. Therefore,
-# for every source-pixel, if we sum the values of all hyper-image pixels that map to it we get an estimate of how much
+# For every source-pixel, we have a mapping between that pixel and a set of pixels in the hyper_galaxy-image. Therefore,
+# for every source-pixel, if we sum the values of all hyper_galaxy-image pixels that map to it we get an estimate of how much
 # of the lensed source's signal we expect will be reconstructed. We call this each pixel's 'pixel signal'.
 
 # From here, the idea is simple, if source-pixels have a higher pixel-signal we use this information to regularize it
@@ -203,7 +203,7 @@ lens_fit_plotters.plot_fit_subplot(
 # This works as follows:
 
 # 1) For every source pixel, compute its pixel-signal, that is the summed flux of all corresponding image-pixels in
-#    the hyper-image.
+#    the hyper_galaxy-image.
 
 # 2) Divide every pixel-signal by the number of image-pixels that map directly to that source-pixel. In doing so, all
 #    pixel-signals are relative. This means that source-pixels which by chance map to more image-pixels than their
@@ -212,7 +212,7 @@ lens_fit_plotters.plot_fit_subplot(
 
 # 3) Divide the pixel-signals by the maximum pixel signal, so that they range between 0.0 and 1.0.
 
-# 4) Raise these values to the power of the hyper-parameter *signal_scale*. For a *signal_scale* of 0.0, all pixels
+# 4) Raise these values to the power of the hyper_galaxy-parameter *signal_scale*. For a *signal_scale* of 0.0, all pixels
 #    will therefore have the same final pixel-scale. As the *signal_scale* increases, a sharper transition of
 #    of pixel-signal values arises between regions with high and low pixel-signals.
 

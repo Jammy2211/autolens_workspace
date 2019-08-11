@@ -120,7 +120,7 @@ def make_pipeline(
                 "phase_4__lens_bulge_disk_sie__source_inversion"
             ).variable.galaxies.lens.bulge.sersic_index
 
-            ### Lens Light to Light + Mass, Sersic -> Sersic, Exp -> Exp ###
+            ### Lens Light to Light + Mass, Bulge -> Bulge, Disk -> Disk ###
 
             self.galaxies.lens.disk_mass.centre = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_inversion"

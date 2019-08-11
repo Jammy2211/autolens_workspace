@@ -25,7 +25,7 @@ import os
 
 # Phase 2:
 
-# Description: initialize the inversion's pixelization and regularization hyper-parameters, using a previous lens mass
+# Description: initialize the inversion's pixelization and regularization hyper_galaxy-parameters, using a previous lens mass
 #              model.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiMagnification + Constant

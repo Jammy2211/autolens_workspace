@@ -64,7 +64,7 @@ def make_pipeline(
         hyper_galaxies=pipeline_settings.hyper_galaxies,
         hyper_image_sky=pipeline_settings.hyper_image_sky,
         hyper_background_noise=pipeline_settings.hyper_background_noise,
-        include_shear=pipeline_settings.include_shear
+        include_shear=pipeline_settings.include_shear,
     )
 
     phase_folders.append(pipeline_name)
@@ -140,7 +140,7 @@ def make_pipeline(
                 .galaxies.lens.light.centre
             )
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -225,7 +225,7 @@ def make_pipeline(
                 "phase_2__lens_sie__source_sersic"
             ).variable.galaxies.source
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

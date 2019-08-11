@@ -22,7 +22,7 @@ af.conf.instance = af.conf.Config(
 # of that pipeline we want to load results from. Lets load the results of the pipeline's final phase.
 
 pipeline = "pl__lens_sersic_sie_shear_source_x1_sersic"
-phase = "phase_3_lens_sersic_sie_shear_source_sersic"
+phase = "phase_3__lens_sersic_sie_shear_source_sersic"
 
 # First, we create an instance of the aggregator, which takes the output path as input, telling it where to load
 # results from.

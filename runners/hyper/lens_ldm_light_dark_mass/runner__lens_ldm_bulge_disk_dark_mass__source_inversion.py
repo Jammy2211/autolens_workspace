@@ -68,8 +68,10 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=pixel_scale,
 )
 
-# We need to define and pass our mask to the hyper pipeline from the beginning.
-mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+# We need to define and pass our mask to the hyper_galaxy pipeline from the beginning.
+mask = msk.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+)
 
 # Plot CCD before running.
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
@@ -95,14 +97,14 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 # In the advanced pipelines, we defined pipeline settings which controlled various aspects of the pipelines, such as
 # the model complexity and assumtpions we made about the lens and source galaxy models.
 
-# The pipeline settings we used in the advanced runners all still apply, but hyper-fitting brings with it the following
+# The pipeline settings we used in the advanced runners all still apply, but hyper_galaxy-fitting brings with it the following
 # new settings:
 
-# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+# - If hyper_galaxy-galaxies are used to scale the noise in each component of the image (default True)
 
 # - If the background sky is modeled throughout the pipeline (default False)
 
-# - If the level of background noise is scaled throughout the pipeline (default True)
+# - If the level of background noise is normal throughout the pipeline (default True)
 
 
 ### PIPELINE SETTINGS ###

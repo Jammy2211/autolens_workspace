@@ -14,7 +14,7 @@ from autolens.model.inversion import regularization as reg
 
 # Phase 1:
 
-# Description: initialize the inversion's pixelization and regularization hyper-parameters, using a previous lens
+# Description: initialize the inversion's pixelization and regularization hyper_galaxy-parameters, using a previous lens
 #              light and mass model.
 # Lens Light: EllipticalSersic + EllipticalExponential
 # Lens Mass: EllipitcalIsothermal + ExternalShear
@@ -94,7 +94,7 @@ def make_pipeline(
     class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
+            ## Lens Light & Mass, Bulge -> Bulge, Disk -> Disk, SIE -> SIE, Shear -> Shear ###
 
             self.galaxies.lens = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_sersic"
@@ -144,7 +144,7 @@ def make_pipeline(
     class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ## Lens Light & Mass, Sersic -> Sersic, Exp -> Exp, SIE -> SIE, Shear -> Shear ###
+            ## Lens Light & Mass, Bulge -> Bulge, Disk -> Disk, SIE -> SIE, Shear -> Shear ###
 
             self.galaxies.lens = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_sersic"

@@ -113,7 +113,7 @@ def make_pipeline(
                 "phase_4__lens_bulge_disk_sie__source_inversion"
             ).variable.galaxies.lens.bulge.sersic_index
 
-            ### Lens Light to Light + Mass, Sersic -> Sersic, Exp -> Exp ###
+            ### Lens Light to Light + Mass, Bulge -> Bulge, Disk -> Disk ###
 
             self.galaxies.lens.disk_mass.centre = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_inversion"
@@ -157,11 +157,15 @@ def make_pipeline(
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_4__lens_bulge_disk_sie__source_inversion"
-            ).hyper_combined.constant.galaxies.source
+            ).hyper_combined.constant.galaxies.source.pixelization
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_4__lens_bulge_disk_sie__source_inversion"
+            ).hyper_combined.constant.galaxies.source.regularization
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

@@ -41,13 +41,13 @@ result_path = array_util.make_and_return_path(
 residual_map_path = result_path + "/image/fits/fit_residual_map.fits"
 chi_squared_map_path = result_path + "/image/fits/fit_chi_squared_map.fits"
 
-# Now, lets load this array as a scaled array. A scaled array is an ordinary NumPy array, but it also includes a pixel
+# Now, lets load this array as a normal array. A normal array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
 image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=image_path, hdu=0, pixel_scale=0.03
 )
 
-# Now, lets load this image as a scaled array. A scaled array is an ordinary NumPy array, but it also includes a pixel
+# Now, lets load this image as a normal array. A normal array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the image to arc-second coordinates.
 residual_map = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=residual_map_path, hdu=0, pixel_scale=0.03
@@ -96,7 +96,7 @@ array_plotters.plot_array(
 # so as to load up all the results of the pipeline. We can then access the results of every phase.
 from autolens.data.instrument import abstract_data
 from autolens.data.instrument import ccd
-from workspace.pipelines.examples import lens_sersic_sie_source_x1_sersic
+from workspace.pipelines.examples import lens_sersic_sie__source_x1_sersic
 
 image_path = data_path + "/image.fits"
 psf_path = data_path + "/psf.fits"
@@ -109,7 +109,7 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=0.03,
 )
 
-pipeline = lens_sersic_sie_source_x1_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_x1_sersic.make_pipeline(
     pipeline_path="example/" + data_name
 )
 

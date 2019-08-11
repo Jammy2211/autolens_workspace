@@ -154,7 +154,7 @@ def make_pipeline(
     class LensSubtractedPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
 
-            ## Lens Light Sersic -> Sersic, Exp -> Exp ##
+            ## Lens Light Bulge -> Bulge, Disk -> Disk ##
 
             self.galaxies.lens.bulge = results.from_phase(
                 "phase_1__lens_bulge_disk"
@@ -229,7 +229,7 @@ def make_pipeline(
                     "phase_2__lens_sie__source_sersic"
                 ).constant.galaxies.lens.shear
 
-            ### Source Light, Sersic -> Sersic, Exp -> Exp ###
+            ### Source Light, Bulge -> Bulge, Disk -> Disk ###
 
             self.galaxies.source = results.from_phase(
                 "phase_2__lens_sie__source_sersic"
@@ -292,7 +292,7 @@ def make_pipeline(
                     "phase_2__lens_sie__source_sersic"
                 ).variable.galaxies.lens.shear
 
-            ### Source Light, Sersic -> Sersic, Exp -> Exp ###
+            ### Source Light, Bulge -> Bulge, Disk -> Disk ###
 
             self.galaxies.source = results.from_phase(
                 "phase_2__lens_sie__source_sersic"

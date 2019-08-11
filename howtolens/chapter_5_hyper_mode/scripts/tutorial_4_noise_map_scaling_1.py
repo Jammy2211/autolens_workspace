@@ -148,14 +148,14 @@ inversion_plotters.plot_pixelization_values(
 # central structure was the problem). So, the obvious question is can our adaptive pixelization and regularization
 # schemes address the problem?
 
-# Lets find out, using this solution as our hyper-image. In this case, our hyper-image isn't a perfect fit to the instrument.
+# Lets find out, using this solution as our hyper_galaxy-image. In this case, our hyper_galaxy-image isn't a perfect fit to the instrument.
 # This isn't ideal, but shouldn't be to problematic either. Although the solution leaves residuals it still
-# captures the source's overall structure. The pixelization / regularization hyper-parameters have enough flexibility
-# in how they use this image to adapt themselves, so the hyper-image doesn't *need* to be perfect.
+# captures the source's overall structure. The pixelization / regularization hyper_galaxy-parameters have enough flexibility
+# in how they use this image to adapt themselves, so the hyper_galaxy-image doesn't *need* to be perfect.
 
 hyper_image_1d = fit.model_image(return_in_2d=False)
 
-# You'll note that, unlike before, this source galaxy receives two types of hyper-images, a 'hyper_galaxy_image'
+# You'll note that, unlike before, this source galaxy receives two types of hyper_galaxy-images, a 'hyper_galaxy_image'
 # (like before) and a 'hyper_model_image' (which is new). I'll come back to this later.
 
 source_adaptive = g.Galaxy(
@@ -214,7 +214,7 @@ print("Evidence = ", fit.evidence)
 
 # This is where noise-map scaling comes in. If we have no alternative, the best way to get Gaussian-distribution (e.g.
 # more uniform) chi-squared fit is to increase the variances of image pixels with high chi-squared values. So, that's
-# what we're going to do, by making our source galaxy a 'hyper-galaxy', that is, a galaxy which use's its hyper
+# what we're going to do, by making our source galaxy a 'hyper_galaxy-galaxy', that is, a galaxy which use's its hyper_galaxy
 # image's to increase the noise in pixels where it has a large signal. Let take a look.
 
 source_hyper_galaxy = g.Galaxy(
@@ -250,28 +250,28 @@ lens_fit_plotters.plot_fit_subplot(
 
 print("Evidence using baseline variances = ", 8911.66)
 
-print("Evidence using variances scaled by hyper galaxy = ", fit.evidence)
+print("Evidence using variances normal by hyper_galaxy galaxy = ", fit.evidence)
 
 # Yep, a huge increase in the 1000's! Clearly, if our model doesn't fit the instrument well, we *need* to increase the noise
 # wherever the fit is poor to ensure that our use of the Bayesian evidence is well defined.
 
 # So, how does the HyperGalaxy that we attached to the source-galaxy above actually scale the noise?
 
-# First, it creates a 'contribution_map' from the hyper-image of the lensed source galaxy. This also uses the
+# First, it creates a 'contribution_map' from the hyper_galaxy-image of the lensed source galaxy. This also uses the
 # 'hyper_model_image', which is the overall model-image of the best-fit lens model. In this tutorial, because our
-# strong lens imaging only has a source galaxy emitting light, the hyper-image of the source galaxy is the same as the
-# hyper_model_image. However, In the next tutorial, we'll introduce the lens galaxy's light, such that each hyper
-# galaxy image is different to the hyper model image!
+# strong lens imaging only has a source galaxy emitting light, the hyper_galaxy-image of the source galaxy is the same as the
+# hyper_model_image. However, In the next tutorial, we'll introduce the lens galaxy's light, such that each hyper_galaxy
+# galaxy image is different to the hyper_galaxy model image!
 
 # We compute the contribution map as follows:
 
-# 1) Add the 'contribution_factor' hyper-parameter value to the 'hyper_model_image'.
+# 1) Add the 'contribution_factor' hyper_galaxy-parameter value to the 'hyper_model_image'.
 
-# 2) Divide the 'hyper_galaxy_image' by the hyper-model image created in step 1).
+# 2) Divide the 'hyper_galaxy_image' by the hyper_galaxy-model image created in step 1).
 
 # 3) Divide the image created in step 2) by its maximum value, such that all pixels range between 0.0 and 1.0.
 
-# Lets look at a few contribution maps, generated using hyper-galaxy's with different contribution factors.
+# Lets look at a few contribution maps, generated using hyper_galaxy-galaxy's with different contribution factors.
 
 source_contribution_factor_1 = g.Galaxy(
     redshift=1.0,
@@ -345,13 +345,13 @@ array_plotters.plot_array(
 #    This means that only noise-map values where the contribution map has large values (e.g. near 1.0) are going to
 #    remain in this image, with the majority of values multiplied by contribution map values near 0.0.
 
-# 2) Raise the noise-map generated in step 1) above to the power of the hyper-parameter noise_power. Thus, for large
+# 2) Raise the noise-map generated in step 1) above to the power of the hyper_galaxy-parameter noise_power. Thus, for large
 #    values of noise_power, the largest noise-map values will be increased even more, raising their noise the most.
 
-# 3) Multiply the noise-map values generated in step 2) by the hyper-parameter noise_factor. Again, this is a means by
+# 3) Multiply the noise-map values generated in step 2) by the hyper_galaxy-parameter noise_factor. Again, this is a means by
 #    which PyAutoLens is able to scale the noise-map values.
 
-# Lets compare two fits, one where a hyper-galaxy scales the noise-map, and one where it dooesn't.
+# Lets compare two fits, one where a hyper_galaxy-galaxy scales the noise-map, and one where it dooesn't.
 
 source_no_hyper_galaxy = g.Galaxy(
     redshift=1.0,
@@ -405,9 +405,9 @@ lens_fit_plotters.plot_fit_subplot(
     zoom_around_mask=True,
 )
 
-print("Evidence using variances scaled by hyper galaxy = ", fit.evidence)
+print("Evidence using variances normal by hyper_galaxy galaxy = ", fit.evidence)
 
-# Feel free to play around with the noise_factor and noise_power hyper-parameters above. It should be fairly clear
+# Feel free to play around with the noise_factor and noise_power hyper_galaxy-parameters above. It should be fairly clear
 # what they do; they simply change the amount by which the noise is increased.
 
 # And with that, we've completed the first of two tutorials on noise-map scaling. To end, I want you to have a quick

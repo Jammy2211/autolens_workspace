@@ -125,7 +125,7 @@ def make_pipeline(phase_folders=None):
     # results of previous phases to setup new phases.
     #
     # You should see that this is done by using the phase_name of the phase we're interested in, which in the above
-    # code is named 'phase_1_lens_light_only' (you can check this on line 73 above).
+    # code is named 'phase_1__lens_light_only' (you can check this on line 73 above).
     #
     # We'll do this again in phase 3, and throughout all of the pipelines in this chapter and the workspace examples.
 

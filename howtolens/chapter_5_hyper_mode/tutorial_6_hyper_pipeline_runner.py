@@ -10,6 +10,7 @@ from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
 
 import os
+
 # In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
 # using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a light profile,
 # to initialize the mass model, and then switch to an inversion.
@@ -117,12 +118,15 @@ def simulate():
         add_noise=True,
     )
 
+
 # Plot CCD before running.
 ccd_data = simulate()
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# Remember, we need to define and pass our mask to the hyper pipeline from the beginning.
-mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+# Remember, we need to define and pass our mask to the hyper_galaxy pipeline from the beginning.
+mask = msk.Mask.circular(
+    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+)
 
 ### HYPER PIPELINE SETTINGS ###
 
@@ -131,11 +135,11 @@ mask = msk.Mask.circular(shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale,
 
 # Hyper-fitting brings with it the following settings:
 
-# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+# - If hyper_galaxy-galaxies are used to scale the noise in each component of the image (default True)
 
 # - If the background sky is modeled throughout the pipeline (default False)
 
-# - If the level of background noise is scaled throughout the pipeline (default True)
+# - If the level of background noise is normal throughout the pipeline (default True)
 
 pipeline_settings = pl.PipelineSettingsHyper(
     hyper_galaxies=True,
@@ -150,7 +154,7 @@ pipeline_settings = pl.PipelineSettingsHyper(
 from workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t4_hyper"],
+    pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t4_hyper"]
 )
 
 pipeline_hyper.run(data=ccd_data)

@@ -92,9 +92,13 @@ def make_pipeline(
 
             ### Lens Mass, PL -> PL, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.mass = results.from_phase(
                 "phase_4__lens_sie__source_inversion"
-            ).constant.galaxies.lens
+            ).constant.galaxies.mass
+
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_4__lens_sie__source_inversion"
+            ).constant.galaxies.shear
 
             ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24)
 
@@ -113,11 +117,15 @@ def make_pipeline(
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_4__lens_sie__source_inversion"
-            ).hyper_combined.constant.galaxies.source
+            ).hyper_combined.constant.galaxies.source.pixelization
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_4__lens_sie__source_inversion"
+            ).hyper_combined.constant.galaxies.source.regularization
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -201,11 +209,15 @@ def make_pipeline(
                 .galaxies.subhalo.mass.scale_radius
             )
 
-            ### Source Light, Sersic -> Sersic ###
+            ### Source Light, Inversion -> Inversion ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_4__lens_sie__source_inversion"
-            ).hyper_combined.constant.galaxies.source
+            ).hyper_combined.constant.galaxies.source.pixelization
+
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_4__lens_sie__source_inversion"
+            ).hyper_combined.constant.galaxies.source.regularization
 
             if pipeline_settings.hyper_galaxies:
 

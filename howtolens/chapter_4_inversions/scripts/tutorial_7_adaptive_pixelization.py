@@ -198,7 +198,7 @@ inversion_plotters.plot_pixelization_values(
 # However, the Voronoi magnification grid is still far from optimal. There are still a lot of source-pixels
 # effectively fitting noise, and it may be that we would achieve even better solutions if the central regions of the
 # source were reconstructed using even more pixels. So, how do we improve on this? Well, you'll have to wait until
-# chapter 5, when we introduce PyAutoLens's adaptive functionality, which has the umbrella term of 'hyper-fitting'.
+# chapter 5, when we introduce PyAutoLens's adaptive functionality, which has the umbrella term of 'hyper_galaxy-fitting'.
 
 # In the mean time, you may wish to experiment with using both Rectangular and VoronoiMagnification grids to fit
 # lenses, which can be easily achieve by changing the input pixeliation given to a pipeline.

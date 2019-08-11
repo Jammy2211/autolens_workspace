@@ -18,14 +18,14 @@ from autolens.plotters import array_plotters
 # raises an interesting question; how do we adapt our source pixelization to the reconstructed source, before we've
 # actually reconstructed the source and therefore know what to adapt it too?
 
-# To do this, we define a 'hyper-image' of the lensed source galaxy, which is a model image of the source computed
+# To do this, we define a 'hyper_galaxy-image' of the lensed source galaxy, which is a model image of the source computed
 # using a previous lens model fit to the image (e.g. in an earlier phase of a pipeline). Because this image tells us
 # where in the image our source is located, it means that by tracing these pixels to the source-plane we can use them
 # to tell us where we need to adapt our source pixelization!
 
 # So, lets go into the details of how this works. We'll use the same compact source galaxy as the previous tutorial and
 # we'll begin by fitting it with a magnification based pixelizationo. Why? So we can use its model image to set up
-# the hyper-image.
+# the hyper_galaxy-image.
 
 # This is the usual simulate function, using the compact source of the previous tutorial.
 
@@ -100,7 +100,7 @@ source_magnification = g.Galaxy(
 )
 
 
-# This convenience function fits the image using a source-galaxy (which may have a hyper-image attatched to it).
+# This convenience function fits the image using a source-galaxy (which may have a hyper_galaxy-image attatched to it).
 
 
 def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
@@ -143,15 +143,15 @@ inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_centres=True
 )
 
-# Finally, we can use this fit to set up our hyper-image. Sure, the hyper-image isn't perfect, after all the were clear
+# Finally, we can use this fit to set up our hyper_galaxy-image. Sure, the hyper_galaxy-image isn't perfect, after all the were clear
 # residuals in the central regions of the reconstructed source. But it's *okay*, it'll certainly gives us enough
 # information on where the lensed source is located to adapt our pixelization.
 hyper_image_1d = fit.model_image(return_in_2d=False)
 
 # Okay, so now lets take a look at our brightness based adaption in action! Below, we define a source-galaxy using
 # our new 'VoronoiBrightnessImage' pixelization and use this to fit the lens-instrument. One should note that we also
-# attach the hyper-image to this galaxy. This is because it's pixelization uses this hyper-image to adapt, thus the
-# galaxy needs to know what hyper-image it should use!
+# attach the hyper_galaxy-image to this galaxy. This is because it's pixelization uses this hyper_galaxy-image to adapt, thus the
+# galaxy needs to know what hyper_galaxy-image it should use!
 
 source_brightness = g.Galaxy(
     redshift=1.0,
@@ -195,7 +195,7 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 # Okay, so we can now adapt our pixelization to the morphology of our lensed source galaxy. To my knowledge,
 # this is the *best* approach one can take the lens modeling. Its more tricky to implement (as I'll explain next)
-# and introduces a few extra hyper-parameters that we'll fit for. But, the pay-off is more than worth it, as we fit
+# and introduces a few extra hyper_galaxy-parameters that we'll fit for. But, the pay-off is more than worth it, as we fit
 # our imaging data better and (typically) end up using far fewer source pixels to fit the instrument, as we don't 'waste'
 # pixels reconstructing regions of the source-plane where there is no signal.
 
@@ -206,14 +206,14 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 # In simple terms, this algorithm works as follows:
 
-# 1) Give the KMeans algorithm a set of weighted instrument (e.g. determined from the hyper image).
+# 1) Give the KMeans algorithm a set of weighted instrument (e.g. determined from the hyper_galaxy image).
 
 # 2) For a given number of clusters, this algorithm will find a set of (y,x) coordinates or 'clusters' that are equally
 #    distributed over the weighted instrument. Where the instrument is weighted higher, more clusters will congregate, and visa
 #    versa.
 
 # 3) The returned (y,x) 'clusters' then make up our source-pixel centres and, as described, there will be more
-#    wherever our hyper-image is brighter! Like we did for the magnification based pixelization, we can then trace
+#    wherever our hyper_galaxy-image is brighter! Like we did for the magnification based pixelization, we can then trace
 #    these coordinates to the source-plane to define our source-pixel grid.
 
 # This is a fairly simplistic description of a KMeans algorithm. Feel free to check out the links below for a more
@@ -229,11 +229,11 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 # This image, called the 'cluster_weight_map'  is generated using the 'weight_floor' and 'weight_power' parameters
 # of the VoronoiBrightness pixelization. The cluster weight map is generated following 4 steps:
 
-# 1) Increase all values of the hyper-image that are < 0.02 to 0.02. This is necessary because negative values and
+# 1) Increase all values of the hyper_galaxy-image that are < 0.02 to 0.02. This is necessary because negative values and
 #    zeros break the KMeans clustering algorithm.
 
-# 2) Divide all values of this image by its maximum value, such that the hyper-image now only contains values between
-#    0.0 and 1.0 (where the values of 1.0 were the maximum values of the hyper-image)
+# 2) Divide all values of this image by its maximum value, such that the hyper_galaxy-image now only contains values between
+#    0.0 and 1.0 (where the values of 1.0 were the maximum values of the hyper_galaxy-image)
 
 # 3) Add the weight_floor to all values (a weight_floor of 0.0 therefore does not change the cluster weight map)
 
@@ -309,7 +309,7 @@ array_plotters.plot_array(
     zoom_around_mask=True,
 )
 
-# So, as expected, when we increased the weight-power the brightest regions of the hyper-image become weighted higher
+# So, as expected, when we increased the weight-power the brightest regions of the hyper_galaxy-image become weighted higher
 # relative to the fainter regions. This is exactly what we want, as it means the KMeans algorithm will adapt its
 # pixelization to the brightest regions of the source.
 
@@ -378,7 +378,7 @@ inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_centres=True
 )
 
-# And that is how the first feature in hyper-mode works.
+# And that is how the first feature in hyper_galaxy-mode works.
 
 # Finally, lets think about the Bayesian evidence, which we have noted went to significantly higher values than the
 # magnification-based gird. At this point, it might be worth reminding yourself how the Bayesian evidence works, by
@@ -393,7 +393,7 @@ inversion_plotters.plot_pixelization_values(
 # solution simpler is to use fewer pixels overall!
 
 # This provides a second benefit. If the best solutions in our fit want to use the fewest source-pixels possible, and
-# PyAutoLens can now access those solutions, this means that hyper-mode will run much faster than the
+# PyAutoLens can now access those solutions, this means that hyper_galaxy-mode will run much faster than the
 # magnification based grid! Put simply, fewer source-pixels means lower computational overheads. YAY!
 
 # Tutorial 2 done, next up, adaptive regularization!

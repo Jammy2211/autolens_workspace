@@ -111,7 +111,7 @@ def make_pipeline(
                 "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.source
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 

@@ -386,7 +386,7 @@ def make_pipeline(
             ).inversion.constant.galaxies.source
 
     phase5 = InversionPhase(
-        phase_name="phase_5_lens_sersic_sie__source_inversion",
+        phase_name="phase_5__lens_sersic_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(

@@ -169,7 +169,7 @@ lens_fit_plotters.plot_fit_subplot(
 # that adapt to the source morphology, as not only are they adapting to where the source *is*, they adapt to where
 # *it isn't* (and therefore where the lens galaxy is), by changing the source-pixel sizes and regularization.
 
-# Okay, so now, lets create our hyper-images and use them create the contribution maps of our lens and source galaxies.
+# Okay, so now, lets create our hyper_galaxy-images and use them create the contribution maps of our lens and source galaxies.
 # Note below that we now create separate model images for our lens and source galaxies. This is what will allow us to
 # create contribution maps for each.
 
@@ -202,7 +202,7 @@ lens_galaxy_hyper = g.Galaxy(
         contribution_factor=0.3, noise_factor=4.0, noise_power=1.5
     ),
     hyper_model_image_1d=hyper_image_1d,
-    hyper_galaxy_image_1d=hyper_image_lens_1d,  # <- The lens get its own hyper image.
+    hyper_galaxy_image_1d=hyper_image_lens_1d,  # <- The lens get its own hyper_galaxy image.
 )
 
 source_magnification_hyper = g.Galaxy(
@@ -213,7 +213,7 @@ source_magnification_hyper = g.Galaxy(
         contribution_factor=2.0, noise_factor=2.0, noise_power=3.0
     ),
     hyper_galaxy_image_1d=hyper_image_1d,
-    hyper_model_image_1d=hyper_image_source_1d,  # <- The source get its own hyper image.
+    hyper_model_image_1d=hyper_image_source_1d,  # <- The source get its own hyper_galaxy image.
 )
 
 fit = fit_lens_data_with_lens_and_source_galaxy(
@@ -254,7 +254,7 @@ array_plotters.plot_array(
 
 # Okay, so clearly the contribution maps successfully decompose the image into its different components. Now, we can
 # use each contribution map to scale different regions of the noise-map. This is key, as from the fit above, it was
-# clear that both the lens and source required the noise to be scaled, but they had different chi-squared values
+# clear that both the lens and source required the noise to be normal, but they had different chi-squared values
 # ( > 150 and ~ 30), meaning they required different levels of noise-scaling. Lets see how much our fit improves
 # and Bayesian evidence increases when we include noise-scaling
 
@@ -274,10 +274,10 @@ lens_fit_plotters.plot_fit_subplot(
 
 print("Evidence using baseline variances = ", 8861.51)
 
-print("Evidence using hyper-galaxy scaled variances = ", fit.evidence)
+print("Evidence using hyper_galaxy-galaxy normal variances = ", fit.evidence)
 
-# Great, and with that, we've covered hyper galaxies. You might be wondering, what happens if there are multiple lens
-# galaxies? or multiple source galaxies? Well, as you'd expect, PyAutoLens will make each a hyper-galaxy, and therefore
+# Great, and with that, we've covered hyper_galaxy galaxies. You might be wondering, what happens if there are multiple lens
+# galaxies? or multiple source galaxies? Well, as you'd expect, PyAutoLens will make each a hyper_galaxy-galaxy, and therefore
 # scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of the image
 # require different levels of noise-map scaling.
 
@@ -297,11 +297,11 @@ hyper_image_sky = hd.HyperImageSky(sky_scale=1.0)
 # an inaccurate background sky subtraction in our instrument reduction during the PyAutoLens model fitting.
 
 # We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the
-# 'noise_scale' hyper-parameter. This value is added to every pixel in the noise-map.
+# 'noise_scale' hyper_galaxy-parameter. This value is added to every pixel in the noise-map.
 
 hyper_background_noise = hd.HyperBackgroundNoise(noise_scale=1.0)
 
-# To use these hyper-instrument parameters, we pass them to a lens-fit just like we do our tracer.
+# To use these hyper_galaxy-instrument parameters, we pass them to a lens-fit just like we do our tracer.
 
 pixelization_grid = source_magnification_hyper.pixelization.pixelization_grid_from_grid_stack(
     grid_stack=lens_data.grid_stack,
@@ -339,7 +339,7 @@ lens_fit_plotters.plot_fit_subplot(
 # are fitted by the inversion. As we've learnt in this chapter, this isn't problematic when we have our adaptive
 # regularization scheme because the regularization coefficient will be increased to large values.
 
-# However, if you ran a full PyAutoLens analysis in hyper-mode (which we cover in the next tutorial), you'd find the
+# However, if you ran a full PyAutoLens analysis in hyper_galaxy-mode (which we cover in the next tutorial), you'd find the
 # method still dedicates a lot of source-pixels to fit these regions of the image, _even though they have no source_.
 # Why is this? Well, its because although these pixels have no source, they still have a relatively high S/N value
 # (of order 5-10) due to the lens galaxy (e.g. its flux before it is subtracted). The inversion when reconstructing
@@ -351,6 +351,6 @@ lens_fit_plotters.plot_fit_subplot(
 # importantly, it will dramatically reduce the number of source pixels we use to fit the instrument. And what does fewer
 # soruce-pixels mean? Much, much faster run times. Yay!
 
-# With that, we have introduced every feature of hyper-mode. The only thing left for us to do is to bring it all
+# With that, we have introduced every feature of hyper_galaxy-mode. The only thing left for us to do is to bring it all
 # together, and consider how we use all of these features in PyAutoLens pipelines. That is what we'll discuss in the
-# next tutorial, and then you'll be ready to perform your own hyper-fits!
+# next tutorial, and then you'll be ready to perform your own hyper_galaxy-fits!

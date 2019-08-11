@@ -85,6 +85,6 @@ pipeline.run(data=ccd_data)
 #
 # ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# from workspace.pipelines.simple import lens_sie_source_x2_sersic
-# pipeline = lens_sie_source_x2_sersic.make_pipeline(phase_folders=[data_type, data_name])
+# from workspace.pipelines.simple import lens_sie__source_x2_sersic
+# pipeline = lens_sie__source_x2_sersic.make_pipeline(phase_folders=[data_type, data_name])
 # pipeline.run(instrument=ccd_data)

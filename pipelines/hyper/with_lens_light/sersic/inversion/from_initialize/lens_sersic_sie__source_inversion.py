@@ -12,7 +12,7 @@ from autolens.model.inversion import regularization as reg
 # component.
 #
 # This first reconstructs the source using a magnification based pxielized inversion, initialized using the
-# light-profile source fit of a previous pipeline. This ensures that the hyper-image used by the pipeline_settings.pixelization and
+# light-profile source fit of a previous pipeline. This ensures that the hyper_galaxy-image used by the pipeline_settings.pixelization and
 # pipeline_settings.regularization is fitted using a pixelized source-plane, which ensures that irregular structure in the lensed
 # source is adapted too.
 
@@ -41,8 +41,8 @@ from autolens.model.inversion import regularization as reg
 
 # Phase 3:
 
-# Description: initialize the inversion's pixelization and regularization, using the input hyper-pixelization,
-#              hyper-regularization and the previous lens mass model.
+# Description: initialize the inversion's pixelization and regularization, using the input hyper_galaxy-pixelization,
+#              hyper_galaxy-regularization and the previous lens mass model.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiBrightnessImage + Constant
@@ -52,7 +52,7 @@ from autolens.model.inversion import regularization as reg
 
 # Phase 4:
 
-# Description: Refine the lens mass model using the hyper-inversion.
+# Description: Refine the lens mass model using the hyper_galaxy-inversion.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: pipeline_settings.pixelization + pipeline_settings.regularization
@@ -111,11 +111,15 @@ def make_pipeline(
 
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.mass = results.from_phase(
                 "phase_3__lens_sersic_sie__source_sersic"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.mass
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_3__lens_sersic_sie__source_sersic"
+            ).constant.galaxies.lens.shear
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -201,11 +205,15 @@ def make_pipeline(
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_1__source_inversion_magnification_initialization"
-            ).constant.galaxies.source
+            ).constant.galaxies.source.pixelization
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_1__source_inversion_magnification_initialization"
+            ).constant.galaxies.source.regularization
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -278,11 +286,15 @@ def make_pipeline(
 
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
-            self.galaxies.lens = results.from_phase(
+            self.galaxies.lens.mass = results.from_phase(
                 "phase_2__lens_sersic_sie__source_inversion_magnification"
-            ).constant.galaxies.lens
+            ).constant.galaxies.lens.mass
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.lens.shear = results.from_phase(
+                "phase_2__lens_sersic_sie__source_inversion_magnification"
+            ).constant.galaxies.lens.shear
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -367,11 +379,15 @@ def make_pipeline(
 
             ### Source Inversion, Inv -> Inv ###
 
-            self.galaxies.source = results.from_phase(
+            self.galaxies.source.pixelization = results.from_phase(
                 "phase_3__source_inversion_initialization"
-            ).hyper_combined.constant.galaxies.source
+            ).hyper_combined.constant.galaxies.source.pixelization
 
-            ## Set all hyper-galaxies if feature is turned on ##
+            self.galaxies.source.regularization = results.from_phase(
+                "phase_3__source_inversion_initialization"
+            ).hyper_combined.constant.galaxies.source.regularization
+
+            ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
