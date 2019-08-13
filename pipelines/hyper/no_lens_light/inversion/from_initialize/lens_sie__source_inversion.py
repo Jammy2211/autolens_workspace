@@ -275,6 +275,12 @@ def make_pipeline(
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
+            if pipeline_settings.hyper_galaxies:
+
+                self.galaxies.source.hyper_galaxy = (
+                    results.last.hyper_combined.constant.galaxies.source.hyper_galaxy
+                )
+
             if pipeline_settings.hyper_image_sky:
 
                 self.hyper_image_sky = (
@@ -322,7 +328,7 @@ def make_pipeline(
         hyper_galaxy=pipeline_settings.hyper_galaxies,
         include_background_sky=pipeline_settings.hyper_image_sky,
         include_background_noise=pipeline_settings.hyper_background_noise,
-        inversion=True,
+        inversion=False,
     )
 
     ### PHASE 4 ###
