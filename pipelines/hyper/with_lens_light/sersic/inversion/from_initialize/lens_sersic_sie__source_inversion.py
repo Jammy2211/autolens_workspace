@@ -389,11 +389,11 @@ def make_pipeline(
 
             self.galaxies.source.pixelization = results.from_phase(
                 "phase_3__source_inversion_initialization"
-            ).hyper_combined.constant.galaxies.source.pixelization
+            ).constant.galaxies.source.pixelization
 
             self.galaxies.source.regularization = results.from_phase(
                 "phase_3__source_inversion_initialization"
-            ).hyper_combined.constant.galaxies.source.regularization
+            ).constant.galaxies.source.regularization
 
             ## Set all hyper_galaxy-galaxies if feature is turned on ##
 
