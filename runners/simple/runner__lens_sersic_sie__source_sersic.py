@@ -56,12 +56,6 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# The example autolens_workspace instrument comes with a mask already, if you look in
-# workspace/data/example/lens_light_and_x1_source/ you'll see a mask.fits file!
-mask = msk.load_mask_from_fits(
-    mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
-)
-
 # Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens instrument to its run function.
 # Below, we'll use a 3 phase example pipeline to fit the instrument with a parametric lens light, mass and source light
 # profile. Checkout _workspace/pipelines/examples/lens_sersic_sie_shear_source_sersic.py_' for a full description of

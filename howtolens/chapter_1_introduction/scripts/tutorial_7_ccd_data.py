@@ -16,7 +16,7 @@ from autolens.data.plotters import ccd_plotters
 # Point-Spread Function, which we can simulate as a Gaussian using the imaging module.
 psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-# To simulate ccd instrument, we use the normal grid stack. However, it should be noted that when we simulate the image,
+# To simulate ccd instrument, we use the hyper grid stack. However, it should be noted that when we simulate the image,
 # this will be used to generate a 'padded grid', which pads its 2D dimensions relative to the PSF-shape, to ensure that
 # the edge's of our simulated image are not degraded.
 image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
@@ -46,7 +46,7 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 

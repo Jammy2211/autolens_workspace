@@ -114,7 +114,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -185,7 +185,7 @@ class CustomPhase(phase_imaging.PhaseImaging):
 # code is using a number of Python's object-oriented features. In general, I expect that'll you'll simply copy the code
 # above and use it as a template).
 
-# We can now create this custom phase like we did a normal phase before. When we run the phase, the pass_prior function
+# We can now create this custom phase like we did a hyper phase before. When we run the phase, the pass_prior function
 # will be called automatically and thus change the priors as we specified above. If you look at the 'model.info'
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
 custom_phase = CustomPhase(

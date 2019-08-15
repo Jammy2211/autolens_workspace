@@ -60,10 +60,10 @@
 # This extends te phase with 3 addition phases, which do the following:
 
 # 1) Simultaneously fit all hyper_galaxy-galaxies, the background sky and background noise hyper_galaxy parameters, using the best-fit
-#    lens and source models from the normal phase. Thus, this phase only scales the noise and the image. This is called
+#    lens and source models from the hyper phase. Thus, this phase only scales the noise and the image. This is called
 #    the 'hyper_galaxy' phase.
 
-# 2) Fit all of the inversion parameters, using the pixelization and regularization scheme that were used in the normal
+# 2) Fit all of the inversion parameters, using the pixelization and regularization scheme that were used in the hyper
 #    phase. Typically, this would be a brightness-based pixelization and adaptive regularization scheme, but if it were
 #    magnification based and constant it would work just fine. Again, the previous best-fit lens and source models are
 #    used. This is called the 'inversion' phase.
@@ -74,7 +74,7 @@
 
 # In the pipeline below, you'll see we use the results of these phases (typically just the 'hyper_combined' phase) to
 # setup the hyper_galaxy-galaxies, hyper_galaxy-instrument, pixelization and regularization in the next phase. Infact, in this pipeline
-# all these components will then be setup as 'constants' and therefore fixed during each phases 'normal' optimization
+# all these components will then be setup as 'constants' and therefore fixed during each phases 'hyper' optimization
 # that changes lens and source models.
 
 ### HYPER MASKING ###
@@ -303,7 +303,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
             # we make a choice not to pass the hyper_galaxy-galaxy of the source. Why? Because there is a good chance
             # our simplistic single Sersic profile won't yet provide a good fit to the source.
             #
-            # If this is the case, it normal noise map won't be very good. It isn't until we are fitting the
+            # If this is the case, it hyper noise map won't be very good. It isn't until we are fitting the
             # source using an inversion that we begin to pass its hyper_galaxy galaxy, e.g. when we can be confident our fit
             # to the instrument is reliable!
 
@@ -365,7 +365,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # So, its beneficial for us to introduce an intermediate inversion using a magnification based grid, that will fit
     # all components of the source accurately, so that we have a good quality hyper_galaxy image for the brightness based
     # pixelization and adaptive regularization. Its for this reason we've also omitted the hyper_galaxy source galaxy from
-    # the phases above; if the hyper_galaxy-image were poor, so is the normal noise-map!
+    # the phases above; if the hyper_galaxy-image were poor, so is the hyper noise-map!
 
     class InversionPhase(phase_imaging.PhaseImaging):
         def pass_priors(self, results):
@@ -513,7 +513,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     ### PHASE 6 ###
 
     # In phase 6, we finally use our hyper_galaxy-mode features to adapt the pixelization to the source's morphology
-    # and the regularization to its brightness! This phase works like a normal initialization phase, whereby we fix
+    # and the regularization to its brightness! This phase works like a hyper initialization phase, whereby we fix
     # the lens and source models to the best-fit of the previous phase and just optimize the hyper_galaxy-parameters.
 
     class InversionPhase(phase_imaging.PhaseImaging):
@@ -603,7 +603,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 "phase_6__source_inversion_initialize"
             ).hyper_combined.constant.galaxies.source.pixelization
 
-            self.galaxies.source.regularization= results.from_phase(
+            self.galaxies.source.regularization = results.from_phase(
                 "phase_6__source_inversion_initialize"
             ).hyper_combined.constant.galaxies.source.regularization
 

@@ -50,7 +50,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -88,7 +88,7 @@ lens_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy],
     galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=lens_data.grid_stack,
@@ -218,7 +218,7 @@ def simulate_complex_source():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy],
         galaxies=[
             source_galaxy_0,
@@ -256,7 +256,7 @@ ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy],
     galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=lens_data.grid_stack,
@@ -336,7 +336,7 @@ source_galaxy = g.Galaxy(
     regularization=reg.Constant(coefficient=1.0),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy],
     image_plane_grid_stack=lens_data.grid_stack,
     border=lens_data.border,

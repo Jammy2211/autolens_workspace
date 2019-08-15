@@ -51,7 +51,7 @@ perturber = g.Galaxy(
 source_galaxy = g.Galaxy(redshift=1.0)
 
 # We'll use a tracer to compute our multi-plane deflection angles.
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, perturber, source_galaxy], image_plane_grid_stack=grid_stack
 )
 

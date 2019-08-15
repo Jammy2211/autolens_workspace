@@ -23,8 +23,8 @@ def make_pipeline(phase_folders=None):
 
     # Pipelines takes a path as input, which in conjunction with the pipeline name specify the directory structure of
     # its results in the output folder. In pipeline runners we'll pass the pipeline path
-    # 'howtolens/c3_t1_lens_and_source', which means the results of this pipeline will go to the folder
-    # 'output/howtolens/c3_t1_lens_and_source/pipeline_light_and_source'.
+    # 'howtolens/c3_t1_lens__source', which means the results of this pipeline will go to the folder
+    # 'output/howtolens/c3_t1_lens__source/pipeline_light_and_source'.
 
     # By default, the pipeline path is an empty string, such that without a pipeline path the results go to the output
     # directory 'output/pipeline_name', which in this case would be 'output/pipeline_light_and_source'.
@@ -75,7 +75,7 @@ def make_pipeline(phase_folders=None):
     # this phase ensuring the anti-annular masks above is used).
 
     phase1 = phase.PhaseImaging(
-        phase_name="phase_1__lens_light_only",
+        phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=gm.GalaxyModel(redshift=0.5, light=lp.EllipticalSersic)),
         mask_function=mask_function,
@@ -117,7 +117,7 @@ def make_pipeline(phase_folders=None):
 
     class LensSubtractedPhase(phase.PhaseImaging):
         def modify_image(self, image, results):
-            phase_1_results = results.from_phase("phase_1__lens_light_only")
+            phase_1_results = results.from_phase("phase_1__lens_sersic")
             return image - phase_1_results.unmasked_lens_plane_model_image
 
     # The function above demonstrates the most important thing about pipelines - that every phase has access to the
@@ -125,14 +125,14 @@ def make_pipeline(phase_folders=None):
     # results of previous phases to setup new phases.
     #
     # You should see that this is done by using the phase_name of the phase we're interested in, which in the above
-    # code is named 'phase_1__lens_light_only' (you can check this on line 73 above).
+    # code is named 'phase_1__lens_sersic' (you can check this on line 73 above).
     #
     # We'll do this again in phase 3, and throughout all of the pipelines in this chapter and the workspace examples.
 
     # We setup phase 2 as per usual. Note that we don't need to pass the modify image function.
 
     phase2 = LensSubtractedPhase(
-        phase_name="phase_2__source_only",
+        phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -163,8 +163,8 @@ def make_pipeline(phase_folders=None):
             # The previous results is a 'list' in python. The zeroth index entry of the list maps to the results of
             # phase 1, the first entry to phase 2, and so on.
 
-            phase_1_results = results.from_phase("phase_1__lens_light_only")
-            phase_2_results = results.from_phase("phase_2__source_only")
+            phase_1_results = results.from_phase("phase_1__lens_sersic")
+            phase_2_results = results.from_phase("phase_2__lens_sie__source_sersic")
 
             # To link two priors together, we invoke the 'variable' attribute of the previous results. By invoking
             # 'variable', this means that:
@@ -222,7 +222,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.lens.mass = phase_2_results.variable.galaxies.lens.mass
 
     phase3 = LensSourcePhase(
-        phase_name="phase_3__both",
+        phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(

@@ -96,7 +96,7 @@ los_2 = g.Galaxy(
 
 # Use these galaxies to setup a multi-plane tracer, which will generate the image-plane image for the simulated CCD
 # instrument. This tracer orders galaxies by redshift and performs ray-tracing based on their line-of-sight redshifts.
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy, los_0, los_1, los_2],
     image_plane_grid_stack=image_plane_grid_stack,
 )

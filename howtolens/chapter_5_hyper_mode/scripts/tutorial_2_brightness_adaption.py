@@ -61,7 +61,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -115,7 +115,7 @@ def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
         pixelization=pixelization_grid
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=grid_stack_with_pixelization_grid,
         border=lens_data.border,

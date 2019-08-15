@@ -19,9 +19,9 @@ import os
 # 3) Create the mask for all pixels with a S/N above a theshold value.
 
 # The following parameters determine the behaviour of this function:
-blurring_gaussian_sigma = 0.01  # The FWHM of the Gaussian the image is blurred with
+blurring_gaussian_sigma = 0.02  # The FWHM of the Gaussian the image is blurred with
 signal_to_noise_threshold = (
-    1.0
+    10.0
 )  # The threshold S/N value the blurred image must be above to not be masked.
 
 # Setup the path to the workspace, using a relative directory name.
@@ -35,7 +35,7 @@ af.conf.instance = af.conf.Config(
 # The 'data name' is the name of the data folder and 'data_name' the folder the mask is stored in, e.g,
 # the mask will be output as '/workspace/data/data_type/data_name/mask.fits'.
 data_type = "example"
-data_name = "lens_light_and_x1_source"
+data_name = "lens_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/workspace/data/example/lens_light_and_x1_source/'

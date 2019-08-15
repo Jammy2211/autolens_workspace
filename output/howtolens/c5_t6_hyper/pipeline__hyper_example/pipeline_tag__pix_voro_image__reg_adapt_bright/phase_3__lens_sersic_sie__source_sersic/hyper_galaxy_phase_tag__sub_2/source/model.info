@@ -1,0 +1,4 @@
+hyper_galaxy
+    contribution_factor                                                                   UniformPrior, lower_limit = 0.0, upper_limit = 20.0
+    noise_factor                                                                          UniformPrior, lower_limit = 0.0, upper_limit = 10.0
+    noise_power                                                                           UniformPrior, lower_limit = -10.0, upper_limit = 10.0

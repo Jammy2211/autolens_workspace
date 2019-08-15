@@ -65,7 +65,7 @@ source_galaxy = g.Galaxy(
     )
 )
 
-tools.from_data_lens_and_source_galaxy_simulate_and_output_ccd_data(
+tools.from_data_lens__source_galaxy_simulate_and_output_ccd_data(
     data_path=data_path,
     data_name=data_name,
     ccd_shape=ccd_shape,
@@ -98,7 +98,7 @@ source_galaxy = g.Galaxy(
     )
 )
 
-tools.from_data_lens_and_source_galaxy_simulate_and_output_ccd_data(
+tools.from_data_lens__source_galaxy_simulate_and_output_ccd_data(
     data_path=data_path,
     data_name=data_name,
     ccd_shape=ccd_shape,
@@ -131,7 +131,7 @@ source_galaxy = g.Galaxy(
     )
 )
 
-tools.from_data_lens_and_source_galaxy_simulate_and_output_ccd_data(
+tools.from_data_lens__source_galaxy_simulate_and_output_ccd_data(
     data_path=data_path,
     data_name=data_name,
     ccd_shape=ccd_shape,
@@ -164,7 +164,7 @@ source_galaxy = g.Galaxy(
     )
 )
 
-tools.from_data_lens_and_source_galaxy_simulate_and_output_ccd_data(
+tools.from_data_lens__source_galaxy_simulate_and_output_ccd_data(
     data_path=data_path,
     data_name=data_name,
     ccd_shape=ccd_shape,

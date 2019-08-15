@@ -30,7 +30,7 @@ def simulate():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05,
+        shape=(180, 180), pixel_scale=0.05
     )
 
     lens_galaxy = g.Galaxy(
@@ -52,7 +52,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -68,7 +68,7 @@ def simulate():
 
 
 # And the same fitting function as the last tutorial
-def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
+def perform_fit_with_lens__source_galaxy(lens_galaxy, source_galaxy):
 
     ccd_data = simulate()
     mask = msk.Mask.circular_annular(
@@ -80,7 +80,7 @@ def perform_fit_with_lens_and_source_galaxy(lens_galaxy, source_galaxy):
 
     lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=lens_data.grid_stack,
         border=lens_data.border,
@@ -103,7 +103,7 @@ source_galaxy = g.Galaxy(
     regularization=reg.Constant(coefficient=1.0),
 )
 
-fit = perform_fit_with_lens_and_source_galaxy(
+fit = perform_fit_with_lens__source_galaxy(
     lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
@@ -134,7 +134,7 @@ source_galaxy = g.Galaxy(
     regularization=reg.Constant(coefficient=1.0),
 )
 
-correct_fit = perform_fit_with_lens_and_source_galaxy(
+correct_fit = perform_fit_with_lens__source_galaxy(
     lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
@@ -179,7 +179,7 @@ def simulate_lens_with_light_profile():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05,
+        shape=(180, 180), pixel_scale=0.05
     )
 
     lens_galaxy = g.Galaxy(
@@ -204,7 +204,7 @@ def simulate_lens_with_light_profile():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -247,7 +247,7 @@ source_galaxy = g.Galaxy(
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy],
     image_plane_grid_stack=lens_data.grid_stack,
     border=lens_data.border,
@@ -273,7 +273,7 @@ lens_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy],
     image_plane_grid_stack=lens_data.grid_stack,
     border=lens_data.border,

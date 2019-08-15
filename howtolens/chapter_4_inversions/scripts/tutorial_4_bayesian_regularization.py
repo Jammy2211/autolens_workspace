@@ -30,7 +30,7 @@ def simulate():
     psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
     image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05,
+        shape=(180, 180), pixel_scale=0.05
     )
 
     lens_galaxy = g.Galaxy(
@@ -52,7 +52,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy_0],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -91,7 +91,7 @@ def perform_fit_with_source_galaxy(source_galaxy):
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=lens_data.grid_stack,
         border=lens_data.border,

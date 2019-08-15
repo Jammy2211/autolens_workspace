@@ -104,7 +104,7 @@ ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 
 # - If the background sky is modeled throughout the pipeline (default False)
 
-# - If the level of background noise is normal throughout the pipeline (default True)
+# - If the level of background noise is hyper throughout the pipeline (default True)
 
 
 ### PIPELINE SETTINGS ###
@@ -181,4 +181,4 @@ pipeline_light_dark = lens_bulge_disk_mlr_nfw__source_inversion.make_pipeline(
 
 pipeline = pipeline_initialize + pipeline_inversion + pipeline_light_dark
 
-pipeline.run(data=ccd_data)
+pipeline.run(data=ccd_data, mask=mask)

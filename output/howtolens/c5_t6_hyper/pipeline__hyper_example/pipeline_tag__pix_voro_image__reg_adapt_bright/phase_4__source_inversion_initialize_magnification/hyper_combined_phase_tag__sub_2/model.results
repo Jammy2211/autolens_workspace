@@ -1,0 +1,68 @@
+Most likely model, Likelihood = 14320.79172418
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           8.660
+            noise_factor                                                                  0.909
+            noise_power                                                                   1.055
+    source
+        hyper_galaxy
+            contribution_factor                                                           13.103
+            noise_factor                                                                  0.269
+            noise_power                                                                   1.069
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           10.474 (4.550, 23.171)
+            noise_factor                                                                  0.702 (0.405, 0.984)
+            noise_power                                                                   0.963 (0.852, 1.079)
+    source
+        hyper_galaxy
+            contribution_factor                                                           13.340 (6.372, 22.164)
+            noise_factor                                                                  0.227 (0.124, 0.321)
+            noise_power                                                                   1.036 (0.869, 1.190)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           10.474 (8.243, 11.795)
+            noise_factor                                                                  0.702 (0.614, 0.793)
+            noise_power                                                                   0.963 (0.918, 1.007)
+    source
+        hyper_galaxy
+            contribution_factor                                                           13.340 (10.638, 15.647)
+            noise_factor                                                                  0.227 (0.194, 0.260)
+            noise_power                                                                   1.036 (0.994, 1.080)
+
+Constants
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        light
+            axis_ratio                                                                    0.7509968470545809
+            phi                                                                           81.94296437176156
+            intensity                                                                     0.5768948508574355
+            effective_radius                                                              1.6340488355330205
+            sersic_index                                                                  2.7823685883854394
+        mass
+            axis_ratio                                                                    0.7345039033067239
+            phi                                                                           140.0035633416761
+            einstein_radius                                                               1.631711500004057
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            axis_ratio                                                                    1.0
+            phi                                                                           146.5973853231122
+            magnitude                                                                     0.03279682367864517
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   3.1178706913179495

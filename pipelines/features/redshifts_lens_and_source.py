@@ -47,7 +47,7 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_feature__redshifts_lens_and_source"
+    pipeline_name = "pipeline_feature__redshifts_lens__source"
 
     pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
 

@@ -1,4 +1,4 @@
-# Welcome to the example aggregator pipeline runner. This is a normal runner, which analyses two example images to
+# Welcome to the example aggregator pipeline runner. This is a hyper runner, which analyses two example images to
 # setup the pipeline results on your hard-disk to demonstrate the aggregator. You should run this now, which should
 # take ~ 10 minutes
 

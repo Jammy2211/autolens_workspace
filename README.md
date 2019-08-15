@@ -4,10 +4,10 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.27.2** and **PyAutoFit v0.31.4** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.27.4** and **PyAutoFit v0.31.4** If you have any errors or issues using the workspace, try using these versions:
 
 ```
-pip install autolens==0.27.2
+pip install autolens==0.27.4
 pip install autofit==0.31.4
 ```
 
@@ -30,6 +30,23 @@ The workspace includes the following:
 - **Plotting** - Scripts enabling customized figures and images.
 - **Runners** - Scripts for running a **PyAutoLens** pipeline.
 - **Tools** - Tools for simulating strong lens data, creating masks and using many other **PyAutoLens** features.
+
+## Setup
+
+The workspace is independent from the autolens install (e.g. the 'site-packages' folder), meaning you can edit workspace 
+scripts and not worry about conflicts with new **PyAutoLens** installs.
+
+Python therefore must know where the workspace is located so that it can import modules / scripts. This is done by 
+setting the PYTHONPATH:
+```
+export PYTHONPATH=/path/to/autolens_workspace/
+```
+
+**PyAutoLens** additionally needs to know the default location of config files, which is done by setting the WORKSPACE.
+Clone autolens workspace & set WORKSPACE enviroment variable:
+```
+export WORKSPACE=/path/to/autolens_workspace/
+```
 
 ## Support & Discussion
 

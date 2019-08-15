@@ -168,7 +168,7 @@ def make_pipeline(phase_folders=None):
             )
 
     phase3 = LensSubtractedPhase(
-        phase_name="phase_3__fit_sources",
+        phase_name="phase_3__lens_x2_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(
             left_lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -191,7 +191,7 @@ def make_pipeline(phase_folders=None):
 
             phase_1_results = results.from_phase("phase_1__left_lens_light")
             phase_2_results = results.from_phase("phase_2__right_lens_light")
-            phase_3_results = results.from_phase("phase_3__fit_sources")
+            phase_3_results = results.from_phase("phase_3__lens_x2_sie__source_exp")
 
             # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
@@ -247,7 +247,7 @@ def make_pipeline(phase_folders=None):
             self.galaxies.source = phase_3_results.variable.source
 
     phase4 = FitAllPhase(
-        phase_name="phase_4__fit_all",
+        phase_name="phase_4__lens_x2_sersic_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(
             left_lens=gm.GalaxyModel(

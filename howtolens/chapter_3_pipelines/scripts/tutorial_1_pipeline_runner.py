@@ -52,7 +52,7 @@ import os
 # From here on, we'll use the configs in the 'workspace/config' folder, which are the default configs used
 # by all pipelines (e.g. not just this tutorial, but when you model your own images and lenses!).
 
-# We'll also put the output in 'workspace/output', which is where output goes for a normal analysis.
+# We'll also put the output in 'workspace/output', which is where output goes for a hyper analysis.
 
 # To setup the config and output path, we'll use the relative import below.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
@@ -96,7 +96,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -117,24 +117,24 @@ ccd_data = simulate()
 ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # To make a pipeline, we call one long function which is written in its own Python module,
-# '_tutorial_1_pipeline_lens_and_source.py_'. Before we check it out, lets get the pipeline running. To do this, we
+# '_tutorial_1_pipeline_lens__source.py_'. Before we check it out, lets get the pipeline running. To do this, we
 # import the module and run its 'make_pipeline' function.
 
 # When we run the make_pipeline function, we specify a phase_folders which structure the way our output is stored -
 # for this pipeline this will output the instrument as:
-# 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name' (the pipeline name is specified in the
+# 'autolens_workspace/output/howtolens/c3_t1_lens__source/pipeline_name' (the pipeline name is specified in the
 # pipeline).
-from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
+from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens__source
 
-pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
-    phase_folders=["howtolens", "c3_t1_lens_and_source"]
+pipeline_lens__source = tutorial_1_pipeline_lens__source.make_pipeline(
+    phase_folders=["howtolens", "c3_t1_lens__source"]
 )
 
 # To run a pipeline, we simply use its 'run' function, passing it the instrument we want to run the pipeline on. Simple, huh?
-pipeline_lens_and_source.run(data=ccd_data)
+pipeline_lens__source.run(data=ccd_data)
 
 # Okay, good job, we're running out first pipeline in PyAutoLens! But what does it *actually* do? Well, to find that
-# out, now go to the module '_tutorial_1_pipeline_lens_and_source.py_', which contains a full description of the pipeline,
+# out, now go to the module '_tutorial_1_pipeline_lens__source.py_', which contains a full description of the pipeline,
 # as well as an overview of some tools we use to write the best, most general pipelines possible. Once you're done,
 # come back to this pipeline runner script and we'll wrap up tutorial 1.
 

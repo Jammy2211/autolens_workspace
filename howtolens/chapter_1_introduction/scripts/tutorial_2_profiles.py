@@ -28,7 +28,7 @@ print(sersic_light_profile)
 
 # We can pass a grid to a light profile to compute the intensity of at every coordinate on the grid.
 # (The resulting image comes back on the same 1D NumPy arrays as the grid, for memory efficiency)
-light_profile_intensities = sersic_light_profile.intensities_from_grid(
+light_profile_intensities = sersic_light_profile.image_from_grid(
     grid=grid_stack.regular
 )
 
@@ -47,7 +47,7 @@ print(light_profile_intensities[5049])
 print(light_profile_intensities[5050])
 
 # Alternatively, the grid can come back in 2D.
-light_profile_intensities = sersic_light_profile.intensities_from_grid(
+light_profile_intensities = sersic_light_profile.image_from_grid(
     grid=grid_stack.regular, return_in_2d=True
 )
 

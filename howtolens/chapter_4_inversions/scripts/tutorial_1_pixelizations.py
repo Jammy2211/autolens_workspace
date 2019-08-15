@@ -21,7 +21,7 @@ lens_galaxy = g.Galaxy(
 )
 
 # (Our source galaxy doesn't have a light profile from here on, as we're reconstructing its light using a pixelization).
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy],
     galaxies=[g.Galaxy(redshift=1.0)],
     image_plane_grid_stack=image_plane_grid_stack,

@@ -79,7 +79,7 @@ source_galaxy = g.Galaxy(
 
 
 # Use these galaxies to setup a tracer, which will generate the image-plane image for the simulated CCD instrument.
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 
@@ -155,7 +155,7 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=image_plane_grid_stack
 )
 

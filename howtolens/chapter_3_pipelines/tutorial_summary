@@ -27,4 +27,4 @@ modeling your first real strong lens - its about time after 3 chapters of HowTol
 1) Go to the main docker page (where you can see 'config', 'data', 'output', etc.)
 2) On the right hand side, click 'New', and on the drop down menu 'Terminal'.
 3) Navigate to the directory of your pipeline (e.g. cd howtolens/chapter_3_pipelines).
-4) Run the pipeline by using the python command (e.g. python tutorial_1_lens_and_source.py).
+4) Run the pipeline by using the python command (e.g. python tutorial_1_lens__source.py).

@@ -63,7 +63,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -88,7 +88,7 @@ lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 # Again, we'll use a convenience function to fit the lens instrument we simulated above.
 
 
-def fit_lens_data_with_lens_and_source_galaxy(lens_data, lens_galaxy, source_galaxy):
+def fit_lens_data_with_lens__source_galaxy(lens_data, lens_galaxy, source_galaxy):
 
     pixelization_grid = source_galaxy.pixelization.pixelization_grid_from_grid_stack(
         grid_stack=lens_data.grid_stack,
@@ -100,7 +100,7 @@ def fit_lens_data_with_lens_and_source_galaxy(lens_data, lens_galaxy, source_gal
         pixelization=pixelization_grid
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=grid_stack_with_pixelization_grid,
         border=lens_data.border,
@@ -134,7 +134,7 @@ source_magnification = g.Galaxy(
     regularization=reg.Constant(coefficient=3.3),
 )
 
-fit = fit_lens_data_with_lens_and_source_galaxy(
+fit = fit_lens_data_with_lens__source_galaxy(
     lens_data=lens_data, lens_galaxy=lens_galaxy, source_galaxy=source_magnification
 )
 
@@ -216,7 +216,7 @@ source_magnification_hyper = g.Galaxy(
     hyper_model_image_1d=hyper_image_source_1d,  # <- The source get its own hyper_galaxy image.
 )
 
-fit = fit_lens_data_with_lens_and_source_galaxy(
+fit = fit_lens_data_with_lens__source_galaxy(
     lens_data=lens_data, lens_galaxy=lens_galaxy, source_galaxy=source_magnification
 )
 
@@ -254,11 +254,11 @@ array_plotters.plot_array(
 
 # Okay, so clearly the contribution maps successfully decompose the image into its different components. Now, we can
 # use each contribution map to scale different regions of the noise-map. This is key, as from the fit above, it was
-# clear that both the lens and source required the noise to be normal, but they had different chi-squared values
+# clear that both the lens and source required the noise to be hyper, but they had different chi-squared values
 # ( > 150 and ~ 30), meaning they required different levels of noise-scaling. Lets see how much our fit improves
 # and Bayesian evidence increases when we include noise-scaling
 
-fit = fit_lens_data_with_lens_and_source_galaxy(
+fit = fit_lens_data_with_lens__source_galaxy(
     lens_data=lens_data,
     lens_galaxy=lens_galaxy_hyper,
     source_galaxy=source_magnification_hyper,
@@ -274,7 +274,7 @@ lens_fit_plotters.plot_fit_subplot(
 
 print("Evidence using baseline variances = ", 8861.51)
 
-print("Evidence using hyper_galaxy-galaxy normal variances = ", fit.evidence)
+print("Evidence using hyper_galaxy-galaxy hyper variances = ", fit.evidence)
 
 # Great, and with that, we've covered hyper_galaxy galaxies. You might be wondering, what happens if there are multiple lens
 # galaxies? or multiple source galaxies? Well, as you'd expect, PyAutoLens will make each a hyper_galaxy-galaxy, and therefore
@@ -313,7 +313,7 @@ grid_stack_with_pixelization_grid = lens_data.grid_stack.new_grid_stack_with_gri
     pixelization=pixelization_grid
 )
 
-tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+tracer = ray_tracing.Tracer.from_galaxies(
     galaxies=[lens_galaxy_hyper, source_magnification_hyper],
     image_plane_grid_stack=grid_stack_with_pixelization_grid,
     border=lens_data.border,

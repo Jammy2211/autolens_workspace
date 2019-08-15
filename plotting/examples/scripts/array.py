@@ -28,7 +28,7 @@ data_path = array_util.make_and_return_path(
 )
 image_path = data_path + "image.fits"
 
-# Now, lets load this array as a normal array. A normal array is an ordinary NumPy array, but it also includes a pixel
+# Now, lets load this array as a hyper array. A hyper array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
 image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=image_path, hdu=0, pixel_scale=0.03

@@ -33,7 +33,7 @@ print(galaxy_with_light_profile)
 
 # In the previous example, we passed grids to the light-profile module to compute its image.
 # We can do the exact same with galaxies, to again compute the galaxy's image.
-galaxy_intensities = galaxy_with_light_profile.intensities_from_grid(
+galaxy_intensities = galaxy_with_light_profile.profile_image_from_grid(
     grid=grid_stack.regular, return_in_2d=True
 )
 

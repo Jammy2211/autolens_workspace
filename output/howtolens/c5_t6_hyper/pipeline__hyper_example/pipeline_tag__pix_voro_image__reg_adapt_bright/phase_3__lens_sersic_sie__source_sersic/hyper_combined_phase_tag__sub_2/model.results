@@ -1,0 +1,69 @@
+Most likely model, Likelihood = 12099.06295036
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           20.504
+            noise_factor                                                                  0.520
+            noise_power                                                                   0.847
+    source
+        hyper_galaxy
+            contribution_factor                                                           0.948
+            noise_factor                                                                  1.247
+            noise_power                                                                   1.016
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           19.837 (13.927, 35.613)
+            noise_factor                                                                  0.507 (0.319, 0.723)
+            noise_power                                                                   0.864 (0.754, 1.003)
+    source
+        hyper_galaxy
+            contribution_factor                                                           0.889 (0.350, 6.843)
+            noise_factor                                                                  1.197 (1.082, 1.311)
+            noise_power                                                                   1.005 (0.969, 1.049)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           19.837 (17.779, 20.836)
+            noise_factor                                                                  0.507 (0.453, 0.565)
+            noise_power                                                                   0.864 (0.855, 0.888)
+    source
+        hyper_galaxy
+            contribution_factor                                                           0.889 (0.350, 2.434)
+            noise_factor                                                                  1.197 (1.163, 1.240)
+            noise_power                                                                   1.005 (0.994, 1.012)
+
+Constants
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        light
+            axis_ratio                                                                    0.7509968470545809
+            phi                                                                           81.94296437176156
+            intensity                                                                     0.5768948508574355
+            effective_radius                                                              1.6340488355330205
+            sersic_index                                                                  2.7823685883854394
+        mass
+            axis_ratio                                                                    0.7345039033067239
+            phi                                                                           140.0035633416761
+            einstein_radius                                                               1.631711500004057
+        shear
+            magnitude                                                                     0.03279682367864517
+            phi                                                                           146.5973853231122
+    source
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.6969776961593599
+            phi                                                                           85.89016270247845
+            intensity                                                                     0.33013434973114136
+            effective_radius                                                              0.6920903622469675
+            sersic_index                                                                  1.140615515756641

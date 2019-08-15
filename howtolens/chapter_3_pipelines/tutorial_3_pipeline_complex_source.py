@@ -30,7 +30,7 @@ def make_pipeline(phase_folders=None):
     # such that the parameter space is just 12 parameters.
 
     phase1 = phase_imaging.PhaseImaging(
-        phase_name="phase_1__simple_source",
+        phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -50,18 +50,18 @@ def make_pipeline(phase_folders=None):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_1__simple_source"
+                "phase_1__lens_sie__source_sersic"
             ).variable.lens
 
             self.galaxies.source.light_0 = results.from_phase(
-                "phase_1__simple_source"
+                "phase_1__lens_sie__source_sersic"
             ).variable.source.light_0
 
     # You'll notice I've stop writing 'phase_1_results = results.from_phase('phase_1_simple_source')' - we know how
     # the previous results are structured now so lets not clutter our code!
 
     phase2 = X2SourcePhase(
-        phase_name="phase_2__x2_source",
+        phase_name="phase_2__lens_sie__source_x2_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -84,19 +84,19 @@ def make_pipeline(phase_folders=None):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_2__x2_source"
+                "phase_2__lens_sie__source_x2_sersic"
             ).variable.galaxies.lens
 
             self.galaxies.source.light_0 = results.from_phase(
-                "phase_2__x2_source"
+                "phase_2__lens_sie__source_x2_sersic"
             ).variable.galaxies.source.light_0
 
             self.galaxies.source.light_1 = results.from_phase(
-                "phase_2__x2_source"
+                "phase_2__lens_sie__source_x2_sersic"
             ).variable.galaxies.source.light_1
 
     phase3 = X3SourcePhase(
-        phase_name="phase_3__x3_source",
+        phase_name="phase_3__lens_sie__source_x3_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
@@ -120,23 +120,23 @@ def make_pipeline(phase_folders=None):
         def pass_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
-                "phase_3__x3_source"
+                "phase_3__lens_sie__source_x3_sersic"
             ).variable.galaxies.lens
 
             self.galaxies.source.light_0 = results.from_phase(
-                "phase_3__x3_source"
+                "phase_3__lens_sie__source_x3_sersic"
             ).variable.galaxies.source.light_0
 
             self.galaxies.source.light_1 = results.from_phase(
-                "phase_3__x3_source"
+                "phase_3__lens_sie__source_x3_sersic"
             ).variable.galaxies.source.light_1
 
             self.galaxies.source.light_2 = results.from_phase(
-                "phase_3__x3_source"
+                "phase_3__lens_sie__source_x3_sersic"
             ).variable.galaxies.source.light_2
 
     phase4 = X4SourcePhase(
-        phase_name="phase_4__x4_source",
+        phase_name="phase_4__lens_sie__source_x4_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),

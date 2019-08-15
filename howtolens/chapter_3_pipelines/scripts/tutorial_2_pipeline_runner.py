@@ -76,7 +76,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy_0, lens_galaxy_1],
         galaxies=[source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,

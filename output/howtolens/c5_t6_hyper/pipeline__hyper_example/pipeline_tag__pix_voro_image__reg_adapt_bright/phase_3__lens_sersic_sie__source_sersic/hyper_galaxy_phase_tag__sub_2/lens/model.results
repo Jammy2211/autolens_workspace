@@ -1,0 +1,24 @@
+Most likely model, Likelihood = 9763.33730464
+
+hyper_galaxy
+    contribution_factor                                                                   19.742
+    noise_factor                                                                          0.159
+    noise_power                                                                           0.217
+
+
+Most probable model (3.0 sigma limits)
+
+hyper_galaxy
+    contribution_factor                                                                   15.210 (5.232, 23.066)
+    noise_factor                                                                          0.157 (0.111, 0.207)
+    noise_power                                                                           0.219 (0.169, 0.269)
+
+Most probable model (1.0 sigma limits)
+
+hyper_galaxy
+    contribution_factor                                                                   15.210 (12.579, 19.391)
+    noise_factor                                                                          0.157 (0.139, 0.172)
+    noise_power                                                                           0.219 (0.202, 0.237)
+
+Constants
+

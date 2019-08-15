@@ -62,7 +62,7 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=image_plane_grid_stack,
     )
@@ -110,7 +110,7 @@ def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies_and_image_plane_grid_stack(
+    tracer = ray_tracing.Tracer.from_galaxies(
         galaxies=[lens_galaxy, source_galaxy],
         image_plane_grid_stack=grid_stack_with_pixelization_grid,
         border=lens_data.border,
@@ -250,7 +250,7 @@ lens_fit_plotters.plot_fit_subplot(
 
 print("Evidence using baseline variances = ", 8911.66)
 
-print("Evidence using variances normal by hyper_galaxy galaxy = ", fit.evidence)
+print("Evidence using variances hyper by hyper_galaxy galaxy = ", fit.evidence)
 
 # Yep, a huge increase in the 1000's! Clearly, if our model doesn't fit the instrument well, we *need* to increase the noise
 # wherever the fit is poor to ensure that our use of the Bayesian evidence is well defined.
@@ -405,7 +405,7 @@ lens_fit_plotters.plot_fit_subplot(
     zoom_around_mask=True,
 )
 
-print("Evidence using variances normal by hyper_galaxy galaxy = ", fit.evidence)
+print("Evidence using variances hyper by hyper_galaxy galaxy = ", fit.evidence)
 
 # Feel free to play around with the noise_factor and noise_power hyper_galaxy-parameters above. It should be fairly clear
 # what they do; they simply change the amount by which the noise is increased.

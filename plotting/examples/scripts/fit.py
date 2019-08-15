@@ -41,13 +41,13 @@ result_path = array_util.make_and_return_path(
 residual_map_path = result_path + "/image/fits/fit_residual_map.fits"
 chi_squared_map_path = result_path + "/image/fits/fit_chi_squared_map.fits"
 
-# Now, lets load this array as a normal array. A normal array is an ordinary NumPy array, but it also includes a pixel
+# Now, lets load this array as a hyper array. A hyper array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
 image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=image_path, hdu=0, pixel_scale=0.03
 )
 
-# Now, lets load this image as a normal array. A normal array is an ordinary NumPy array, but it also includes a pixel
+# Now, lets load this image as a hyper array. A hyper array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the image to arc-second coordinates.
 residual_map = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=residual_map_path, hdu=0, pixel_scale=0.03

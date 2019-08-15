@@ -1,19 +1,19 @@
 ### MODEL YOUR DATA ###
 
-# Its time to model your own lens instrument! This is straight forward - just adapt the runner script you ran above to
-# load your own CCD imaging data instead of the example instrument we ran previously.
+# Its time to model your own lens data! This is straight forward - just adapt the runner script you ran above to
+# load your own CCD imaging data instead of the example data we ran previously.
 #
-# First, we need to make sure the instrument conforms to the PyAutoLens inputs. This requires that:
+# First, we need to make sure the data conforms to the PyAutoLens inputs. This requires that:
 #
 # 1) The image is a small (e.g. 501 x 501) cut-out of the strong lens, centred on the lens galaxy.
 # 2) The image and noise-map are in electrons per second.
 # 3) The PSF is cut-out to an odd-sized kernel with a reasonably small kernel size (e.g. 21x21).
 
-# PyAutoLens has built-in tools to convert your instrument to these requirements, checkout the scripts in
+# PyAutoLens has built-in tools to convert your data to these requirements, checkout the scripts in
 # 'autolens_workspace/tools/loading_and_preparing_data'.
 
 
-# Your instrument probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
+# Your data probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
 
 # 1) Use a large circular mask by adding the line
 #
@@ -23,7 +23,7 @@
 # 2) Creating your own custom mask, using the script 'autolens_workspace/tools/example/mask_maker.py'
 
 
-# If your instrument doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
+# If your data doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
 # lenses, where only the source galaxy is visible) then you should use the 'runner__lens_sie__source_inversion.py' script
 # instead.
 
@@ -66,16 +66,16 @@
 # places in the autolens_workspace:
 
 # 1) 'pipelines/features' and 'runners/features'. These describe pipeline features that customize an analysis of
-#    a strong lens, for example by binning up the instrument to a coarser resolution of performing ray-tracing on a higher
+#    a strong lens, for example by binning up the data to a coarser resolution of performing ray-tracing on a higher
 #    resolution 'sub-grid'.
 
 # 2) 'pipelines/advanced' and 'runners/advanced'. These advanced pipelines and runners allow for a much broader range
 #    of complex lens models to be fitted, and allow for different pipelines to be hyper_combined together so that the early
 #    phases of a pipeline can be reused when fitting more complex models later on.
 
-# 3) 'pipelines/hyper_galaxy' and 'runners/hyper_galaxy'. Hyper functionality is where PyAutoLens adapt the model fit to the instrument
+# 3) 'pipelines/hyper_galaxy' and 'runners/hyper_galaxy'. Hyper functionality is where PyAutoLens adapt the model fit to the data
 #     its fitting. This includes fitting for the background sky subtracton in the image and scaling the noise-map to
-#     prevent over-fitting small portions of the instrument. Only once you're confident with PyAutoLens would I
+#     prevent over-fitting small portions of the data. Only once you're confident with PyAutoLens would I
 #    recommend that you start experimenting with this functionality!
 
 ### FIN. ###
