@@ -48,6 +48,11 @@ Clone autolens workspace & set WORKSPACE enviroment variable:
 export WORKSPACE=/path/to/autolens_workspace/
 ```
 
+You can test everything is working by running the example pipeline runner in the autolens_workspace
+```
+python3 /path/to/autolens_workspace/runners/simple/runner__lens_sie__source_sersic.py
+```
+
 ## Support & Discussion
 
 If you haven't already, go ahead and [email](https://github.com/Jammy2211) me to get on our [Slack channel](https://pyautolens.slack.com/).
