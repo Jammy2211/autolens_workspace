@@ -1,14 +1,5 @@
 import autofit as af
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-
-import os
+import autolens as al
 
 ############## THIS PIPELINE IS A WORK IN PROGRESS AND I DO NOT RECOMMEND YOU TRY TO USE IT TO DO LENS MODELING ########
 
@@ -57,7 +48,7 @@ def make_pipeline(phase_folders=None):
     # a pipeline does use customized tag names.
 
     pipeline_name = "pipeline_multi_plane"
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
@@ -70,8 +61,8 @@ def make_pipeline(phase_folders=None):
     # 1) Subtract the light of the main lens galaxy (located at (0.0", 0.0")) and the light of each line-of-sight
     # galaxy (located at (4.0", 4.0"), (3.6", -5.3") and (-3.1", -2.4"))
 
-    class LensPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
             self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
@@ -86,10 +77,10 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_1__light_subtraction",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(light=lp.EllipticalSersic),
-            los_0=gm.GalaxyModel(light=lp.SphericalSersic),
-            los_1=gm.GalaxyModel(light=lp.SphericalSersic),
-            los_2=gm.GalaxyModel(light=lp.SphericalSersic),
+            lens=al.GalaxyModel(light=al.light_profiles.EllipticalSersic),
+            los_0=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
+            los_1=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
+            los_2=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -104,7 +95,7 @@ def make_pipeline(phase_folders=None):
     # 1) Fit this foreground subtracted image, using an SIE+Shear mass model and Sersic source.
     # 2) Use the input positions to resample inaccurate mass models.
 
-    class LensSubtractedPhase(phase_imaging.PhaseImaging):
+    class LensSubtractedPhase(al.PhaseImaging):
         def modify_image(self, image, results):
             return (
                 image
@@ -113,7 +104,7 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
@@ -122,8 +113,8 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_2__source_parametric",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(light=lp.EllipticalSersic),
+            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            source=al.GalaxyModel(light=al.light_profiles.EllipticalSersic),
         ),
         positions_threshold=0.3,
         optimizer_class=af.MultiNest,
@@ -138,7 +129,7 @@ def make_pipeline(phase_folders=None):
     #  1) Fit the foreground subtracted image using a source-inversion instead of parametric source, using lens galaxy
     #     priors from phase 2.
 
-    class InversionPhase(phase_imaging.PhaseImaging):
+    class InversionPhase(al.PhaseImaging):
         def modify_image(self, image, results):
             return (
                 image
@@ -147,7 +138,7 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results[1].constant.lens
 
@@ -162,9 +153,10 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_3__inversion_init",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(
-                pixelization=pix.VoronoiMagnification, regularization=reg.Constant
+            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            source=al.GalaxyModel(
+                pixelization=al.pixelizations.VoronoiMagnification,
+                regularization=al.regularization.Constant,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -183,7 +175,7 @@ def make_pipeline(phase_folders=None):
     #     a single lens plane for all line-of-sight galaxies.
     #  3) Use the input positions to resample inaccurate mass models.
 
-    class SingleLensPlanePhase(phase_imaging.PhaseImaging):
+    class SingleLensPlanePhase(al.PhaseImaging):
         def modify_image(self, image, results):
             return (
                 image
@@ -192,7 +184,7 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass = results.from_phase(
                 "phase_3__inversion_init"
@@ -213,12 +205,13 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_4__single_plane",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
-            los_0=gm.GalaxyModel(mass=mp.SphericalIsothermal),
-            los_1=gm.GalaxyModel(mass=mp.SphericalIsothermal),
-            los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal),
-            source=gm.GalaxyModel(
-                pixelization=pix.VoronoiMagnification, regularization=reg.Constant
+            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            los_0=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
+            los_1=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
+            los_2=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
+            source=al.GalaxyModel(
+                pixelization=al.pixelizations.VoronoiMagnification,
+                regularization=al.regularization.Constant,
             ),
         ),
         positions_threshold=0.3,
@@ -234,7 +227,7 @@ def make_pipeline(phase_folders=None):
     # redshift of each line-of-sight galaxy is included as a free parameter (we assume the lens and source redshifts
     # are known).
 
-    class MultiPlanePhase(phase_imaging.PhaseImaging):
+    class MultiPlanePhase(al.PhaseImaging):
         def modify_image(self, image, results):
             return (
                 image
@@ -243,7 +236,7 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
                 "phase_4__single_plane"
@@ -267,12 +260,19 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_5_multi_plane",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(mass=mp.EllipticalIsothermal),
-            los_0=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
-            los_1=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
-            los_2=gm.GalaxyModel(mass=mp.SphericalIsothermal, variable_redshift=True),
-            source=gm.GalaxyModel(
-                pixelization=pix.VoronoiMagnification, regularization=reg.Constant
+            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            los_0=al.GalaxyModel(
+                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+            ),
+            los_1=al.GalaxyModel(
+                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+            ),
+            los_2=al.GalaxyModel(
+                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+            ),
+            source=al.GalaxyModel(
+                pixelization=al.pixelizations.VoronoiMagnification,
+                regularization=al.regularization.Constant,
             ),
         ),
         positions_threshold=0.3,
@@ -284,6 +284,4 @@ def make_pipeline(phase_folders=None):
     phase5.optimizer.sampling_efficiency = 0.2
     phase5.optimizer.const_efficiency_mode = True
 
-    return pipeline.PipelineImaging(
-        pipeline_name, phase1, phase2, phase3, phase4, phase5
-    )
+    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3, phase4, phase5)

@@ -1,0 +1,7 @@
+galaxies_source_galaxy_light_centre_0                                 y_{\mathrm{l18}}
+galaxies_source_galaxy_light_centre_1                                 x_{\mathrm{l18}}
+galaxies_source_galaxy_light_intensity_value                          I_{\mathrm{l18}}
+galaxies_lens_galaxy_mass_centre_0                                    y_{\mathrm{m18}}
+galaxies_lens_galaxy_mass_centre_1                                    x_{\mathrm{m18}}
+galaxies_lens_galaxy_mass_einstein_radius                             \theta_{\mathrm{m18}}
+galaxies_source_galaxy_light_effective_radius                         R_{\mathrm{l18}}

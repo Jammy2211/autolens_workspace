@@ -1,15 +1,10 @@
 import autofit as af
+import autolens as al
 from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.data.plotters import ccd_plotters
-from autolens.lens.plotters import lens_fit_plotters
 
-# In the previous example, we used a non-linear search to infer the best-fit lens model of a strong lens. In this
-# example, we'll get a deeper intuition of how a non-linear search works.
+# In the previous example, we used a non-linear search to infer the best-fit lens model of ccd-imaging of a strong lens.
+# In this example, we'll get a deeper intuition of how a non-linear search works.
 
 # First, I want to develop the idea of a 'parameter space'. Lets think of a function, like the simple function below:
 
@@ -17,7 +12,7 @@ from autolens.lens.plotters import lens_fit_plotters
 
 # In this function, when we input a parameter x, it returns a value f(x). The mappings between different values of x
 # and f(x) define a parameter space (and if you remember your high school math classes, you'll remember this parameter
-# space is a parabola!)
+# space is a parabola).
 
 # A function can of course have multiple parameters:
 
@@ -28,14 +23,14 @@ from autolens.lens.plotters import lens_fit_plotters
 # curved surface.
 
 # The process of computing a likelihood in PyAutoLens can be visualized in exactly the same way. We have a set of lens
-# model parameters, which we input into AutoLens's 'likelihood function'. Now, this likelihood function isn't something
-# that we can write down analytically, and its inherently non-linear. But, nevertheless, it is a function;
+# model parameters, which we input into PyAutoLens's 'likelihood function'. Now, this likelihood function isn't something
+# that we can write down analytically and its inherently non-linear. But, nevertheless, it is a function;
 # if we put the same set of lens model parameters into it, we'll compute the same likelihood.
 
 # We can write our likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
 # mass-profile and light-profile parameters):
 
-# f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a likelihood from PyAutoLens's tracer and fit modules
+# f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a likelihood from PyAutoLens's tracer and lens_fit.
 
 # The point is, like we did for the simple functions above, we again have a parameter space! It can't be written down
 # analytically and its undoubtedly very complex and non-linear. Fortunately, we've already learnt how to search it, and
@@ -45,11 +40,11 @@ from autolens.lens.plotters import lens_fit_plotters
 # density functions' or PDF's for short. These represent where the highest likelihood regions of parameter space
 # were found for each parameter.
 #
-# Navigate to the folder 'AutoLens/howtolens/chapter_2_lens_modeling/output_optimizer/1_non_linear_search/image' and
+# Navigate to the folder 'autolens_workspace/howtolens/chapter_2_lens_modeling/output_optimizer/t1_non_linear_search/image' and
 # open the 'pdf_triangle.png' figure. The Gaussian shaped lines running down the diagonal of this triangle represent 1D
 # estimates of the highest likelihood regions that were found in parameter space for each parameter.
 
-# The remaning figures, which look like contour-maps, show the maximum likelihood regions in 2D between every parameter
+# The remaining figures, which look like contour-maps, show the maximum likelihood regions in 2D between every parameter
 # pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other leads to a
 # similar likelihood value. The 2D PDF between the source galaxy's light-profile's intensity (I_l4) and effective
 # radius (R_l4) shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is similar to
@@ -74,7 +69,6 @@ from autolens.lens.plotters import lens_fit_plotters
 # config files like light_profiles.ini. The convention is as follow:
 
 # [EllipticalSersic]          # These are the priors used for an EllipticalSersic profile.
-# intensity=u,0.0,1.0         # Its intensity uses a UniformPrior with lower_limit=0.0, upper_limit=1.0
 # effective_radius=u,0.0,2.0  # Its effective radius uses a UniformPrior with lower_limit=0.0, upper_limit=2.0
 # sersic_index=g,4.0,2.0      # Its Sersic index uses a GaussianPrior with mean=4.0 and sigma=2.0
 
@@ -85,42 +79,38 @@ chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeli
 chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/2_parameter_space_and_priors",
+    config_path=chapter_path + "configs/t2_parameter_space_and_priors",
     output_path=chapter_path + "output",
 )
 
-# This function simulates the image we'll fit in this tutorial - which is identical to the previous tutorial.
+# This function simulates the data we'll fit in this tutorial - which is identical to the previous tutorial.
 def simulate():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
     )
 
-    lens_galaxy = g.Galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.6
+        ),
     )
 
-    source_galaxy = g.Galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(
+        light=al.light_profiles.SphericalExponential(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    ccd_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
+        tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -128,26 +118,27 @@ def simulate():
         add_noise=True,
     )
 
-    return ccd_simulated
 
-
-# Again, lets setup the simulated image
+# Again, lets create the simulated CCD data.
 ccd_data = simulate()
 
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 #  To change the priors on specific parameters, we create our galaxy models and use a custom-phase and its
-# 'pass_priors' function to overwrite priors on specific parameters.
+# 'customize_priors' function to overwrite priors on specific parameters.
 
-lens_galaxy_model = gm.GalaxyModel(redshift=0.5, mass=mp.SphericalIsothermal)
-
-source_galaxy_model = gm.GalaxyModel(redshift=1.0, light=lp.SphericalExponential)
+lens_galaxy_model = gm.GalaxyModel(
+    redshift=0.5, mass=al.mass_profiles.SphericalIsothermal
+)
+source_galaxy_model = gm.GalaxyModel(
+    redshift=1.0, light=al.light_profiles.SphericalExponential
+)
 
 
 class CustomPhase(phase_imaging.PhaseImaging):
-    def pass_priors(self, results):
+    def customize_priors(self, results):
 
-        # To change priors, we use the 'prior' module of PyAutoFit. These priors link our GalaxyModel to the
+        # To change priors, we use the 'prior' module of PyAutoFit (imported as af). These priors link our GalaxyModel to the
         # non-linear search. Thus, it tells PyAutoLens where to search non-linear parameter space.
 
         # These two lines change the centre of the lens galaxy's mass-profile to UniformPriors around the coordinates
@@ -167,7 +158,7 @@ class CustomPhase(phase_imaging.PhaseImaging):
             lower_limit=-0.1, upper_limit=0.1
         )
 
-        # Lets also change the prior on the lens galaxy's einstein radius, to a GaussianPrior centred on 1.4".
+        # Lets also change the prior on the lens galaxy's einstein radius to a GaussianPrior centred on 1.4".
         # For real lens modeling, this might be done by visually estimating the radius the lens's arcs / ring appear.
 
         self.galaxies.lens_galaxy.mass.einstein_radius = af.GaussianPrior(
@@ -181,17 +172,16 @@ class CustomPhase(phase_imaging.PhaseImaging):
         )
 
 
-# (If the use of a python 'class' here, or some of the python code doesn't appear clear, don't worry about it. This
-# code is using a number of Python's object-oriented features. In general, I expect that'll you'll simply copy the code
+# (If the use of a Python 'class' here or other Python code is not clear, don't worry about it. This code is using a
+# number of Python's object-oriented features. In general, I expect that'll you'll simply copy the code
 # above and use it as a template).
 
 # We can now create this custom phase like we did a hyper phase before. When we run the phase, the pass_prior function
 # will be called automatically and thus change the priors as we specified above. If you look at the 'model.info'
 # file in the output of the non-linear search, you'll see that the priors have indeed been changed.
 custom_phase = CustomPhase(
-    phase_name="2_custom_priors",
-    galaxies=dict(lens_galaxy=lens_galaxy_model),
-    galaxies=dict(source_galaxy=source_galaxy_model),
+    phase_name="phase_t2_custom_priors",
+    galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 
@@ -203,15 +193,15 @@ print(
 
 results_custom = custom_phase.run(data=ccd_data)
 
-lens_fit_plotters.plot_fit_subplot(fit=results_custom.most_likely_fit)
+al.lens_fit_plotters.plot_fit_subplot(fit=results_custom.most_likely_fit)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # And, we're done. This tutorial had some pretty difficult concepts to wrap your head around. However, I can't
 # emphasize enough how important it is that you develop an intuition for non-linear searches and the notion of a
 # non-linear parameter space. Becoming good at lens modeling is all being able to navigate a complex, degenerate and
-# highly non-linear parameter space! Luckily, we're going to keep thinking about this in the next set of exercises,
-# so if you're not feeling too confident yet, you should be in a few exercises time!
+# highly non-linear parameter space! Luckily, we're going to keep thinking about this in the next set of tutorials,
+# so if you're not feeling too confident yet, you will be soon!
 
 # Before continuing to the next tutorial, I want you think about whether anything could go wrong when we search a
 # non-linear parameter space. Is it possible that we won't find the highest likelihood lens model? Why might this be?

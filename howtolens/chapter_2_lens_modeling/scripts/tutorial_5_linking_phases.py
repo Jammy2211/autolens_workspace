@@ -1,12 +1,7 @@
 import autofit as af
+import autolens as al
 from autolens.pipeline.phase import phase_imaging
 from autolens.model.galaxy import galaxy_model as gm
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.data.plotters import ccd_plotters
-from autolens.lens.plotters import lens_fit_plotters
 
 # So, we've learnt that if our parameter space is too complex, our non-linear search might fail to find the global
 # maximum solution. However, we also learnt how to ensure this doesn't happen, by:
@@ -19,7 +14,7 @@ from autolens.lens.plotters import lens_fit_plotters
 # analysis to a different strong lens. The less complex we make our model, the less realistic it is. And if we rely too
 # much on searching parameter space for longer, we could end up with phase's that take days, weeks or months to run.
 
-# In this exercise, we're going to combine these 3 approaches, so that we can fit complex and realistic lens
+# In this exercise, we're going to combine these 3 approaches so that we can fit complex and realistic lens
 # models in a way that that can be generalized to many different strong lenses. To do this, we'll run 2 phases, and
 # link the lens model inferred in the first phase to the priors of the second phase's lens model.
 
@@ -42,26 +37,22 @@ chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeli
 chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/5_linking_phases",
+    config_path=chapter_path + "configs/t5_linking_phases",
     output_path=chapter_path + "output",
 )
 
-# Another simulate image function, for the same image again.
+# Another simulate image function, for the same image as tutorial 4..
 def simulate():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
         shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
     )
 
-    lens_galaxy = g.Galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(
+        light=al.light_profiles.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.9,
             phi=45.0,
@@ -69,14 +60,14 @@ def simulate():
             effective_radius=0.5,
             sersic_index=3.5,
         ),
-        mass=mp.EllipticalIsothermal(
+        mass=al.mass_profiles.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
         ),
     )
 
-    source_galaxy = g.Galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(
+        light=al.light_profiles.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.5,
             phi=90.0,
@@ -86,13 +77,11 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    image_simulated = ccd.SimulatedCCDData.from_image_and_exposure_arrays(
-        image=tracer.padded_profile_image_plane_image_2d_from_psf_shape,
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
+        tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -100,26 +89,24 @@ def simulate():
         add_noise=True,
     )
 
-    return image_simulated
 
-
-# Simulate the image and set it up.
+# Simulate the CCD data and set it up.
 ccd_data = simulate()
 
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Lets use the same LightTracesMass Phase that we did previously, but we'll make it slightly less complex then before.
 
 
 class LightTracesMassPhase(phase_imaging.PhaseImaging):
-    def pass_priors(self, results):
+    def customize_priors(self, results):
 
         # As we've eluded to before, one can look at an image and immediately identify the centre of the lens
-        # galaxy. It's that bright blob of light surrounded by the lensed source galaxy! Given that we know we're going
-        # to make the lens model more complex in the next phase, lets take a liberal approach to the lens centre and
-        # fix it to (y,x) = (0.0", 0.0").
+        # galaxy. It's that bright blob of light in the middle! Given that we know we're going to make the lens model
+        # more complex in the next phase, lets take a more liberal approach than before and fix the lens centre
+        # to (y,x) = (0.0", 0.0").
 
-        # You haven't actually seen a line like this one before. By setting a parameter to a number (and not a prior),
+        # You haven't actually seen a line like this one before. By setting a parameter to a number (and not a prior)
         # it is be removed from non-linear parameter space and always fixed to that value. Pretty neat, huh?
         self.galaxies.lens.light.centre_0 = 0.0
         self.galaxies.lens.light.centre_1 = 0.0
@@ -129,34 +116,34 @@ class LightTracesMassPhase(phase_imaging.PhaseImaging):
         # Now, you might be thinking, doesn't this prevent our phase from generalizing to other strong lenses?
         # What if the centre of their lens galaxy isn't at (0.0", 0.0")?
 
-        # Well, this is true if our instrument reduction centres the lens galaxy somewhere else. But we get to choose where
+        # Well, this is true if our data reduction centres the lens galaxy somewhere else. But we get to choose where
         # we centre it when we make the image. Therefore, I'd recommend you always centre the lens galaxy at the same
         # location, and (0.0", 0.0") seems the best choice!
 
-        # We also discussed that the Sersic index of most lens galaxies is around 4. Lets be liberal and fix it to
-        # 4 this time.
+        # We also discussed that the Sersic index of most lens galaxies is around 4. Lets fix it to 4 this time.
 
         self.galaxies.lens.light.sersic_index = 4.0
 
 
 # Now lets create the phase. You'll notice two new inputs to the lens galaxy's model - 'align_axis_ratios' and
 # 'align_orientations'. These functions align the axis_ratio and phi values of all of the lens galaxy's profiles (in
-# this case, its light profile and mass profile). We did this in the previous phase using the 'pass_priors' function,
-# but given that this is a fairly common thing to do to a GalaxyModel, we made these these inputs available for your
-# convinience.
+# this case, its light profile and mass profile). We did this in the previous phase using the 'customize_priors' function,
+# but because this is a fairly common thing to do to a GalaxyModel we made these these inputs available for your convenience.
 
-# There is also an 'align_centres' method, but because we are fixing all centres to floats we have ommitted it.
+# There is also an 'align_centres' method, but because we are fixing all centres to floats it is omitted.
 phase_1 = LightTracesMassPhase(
-    phase_name="5_linking_phase_1",
+    phase_name="phase_t5_linking_phases_1",
     galaxies=dict(
         lens=gm.GalaxyModel(
             redshift=0.5,
-            light=lp.EllipticalSersic,
-            mass=mp.EllipticalIsothermal,
+            light=al.light_profiles.EllipticalSersic,
+            mass=al.mass_profiles.EllipticalIsothermal,
             align_axis_ratios=True,
             align_orientations=True,
         ),
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
+        source=gm.GalaxyModel(
+            redshift=1.0, light=al.light_profiles.EllipticalExponential
+        ),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -169,7 +156,7 @@ phase_1.optimizer.sampling_efficiency = 0.9
 # Lets run the phase, noting that our liberal approach to reducing the lens model complexity has reduced it to just
 # 11 parameters. (The results are still preloaded for you, but feel free to run it yourself, its fairly quick).
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases"
+    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/t5_linking_phases"
     "folder for live output of the results, images and lens model."
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
@@ -178,8 +165,8 @@ phase_1_results = phase_1.run(data=ccd_data)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-# And indeed, we get a reasonably good model and fit to the instrument - in a much shorter space of time!
-lens_fit_plotters.plot_fit_subplot(
+# And indeed, we get a reasonably good model and fit to the data - in a much shorter space of time!
+al.lens_fit_plotters.plot_fit_subplot(
     fit=phase_1_results.most_likely_fit,
     should_plot_mask=True,
     extract_array_from_mask=True,
@@ -188,16 +175,16 @@ lens_fit_plotters.plot_fit_subplot(
 
 # Now all we need to do is look at the results of phase 1 and tune our priors in phase 2 to those results. Lets
 # setup a custom phase that does exactly that.
-#
+
 # GaussianPriors are a nice way to do this. They tell the non-linear search where to look, but leave open the
 # possibility that there might be a better solution nearby. In contrast, UniformPriors put hard limits on what
-# values a parameter can or can't take - it makes it more likely we'll accidently cut-out the global likelihood solution.
+# values a parameter can or can't take. It makes it more likely we'll accidently cut-out the global maxima solution.
 
 
 class CustomPriorPhase(phase_imaging.PhaseImaging):
-    def pass_priors(self, results):
+    def customize_priors(self, results):
 
-        # What I've done here is looked at the results of phase 1, and manually specified a prior for every parameter.
+        # What I've done here is looked at the results of phase 1 and manually specified a prior for every parameter.
         # If a parameter was fixed in the previous phase, its prior is based around the previous value. Don't worry
         # about the sigma values for now, I've chosen values that I know will ensure reasonable sampling, but we'll
         # cover this later.
@@ -253,12 +240,16 @@ class CustomPriorPhase(phase_imaging.PhaseImaging):
 # faster than we're used to - I didn't have to edit the config files to get this phase to run fast!
 
 phase_2 = CustomPriorPhase(
-    phase_name="5_linking_phase_2",
+    phase_name="phase_t5_linking_phases_2",
     galaxies=dict(
         lens=gm.GalaxyModel(
-            redshift=0.5, light=lp.EllipticalSersic, mass=mp.EllipticalIsothermal
+            redshift=0.5,
+            light=al.light_profiles.EllipticalSersic,
+            mass=al.mass_profiles.EllipticalIsothermal,
         ),
-        source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalExponential),
+        source=gm.GalaxyModel(
+            redshift=1.0, light=al.light_profiles.EllipticalExponential
+        ),
     ),
     optimizer_class=af.MultiNest,
 )
@@ -267,7 +258,7 @@ phase_2.optimizer.n_live_points = 30
 phase_2.optimizer.sampling_efficiency = 0.9
 
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases"
+    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/t5_linking_phases"
     "folder for live output of the results, images and lens model."
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
@@ -277,7 +268,7 @@ phase_2_results = phase_2.run(data=ccd_data)
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # Look at that, the right lens model, again!
-lens_fit_plotters.plot_fit_subplot(
+al.lens_fit_plotters.plot_fit_subplot(
     fit=phase_2_results.most_likely_fit,
     should_plot_mask=True,
     extract_array_from_mask=True,
@@ -286,10 +277,10 @@ lens_fit_plotters.plot_fit_subplot(
 
 # Our choice to link two phases together was a huge success. We managed to fit a complex and realistic model,
 # but were able to begin by making simplifying assumptions that eased our search of non-linear parameter space. We
-# could apply phase 1 to pretty much any strong lens, and therefore get ourselves a decent lens model with which to
+# could apply phase 1 to pretty much any strong lens and therefore get ourselves a decent lens model with which to
 # tune phase 2's priors.
 
-# You're probably thinking though, that there is one huge, giant, glaring flaw in all of this that I've not mentioned.
+# You're probably thinking though that there is one huge, giant, glaring flaw in all of this that I've not mentioned.
 # Phase 2 can't be generalized to another lens - it's priors are tuned to the image we fitted. If we had a lot of
 # lenses, we'd have to write a new phase_2 for every single one. This isn't ideal, is it?
 
@@ -300,7 +291,7 @@ lens_fit_plotters.plot_fit_subplot(
 # applied generically to any strong lens.
 
 # However, before moving forward, there's a couple more thing we need to discuss - which revolve around run-speed. Lens
-# modeling is a  computationally expensive process and keeping the run times on the order of days, or less, can be tricky.
+# modeling is a computationally expensive process and keeping the run times on the order of days, or less, can be tricky.
 # I'll give  you a sense of how we can do that in the next tutorial, and show you some neat tricks to get PyAutoLens modeling
 # lenses super-fast after that!
 #

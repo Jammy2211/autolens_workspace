@@ -1,0 +1,14 @@
+galaxies_lens_light_centre_0                                          y_{\mathrm{m77}}
+galaxies_lens_light_centre_1                                          x_{\mathrm{m77}}
+galaxies_lens_light_axis_ratio                                        q_{\mathrm{m77}}
+galaxies_lens_light_phi                                               \phi_{\mathrm{m77}}
+galaxies_lens_light_intensity_value                                   I_{\mathrm{l77}}
+galaxies_lens_light_effective_radius_value                            R_{\mathrm{l77}}
+galaxies_lens_light_sersic_index                                      n_{\mathrm{l77}}
+galaxies_lens_mass_einstein_radius_value                              \theta_{\mathrm{m77}}
+galaxies_source_light_centre_0                                        y_{\mathrm{l77}}
+galaxies_source_light_centre_1                                        x_{\mathrm{l77}}
+galaxies_source_light_axis_ratio                                      q_{\mathrm{l77}}
+galaxies_source_light_phi                                             \phi_{\mathrm{l77}}
+galaxies_source_light_intensity_value                                 I_{\mathrm{l77}}
+galaxies_source_light_effective_radius_value                          R_{\mathrm{l77}}

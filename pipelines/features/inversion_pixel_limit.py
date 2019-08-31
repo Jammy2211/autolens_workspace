@@ -1,12 +1,4 @@
 import autofit as af
-from autolens.data.array import mask as msk
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
 
 # In this pipeline, we'll demonstrate the use of an inversion pixel limit - which allows us to put an upper limit on
 # the number of pixels an inversion uses in a pipeline. In this example, we will perform an initial analysis which is
@@ -52,7 +44,7 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
 
     pipeline_name = "pipeline_feature__inversion_pixel_limit"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed a inversion_pixel_limit, a settings tag is automatically generated and added to the
     # phase path to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
@@ -76,7 +68,7 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
     # central regions of the image.
 
     def mask_function(image):
-        return msk.Mask.circular_annular(
+        return al.Mask.circular_annular(
             shape=image.shape,
             pixel_scale=image.pixel_scale,
             inner_radius_arcsec=0.2,
@@ -89,8 +81,8 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
 
     # 1) Limit the number of source pixels used by the inversion.
 
-    class LensSourceX1Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX1Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
@@ -100,13 +92,15 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=pix.VoronoiMagnification,
-                regularization=reg.Constant,
+                pixelization=al.pixelizations.VoronoiMagnification,
+                regularization=al.regularization.Constant,
             ),
         ),
         mask_function=mask_function,
@@ -124,8 +118,8 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
 
     # 1) Omit the inversion pixel limit, thus performing the modeling at a high source plane resolution if necessary.
 
-    class LensSourceX2Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX2Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
                 "phase_1__x1_source"
@@ -139,13 +133,15 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=pix.VoronoiMagnification,
-                regularization=reg.Constant,
+                pixelization=al.pixelizations.VoronoiMagnification,
+                regularization=al.regularization.Constant,
             ),
         ),
         mask_function=mask_function,
@@ -156,4 +152,4 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineImaging(pipeline_name, phase1, phase2)

@@ -1,47 +1,48 @@
-import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.data.plotters import ccd_plotters
-
-import os
-
-# Up to now, all of the image that we fitted had only one lens galaxy. However, we saw in chapter 1 that we can
-# create multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
-# model, because you're adding an extra 5-10 parameters to the non-linear search and, more problematically, the
+# Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can consist
+# of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
+# model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the
 # degeneracies between the mass-profiles of the two galaxies can be severe.
 
-# However, we can nevertheless break the analysis down using a pipeline and give ourselves a shot at getting a good
-# lens model. The approach we're going to take is we're going to fit as much about each individual lens galaxy
-# first, before fitting them simultaneously.
+# However, we can still break their analysis down using a pipeline and give ourselves a shot at getting a good
+# lens model. Here, we're going to fit a double lens system, fitting as much about each individual lens galaxy before
+# fitting them simultaneously.
 
 # Up to now, I've put a focus on pipelines being general. The pipeline we write in this example is going to be
 # the opposite - specific to the image we're modeling. Fitting multiple lens galaxies is really difficult and
 # writing a pipeline that we can generalize to many lenses isn't currently possible with PyAutoLens.
 
-# Lets setup the path to the workspace, config and output folders, as per usual.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+### AUTOFIT + CONFIG SETUP ###
+
+import autofit as af
+
+# Setup the path to the workspace, using by filling in your path below.
+workspace_path = "/path/to/user/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/"
+
+# Setup the path to the config folder, using the workspace path.
+config_path = workspace_path + "config"
+
+# Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "output"
 )
+
+### AUTOLENS + DATA SETUP ###
+
+import autolens as al
 
 # This rather long simulate function generates an image with two strong lens galaxies.
 def simulate():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05,
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(180, 180), pixel_scale=0.05
     )
 
-    lens_galaxy_0 = g.Galaxy(
+    lens_galaxy_0 = al.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(
+        light=al.light_profiles.EllipticalSersic(
             centre=(0.0, -1.0),
             axis_ratio=0.8,
             phi=55.0,
@@ -49,14 +50,14 @@ def simulate():
             effective_radius=0.8,
             sersic_index=2.5,
         ),
-        mass=mp.EllipticalIsothermal(
+        mass=al.mass_profiles.EllipticalIsothermal(
             centre=(1.0, 0.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0
         ),
     )
 
-    lens_galaxy_1 = g.Galaxy(
+    lens_galaxy_1 = al.Galaxy(
         redshift=0.5,
-        light=lp.EllipticalSersic(
+        light=al.light_profiles.EllipticalSersic(
             centre=(0.0, 1.0),
             axis_ratio=0.8,
             phi=100.0,
@@ -64,26 +65,25 @@ def simulate():
             effective_radius=0.6,
             sersic_index=3.0,
         ),
-        mass=mp.EllipticalIsothermal(
+        mass=al.mass_profiles.EllipticalIsothermal(
             centre=(-1.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8
         ),
     )
 
-    source_galaxy = g.Galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
-        light=lp.SphericalExponential(
+        light=al.light_profiles.SphericalExponential(
             centre=(0.05, 0.15), intensity=0.2, effective_radius=0.5
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy_0, lens_galaxy_1],
-        galaxies=[source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
+    tracer = al.Tracer.from_galaxies(
+        galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy]
     )
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.05,
         exposure_time=300.0,
         psf=psf,
@@ -92,42 +92,38 @@ def simulate():
     )
 
 
-# Lets simulate the image we'll fit, which is a new image, finally!
+# Lets Simulate the CCD data we'll fit, which is a new image, finally!
 ccd_data = simulate()
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# Okay, so looking at the image, we clearly see two blobs of light, corresponding to our two lens galaxies. We also
-# see the source's light is pretty complex - the arcs don't posses the rotational symmetry we're used to seeing
-# up to now. Multi-galaxy ray-tracing is just a lot more complicated, which means so is modeling it!
+# Looking at the image, there are clearly two blobs of light corresponding to our two lens galaxies. The source's light
+# is also pretty complex - the arcs don't posses the rotational symmetry we're used to seeing up to now. Multi-galaxy
+# ray-tracing is just a lot more complicated, which means so is modeling it!
 
-# So, how can we break the lens modeling up? We can:
+# So, how can we break the lens modeling up? As follows:
 
 # 1) Fit and subtract the light of each lens galaxy individually - this will require some careful masking but is doable.
-
 # 2) Use these results to initialize each lens galaxy's mass-profile.
 
 # So, with this in mind, we've written a pipeline composed of 4 phases:
 
 # Phase 1) Fit the light profile of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
-
 # Phase 2) Fit the light profile of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
-
 # Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The mass-profiles of the two lens galaxies
 #          can use the results of phases 1 and 2 to initialize their priors.
-
 # Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 
 # Again, before we checkout the pipeline, lets import it, and get it running.
-from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_galaxies
+from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
 
-pipeline_x2_galaxies = tutorial_2_pipeline_x2_galaxies.make_pipeline(
+pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
     phase_folders=["howtolens", "c3_t2_x2_galaxies"]
 )
 
 pipeline_x2_galaxies.run(data=ccd_data)
 
-# Okay, great, nows a good time to read through the '_tutorial_2_pipeline_x2_galaxies.py_' pipeline, to get a
-# complete view of how it works. Once you've done that, come back here and we'll wrap up this tutorial.
+# Now, read through the '_tutorial_2_pipeline_x2_galaxies.py_' pipeline, to get a complete view of how it works.
+# Once you've done that, come back here and we'll wrap up this tutorial.
 
 
 # And, we're done. This pipeline takes a while to run, as is the nature of multi-galaxy modeling. Nevertheless, the
@@ -139,7 +135,7 @@ pipeline_x2_galaxies.run(data=ccd_data)
 
 #    Typically, a 2 galaxy system has 1 massive galaxy (that makes up some 80%-90% of the overall light and mass),
 #    accompanied by a smaller satellite. The satellite can't be ignored - it impacts the ray-tracing in a measureable
-#    way, but this is a lot less degenerate with the 'main' lens galaxy. This means we can often model the  satellite
+#    way, but its a lot less degenerate with the 'main' lens galaxy. This means we can often model the  satellite
 #    with much simpler profiles (e.g. spherical profiles). So yes, multi-galaxy systems can often be easier to model.
 
 # 2) It got pretty confusing passing all those priors towards the end of the pipeline there, didn't it?

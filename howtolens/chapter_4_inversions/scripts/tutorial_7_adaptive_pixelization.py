@@ -1,46 +1,31 @@
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.array import mask as msk
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.galaxy import galaxy as g
-from autolens.lens import ray_tracing
-from autolens.lens import lens_fit
-from autolens.lens import lens_data as ld
+import autolens as al
 from autolens.model.inversion import pixelizations as pix
 from autolens.model.inversion import regularization as reg
-from autolens.data.plotters import ccd_plotters
 from autolens.model.inversion.plotters import inversion_plotters
-from autolens.lens.plotters import lens_fit_plotters
 
-# In this tutorial, we'll introduce a new type of pixelization, called a VoronoiMagnification pixelization.
-#
-# This pixelization doesn't use uniform grid of rectangular pixels, but instead an irregular grid 'Voronoi' pixels.
-# So, why do we want to do that? Lets take another look at the rectangular grid, and think about its weaknesses.
+# In this tutorial we'll use a new pixelization, called the VoronoiMagnification pixelization. This pixelization
+# doesn't use a uniform grid of rectangular pixels, but instead uses an irregular 'Voronoi' pixels.
+# So, why do we want to do that? Lets take another quick look at the rectangular grid..
 
 # This simulates the same the image we've fitted in the past few tutorials.
 def simulate():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
         shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
     )
 
-    lens_galaxy = g.Galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
-        mass=mp.EllipticalIsothermal(
+        mass=al.mass_profiles.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = g.Galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
-        light=lp.EllipticalSersic(
+        light=al.light_profiles.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.7,
             phi=135.0,
@@ -50,13 +35,11 @@ def simulate():
         ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.05,
         exposure_time=300.0,
         psf=psf,
@@ -68,42 +51,38 @@ def simulate():
 # Lets quickly remind ourselves of the image and the 3.0" circular mask we'll use to mask it.
 ccd_data = simulate()
 
-mask = msk.Mask.circular(
+mask = al.Mask.circular(
     shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=2.5
 )
 
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
+al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
 
-# The lines of code below do everything we're used to, that is, setup an image and its grid stack, mask it, trace it
-# via a tracer, setup the rectangular mapper, etc.
-lens_galaxy = g.Galaxy(
+# The lines of code below do everything we're used to, that is, setup an image, mask it, trace it via a tracer,
+# setup the rectangular mapper, etc.
+lens_galaxy = al.Galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(
+    mass=al.mass_profiles.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
     ),
 )
 
-lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
+lens_data = al.LensData(ccd_data=ccd_data, mask=mask)
 
-source_galaxy = g.Galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     pixelization=pix.Rectangular(shape=(40, 40)),
     regularization=reg.Constant(coefficient=0.5),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(
-    galaxies=[lens_galaxy, source_galaxy],
-    image_plane_grid_stack=lens_data.grid_stack,
-    border=lens_data.border,
-)
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
-lens_fit_plotters.plot_fit_subplot(
+al.lens_fit_plotters.plot_fit_subplot(
     fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
 )
 
-# Okay, so lets think about the rectangular pixelization. Is it the optimal way to reconstruct our source? Are there
+# Okay, so lets think about the rectangular pixelization. Is this the optimal way to reconstruct our source? Are there
 # features in the source-plane that arn't ideal? How do you think we could do a better job?
 
 # Well, given we're doing a whole tutorial on using a different pixelization to the rectangular grid, you've probably
@@ -115,35 +94,32 @@ inversion_plotters.plot_pixelization_values(
     inversion=fit.inversion, should_plot_centres=True
 )
 
-# There is one clear problem - we are using just a small number of source pixels to reconstruct the source. Think about
-# it - the majority of source pixels are located away from the source. By my estimate, we're using just 16 pixels (the
-# central 4x4 grid) out of the 1600 pixels to actually fit the instrument! The remaining ~1500 pixels are doing *nothing*
+# There is one clear problem, we are using a small number of the total source pixels to reconstruct the source. The
+# majority of source pixels are located away from the source. By my estimate, we're using just 16 pixels (the
+# central 4x4 grid) out of the 1600 pixels to actually fit the data! The remaining ~1500 pixels are doing *nothing*
 # but fit noise.
 
-# This is a complete waste of processing, meaning that our analysis will take longer to run than necessary. However,
-# more importantly, it means that our Bayesian regularization scheme is sub-optimal. In tutorial 4, we discussed how
-# the Bayesian evidence of the regularization wants to obtain the *simplest* source solution possible. That is,
-# the solution which fits the instrument well, using the fewest source pixels. Clearly, we're dedicating a huge number of
-# source pixels to doing *nothing*, making our source reconstruction more complex (and therefore of a
-# lower evidence) than necessary.
+# This is a waste and our analysis will take longer to run because of it. However, more importantly, it means that our
+# Bayesian regularization scheme is sub-optimal. In tutorial 4, we discussed how the Bayesian evidence of the
+# regularization wants to obtain the *simplest* source solution possible. That is the solution which fits the data well
+# using the fewest source pixels. Clearly, if we dedicating a huge number of source pixels to doing *nothing*, our source
+# reconstruction will be unecessarily complex (and therefore lower evidence).
 
-# If our pixelization could 'focus' its pixels where we actually have more instrument, e.g. the highly magnified regions
+# If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions
 # of the source-plane, we could reconstruct the source using far fewer pixels. That'd be great both for computational
-# efficiency and increasing the Bayesian evidence, and that is exactly what our Voronoi grid does.
+# efficiency and increasing the Bayesian evidence and that is exactly what our Voronoi grid does.
 
 # To achieve this, we first compute an 'image-plane pixelization grid', which is a set of sparse coordinates in the
 # image-plane that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute
-# this grid directly from a pixelization, by passing it a grid-stack.
+# this grid directly from a pixelization, by passing it a grid.
 
 adaptive = pix.VoronoiMagnification(shape=(20, 20))
 
-pixelization_grid = adaptive.pixelization_grid_from_grid_stack(
-    grid_stack=lens_data.grid_stack
-)
+pixelization_grid = adaptive.pixelization_grid_from_grid(grid=lens_data.grid)
 
 # We can plot this grid over the image, to see that it is a coarse grid over-laying the image itself.
 
-ccd_plotters.plot_image(
+al.ccd_plotters.plot_image(
     ccd_data=ccd_data,
     grid=pixelization_grid,
     mask=mask,
@@ -151,29 +127,20 @@ ccd_plotters.plot_image(
     extract_array_from_mask=True,
 )
 
-# Next, we can add this grid to the grid-stack we pass via the tracer. This means that the grid will be ray-traced
-# like the regular-grid and sub-grids, such that in the source-plane we can use it to set our source-pixel centres.
+# When we pass a tracer a source galaxy with this pixelization it automatically computes the ray-traced source-plane
+# Voronoi grid using the grid above. Thus, our Voronoi pixelization is used by the tracer's fit.
 
-grid_stack_with_pixelization_grid = lens_data.grid_stack.new_grid_stack_with_grids_added(
-    pixelization=pixelization_grid
-)
-
-source_galaxy = g.Galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0, pixelization=adaptive, regularization=reg.Constant(coefficient=1.0)
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(
-    galaxies=[lens_galaxy, source_galaxy],
-    image_plane_grid_stack=grid_stack_with_pixelization_grid,
-)
-
-print(tracer.source_plane.grid_stack.pixelization)  # <- this is our pixelization grid
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # If we look at the lens fit, we'll that our source-plane no longer uses rectangular pixels, but Voronoi pixels!
 
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
-lens_fit_plotters.plot_fit_subplot(
+al.lens_fit_plotters.plot_fit_subplot(
     fit=fit,
     should_plot_image_plane_pix=True,
     should_plot_mask=True,
@@ -189,16 +156,16 @@ inversion_plotters.plot_pixelization_values(
 # Clearly, this is an improvement. We're using fewer pixels than the rectangular grid (400, instead of 1600), but
 # reconstructing our source is far greater detail. A win all around? It sure is.
 
-# I'll quickly mention regularization, too. On our rectangular grid, we regularized each source pixel with its 4
-# neighbors. That is, we compared their fluxes, summed the differences, and penalized solutions where the differences
-# were large. For a Voronoi grid, we do the exact same thing, except we compare each source-pixel with all other
-# source-pixels with which it shares a direct vertex. This means that different source-pixels may be regularized
-# with different numbers of source-pixels, depending on how many neighbors are formed.
+# On our rectangular grid, we regularized each source pixel with its 4 neighbors. We compared their fluxes, summed the
+# differences, and penalized solutions where the differences were large. For a Voronoi grid, we do the same thing,
+# now comparing each source-pixel with all other source-pixels with which it shares a direct vertex. This means that
+# different source-pixels may be regularized with different numbers of source-pixels, depending on how many neighbors
+# are formed.
 
-# However, the Voronoi magnification grid is still far from optimal. There are still a lot of source-pixels
-# effectively fitting noise, and it may be that we would achieve even better solutions if the central regions of the
-# source were reconstructed using even more pixels. So, how do we improve on this? Well, you'll have to wait until
-# chapter 5, when we introduce PyAutoLens's adaptive functionality, which has the umbrella term of 'hyper_galaxy-fitting'.
+# This Voronoi magnification grid is still far from optimal. There are lots of source-pixels effectively fitting just
+# noise. We may achieve even better solutions if the central regions of the source were reconstructed using even more
+# pixels. So, how do we improve on this? Well, you'll have to wait until chapter 5, when we introduce PyAutoLens's
+# adaptive functionality, or 'hyper-mode'.
 
 # In the mean time, you may wish to experiment with using both Rectangular and VoronoiMagnification grids to fit
-# lenses, which can be easily achieve by changing the input pixeliation given to a pipeline.
+# lenses which can be easily achieve by changing the input pixeliation given to a pipeline.

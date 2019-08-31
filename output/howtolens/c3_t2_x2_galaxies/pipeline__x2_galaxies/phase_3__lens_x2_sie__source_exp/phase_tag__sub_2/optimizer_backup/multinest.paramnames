@@ -1,0 +1,16 @@
+galaxies_left_lens_mass_axis_ratio                                    q_{\mathrm{m57}}
+galaxies_left_lens_mass_phi                                           \phi_{\mathrm{m57}}
+galaxies_left_lens_mass_einstein_radius_value                         \theta_{\mathrm{m57}}
+galaxies_right_lens_mass_axis_ratio                                   q_{\mathrm{m57}}
+galaxies_right_lens_mass_phi                                          \phi_{\mathrm{m57}}
+galaxies_right_lens_mass_einstein_radius_value                        \theta_{\mathrm{m57}}
+galaxies_source_light_centre_0                                        y_{\mathrm{l57}}
+galaxies_source_light_centre_1                                        x_{\mathrm{l57}}
+galaxies_source_light_axis_ratio                                      q_{\mathrm{l57}}
+galaxies_source_light_phi                                             \phi_{\mathrm{l57}}
+galaxies_source_light_intensity_value                                 I_{\mathrm{l57}}
+galaxies_source_light_effective_radius_value                          R_{\mathrm{l57}}
+galaxies_left_lens_mass_centre_0                                      y_{\mathrm{m57}}
+galaxies_left_lens_mass_centre_1                                      x_{\mathrm{m57}}
+galaxies_right_lens_mass_centre_0                                     y_{\mathrm{m57}}
+galaxies_right_lens_mass_centre_1                                     x_{\mathrm{m57}}

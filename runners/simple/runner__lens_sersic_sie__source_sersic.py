@@ -1,9 +1,3 @@
-import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.array import mask as msk
-from autolens.data.plotters import ccd_plotters
-
 import os
 
 # Welcome to the pipeline runner. This tool allows you to load instrument on strong lenses, and pass it to pipelines for a
@@ -24,13 +18,24 @@ import os
 # names and pipelines to set off different analyses. However, notebooks are a tidier way to manage visualization - so
 # feel free to use notebooks. Or, use both for a bit, and decide your favourite!
 
+### AUTOFIT + CONFIG SETUP ###
+
+import autofit as af
+
 # Setup the path to the workspace, using a relative directory name.
 workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
+# Setup the path to the config folder, using the workspace path.
+config_path = workspace_path + "config"
+
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "output"
 )
+
+### AUTOLENS + DATA SETUP ###
+
+import autolens as al
 
 # It is convenient to specify the lens name as a string, so that if the pipeline is applied to multiple images we \
 # don't have to change all of the path entries in the load_ccd_data_from_fits function below.
@@ -41,23 +46,23 @@ data_name = (
 )  # An example simulated image with lens light emission and a source galaxy.
 pixel_scale = 0.1
 
-# Create the path where the instrument will be loaded from, which in this case is
+# Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_mass_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
     psf_path=data_path + "psf.fits",
     noise_map_path=data_path + "noise_map.fits",
     pixel_scale=pixel_scale,
 )
 
-ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens instrument to its run function.
-# Below, we'll use a 3 phase example pipeline to fit the instrument with a parametric lens light, mass and source light
+# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
+# Below, we'll use a 3 phase example pipeline to fit the data with a parametric lens light, mass and source light
 # profile. Checkout _workspace/pipelines/examples/lens_sersic_sie_shear_source_sersic.py_' for a full description of
 # the pipeline.
 
@@ -69,7 +74,7 @@ pipeline = lens_sersic_sie__source_sersic.make_pipeline(
 
 pipeline.run(data=ccd_data)
 
-# Another example pipeline is shown below, which fits the instrument using a pixelized inversion for the source light.
+# Another example pipeline is shown below, which fits the data using a pixelized inversion for the source light.
 # If you commented out the 3 lines of code above, and uncomment the code below, you can easily set this pipeline
 # off running!
 

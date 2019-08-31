@@ -1,0 +1,47 @@
+Most likely model, Likelihood = -2195.00449107
+
+galaxies
+    left_lens
+        light
+            axis_ratio                                                                    0.987
+            phi                                                                           45.738
+            intensity                                                                     0.027
+            effective_radius                                                              4.000
+            centre
+                centre_0                                                                  -0.026
+                centre_1                                                                  -1.026
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    left_lens
+        light
+            axis_ratio                                                                    0.983 (0.957, 1.007)
+            phi                                                                           44.706 (-9.111, 122.020)
+            intensity                                                                     0.027 (0.026, 0.027)
+            effective_radius                                                              3.999 (3.981, 4.001)
+            centre
+                centre_0                                                                  -0.026 (-0.028, -0.024)
+                centre_1                                                                  -1.026 (-1.033, -1.018)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    left_lens
+        light
+            axis_ratio                                                                    0.983 (0.975, 0.992)
+            phi                                                                           44.706 (23.716, 61.690)
+            intensity                                                                     0.027 (0.026, 0.027)
+            effective_radius                                                              3.999 (3.995, 4.001)
+            centre
+                centre_0                                                                  -0.026 (-0.027, -0.025)
+                centre_1                                                                  -1.026 (-1.028, -1.023)
+
+Constants
+
+galaxies
+    left_lens
+        redshift                                                                          0.5
+        light
+            sersic_index                                                                  4.0

@@ -1,30 +1,31 @@
 ### PIPELINES ###
 
-# Above, we used the phase module to create a phase, which fitted a lens and source galaxy model to some CCD instrument using
-# MultiNest. In PyAutoLens, a pipeline is effectively a series of phases that are linked together, which ultimately
-# fit a lens model. Why do we break the analysis down into multiple phases, instead of using just 1 phase?
+# We just performed strong lens modeling using a 'Phase', which inferred the lens and source parameters using the
+# non-linear seach MultiNest. A pipeline is a series of phases that are linked together, performing a chain of
+# non-linear searches. This allows us to break-down fitting of a lens mode. So, why break the analysis down into
+# multiple phases instead of using just 1 phase?
 
-# For highly complex lens models, fitting all lens model parameters without any initialization will lead to either
-# extremely slow and inefficient lens modeling or, worse still, cause us to infer an incorrect lens model. Pipelines
-# break the fit down by initially fitting simple lens models, and then gradually make the model more complex, using
-# the results of the earlier phases to initialize the non-linear sampler.
+# For complex lens models fitting all lens model parameters without any initialization leads to either slow and
+# inefficient lens modeling or infers an incorrect lens model. Pipelines circumvent these problems by initially fitting
+# simple lens models (e.g. with fewer parameters) and gradually making the model that is fitted more complex. Crucially,
+# a pipeline uses the results of the earlier phases to tell the non-linear search where to look in later phases.
 
-# Lets look at an example. Go to 'autolens_workspace/pipelines/simple/lens_sersic_sie__source_sersic.py'
-# First, have a skim read of the pipeline - you'll see it uses phases like the one we made above, but introduces a
-# number of other concepts (e.g. prior passing, image modification) that we haven't covered in the quick-start tutorial.
+# Open the script 'autolens_workspace/pipelines/simple/lens_sersic_sie__source_sersic.py'
 
-# Nevertheless, the main point of this pipeline is straight forward. We assume we have an image of a strong lens where
-# the lens galaxy's light is also visible, and we fitting it using 3 phases:
+# First, read the pipeline, which uses phases to model a lens. The introduces a number of new concepts, such as
+# passing priors between phases and using previous phases to modify the image that is fitted. The idea behind this
+# pipeline is simple. Basically, if we we have an image of a strong lens where the lens galaxy's light is visible we
+# fit it using 3 phases:
 
 # Phase 1) We fit only the lens galaxy's light.
 # Phase 2) We fit the lens galaxy's mass and source galaxy's light, using the lens light subtracted image from Phase 1.
-# Phase 3) We fit the lens galaxy's light and mass and source galaxy's light, using the results of Phase's 1 and 2 to
+# Phase 3) We fit the lens galaxy's light, mass and source galaxy's light, using the results of Phase's 1 and 2 to
 #          initialize our non-linear search.
 
-# By breaking the analysis down in this way, we achieve much faster lens modeling and will avoid inferred an incorrect
+# By breaking the analysis down in this way we achieve much faster lens modeling and avoid inferring an incorrect
 # lens model.
-#
-# Lets load some simulated lens instrument (which now includes the lens galaxy's light) and fit it using this pipeline. To do
+
+# Lets load some simulated lens data (which now includes the lens galaxy's light) and fit it using this pipeline. To do
 # this, we won't use this Juypter notebook! Instead, go to the script
 # 'autolens_workspace/runners/simple/runner__lens_sersic_sie__source_sersic.py'. This runner script does everything
 # we need to set off the pipeline, in particular, it:
@@ -32,7 +33,7 @@
 # 1) Loads the CCD imaging data from .fits files.
 # 2) Loads the mask of this example instrument from a .fits file.
 # 3) Imports and creates the pipeline.
-# 4) Uses this pipeline to fit the instrument.
+# 4) Uses this pipeline to fit the data.
 
 # The results of this pipeline will appear in the 'output' folder of the autolens workspace. It should take half an
 # hour or so to run from start to end. Of course, you can check out the results on-the-fly in the output folder.

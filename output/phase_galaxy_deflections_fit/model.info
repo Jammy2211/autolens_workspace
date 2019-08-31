@@ -1,0 +1,15 @@
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+        redshift                                                                          0.5
+    subhalo
+        mass
+            einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.5, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.5, sigma = 0.3
+        redshift                                                                          0.5

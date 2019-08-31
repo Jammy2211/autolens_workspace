@@ -1,6 +1,5 @@
-from autolens.data.array import scaled_array
-from autolens.data.array.util import array_util
-from autolens.plotters import array_plotters
+import autofit as af
+import autolens as al
 
 import os
 
@@ -21,26 +20,26 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 data_type = "example"
 data_name = "slacs1430+4105"
 
-# Create the path where the instrument will be loaded from, which in this case is
+# Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
-data_path = array_util.make_and_return_path(
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 image_path = data_path + "image.fits"
 
 # Now, lets load this array as a hyper array. A hyper array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
-image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
+image = al.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=image_path, hdu=0, pixel_scale=0.03
 )
 
 # We can now use an array plotter to plot the image. Lets first plot it using the default PyAutoLens settings.
-array_plotters.plot_array(array=image, title="SLACS1430+4105 Image")
+al.array_plotters.plot_array(array=image, title="SLACS1430+4105 Image")
 
 # For a lens like SLACS1430+4105, the lens galaxy's light outshines the background source, making it appear faint.
 # we can use a symmetric logarithmic colorbar normalization to better reveal the source galaxy (due to negative values
-# in the image, we cannot use a regular logirithmic colorbar normalization).
-array_plotters.plot_array(
+# in the image, we cannot use a logirithmic colorbar normalization).
+al.array_plotters.plot_array(
     array=image,
     title="SLACS1430+4105 Image",
     norm="symmetric_log",
@@ -50,19 +49,14 @@ array_plotters.plot_array(
 
 # Alternatively, we can use the default linear colorbar normalization and customize the limits over which the colormap
 # spans its dynamic range.
-array_plotters.plot_array(
+al.array_plotters.plot_array(
     array=image, title="SLACS1430+4105 Image", norm="linear", norm_min=0.0, norm_max=0.3
 )
-
-# We can also load the full set of ccd instrument (image, noise-map, PSF) and use the ccd_plotters to make the figures above.
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.plotters import ccd_plotters
 
 psf_path = workspace_path + "/data/example/" + data_name + "/psf.fits"
 noise_map_path = workspace_path + "/data/example/" + data_name + "/noise_map.fits"
 
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path,
     psf_path=psf_path,
     noise_map_path=noise_map_path,
@@ -70,13 +64,13 @@ ccd_data = ccd.load_ccd_data_from_fits(
 )
 
 # These plotters can be customized using the exact same functions as above.
-ccd_plotters.plot_noise_map(
+al.ccd_plotters.plot_noise_map(
     ccd_data=ccd_data, title="SLACS1430+4105 Noise-Map", norm="log"
 )
 
 # Of course, as we've seen in many other examples, a sub-plot of the ccd instrument can be plotted. This can also take the
 # customization inputs above, but it should be noted that the options are applied to all images, and thus will most
 # likely degrade a number of the sub-plot images.
-ccd_plotters.plot_ccd_subplot(
+al.ccd_plotters.plot_ccd_subplot(
     ccd_data=ccd_data, norm="symmetric_log", linthresh=0.05, linscale=0.02
 )

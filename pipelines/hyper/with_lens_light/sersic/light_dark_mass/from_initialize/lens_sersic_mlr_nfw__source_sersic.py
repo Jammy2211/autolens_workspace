@@ -1,11 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.profiles import light_and_mass_profiles as lmp
+import autolens as al
 
 import os
 
@@ -38,7 +32,7 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=0.05,
+    pixel_scale_interpolation_grid=0.05,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -49,7 +43,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_ldm_hyper__lens_sersic_mlr_nfw__source_sersic"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         hyper_galaxies=pipeline_settings.hyper_galaxies,
         hyper_image_sky=pipeline_settings.hyper_image_sky,
         hyper_background_noise=pipeline_settings.hyper_background_noise,
@@ -70,8 +64,8 @@ def make_pipeline(
     # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
     # 4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ### Lens Light to Light + Mass, Sersic -> Sersic ###
 
@@ -125,7 +119,7 @@ def make_pipeline(
                 "phase_3__lens_sersic_sie__source_sersic"
             ).variable.galaxies.source
 
-            ## Set all hyper_galaxy-galaxies if feature is turned on ##
+            ## Set all hyper_galaxies-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
                 self.galaxies.lens.hyper_galaxy = (
@@ -152,20 +146,22 @@ def make_pipeline(
         phase_name="phase_1__lens_sersic_mlr_nfw__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=lmp.EllipticalSersic,
-                dark=mp.SphericalNFW,
-                shear=mp.ExternalShear,
+                light=al.light_and_mass_profiles.EllipticalSersic,
+                dark=al.mass_profiles.SphericalNFW,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         sub_grid_size=sub_grid_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -179,4 +175,4 @@ def make_pipeline(
         include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, hyper_mode=True)
+    return al.PipelineImaging(pipeline_name, phase1, hyper_mode=True)

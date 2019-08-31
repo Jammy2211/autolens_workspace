@@ -1,12 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
+import autolens as al
 
 # In this pipeline, we'll perform an initialize analysis which fits an image with a source galaxy and a lens light
 # component. This reconstructs the source using a pxielized inversion, and uses the light-profile source fit of a
@@ -14,7 +7,7 @@ from autolens.model.inversion import regularization as reg
 
 # Phase 1:
 
-# Description: initialize the inversion's pixelization and regularization hyper_galaxy-parameters, using a previous lens
+# Description: initialize the inversion's pixelization and regularization hyper_galaxies-parameters, using a previous lens
 #              light and mass model.
 # Lens Light: EllipticalSersic
 # Lens Mass: EllipitcalIsothermal + ExternalShear
@@ -54,10 +47,10 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=None,
-    use_inversion_border=True,
+    pixel_scale_interpolation_grid=None,
+    inversion_uses_border=True,
     inversion_pixel_limit=None,
-    cluster_pixel_scale=0.1,
+    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -66,7 +59,7 @@ def make_pipeline(
     # whether the lens light model is fixed throughout the pipeline.
 
     pipeline_name = "pipeline_inv__lens_sersic_sie__source_inversion"
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=pipeline_settings.include_shear,
         fix_lens_light=pipeline_settings.fix_lens_light,
         pixelization=pipeline_settings.pixelization,
@@ -85,8 +78,8 @@ def make_pipeline(
     # 2) Fix our mass model to the lens galaxy mass-model from phase 3 of the initialize pipeline.
     # 3) Use a circular mask which includes all of the source-galaxy light.
 
-    class InversionPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class InversionPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
@@ -98,13 +91,13 @@ def make_pipeline(
         phase_name="phase_1__source_inversion_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=lp.EllipticalSersic,
-                mass=mp.EllipticalIsothermal,
-                shear=mp.ExternalShear,
+                light=al.light_profiles.EllipticalSersic,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pipeline_settings.pixelization,
                 regularization=pipeline_settings.regularization,
@@ -115,10 +108,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -134,8 +127,8 @@ def make_pipeline(
     #    of this pipeline.
     # 2) Use a circular mask including both the lens and source galaxy light.
 
-    class InversionPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class InversionPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
 
@@ -161,13 +154,13 @@ def make_pipeline(
         phase_name="phase_2__lens_sersic_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=lp.EllipticalSersic,
-                mass=mp.EllipticalIsothermal,
-                shear=mp.ExternalShear,
+                light=al.light_profiles.EllipticalSersic,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pipeline_settings.pixelization,
                 regularization=pipeline_settings.regularization,
@@ -178,10 +171,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -191,4 +184,4 @@ def make_pipeline(
 
     phase2 = phase2.extend_with_inversion_phase()
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineImaging(pipeline_name, phase1, phase2)

@@ -1,13 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.profiles import light_and_mass_profiles as lmp
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
+import autolens as al
 
 import os
 
@@ -50,10 +42,10 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=0.05,
-    use_inversion_border=True,
+    pixel_scale_interpolation_grid=0.05,
+    inversion_uses_border=True,
     inversion_pixel_limit=None,
-    cluster_pixel_scale=0.1,
+    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -63,7 +55,7 @@ def make_pipeline(
     # a pipeline does use customized tag names.
 
     pipeline_name = "pipeline_ldm__lens_sersic_mlr_nfw__source_inversion"
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=pipeline_settings.include_shear,
         align_light_dark_centre=pipeline_settings.align_light_dark_centre,
         pixelization=pipeline_settings.pixelization,
@@ -83,8 +75,8 @@ def make_pipeline(
     # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
     # 4) Pass priors on the source galaxy's inversion using the Pixelization and Regularization of the previous pipeline.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ### Lens Light to Light + Mass, Sersic -> Sersic ###
 
@@ -142,13 +134,13 @@ def make_pipeline(
         phase_name="phase_1__lens_sersic_mlr_nfw__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light_mass=lmp.EllipticalSersic,
-                dark=mp.SphericalNFW,
-                shear=mp.ExternalShear,
+                light_mass=al.light_and_mass_profiles.EllipticalSersic,
+                dark=al.mass_profiles.SphericalNFW,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pipeline_settings.pixelization,
                 regularization=pipeline_settings.regularization,
@@ -159,10 +151,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -172,4 +164,4 @@ def make_pipeline(
 
     phase1 = phase1.extend_with_inversion_phase()
 
-    return pipeline.PipelineImaging(pipeline_name, phase1)
+    return al.PipelineImaging(pipeline_name, phase1)

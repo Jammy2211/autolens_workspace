@@ -1,8 +1,5 @@
 import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.array import scaled_array
-from autolens.data.array import mask as msk
-from autolens.plotters import array_plotters
+import autolens as al
 
 import numpy as np
 import os
@@ -11,7 +8,7 @@ import os
 # before a pipeline is run and passed to that pipeline so as to become the default masked used by a phase (if a mask
 # function is not passed to that phase).
 
-# This tool creates an irregular mask, which can form any shape and is not restricted to circles, annuli, ellipses,
+# This tool creates an irmask, which can form any shape and is not restricted to circles, annuli, ellipses,
 # etc. This mask is created as follows:
 
 # 1) Blur the observed image with a Gaussian kernel of specified FWHM.
@@ -27,9 +24,12 @@ signal_to_noise_threshold = (
 # Setup the path to the workspace, using a relative directory name.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
+# Setup the path to the config folder, using the workspace path.
+config_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=config_path + "config", output_path=workspace_path + "output"
 )
 
 # The 'data name' is the name of the data folder and 'data_name' the folder the mask is stored in, e.g,
@@ -47,44 +47,42 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.1
 
 # First, load the CCD imaging data and noise-map, so that the mask can be plotted over the strong lens image.
-image = abstract_data.load_image(
+image = al.load_image(
     image_path=data_path + "image.fits", image_hdu=0, pixel_scale=pixel_scale
 )
 
-noise_map = abstract_data.load_image(
+noise_map = al.load_image(
     image_path=data_path + "noise_map.fits", image_hdu=0, pixel_scale=pixel_scale
 )
 
 # Create the 2D Gaussian that the image is blurred with. This blurring is an attempt to smooth over noise in the
 # image, which will lead unmasked values with in individual pixels if not smoothed over correctly.
-blurring_gaussian = abstract_data.PSF.from_gaussian(
+blurring_gaussian = al.PSF.from_gaussian(
     shape=(31, 31), pixel_scale=pixel_scale, sigma=blurring_gaussian_sigma
 )
 
 blurred_image = blurring_gaussian.convolve(image)
 
-blurred_image = scaled_array.ScaledSquarePixelArray(
-    array=blurred_image, pixel_scale=pixel_scale
-)
+blurred_image = al.ScaledSquarePixelArray(array=blurred_image, pixel_scale=pixel_scale)
 
-array_plotters.plot_array(array=blurred_image)
+al.array_plotters.plot_array(array=blurred_image)
 
 # Now compute the absolute signal-to-noise map of this blurred image, given the noise-map of the observed instrument.
 blurred_signal_to_noise_map = blurred_image / noise_map
 
-blurred_signal_to_noise_map = scaled_array.ScaledSquarePixelArray(
+blurred_signal_to_noise_map = al.ScaledSquarePixelArray(
     array=blurred_signal_to_noise_map, pixel_scale=pixel_scale
 )
 
-array_plotters.plot_array(array=blurred_signal_to_noise_map)
+al.array_plotters.plot_array(array=blurred_signal_to_noise_map)
 
 # Now create the mask in sall pixels where the signal to noise is above some threshold value.
 mask = np.where(blurred_signal_to_noise_map > signal_to_noise_threshold, False, True)
 
-mask = msk.Mask(array=mask, pixel_scale=pixel_scale)
+mask = al.Mask(array=mask, pixel_scale=pixel_scale)
 
-array_plotters.plot_array(array=image, mask=mask)
+al.array_plotters.plot_array(array=image, mask=mask)
 
 # Now we're happy with the mask, lets output it to the data folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-msk.output_mask_to_fits(mask=mask, mask_path=data_path + "mask.fits", overwrite=True)
+al.output_mask_to_fits(mask=mask, mask_path=data_path + "mask.fits", overwrite=True)

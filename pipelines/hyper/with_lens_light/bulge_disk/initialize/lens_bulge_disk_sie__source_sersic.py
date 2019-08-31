@@ -1,10 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
+import autolens as al
 
 # In this pipeline, we'll perform a basic analysis which initialize a lens model (the lens's light, mass and source's \
 # light) and then fits the source galaxy using an inversion. This pipeline uses three phases:
@@ -60,7 +55,7 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=None,
+    pixel_scale_interpolation_grid=None,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -70,7 +65,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_init_hyper__lens_bulge_disk_sie__source_sersic"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         hyper_galaxies=pipeline_settings.hyper_galaxies,
         hyper_image_sky=pipeline_settings.hyper_image_sky,
         hyper_background_noise=pipeline_settings.hyper_background_noise,
@@ -92,7 +87,7 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if pipeline_settings.include_shear:
-        shear = mp.ExternalShear
+        shear = al.mass_profiles.ExternalShear
     else:
         shear = None
 
@@ -105,9 +100,9 @@ def make_pipeline(
     # the same profile chosen in this pipeline.
 
     if pipeline_settings.disk_as_sersic:
-        disk = lp.EllipticalSersic
+        disk = al.light_profiles.EllipticalSersic
     else:
-        disk = lp.EllipticalExponential
+        disk = al.light_profiles.EllipticalExponential
 
     ### PHASE 1 ###
 
@@ -116,8 +111,8 @@ def make_pipeline(
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     # 2) Use a circular mask which includes the lens and source galaxy light.
 
-    class BulgeDiskPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class BulgeDiskPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.bulge.centre = self.galaxies.lens.disk.centre
 
@@ -125,8 +120,10 @@ def make_pipeline(
         phase_name="phase_1__lens_bulge_disk",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=redshift_lens, bulge=lp.EllipticalSersic, disk=disk
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                bulge=al.light_profiles.EllipticalSersic,
+                disk=disk,
             )
         ),
         sub_grid_size=sub_grid_size,
@@ -157,8 +154,8 @@ def make_pipeline(
     #    the bulge of the light profile in phase 1.
     # 3) Have the option to use an annular mask removing the central light, if the inner_mask_radii parametr is input.
 
-    class LensSubtractedPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSubtractedPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Light Bulge -> Bulge, Disk -> Disk ##
 
@@ -178,7 +175,7 @@ def make_pipeline(
                 .galaxies.lens.bulge.centre
             )
 
-            ## Set all hyper_galaxy-galaxies if feature is turned on ##
+            ## Set all hyper_galaxies-galaxies if feature is turned on ##
 
             if pipeline_settings.hyper_galaxies:
 
@@ -202,21 +199,23 @@ def make_pipeline(
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=lp.EllipticalSersic,
+                bulge=al.light_profiles.EllipticalSersic,
                 disk=disk,
-                mass=mp.EllipticalIsothermal,
+                mass=al.mass_profiles.EllipticalIsothermal,
                 shear=shear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         sub_grid_size=sub_grid_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -237,8 +236,8 @@ def make_pipeline(
     # 1) Do not use priors from phase 1 to initialize the lens's light, assuming the source light may of impacted them.
     # 2) Use a circular mask, to fully capture the lens and source light.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             if pipeline_settings.align_bulge_disk_centre:
                 self.galaxies.lens.bulge.centre = self.galaxies.lens.disk.centre
@@ -293,20 +292,22 @@ def make_pipeline(
         phase_name="phase_3__lens_bulge_disk_sie__source_fixed",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=lp.EllipticalSersic,
+                bulge=al.light_profiles.EllipticalSersic,
                 disk=disk,
-                mass=mp.EllipticalIsothermal,
+                mass=al.mass_profiles.EllipticalIsothermal,
                 shear=shear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         sub_grid_size=sub_grid_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -327,8 +328,8 @@ def make_pipeline(
     # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
     # 2) Use a circular mask, to fully capture the lens and source light.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Light, Sersic -> Sersic ###
 
@@ -380,20 +381,22 @@ def make_pipeline(
         phase_name="phase_4__lens_bulge_disk_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=lp.EllipticalSersic,
+                bulge=al.light_profiles.EllipticalSersic,
                 disk=disk,
-                mass=mp.EllipticalIsothermal,
+                mass=al.mass_profiles.EllipticalIsothermal,
                 shear=shear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         sub_grid_size=sub_grid_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -407,6 +410,6 @@ def make_pipeline(
         include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return pipeline.PipelineImaging(
+    return al.PipelineImaging(
         pipeline_name, phase1, phase2, phase3, phase4, hyper_mode=True
     )

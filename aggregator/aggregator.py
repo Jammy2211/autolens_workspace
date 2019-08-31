@@ -117,7 +117,10 @@ print(most_probable_model_instances)
 # Again, we could manipulate these to get all of the most probable values of a given parameter.
 
 einstein_radii = list(
-    map(lambda mp: mp.galaxies.lens.mass.einstein_radius, most_probable_model_instances)
+    map(
+        lambda mp: al.mass_profiles.galaxies.lens.mass.einstein_radius,
+        most_probable_model_instances,
+    )
 )
 
 print(einstein_radii)
@@ -160,7 +163,9 @@ print(einstein_radii_lower_errors)
 
 luminosities = list(
     map(
-        lambda mp: mp.galaxies.lens.light.luminosity_within_circle_in_units(radius=1.0),
+        lambda mp: al.mass_profiles.galaxies.lens.light.luminosity_within_circle_in_units(
+            radius=1.0
+        ),
         most_probable_model_instances,
     )
 )
@@ -170,7 +175,9 @@ print(luminosities)
 
 masses = list(
     map(
-        lambda mp: mp.galaxies.lens.mass_within_circle_in_units(radius=1.0),
+        lambda mp: al.mass_profiles.galaxies.lens.mass_within_circle_in_units(
+            radius=1.0
+        ),
         most_probable_model_instances,
     )
 )

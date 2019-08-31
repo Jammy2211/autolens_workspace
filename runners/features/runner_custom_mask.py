@@ -1,9 +1,3 @@
-import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.array import mask as msk
-from autolens.data.plotters import ccd_plotters
-
 import os
 
 # This pipeline runner demonstrates how to load a custom mask for a lens from the hard-disk, and use this as the
@@ -17,7 +11,14 @@ import os
 # Most of this runner repeats the command described in the 'runner.'py' file. Therefore, to make it clear where the
 # specific mask functionality is used, I have deleted all comments not related to that feature.
 
+### AUTOFIT + CONFIG SETUP ###
+
+import autofit as af
+
 workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+
+config_path = workspace_path + "config"
+
 af.conf.instance = af.conf.Config(
     config_path=workspace_path + "config", output_path=workspace_path + "output"
 )
@@ -26,11 +27,19 @@ data_type = "example"
 data_name = "lens_sersic_sie__source_sersic"
 pixel_scale = 0.1
 
+### AUTOLENS + DATA SETUP ###
+
+from autolens.array import mask as msk
+from autolens.data.instrument import abstract_data
+from autolens.data.instrument import ccd
+from autolens.data.plotters import al.ccd_plotters
+from autolens.pipeline import pipeline as pl
+
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
     psf_path=data_path + "psf.fits",
     noise_map_path=data_path + "noise_map.fits",
@@ -43,7 +52,7 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 # The example autolens_workspace instrument comes with a mask already, if you look in
 # workspace/data/example/lens_light_and_x1_source/ you'll see a mask.fits file!
-mask = msk.load_mask_from_fits(
+mask = al.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
@@ -51,7 +60,7 @@ mask = msk.load_mask_from_fits(
 # - Pass the mask to show it on the image.
 # - Extract only the regions of the image in the mask, to remove contaminating bright sources away from the lens.
 # - zoom in around the mask to emphasize the lens.
-ccd_plotters.plot_ccd_subplot(
+al.ccd_plotters.plot_ccd_subplot(
     ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True
 )
 

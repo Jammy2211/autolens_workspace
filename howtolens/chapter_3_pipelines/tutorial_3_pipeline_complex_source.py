@@ -1,10 +1,16 @@
 import autofit as af
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
+import autolens as al
 from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
+
+# Up to now, we have passed the priors between phases using the 'customize priors' function. This works nicely, and
+# gives us a lot of control for how the prior on every individual parameter is specified. However, it also makes
+# the pipeline code longer than it needs to be, and it does not check for typos or errors in the prior linking.
+
+# In this pipeline, we'll pass priors in a slight different way, where the results of a phase are directly passed to
+# the next phase. This does not change the behaviour of the pipeline from the previous pipelines, but as you'll see
+# reduces the amount of code.
+
+# All template pipelines found in the autolens_workspace use this method of prior passing, so its worth you learning!
 
 
 def make_pipeline(phase_folders=None):
@@ -12,13 +18,13 @@ def make_pipeline(phase_folders=None):
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
     # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
-    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
+    # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
     pipeline_name = "pipeline__complex_source"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/pipeline_tag/phase_name/phase_tag/'
     phase_folders.append(pipeline_name)
 
     # To begin, we need to initialize the lens's mass model. We should be able to do this by using a simple source
@@ -29,12 +35,16 @@ def make_pipeline(phase_folders=None):
     # can be confident MultiNest will fit without much issue, especially when the lens galaxy's light isn't included
     # such that the parameter space is just 12 parameters.
 
-    phase1 = phase_imaging.PhaseImaging(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(redshift=1.0, light_0=lp.EllipticalSersic),
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
+            ),
+            source=al.GalaxyModel(
+                redshift=1.0, light_0=al.light_profiles.EllipticalSersic
+            ),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -46,29 +56,21 @@ def make_pipeline(phase_folders=None):
     # Now lets add another source component, using the previous model as the initialization on the lens / source
     # parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the fit.
 
-    class X2SourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    # To set up phase 2, we use the new method of passing priors, by directly passing the results of phase 1 to the
+    # appropirate model components. The 'variable' behaves exactly as it did in the 'customize_priors' function. Hopefully
+    # you'll agree the code below is a lot more concise than using the customize_priors functioon!
 
-            self.galaxies.lens = results.from_phase(
-                "phase_1__lens_sie__source_sersic"
-            ).variable.lens
-
-            self.galaxies.source.light_0 = results.from_phase(
-                "phase_1__lens_sie__source_sersic"
-            ).variable.source.light_0
-
-    # You'll notice I've stop writing 'phase_1_results = results.from_phase('phase_1_simple_source')' - we know how
-    # the previous results are structured now so lets not clutter our code!
-
-    phase2 = X2SourcePhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_x2_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=phase1.result.variable.galaxies.lens
+            ),
+            source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=lp.EllipticalExponential,
-                light_1=lp.EllipticalSersic,
+                light_0=phase1.result.variable.galaxies.source.light_0,
+                light_1=al.light_profiles.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -80,31 +82,18 @@ def make_pipeline(phase_folders=None):
 
     # Now lets do the same again, but with 3 source galaxy components.
 
-    class X3SourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_2__lens_sie__source_x2_sersic"
-            ).variable.galaxies.lens
-
-            self.galaxies.source.light_0 = results.from_phase(
-                "phase_2__lens_sie__source_x2_sersic"
-            ).variable.galaxies.source.light_0
-
-            self.galaxies.source.light_1 = results.from_phase(
-                "phase_2__lens_sie__source_x2_sersic"
-            ).variable.galaxies.source.light_1
-
-    phase3 = X3SourcePhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sie__source_x3_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=phase2.result.variable.galaxies.lens
+            ),
+            source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=lp.EllipticalExponential,
-                light_1=lp.EllipticalSersic,
-                light_2=lp.EllipticalSersic,
+                light_0=phase2.result.variable.galaxies.source.light_0,
+                light_1=phase2.result.variable.galaxies.source.light_1,
+                light_2=al.light_profiles.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -116,36 +105,19 @@ def make_pipeline(phase_folders=None):
 
     # And one more for luck!
 
-    class X4SourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_3__lens_sie__source_x3_sersic"
-            ).variable.galaxies.lens
-
-            self.galaxies.source.light_0 = results.from_phase(
-                "phase_3__lens_sie__source_x3_sersic"
-            ).variable.galaxies.source.light_0
-
-            self.galaxies.source.light_1 = results.from_phase(
-                "phase_3__lens_sie__source_x3_sersic"
-            ).variable.galaxies.source.light_1
-
-            self.galaxies.source.light_2 = results.from_phase(
-                "phase_3__lens_sie__source_x3_sersic"
-            ).variable.galaxies.source.light_2
-
-    phase4 = X4SourcePhase(
+    phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_sie__source_x4_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=phase3.result.variable.galaxies.lens
+            ),
+            source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=lp.EllipticalExponential,
-                light_1=lp.EllipticalSersic,
-                light_2=lp.EllipticalSersic,
-                light_3=lp.EllipticalSersic,
+                light_0=phase3.result.variable.galaxies.source.light_0,
+                light_1=phase3.result.variable.galaxies.source.light_1,
+                light_2=phase3.result.variable.galaxies.source.light_2,
+                light_3=al.light_profiles.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,

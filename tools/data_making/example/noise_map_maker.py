@@ -1,8 +1,5 @@
 import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.plotters import data_plotters
-from autolens.data.array.util import array_util
+import autolens as al
 
 import os
 
@@ -32,12 +29,12 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.1
 
 # First, load the CCD imaging data, so that the location of galaxies is clear when scaling the noise-map.
-image = abstract_data.load_image(
+image = al.load_image(
     image_path=data_path + "image.fits", image_hdu=0, pixel_scale=pixel_scale
 )
 
 # Next, load the CCD imaging noise-map, which we will use the scale the noise-map.
-noise_map = ccd.load_noise_map(
+noise_map = al.load_noise_map(
     noise_map_path=data_path + "noise_map.fits",
     noise_map_hdu=0,
     pixel_scale=pixel_scale,
@@ -51,10 +48,10 @@ noise_map[25:55, 77:96] = 1.0e8
 noise_map[55:85, 3:27] = 1.0e8
 
 # The signal to noise map is the best way to determine if these regions are appropriately masked out.
-data_plotters.plot_signal_to_noise_map(signal_to_noise_map=image / noise_map)
+al.data_plotters.plot_signal_to_noise_map(signal_to_noise_map=image / noise_map)
 
 # Now we're happy with the mask, lets output it to the data folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-array_util.numpy_array_2d_to_fits(
+al.array_util.numpy_array_2d_to_fits(
     array_2d=noise_map, file_path=data_path + "noise_map_scaled.fits", overwrite=True
 )

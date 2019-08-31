@@ -1,13 +1,5 @@
 import autofit as af
-from autolens.data.array import mask as msk
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-
-import os
+import autolens as al
 
 # In this pipeline, we show how custom masks (generated using the tools/mask_maker.py file) can be input and used by a
 # pipeline. We will also use the inner_mask_radii variable of a phase to mask the central regions of an image.
@@ -53,7 +45,7 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
 
     pipeline_name = "pipeline_feature__inner_mask"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed an inner_mask_radii, a settings tag is automatically generated and added to the phase
     # path to make it clear what mask_radii was used. The settings tag, phase name and phase paths are shown for 2
@@ -82,16 +74,20 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     #    masking on and off for different phases.
 
     def mask_function(image):
-        return msk.Mask.circular(
+        return al.Mask.circular(
             shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=2.5
         )
 
-    phase1 = phase_imaging.PhaseImaging(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__use_inner_radii_input",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
+            ),
+            source=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
         inner_mask_radii=inner_mask_radii,
@@ -109,8 +105,8 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     # 1) Not specify a mask function to the phase, meaning that by default the custom mask passed to the pipeline when
     #    we run it will be used instead.
 
-    class LensSubtractedPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSubtractedPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
                 "phase_1__use_inner_radii_input"
@@ -124,8 +120,12 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
         phase_name="phase_2__circular_mask",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(redshift=0.5, mass=mp.EllipticalIsothermal),
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            lens=al.GalaxyModel(
+                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
+            ),
+            source=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -134,4 +134,4 @@ def make_pipeline(phase_folders=None, inner_mask_radii=None):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.2
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineImaging(pipeline_name, phase1, phase2)

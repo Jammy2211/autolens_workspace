@@ -1,6 +1,5 @@
-from autolens.data.array import scaled_array
-from autolens.data.array.util import array_util
-from autolens.plotters import array_plotters
+import autofit as af
+import autolens as al
 
 import os
 
@@ -21,16 +20,16 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 data_type = "example"
 data_name = "slacs1430+4105"
 
-# Create the path where the instrument will be loaded from, which in this case is
+# Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/slacs1430+4105/'
-data_path = array_util.make_and_return_path(
+data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 image_path = data_path + "image.fits"
 
 # Now, lets load this array as a hyper array. A hyper array is an ordinary NumPy array, but it also includes a pixel
 # scale which allows us to convert the axes of the array to arc-second coordinates.
-image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
+image = al.ScaledSquarePixelArray.from_fits_with_pixel_scale(
     file_path=image_path, hdu=0, pixel_scale=0.03
 )
 
@@ -42,7 +41,7 @@ image = scaled_array.ScaledSquarePixelArray.from_fits_with_pixel_scale(
 #    16 to 24.
 
 # 3) For the same reason, we increase the size of the colorbar ticks from the default value 10 to 20.
-array_plotters.plot_array(
+al.array_plotters.plot_array(
     array=image,
     figsize=(12, 12),
     title="SLACS1430+4105 Image",
@@ -54,16 +53,16 @@ array_plotters.plot_array(
 )
 
 # The colormap of the array can be changed to any of the standard matplotlib colormaps.
-array_plotters.plot_array(array=image, title="SLACS1430+4105 Image", cmap="spring")
+al.array_plotters.plot_array(array=image, title="SLACS1430+4105 Image", cmap="spring")
 
 # We can change the x / y axis units from arc-seconds to kiloparsec, by inputting a kiloparsec to arcsecond conversion
 # factor (for SLACS1430+4105, the lens galaxy is at redshift 0.285, corresponding to the conversion factor below).
-array_plotters.plot_array(
+al.array_plotters.plot_array(
     array=image, title="SLACS1430+4105 Image", units="kpc", kpc_per_arcsec=4.335
 )
 
 # The matplotlib figure can be output to the hard-disk as a png, as follows.
-array_plotters.plot_array(
+al.array_plotters.plot_array(
     array=image,
     title="SLACS1430+4105 Image",
     output_path=workspace_path + "/plotting/plots/",
@@ -72,7 +71,7 @@ array_plotters.plot_array(
 )
 
 # The array itself can be output to the hard-disk as a .fits file.
-array_plotters.plot_array(
+al.array_plotters.plot_array(
     array=image,
     output_path=workspace_path + "/plotting/plots/",
     output_filename="array",

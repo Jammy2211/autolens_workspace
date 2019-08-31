@@ -1,0 +1,12 @@
+galaxies_lens_mass_centre_0                                           y_{\mathrm{m26}}
+galaxies_lens_mass_centre_1                                           x_{\mathrm{m26}}
+galaxies_lens_mass_axis_ratio                                         q_{\mathrm{m26}}
+galaxies_lens_mass_phi                                                \phi_{\mathrm{m26}}
+galaxies_lens_mass_einstein_radius_value                              \theta_{\mathrm{m26}}
+galaxies_source_light_0_centre_0                                      y_{\mathrm{l26}}
+galaxies_source_light_0_centre_1                                      x_{\mathrm{l26}}
+galaxies_source_light_0_axis_ratio                                    q_{\mathrm{l26}}
+galaxies_source_light_0_phi                                           \phi_{\mathrm{l26}}
+galaxies_source_light_0_intensity_value                               I_{\mathrm{l26}}
+galaxies_source_light_0_effective_radius_value                        R_{\mathrm{l26}}
+galaxies_source_light_0_sersic_index                                  n_{\mathrm{l26}}

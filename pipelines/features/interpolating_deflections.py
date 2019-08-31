@@ -1,15 +1,9 @@
 import autofit as af
-from autolens.data.array import mask as msk
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
+import autolens as al
 
 
 # In this pipeline, we'll demonstrate deflection angle interpolation - which computes the deflection angles of a mass
-# profile on a coarse 'interpolation grid' and then interpolates these values to the regular and sub-grids. The premise
+# profile on a coarse 'interpolation grid' and then interpolates these values to the and sub-grids. The premise
 # here is that for mass profiles that require computationally expensive numerical integration, this can reduce the
 # number of integrations necessary from millions to thousands, giving speed-ups in the run times of order x100 or more!
 
@@ -19,7 +13,7 @@ from autolens.model.profiles import mass_profiles as mp
 # experiences balances run-time and precision. In the 'autolens_workspace/tools/precision' folder, you can find
 # tools that allow you to experiment with the precision for different interpolation grids.
 
-# Whilst the 'interp_pixel_scale can be manually specified in the pipeline, in this example we will make it
+# Whilst the 'pixel_scale_interpolation_grid can be manually specified in the pipeline, in this example we will make it
 # an input parameter of the pipeline. This means we can run the pipeline with different pixel scales for different
 # runners.
 
@@ -51,7 +45,7 @@ from autolens.model.profiles import mass_profiles as mp
 # Notes: Uses an interpolation pixel scale of 0.05"
 
 
-def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
+def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
@@ -61,16 +55,16 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
     pipeline_name = "pipeline_feature__interpolating_deflections"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
-    # When a phase is passed a interp_pixel_scale, a settings tag is automatically generated and added to the phase path,
+    # When a phase is passed a pixel_scale_interpolation_grid, a settings tag is automatically generated and added to the phase path,
     # to make it clear what interpolation was used. The settings tag, phase name and phase paths are shown for 3
     # example bin up factors:
 
     # interpolation_pixel_scale=0.1 -> phase_path=phase_name/settings_interp_0.1
     # interpolation_pixel_scale=0.05 -> phase_path=phase_name/settings_interp_0.05
 
-    # If the interp_pixel_scalel is None, the tag is an empty string, thus not changing the settings tag:
+    # If the pixel_scale_interpolation_gridl is None, the tag is an empty string, thus not changing the settings tag:
 
     # interpolation_pixel_scale=None -> phase_path=phase_name/settings
 
@@ -84,7 +78,7 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
     # central regions of the image.
 
     def mask_function(image):
-        return msk.Mask.circular_annular(
+        return al.Mask.circular_annular(
             shape=image.shape,
             pixel_scale=image.pixel_scale,
             inner_radius_arcsec=0.2,
@@ -97,8 +91,8 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
 
     # 1) Use an interpolation pixel scale of 0.1", to ensure fast deflection angle calculations.
 
-    class LensSourceX1Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX1Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
@@ -107,13 +101,17 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            source_0=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
-        interp_pixel_scale=0.1,
+        pixel_scale_interpolation_grid=0.1,
         optimizer_class=af.MultiNest,
     )
 
@@ -128,8 +126,8 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
     # 1) Use the input interpolation pixel scale with (default) value 0.05", to ensure a more accurate modeling of the
     #    mass profile.
 
-    class LensSourceX2Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX2Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
                 "phase_1__x1_source"
@@ -143,14 +141,20 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source_0=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
-            source_1=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            source_0=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
+            source_1=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -158,4 +162,4 @@ def make_pipeline(phase_folders=None, interp_pixel_scale=0.05):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineImaging(pipeline_name, phase1, phase2)

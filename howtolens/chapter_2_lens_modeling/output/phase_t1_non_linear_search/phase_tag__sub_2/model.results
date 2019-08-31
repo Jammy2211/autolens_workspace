@@ -1,0 +1,59 @@
+Most likely model, Likelihood = 6615.80576362
+
+galaxies
+    lens_galaxy
+        mass
+            centre
+                centre_0                                                                  0.011
+                centre_1                                                                  -0.006
+            einstein_radius                                                               1.600
+    source_galaxy
+        light
+            centre
+                centre_0                                                                  -0.001
+                centre_1                                                                  0.000
+            intensity                                                                     0.206
+            effective_radius                                                              0.193
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens_galaxy
+        mass
+            centre
+                centre_0                                                                  -0.002 (-0.025, 0.024)
+                centre_1                                                                  -0.000 (-0.016, 0.015)
+            einstein_radius                                                               1.600 (1.597, 1.602)
+    source_galaxy
+        light
+            centre
+                centre_0                                                                  -0.000 (-0.003, 0.003)
+                centre_1                                                                  -0.000 (-0.004, 0.004)
+            intensity                                                                     0.204 (0.198, 0.210)
+            effective_radius                                                              0.193 (0.189, 0.198)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens_galaxy
+        mass
+            centre
+                centre_0                                                                  -0.002 (-0.017, 0.015)
+                centre_1                                                                  -0.000 (-0.005, 0.005)
+            einstein_radius                                                               1.600 (1.599, 1.601)
+    source_galaxy
+        light
+            centre
+                centre_0                                                                  -0.000 (-0.001, 0.001)
+                centre_1                                                                  -0.000 (-0.001, 0.001)
+            intensity                                                                     0.204 (0.202, 0.206)
+            effective_radius                                                              0.193 (0.192, 0.195)
+
+Constants
+
+galaxies
+    lens_galaxy
+        redshift                                                                          0.5
+    source_galaxy
+        redshift                                                                          1.0

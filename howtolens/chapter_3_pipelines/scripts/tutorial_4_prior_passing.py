@@ -1,20 +1,21 @@
-# In the previous 3  pipelines, we passed priors using the 'variable' attribute of the previous results. However, its
+# In the previous 3 pipelines we passed priors using the 'variable' attribute of the previous results. However, its
 # not yet clear how these priors are passed. Do they use a UniformPrior or GaussianPrior? What are the limits / mean /
 # width of these priors? Can I change this behaviour?
 
 # Lets say I link two parameters in pass priors (don't run this code its just a demo)
 
 
-def pass_priors(self, previous_results):
+class MockPhase(object):
+    def customize_priors(self, previous_results):
 
-    self.galaxies.galaxy_name.profile_name.parameter_name = previous_results[
-        0
-    ].variable.galaxy_name.profile_name.parameter_name
+        self.galaxies.galaxy_name.profile_name.parameter_name = previous_results[
+            0
+        ].variable.galaxies.galaxy_name.profile_name.parameter_name
 
 
 # By invoking the 'variable' attribute, the passing of priors behaves following 3 rules:
 
-# 1) The 'self.galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior as its af.
+# 1) The 'self.galaxies.galaxy_name.profile_name.parameter_name' parameter will use a GaussianPrior.
 
 #    A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase are easily summarized as a
 #    Gaussian.
@@ -29,7 +30,7 @@ def pass_priors(self, previous_results):
 # 3) The sigma of the Gaussian will use either: (i) the 1D error on the previous result's parameter or; (ii) the value
 #    specified in the appropriate 'config/priors/width/profile.ini' config file (check these files out now).
 
-#    The idea here is simple. We want a value of sigma that gives a GaussianPrior wide enough to search a broad region
+#    The idea here is simple. We want a value of sigma that set a GaussianPrior wide enough to search a broad region
 #    of parameter space, so that the lens model can change if a better solution is nearby. However, we want it to be
 #    narrow enough that we don't search too much of parameter space, as this will be slow or risk leading us into an
 #    incorrect solution! A natural choice is the errors of the parameter from the previous phase.
@@ -66,18 +67,18 @@ def pass_priors(self, previous_results):
 ### EXAMPLE ##
 
 # Lets go through an example using a real parameter. Lets say in phase 1 we fit the lens galaxy's light with an
-# elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0. To pass this as a prior to
+# elliptical Sersic profile and we estimate that its sersic index is equal to 4.0 +- 2.0. To pass this as a prior to
 # phase 2, we would write:
 
 
-def pass_priors(self, previous_results):
+def customize_priors(self, previous_results):
 
     self.galaxies.lens.light.sersic_index = previous_results[
         0
-    ].variable.lens.light.sersic
+    ].variable.galaxies.lens.light.sersic
 
 
-# The prior on the lens galaxy's sersic light profile would thus be a GaussianPrior in phase 2, with mean=4.0 and
+# The prior on the lens galaxy's Sersic light profile would thus be a GaussianPrior in phase 2, with mean=4.0 and
 # sigma=2.0.
 
 # If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the

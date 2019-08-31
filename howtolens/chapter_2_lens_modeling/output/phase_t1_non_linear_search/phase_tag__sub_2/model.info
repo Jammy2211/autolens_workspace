@@ -1,0 +1,16 @@
+galaxies
+    lens_galaxy
+        mass
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+            einstein_radius                                                               GaussianPrior, mean = 1.6, sigma = 0.01
+        redshift                                                                          0.5
+    source_galaxy
+        light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+            intensity                                                                     GaussianPrior, mean = 0.2, sigma = 0.01
+            effective_radius                                                              GaussianPrior, mean = 0.2, sigma = 0.01
+        redshift                                                                          1.0

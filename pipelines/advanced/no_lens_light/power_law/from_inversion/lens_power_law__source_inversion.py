@@ -1,13 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
-
-import os
+import autolens as al
 
 # In this pipeline, we'll perform an analysis which fits an image with no lens light, and a source galaxy using an
 # inversion, using a power-law mass profile. The pipeline follows on from the inversion pipeline
@@ -44,10 +36,10 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=None,
-    use_inversion_border=True,
+    pixel_scale_interpolation_grid=None,
+    inversion_uses_border=True,
     inversion_pixel_limit=None,
-    cluster_pixel_scale=0.1,
+    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -58,7 +50,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_power_law__lens_power_law__source_inversion"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=pipeline_settings.include_shear,
         pixelization=pipeline_settings.pixelization,
         regularization=pipeline_settings.regularization,
@@ -74,8 +66,8 @@ def make_pipeline(
     # 1) Set our priors on the lens galaxy mass using the EllipticalIsothermal fit of the previous pipeline, and
     #    source inversion of the previous pipeline.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ### Lens Mass, SIE -> PL ###
 
@@ -115,12 +107,12 @@ def make_pipeline(
         phase_name="phase_1__lens_power_law__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=mp.EllipticalPowerLaw,
-                shear=mp.ExternalShear,
+                mass=al.mass_profiles.EllipticalPowerLaw,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pipeline_settings.pixelization,
                 regularization=pipeline_settings.regularization,
@@ -131,10 +123,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -144,4 +136,4 @@ def make_pipeline(
 
     phase1 = phase1.extend_with_inversion_phase()
 
-    return pipeline.PipelineImaging(pipeline_name, phase1)
+    return al.PipelineImaging(pipeline_name, phase1)

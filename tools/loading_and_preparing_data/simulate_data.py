@@ -2,44 +2,39 @@ import autofit as af
 from astropy.io import fits
 import os
 
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
+import autolens as al
 
 
 def simulate_ccd_data():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(100, 100), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -50,42 +45,40 @@ def simulate_ccd_data():
 
 def simulate_ccd_data_in_counts():
 
-    from autolens.data.array import grids
-    from autolens.model.galaxy import galaxy as g
-    from autolens.lens import ray_tracing
+    psf = al.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
-    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
-
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(100, 100), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0),
             intensity=1000 * 0.3,
             effective_radius=1.0,
             sersic_index=2.0,
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0),
             intensity=1000 * 0.2,
             effective_radius=1.0,
             sersic_index=1.5,
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -96,36 +89,38 @@ def simulate_ccd_data_in_counts():
 
 def simulate_ccd_data_with_large_stamp():
 
-    from autolens.data.array import grids
+    from autolens.array import grids
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = al.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(500, 500), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(500, 500), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -136,36 +131,38 @@ def simulate_ccd_data_with_large_stamp():
 
 def simulate_ccd_data_with_small_stamp():
 
-    from autolens.data.array import grids
+    from autolens.array import grids
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = al.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(50, 50), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(50, 50), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -176,36 +173,38 @@ def simulate_ccd_data_with_small_stamp():
 
 def simulate_ccd_data_with_offset_centre():
 
-    from autolens.data.array import grids
+    from autolens.array import grids
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = abstract_data.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
+    psf = al.PSF.from_gaussian(shape=(21, 21), sigma=0.05, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(100, 100), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(1.0, 1.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(1.0, 1.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -216,36 +215,38 @@ def simulate_ccd_data_with_offset_centre():
 
 def simulate_ccd_data_with_large_psf():
 
-    from autolens.data.array import grids
+    from autolens.array import grids
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = abstract_data.PSF.from_gaussian(shape=(101, 101), sigma=0.05, pixel_scale=0.1)
+    psf = al.PSF.from_gaussian(shape=(101, 101), sigma=0.05, pixel_scale=0.1)
 
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(100, 100), pixel_scale=0.1, psf_shape=(101, 101)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(100, 100), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -256,38 +257,40 @@ def simulate_ccd_data_with_large_psf():
 
 def simulate_ccd_data_with_psf_with_offset_centre():
 
-    from autolens.data.array import grids
+    from autolens.array import grids
     from autolens.model.galaxy import galaxy as g
     from autolens.lens import ray_tracing
 
-    psf = abstract_data.PSF.from_gaussian(
+    psf = al.PSF.from_gaussian(
         shape=(21, 21), sigma=0.05, pixel_scale=0.1, centre=(0.1, 0.1)
     )
 
-    image_plane_grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(100, 100), pixel_scale=0.1, psf_shape=(21, 21)
+    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
+        shape=(100, 100), pixel_scale=0.1
     )
 
-    lens_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    lens_galaxy = al.Galaxy(
+        redshift=0.5,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
-        mass=mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
+        mass=al.mass_profiles.SphericalIsothermal(
+            centre=(0.0, 0.0), einstein_radius=1.2
+        ),
     )
 
-    source_galaxy = g.Galaxy(
-        light=lp.SphericalSersic(
+    source_galaxy = al.Galaxy(
+        redshift=1.0,
+        light=al.light_profiles.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
-        )
+        ),
     )
 
-    tracer = ray_tracing.Tracer.from_galaxies(
-        galaxies=[lens_galaxy, source_galaxy],
-        image_plane_grid_stack=image_plane_grid_stack,
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return ccd.SimulatedCCDData.from_tracer_and_exposure_arrays(
+    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
         tracer=tracer,
+        grid=grid,
         pixel_scale=0.1,
         exposure_time=300.0,
         psf=psf,
@@ -304,7 +307,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data = simulate_ccd_data()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -329,7 +332,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_in_counts = simulate_ccd_data_in_counts()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_in_counts,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -344,7 +347,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_with_large_stamp = simulate_ccd_data_with_large_stamp()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_with_large_stamp,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -358,7 +361,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_with_small_stamp = simulate_ccd_data_with_small_stamp()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_with_small_stamp,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -372,7 +375,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_offset_centre = simulate_ccd_data_with_offset_centre()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_offset_centre,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -386,7 +389,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_with_large_psf = simulate_ccd_data_with_large_psf()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_with_large_psf,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",
@@ -400,7 +403,7 @@ def simulate_all_ccd_data(data_path):
 
     ccd_data_with_off_centre_psf = simulate_ccd_data_with_psf_with_offset_centre()
 
-    ccd.output_ccd_data_to_fits(
+    al.output_ccd_data_to_fits(
         ccd_data=ccd_data_with_off_centre_psf,
         image_path=ccd_data_path + "image.fits",
         noise_map_path=ccd_data_path + "noise_map.fits",

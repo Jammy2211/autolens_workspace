@@ -1,12 +1,5 @@
 import autofit as af
-from autolens.data.array import mask as msk
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-
+import autolens as al
 
 # In this pipeline, we'll demonstrate binning up - which allows us to fit a binned up version of an image in a phse of
 # the pipeline. In this example, we will perform an initial analysis on an image binned up from a pixel scale of 0.05"
@@ -52,7 +45,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     pipeline_name = "pipeline_feature__binning_up"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
 
     # When a phase is passed a bin_up_factor, a settings tag is automatically generated and added to the phase path,
     # to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
@@ -76,7 +69,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     # central regions of the image.
 
     def mask_function(image):
-        return msk.Mask.circular_annular(
+        return al.Mask.circular_annular(
             shape=image.shape,
             pixel_scale=image.pixel_scale,
             inner_radius_arcsec=0.2,
@@ -89,8 +82,8 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # 1) Bin up the image by the input factor specified, which is default 2.
 
-    class LensSourceX1Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX1Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
@@ -99,10 +92,14 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
         bin_up_factor=bin_up_factor,
@@ -119,8 +116,8 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
 
     # 1) Omit the bin up factor, thus performing the modeling at the image's native resolution.
 
-    class LensSourceX2Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX2Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens = results.from_phase(
                 "phase_1__x1_source"
@@ -134,10 +131,14 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=0.5, mass=mp.EllipticalIsothermal, shear=mp.ExternalShear
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(redshift=1.0, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function,
         optimizer_class=af.MultiNest,
@@ -147,4 +148,4 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineImaging(pipeline_name, phase1, phase2)

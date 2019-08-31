@@ -17,7 +17,7 @@ In particular, you'll learn how we:
 3) Apply a smoothness prior on our source reconstruction, called 'regularization', to ensure our solution is physical.
 4) Apply this prior in a Bayesian framework to objectively quantify our source reconstruction's likelihood.
 5) Define a border in the source-plane to prevent pixels tracing outside the source reconstruction.
-6) Can use alternative pixelizations that use irregular Voronoi pixels adapted to the lens's mass model.
+6) Can use alternative pixelizations that use irVoronoi pixels adapted to the lens's mass model.
 7) Use these features in PyAutoLelns pipelines.
 
 Sound good? I agree, so lets get on with it.

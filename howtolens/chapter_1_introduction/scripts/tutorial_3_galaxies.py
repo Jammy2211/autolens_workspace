@@ -1,18 +1,18 @@
 from autolens.model.profiles import light_profiles
 from autolens.model.profiles import mass_profiles
 from autolens.model.galaxy import galaxy
-from autolens.data.array import grids
+from autolens.array import grids
 from autolens.model.galaxy.plotters import galaxy_plotters
 
 # In this example, we'll use the 'mass_profiles' and 'light_profiles' modules introduced previously, along with the
 # 'galaxy' module to create Galaxy objects in PyAutoLens. We'll see that:
 
 # 1) Galaxies can be made from multiple light-profiles and mass-profiles.
-# 2) By taking multiple components, the summed intensities / deflection angle's of the profiles are computed.
+# 2) By taking multiple components, the summed image / deflection angle's of the profiles are computed.
 # 3) Galaxies have redshifts, defining where they are relative to one another in lensing calculations.
 
 # Lets use an identical grid to the previous example.
-grid_stack = grids.GridStack.from_shape_pixel_scale_and_sub_grid_size(
+grid = grids.Grid.from_shape_pixel_scale_and_sub_grid_size(
     shape=(100, 100), pixel_scale=0.05, sub_grid_size=2
 )
 
@@ -33,23 +33,21 @@ print(galaxy_with_light_profile)
 
 # In the previous example, we passed grids to the light-profile module to compute its image.
 # We can do the exact same with galaxies, to again compute the galaxy's image.
-galaxy_intensities = galaxy_with_light_profile.profile_image_from_grid(
-    grid=grid_stack.regular, return_in_2d=True
+galaxy_image = galaxy_with_light_profile.profile_image_from_grid(
+    grid=grid, return_in_2d=True
 )
 
-print("intensity of regular-grid pixel 0:")
-print(galaxy_intensities[0, 0])
-print("intensity of regular-grid pixel 1:")
-print(galaxy_intensities[0, 1])
-print("intensity of regular-grid pixel 2:")
-print(galaxy_intensities[0, 2])
+print("intensity of grid pixel 0:")
+print(galaxy_image[0, 0])
+print("intensity of grid pixel 1:")
+print(galaxy_image[0, 1])
+print("intensity of grid pixel 2:")
+print(galaxy_image[0, 2])
 print("etc.")
 
 # A galaxy plotter allows us to the plot the image, just like the profile plotters did for a light
-# profile (again, mapping the 1D image to 2D).
-galaxy_plotters.plot_intensities(
-    galaxy=galaxy_with_light_profile, grid=grid_stack.regular
-)
+# profile (again, mapping_util the 1D image to 2D).
+galaxy_plotters.plot_profile_image(galaxy=galaxy_with_light_profile, grid=grid)
 
 # We can pass galaxies as many profiles as we like. Lets create a galaxy with three light profiles.
 light_profile_1 = light_profiles.SphericalSersic(
@@ -75,14 +73,10 @@ galaxy_with_3_light_profiles = galaxy.Galaxy(
 print(galaxy_with_3_light_profiles)
 
 # If we plot the galaxy, we see 3 blobs of light!
-galaxy_plotters.plot_intensities(
-    galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_profile_image(galaxy=galaxy_with_3_light_profiles, grid=grid)
 
 # We can also plot each individual light profile using the 'subplot' galaxy plotter.
-galaxy_plotters.plot_intensities_subplot(
-    galaxy=galaxy_with_3_light_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_image_subplot(galaxy=galaxy_with_3_light_profiles, grid=grid)
 
 # Mass profiles interact with Galaxy objects in the exact same way as light profiles.
 # Lets create a galaxy with three SIS mass profiles.
@@ -108,20 +102,12 @@ print(galaxy_with_3_mass_profiles)
 # We can use a galaxy plotter to plot these deflection angles.
 
 # (Deflection angles of mass-profiles add together just like the light-profile image's above)
-galaxy_plotters.plot_deflections_y(
-    galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular
-)
-galaxy_plotters.plot_deflections_x(
-    galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_deflections_y(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_3_mass_profiles, grid=grid)
 
 # I wonder what 3 summed convergence profiles or potential's look like ;)
-galaxy_plotters.plot_convergence(
-    galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular
-)
-galaxy_plotters.plot_potential(
-    galaxy=galaxy_with_3_mass_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_convergence(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+galaxy_plotters.plot_potential(galaxy=galaxy_with_3_mass_profiles, grid=grid)
 
 # Finally, a galaxy can take both light and mass profiles, and there is no limit to how many we pass it.
 light_profile_1 = light_profiles.SphericalSersic(
@@ -176,25 +162,15 @@ galaxy_with_many_profiles = galaxy.Galaxy(
 # Suffice to say, the galaxy's images, convergence, potential and deflections look pretty
 # interesting.
 
-galaxy_plotters.plot_intensities(
-    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_profile_image(galaxy=galaxy_with_many_profiles, grid=grid)
 
-galaxy_plotters.plot_convergence(
-    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_convergence(galaxy=galaxy_with_many_profiles, grid=grid)
 
-galaxy_plotters.plot_potential(
-    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_potential(galaxy=galaxy_with_many_profiles, grid=grid)
 
-galaxy_plotters.plot_deflections_y(
-    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_deflections_y(galaxy=galaxy_with_many_profiles, grid=grid)
 
-galaxy_plotters.plot_deflections_x(
-    galaxy=galaxy_with_many_profiles, grid=grid_stack.regular
-)
+galaxy_plotters.plot_deflections_x(galaxy=galaxy_with_many_profiles, grid=grid)
 
 # And we're done. Lets finished by just thinking about one question:
 

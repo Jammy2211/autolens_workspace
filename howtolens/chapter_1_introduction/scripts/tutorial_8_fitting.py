@@ -1,6 +1,5 @@
-from autolens.data.instrument import abstract_data
 from autolens.data.instrument import ccd
-from autolens.data.array import mask as ma
+from autolens.array import mask as ma
 from autolens.lens import ray_tracing, lens_fit
 from autolens.model.galaxy import galaxy as g
 from autolens.lens import lens_data as ld
@@ -10,16 +9,16 @@ from autolens.data.plotters import ccd_plotters
 from autolens.lens.plotters import ray_tracing_plotters
 from autolens.lens.plotters import lens_fit_plotters
 
-# In this example, we'll fit the ccd imaging data we simulated in the previous exercise. We'll do this using model
+# In this example, we'll fit the ccd data we simulated in the previous exercise. We'll do this using model
 # images generated via a tracer, and by comparing to the simulated image we'll get diagostics about the quality of the fit.
 
-# You need to change the path below to the chapter 1 directory.
+# First you need to change the path below to the chapter 1 directory so we can load the data we output previously.
 chapter_path = (
     "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
 )
 
-# The instrument path specifies where the instrument was output in the last tutorial, this time in the directory 'chapter_path/instrument'
-data_path = chapter_path + "instrument/"
+# The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
+data_path = chapter_path + "data/"
 
 ccd_data = ccd.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
@@ -28,13 +27,13 @@ ccd_data = ccd.load_ccd_data_from_fits(
     pixel_scale=0.1,
 )
 
-# The variable ccd_data is a CCDData object, which is a 'package' of all components of the CCD instrument of the lens, in particular:
+# 'ccd_data' is a CCDData object, which is a 'package' of all components of the CCD instrument of the lens,
+# in particular:
 
 # 1) The image.
-#
 # 2) The Point Spread Function (PSF).
-#
 # 3) Its noise-map.
+
 print("Image:")
 print(ccd_data.image)
 print("Noise-Map:")
@@ -44,7 +43,7 @@ print(ccd_data.psf)
 
 # To fit an image, we first specify a mask. A mask describes the sections of the image that we fit.
 
-# Typically, we want to mask out regions of the image where the lens and source galaxies are not visible, for example
+# Typically, we want to mask regions of the image where the lens and source galaxies are not visible, for example
 # at the edges where the signal is entirely background sky and noise.
 
 # For the image we simulated, a 3" circular mask will do the job.
@@ -64,32 +63,31 @@ ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
 # we can focus-in on the lens and source galaxies.
 
 # You'll see this is an option for pretty much every plotter in PyAutoLens, and is something we'll do often throughout
-#  the tutorials.
+# the tutorials.
 ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask, zoom_around_mask=True)
 
-# We can also remove all pixels output of the mask in the plot, which means that if bright pixels outside the mask
-# are messing up the color scheme and plot, they'll removed. Again, we'll do this throughout the code.
+# We can also remove all pixels outside the mask in the plot, meaning bright pixels outside the mask won't impact the
+# plot's color range. Again, we'll do this throughout the code.
 ccd_plotters.plot_image(
     ccd_data=ccd_data, mask=mask, extract_array_from_mask=True, zoom_around_mask=True
 )
 
-# Now we've loaded the ccd instrument and created a mask, we use them to create a 'lens instrument' object, which we'll perform
-# using the lens_data module (imported as 'ld').
+# Now we've loaded the ccd data and created a mask, we'll create a 'lens data' object, using the 'lens_data' module.
 
-# A lens instrument object is a 'package' of all parts of a instrument-set we need in order to fit it with a lens model:
+# A lens data object is a 'package' of all parts of a data-set we need in order to fit it with a lens model:
 
-# 1) The ccd-instrument, e.g. the image, PSF (so that when we compare a tracer's image-plane image to the image instrument we
+# 1) The ccd-data, including the image, PSF (so that when we compare a tracer's image to the image instrument we
 #    can include blurring due to the telescope optics) and noise-map (so our goodness-of-fit measure accounts for
 #    noise in the observations).
 
 # 2) The mask, so that only the regions of the image with a signal are fitted.
 
-# 3) A grid-stack aligned to the ccd-imaging data's pixels: so the tracer's image-plane image is generated on the same
-#    (masked) grid as the image.
+# 3) A grid aligned to the ccd-imaging data's pixels, so the tracer's image is generated on the same (masked) grid as
+# the image.
 
 lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
 
-ccd_plotters.plot_image(ccd_data=ccd_data)
+ccd_plotters.plot_image(ccd_data=lens_data.ccd_data)
 
 # By printing its attribute, we can see that it does indeed contain the unmasked image, unmasked noise-map mask,
 # psf and so on.
@@ -104,9 +102,9 @@ print(lens_data.psf)
 print()
 print("Mask")
 print(lens_data.mask_2d)
+print()
 
-
-# The lens_dat also contains a masked image, returnd here in 2D and 1D.
+# The lens_data also contains a masked image, returned below in 2D and 1D.
 
 # On the 2D array, all edge values are masked and are therefore zeros. To see the image values, try changing the
 # indexes of the array that are print to the central pixels (e.g. [49, 50])
@@ -117,10 +115,7 @@ print(lens_data.image(return_in_2d=True))
 print(lens_data.image(return_in_2d=False).shape)
 print(lens_data.image(return_in_2d=False))
 
-# There is a masked noise-map, again returnd in 2D and 1D.
-
-# On the 2D array, all edge values are masked and are therefore zeros. To see the noise-map values, try changing the
-# indexes of the array that are print to the central pixels (e.g. [49, 50])
+# There is a masked noise-map, again returned in 2D and 1D with edge values set to zeros.
 
 print("The 2D Masked Noise-Map and 1D Noise-Map of unmasked entries")
 print(lens_data.noise_map(return_in_2d=True).shape)
@@ -128,14 +123,15 @@ print(lens_data.noise_map(return_in_2d=True))
 print(lens_data.noise_map(return_in_2d=False).shape)
 print(lens_data.noise_map(return_in_2d=False))
 
-# The lens-instrument also has the grid_stack we're used to, where only coordinates which are not masked are included
-print(lens_data.grid_stack.regular)
+# The lens-data also has a grid, where only coordinates which are not masked are included.
+print("Masked Grid")
+print(lens_data.grid)
 
-# To fit an image, we need to create an image-plane image using a tracer.
-# Lets use the same tracer we simulated the ccd instrument with (thus, our fit should be 'perfect').
+# To fit an image, create an image using a tracer. Lets use the same tracer we simulated the ccd instrument with (thus,
+# our fit is 'perfect').
 
-# Its worth noting that below, we use the lens_data's grid-stack to setup the tracer. This ensures that our image-plane
-# image will be the same resolution and alignment as our image-instrument, as well as being masked appropriately.
+# Its worth noting that below, we use the lens_data's grid to setup the tracer. This ensures that our image-plane
+# image is the same resolution and alignment as our lens data's masked image.
 
 lens_galaxy = g.Galaxy(
     redshift=0.5,
@@ -156,23 +152,21 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(
-    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=lens_data.grid_stack
-)
+tracer = ray_tracing.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-ray_tracing_plotters.plot_image_plane_image(tracer=tracer)
+ray_tracing_plotters.plot_profile_image(tracer=tracer, grid=lens_data.grid)
 
-# To fit the image, we pass the lens instrument and tracer to the fitting module. This performs the following:
+# To fit the image, we pass the lens data and tracer to the 'lens_fit' module. This performs the following:
 
-# 1) Blurs the tracer's image-plane image with the lens instrument's PSF, ensuring that the telescope optics are
-#    accounted for by the fit. This creates the fit's 'model_image'.
+# 1) Blurs the tracer's image with the lens data's PSF, ensuring the telescope optics are included in the fit. This
+#    creates the fit's 'model_image'.
 
-# 2) Computes the difference between this model_image and the observed image-instrument, creating the fit's 'residual_map'.
+# 2) Computes the difference between this model_image and the observed image-data, creating the fit's 'residual_map'.
 
-# 3) Divides the residuals by the noise-map and squaring each value, creating the fit's 'chi_squared_map'.
+# 3) Divides the residual-map by the noise-map and squares each value, creating the fit's 'chi_squared_map'.
 
-# 4) Sums up these chi-squared values and converts them to a 'likelihood', which quantities how good the tracer's fit
-#    to the instrument was (higher likelihood = better fit).
+# 4) Sums up these chi-squared values and converts them to a 'likelihood', which quantifies how good the tracer's fit
+#    to the data was (higher likelihood = better fit).
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
@@ -209,19 +203,17 @@ print("Chi-Squareds Central Pixels:")
 chi_squared_map = fit.chi_squared_map(return_in_2d=True)
 print(chi_squared_map[48:53, 48:53])
 
-# It also provides a likelihood, which is a single-figure estimate of how good the model image fitted the
+# The fit also gives a likelihood, which is a single-figure estimate of how good the model image fitted the
 # simulated image (in unmasked pixels only!).
 print("Likelihood:")
 print(fit.likelihood)
 
-# We used the same tracer to create and fit the image. Therefore, our fit to the image was excellent.
-# For instance, by inspecting the residuals and chi-squareds, one can see no signs of the source galaxy's light present,
-# indicating a good fit.
+# We used the same tracer to create and fit the image, giving an excellent fit. The residual-map and chi-squared-map,
+# show no signs of the source galaxy's light present, indicating a good fit. This solution will translate to one of
+# the highest-likelihood solutions possible.
 
-# This solution should translate to one of the highest-likelihood solutions possible.
-
-# Lets change the tracer, so that it's near the correct solution, but slightly off.
-# Below, we slightly offset the lens galaxy, by 0.005"
+# Lets change the tracer, so that it's near the correct solution, but slightly off. Below, we slightly offset the
+# lens galaxy, by 0.005"
 
 lens_galaxy = g.Galaxy(
     redshift=0.5,
@@ -242,9 +234,7 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(
-    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=lens_data.grid_stack
-)
+tracer = ray_tracing.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
@@ -252,17 +242,18 @@ lens_fit_plotters.plot_fit_subplot(
     fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
 )
 
-# We now observe residuals to appear at the locations the source galaxy was observed, which
-# corresponds to an increase in chi-squareds (which determines our goodness-of-fit).
+# Residuals now appear at the locations of the source galaxy, increasing the chi-squared values (which determine our
+# likelihood).
 
 # Lets compare the likelihood to the value we computed above (which was 11697.24):
 print("Previous Likelihood:")
 print(11697.24)
 print("New Likelihood:")
 print(fit.likelihood)
-# It decreases! This model was a worse fit to the instrument.
 
-# Lets change the tracer, one more time, to a solution that is nowhere near the correct one.
+# It decreases! As expected, this model us a worse fit to the data.
+
+# Lets change the tracer, one more time, to a solution nowhere near the correct one.
 lens_galaxy = g.Galaxy(
     redshift=0.5,
     mass=mp.EllipticalIsothermal(
@@ -282,9 +273,7 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(
-    galaxies=[lens_galaxy, source_galaxy], image_plane_grid_stack=lens_data.grid_stack
-)
+tracer = ray_tracing.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
 
@@ -292,8 +281,8 @@ lens_fit_plotters.plot_fit_subplot(
     fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
 )
 
-# Clearly, the model provides a terrible fit, and this tracer is not a plausible representation of
-# the image-instrument  (of course, we already knew that, given that we simulated it!)
+# Clearly, the model provides a terrible fit and this tracer is not a plausible representation of
+# the image-data (of course, we already knew that, given that we simulated it!)
 
 # The likelihood drops dramatically, as expected.
 print("Previous Likelihoods:")
@@ -306,4 +295,4 @@ print(fit.likelihood)
 
 # 1) In this example, we 'knew' the correct solution, because we simulated the lens ourselves. In the real Universe,
 #    we have no idea what the correct solution is. How would you go about finding the correct solution?
-#    Could you find a solution that fits the instrument reasonable through trial and error?
+#    Could you find a solution that fits the data reasonable through trial and error?

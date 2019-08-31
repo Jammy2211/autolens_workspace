@@ -8,9 +8,7 @@
 ######################################
 
 import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.data.array import mask as msk
+import autolens as al
 
 import os
 
@@ -31,25 +29,25 @@ data_name = (
 )  # An example simulated image without any lens light and a source galaxy.
 pixel_scale = 0.1
 
-# Create the path where the instrument will be loaded from, which in this case is
+# Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/example/lens_light_mass_and_x1_source/'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
     psf_path=data_path + "psf.fits",
     noise_map_path=data_path + "noise_map.fits",
     pixel_scale=pixel_scale,
 )
 
-mask = msk.load_mask_from_fits(
+mask = al.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
-# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens instrument to its run function.
-# Below, we'll use a 3 phase example pipeline to fit the instrument with a mass model and pixelized source reconstruction.
+# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens data to its run function.
+# Below, we'll use a 3 phase example pipeline to fit the data with a mass model and pixelized source reconstruction.
 # Checkout _workspace/pipelines/examples/lens_sie__source_inversion.py' for a full description of
 # the pipeline.
 
@@ -69,14 +67,14 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["data", data_type, data_name]
 )
 
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
     psf_path=data_path + "psf.fits",
     noise_map_path=data_path + "noise_map.fits",
     pixel_scale=pixel_scale,
 )
 
-mask = msk.load_mask_from_fits(
+mask = al.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 

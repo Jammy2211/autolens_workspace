@@ -1,15 +1,5 @@
 import autofit as af
-from autolens.data.array import mask as msk
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
-
-import os
+import autolens as al
 
 # In this pipeline, we'll perform a basic analysis which fits two source galaxies using a light profile
 # followed by an inversion, where the lens galaxy's light is not present in the image, using two phases:
@@ -25,7 +15,7 @@ import os
 
 # Phase 2:
 
-# Description: initialize the inversion's pixelization and regularization hyper_galaxy-parameters, using a previous lens mass
+# Description: initialize the inversion's pixelization and regularization hyper_galaxies-parameters, using a previous lens mass
 #              model.
 # Lens Mass: EllipitcalIsothermal + ExternalShear
 # Source Light: VoronoiMagnification + Constant
@@ -54,8 +44,8 @@ import os
 
 def make_pipeline(
     include_shear=True,
-    pixelization=pix.VoronoiMagnification,
-    regularization=reg.Constant,
+    pixelization=al.pixelizations.VoronoiMagnification,
+    regularization=al.regularization.Constant,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -64,10 +54,10 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=None,
-    use_inversion_border=True,
+    pixel_scale_interpolation_grid=None,
+    inversion_uses_border=True,
     inversion_pixel_limit=None,
-    cluster_pixel_scale=0.1,
+    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -78,7 +68,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline__sie__source_inversion"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=include_shear,
         pixelization=pixelization,
         regularization=regularization,
@@ -98,7 +88,7 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if include_shear:
-        shear = mp.ExternalShear
+        shear = al.mass_profiles.ExternalShear
     else:
         shear = None
 
@@ -106,7 +96,7 @@ def make_pipeline(
     # central regions of the image.
 
     def mask_function_annular(image):
-        return msk.Mask.circular_annular(
+        return al.Mask.circular_annular(
             shape=image.shape,
             pixel_scale=image.pixel_scale,
             inner_radius_arcsec=0.2,
@@ -119,8 +109,8 @@ def make_pipeline(
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    class LensSourceX1Phase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourceX1Phase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
             self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
@@ -129,10 +119,14 @@ def make_pipeline(
         phase_name="phase_1__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=redshift_lens, mass=mp.EllipticalIsothermal, shear=shear
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=shear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         mask_function=mask_function_annular,
         sub_grid_size=sub_grid_size,
@@ -140,8 +134,8 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        use_inversion_border=use_inversion_border,
-        interp_pixel_scale=interp_pixel_scale,
+        inversion_uses_border=inversion_uses_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -165,8 +159,8 @@ def make_pipeline(
     # 1) Fix our mass model to the lens galaxy mass-model from phase 3 of the initialize pipeline.
     # 2) Use a circular mask which includes all of the source-galaxy light.
 
-    class InversionPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class InversionPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Mass, SIE -> SIE ###
 
@@ -186,10 +180,12 @@ def make_pipeline(
         phase_name="phase_2__source_inversion_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=redshift_lens, mass=mp.EllipticalIsothermal, shear=shear
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=shear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pixelization,
                 regularization=regularization,
@@ -200,10 +196,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -220,8 +216,8 @@ def make_pipeline(
     # 1) Initialize the priors on the lens galaxy mass using the results of the previous pipeline.
     # 2) Initialize the priors of all source inversion parameters from phase 1.
 
-    class InversionPhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class InversionPhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ## Lens Mass, SIE -> SIE ###
 
@@ -247,10 +243,12 @@ def make_pipeline(
         phase_name="phase_3__inversion",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
-                redshift=redshift_lens, mass=mp.EllipticalIsothermal, shear=shear
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                mass=al.mass_profiles.EllipticalIsothermal,
+                shear=shear,
             ),
-            source=gm.GalaxyModel(
+            source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=pixelization,
                 regularization=regularization,
@@ -261,10 +259,10 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
-        use_inversion_border=use_inversion_border,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        cluster_pixel_scale=cluster_pixel_scale,
+        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -272,4 +270,4 @@ def make_pipeline(
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.5
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, phase3)
+    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3)

@@ -1,0 +1,8 @@
+phase_1__left_lens_light took 0:01:20.232547 to run
+phase_2__right_lens_light took 0:01:15.889478 to run
+phase_1__left_lens_light took 0:05:55.911099 to run
+phase_2__right_lens_light took 0:04:51.601180 to run
+phase_1__left_lens_light took 1 day, 1:43:17.387270 to run
+phase_2__right_lens_light took 1 day, 1:42:20.513299 to run
+phase_3__lens_x2_sie__source_exp took 1 day, 1:44:22.419363 to run
+phase_4__lens_x2_sersic_sie__source_exp took 1:28:03.234776 to run

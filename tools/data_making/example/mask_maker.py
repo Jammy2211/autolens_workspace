@@ -1,7 +1,5 @@
 import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.array import mask as msk
-from autolens.data.plotters import data_plotters
+import autolens as al
 
 import os
 
@@ -27,14 +25,14 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scale = 0.1
 
 # First, load the CCD imaging data, so that the mask can be plotted over the strong lens image.
-image = abstract_data.load_image(
+image = al.load_image(
     image_path=data_path + "image.fits", image_hdu=0, pixel_scale=pixel_scale
 )
 
 # Now, create a mask for this instrument, using the mask function's we're used to. I'll use a circular-annular mask here,
 # but I've commented over options you might want to use (feel free to experiment!)
 
-mask = msk.Mask.circular_annular(
+mask = al.Mask.circular_annular(
     shape=image.shape,
     pixel_scale=image.pixel_scale,
     inner_radius_arcsec=0.5,
@@ -43,8 +41,8 @@ mask = msk.Mask.circular_annular(
 )
 
 # Now lets plot the image and mask, so we can check that the mask includes the regions of the image we want.
-data_plotters.plot_image(image=image, mask=mask)
+al.data_plotters.plot_image(image=image, mask=mask)
 
 # Now we're happy with the mask, lets output it to the data folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-msk.output_mask_to_fits(mask=mask, mask_path=data_path + "mask.fits", overwrite=True)
+al.output_mask_to_fits(mask=mask, mask_path=data_path + "mask.fits", overwrite=True)

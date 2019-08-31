@@ -1,10 +1,9 @@
-import autofit as af
-from autolens.data.instrument import abstract_data
-from autolens.data.instrument import ccd
-from autolens.pipeline import pipeline as pl
-
 import os
 import sys
+
+### AUTOFIT + CONFIG SETUP ###
+
+import autofit as af
 
 ### NOTE - if you have not already, complete the setup in 'workspace/runners/cosma/setup' before continuing with this
 ### cosma pipeline script.
@@ -17,11 +16,11 @@ import sys
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The instrument path is over-written to the path '/cosma5/data/autolens/cosma_username/instrument' as opposed to the
+# 1) The data path is over-written to the path '/cosma5/data/autolens/cosma_username/instrument' as opposed to the
 #    workspace. As we discussed in the setup, on cosma we don't store our instrument in our workspace.
 
 # 2) The output path is over-written to the path '/cosma5/data/autolens/cosma_username/output' as opposed to
-#    the workspace. This is for the same reason as the instrument.
+#    the workspace. This is for the same reason as the data.
 
 # We need to specify where our instrument is stored and output is placed. In this example, we'll use the 'share' folder, but
 # you can change the string below to your cosma username if you want to use your own personal directory.
@@ -38,7 +37,7 @@ cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 # lens, it may be best to omit the data_type.
 data_type = "example"
 
-# Next, lets use this path to setup the instrument path, which for this example is named 'example' and found at
+# Next, lets use this path to setup the data path, which for this example is named 'example' and found at
 # '/cosma5/data/autolens/share/data/example/'
 cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["data", data_type]
@@ -53,9 +52,12 @@ cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names
 # located in our Cosma workspace.
 workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
+# Setup the path to the config folder, using the workspace path.
+config_path = workspace_path + "config"
+
 # Lets now use the above paths to set the config path and output path for our Cosma run.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=cosma_output_path
+    config_path=config_path, output_path=cosma_output_path
 )
 
 # On Cosma, there are two systems we can submit to, called 'cordelia' and 'cosma'. The similarities and differences
@@ -91,6 +93,10 @@ cosma_array_id = int(sys.argv[1])
 # will be different. That is, job 1 will get a cosma_array_id of 1, job 2 will get an id of 2, and so on. This is our
 # only unique identifier of every job, thus its our only hope of specifying for each job which image they load!
 
+### AUTOLENS + DATA SETUP ###
+
+import autolens as al
+
 # We're used to specifying the data name as a string, so that our pipeline can be applied to multiple
 # images with ease. On Cosma, we can apply the same logic, but put these strings in a list such that each Cosma job
 # loads a different lens name based on its ID. neat, huh?
@@ -112,7 +118,7 @@ data_name = data_name[cosma_array_id]
 
 pixel_scale = 0.2  # Make sure your pixel scale is correct!
 
-# We now use the data_name to load a the instrument-set on each job. The statement below combines
+# We now use the data_name to load a the data-set on each job. The statement below combines
 # the cosma_data_path and and data_name to read instrument from the following directory:
 # '/cosma5/data/autolens/share/data/example/data_name'
 data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
@@ -120,7 +126,7 @@ data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 )
 
 # This loads the CCD imaging data, as per usual.
-ccd_data = ccd.load_ccd_data_from_fits(
+ccd_data = al.load_ccd_data_from_fits(
     image_path=data_path + "image.fits",
     psf_path=data_path + "psf.fits",
     noise_map_path=data_path + "noise_map.fits",
@@ -129,16 +135,13 @@ ccd_data = ccd.load_ccd_data_from_fits(
 
 ### PIPELINE SETTINGS ###
 
-pipeline_settings = pl.PipelineSettings(include_shear=True)
+pipeline_settings = al.PipelineSettings(include_shear=True)
 
 from workspace.pipelines.advanced.no_lens_light.initialize import (
     lens_sie__source_sersic,
 )
 from workspace.pipelines.advanced.no_lens_light.power_law.from_initialize import (
     lens_power_law__source_sersic,
-)
-from workspace_jam.pipelines.advanced.no_lens_light.subhalo.from_power_law import (
-    lens_pl_subhalo_source_sersic,
 )
 
 pipeline_initialize = lens_sie__source_sersic.make_pipeline(
@@ -149,11 +152,8 @@ pipeline_power_law = lens_power_law__source_sersic.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
 )
 
-pipeline_subhalo = lens_pl_subhalo_source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
-)
 
-pipeline = pipeline_initialize + pipeline_power_law + pipeline_subhalo
+pipeline = pipeline_initialize + pipeline_power_law
 
 pipeline.run(data=ccd_data)
 

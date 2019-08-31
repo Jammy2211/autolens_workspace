@@ -1,12 +1,5 @@
 import autofit as af
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
-from autolens.pipeline import pipeline
-from autolens.pipeline import pipeline_tagging
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-
-import os
+import autolens as al
 
 # In this pipeline, we'll perform an analysis which fits an image with  no lens light, and a source galaxy using a
 # parametric light profile, using a power-law mass profile. The pipeline follows on from the initialize pipeline
@@ -34,7 +27,7 @@ def make_pipeline(
     bin_up_factor=None,
     positions_threshold=None,
     inner_mask_radii=None,
-    interp_pixel_scale=None,
+    pixel_scale_interpolation_grid=None,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -45,7 +38,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_power_law__lens_power_law__source_sersic"
 
-    pipeline_tag = pipeline_tagging.pipeline_tag_from_pipeline_settings(
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
         include_shear=pipeline_settings.include_shear
     )
 
@@ -59,8 +52,8 @@ def make_pipeline(
     # 1) Set our priors on the lens galaxy mass using the EllipticalIsothermal fit of the previous pipeline, and
     #    source galaxy of the previous pipeline.
 
-    class LensSourcePhase(phase_imaging.PhaseImaging):
-        def pass_priors(self, results):
+    class LensSourcePhase(al.PhaseImaging):
+        def customize_priors(self, results):
 
             ### Lens Mass, SIE -> PL ###
 
@@ -100,19 +93,21 @@ def make_pipeline(
         phase_name="phase_1__lens_power_law__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=gm.GalaxyModel(
+            lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=mp.EllipticalPowerLaw,
-                shear=mp.ExternalShear,
+                mass=al.mass_profiles.EllipticalPowerLaw,
+                shear=al.mass_profiles.ExternalShear,
             ),
-            source=gm.GalaxyModel(redshift=redshift_source, light=lp.EllipticalSersic),
+            source=al.GalaxyModel(
+                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+            ),
         ),
         sub_grid_size=sub_grid_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
         inner_mask_radii=inner_mask_radii,
-        interp_pixel_scale=interp_pixel_scale,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -120,4 +115,4 @@ def make_pipeline(
     phase1.optimizer.n_live_points = 75
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return pipeline.PipelineImaging(pipeline_name, phase1)
+    return al.PipelineImaging(pipeline_name, phase1)
