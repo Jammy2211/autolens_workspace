@@ -51,7 +51,7 @@ mask = al.load_mask_from_fits(
 # Checkout _workspace/pipelines/examples/lens_sie__source_inversion.py' for a full description of
 # the pipeline.
 
-from workspace.pipelines.simple import lens_sersic_sie__source_sersic
+from autolens_workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
 pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]
@@ -78,7 +78,7 @@ mask = al.load_mask_from_fits(
     mask_path=data_path + "mask.fits", pixel_scale=pixel_scale
 )
 
-from workspace.pipelines.simple import lens_sersic_sie__source_sersic
+from autolens_workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
 pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]

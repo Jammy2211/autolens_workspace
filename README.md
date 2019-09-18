@@ -50,7 +50,7 @@ export WORKSPACE=/path/to/autolens_workspace/
 
 You can test everything is working by running the example pipeline runner in the autolens_workspace
 ```
-python3 /path/to/autolens_workspace/runners/simple/runner__lens_sie__source_sersic.py
+python3 /path/to/autolens_workspace/runners/simple/runner__lens_sie__source_inversion.py
 ```
 
 ## Support & Discussion

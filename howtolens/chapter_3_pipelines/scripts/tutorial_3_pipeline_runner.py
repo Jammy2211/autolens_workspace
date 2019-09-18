@@ -122,7 +122,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # to keep the number of parameters down and the phases running fast, but we wouldn't get such a luxury for a real galaxy.
 
 # Again, before we checkout the pipeline, lets import it, and get it running.
-from workspace.howtolens.chapter_3_pipelines import tutorial_3_pipeline_complex_source
+from autolens_workspace.howtolens.chapter_3_pipelines import tutorial_3_pipeline_complex_source
 
 pipeline_complex_source = tutorial_3_pipeline_complex_source.make_pipeline(
     phase_folders=["howtolens", "c3_t3_complex_source"]

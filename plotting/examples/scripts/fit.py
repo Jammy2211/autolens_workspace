@@ -96,7 +96,7 @@ al.array_plotters.plot_array(
 # We can also plot the results of a fit using the fit itself. To do this, we have to make the pipeline and run it
 # so as to load up all the results of the pipeline. We can then access the results of every phase.
 
-from workspace.pipelines.simple import lens_sersic_sie__source_sersic
+from autolens_workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
 image_path = data_path + "/image.fits"
 psf_path = data_path + "/psf.fits"

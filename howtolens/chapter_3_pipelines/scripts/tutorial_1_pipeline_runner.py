@@ -131,7 +131,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # for this pipeline this will output the data as:
 # 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name' (the pipeline name is specified in the
 # pipeline).
-from workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
+from autolens_workspace.howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
 
 pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
     phase_folders=["howtolens", "c3_t1_lens_and_source"]

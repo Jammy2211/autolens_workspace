@@ -136,13 +136,13 @@ pipeline_settings = al.PipelineSettingsHyper(
     regularization=al.regularization.AdaptiveBrightness,
 )
 
-from workspace.pipelines.hyper.with_lens_light.bulge_disk.initialize import (
+from autolens_workspace.pipelines.hyper.with_lens_light.bulge_disk.initialize import (
     lens_bulge_disk_sie__source_sersic,
 )
-from workspace.pipelines.hyper.with_lens_light.bulge_disk.inversion.from_initialize import (
+from autolens_workspace.pipelines.hyper.with_lens_light.bulge_disk.inversion.from_initialize import (
     lens_bulge_disk_sie__source_inversion,
 )
-from workspace.pipelines.hyper.with_lens_light.bulge_disk.power_law.from_inversion import (
+from autolens_workspace.pipelines.hyper.with_lens_light.bulge_disk.power_law.from_inversion import (
     lens_bulge_disk_power_law__source_inversion,
 )
 

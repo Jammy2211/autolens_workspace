@@ -3,7 +3,7 @@ import autolens as al
 
 import os
 
-from workspace.tools.data_making.samples import tools
+from autolens_workspace.tools.data_making.samples import tools
 
 #### UNFINISHE CODE ####
 

@@ -46,7 +46,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # We simply import the binning up pipeline and pass the level of binning up we want as an input parameter (which
 # for the pipeline below, is only used in phase 1).
 
-from workspace.pipelines.features import signal_to_noise_limit
+from autolens_workspace.pipelines.features import signal_to_noise_limit
 
 pipeline = signal_to_noise_limit.make_pipeline(
     phase_folders=[data_type, data_name], signal_to_noise_limit=20.0

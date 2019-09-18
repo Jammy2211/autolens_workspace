@@ -114,7 +114,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 
 # Again, before we checkout the pipeline, lets import it, and get it running.
-from workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
+from autolens_workspace.howtolens.chapter_3_pipelines import tutorial_2_pipeline_x2_lens_galaxies
 
 pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
     phase_folders=["howtolens", "c3_t2_x2_galaxies"]

@@ -67,7 +67,7 @@ al.ccd_plotters.plot_ccd_subplot(
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
 # 'pipeline.run() function.
 
-from workspace.pipelines.simple import lens_sersic_sie__source_sersic
+from autolens_workspace.pipelines.simple import lens_sersic_sie__source_sersic
 
 pipeline = lens_sersic_sie__source_sersic.make_pipeline(
     phase_folders=[data_type, data_name]

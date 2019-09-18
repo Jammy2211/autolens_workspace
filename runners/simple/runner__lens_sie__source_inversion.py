@@ -66,7 +66,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # Checkout _workspace/pipelines/examples/lens_sie__source_inversion.py' for a full description of
 # the pipeline.
 
-from workspace.pipelines.simple import lens_sie__source_inversion
+from autolens_workspace.pipelines.simple import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
     phase_folders=[data_type, data_name], include_shear=True
@@ -91,6 +91,6 @@ pipeline.run(data=ccd_data)
 #
 # al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
-# from workspace.pipelines.simple import lens_sie__source_x2_sersic
+# from autolens_workspace.pipelines.simple import lens_sie__source_x2_sersic
 # pipeline = lens_sie__source_x2_sersic.make_pipeline(phase_folders=[data_type, data_name])
 # pipeline.run(instrument=ccd_data)

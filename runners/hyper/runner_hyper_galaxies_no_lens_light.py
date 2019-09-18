@@ -134,11 +134,11 @@ pipeline_settings = al.PipelineSettingsHyper(
 
 ### HYPER PIPELINES ###
 
-from workspace.pipelines.hyper.no_lens_light.initialize import lens_sie__source_sersic
-from workspace.pipelines.hyper.no_lens_light.inversion.from_initialize import (
+from autolens_workspace.pipelines.hyper.no_lens_light.initialize import lens_sie__source_sersic
+from autolens_workspace.pipelines.hyper.no_lens_light.inversion.from_initialize import (
     lens_sie__source_inversion,
 )
-from workspace.pipelines.hyper.no_lens_light.power_law.from_inversion import (
+from autolens_workspace.pipelines.hyper.no_lens_light.power_law.from_inversion import (
     lens_power_law__source_inversion,
 )
 
