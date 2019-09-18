@@ -47,7 +47,7 @@ al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 # We simply import the interpolating deflections pipeline and pass the interpolation pixel scale up we want as an input
 # parameter (which for the pipeline below, is only used in phase 2).
 
-from autolens_workspace.pipelines.features import interpolating_deflections
+from pipelines.features import interpolating_deflections
 
 pipeline = interpolating_deflections.make_pipeline(
     phase_folders=[data_type, data_name], pixel_scale_interpolation_grid=0.05

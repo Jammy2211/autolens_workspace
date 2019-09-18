@@ -136,13 +136,13 @@ pipeline_settings = al.PipelineSettingsHyper(
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from autolens_workspace.pipelines.hyper.with_lens_light.sersic.initialize import (
+from pipelines.hyper.with_lens_light.sersic.initialize import (
     lens_sersic_sie__source_sersic,
 )
-from autolens_workspace.pipelines.hyper.with_lens_light.sersic.inversion.from_initialize import (
+from pipelines.hyper.with_lens_light.sersic.inversion.from_initialize import (
     lens_sersic_sie__source_inversion,
 )
-from autolens_workspace.pipelines.hyper.with_lens_light.sersic.power_law.from_inversion import (
+from pipelines.hyper.with_lens_light.sersic.power_law.from_inversion import (
     lens_sersic_power_law__source_inversion,
 )
 

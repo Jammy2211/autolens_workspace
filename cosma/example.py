@@ -137,10 +137,10 @@ ccd_data = al.load_ccd_data_from_fits(
 
 pipeline_settings = al.PipelineSettings(include_shear=True)
 
-from autolens_workspace.pipelines.advanced.no_lens_light.initialize import (
+from pipelines.advanced.no_lens_light.initialize import (
     lens_sie__source_sersic,
 )
-from autolens_workspace.pipelines.advanced.no_lens_light.power_law.from_initialize import (
+from pipelines.advanced.no_lens_light.power_law.from_initialize import (
     lens_power_law__source_sersic,
 )
 

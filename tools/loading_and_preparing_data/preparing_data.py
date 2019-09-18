@@ -1,6 +1,6 @@
 import autofit as af
 import autolens as al
-from autolens_workspace.tools.loading_and_preparing_data import simulate_data
+from tools.loading_and_preparing_data import simulate_data
 
 # To model data with PyAutoLens you first need to ensure it is in a format suitable for lens modeling. This tutorial
 # takes you through data preparation, introducing PyAutoLens's built in tools that convert data to a suitable format.

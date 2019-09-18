@@ -136,11 +136,11 @@ pipeline_settings = al.PipelineSettings(
 #     initialize the priors.
 # 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
 
-from autolens_workspace.pipelines.advanced.with_lens_light.bulge_disk.initialize import (
+from pipelines.advanced.with_lens_light.bulge_disk.initialize import (
     lens_bulge_disk_sie__source_sersic,
 )
 
-from autolens_workspace.pipelines.advanced.with_lens_light.bulge_disk.light_dark_mass.from_initialize import (
+from pipelines.advanced.with_lens_light.bulge_disk.light_dark_mass.from_initialize import (
     lens_bulge_disk_mlr_nfw__source_sersic,
 )
 

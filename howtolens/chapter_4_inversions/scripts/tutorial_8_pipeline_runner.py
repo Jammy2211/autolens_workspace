@@ -114,7 +114,7 @@ ccd_data = simulate()
 al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
 
 # Lets import the pipeline and run it.
-from autolens_workspace.howtolens.chapter_4_inversions import tutorial_8_pipeline
+from howtolens.chapter_4_inversions import tutorial_8_pipeline
 
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(
     phase_folders=["howtolens", "c4_t8_inversion"]

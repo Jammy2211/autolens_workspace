@@ -150,7 +150,7 @@ pipeline_settings = al.PipelineSettingsHyper(
 )
 
 # Lets import the pipeline and run it.
-from autolens_workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
+from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t6_hyper"]
