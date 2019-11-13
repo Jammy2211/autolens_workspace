@@ -1,7 +1,7 @@
 # Welcome to your first pipeline runner, which we'll use to run the tutorial 1 pipeline.
 #
-# In PyAutoLens, every pipeline is a standalone function which 'makes' a pipeline. We then pass data to this pipeline and
-# run it. This keeps our pipelines and data separate, which is good practise, as it it encourages us to write pipelines
+# In PyAutoLens, every pipeline is a standalone function which 'makes' a pipeline. We then pass simulator to this pipeline and
+# run it. This keeps our pipelines and simulator separate, which is good practise, as it it encourages us to write pipelines
 # that generalize to as many lenses as possible!
 
 # So, lets begin by discussing the pipeline in this tutorial, which fits the lens and source galaxy of a strong lens.
@@ -43,25 +43,23 @@
 
 ### RUNNER FORMAT ###
 
-# A runner begins by setting up PyAutoFit, in particular the paths to the workspace, config files and where output
-# is stored. It is then followed by the setup of PyAutoLens, in particular where data is stored and loaded.
+# A runner begins by setting up PyAutoFit, in particular the paths to the autolens_workspace, config files and where output
+# is stored. It is then followed by the setup of PyAutoLens, in particular where simulator is stored and loaded.
 
 # From here on, we'll use the configs in the 'autolens_workspace/config' folder, which are the default configs used
 # by all pipelines (e.g. not just this tutorial, but when you model your own images and lenses!).
 
 # We'll also put the output in 'autolens_workspace/output', which is where output goes for an analysis.
 
-import os
-
 ### AUTOFIT + CONFIG SETUP ###
 
 import autofit as af
 
-# Setup the path to the workspace, using by filling in your path below.
+# Setup the path to the autolens_workspace, using by filling in your path below.
 workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
 
-# Setup the path to the config folder, using the workspace path.
+# Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
@@ -73,18 +71,14 @@ af.conf.instance = af.conf.Config(
 
 import autolens as al
 
-# The same simulate function we used in chapter 2.
+# The same simulator function we used in chapter 2.
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.9,
             phi=45.0,
@@ -92,43 +86,45 @@ def simulate():
             effective_radius=0.5,
             sersic_index=3.5,
         ),
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.0
         ),
-        shear=al.mass_profiles.ExternalShear(magnitude=0.05, phi=90.0),
+        shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.SphericalExponential(
+        light=al.lp.SphericalExponential(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.1,
+    simulator = al.simulator.imaging(
+        shape_2d=(130, 130),
+        pixel_scales=0.1,
         exposure_time=300.0,
+        sub_size=1,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Now lets Simulate the CCD data which we'll fit using the pipeline.
-ccd_data = simulate()
 
-al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+# Now lets Simulate the imaging datawhich we'll fit using the pipeline.
+imaging = simulate()
+
+al.plot.imaging.subplot(imaging=imaging)
 
 # To make a pipeline, we call one long function which is written in its own Python module,
 # '_tutorial_1_pipeline_lens__source.py_'. Before we check it out, lets get the pipeline running. To do this, we
 # import the module and run its 'make_pipeline' function.
 
 # When we run the make_pipeline function, we specify a'phase_folders' which structure the way our output is stored -
-# for this pipeline this will output the data as:
+# for this pipeline this will output the dataset as:
 # 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name' (the pipeline name is specified in the
 # pipeline).
 from howtolens.chapter_3_pipelines import tutorial_1_pipeline_lens_and_source
@@ -137,8 +133,8 @@ pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
     phase_folders=["howtolens", "c3_t1_lens_and_source"]
 )
 
-# To run a pipeline, we simply use its 'run' function, passing it the data we want to run the pipeline on. Simple, huh?
-pipeline_lens_and_source.run(data=ccd_data)
+# To run a pipeline, we simply use its 'run' function, passing it the dataset we want to run the pipeline on. Simple, huh?
+pipeline_lens_and_source.run(dataset=imaging)
 
 # Okay, good job, we're running our first pipeline in PyAutoLens! But what does it *actually* do? Well, to find that
 # out, go to the script '_tutorial_1_pipeline_lens_and_source.py_', which contains a full description of the pipeline,

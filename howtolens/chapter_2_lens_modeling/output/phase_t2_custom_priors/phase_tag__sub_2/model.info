@@ -1,5 +1,5 @@
 galaxies
-    source_galaxy
+    source
         light
             centre
                 centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
@@ -7,7 +7,7 @@ galaxies
             intensity                                                                     GaussianPrior, mean = 0.2, sigma = 0.01
             effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 0.3
         redshift                                                                          1.0
-    lens_galaxy
+    lens
         mass
             centre
                 centre_0                                                                  UniformPrior, lower_limit = -0.1, upper_limit = 0.1

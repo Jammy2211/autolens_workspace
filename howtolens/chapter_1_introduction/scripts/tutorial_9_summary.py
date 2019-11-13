@@ -1,14 +1,4 @@
-from autolens.data.instrument import ccd
-from autolens.array import mask as ma
-from autolens.lens import ray_tracing, lens_fit
-from autolens.model.galaxy import galaxy as g
-from autolens.lens import lens_data as ld
-from autolens.model.profiles import light_profiles as lp
-from autolens.model.profiles import mass_profiles as mp
-from autolens.model.profiles.plotters import profile_plotters
-from autolens.model.galaxy.plotters import galaxy_plotters
-from autolens.lens.plotters import plane_plotters
-from autolens.lens.plotters import ray_tracing_plotters
+import autolens as al
 
 # In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
@@ -20,44 +10,42 @@ from autolens.lens.plotters import ray_tracing_plotters
 # 5) A tracer can make an image-plane + source-plane strong lens system.
 # 6) The Universe's cosmology can be input into this tracer to convert units to physical values.
 # 7) The tracer's image can be used to simulate strong lens imaging observed on a real telescope.
-# 8) This instrument can be fitted, so to as quantify how well a model strong lens system represents the observed image.
+# 8) This data can be fitted, so to as quantify how well a model strong lens system represents the observed image.
 
 # In this summary, we'll consider how flexible the tools PyAutoLens gives you are to study every aspect of a strong
 # lens system. Lets get a 'fit' to a strong lens, by setting up an image, mask, tracer, etc.
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/"
-chapter_path = (
-    "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_1_introduction/"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
+
+# The simulator path specifies where the dataset was output in the last tutorial, which is the directory 'chapter_path/simulator'
+dataset_path = chapter_path + "dataset/"
+
+# Below, we do all the steps we learned this chapter - making galaxies, a tracer, fitting the dataset, etc.
+imaging = al.imaging.from_fits(
+    image_path=dataset_path + "image.fits",
+    noise_map_path=dataset_path + "noise_map.fits",
+    psf_path=dataset_path + "psf.fits",
+    pixel_scales=0.1,
 )
 
-# The data path specifies where the data was output in the last tutorial, which is the directory 'chapter_path/data'
-data_path = chapter_path + "data/"
-
-# Below, we do all the steps we learned this chapter - making galaxies, a tracer, fitting the data, etc.
-ccd_data = ccd.load_ccd_data_from_fits(
-    image_path=data_path + "image.fits",
-    noise_map_path=data_path + "noise_map.fits",
-    psf_path=data_path + "psf.fits",
-    pixel_scale=0.1,
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0
 )
 
-mask = ma.Mask.circular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
-)
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-lens_data = ld.LensData(ccd_data=ccd_data, mask=mask)
-
-lens_galaxy = g.Galaxy(
+lens_galaxy = al.galaxy(
     redshift=0.5,
-    mass=mp.EllipticalIsothermal(
+    mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
 )
 
-source_galaxy = g.Galaxy(
+source_galaxy = al.galaxy(
     redshift=1.0,
-    bulge=lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         axis_ratio=0.8,
         phi=45.0,
@@ -65,7 +53,7 @@ source_galaxy = g.Galaxy(
         effective_radius=1.0,
         sersic_index=4.0,
     ),
-    disk=lp.EllipticalSersic(
+    disk=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         axis_ratio=0.8,
         phi=45.0,
@@ -75,9 +63,9 @@ source_galaxy = g.Galaxy(
     ),
 )
 
-tracer = ray_tracing.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-fit = lens_fit.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 # The fit contains our tracer, which contains our planes, which contains galaxies, which contains our profiles:
 print(fit)
@@ -100,14 +88,14 @@ print(fit.tracer.source_plane.galaxies[0].disk)
 print()
 
 # Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested
-# in. For example, if we want to plot the image of the source galaxy mass profile, we can do this in a variety of
+# in. For example, if we want to plotters the image of the source galaxy mass profile, we can do this in a variety of
 # different ways
-ray_tracing_plotters.plot_profile_image(tracer=fit.tracer, grid=lens_data.grid)
+al.plot.tracer.profile_image(tracer=fit.tracer, grid=masked_imaging.grid)
 
-source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=lens_data.grid)[1]
-plane_plotters.plot_profile_image(plane=fit.tracer.source_plane, grid=source_plane_grid)
+source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
+al.plot.plane.profile_image(plane=fit.tracer.source_plane, grid=source_plane_grid)
 
-galaxy_plotters.plot_profile_image(
+al.plot.galaxy.profile_image(
     galaxy=fit.tracer.source_plane.galaxies[0], grid=source_plane_grid
 )
 
@@ -115,13 +103,13 @@ galaxy_plotters.plot_profile_image(
 # attributes to extract different things about them. For example, we made our source-galaxy above with two light
 # profiles, a 'bulge' and 'disk. We can plot the image of each component individually, if we know how to
 # break-up the different components of the fit and tracer.
-profile_plotters.plot_image(
+al.plot.profile.image(
     light_profile=fit.tracer.source_plane.galaxies[0].bulge,
     grid=source_plane_grid,
     title="Bulge image",
 )
 
-profile_plotters.plot_image(
+al.plot.profile.image(
     light_profile=fit.tracer.source_plane.galaxies[0].disk,
     grid=source_plane_grid,
     title="Disk image",
@@ -142,7 +130,7 @@ profile_plotters.plot_image(
 # However, if you do enjoy code, variables, functions, and parameters, you're probably ready to take a look at the
 # PyAutoLens source-code. This can be found in the 'autolens' folder. At team PyAutoLens, we take a lot of pride
 # in our source-code, so I can promise you its well written, well documented and thoroughly tested (check out the
-# 'test' directory if you're curious how to test code well!).
+# 'test_autoarray' directory if you're curious how to test code well!).
 
 # Okay, enough self-serving praise for PyAutoLens, lets wrap up the chapter. You've learn a lot in this chapter, but
 # what you haven't learnt is how to 'model' a real strong gravitational lens.

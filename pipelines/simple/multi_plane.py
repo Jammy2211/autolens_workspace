@@ -35,7 +35,7 @@ import autolens as al
 # resulting in the inversion reconstructing the image as a demagnified version of itself. This is because the \
 # line-of-sight halos each have a mass, which during the modeling can go to very high values.
 
-# For this reason, we include positions (drawn using the 'tools/positions.py' script) to prevent these solutions from
+# For this reason, we include positions (drawn using the 'tools/position_thresholding.py' script) to prevent these solutions from
 # existing in parameter space.
 
 
@@ -61,27 +61,26 @@ def make_pipeline(phase_folders=None):
     # 1) Subtract the light of the main lens galaxy (located at (0.0", 0.0")) and the light of each line-of-sight
     # galaxy (located at (4.0", 4.0"), (3.6", -5.3") and (-3.1", -2.4"))
 
-    class LensPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    lens = al.GalaxyModel(light=al.lp.EllipticalSersic)
+    lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.los0.light.centre_0 = af.GaussianPrior(mean=4.0, sigma=0.1)
-            self.galaxies.los0.light.centre_1 = af.GaussianPrior(mean=4.0, sigma=0.1)
-            self.galaxies.los1.light.centre_0 = af.GaussianPrior(mean=3.6, sigma=0.1)
-            self.galaxies.los1.light.centre_1 = af.GaussianPrior(mean=-5.3, sigma=0.1)
-            self.galaxies.los2.light.centre_0 = af.GaussianPrior(mean=-3.1, sigma=0.1)
-            self.galaxies.los2.light.centre_1 = af.GaussianPrior(mean=-2.4, sigma=0.1)
+    los_0 = al.GalaxyModel(light=al.lp.SphericalSersic)
+    los_0.light.centre_0 = af.GaussianPrior(mean=4.0, sigma=0.1)
+    los_0.light.centre_1 = af.GaussianPrior(mean=4.0, sigma=0.1)
 
-    phase1 = LensPhase(
+    los_1 = al.GalaxyModel(light=al.lp.SphericalSersic)
+    los_1.light.centre_0 = af.GaussianPrior(mean=3.6, sigma=0.1)
+    los_1.light.centre_1 = af.GaussianPrior(mean=-5.3, sigma=0.1)
+
+    los_2 = al.GalaxyModel(light=al.lp.SphericalSersic)
+    los_2.light.centre_0 = af.GaussianPrior(mean=-3.1, sigma=0.1)
+    los_2.light.centre_1 = af.GaussianPrior(mean=-2.4, sigma=0.1)
+
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__light_subtraction",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=al.GalaxyModel(light=al.light_profiles.EllipticalSersic),
-            los_0=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
-            los_1=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
-            los_2=al.GalaxyModel(light=al.light_profiles.SphericalSersic),
-        ),
+        galaxies=dict(lens=lens, los_0=los_0, los_1=los_1, los_2=los_2),
         optimizer_class=af.MultiNest,
     )
 
@@ -104,17 +103,16 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def customize_priors(self, results):
-
-            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase2 = LensSubtractedPhase(
         phase_name="phase_2__source_parametric",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
-            source=al.GalaxyModel(light=al.light_profiles.EllipticalSersic),
+            lens=al.GalaxyModel(mass=mass),
+            source=al.GalaxyModel(light=al.lp.EllipticalSersic),
         ),
         positions_threshold=0.3,
         optimizer_class=af.MultiNest,
@@ -138,25 +136,13 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def customize_priors(self, results):
-
-            self.galaxies.lens = results[1].constant.lens
-
-            self.galaxies.source.pixelization.shape_0 = af.UniformPrior(
-                lower_limit=20.0, upper_limit=45.0
-            )
-            self.galaxies.source.pixelization.shape_1 = af.UniformPrior(
-                lower_limit=20.0, upper_limit=45.0
-            )
-
     phase3 = InversionPhase(
         phase_name="phase_3__inversion_init",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            lens=al.GalaxyModel(mass=phase2.result.instance.galaxies.lens.mass),
             source=al.GalaxyModel(
-                pixelization=al.pixelizations.VoronoiMagnification,
-                regularization=al.regularization.Constant,
+                pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -184,34 +170,29 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def customize_priors(self, results):
+    los_0 = al.GalaxyModel(mass=al.mp.SphericalIsothermal)
+    los_0.mass.centre_0 = phase3.result.instance.los_0.light.centre_0
+    los_0.mass.centre_1 = phase3.result.instance.los_0.light.centre_1
 
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_3__inversion_init"
-            ).variable.lens.mass
+    los_1 = al.GalaxyModel(mass=al.mp.SphericalIsothermal)
+    los_1.mass.centre_0 = phase3.result.instance.los_1.light.centre_0
+    los_1.mass.centre_1 = phase3.result.instance.los_1.light.centre_1
 
-            self.galaxies.los_0.mass.centre_0 = results[0].constant.los_0.light.centre_0
-            self.galaxies.los_0.mass.centre_1 = results[0].constant.los_0.light.centre_1
-            self.galaxies.los_1.mass.centre_0 = results[0].constant.los_1.light.centre_0
-            self.galaxies.los_1.mass.centre_1 = results[0].constant.los_1.light.centre_1
-            self.galaxies.los_2.mass.centre_0 = results[0].constant.los_2.light.centre_0
-            self.galaxies.los_2.mass.centre_1 = results[0].constant.los_2.light.centre_1
-
-            self.galaxies.source = results.from_phase(
-                "phase_3__inversion_init"
-            ).variable.source
+    los_2 = al.GalaxyModel(mass=al.mp.SphericalIsothermal)
+    los_2.mass.centre_0 = phase3.result.instance.los_2.light.centre_0
+    los_2.mass.centre_1 = phase3.result.instance.los_2.light.centre_1
 
     phase4 = SingleLensPlanePhase(
         phase_name="phase_4__single_plane",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
-            los_0=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
-            los_1=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
-            los_2=al.GalaxyModel(mass=al.mass_profiles.SphericalIsothermal),
+            lens=al.GalaxyModel(mass=phase3.result.model.lens.mass),
+            los_0=los_0,
+            los_1=los_1,
+            los_2=los_2,
             source=al.GalaxyModel(
-                pixelization=al.pixelizations.VoronoiMagnification,
-                regularization=al.regularization.Constant,
+                pixelization=phase3.result.instance.galaxies.source.pixelization,
+                regularization=phase3.result.instance.galaxies.source.regularization,
             ),
         ),
         positions_threshold=0.3,
@@ -236,43 +217,23 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-        def customize_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_4__single_plane"
-            ).variable.lens
-
-            self.galaxies.los_0.mass = results.from_phase(
-                "phase_4__single_plane"
-            ).variable.los_0.mass
-            self.galaxies.los_1.mass = results.from_phase(
-                "phase_4__single_plane"
-            ).variable.los_1.mass
-            self.galaxies.los_2.mass = results.from_phase(
-                "phase_4__single_plane"
-            ).variable.los_2.mass
-
-            self.galaxies.source = results.from_phase(
-                "phase_4__single_plane"
-            ).variable.source
-
     phase5 = MultiPlanePhase(
         phase_name="phase_5_multi_plane",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(mass=al.mass_profiles.EllipticalIsothermal),
+            lens=al.GalaxyModel(mass == phase4.result.model.galaxies.lens.mass),
             los_0=al.GalaxyModel(
-                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+                mass=phase4.result.model.galaxies.los_0.mass, variable_redshift=True
             ),
             los_1=al.GalaxyModel(
-                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+                mass=phase4.result.model.galaxies.los_1.mass, variable_redshift=True
             ),
             los_2=al.GalaxyModel(
-                mass=al.mass_profiles.SphericalIsothermal, variable_redshift=True
+                mass=phase4.result.model.galaxies.los_2.mass, variable_redshift=True
             ),
             source=al.GalaxyModel(
-                pixelization=al.pixelizations.VoronoiMagnification,
-                regularization=al.regularization.Constant,
+                pixelization=phase4.result.model.galaxies.source.pixelization,
+                regularization=phase4.result.model.galaxies.source.regularization,
             ),
         ),
         positions_threshold=0.3,
@@ -284,4 +245,4 @@ def make_pipeline(phase_folders=None):
     phase5.optimizer.sampling_efficiency = 0.2
     phase5.optimizer.const_efficiency_mode = True
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3, phase4, phase5)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4, phase5)

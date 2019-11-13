@@ -1,9 +1,4 @@
 import autolens as al
-from autolens.model.inversion import inversions as inv
-from autolens.model.inversion import pixelizations as pix
-from autolens.model.inversion import regularization as reg
-from autolens.model.inversion.plotters import inversion_plotters
-from autolens.model.inversion.plotters import mapper_plotters
 
 # We've covered mappers, which, if I haven't emphasised it enough yet, map things. Now, we're going to look at how we
 # can use these mappers (which map things) to reconstruct the source galaxy - I hope you're excited!
@@ -12,22 +7,18 @@ from autolens.model.inversion.plotters import mapper_plotters
 # to reconstruct it, but we'll make things more complex later on!
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.8,
             phi=90.0,
@@ -37,95 +28,91 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(180, 180),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=1,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Now, lets simulate the source, mask it, and use a plot to check the masking is appropriate.
-ccd_data = simulate()
 
-mask = al.Mask.circular_annular(
-    shape=ccd_data.shape,
-    pixel_scale=ccd_data.pixel_scale,
+# Now, lets simulate the source, mask it, and use a plotters to check the masking is appropriate.
+imaging = simulate()
+
+mask = al.mask.circular_annular(
+    shape_2d=imaging.shape_2d,
+    pixel_scales=imaging.pixel_scales,
     inner_radius_arcsec=1.0,
     outer_radius_arcsec=2.2,
 )
 
-al.ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
+al.plot.imaging.image(imaging=imaging, mask=mask)
 
-# Next, lets set this image up as lens data and setup a tracer using the input lens galaxy model (we don't need
+# Next, lets set this image up as lens dataset and setup a tracer using the input lens galaxy model (we don't need
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
-lens_data = al.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-lens_galaxy = al.Galaxy(
+lens_galaxy = al.galaxy(
     redshift=0.5,
-    mass=al.mass_profiles.EllipticalIsothermal(
+    mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=lens_data.grid)[1]
+source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
 
 # We'll use another rectangular pixelization and mapper to perform the reconstruction
-rectangular = pix.Rectangular(shape=(25, 25))
+rectangular = al.pix.Rectangular(shp=(25, 25))
 
-mapper = rectangular.mapper_from_grid_and_pixelization_grid(grid=source_plane_grid)
+mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
-mapper_plotters.plot_image_and_mapper(
-    ccd_data=ccd_data, mask=mask, mapper=mapper, should_plot_grid=True
+al.plot.mapper.image_and_mapper(
+    imaging=imaging, mask=mask, mapper=mapper, include_grid=True
 )
 
 # And now, finally, we're going to use our mapper to invert the image using the 'inversions' module, which is imported
 # as 'inv'. I'll explain how this works in a second - but lets just go ahead and perform the inversion first.
 # (Ignore the 'regularization' input below for now, we'll cover this in the next tutorial).
-inversion = inv.Inversion.from_data_1d_mapper_and_regularization(
-    image_1d=lens_data.image_1d,
-    noise_map_1d=lens_data.noise_map_1d,
-    convolver=lens_data.convolver,
+inversion = al.inversion(
+    masked_dataset=masked_imaging,
     mapper=mapper,
-    regularization=reg.Constant(coefficient=1.0),
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
 # Our inversion has a reconstructed image and pixeilzation, whcih we can plot using an inversion plotter
-inversion_plotters.plot_reconstructed_image(inversion=inversion, mask=mask)
+al.plot.inversion.reconstructed_image(inversion=inversion, mask=mask)
 
-inversion_plotters.plot_pixelization_values(inversion=inversion, should_plot_grid=True)
+al.plot.inversion.reconstruction(inversion=inversion, include_grid=True)
 
 # And there we have it, we've successfully reconstructed, or, *inverted*, our source using the mapper's rectangular
 # grid. Whilst this source was simple (a blob of light in the centre of the source-plane), inversions come into their
 # own when fitting sources with complex morphologies. Infact, given we're having so much fun inverting things, lets
-# simulate a really complex source and invert it!
+# simulator a really complex source and invert it!
 
 
 def simulate_complex_source():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.Galaxy(
+    source_galaxy_0 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
             axis_ratio=0.8,
             phi=90.0,
@@ -135,9 +122,9 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_1 = al.Galaxy(
+    source_galaxy_1 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
             axis_ratio=0.7,
             phi=45.0,
@@ -147,9 +134,9 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_2 = al.Galaxy(
+    source_galaxy_2 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
             axis_ratio=0.6,
             phi=90.0,
@@ -159,9 +146,9 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_3 = al.Galaxy(
+    source_galaxy_3 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
             axis_ratio=0.9,
             phi=140.0,
@@ -171,9 +158,9 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_4 = al.Galaxy(
+    source_galaxy_4 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.85, -0.85),
             axis_ratio=0.6,
             phi=90.0,
@@ -183,9 +170,9 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_5 = al.Galaxy(
+    source_galaxy_5 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.75, -0.1),
             axis_ratio=0.9,
             phi=140.0,
@@ -195,7 +182,7 @@ def simulate_complex_source():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(
+    tracer = al.tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -207,50 +194,50 @@ def simulate_complex_source():
         ]
     )
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(180, 180),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=1,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
+
 
 # This code is doing all the the same as above (setup the image, galaxies, tracer, mapper, ec.),
 # but I have made the mask slightly larger for this source.
-ccd_data = simulate_complex_source()
+imaging = simulate_complex_source()
 
-mask = al.Mask.circular_annular(
-    shape=ccd_data.shape,
-    pixel_scale=ccd_data.pixel_scale,
+mask = al.mask.circular_annular(
+    shape_2d=imaging.shape_2d,
+    pixel_scales=imaging.pixel_scales,
     inner_radius_arcsec=0.1,
     outer_radius_arcsec=3.2,
 )
 
-al.ccd_plotters.plot_image(ccd_data=ccd_data, mask=mask)
+al.plot.imaging.image(imaging=imaging, mask=mask)
 
-lens_data = al.LensData(ccd_data=ccd_data, mask=mask, sub_grid_size=1)
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=lens_data.grid)[1]
+source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
 
-mapper = rectangular.mapper_from_grid_and_pixelization_grid(grid=source_plane_grid)
+mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
-inversion = inv.Inversion.from_data_1d_mapper_and_regularization(
-    image_1d=lens_data.image_1d,
-    noise_map_1d=lens_data.noise_map_1d,
-    convolver=lens_data.convolver,
+inversion = al.inversion(
+    masked_dataset=masked_imaging,
     mapper=mapper,
-    regularization=reg.Constant(coefficient=1.0),
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
 # Lets inspect the complex source reconstruction.
-inversion_plotters.plot_reconstructed_image(inversion=inversion, mask=mask)
+al.plot.inversion.reconstructed_image(inversion=inversion, mask=mask)
 
-inversion_plotters.plot_pixelization_values(inversion=inversion, should_plot_grid=True)
+al.plot.inversion.reconstruction(inversion=inversion, include_grid=True)
 
 # Pretty great, huh? If you ran the complex source pipeline, you'll remember that getting a model image that looked
 # that good simply *was not possible*. With an inversion, we can do it with ease - and without fitting 30+ parameters!
@@ -269,11 +256,11 @@ inversion_plotters.plot_pixelization_values(inversion=inversion, should_plot_gri
 # inversions.inversions.Inversion
 
 # To begin, lets consider some random mappings between our mapper's source-pixels and the image.
-mapper_plotters.plot_image_and_mapper(
-    ccd_data=ccd_data,
+al.plot.mapper.image_and_mapper(
+    imaging=imaging,
     mapper=mapper,
     mask=mask,
-    should_plot_grid=True,
+    include_grid=True,
     source_pixels=[[445], [285], [313], [132], [11]],
 )
 
@@ -295,28 +282,26 @@ mapper_plotters.plot_image_and_mapper(
 #    suggest you use sub-gridding of degree 2x2.
 
 # 2) When fitting images using light profiles we discussed how a 'model_image' was generated by blurring them with
-#    the data's PSF. A similar blurring operation is incorporated into the inversion, such that the reconstructed
+#    the dataset's PSF. A similar blurring operation is incorporated into the inversion, such that the reconstructed
 #    image and source fully account for the telescope optics and effect of the PSF.
 
 # 3) The inversion's solution is regularized. But wait, that's what we'll cover in the next tutorial!
 
 # Finally, let me show you how easy it is to fit an image with an inversion using the fitting module. Instead of giving
 # the source galaxy a light profile, we give it a pixelization and regularization, and pass it to a tracer.
-source_galaxy = al.Galaxy(
+source_galaxy = al.galaxy(
     redshift=1.0,
-    pixelization=pix.Rectangular(shape=(40, 40)),
-    regularization=reg.Constant(coefficient=1.0),
+    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Then, like before, we call on the fitting module to perform the fit to the lensing image. Indeed, we see
 # some pretty good looking residuals - we're certainly fitting the lensed source accurately!
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit, should_plot_mask=True, extract_array_from_mask=True, zoom_around_mask=True
-)
+al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
 
 # And, we're done, here are a few questions to get you thinking about inversions:
 
@@ -325,4 +310,4 @@ al.lens_fit_plotters.plot_fit_subplot(
 #    if you reduce the regularization 'coefficient' above to zero?
 
 # 2) The exterior pixels in the rectangular grid have no image-pixels in them. However, they are still given a
-#    reconstructed flux. If this value isn't' coming from a mapping_util to an image-pixel, where is it be coming from?
+#    reconstructed flux. If this value isn't' coming from a util to an image-pixel, where is it be coming from?

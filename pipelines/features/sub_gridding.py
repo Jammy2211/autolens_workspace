@@ -35,7 +35,7 @@ import autolens as al
 # Notes: Uses a sub grid size of 4.
 
 
-def make_pipeline(phase_folders=None, sub_grid_size=2):
+def make_pipeline(phase_folders=None, sub_size=2):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
@@ -43,9 +43,8 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_feature__sub_gridding"
-
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_name = "pipeline__feature"
+    pipeline_tag = "sub_gridding"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag/'
@@ -53,24 +52,24 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_tag)
 
-    # When a phase is passed a sub_grid_size, a settings tag is automatically generated and added to the phase path,
+    # When a phase is passed a sub_size, a settings tag is automatically generated and added to the phase path,
     # to make it clear what sub-grid was used. The settings tag, phase name and phase paths are shown for 3
     # example bin up factors:
 
-    # sub_grid_size=2 -> phase_path=phase_name/settings_sub_2
-    # sub_grid_size=3 -> phase_path=phase_name/settings_sub_3
+    # sub_size=2 -> phase_path=phase_name/settings_sub_2
+    # sub_size=3 -> phase_path=phase_name/settings_sub_3
 
     # If the sub-grid size is 1, the tag is an empty string, thus not changing the settings tag:
 
-    # sub_grid_size=1 -> phase_path=phase_name/settings
+    # sub_size=1 -> phase_path=phase_name/settings
 
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
 
-    def mask_function(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             inner_radius_arcsec=0.2,
             outer_radius_arcsec=3.3,
         )
@@ -81,27 +80,19 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # 1) Use a sub-grid size of 2x2 in every image pixel.
 
-    class LensSourceX1Phase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-    phase1 = LensSourceX1Phase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
-            ),
-            source_0=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         mask_function=mask_function,
-        sub_grid_size=2,
+        sub_size=2,
         optimizer_class=af.MultiNest,
     )
 
@@ -115,35 +106,21 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
 
     # 1) Use a sub-grid size of 4x4 in every image pixel.
 
-    class LensSourceX2Phase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.lens
-
-            self.galaxies.source_0 = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.source_0
-
-    phase2 = LensSourceX2Phase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
+                mass=phase1.result.model.galaxies.lens.mass,
+                shear=phase1.result.model.galaxies.lens.shear,
             ),
-            source_0=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
-            source_1=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
+            source=al.GalaxyModel(
+                redshift=1.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
         mask_function=mask_function,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         optimizer_class=af.MultiNest,
     )
 
@@ -151,4 +128,4 @@ def make_pipeline(phase_folders=None, sub_grid_size=2):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

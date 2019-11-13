@@ -5,7 +5,7 @@ import sys
 
 import autofit as af
 
-### NOTE - if you have not already, complete the setup in 'workspace/runners/cosma/setup' before continuing with this
+### NOTE - if you have not already, complete the setup in 'autolens_workspace/runners/cosma/setup' before continuing with this
 ### cosma pipeline script.
 
 # Welcome to the Cosma pipeline runner. Hopefully, you're familiar with runners at this point, and have been using them
@@ -16,43 +16,43 @@ import autofit as af
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The data path is over-written to the path '/cosma5/data/autolens/cosma_username/instrument' as opposed to the
-#    workspace. As we discussed in the setup, on cosma we don't store our instrument in our workspace.
+# 1) The simulator path is over-written to the path '/cosma5/simulator/autolens/cosma_username/dataset_label' as opposed to the
+#    autolens_workspace. As we discussed in the setup, on cosma we don't store our dataset_label in our autolens_workspace.
 
-# 2) The output path is over-written to the path '/cosma5/data/autolens/cosma_username/output' as opposed to
-#    the workspace. This is for the same reason as the data.
+# 2) The output path is over-written to the path '/cosma5/simulator/autolens/cosma_username/output' as opposed to
+#    the autolens_workspace. This is for the same reason as the dataset.
 
-# We need to specify where our instrument is stored and output is placed. In this example, we'll use the 'share' folder, but
+# We need to specify where our dataset_label is stored and output is placed. In this example, we'll use the 'share' folder, but
 # you can change the string below to your cosma username if you want to use your own personal directory.
 data_folder_name = "share"
 # data_folder_name = 'cosma_username'
 
-# Lets use this to setup our cosma path, which is where our instrument and output are stored.
+# Lets use this to setup our cosma path, which is where our dataset_label and output are stored.
 cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path="/cosma5/data/autolens/", folder_names=[data_folder_name]
+    path="/cosma5/simulator/autolens/", folder_names=[data_folder_name]
 )
 
-# The data folder is the name of the folder our instrument is stored in, which in this case is 'example'. I would typically
+# The simulator folder is the name of the folder our dataset_label is stored in, which in this case is 'example'. I would typically
 # expect this would be named after your sample of lenses (e.g. 'slacs', 'bells'). If you are modelng just one
-# lens, it may be best to omit the data_type.
-data_type = "example"
+# lens, it may be best to omit the dataset_label.
+dataset_label = "imaging"
 
-# Next, lets use this path to setup the data path, which for this example is named 'example' and found at
-# '/cosma5/data/autolens/share/data/example/'
+# Next, lets use this path to setup the dataset path, which for this example is named 'example' and found at
+# '/cosma5/simulator/autolens/share/dataset/imaging/'
 cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_path, folder_names=["data", data_type]
+    path=cosma_path, folder_names=["dataset", dataset_label]
 )
 
-# We'll do the same for our output path, which is '/cosma5/data/autolens/share/output/example/'
+# We'll do the same for our output path, which is '/cosma5/simulator/autolens/share/output/imaging/'
 cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_path, folder_names=["output", data_type]
+    path=cosma_path, folder_names=["output", dataset_label]
 )
 
-# Next, we need the path to our Cosma workspace, which can be generated using a relative path given that our runner is
-# located in our Cosma workspace.
+# Next, we need the path to our Cosma autolens_workspace, which can be generated using a relative path given that our runner is
+# located in our Cosma autolens_workspace.
 workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
-# Setup the path to the config folder, using the workspace path.
+# Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Lets now use the above paths to set the config path and output path for our Cosma run.
@@ -77,16 +77,16 @@ af.conf.instance = af.conf.Config(
 # job your sending it, and distributes it to nodes and CPUs. Lets first look
 
 # Lets first take a look at a cordelia batch script, which can be found at
-# 'workspace/runners/cosma/batch_cordelia/example' (we'll cover cosma batch scripts at the end of this runner). In the
+# 'autolens_workspace/runners/cosma/batch_cordelia/example' (we'll cover cosma batch scripts at the end of this runner). In the
 # same folder, you should see a file 'doc', which will example what each line does.
 
 # When we submit a PyAutoLens job to Cosma, we submit a 'batch' of jobs, whereby each job will run on one CPU of Cosma.
 # Thus, if our lens sample contains, lets say, 4 lenses, we'd submit 4 jobs at the same time where each job applies
 # our pipeline to each image.
 
-# The fifth line of this batch script - '#SBATCH --array=1-8' is what species this. Its telling Cosma we're going to
+# The fifth line of this batch script - '#SBATCH --arrays=1-8' is what species this. Its telling Cosma we're going to
 # run 4 jobs, and the id's of those jobs will be numbered from 1 to 8. Infact, these ids are passed to this runner,
-# and we'll use them to ensure that each jobs loads a different image. Lets get the cosma array id for our job.
+# and we'll use them to ensure that each jobs loads a different image. Lets get the cosma arrays id for our job.
 cosma_array_id = int(sys.argv[1])
 
 # Now, I just want to really drive home what the above line is doing. For every job we run on Cosma, the cosma_array_id
@@ -97,65 +97,63 @@ cosma_array_id = int(sys.argv[1])
 
 import autolens as al
 
-# We're used to specifying the data name as a string, so that our pipeline can be applied to multiple
+# We're used to specifying the dataset name as a string, so that our pipeline can be applied to multiple
 # images with ease. On Cosma, we can apply the same logic, but put these strings in a list such that each Cosma job
 # loads a different lens name based on its ID. neat, huh?
 
-data_name = []
-data_name.append("")  # Task number beings at 1, so keep index 0 blank
-data_name.append("example_image_1")  # Index 1
-data_name.append("example_image_2")  # Index 2
-data_name.append("example_image_3")  # Index 3
-data_name.append("example_image_4")  # Index 4
-data_name.append("example_image_5")  # Index 5
-data_name.append("example_image_6")  # Index 6
-data_name.append("example_image_7")  # Index 7
-data_name.append("example_image_8")  # Index 8
+dataset_name = []
+dataset_name.append("")  # Task number beings at 1, so keep index 0 blank
+dataset_name.append("example_image_1")  # Index 1
+dataset_name.append("example_image_2")  # Index 2
+dataset_name.append("example_image_3")  # Index 3
+dataset_name.append("example_image_4")  # Index 4
+dataset_name.append("example_image_5")  # Index 5
+dataset_name.append("example_image_6")  # Index 6
+dataset_name.append("example_image_7")  # Index 7
+dataset_name.append("example_image_8")  # Index 8
 
-# Lets extract the data name explicitly using our cosma_array_id (rememeber, each job has a different cosma_array_id,
-# so each will be given a different data_name string).
-data_name = data_name[cosma_array_id]
+# Lets extract the dataset name explicitly using our cosma_array_id (rememeber, each job has a different cosma_array_id,
+# so each will be given a different dataset_name string).
+dataset_name = dataset_name[cosma_array_id]
 
-pixel_scale = 0.2  # Make sure your pixel scale is correct!
+pixel_scales = 0.2  # Make sure your pixel scale is correct!
 
-# We now use the data_name to load a the data-set on each job. The statement below combines
-# the cosma_data_path and and data_name to read instrument from the following directory:
-# '/cosma5/data/autolens/share/data/example/data_name'
-data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_data_path, folder_names=[data_name]
+# We now use the dataset_name to load a the dataset-set on each job. The statement below combines
+# the cosma_data_path and and dataset_name to read dataset_label from the following directory:
+# '/cosma5/simulator/autolens/share/dataset/imaging/dataset_name'
+dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=cosma_data_path, folder_names=[dataset_name]
 )
 
-# This loads the CCD imaging data, as per usual.
-ccd_data = al.load_ccd_data_from_fits(
-    image_path=data_path + "image.fits",
-    psf_path=data_path + "psf.fits",
-    noise_map_path=data_path + "noise_map.fits",
-    pixel_scale=pixel_scale,
+# This loads the imaging dataset, as per usual.
+imaging = al.imaging.from_fits(
+    image_path=dataset_path + "image.fits",
+    psf_path=dataset_path + "psf.fits",
+    noise_map_path=dataset_path + "noise_map.fits",
+    pixel_scales=pixel_scales,
 )
 
 ### PIPELINE SETTINGS ###
 
 pipeline_settings = al.PipelineSettings(include_shear=True)
 
-from pipelines.advanced.no_lens_light.initialize import (
-    lens_sie__source_sersic,
-)
+from pipelines.advanced.no_lens_light.initialize import lens_sie__source_sersic
 from pipelines.advanced.no_lens_light.power_law.from_initialize import (
     lens_power_law__source_sersic,
 )
 
 pipeline_initialize = lens_sie__source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
+    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
 )
 
 pipeline_power_law = lens_power_law__source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[data_type, data_name]
+    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
 )
 
 
 pipeline = pipeline_initialize + pipeline_power_law
 
-pipeline.run(data=ccd_data)
+pipeline.run(dataset=imaging)
 
 # Finally, lets quickly look at the batch_cosma folder, for submitting jobs to cosma. There really isn't much different
 # from a cordelia batch script. It is simply that the last line has to use the 'srun' command to distribute each job
@@ -167,9 +165,9 @@ pipeline.run(data=ccd_data)
 
 # - Copy and paste this example.py script and rename it to your new runner (e.g. 'slacs.py').
 # - Either keep the data_folder_name as 'share', or change to your cosma username.
-# - Change the 'data_type' from example to your data folder (e.g. 'slacs', 'bells').
-# - Change the list of data_names to your data names (e.g. 'slacs0123+4567, 'bells3141+5926')
+# - Change the 'dataset_label' from example to your simulator folder (e.g. 'slacs', 'bells').
+# - Change the list of data_names to your dataset names (e.g. 'slacs0123+4567, 'bells3141+5926')
 # - Change the imported pipeline from the example above to the one you want to use.
-# - Create new batch scripts, by copying the example scripts and changing the job name, task number, array ids and
+# - Create new batch scripts, by copying the example scripts and changing the job name, task number, arrays ids and
 #   last line which points to the name of your runner. For cosma batch scripts, you'll need to copy, paste and edit
 #   both the batch script and multiconf.conf scripts.

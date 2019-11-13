@@ -35,12 +35,8 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
-            ),
-            source=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -50,43 +46,38 @@ def make_pipeline(phase_folders=None):
 
     # Now, in phase 2, lets use the lens mass model to fit the source with an inversion.
 
-    class InversionPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    source = al.GalaxyModel(
+        redshift=1.0,
+        pixelization=al.pix.VoronoiMagnification,
+        regularization=al.reg.Constant,
+    )
 
-            # We can customize the inversion's priors like we do our light and mass profiles.
+    # We can customize the inversion's priors like we do our light and mass profiles.
 
-            self.galaxies.lens = results.from_phase(
-                "phase_1__lens_sie__source_sersic"
-            ).variable.galaxies.lens
+    source.pixelization.shape_0 = af.UniformPrior(
+        lower_limit=20.0, upper_limit=40.0
+    )
 
-            self.galaxies.source.pixelization.shape_0 = af.UniformPrior(
-                lower_limit=20.0, upper_limit=40.0
-            )
+    source.pixelization.shape_1 = af.UniformPrior(
+        lower_limit=20.0, upper_limit=40.0
+    )
 
-            self.galaxies.source.pixelization.shape_1 = af.UniformPrior(
-                lower_limit=20.0, upper_limit=40.0
-            )
+    # The expected value of the regularization coefficient depends on the details of the dataset reduction and
+    # source galaxy. A broad log-uniform prior is thus an appropriate way to sample the large range of
+    # possible values.
 
-            # The expected value of the regularization coefficient depends on the details of the data reduction and
-            # source galaxy. A broad log-uniform prior is thus an appropriate way to sample the large range of
-            # possible values.
+    source.regularization.coefficient = af.LogUniformPrior(
+        lower_limit=1.0e-6, upper_limit=10000.0
+    )
 
-            self.galaxies.source.regularization.coefficient = af.LogUniformPrior(
-                lower_limit=1.0e-6, upper_limit=10000.0
-            )
-
-    phase2 = InversionPhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__source_inversion_initialize",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
+                redshift=0.5, mass=phase1.result.model.galaxies.lens.mass
             ),
-            source=al.GalaxyModel(
-                redshift=1.0,
-                pixelization=al.pixelizations.VoronoiMagnification,
-                regularization=al.regularization.Constant,
-            ),
+            source=source,
         ),
         optimizer_class=af.MultiNest,
     )
@@ -105,31 +96,17 @@ def make_pipeline(phase_folders=None):
 
     # Now, in phase 3, lets use the refined source inversion to fit the lens mass model again.
 
-    class InversionPhase(al.PhaseImaging):
-        def customize_priors(self, results):
-            # We can customize the inversion's priors like we do our light and mass profiles.
-
-            self.galaxies.lens = results.from_phase(
-                "phase_2__source_inversion_initialize"
-            ).variable.galaxies.lens
-
-            # Note the use of the 'inversion' result attribute below, which uses the extended inversion phase results.
-
-            self.galaxies.source = results.from_phase(
-                "phase_2__source_inversion_initialize"
-            ).inversion.constant.galaxies.source
-
-    phase3 = InversionPhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
+                redshift=0.5, mass=phase1.result.model.galaxies.lens.mass
             ),
             source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=al.pixelizations.VoronoiMagnification,
-                regularization=al.regularization.Constant,
+                pixelization=phase2.inversion.instance.galaxies.source.pixelization,
+                regularization=phase2.inversion.instance.galaxies.source.regularization,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -138,4 +115,4 @@ def make_pipeline(phase_folders=None):
     phase3.optimizer.sampling_efficiency = 0.3
     phase3.optimizer.const_efficiency_mode = True
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

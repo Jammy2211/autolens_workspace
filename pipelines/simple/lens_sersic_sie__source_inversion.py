@@ -68,12 +68,12 @@ import autolens as al
 
 def make_pipeline(
     include_shear=True,
-    pixelization=al.pixelizations.VoronoiMagnification,
-    regularization=al.regularization.Constant,
+    pixelization=al.pix.VoronoiMagnification,
+    regularization=al.reg.Constant,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -81,7 +81,6 @@ def make_pipeline(
     pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
-    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -112,21 +111,21 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if include_shear:
-        shear = al.mass_profiles.ExternalShear
+        shear = al.mp.ExternalShear
     else:
         shear = None
 
     # We will switch between a circular mask which includes the lens light and an annular mask which removes it.
 
-    def mask_function_circular(image):
-        return al.Mask.circular(
-            shape=image.shape, pixel_scale=image.pixel_scale, radius_arcsec=3.0
+    def mask_function_circular(shape_2d, pixel_scales):
+        return al.mask.circular(
+            shape_2d=shape_2d, pixel_scales=pixel_scales, radius_arcsec=3.0
         )
 
-    def mask_function_annular(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function_annular(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             inner_radius_arcsec=0.3,
             outer_radius_arcsec=3.0,
         )
@@ -138,22 +137,16 @@ def make_pipeline(
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     # 2) Use a circular mask which includes the lens and source galaxy light.
 
-    class LensPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    light = af.PriorModel(mass=al.lp.EllipticalSersic)
+    light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-    phase1 = LensPhase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens, light=al.light_profiles.EllipticalSersic
-            )
-        ),
+        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
         mask_function=mask_function_circular,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         optimizer_class=af.MultiNest,
@@ -177,38 +170,23 @@ def make_pipeline(
 
     class LensSubtractedPhase(al.PhaseImaging):
         def modify_image(self, image, results):
-            return (
-                image
-                - results.from_phase(
-                    "phase_1__lens_sersic"
-                ).unmasked_lens_power_lawane_model_image
-            )
+            return image - phase1.result.unmasked_model_visibilities
 
-        def customize_priors(self, results):
-
-            self.galaxies.lens.mass.centre_0 = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light.centre_0
-
-            self.galaxies.lens.mass.centre_1 = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light.centre_1
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
+    mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 
     phase2 = LensSubtractedPhase(
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
-            ),
+            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         mask_function=mask_function_annular,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -227,51 +205,23 @@ def make_pipeline(
 
     # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ## Lens Light, Sersic -> Sersic ###
-
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light
-
-            ## Lens Mass, SIE -> SIE ###
-
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.lens.mass
-
-            ## Lens Mass, Shear -> Shear ###
-
-            if include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_2__lens_sie__source_sersic"
-                ).variable.galaxies.lens.shear
-
-            ### Source Inversion, Sersic -> Sersic ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.source
-
-    phase3 = LensSourcePhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                light=phase1.result.model.galaxies.lens.light,
+                mass=phase2.result.model.galaxies.lens.mass,
+                shear=phase2.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source,
+                light=phase1.result.model.galaxies.source.light,
             ),
         ),
         mask_function=mask_function_circular,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -294,28 +244,7 @@ def make_pipeline(
 
     class InversionPhase(al.PhaseImaging):
         def modify_image(self, image, results):
-            return (
-                image
-                - results.from_phase(
-                    "phase_3__lens_sersic_sie__source_sersic"
-                ).unmasked_lens_power_lawane_model_image
-            )
-
-        def customize_priors(self, results):
-
-            ## Lens Mass, SIE -> SIE ###
-
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).constant.galaxies.lens.mass
-
-            ## Lens Mass, Shear -> Shear ###
-
-            if include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_3__lens_sersic_sie__source_sersic"
-                ).constant.galaxies.lens.shear
+            return image - phase1.result.unmasked_model_visibilities
 
     phase4 = InversionPhase(
         phase_name="phase_4__source_inversion_initialization",
@@ -323,8 +252,8 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                mass=phase3.result.model.galaxies.lens.mass,
+                shear=phase3.result.model.galaxies.lens.mass,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
@@ -333,7 +262,7 @@ def make_pipeline(
             ),
         ),
         mask_function=mask_function_annular,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -341,7 +270,6 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -358,53 +286,24 @@ def make_pipeline(
     # 1) Initialize the priors of the lens galaxy and source galaxy from phases 3+4.
     # 2) Use a circular mask which includes the lens and source galaxy light.
 
-    class InversionPhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ## Lens Light, Sersic -> Sersic ###
-
-            self.galaxies.lens.light = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light
-
-            ## Lens Mass, SIE -> SIE ###
-
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.mass
-
-            ## Lens Mass, Shear -> Shear ###
-
-            if include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_3__lens_sersic_sie__source_sersic"
-                ).variable.galaxies.lens.shear
-
-            ### Source Inversion, Inv -> Inv ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_4__source_inversion_initialization"
-            ).inversion.constant.galaxies.source
-
-    phase5 = InversionPhase(
+    phase5 = al.PhaseImaging(
         phase_name="phase_5__lens_sersic_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                light=phase3.result.model.galaxies.lens.light,
+                mass=phase3.result.model.galaxies.lens.mass,
+                shear=phase3.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pixelization,
-                regularization=regularization,
+                pixelization=phase4.result.model.galaxies.source.pixelization,
+                regularization=phase4.result.model.galaxies.source.regularization,
             ),
         ),
         mask_function=mask_function_circular,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -412,7 +311,6 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -420,4 +318,4 @@ def make_pipeline(
     phase5.optimizer.n_live_points = 60
     phase5.optimizer.sampling_efficiency = 0.4
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3, phase4, phase5)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4, phase5)

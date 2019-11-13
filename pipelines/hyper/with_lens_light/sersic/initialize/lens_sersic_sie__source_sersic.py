@@ -40,7 +40,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -73,7 +73,7 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if pipeline_settings.include_shear:
-        shear = al.mass_profiles.ExternalShear
+        shear = al.mp.ExternalShear
     else:
         shear = None
 
@@ -88,11 +88,9 @@ def make_pipeline(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens, light=al.light_profiles.EllipticalSersic
-            )
+            lens=al.GalaxyModel(redshift=redshift_lens, light=al.lp.EllipticalSersic)
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         optimizer_class=af.MultiNest,
@@ -120,58 +118,29 @@ def make_pipeline(
     #    its light profile in phase 1.
     # 3) Have the option to use an annular mask removing the central light, if the inner_mask_radii parametr is input.
 
-    class LensSubtractedPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
-            ## Lens Light Sersic -> Sersic ##
+    #    mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
+    mass.centre = phase1.result.model.galaxies.lens.light.centre
 
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic"
-            ).constant.galaxies.lens.light
-
-            ## Lens Mass, Move centre priors to centre of lens light ###
-
-            self.galaxies.lens.mass.centre = (
-                results.from_phase("phase_1__lens_sersic")
-                .variable_absolute(a=0.1)
-                .galaxies.lens.light.centre
-            )
-
-            ## Set all hyper_galaxies-galaxies if feature is turned on ##
-
-            if pipeline_settings.hyper_galaxies:
-
-                self.galaxies.lens.hyper_galaxy = (
-                    results.last.hyper_combined.constant.galaxies.lens.hyper_galaxy
-                )
-
-            if pipeline_settings.hyper_image_sky:
-
-                self.hyper_image_sky = (
-                    results.last.hyper_combined.constant.hyper_image_sky
-                )
-
-            if pipeline_settings.hyper_background_noise:
-
-                self.hyper_background_noise = (
-                    results.last.hyper_combined.constant.hyper_background_noise
-                )
-
-    phase2 = LensSubtractedPhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
+                light=phase1.result.instance.galaxies.lens.light,
+                mass=al.mp.EllipticalIsothermal,
                 shear=shear,
+                hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        hyper_image_sky=phase1.result.hyper_combined.instance.hyper_image_sky,
+        hyper_background_noise=phase1.result.hyper_combined.instance.hyper_background_noise,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -182,7 +151,7 @@ def make_pipeline(
 
     phase2.optimizer.const_efficiency_mode = False
     phase2.optimizer.n_live_points = 50
-    phase2.optimizer.sampling_efficiency = 0.3
+    phase2.optimizer.sampling_efficiency = 0.5
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
         hyper_galaxy=pipeline_settings.hyper_galaxies,
@@ -192,73 +161,28 @@ def make_pipeline(
 
     ### PHASE 3 ###
 
-    # In phase 3, we will fit simultaneously the lens and source galaxies, where we:
+    # In phase 3, we will refit the lens galaxy's light using a fixed mass andn source model above, where we:
 
-    # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
+    # 1) Do not use priors from phase 1 to initialize the lens's light, assuming the source light may of impacted them.
     # 2) Use a circular mask, to fully capture the lens and source light.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ## Lens Light, Sersic -> Sersic ###
-
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light
-
-            ## Lens Mass, SIE -> SIE, Shear -> Shear ###
-
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.lens.mass
-
-            if pipeline_settings.include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_2__lens_sie__source_sersic"
-                ).variable.galaxies.lens.shear
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.source
-
-            ## Set all hyper_galaxies-galaxies if feature is turned on ##
-
-            if pipeline_settings.hyper_galaxies:
-
-                self.galaxies.lens.hyper_galaxy = (
-                    results.last.hyper_combined.constant.galaxies.lens.hyper_galaxy
-                )
-
-            if pipeline_settings.hyper_image_sky:
-
-                self.hyper_image_sky = (
-                    results.last.hyper_combined.constant.hyper_image_sky
-                )
-
-            if pipeline_settings.hyper_background_noise:
-
-                self.hyper_background_noise = (
-                    results.last.hyper_combined.constant.hyper_background_noise
-                )
-
-    phase3 = LensSourcePhase(
-        phase_name="phase_3__lens_sersic_sie__source_sersic",
+    phase3 = al.PhaseImaging(
+        phase_name="phase_3__lens_sersic_sie__source_fixed",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                light=al.lp.EllipticalSersic,
+                mass=phase2.result.instance.galaxies.lens.mass,
+                shear=phase2.result.instance.galaxies.lens.shear,
+                hyper_galaxy=phase2.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source,
+                light=phase2.result.instance.galaxies.source.light,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -266,14 +190,53 @@ def make_pipeline(
         optimizer_class=af.MultiNest,
     )
 
-    phase3.optimizer.const_efficiency_mode = True
+    phase3.optimizer.const_efficiency_mode = False
     phase3.optimizer.n_live_points = 75
-    phase3.optimizer.sampling_efficiency = 0.3
+    phase3.optimizer.sampling_efficiency = 0.5
 
-    phase3 = phase3.extend_with_multiple_hyper_phases(
+    ### PHASE 4 ###
+
+    # In phase 4, we will fit simultaneously the lens and source galaxies, where we:
+
+    # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 2 and 3.
+    # 2) Use a circular mask, to fully capture the lens and source light.
+
+    phase4 = al.PhaseImaging(
+        phase_name="phase_4__lens_sersic_sie__source_sersic",
+        phase_folders=phase_folders,
+        galaxies=dict(
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                light=phase1.result.model.galaxies.lens.light,
+                mass=phase2.result.model.galaxies.lens.mass,
+                shear=phase2.result.model.galaxies.lens.shear,
+                hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
+            ),
+            source=al.GalaxyModel(
+                redshift=redshift_source,
+                light=phase2.result.model.galaxies.source.light,
+            ),
+        ),
+        hyper_image_sky=phase2.result.hyper_combined.instance.hyper_image_sky,
+        hyper_background_noise=phase2.result.hyper_combined.instance.hyper_background_noise,
+        sub_size=sub_size,
+        signal_to_noise_limit=signal_to_noise_limit,
+        bin_up_factor=bin_up_factor,
+        positions_threshold=positions_threshold,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        optimizer_class=af.MultiNest,
+    )
+
+    phase4.optimizer.const_efficiency_mode = True
+    phase4.optimizer.n_live_points = 75
+    phase4.optimizer.sampling_efficiency = 0.3
+
+    phase4 = phase4.extend_with_multiple_hyper_phases(
         hyper_galaxy=pipeline_settings.hyper_galaxies,
         include_background_sky=pipeline_settings.hyper_image_sky,
         include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3, hyper_mode=True)
+    return al.PipelineDataset(
+        pipeline_name, phase1, phase2, phase3, phase4, hyper_mode=True
+    )

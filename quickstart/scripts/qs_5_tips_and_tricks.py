@@ -1,30 +1,30 @@
 ### MODEL YOUR DATA ###
 
-# Its time to model your own lens data! This is straight forward - just adapt the runner script you ran above to
-# load your own CCD imaging data instead of the example data we ran previously.
+# Its time to model your own lens dataset! This is straight forward - just adapt the runner script you ran above to
+# load your own imaging dataset instead of the example simulator we ran previously.
 #
-# First, we need to make sure the data conforms to the PyAutoLens inputs. This requires that:
+# First, we need to make sure the dataset conforms to the PyAutoLens inputs. This requires that:
 #
 # 1) The image is a small (e.g. 501 x 501) cut-out of the strong lens, centred on the lens galaxy.
 # 2) The image and noise-map are in electrons per second.
 # 3) The PSF is cut-out to an odd-sized kernel with a reasonably small kernel size (e.g. 21x21).
 
-# PyAutoLens has built-in tools to convert your data to these requirements, checkout the scripts in
+# PyAutoLens has built-in tools to convert your simulator to these requirements, checkout the scripts in
 # 'autolens_workspace/tools/loading_and_preparing_data'.
 
 
-# Your data probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
+# Your simulator probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
 
 # 1) Use a large circular mask by adding the line
 #
-#     mask = al.Mask.circular(
-#          shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0)
+#     mask = al.mask.circular(
+#          shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0)
 
-# 2) Creating your own custom mask, using the script 'autolens_workspace/tools/example/mask_maker.py'
+# 2) Creating your own custom mask, using the script 'autolens_workspace/tools/imaging/mask_maker.py'
 
 
-# If your data doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
-# lenses, where only the source galaxy is visible) then you should use the 'runner__lens_sie__source_inversion.py'
+# If your simulator doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
+# lenses, where only the source galaxy is visible) then you should use the 'lens_sie__source_inversion.py'
 # instead.
 
 ### POSITIONS ###
@@ -41,7 +41,7 @@
 
 # For setting up an image with positions, checkout 'autolens_workspace/tools/data_making/positions_maker.py'. To see
 # how positions are used by a runner and pipeline, checkout 'pipelines/features/position_thresholding.py' and
-# 'runners/features/runner_positions.py'
+# 'runners/features/position_thresholding.py'
 
 ### INVERSIONS ###
 
@@ -50,7 +50,7 @@
 # grid using an 'inversion'.
 
 # To use an inversion, checkout the pipeline 'pipelines/simple/lens_sersic_sie__source_inversion.py' and the runner
-# 'runners/simple/runner__lens_light_mass__source_inversion.py'. By default, these pipelines use an adaptive pixelization
+# 'runners/simple/lens_light_mass__source_inversion.py'. By default, these pipelines use an adaptive pixelization
 # where the pixels adapt to the mass model's magnification.
 
 # I advise that you use inversions in conjuction with the positions feature described above. Inversions run a high risk
@@ -64,14 +64,14 @@
 # in the autolens_workspace:
 
 # 1) 'pipelines/features' and 'runners/features'. These describe pipeline features that customize an analysis of
-#    a strong lens, for example by binning up the data to a coarser resolution or performing ray-tracing on a higher
+#    a strong lens, for example by binning up the dataset to a coarser resolution or performing ray-tracing on a higher
 #    resolution 'sub-grid'.
 
 # 2) 'pipelines/advanced' and 'runners/advanced'. Advanced pipelines allow a broader range of complex lens models to be
 #    fitted and allow for pipelines to be combined with one another, so the early phases of a pipeline can be reused
 #    when fitting different lens model in later phases.
 
-# 3) 'pipelines/hyper' and 'runners/hyper'. Hyper functionality adapts the fit to the data. Only once you're confident
+# 3) 'pipelines/hyper' and 'runners/hyper'. Hyper functionality adapts the fit to the dataset. Only once you're confident
 #    with PyAutoLens would I recommend that you start experimenting with this functionality!
 
 ### FIN. ###

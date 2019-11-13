@@ -37,7 +37,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -45,7 +45,6 @@ def make_pipeline(
     pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
-    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -78,73 +77,31 @@ def make_pipeline(
     #    pipeline.
     # 3) Pass priors on the source galaxy's inversion using the Pixelization and Regularization of the previous pipeline.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
-            ### Lens Light, Bulge -> Bulge, Disk -> Disk ###
+    mass.centre = af.last.model.galaxies.lens.mass.centre
+    mass.axis_ratio = af.last.model.galaxies.lens.mass.axis_ratio
+    mass.phi = af.last.model.galaxies.lens.mass.phi
+    #  mass.einstein_radius = af.last.model_absolute(a=0.3).galaxies.lens.mass.einstein_radius
 
-            self.galaxies.lens.bulge = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion"
-            ).variable.galaxies.lens.bulge
-
-            self.galaxies.lens.disk = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion"
-            ).variable.galaxies.lens.disk
-
-            ### Lens Mass, SIE -> Powerlaw ###
-
-            self.galaxies.lens.mass.centre = (
-                results.from_phase("phase_2__lens_bulge_disk_sie__source_inversion")
-                .variable_absolute(a=0.05)
-                .galaxies.lens.mass.centre
-            )
-
-            self.galaxies.lens.mass.axis_ratio = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion"
-            ).variable.galaxies.lens.mass.axis_ratio
-
-            self.galaxies.lens.mass.phi = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion"
-            ).variable.galaxies.lens.mass.phi
-
-            self.galaxies.lens.mass.einstein_radius = (
-                results.from_phase("phase_2__lens_bulge_disk_sie__source_inversion")
-                .variable_absolute(a=0.3)
-                .galaxies.lens.mass.einstein_radius
-            )
-
-            ### Lens Shear, Shear -> Shear ###
-
-            if pipeline_settings.include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_2__lens_bulge_disk_sie__source_inversion"
-                ).variable.galaxies.lens.shear
-
-            ### Source Inversion, Inv -> Inv ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_2__lens_bulge_disk_sie__source_inversion"
-            ).inversion.constant.galaxies.source
-
-    phase1 = LensSourcePhase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk_power_law__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=al.light_profiles.EllipticalSersic,
-                disk=al.light_profiles.EllipticalExponential,
-                mass=al.mass_profiles.EllipticalPowerLaw,
-                shear=al.mass_profiles.ExternalShear,
+                bulge=af.last.model.galaxies.lens.bulge,
+                disk=af.last.model.galaxies.lens.disk,
+                mass=mass,
+                shear=af.last.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_settings.pixelization,
-                regularization=pipeline_settings.regularization,
+                pixelization=af.last.instance.galaxies.source.pixelization,
+                regularization=af.last.instance.galaxies.source.regularization,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -152,7 +109,6 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -162,4 +118,4 @@ def make_pipeline(
 
     phase1 = phase1.extend_with_inversion_phase()
 
-    return al.PipelineImaging(pipeline_name, phase1)
+    return al.PipelineDataset(pipeline_name, phase1)

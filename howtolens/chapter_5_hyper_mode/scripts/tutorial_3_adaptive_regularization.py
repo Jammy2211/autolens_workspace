@@ -8,27 +8,25 @@ import autolens as al
 # recontructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 # phase of the pipeline that we've begun calling the 'hyper-galaxy-image'.
 
-# This is the usual simulate function, using the compact source of the previous tutorials.
+# This is the usual simulator function, using the compact source of the previous tutorials.
 
 
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
-    )
+    grid = al.grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.7,
             phi=135.0,
@@ -38,101 +36,89 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(150, 150),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=2,
         psf=psf,
         background_sky_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
 
-ccd_data = simulate()
-mask = al.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
-lens_data = al.LensData(ccd_data=ccd_data, mask=mask)
+# Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
+
+imaging = simulate()
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fits, we'll use a convenience
-# function to fit the lens data we simulated above.
+# function to fit the lens dataset we simulated above.
 
 
-def fit_lens_data_with_source_galaxy(lens_data, source_galaxy):
+def fit_masked_imaging_with_source_galaxy(masked_imaging, source_galaxy):
 
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+    return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
-# Next, we'll use the magnification based source to fit this data.
+# Next, we'll use the magnification based source to fit this simulator.
 
-source_magnification = al.Galaxy(
+source_magnification = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiMagnification(shape=(30, 30)),
-    regularization=al.regularization.Constant(coefficient=3.3),
+    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    regularization=al.reg.Constant(coefficient=3.3),
 )
 
-fit = fit_lens_data_with_source_galaxy(
-    lens_data=lens_data, source_galaxy=source_magnification
+fit = fit_masked_imaging_with_source_galaxy(
+    masked_imaging=masked_imaging, source_galaxy=source_magnification
 )
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 
 # Okay, so the inversion's fit looks just like it did in the previous tutorials. Lets quickly remind ourselves that the
 # effective regularization coefficient of each source pixel is our input coefficient value of 3.3.
 
-al.inversion_plotters.plot_pixelization_regularization_weights(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
 
 # Lets now look at adaptive regularization in action, by setting up a hyper-galaxy-image and using the
 # 'AdaptiveBrightness' regularization scheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
 
-hyper_image_1d = fit.model_image(return_in_2d=False)
+hyper_image = fit.model_image.in_1d
 
-source_adaptive_regularization = al.Galaxy(
+source_adaptive_regularization = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiMagnification(shape=(30, 30)),
-    regularization=al.regularization.AdaptiveBrightness(
+    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.005, outer_coefficient=1.9, signal_scale=3.0
     ),
-    hyper_galaxy_image_1d=hyper_image_1d,
+    hyper_galaxy_image=hyper_image,
 )
 
-fit = fit_lens_data_with_source_galaxy(
-    lens_data=lens_data, source_galaxy=source_adaptive_regularization
+fit = fit_masked_imaging_with_source_galaxy(
+    masked_imaging=masked_imaging, source_galaxy=source_adaptive_regularization
 )
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-al.inversion_plotters.plot_pixelization_regularization_weights(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
 
 # So, as expected, we now have a variable regularization scheme. The regularization of the source's brightest regions
 # is much lower than that of its outer regions. As discussed before, this is what we want. Lets quickly check that this
@@ -149,13 +135,7 @@ print("Evidence using adaptive regularization = ", fit.evidence)
 # chapter. This is because although the adaptive regularization scheme improves the fit, the magnification based grid
 # simply *does not*  have sufficient resolution to resolve the source's cuspy central light profile.
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
 
 # So, how does adaptive regularization work?
 
@@ -203,40 +183,30 @@ al.lens_fit_plotters.plot_fit_subplot(
 # You may find solutions that raise an 'InversionException'. These solutions mean that the matrix used during the linear
 # algebra calculation was ill-defined, and could not be inverted. These solutions are removed by PyAutoLens during lens modeling.
 
-source_adaptive_regularization = al.Galaxy(
+source_adaptive_regularization = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiMagnification(shape=(30, 30)),
-    regularization=al.regularization.AdaptiveBrightness(
+    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.001, outer_coefficient=0.2, signal_scale=2.0
     ),
-    hyper_galaxy_image_1d=hyper_image_1d,
+    hyper_galaxy_image=hyper_image,
 )
 
-fit = fit_lens_data_with_source_galaxy(
-    lens_data=lens_data, source_galaxy=source_adaptive_regularization
+fit = fit_masked_imaging_with_source_galaxy(
+    masked_imaging=masked_imaging, source_galaxy=source_adaptive_regularization
 )
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-al.inversion_plotters.plot_pixelization_regularization_weights(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
 
 print("Evidence using adaptive regularization = ", fit.evidence)
 
 # To end, lets consider what this adaptive regularization scheme means in the context of maximizing the Bayesian
 # evidence. In the previous tutorial, we noted that by using a brightness-based adaptive pixelization we
-# increased the Bayesian evidence by allowing for new solutions which fit the data user fewer source pixels; the
+# increased the Bayesian evidence by allowing for new solutions which fit the dataset user fewer source pixels; the
 # key criteria in making a source reconstruction 'more simple' and 'less complex'.
 
 # As you might of guessed, adaptive regularization again increases the Bayesian evidence by making the source

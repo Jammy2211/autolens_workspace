@@ -23,7 +23,7 @@ def make_pipeline(phase_folders=None):
     # By default, the pipeline folders is None, meaning the output go to the directory 'output/pipeline_name',
     # which in this case would be 'output/pipeline_light_and_source'.
 
-    # In the example pipelines found in 'autolens_workspace/pipelines' folder, we pass the name of our strong lens data
+    # In the example pipelines found in 'autolens_workspace/pipelines' folder, we pass the name of our strong lens dataset
     # to the pipeline path. This allows us to fit a large sample of lenses using one pipeline and store all of their
     # results in an ordered directory structure.
 
@@ -35,7 +35,7 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 1 ###
 
-    # In chapter 2, we learnt how to mask data. With pipelines we can change our mask between phases. Afterall,
+    # In chapter 2, we learnt how to mask simulator. With pipelines we can change our mask between phases. Afterall,
     # the bigger the mask, the slower the run-time. In the early phases of a pipeline we're not bothered about fitting
     # all of the image. Aggresive masking (which removes lots of image-pixels) is an appealing way to get things running fast.
 
@@ -49,14 +49,15 @@ def make_pipeline(phase_folders=None):
     # But wait, we actually want the opposite of this! We want a masks where the pixels between 0.5" and 2.0" are not
     # included! They're the pixels the source is actually located. Therefore, we're going to use an 'anti-annular
     # mask', where the inner and outer radii are the regions we omit from the analysis. This means we need to specify
-    # a third mask radii, further out, such that data at these exterior edges of the image are masked.
+    # a third mask radii, further out, such that simulator at these exterior edges of the image are masked.
 
     # We can set a mask using a 'mask_function', which returns the mask used by a phase.
 
-    def mask_function(image):
-        return al.Mask.circular_anti_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_anti_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
+            sub_size=2,
             inner_radius_arcsec=0.5,
             outer_radius_arcsec=1.6,
             outer_radius_2_arcsec=2.5,
@@ -68,9 +69,7 @@ def make_pipeline(phase_folders=None):
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=al.GalaxyModel(redshift=0.5, light=al.light_profiles.EllipticalSersic)
-        ),
+        galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
         mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
@@ -90,10 +89,11 @@ def make_pipeline(phase_folders=None):
 
     # We can use the mask function again, to modify the mask to an annulus. We'll use the same ring radii as before.
 
-    def mask_function(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
+            sub_size=2,
             inner_radius_arcsec=0.5,
             outer_radius_arcsec=3.0,
         )
@@ -110,7 +110,7 @@ def make_pipeline(phase_folders=None):
     class LensSubtractedPhase(al.PhaseImaging):
         def modify_image(self, image, results):
             phase_1_results = results.from_phase("phase_1__lens_sersic")
-            return image - phase_1_results.unmasked_model_image_of_planes[0]
+            return image - phase_1_results.unmasked_model_visibilities_of_planes[0]
 
     # The function above demonstrates the most important thing about pipelines - that every phase has access to the
     # results of all previous phases. This means we can feed information through the pipeline and therefore use the
@@ -119,7 +119,7 @@ def make_pipeline(phase_folders=None):
     # You should see that this is done by using the phase_name of the phase we're interested in, which in the above
     # code is named 'phase_1__lens_sersic' (you can check this on line 73 above).
 
-    # We'll do this again in phase 3 and throughout all of the pipelines in this chapter and the workspace examples.
+    # We'll do this again in phase 3 and throughout all of the pipelines in this chapter and the autolens_workspace examples.
 
     # We setup phase 2 as per usual. Note that we don't need to pass the modify image function.
 
@@ -127,12 +127,8 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
-            ),
-            source=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         optimizer_class=af.MultiNest,
@@ -150,82 +146,72 @@ def make_pipeline(phase_folders=None):
     # 'results' argument that, in chapter 2, we ignored. This stores the results of the lens model of
     # phases 1 and 2 meaning we can use it to initialize phase 3's priors!
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    lens = al.GalaxyModel(
+        redshift=0.5,
+        light=al.lp.EllipticalSersic,
+        mass=al.mp.EllipticalIsothermal,
+    )
+    source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 
-            # The previous results is a 'list' in python. The zeroth index entry of the list maps to the results of
-            # phase 1, the first entry to phase 2, and so on.
+    # To link two priors together we invoke the 'model' attribute of the previous results. By invoking
+    # 'model', this means that:
 
-            phase_1_results = results.from_phase("phase_1__lens_sersic")
-            phase_2_results = results.from_phase("phase_2__lens_sie__source_sersic")
+    # 1) The parameter will be a free-parameter fitted for by the non-linear search.
+    # 2) It will use a GaussianPrior based on the previous results as its initialization (we'll cover how this
+    #    Gaussian is setup in tutorial 4, for now just imagine it links the results in a sensible way).
 
-            # To link two priors together we invoke the 'variable' attribute of the previous results. By invoking
-            # 'variable', this means that:
+    # We can simply link every source galaxy parameter to its phase 2 inferred value, as follows
 
-            # 1) The parameter will be a free-parameter fitted for by the non-linear search.
-            # 2) It will use a GaussianPrior based on the previous results as its initialization (we'll cover how this
-            #    Gaussian is setup in tutorial 4, for now just imagine it links the results in a sensible way).
+    source.light.centre_0 = (
+        phase2.result.model.galaxies.source.light.centre_0
+    )
 
-            # We can simply link every source galaxy parameter to its phase 2 inferred value, as follows
+    source.light.centre_1 = (
+        phase2.result.model.galaxies.source.light.centre_1
+    )
 
-            self.galaxies.source.light.centre_0 = (
-                phase_2_results.variable.galaxies.source.light.centre_0
-            )
+    source.light.axis_ratio = (
+        phase2.result.model.galaxies.source.light.axis_ratio
+    )
 
-            self.galaxies.source.light.centre_1 = (
-                phase_2_results.variable.galaxies.source.light.centre_1
-            )
+    source.light.phi = (
+        phase2.result.model.galaxies.source.light.phi
+    )
 
-            self.galaxies.source.light.axis_ratio = (
-                phase_2_results.variable.galaxies.source.light.axis_ratio
-            )
+    source.light.intensity = (
+        phase2.result.model.galaxies.source.light.intensity
+    )
 
-            self.galaxies.source.light.phi = (
-                phase_2_results.variable.galaxies.source.light.phi
-            )
+    source.light.effective_radius = (
+        phase2.result.model.galaxies.source.light.effective_radius
+    )
 
-            self.galaxies.source.light.intensity = (
-                phase_2_results.variable.galaxies.source.light.intensity
-            )
+    source.light.sersic_index = (
+        phase2.result.model.galaxies.source.light.sersic_index
+    )
 
-            self.galaxies.source.light.effective_radius = (
-                phase_2_results.variable.galaxies.source.light.effective_radius
-            )
+    # However, listing every parameter like this is ugly and becomes cumbersome if we have a lot of parameters.
 
-            self.galaxies.source.light.sersic_index = (
-                phase_2_results.variable.galaxies.source.light.sersic_index
-            )
+    # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
+    # you can simply set the source galaxy equal to one another without specifying each parameter of every
+    # light and mass profile.
 
-            # However, listing every parameter like this is ugly and becomes cumbersome if we have a lot of parameters.
+    source = (
+        phase2.result.model.galaxies.source
+    )  # This is identical to lines 196-203 above.
 
-            # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
-            # you can simply set the source galaxy equal to one another without specifying each parameter of every
-            # light and mass profile.
+    # For the lens galaxies we have a slightly weird circumstance where the light profiles requires the
+    # results of phase 1 and the mass profile the results of phase 2. When passing these as a 'model', we
+    # can split them as follows
 
-            self.galaxies.source = (
-                phase_2_results.variable.galaxies.source
-            )  # This is identical to lines 196-203 above.
+    lens.light = phase1.result.model.galaxies.lens.light
+    lens.mass = phase2.result.model.galaxies.lens.mass
 
-            # For the lens galaxies we have a slightly weird circumstance where the light profiles requires the
-            # results of phase 1 and the mass profile the results of phase 2. When passing these as a 'variable', we
-            # can split them as follows
-
-            self.galaxies.lens.light = phase_1_results.variable.galaxies.lens.light
-
-            self.galaxies.lens.mass = phase_2_results.variable.galaxies.lens.mass
-
-    phase3 = LensSourcePhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-            ),
-            source=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
+            lens=lens, source=source,
         ),
         optimizer_class=af.MultiNest,
     )
@@ -234,4 +220,4 @@ def make_pipeline(phase_folders=None):
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, phase3)
+    return pipeline.PipelineDataset(pipeline_name, phase1, phase2, phase3)

@@ -23,7 +23,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -55,66 +55,28 @@ def make_pipeline(
     #    pipeline.
     # 3) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
-            ### Lens Light, Sersic -> Sersic ###
+    mass.centre = af.last.model.galaxies.lens.mass.centre
+    mass.axis_ratio = af.last.model.galaxies.lens.mass.axis_ratio
+    mass.phi = af.last.model.galaxies.lens.mass.phi
+    #  mass.einstein_radius = af.last.model_absolute(a=0.3).galaxies.lens.mass.einstein_radius
 
-            self.galaxies.lens.light = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light
-
-            ### Lens Mass, SIE -> PL ###
-
-            self.galaxies.lens.mass.centre = (
-                results.from_phase("phase_3__lens_sersic_sie__source_sersic")
-                .variable_absolute(a=0.05)
-                .galaxies.lens.mass.centre
-            )
-
-            self.galaxies.lens.mass.axis_ratio = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.mass.axis_ratio
-
-            self.galaxies.lens.mass.phi = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.mass.phi
-
-            self.galaxies.lens.mass.einstein_radius = (
-                results.from_phase("phase_3__lens_sersic_sie__source_sersic")
-                .variable_absolute(a=0.3)
-                .galaxies.lens.mass.einstein_radius
-            )
-
-            ### Lens Shear, Shear -> Shear ###
-
-            if pipeline_settings.include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_3__lens_sersic_sie__source_sersic"
-                ).variable.galaxies.lens.shear
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.source
-
-    phase1 = LensSourcePhase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic_power_law__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalPowerLaw,
-                shear=al.mass_profiles.ExternalShear,
+                light=af.last.model.galaxies.lens.light,
+                mass=mass,
+                shear=af.last.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=af.last.model.galaxies.source.light
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -127,4 +89,4 @@ def make_pipeline(
     phase1.optimizer.n_live_points = 75
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return al.PipelineImaging(pipeline_name, phase1)
+    return al.PipelineDataset(pipeline_name, phase1)

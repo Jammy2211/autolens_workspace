@@ -25,15 +25,15 @@
 # By breaking the analysis down in this way we achieve much faster lens modeling and avoid inferring an incorrect
 # lens model.
 
-# Lets load some simulated lens data (which now includes the lens galaxy's light) and fit it using this pipeline. To do
+# Lets load some simulated lens dataset (which now includes the lens galaxy's light) and fit it using this pipeline. To do
 # this, we won't use this Juypter notebook! Instead, go to the script
-# 'autolens_workspace/runners/simple/runner__lens_sersic_sie__source_sersic.py'. This runner script does everything
+# 'autolens_workspace/runners/simple/lens_sersic_sie__source_sersic.py'. This runner script does everything
 # we need to set off the pipeline, in particular, it:
 
-# 1) Loads the CCD imaging data from .fits files.
-# 2) Loads the mask of this example instrument from a .fits file.
+# 1) Loads the imaging dataset from .fits files.
+# 2) Loads the mask of this example dataset from a .fits file.
 # 3) Imports and creates the pipeline.
-# 4) Uses this pipeline to fit the data.
+# 4) Uses this pipeline to fit the dataset.
 
-# The results of this pipeline will appear in the 'output' folder of the autolens workspace. It should take half an
+# The results of this pipeline will appear in the 'output' folder of the autolens autolens_workspace. It should take half an
 # hour or so to run from start to end. Of course, you can check out the results on-the-fly in the output folder.

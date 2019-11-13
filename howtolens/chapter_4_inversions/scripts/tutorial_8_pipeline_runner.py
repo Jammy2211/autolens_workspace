@@ -8,10 +8,10 @@ import os
 
 import autofit as af
 
-# Setup the path to the workspace, using a relative directory name.
+# Setup the path to the autolens_workspace, using a relative directory name.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-# Setup the path to the config folder, using the workspace path.
+# Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
@@ -26,22 +26,18 @@ import autolens as al
 # This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.Galaxy(
+    source_galaxy_0 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
             axis_ratio=0.8,
             phi=90.0,
@@ -51,9 +47,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_1 = al.Galaxy(
+    source_galaxy_1 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
             axis_ratio=0.7,
             phi=45.0,
@@ -63,9 +59,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_2 = al.Galaxy(
+    source_galaxy_2 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
             axis_ratio=0.6,
             phi=90.0,
@@ -75,9 +71,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_3 = al.Galaxy(
+    source_galaxy_3 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
             axis_ratio=0.9,
             phi=140.0,
@@ -87,7 +83,7 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(
+    tracer = al.tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -97,21 +93,23 @@ def simulate():
         ]
     )
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(180, 180),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=2,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
+
 
 # Lets simulate the we'll fit, which is the same complex source as the
 # 'chapter_3_pipelines/tutorial_3_complex_source.py' tutorial.
-ccd_data = simulate()
-al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+imaging = simulate()
+al.plot.imaging.subplot(imaging=imaging)
 
 # Lets import the pipeline and run it.
 from howtolens.chapter_4_inversions import tutorial_8_pipeline
@@ -119,8 +117,8 @@ from howtolens.chapter_4_inversions import tutorial_8_pipeline
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(
     phase_folders=["howtolens", "c4_t8_inversion"]
 )
-pipeline_inversion.run(data=ccd_data)
+pipeline_inversion.run(dataset=imaging)
 
 # And with that, we now have a pipeline to model strong lenses using an inversion! Checkout the example pipeline in
-# 'workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an inversion pipeline that includes the lens light
+# 'autolens_workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an inversion pipeline that includes the lens light
 # component.

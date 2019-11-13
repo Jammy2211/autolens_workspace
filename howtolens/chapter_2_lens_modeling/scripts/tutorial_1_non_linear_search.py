@@ -5,8 +5,6 @@ import autofit as af
 # we'll indivdually import the modules new to this chapter (and we'll import them as 'al' in chapter 3).
 
 import autolens as al
-from autolens.model.galaxy import galaxy_model as gm
-from autolens.pipeline.phase import phase_imaging
 
 # In this example, we're going to find a lens model that provides a good fit to an image, without
 # assuming any knowledge of what the 'correct' lens model is.
@@ -21,20 +19,20 @@ from autolens.pipeline.phase import phase_imaging
 # 1) A spherical Isothermal Sphere (SIS) for the lens galaxy's mass.
 # 2) A spherical exponential light profile for the source galaxy's light.
 
-# I'll let you into a secret - this is the same lens model used to Simulate the CCD data we're going to fit and we're
+# I'll let you into a secret - this is the same lens model used to Simulate the imaging datawe're going to fit and we're
 # going to infer the actual parameters I used.
 
-# So, how do we infer the light and mass profile parameters that give a good fit to our data?
+# So, how do we infer the light and mass profile parameters that give a good fit to our simulator?
 
 # Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this lens
-# model to create a tracer and fit the image-data, and quantify how good the fit was using its likelihood
+# model to create a tracer and fit the image-simulator, and quantify how good the fit was using its likelihood
 # (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd find one that provides a good fit
-# (i.e. high likelihood) to the data!
+# (i.e. high likelihood) to the dataset!
 
 # It may sound surprising, but this is actually the basis of how lens modeling works. However, we can do a lot better
 # than random guessing. Instead, we track the likelihood of our previous guesses and guess more models using combinations
 # of parameters that gave higher likelihood solutions previously. The idea is that if a set of parameters provided a
-# good fit to the data, another set with similar values probably will too.
+# good fit to the dataset, another set with similar values probably will too.
 
 # This is called a 'non-linear search' and its a fairly common problem faced by scientists. Over the next few tutorials,
 # we're going to really get our heads around the concept of a non-linear search - intuition which will prove crucial
@@ -48,7 +46,7 @@ from autolens.pipeline.phase import phase_imaging
 #    and a tracer.
 
 # 2) Pass this tracer through the fitting module, generating a model image and comparing this model image to the
-#    observed strong lens imaging data. This computes a likelihood.
+#    observed strong lens imaging dataset. This computes a likelihood.
 
 # 3) Repeat this many times, using the likelihoods of previous fits (typically those with a high likelihood) to
 #    guide us to the lens models with the highest likelihood.
@@ -67,7 +65,7 @@ from autolens.pipeline.phase import phase_imaging
 
 # You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
 
 af.conf.instance = af.conf.Config(
     config_path=chapter_path + "/configs/t1_non_linear_search",
@@ -77,57 +75,49 @@ af.conf.instance = af.conf.Config(
 # This function simulates the image we'll fit in this tutorial.
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.1, pixel_scale=0.1)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(130, 130), pixel_scale=0.1, sub_grid_size=2
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.SphericalIsothermal(
-            centre=(0.0, 0.0), einstein_radius=1.6
-        ),
+        mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.SphericalExponential(
+        light=al.lp.SphericalExponential(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.1,
+    simulator = al.simulator.imaging(
+        shape_2d=(130, 130),
+        pixel_scales=0.1,
         exposure_time=300.0,
+        sub_size=1,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Lets call the simulate function above, providing us with CCD data to fit.
-ccd_data = simulate()
 
-al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+# Lets call the dataset function above, providing us with imaging datato fit.
+imaging = simulate()
+
+al.plot.imaging.subplot(imaging=imaging)
 
 # To compute a lens model, we use a GalaxyModel, which behaves analogously to the Galaxy objects we're now used to.
 # However, whereas for a Galaxy we manually specified the value of every parameter of its light-profiles and mass-profiles,
 # for a GalaxyModel these are inferred by the non-linear search.
 
 # Lets model the lens galaxy with an SIS mass profile (which is what it was simulated with).
-lens_galaxy_model = gm.GalaxyModel(
-    redshift=0.5, mass=al.mass_profiles.SphericalIsothermal
-)
+lens_galaxy_model = al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal)
 
 # Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
-source_galaxy_model = gm.GalaxyModel(
-    redshift=1.0, light=al.light_profiles.SphericalExponential
-)
+source_galaxy_model = al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential)
 
 # A phase takes our galaxy models and fits their parameters via a non-linear search (in this case, MultiNest).
 
@@ -137,21 +127,21 @@ source_galaxy_model = gm.GalaxyModel(
 
 # (ignore the 'dict' - its necessary syntax but not something you need to concern yourself with).
 
-phase = phase_imaging.PhaseImaging(
+phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
     optimizer_class=af.MultiNest,
 )
 
-# To run the phase, we pass it the data we're going to fit a lens model to and the non-linear search begins! As the phase
+# To run the phase, we pass it the dataset we're going to fit a lens model to and the non-linear search begins! As the phase
 # runs, a logger will show you the parameters of the best-fit model.
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/t1_non_linear_search"
+    "MultiNest has begun running - checkout the autolens_workspace/howtolens/chapter_2_lens_modeling/output/t1_non_linear_search"
     "folder for live output of the results, images and lens model."
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-results = phase.run(data=ccd_data)
+results = phase.run(dataset=imaging)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
@@ -162,10 +152,10 @@ print("MultiNest has finished run - you may now continue the notebook.")
 # python code to see the results.
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-al.lens_fit_plotters.plot_fit_subplot(fit=results.most_likely_fit)
+al.plot.fit_imaging.subplot(fit=results.most_likely_fit)
 
 # The fit looks good and we've therefore found a model close to the one I used to simulat the image with (you can
-# confirm this yourself if you want, by comparing the inferred parameters to those found in the simulate function above).
+# confirm this yourself if you want, by comparing the inferred parameters to those found in the dataset function above).
 
 # And with that, we're done - you've successfully modeled your first strong lens with PyAutoLens! Before moving
 # onto the next tutorial, I want you to think about the following:

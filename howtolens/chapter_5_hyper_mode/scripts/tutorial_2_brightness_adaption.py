@@ -13,27 +13,23 @@ import autolens as al
 # we'll begin by fitting it with a magnification based pixelization. Why? So we can use its model image to set up
 # the hyper-galaxy-image.
 
-# This is the usual simulate function, using the compact source of the previous tutorial.
+# This is the usual simulator function, using the compact source of the previous tutorial.
 
 
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.7,
             phi=135.0,
@@ -43,100 +39,84 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(150, 150),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=2,
         psf=psf,
         background_sky_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
 
-ccd_data = simulate()
-mask = al.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
+# Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
-# To perform brightness adaption, we use a 'binned grid' in our lens_data aongide binned_hyper_galaxy_images. For now,
-# ignore these 'binned' quantities - I'll explain what they do at the end of the tutorial.
-lens_data = al.LensData(
-    ccd_data=ccd_data, mask=mask, pixel_scale_binned_grid=ccd_data.pixel_scale
+imaging = simulate()
+mask = al.mask.circular(
+    shape_2d=(150, 150), pixel_scales=0.05, sub_size=1, radius_arcsec=3.0
 )
+
+# To perform brightness adaption, we need create our masked imaging dataset.
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. The code below does all the usual steps
 # required to do this.
 
-lens_galaxy = al.Galaxy(
+lens_galaxy = al.galaxy(
     redshift=0.5,
-    mass=al.mass_profiles.EllipticalIsothermal(
+    mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
     ),
 )
 
-source_galaxy_magnification = al.Galaxy(
+source_galaxy_magnification = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiMagnification(shape=(30, 30)),
-    regularization=al.regularization.Constant(coefficient=3.3),
+    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    regularization=al.reg.Constant(coefficient=3.3),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_magnification])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_magnification])
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 # Lets have a quick look to make sure it has the same residuals we saw in tutorial 1.
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 # Finally, we can use this fit to set up our hyper-galaxy-image. This hyper-galaxy-image isn't perfect,  as there are
 # residuals in the central regions of the reconstructed source. But it's *okay* and it'll certainly give us enough
 # information on where the lensed source is located to adapt our pixelization.
-hyper_image_1d = fit.model_image(return_in_2d=False)
+hyper_image = fit.model_image.in_1d_binned
 
 # Now lets take a look at brightness based adaption in action! Below, we define a source-galaxy using our new
-# 'VoronoiBrightnessImage' pixelization and use this to fit the lens-data. One should note that we also attach the
+# 'VoronoiBrightnessImage' pixelization and use this to fit the lens-simulator. One should note that we also attach the
 # hyper-galaxy-image to this galaxy because its pixelization uses this hyper-galaxy-image for adaption, thus the
 # galaxy needs to know what hyper-galaxy-image it should use!
 
-source_galaxy_brightness = al.Galaxy(
+source_galaxy_brightness = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiBrightnessImage(
+    pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=10.0
     ),
-    regularization=al.regularization.Constant(coefficient=0.5),
-    hyper_galaxy_image_1d=hyper_image_1d,
-    binned_hyper_galaxy_image_1d=hyper_image_1d,
+    regularization=al.reg.Constant(coefficient=0.5),
+    hyper_galaxy_image=hyper_image,
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_brightness])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_brightness])
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 # Would you look at that! Our reconstruction of the image no longer has residuals! By congregating more source pixels
 # in the brightest regions of the source reconstruction we get a better fit. Furthermore, we can check that this
@@ -155,20 +135,20 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 # So, we are now able to adapt our pixelization to the morphology of our lensed source galaxy. To my knowledge,
 # this is the *best* approach one can take in lens modeling. Its more tricky to implement (as I'll explain next)
-# and introduces extra hyper-galaxy-parametersr. But the pay-off is more than worth it, as we fit our image data
-# better and (typically) end up using far fewer source pixels to fit the data because we don't 'waste' pixels
+# and introduces extra hyper-galaxy-parametersr. But the pay-off is more than worth it, as we fit our image simulator
+# better and (typically) end up using far fewer source pixels to fit the dataset because we don't 'waste' pixels
 # reconstructing regions of the source-plane where there is no signal.
 
 
 # Okay, so how does the hyper_image actually adapt our pixelization to the source's brightness? It uses a 'weighted
-# KMeans clustering algorithm', which is a standard algorithm for partioning data in statistics.
+# KMeans clustering algorithm', which is a standard algorithm for partioning simulator in statistics.
 
 # In simple terms, this algorithm works as follows:
 
-# 1) Give the KMeans algorithm a set of weighted data (e.g. determined from the hyper-galaxy image).
+# 1) Give the KMeans algorithm a set of weighted simulator (e.g. determined from the hyper-galaxy image).
 
 # 2) For a given number of K-clusters, this algorithm will find a set of (y,x) coordinates that equally partition
-#    the weighted data-set. Wherever the data has higher weighting, more clusters congregate and visa versa.
+#    the weighted simulator-set. Wherever the dataset has higher weighting, more clusters congregate and visa versa.
 
 # 3) The returned (y,x) 'clusters' then make up our source-pixel centres, where the brightest (e.g. higher weighted)
 #    regions of the hyper-galaxy-image will have more clusters! Like we did for the magnification based pixelization,
@@ -182,7 +162,7 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 
 # Okay, so we now have a sense of how our VoronoiBrightnessImage pixelization is computed. Now, lets look at how we
-# create the weighted data the KMeans algorithm uses.
+# create the weighted simulate the KMeans algorithm uses.
 
 # This image, called the 'cluster_weight_map' is generated using the 'weight_floor' and 'weight_power' parameters
 # of the VoronoiBrightness pixelization. The cluster weight map is generated following 4 steps:
@@ -201,103 +181,73 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 # Lets look at this in action. We'll inspect 3 cluster_weight_maps, using a weight_power of 0.0, 5.0 and 10.0,
 # setting the weight_floor to 0.0 such that it does not change the cluster weight map.
 
-source_weight_power_0 = al.Galaxy(
+source_weight_power_0 = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiBrightnessImage(
+    pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=0.0
     ),
-    regularization=al.regularization.Constant(coefficient=1.0),
-    hyper_galaxy_image_1d=hyper_image_1d,
-    binned_hyper_galaxy_image_1d=hyper_image_1d,
+    regularization=al.reg.Constant(coefficient=1.0),
+    hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_0 = source_weight_power_0.pixelization.cluster_weight_map_from_hyper_image(
-    hyper_image=source_weight_power_0.hyper_galaxy_image_1d
-)
-cluster_weight_power_0 = mask.scaled_array_2d_from_array_1d(
-    array_1d=cluster_weight_power_0
-)
-al.array_plotters.plot_array(
-    array=cluster_weight_power_0,
-    mask=mask,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+cluster_weight_power_0 = source_weight_power_0.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_power_0.hyper_galaxy_image
 )
 
-source_weight_power_5 = al.Galaxy(
+al.plot.array(array=cluster_weight_power_0, mask=mask)
+
+source_weight_power_5 = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiBrightnessImage(
+    pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0
     ),
-    regularization=al.regularization.Constant(coefficient=1.0),
-    hyper_galaxy_image_1d=hyper_image_1d,
-    binned_hyper_galaxy_image_1d=hyper_image_1d,
+    regularization=al.reg.Constant(coefficient=1.0),
+    hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_5 = source_weight_power_5.pixelization.cluster_weight_map_from_hyper_image(
-    hyper_image=source_weight_power_5.hyper_galaxy_image_1d
-)
-cluster_weight_power_5 = mask.scaled_array_2d_from_array_1d(
-    array_1d=cluster_weight_power_5
-)
-al.array_plotters.plot_array(
-    array=cluster_weight_power_5,
-    mask=mask,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+cluster_weight_power_5 = source_weight_power_5.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_power_5.hyper_galaxy_image
 )
 
-source_weight_power_10 = al.Galaxy(
+al.plot.array(array=cluster_weight_power_5, mask=mask)
+
+source_weight_power_10 = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiBrightnessImage(
+    pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=10.0
     ),
-    regularization=al.regularization.Constant(coefficient=1.0),
-    hyper_galaxy_image_1d=hyper_image_1d,
-    binned_hyper_galaxy_image_1d=hyper_image_1d,
+    regularization=al.reg.Constant(coefficient=1.0),
+    hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_10 = source_weight_power_10.pixelization.cluster_weight_map_from_hyper_image(
-    hyper_image=source_weight_power_10.hyper_galaxy_image_1d
+cluster_weight_power_10 = source_weight_power_10.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_power_10.hyper_galaxy_image
 )
-cluster_weight_power_10 = mask.scaled_array_2d_from_array_1d(
-    array_1d=cluster_weight_power_10
-)
-al.array_plotters.plot_array(
-    array=cluster_weight_power_10,
-    mask=mask,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+
+al.plot.array(array=cluster_weight_power_10, mask=mask)
 
 # When we increase the weight-power the brightest regions of the hyper-galaxy-image become weighted higher relative to
 # the fainter regions. This means that t e KMeans algorithm will adapt its pixelization to the brightest regions of
 # the source.
 
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 # So, what does the weight_floor do? Increasing the weight-power congregates pixels around the source. However,
 # there is a risk that by congregating too many source pixels in its brightest regions we lose resolution further out,
@@ -308,42 +258,26 @@ al.inversion_plotters.plot_pixelization_values(
 
 # Lets look at once example:
 
-source_weight_floor = al.Galaxy(
+source_weight_floor = al.galaxy(
     redshift=1.0,
-    pixelization=al.pixelizations.VoronoiBrightnessImage(
+    pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.5, weight_power=10.0
     ),
-    regularization=al.regularization.Constant(coefficient=1.0),
-    hyper_galaxy_image_1d=hyper_image_1d,
-    binned_hyper_galaxy_image_1d=hyper_image_1d,
+    regularization=al.reg.Constant(coefficient=1.0),
+    hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_floor = source_weight_floor.pixelization.cluster_weight_map_from_hyper_image(
-    hyper_image=source_weight_floor.hyper_galaxy_image_1d
-)
-cluster_weight_floor = mask.scaled_array_2d_from_array_1d(array_1d=cluster_weight_floor)
-
-al.array_plotters.plot_array(
-    array=cluster_weight_floor,
-    mask=mask,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+cluster_weight_floor = source_weight_floor.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_floor.hyper_galaxy_image
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
+al.plot.array(array=cluster_weight_floor, mask=mask)
 
-fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit.inversion, should_plot_centres=True
-)
+fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-# Now, lets addresses why the functions above used a binned-grid and binned hyper images. Basically, running a weighted
-# KMeans algorithm is comoputationally expensive. Furthermore, the higher resolutiion the data you run it on, the
-# longer it takes to run. Too work around this, we used a binned hyper image, which rebins the hyper-data to a sparse
-# resolution. We can still use this image to adapt the source pixelization fine, it simply means the computational run
-# times are reduced.
-
+al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 # To end, lets think about the Bayesian evidence which goes to significantly higher values than a magnification-based
 # gird. At this point, it might be worth reminding yourself how the Bayesian evidence works by going back to the
@@ -351,8 +285,8 @@ al.inversion_plotters.plot_pixelization_values(
 
 # So, why do you think why adapting to the source's brightness increases the evidence?
 
-# It is because by adapting to the source's morphology we can now access solutions that fit the data really well
-# (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other grids. For instance, a
+# It is because by adapting to the source's morphology we can now access solutions that fit the dataset really well
+# (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other al. For instance, a
 # typical magnification based grid uses resolutions of 40 x 40, or 1600 pixels. In contrast, a morphology based grid
 # typically uses just 300-800 pixels (depending on the source itself). Clearly, the easiest way to make our source
 # solution simpler is to use fewer pixels overall!

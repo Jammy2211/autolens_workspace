@@ -39,12 +39,8 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=al.mass_profiles.EllipticalIsothermal
-            ),
-            source=al.GalaxyModel(
-                redshift=1.0, light_0=al.light_profiles.EllipticalSersic
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
+            source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
     )
@@ -64,13 +60,11 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_2__lens_sie__source_x2_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=phase1.result.variable.galaxies.lens
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=phase1.result.model.galaxies.lens),
             source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=phase1.result.variable.galaxies.source.light_0,
-                light_1=al.light_profiles.EllipticalSersic,
+                light_0=phase1.result.model.galaxies.source.light_0,
+                light_1=al.lp.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -86,14 +80,12 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_3__lens_sie__source_x3_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=phase2.result.variable.galaxies.lens
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=phase2.result.model.galaxies.lens),
             source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=phase2.result.variable.galaxies.source.light_0,
-                light_1=phase2.result.variable.galaxies.source.light_1,
-                light_2=al.light_profiles.EllipticalSersic,
+                light_0=phase2.result.model.galaxies.source.light_0,
+                light_1=phase2.result.model.galaxies.source.light_1,
+                light_2=al.lp.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -109,15 +101,13 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_4__lens_sie__source_x4_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5, mass=phase3.result.variable.galaxies.lens
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=phase3.result.model.galaxies.lens),
             source=al.GalaxyModel(
                 redshift=1.0,
-                light_0=phase3.result.variable.galaxies.source.light_0,
-                light_1=phase3.result.variable.galaxies.source.light_1,
-                light_2=phase3.result.variable.galaxies.source.light_2,
-                light_3=al.light_profiles.EllipticalSersic,
+                light_0=phase3.result.model.galaxies.source.light_0,
+                light_1=phase3.result.model.galaxies.source.light_1,
+                light_2=phase3.result.model.galaxies.source.light_2,
+                light_3=al.lp.EllipticalSersic,
             ),
         ),
         optimizer_class=af.MultiNest,
@@ -127,4 +117,4 @@ def make_pipeline(phase_folders=None):
     phase4.optimizer.n_live_points = 50
     phase4.optimizer.sampling_efficiency = 0.5
 
-    return pipeline.PipelineImaging(pipeline_name, phase1, phase2, phase3, phase4)
+    return pipeline.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

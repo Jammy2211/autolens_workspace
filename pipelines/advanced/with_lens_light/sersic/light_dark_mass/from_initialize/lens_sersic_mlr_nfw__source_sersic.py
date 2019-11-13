@@ -12,7 +12,19 @@ import os
 
 # Phase 1:
 
-# Description: Fits the lens light and mass model as a decomposed light and dark matterr profile, using a
+# Description: Fits the lens light and mass model as a decomposed light and dark matter profile, using a
+#              parametric Sersic light profile for the source. The lens light model is fixed.
+# Lens Light & Mass: EllipticalSersic
+# Lens Mass: SphericalNFW + ExternalShear
+# Source Light: EllipticalSersic
+# Previous Pipelines: with_lens_light/initialize/lens_sersic_sie__source_sersic.py
+# Prior Passing: None
+# Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
+
+
+# Phase 2:
+
+# Description: Fits the lens light and mass model as a decomposed light and dark matter profile, using a
 #              parametric Sersic light profile for the source.
 # Lens Light & Mass: EllipticalSersic
 # Lens Mass: SphericalNFW + ExternalShear
@@ -27,7 +39,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -54,82 +66,44 @@ def make_pipeline(
 
     # In phase 1, we will fit the lens galaxy's light and mass and one source galaxy, where we:
 
-    # 1) Pass priors on the lens galaxy's light using the EllipticalSersic of the previous pipeline.
+    # 1) Fix the lens galaxy's light using the EllipticalSersic of the previous pipeline.
     # 2) Pass priors on the lens galaxy's SphericalNFW mass profile's centre using the EllipticalIsothermal fit of the
     #    previous pipeline, if the NFW centre is a free parameter.
     # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
     # 4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    lens = al.GalaxyModel(
+        redshift=redshift_lens,
+        light=al.lmp.EllipticalSersic,
+        dark=al.mp.SphericalNFW,
+        shear=af.last.model.galaxies.lens.shear,
+    )
 
-            ### Lens Light to Light + Mass, Sersic -> Sersic ###
+    lens.light.centre = af.last.instance.galaxies.lens.light.centre
+    lens.light.axis_ratio = af.last.instance.galaxies.lens.light.axis_ratio
+    lens.light.phi = af.last.instance.galaxies.lens.light.phi
+    lens.light.intensity = af.last.instance.galaxies.lens.light.intensity
+    lens.light.effective_radius = af.last.instance.galaxies.lens.light.effective_radius
+    lens.light.sersic_index = af.last.instance.galaxies.lens.light.sersic_index
 
-            self.galaxies.lens.light_mass.centre = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.centre
+    if pipeline_settings.align_light_dark_centre:
 
-            self.galaxies.lens.light_mass.axis_ratio = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.axis_ratio
+        lens.dark.centre = lens.light.centre
 
-            self.galaxies.lens.light_mass.phi = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.phi
+    elif not pipeline_settings.align_light_dark_centre:
 
-            self.galaxies.lens.light_mass.intensity = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.intensity
+        lens.dark.centre = af.last.model_absolute(a=0.05).galaxies.lens.light.centre
 
-            self.galaxies.lens.light_mass.effective_radius = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.effective_radius
-
-            self.galaxies.lens.light_mass.sersic_index = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.light.sersic_index
-
-            ### Lens Mass, SIE ->  NFW ###
-
-            if pipeline_settings.align_light_dark_centre:
-
-                self.galaxies.lens.dark.centre = self.galaxies.lens.light_mass.centre
-
-            elif not pipeline_settings.align_light_dark_centre:
-
-                self.galaxies.lens.dark.centre = (
-                    results.from_phase("phase_3__lens_sersic_sie__source_sersic")
-                    .variable_absolute(a=0.05)
-                    .galaxies.lens.light_mass.centre
-                )
-
-            ### Lens Shear, Shear -> Shear ###
-
-            self.galaxies.lens.shear = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens.shear
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.source
-
-    phase1 = LensSourcePhase(
-        phase_name="phase_1__lens_sersic_mlr_nfw__source_sersic",
+    phase1 = al.PhaseImaging(
+        phase_name="phase_1__lens_sersic_mlr_nfw__source_sersic__fixed_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                light_mass=al.light_and_mass_profiles.EllipticalSersic,
-                dark=al.mass_profiles.SphericalNFW,
-                shear=al.mass_profiles.ExternalShear,
-            ),
+            lens=lens,
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=af.last.model.galaxies.source.light
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -142,4 +116,42 @@ def make_pipeline(
     phase1.optimizer.n_live_points = 75
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return al.PipelineImaging(pipeline_name, phase1)
+    ### PHASE 1 ###
+
+    # In phase 1, we will fit the lens galaxy's light and mass and one source galaxy, where we:
+
+    # 1) Pass priors on the lens galaxy's light using the EllipticalSersic of the previous pipeline.
+    # 2) Pass priors on the lens galaxy's SphericalNFW mass profile's centre using the EllipticalIsothermal fit of the
+    #    previous pipeline, if the NFW centre is a free parameter.
+    # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
+    # 4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
+
+    phase2 = al.PhaseImaging(
+        phase_name="phase_2__lens_sersic_mlr_nfw__source_sersic",
+        phase_folders=phase_folders,
+        galaxies=dict(
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                light=phase1.result.model.galaxies.lens.light,
+                dark=phase1.result.model.galaxies.lens.dark,
+                shear=phase1.result.model.galaxies.lens.shear,
+            ),
+            source=al.GalaxyModel(
+                redshift=redshift_source,
+                light=phase1.result.model.galaxies.source.light,
+            ),
+        ),
+        sub_size=sub_size,
+        signal_to_noise_limit=signal_to_noise_limit,
+        bin_up_factor=bin_up_factor,
+        positions_threshold=positions_threshold,
+        inner_mask_radii=inner_mask_radii,
+        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        optimizer_class=af.MultiNest,
+    )
+
+    phase2.optimizer.const_efficiency_mode = True
+    phase2.optimizer.n_live_points = 75
+    phase2.optimizer.sampling_efficiency = 0.2
+
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

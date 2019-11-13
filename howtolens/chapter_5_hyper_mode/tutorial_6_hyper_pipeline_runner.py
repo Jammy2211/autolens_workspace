@@ -8,10 +8,10 @@ import os
 
 import autofit as af
 
-# Setup the path to the workspace, using a relative directory name.
+# Setup the path to the autolens_workspace, using a relative directory name.
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-# Setup the path to the config folder, using the workspace path.
+# Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
@@ -27,15 +27,13 @@ import autolens as al
 # lens galaxy light.
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05
-    )
+    grid = al.grid.uniform(shape_2d=(180, 180), pixel_scales=0.05)
 
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
             axis_ratio=0.7,
             phi=80.0,
@@ -43,14 +41,14 @@ def simulate():
             effective_radius=1.3,
             sersic_index=2.5,
         ),
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.Galaxy(
+    source_galaxy_0 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
             axis_ratio=0.8,
             phi=90.0,
@@ -60,9 +58,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_1 = al.Galaxy(
+    source_galaxy_1 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
             axis_ratio=0.7,
             phi=45.0,
@@ -72,9 +70,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_2 = al.Galaxy(
+    source_galaxy_2 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
             axis_ratio=0.6,
             phi=90.0,
@@ -84,9 +82,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_3 = al.Galaxy(
+    source_galaxy_3 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
             axis_ratio=0.9,
             phi=140.0,
@@ -96,7 +94,7 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(
+    tracer = al.tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -106,10 +104,10 @@ def simulate():
         ]
     )
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
+    return al.SimulatedImagingData.from_tracer(
         tracer=tracer,
         grid=grid,
-        pixel_scale=0.05,
+        pixel_scales=0.05,
         exposure_time=300.0,
         psf=psf,
         background_sky_level=0.1,
@@ -117,15 +115,15 @@ def simulate():
     )
 
 
-# Plot CCD before running.
-ccd_data = simulate()
+# Plot Imaging before running.
+imaging = simulate()
 
 # Remember, we need to define and pass our mask to the hyper_galaxies pipeline from the beginning.
-mask = al.Mask.circular(
-    shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0
 )
 
-al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data, mask=mask)
+al.plot.imaging.subplot(imaging=imaging, mask=mask)
 
 ### HYPER PIPELINE SETTINGS ###
 
@@ -145,8 +143,8 @@ pipeline_settings = al.PipelineSettingsHyper(
     hyper_image_sky=False,
     hyper_background_noise=False,
     include_shear=True,
-    pixelization=al.pixelizations.VoronoiBrightnessImage,
-    regularization=al.regularization.AdaptiveBrightness,
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
 )
 
 # Lets import the pipeline and run it.
@@ -156,4 +154,4 @@ pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t6_hyper"]
 )
 
-pipeline_hyper.run(data=ccd_data, mask=mask)
+pipeline_hyper.run(dataset=imaging, mask=mask)

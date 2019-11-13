@@ -2,7 +2,7 @@ import autofit as af
 import autolens as al
 
 
-# In this pipeline, we'll demonstrate signal-to-noise limiting - which allows us to fit ccd instrument where the noise-map
+# In this pipeline, we'll demonstrate signal-to-noise limiting - which allows us to fit imaging dataset where the noise-map
 # has been increased to cap the maximum signal-to-noise value in the image in a phase of the pipeline. In this example,
 # we will perform an initial analysis on an image with a signal-to-noise limit of 20.0, and then fit the image using
 # the unscaled signal-to-noise map.
@@ -18,8 +18,8 @@ import autolens as al
 
 #    To learn more about this over-fitting problem, checkout chapter 5 of the 'HowToLens' lecture series.
 
-# 2) If the model-fit has extremely large chi-squared values due to the high S/N of the data, this means the non-linear
-#    search will take a long time mapping_util out this 'extreme' parameter space. In the early phases of a pipeline this
+# 2) If the model-fit has extremely large chi-squared values due to the high S/N of the dataset, this means the non-linear
+#    search will take a long time util out this 'extreme' parameter space. In the early phases of a pipeline this
 #    often isn't necessary, therefore a signal-to-noise limit can reduce the time an analysis takes to converge.
 
 # Whilst signal to noise limits can be manually specified in the pipeline, in this example we will make the signal to
@@ -59,9 +59,8 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     # will be the string specified below However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_feature__signal_to_noise_limit"
-
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_name = "pipeline__feature"
+    pipeline_tag = "signal_to_noise_limit"
 
     # When a phase is passed a signal_to_noise_limit, a settings tag is automatically generated and added to the phase
     # path,to make it clear what signal-to-noise limit was used. The settings tag, phase name and phase paths are shown
@@ -83,10 +82,10 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
 
-    def mask_function(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             inner_radius_arcsec=0.2,
             outer_radius_arcsec=3.3,
         )
@@ -97,24 +96,16 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
 
     # 1) Use a signal-to-noise limit of 20.0
 
-    class LensSourceX1Phase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-    phase1 = LensSourceX1Phase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=0.5,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
-            ),
-            source=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
-            ),
+            lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         mask_function=mask_function,
         signal_to_noise_limit=signal_to_noise_limit,
@@ -131,28 +122,17 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
 
     # 1) Omit the signal-to-noise limit, thus performing the modeling at the image's native signal-to-noise.
 
-    class LensSourceX2Phase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.lens
-
-            self.galaxies.source = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.source
-
-    phase2 = LensSourceX2Phase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
+                mass=phase1.result.model.galaxies.lens.mass,
+                shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, light=al.light_profiles.EllipticalSersic
+                redshift=1.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
         mask_function=mask_function,
@@ -163,4 +143,4 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

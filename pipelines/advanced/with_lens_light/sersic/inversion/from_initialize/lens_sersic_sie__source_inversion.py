@@ -42,7 +42,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -50,7 +50,6 @@ def make_pipeline(
     pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
-    pixel_scale_binned_cluster_grid=0.1,
 ):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
@@ -78,24 +77,15 @@ def make_pipeline(
     # 2) Fix our mass model to the lens galaxy mass-model from phase 3 of the initialize pipeline.
     # 3) Use a circular mask which includes all of the source-galaxy light.
 
-    class InversionPhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
-
-            self.galaxies.lens = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).constant.galaxies.lens
-
-    phase1 = InversionPhase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__source_inversion_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
+                light=af.last.instance.galaxies.lens.light,
+                mass=af.last.instance.galaxies.lens.mass,
+                shear=af.last.instance.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
@@ -103,7 +93,7 @@ def make_pipeline(
                 regularization=pipeline_settings.regularization,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -111,7 +101,6 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -127,46 +116,34 @@ def make_pipeline(
     #    of this pipeline.
     # 2) Use a circular mask including both the lens and source galaxy light.
 
-    class InversionPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    lens = (
+        al.GalaxyModel(
+            redshift=redshift_lens,
+            bulge=af.last.model.galaxies.lens.bulge,
+            disk=af.last.model.galaxies.lens.disk,
+            mass=af.last.model.galaxies.lens.mass,
+            shear=af.last.model.galaxies.lens.shear,
+        ),
+    )
 
-            ## Lens Light & Mass, Sersic -> Sersic, SIE -> SIE, Shear -> Shear ###
+    # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
 
-            self.galaxies.lens = results.from_phase(
-                "phase_3__lens_sersic_sie__source_sersic"
-            ).variable.galaxies.lens
+    if pipeline_settings.fix_lens_light:
 
-            # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
+        lens.light = af.last.instance.galaxies.lens.light
 
-            if pipeline_settings.fix_lens_light:
-
-                self.galaxies.lens.light = results.from_phase(
-                    "phase_3__lens_sersic_sie__source_sersic"
-                ).constant.galaxies.lens.light
-
-            ### Source Inversion, Inv -> Inv ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_1__source_inversion_initialization"
-            ).constant.galaxies.source
-
-    phase2 = InversionPhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sersic_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
-            ),
+            lens=lens,
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_settings.pixelization,
-                regularization=pipeline_settings.regularization,
+                pixelization=phase1.result.instance.galaxies.source.pixelization,
+                regularization=phase1.result.instance.galaxies.source.regularization,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -174,7 +151,6 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        pixel_scale_binned_cluster_grid=pixel_scale_binned_cluster_grid,
         optimizer_class=af.MultiNest,
     )
 
@@ -184,4 +160,4 @@ def make_pipeline(
 
     phase2 = phase2.extend_with_inversion_phase()
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

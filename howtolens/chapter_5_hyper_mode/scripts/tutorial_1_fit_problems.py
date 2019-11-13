@@ -5,7 +5,7 @@ import autolens as al
 
 # In the previous chapter we investigated two pixelizations; Rectanguar and VoronoiMagnification. We learnt that the
 # latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where
-# we had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
+# we had more simulator, e.g, the high-magnification regions. Therefore, we could fit the dataset using fewer source pixels,
 # which improved computational efficiency and the Bayesian evidence.
 
 # So far, we've used just one regularization scheme; Constant. As the name suggests, this regularization scheme
@@ -44,9 +44,9 @@ import autolens as al
 
 # We'll use 3 sources whose effective radius and Sersic index are changed such that each is more compact that the last.
 
-source_galaxy_flat = al.Galaxy(
+source_galaxy_flat = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         axis_ratio=0.7,
         phi=135.0,
@@ -56,9 +56,9 @@ source_galaxy_flat = al.Galaxy(
     ),
 )
 
-source_galaxy_compact = al.Galaxy(
+source_galaxy_compact = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         axis_ratio=0.7,
         phi=135.0,
@@ -68,9 +68,9 @@ source_galaxy_compact = al.Galaxy(
     ),
 )
 
-source_galaxy_super_compact = al.Galaxy(
+source_galaxy_super_compact = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         axis_ratio=0.7,
         phi=135.0,
@@ -80,105 +80,93 @@ source_galaxy_super_compact = al.Galaxy(
     ),
 )
 
-# The function below uses each source galaxy to simulate the ccd data. It performs the usual tasks we are used to seeing
+# The function below uses each source galaxy to simulate the imaging dataset. It performs the usual tasks we are used to seeing
 # (make the PSF, galaxies, tracer, etc.).
 
 
 def simulate_for_source_galaxy(source_galaxy):
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(150, 150), pixel_scale=0.05, sub_grid_size=2
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(150, 150),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=2,
         psf=psf,
         background_sky_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
 
+    return simulator.from_tracer(tracer=tracer)
+
 
 # We'll use the same 3.0" mask to fit all three of our sources.
-mask = al.Mask.circular(shape=(150, 150), pixel_scale=0.05, radius_arcsec=3.0)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
 
-# Now, lets simulate all 3 of our source's as CCD imaging data.
+# Now, lets simulator all 3 of our source's as imaging dataset.
 
-ccd_data_source_flat = simulate_for_source_galaxy(source_galaxy=source_galaxy_flat)
+imaging_source_flat = simulate_for_source_galaxy(source_galaxy=source_galaxy_flat)
 
-ccd_data_source_compact = simulate_for_source_galaxy(
-    source_galaxy=source_galaxy_compact
-)
+imaging_source_compact = simulate_for_source_galaxy(source_galaxy=source_galaxy_compact)
 
-ccd_data_source_super_compact = simulate_for_source_galaxy(
+imaging_source_super_compact = simulate_for_source_galaxy(
     source_galaxy=source_galaxy_super_compact
 )
 
-# We'll make one more useful function which fits each simulated ccd_data with a VoronoiMagniication pixelization
+# We'll make one more useful function which fits each simulated imaging with a VoronoiMagniication pixelization
 # and Constant regularization scheme.
 
 # We'll input the regularization coefficient of each fit, so that for each simulated source we regularize it at
 # an appropriate level. Again, there is nothing new in this function you haven't seen before.
 
 
-def fit_ccd_data_with_voronoi_magnification_pixelization(
-    ccd_data, mask, regularization_coefficient
+def fit_imaging_with_voronoi_magnification_pixelization(
+    imaging, mask, regularization_coefficient
 ):
 
-    lens_data = al.LensData(ccd_data=ccd_data, mask=mask)
+    masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.Galaxy(
+    source_galaxy = al.galaxy(
         redshift=1.0,
-        pixelization=al.pixelizations.VoronoiMagnification(shape=(30, 30)),
-        regularization=al.regularization.Constant(
-            coefficient=regularization_coefficient
-        ),
+        pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+        regularization=al.reg.Constant(coefficient=regularization_coefficient),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+    return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # Lets fit our first source with the flattest light profile. One should note that this uses the highest
 # regularization coefficient of our 3 fits (as determined by maximizing the Bayesian evidence).
 
-fit_flat = fit_ccd_data_with_voronoi_magnification_pixelization(
-    ccd_data=ccd_data_source_flat, mask=mask, regularization_coefficient=9.2
+fit_flat = fit_imaging_with_voronoi_magnification_pixelization(
+    imaging=imaging_source_flat, mask=mask, regularization_coefficient=9.2
 )
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit_flat,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+al.plot.fit_imaging.subplot(
+    fit=fit_flat, include_image_plane_pix=True, include_mask=True
 )
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit_flat.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit_flat.inversion, include_centres=True)
 
 print(fit_flat.evidence)
 
@@ -187,21 +175,15 @@ print(fit_flat.evidence)
 
 # Now, lets fit the next source, which is more compact.
 
-fit_compact = fit_ccd_data_with_voronoi_magnification_pixelization(
-    ccd_data=ccd_data_source_compact, mask=mask, regularization_coefficient=3.3
+fit_compact = fit_imaging_with_voronoi_magnification_pixelization(
+    imaging=imaging_source_compact, mask=mask, regularization_coefficient=3.3
 )
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit_compact,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+al.plot.fit_imaging.subplot(
+    fit=fit_compact, include_image_plane_pix=True, include_mask=True
 )
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit_compact.inversion, should_plot_centres=True
-)
+al.plot.inversion.reconstruction(inversion=fit_compact.inversion, include_centres=True)
 
 print(fit_compact.evidence)
 
@@ -214,20 +196,16 @@ print(fit_compact.evidence)
 # look so good, you'd be right in assuming this is just going to make things even worse. Again, think about why this
 # might be.
 
-fit_super_compact = fit_ccd_data_with_voronoi_magnification_pixelization(
-    ccd_data=ccd_data_source_super_compact, mask=mask, regularization_coefficient=3.1
+fit_super_compact = fit_imaging_with_voronoi_magnification_pixelization(
+    imaging=imaging_source_super_compact, mask=mask, regularization_coefficient=3.1
 )
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit_super_compact,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+al.plot.fit_imaging.subplot(
+    fit=fit_super_compact, include_image_plane_pix=True, include_mask=True
 )
 
-al.inversion_plotters.plot_pixelization_values(
-    inversion=fit_super_compact.inversion, should_plot_centres=True
+al.plot.inversion.reconstruction(
+    inversion=fit_super_compact.inversion, include_centres=True
 )
 
 print(fit_super_compact.evidence)
@@ -261,8 +239,8 @@ print(fit_super_compact.evidence)
 # coefficient. This means that, every single source pixel receives the same 'level' of regularization, regardless of
 # whether it is reconstructing the bright central regions of the source or its faint exterior regions. Lets look:
 
-al.inversion_plotters.plot_pixelization_regularization_weights(
-    inversion=fit_compact.inversion, should_plot_centres=True
+al.plot.inversion.regularization_weights(
+    inversion=fit_compact.inversion, include_centres=True
 )
 
 # As you can see, all pixels are regularized with our input regularization coefficient value of 3.6.
@@ -293,18 +271,14 @@ al.inversion_plotters.plot_pixelization_regularization_weights(
 # Before we wrap up this tutorial, I want us to also consider the role of our noise-map and get you thinking about why
 # we might want to scale its variances. Lets look at the super-compact fit again;
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=fit_super_compact,
-    should_plot_image_plane_pix=True,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
+al.plot.fit_imaging.subplot(
+    fit=fit_super_compact, include_image_plane_pix=True, include_mask=True
 )
 
-# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our data
+# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our simulator
 # have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared)
 # is going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset
-# of the data (e.g. < 5% of pixels) contributes to the majority of the likelihood (e.g. > 95% of the overall chi-squared).
+# of the dataset (e.g. < 5% of pixels) contributes to the majority of the likelihood (e.g. > 95% of the overall chi-squared).
 # This is *not* what we want, as instead of using the entire surface brightness profile of the lensed source galaxy to
 # fit our lens model, we end up using only a small subset of its brightest pixels.
 

@@ -41,9 +41,8 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline_feature__redshifts_lens__source"
-
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings()
+    pipeline_name = "pipeline__feature"
+    pipeline_tag = "redshifts"
 
     # Unlike other features, the redshifts of the lens and source do not change the settings tag and phase path. Thus,
     # our output will simply go to the phase path:
@@ -59,10 +58,10 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
     # central regions of the image.
 
-    def mask_function(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             inner_radius_arcsec=0.2,
             outer_radius_arcsec=3.3,
         )
@@ -73,23 +72,19 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
 
     # 1) Use the input value of redshifts from the pipeline.
 
-    class LensSourceX1Phase(al.PhaseImaging):
-        def customize_priors(self, results):
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-    phase1 = LensSourceX1Phase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__x1_source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
+                redshift=redshift_lens, mass=mass, shear=al.mp.ExternalShear
             ),
             source_0=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         mask_function=mask_function,
@@ -106,28 +101,17 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
 
     # 1) Use manually specified new values of redshifts for the lens and source galaxies.
 
-    class LensSourceX2Phase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            self.galaxies.lens = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.lens
-
-            self.galaxies.source = results.from_phase(
-                "phase_1__x1_source"
-            ).variable.galaxies.source
-
-    phase2 = LensSourceX2Phase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__x2_source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=1.0,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=al.mass_profiles.ExternalShear,
+                mass=phase1.result.model.galaxies.lens.mass,
+                shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=2.0, light=al.light_profiles.EllipticalSersic
+                redshift=2.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
         mask_function=mask_function,
@@ -138,4 +122,4 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

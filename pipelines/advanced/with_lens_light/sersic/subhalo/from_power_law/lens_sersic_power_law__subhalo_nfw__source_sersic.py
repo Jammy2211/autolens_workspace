@@ -34,7 +34,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -70,66 +70,21 @@ def make_pipeline(
         @property
         def grid_priors(self):
             return [
-                self.variable.galaxies.subhalo.mass.centre_0,
-                self.variable.galaxies.subhalo.mass.centre_1,
+                self.model.galaxies.subhalo.mass.centre_0,
+                self.model.galaxies.subhalo.mass.centre_1,
             ]
 
-        def customize_priors(self, results):
+    subhalo = al.GalaxyModel(
+        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMassToConcentration
+    )
 
-            ### Lens Light, Sersic -> Sersic ###
+    subhalo.mass.mass_at_200 = af.LogUniformPrior(
+        lower_limit=10.0e6, upper_limit=10.0e9
+    )
 
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).constant.galaxies.lens.light
+    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
-            ### Lens Mass, PL -> PL, Shear -> Shear ###
-
-            self.galaxies.lens = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).constant.galaxies.lens
-
-            ### Lens Subhalo, Adjust priors to physical masses (10^6 - 10^10) and concentrations (6-24) ###
-
-            self.galaxies.subhalo.mass.kappa_s = af.UniformPrior(
-                lower_limit=0.0005, upper_limit=0.2
-            )
-            self.galaxies.subhalo.mass.scale_radius = af.UniformPrior(
-                lower_limit=0.001, upper_limit=1.0
-            )
-            self.galaxies.subhalo.mass.centre_0 = af.UniformPrior(
-                lower_limit=-2.0, upper_limit=2.0
-            )
-            self.galaxies.subhalo.mass.centre_1 = af.UniformPrior(
-                lower_limit=-2.0, upper_limit=2.0
-            )
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.galaxies.source.light.centre = (
-                results.from_phase("phase_1__lens_sersic_power_law__source_sersic")
-                .variable_absolute(a=0.3)
-                .galaxies.source.light.centre
-            )
-
-            self.galaxies.source.light.intensity = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.source.light.intensity
-
-            self.galaxies.source.light.effective_radius = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.source.light.effective_radius
-
-            self.galaxies.source.light.sersic_index = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.source.light.sersic_index
-
-            self.galaxies.source.light.axis_ratio = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.source.light.axis_ratio
-
-            self.galaxies.source.light.phi = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.source.light.phi
+    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
     phase1 = GridPhase(
         phase_name="phase_1__subhalo_search",
@@ -137,19 +92,16 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalPowerLaw,
-                shear=al.mass_profiles.ExternalShear,
+                light=af.last.instance.galaxies.lens.light,
+                mass=af.last.instance.galaxies.lens.mass,
+                shear=af.last.instance.galaxies.lens.shear,
             ),
-            subhalo=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mass_profiles.SphericalTruncatedNFWChallenge,
-            ),
+            subhalo=subhalo,
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=af.last.instance.galaxies.source.light
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -163,52 +115,26 @@ def make_pipeline(
     phase1.optimizer.n_live_points = 50
     phase1.optimizer.sampling_efficiency = 0.5
 
-    class SubhaloPhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ### Lens Light, Sersic -> Sersic ###
-
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.lens.light
-
-            ### Lens Mass, PL -> PL, Shear -> Shear ###
-
-            self.galaxies.lens = results.from_phase(
-                "phase_1__lens_sersic_power_law__source_sersic"
-            ).variable.galaxies.lens
-
-            ### Subhalo, TruncatedNFW -> TruncatedNFW ###
-
-            self.galaxies.subhalo = results.from_phase(
-                "phase_1__subhalo_search"
-            ).best_result.variable.galaxies.subhalo
-
-            ### Source Light, Sersic -> Sersic ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_1__subhalo_search"
-            ).best_result.variable.galaxies.source
-
-    phase2 = SubhaloPhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_3__subhalo_refine",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalPowerLaw,
-                shear=al.mass_profiles.ExternalShear,
+                light=af.last.model.galaxies.lens.light,
+                mass=af.last.model.galaxies.lens.mass,
+                shear=af.last.model.galaxies.lens.shear,
             ),
             subhalo=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=al.mass_profiles.SphericalTruncatedNFWChallenge,
+                mass=phase1.best_result.model.galaxies.subhalo.mass,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source,
+                light=phase1.best_result.model.galaxies.source.light,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -221,4 +147,4 @@ def make_pipeline(
     phase2.optimizer.n_live_points = 80
     phase2.optimizer.sampling_efficiency = 0.3
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1, phase2)

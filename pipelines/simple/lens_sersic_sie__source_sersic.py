@@ -41,7 +41,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -75,7 +75,7 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if include_shear:
-        shear = al.mass_profiles.ExternalShear
+        shear = al.mp.ExternalShear
     else:
         shear = None
 
@@ -90,21 +90,15 @@ def make_pipeline(
     # use the default 3.0"  circular mask. In general, I haven't found the choice of mask to make a big difference,
     # albeit this does depend on how much off the lens galaxy's light the lensed source galaxy's light obstructs.
 
-    class LensPhase(al.PhaseImaging):
-        def customize_priors(self, results):
+    light = af.PriorModel(mass=al.lp.EllipticalSersic)
+    light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-            self.galaxies.lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-            self.galaxies.lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-    phase1 = LensPhase(
+    phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens, light=al.light_profiles.EllipticalSersic
-            )
-        ),
-        sub_grid_size=sub_grid_size,
+        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         inner_mask_radii=inner_mask_radii,
@@ -128,43 +122,33 @@ def make_pipeline(
     # 3) Initialize the priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for \
     #    its light profile in phase 1.
 
-    def mask_function(image):
-        return al.Mask.circular_annular(
-            shape=image.shape,
-            pixel_scale=image.pixel_scale,
+    def mask_function(shape_2d, pixel_scales):
+        return al.mask.circular_annular(
+            shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             inner_radius_arcsec=0.3,
             outer_radius_arcsec=3.0,
         )
 
     class LensSubtractedPhase(al.PhaseImaging):
         def modify_image(self, image, results):
-            return image - results[-1].unmasked_model_image_of_planes[0]
+            return image - results[-1].unmasked_model_visibilities_of_planes[0]
 
-        def customize_priors(self, results):
-
-            self.galaxies.lens.mass.centre_0 = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light.centre_0
-
-            self.galaxies.lens.mass.centre_1 = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light.centre_1
+    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
+    mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 
     phase2 = LensSubtractedPhase(
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
-            ),
+            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         mask_function=mask_function,
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -183,50 +167,22 @@ def make_pipeline(
 
     # 1) Initialize the lens's light, mass, shear and source's light using the results of phases 1 and 2.
 
-    class LensSourcePhase(al.PhaseImaging):
-        def customize_priors(self, results):
-
-            ## Lens Light, Sersic -> Sersic ###
-
-            self.galaxies.lens.light = results.from_phase(
-                "phase_1__lens_sersic"
-            ).variable.galaxies.lens.light
-
-            ## Lens Mass, SIE -> SIE ###
-
-            self.galaxies.lens.mass = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.lens.mass
-
-            ## Lens Mass, Shear -> Shear ###
-
-            if include_shear:
-
-                self.galaxies.lens.shear = results.from_phase(
-                    "phase_2__lens_sie__source_sersic"
-                ).variable.galaxies.lens.shear
-
-            ### Source Inversion, Inv -> Inv ###
-
-            self.galaxies.source = results.from_phase(
-                "phase_2__lens_sie__source_sersic"
-            ).variable.galaxies.source
-
-    phase3 = LensSourcePhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=al.light_profiles.EllipticalSersic,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                light=phase1.result.model.galaxies.lens.light,
+                mass=phase2.result.model.galaxies.lens.mass,
+                shear=phase2.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source,
+                light=phase2.result.model.galaxies.source.light,
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -239,4 +195,4 @@ def make_pipeline(
     phase3.optimizer.n_live_points = 75
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return al.PipelineImaging(pipeline_name, phase1, phase2, phase3)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

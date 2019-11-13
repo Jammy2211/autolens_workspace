@@ -12,11 +12,11 @@
 
 import autofit as af
 
-# Setup the path to the workspace, using by filling in your path below.
+# Setup the path to the autolens_workspace, using by filling in your path below.
 workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAutoLens/workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
 
-# Setup the path to the config folder, using the workspace path.
+# Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
@@ -31,22 +31,18 @@ import autolens as al
 # This function simulates an image with a complex source.
 def simulate():
 
-    psf = al.PSF.from_gaussian(shape=(11, 11), sigma=0.05, pixel_scale=0.05)
+    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    grid = al.Grid.from_shape_pixel_scale_and_sub_grid_size(
-        shape=(180, 180), pixel_scale=0.05
-    )
-
-    lens_galaxy = al.Galaxy(
+    lens_galaxy = al.galaxy(
         redshift=0.5,
-        mass=al.mass_profiles.EllipticalIsothermal(
+        mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.Galaxy(
+    source_galaxy_0 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
             axis_ratio=0.8,
             phi=90.0,
@@ -56,9 +52,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_1 = al.Galaxy(
+    source_galaxy_1 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
             axis_ratio=0.7,
             phi=45.0,
@@ -68,9 +64,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_2 = al.Galaxy(
+    source_galaxy_2 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
             axis_ratio=0.6,
             phi=90.0,
@@ -80,9 +76,9 @@ def simulate():
         ),
     )
 
-    source_galaxy_3 = al.Galaxy(
+    source_galaxy_3 = al.galaxy(
         redshift=1.0,
-        light=al.light_profiles.EllipticalSersic(
+        light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
             axis_ratio=0.9,
             phi=140.0,
@@ -92,7 +88,7 @@ def simulate():
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(
+    tracer = al.tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -102,20 +98,22 @@ def simulate():
         ]
     )
 
-    return al.SimulatedCCDData.from_tracer_grid_and_exposure_arrays(
-        tracer=tracer,
-        grid=grid,
-        pixel_scale=0.05,
+    simulator = al.simulator.imaging(
+        shape_2d=(180, 180),
+        pixel_scales=0.05,
         exposure_time=300.0,
+        sub_size=1,
         psf=psf,
         background_sky_level=0.1,
         add_noise=True,
     )
 
+    return simulator.from_tracer(tracer=tracer)
 
-# Lets Simulate the CCD data.
-ccd_data = simulate()
-al.ccd_plotters.plot_ccd_subplot(ccd_data=ccd_data)
+
+# Lets Simulate the Imaging simulator.
+imaging = simulate()
+al.plot.imaging.subplot(imaging=imaging)
 
 # Yep, that's a pretty complex source. There are clearly more than 4 peaks of light - I wouldn't like to guess whether
 # there is one or two sources (or more). You'll also notice I omitted the lens galaxy's light for this system. This is
@@ -128,31 +126,31 @@ pipeline_complex_source = tutorial_3_pipeline_complex_source.make_pipeline(
     phase_folders=["howtolens", "c3_t3_complex_source"]
 )
 
-pipeline_complex_source.run(data=ccd_data)
+pipeline_complex_source.run(dataset=imaging)
 
 # Okay, so with 4 sources, we still couldn't get a good a fit to the source that didn't leave residuals. However, I actually
 # simulated the lens with 4 sources. This means that there is a 'perfect fit' somewhere in parameter
 # space that we unfortunately missed using the pipeline above.
 
-# Lets confirm this, by manually fitting the ccd data with the true input model.
+# Lets confirm this, by manually fitting the imaging dataset with the true input model.
 
-lens_data = al.LensData(
-    ccd_data=ccd_data,
-    mask=al.Mask.circular(
-        shape=ccd_data.shape, pixel_scale=ccd_data.pixel_scale, radius_arcsec=3.0
+masked_imaging = al.masked.imaging(
+    imaging=imaging,
+    mask=al.mask.circular(
+        shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0
     ),
 )
 
-lens_galaxy = al.Galaxy(
+lens_galaxy = al.galaxy(
     redshift=0.5,
-    mass=al.mass_profiles.EllipticalIsothermal(
+    mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
     ),
 )
 
-source_galaxy_0 = al.Galaxy(
+source_galaxy_0 = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         axis_ratio=0.8,
         phi=90.0,
@@ -162,9 +160,9 @@ source_galaxy_0 = al.Galaxy(
     ),
 )
 
-source_galaxy_1 = al.Galaxy(
+source_galaxy_1 = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(-0.25, 0.25),
         axis_ratio=0.7,
         phi=45.0,
@@ -174,9 +172,9 @@ source_galaxy_1 = al.Galaxy(
     ),
 )
 
-source_galaxy_2 = al.Galaxy(
+source_galaxy_2 = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(0.45, -0.35),
         axis_ratio=0.6,
         phi=90.0,
@@ -186,9 +184,9 @@ source_galaxy_2 = al.Galaxy(
     ),
 )
 
-source_galaxy_3 = al.Galaxy(
+source_galaxy_3 = al.galaxy(
     redshift=1.0,
-    light=al.light_profiles.EllipticalSersic(
+    light=al.lp.EllipticalSersic(
         centre=(-0.05, -0.0),
         axis_ratio=0.9,
         phi=140.0,
@@ -198,7 +196,7 @@ source_galaxy_3 = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(
+tracer = al.tracer.from_galaxies(
     galaxies=[
         lens_galaxy,
         source_galaxy_0,
@@ -208,26 +206,16 @@ tracer = al.Tracer.from_galaxies(
     ]
 )
 
-true_fit = al.LensDataFit.for_data_and_tracer(lens_data=lens_data, tracer=tracer)
+true_fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.lens_fit_plotters.plot_fit_subplot(
-    fit=true_fit,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot(fit=true_fit, include_mask=True)
 
-al.lens_fit_plotters.plot_fit_subplot_of_planes(
-    fit=true_fit,
-    should_plot_mask=True,
-    extract_array_from_mask=True,
-    zoom_around_mask=True,
-)
+al.plot.fit_imaging.subplot_of_planes(fit=true_fit, include_mask=True)
 
 # And indeed, we see an improved residual-map, chi-squared-mao, and so forth.
 
 # The morale of this story is that if the source morphology is complex, there is no way we can build a pipeline to
-# fit it. For this tutorial, this was true even though our source model could actually fit the data perfectly. For
+# fit it. For this tutorial, this was true even though our source model could actually fit the dataset perfectly. For
 # real lenses, the source will be *even more complex* and there is even less hope of getting a good fit :(
 
 # But fear not, PyAutoLens has you covered. In chapter 4, we'll introduce a completely new way to model the source

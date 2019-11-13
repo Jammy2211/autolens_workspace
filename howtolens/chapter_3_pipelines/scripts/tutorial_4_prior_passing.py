@@ -10,7 +10,7 @@ class MockPhase(object):
 
         self.galaxies.galaxy_name.profile_name.parameter_name = previous_results[
             0
-        ].variable.galaxies.galaxy_name.profile_name.parameter_name
+        ].model.galaxies.galaxy_name.profile_name.parameter_name
 
 
 # By invoking the 'variable' attribute, the passing of priors behaves following 3 rules:
@@ -21,7 +21,7 @@ class MockPhase(object):
 #    Gaussian.
 
 # 2) The mean of the GaussianPrior is the best-fit value of
-#    'previous_results[0].variable.galaxy_name.profile_name.parameter_name'.
+#    'previous_results[0].model.galaxy_name.profile_name.parameter_name'.
 
 #    This means that MultiNest specifically starts by searching the region of non-linear parameter space that
 #    corresponded to highest likelihood solutions in the previous phase. Thus, we're setting our priors to look in the
@@ -37,7 +37,7 @@ class MockPhase(object):
 
 #    Unfortunately, this doesn't always work. Lens modeling is prone to an effect called 'over-fitting' where we
 #    underestimate the errors on our lens model parameters. This is especially true when we take the shortcuts we're
-#    used to in early phases - aggresive masking, reduced instrument, simplified lens models, constant efficiency mode, etc.
+#    used to in early phases - aggresive masking, reduced data, simplified lens models, constant efficiency mode, etc.
 
 #    Therefore, the priors/widths file is our fallback. If the error on a parameter is suspiciously small, we instead
 #    use the value specified in the widths file. These values are chosen based on our experience as being a good
@@ -75,7 +75,7 @@ def customize_priors(self, previous_results):
 
     self.galaxies.lens.light.sersic_index = previous_results[
         0
-    ].variable.galaxies.lens.light.sersic
+    ].model.galaxies.lens.light.sersic
 
 
 # The prior on the lens galaxy's Sersic light profile would thus be a GaussianPrior in phase 2, with mean=4.0 and
@@ -91,6 +91,6 @@ def customize_priors(self, previous_results):
 
 # And with that, we're done. Linking priors is a bit of an art form, but one that tends to work really well. Its true
 # to say that things can go wrong - maybe we 'trim' out the solution we're looking for, or underestimate our errors a
-# bit due to making our priors too narrow. However, in general, things are okay, the point is that you should test
+# bit due to making our priors too narrow. However, in general, things are okay, the point is that you should test_autoarray
 # pipelines with different settings, and settle on a setup that appears to be give consistent results but the faster
 # run times.

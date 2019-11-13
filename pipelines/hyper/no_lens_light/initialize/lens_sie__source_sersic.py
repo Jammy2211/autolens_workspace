@@ -19,7 +19,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    sub_grid_size=2,
+    sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
     positions_threshold=None,
@@ -53,7 +53,7 @@ def make_pipeline(
     # included or omitted throughout the entire pipeline.
 
     if pipeline_settings.include_shear:
-        shear = al.mass_profiles.ExternalShear
+        shear = al.mp.ExternalShear
     else:
         shear = None
 
@@ -68,15 +68,13 @@ def make_pipeline(
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mass_profiles.EllipticalIsothermal,
-                shear=shear,
+                redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.light_profiles.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
-        sub_grid_size=sub_grid_size,
+        sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         positions_threshold=positions_threshold,
@@ -95,4 +93,4 @@ def make_pipeline(
         include_background_noise=pipeline_settings.hyper_background_noise,
     )
 
-    return al.PipelineImaging(pipeline_name, phase1, hyper_mode=True)
+    return al.PipelineDataset(pipeline_name, phase1, hyper_mode=True)
