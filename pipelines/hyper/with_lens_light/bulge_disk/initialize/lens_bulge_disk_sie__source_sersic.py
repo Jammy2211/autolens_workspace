@@ -205,7 +205,7 @@ def make_pipeline(
         bulge=al.lp.EllipticalSersic,
         disk=disk,
         mass=phase2.result.instance.galaxies.lens.mass,
-        shear=phase2.result.instance.galaxies.lens.mass,
+        shear=phase2.result.instance.galaxies.lens.shear,
         hyper_galaxy=phase2.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
     )
 

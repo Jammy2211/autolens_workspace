@@ -188,7 +188,7 @@ def make_pipeline(
         bulge=al.lp.EllipticalSersic,
         disk=disk,
         mass=phase2.result.instance.galaxies.lens.mass,
-        shear=phase2.result.instance.galaxies.lens.mass,
+        shear=phase2.result.instance.galaxies.lens.shear,
     )
 
     if pipeline_settings.align_bulge_disk_centre:
