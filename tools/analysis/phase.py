@@ -43,7 +43,7 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
     sub_size=1,
-    radius_arcsec=3.0,
+    radius=3.0,
 )
 
 # We can also specify a set of positions, which must be traced within a threshold value or else the mass model is.

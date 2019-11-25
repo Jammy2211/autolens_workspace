@@ -5,7 +5,7 @@ import os
 
 # In this example, we will load the image of a strong lens from a .fits file and plotters it using the
 # function autolens.dataset_label.plotters.array_plotters.plot_array. We will customize the appearance of this figure to
-# highlight the features of the image. For more generical plotting tools (e.g. changing the figure size, axis units,
+# highlight the features of the image. For more generical plotting tools (e.g. changing the figure size, axis unit_label,
 # outputting the image to the hard-disk, etc.) checkout the example in 'autolens_workspace/plotting/examples/structures/masked_structures.py'.
 
 # We will use the image of slacs1430+4105.

@@ -58,9 +58,9 @@ def make_pipeline(phase_folders=None):
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
             sub_size=2,
-            inner_radius_arcsec=0.5,
-            outer_radius_arcsec=1.6,
-            outer_radius_2_arcsec=2.5,
+            inner_radius=0.5,
+            outer_radius=1.6,
+            outer_radius_2=2.5,
         )
 
     # Next , wecreate the phase, using the same notation we learnt before (noting the masks function is passed to
@@ -94,8 +94,8 @@ def make_pipeline(phase_folders=None):
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
             sub_size=2,
-            inner_radius_arcsec=0.5,
-            outer_radius_arcsec=3.0,
+            inner_radius=0.5,
+            outer_radius=3.0,
         )
 
     # To modify an image, we call a new function, 'modify image'. This function behaves like the pass-priors functions

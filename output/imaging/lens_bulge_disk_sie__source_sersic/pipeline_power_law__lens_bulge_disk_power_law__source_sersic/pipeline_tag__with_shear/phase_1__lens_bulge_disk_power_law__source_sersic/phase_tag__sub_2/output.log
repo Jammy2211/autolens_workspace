@@ -1,0 +1,5 @@
+phase_1__lens_bulge_disk took 0:07:42.790570 to run
+phase_2__lens_sie__source_sersic took 0:30:21.123965 to run
+phase_1__lens_bulge_disk took 13:01:18.319843 to run
+phase_2__lens_sie__source_sersic took 12:54:48.016722 to run
+phase_3__lens_bulge_disk_sie__source_fixed took 12:58:54.342359 to run

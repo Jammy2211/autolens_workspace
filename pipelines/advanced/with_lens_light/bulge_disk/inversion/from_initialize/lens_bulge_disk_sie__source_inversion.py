@@ -130,7 +130,7 @@ def make_pipeline(
             disk=af.last.model.galaxies.lens.disk,
             mass=af.last.model.galaxies.lens.mass,
             shear=af.last.model.galaxies.lens.shear,
-        ),
+        )
     )
 
     # If the lens light is fixed, over-write the pass prior above to fix the lens light model.

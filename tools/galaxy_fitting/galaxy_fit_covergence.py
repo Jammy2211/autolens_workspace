@@ -36,7 +36,7 @@ import autolens as al
 grid = al.grid.uniform(shape_2d=(250, 250), pixel_scales=0.05, sub_size=2)
 
 # Now lets create a galaxy, using a singular isothermal sphere.
-galaxy = al.galaxy(
+galaxy = al.Galaxy(
     redshift=0.5, mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0)
 )
 
@@ -59,7 +59,7 @@ data = al.galaxy_data(
 # The fit will use a mask, which we setup like any other fit. Lets use a circular mask of 2.0"
 def mask_function_circular(shape_2d, pixel_scales):
     return al.mask.circular(
-        shape_2d=shape_2d, pixel_scales=pixel_scales, sub_size=1, radius_arcsec=2.0
+        shape_2d=shape_2d, pixel_scales=pixel_scales, sub_size=1, radius=2.0
     )
 
 

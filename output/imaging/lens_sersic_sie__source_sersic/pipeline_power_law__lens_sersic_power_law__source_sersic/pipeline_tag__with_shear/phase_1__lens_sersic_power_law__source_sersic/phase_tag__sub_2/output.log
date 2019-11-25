@@ -1,1 +1,7 @@
 phase_1__lens_sersic took 0:01:16.186903 to run
+phase_2__lens_sie__source_sersic took 0:38:39.352295 to run
+phase_1__lens_sersic took 1 day, 0:05:19.635480 to run
+phase_2__lens_sie__source_sersic took 1 day, 0:05:50.788594 to run
+phase_4__lens_sersic_sie__source_sersic took 23:28:53.842956 to run
+phase_1__lens_sersic took 1 day, 13:06:31.467421 to run
+phase_2__lens_sie__source_sersic took 1 day, 13:06:32.397444 to run

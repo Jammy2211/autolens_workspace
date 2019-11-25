@@ -12,14 +12,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.galaxy(
+    source_galaxy_0 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -31,7 +31,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_0])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_0])
 
     simulator = al.simulator.imaging(
         shape_2d=(180, 180),
@@ -39,7 +39,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -58,28 +58,28 @@ def perform_fit_with_source_galaxy(source_galaxy):
     mask = al.mask.circular_annular(
         shape_2d=imaging.shape_2d,
         pixel_scales=imaging.pixel_scales,
-        inner_radius_arcsec=0.5,
-        outer_radius_arcsec=2.2,
+        inner_radius=0.5,
+        outer_radius=2.2,
     )
 
     masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # Okay, so lets look at our fit from the previous tutorial in more detail. We'll use a higher resolution 40 x 40 grid.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -89,9 +89,9 @@ al.plot.fit_imaging.subplot(fit=fit)
 
 # It looks pretty good! However, this is because I sneakily chose a regularization coefficient that gives a good looking
 # solution. If we reduce this regularization coefficient to zero, our source reconstruction goes weird.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=0.0),
 )
 
@@ -125,9 +125,9 @@ al.plot.inversion.reconstruction(
 # strong lens. By smoothing our source reconstruction we ensure it doesn't fit the noise in the image. If we set a
 # really high regularization coefficient we completely remove over-fitting at the expense of also fitting the
 # image less accurately.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=100.0),
 )
 
@@ -191,9 +191,9 @@ print(high_regularization_fit.evidence)
 #    provide a higher evidence, provided it still has enough resolution to fit the image well (and provided that the
 #    regularization coefficient is still an appropriate value). Can you increase the evidence from the value above by
 #    changing these parameters - I've set you up with a code to do so below.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 

@@ -43,13 +43,13 @@ simulator = al.simulator.interferometer(
     uv_wavelengths=uv_wavelengths,
     sub_size=4,
     exposure_time=300.0,
-    background_sky_level=0.1,
+    background_level=0.1,
     noise_sigma=0.1,
 )
 
 # Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
 # this simulated lens.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.9, phi=45.0
@@ -57,7 +57,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -71,7 +71,7 @@ source_galaxy = al.galaxy(
 
 
 # Use these galaxies to setup a tracer, which will generate the image for the simulated interferometer dataset.
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Lets look at the tracer's image - this is the image we'll be simulating.
 

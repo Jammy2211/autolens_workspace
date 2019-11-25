@@ -35,14 +35,14 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
     sub_size=2,
-    radius_arcsec=3.0,
+    radius=3.0,
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask)
 
 # Next, we create a 'lens dataset' object, which is a 'package' of all parts of a simulator-set we need to fit it:
 
-# 1) The imaging-simulator, e.g. the image, PSF and noise-map.
+# 1) The imaging-data, e.g. the image, PSF and noise-map.
 # 2) The mask.
 # 3) A grid aligned with the image's pixels: ray-tracing uses the dataset's masked grid coordinates.
 
@@ -52,7 +52,7 @@ masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 # will therefore be 'perfect'. We use the masked_imaging's grid to setup the tracer, ensuring our ray-tracing fit is
 # aligned with the image-simulate and mask.
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
@@ -60,7 +60,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -72,7 +72,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
@@ -110,7 +110,7 @@ print(fit.likelihood)
 
 # Lets change the tracer so that it's near the correct solution but slightly off, by offsetting the lens galaxy by 0.02".
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.02, 0.02), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
@@ -118,7 +118,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -130,7 +130,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

@@ -41,7 +41,7 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
     sub_size=2,
-    radius_arcsec=3.0,
+    radius=3.0,
 )
 
 print(mask)  # 1 = True, which means the pixel is masked. Edge pixels are indeed masked.
@@ -66,7 +66,7 @@ al.plot.imaging.image(imaging=imaging, mask=mask)
 
 # A lens dataset object is a 'package' of all parts of a simulator-set we need in order to fit it with a lens model:
 
-# 1) The imaging-simulator, including the image, PSF (so that when we compare a tracer's image to the image data we
+# 1) The imaging-data, including the image, PSF (so that when we compare a tracer's image to the image data we
 #    can include blurring due to the telescope optics) and noise-map (so our goodness-of-fit measure accounts for
 #    noise in the observations).
 
@@ -122,14 +122,14 @@ print(masked_imaging.grid.in_1d)
 # Its worth noting that below, we use the masked_imaging's grid to setup the tracer. This ensures that our image-plane
 # image is the same resolution and alignment as our lens dataset's masked image.
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -141,7 +141,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
@@ -202,14 +202,14 @@ print(fit.likelihood)
 # Lets change the tracer, so that it's near the correct solution, but slightly off. Below, we slightly offset the
 # lens galaxy, by 0.005"
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -221,7 +221,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -239,14 +239,14 @@ print(fit.likelihood)
 # It decreases! As expected, this model us a worse fit to the dataset.
 
 # Lets change the tracer, one more time, to a solution nowhere near the correct one.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.005, 0.005), einstein_radius=1.3, axis_ratio=0.8, phi=45.0
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -258,7 +258,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

@@ -14,14 +14,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -33,7 +33,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(180, 180),
@@ -41,7 +41,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -55,28 +55,28 @@ def perform_fit_with_lens__source_galaxy(lens_galaxy, source_galaxy):
     mask = al.mask.circular_annular(
         shape_2d=imaging.shape_2d,
         pixel_scales=imaging.pixel_scales,
-        inner_radius_arcsec=0.5,
-        outer_radius_arcsec=2.2,
+        inner_radius=0.5,
+        outer_radius=2.2,
     )
 
     masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # This fit uses a lens galaxy with the wrong mass-model (I've reduced its Einstein Radius from 1.6 to 0.8).
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -96,16 +96,16 @@ al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
 # This isn't necessarily problematic for lens modeling. Afterall, the source reconstruction above is extremely complex,
 # in that it requires a lot of pixels to fit the image accurately. Indeed, its Bayesian evidence is much lower than the
 # correct solution.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -144,7 +144,7 @@ def simulate_lens_with_light_profile():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
@@ -154,7 +154,7 @@ def simulate_lens_with_light_profile():
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -166,7 +166,7 @@ def simulate_lens_with_light_profile():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(180, 180),
@@ -174,7 +174,7 @@ def simulate_lens_with_light_profile():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -186,11 +186,11 @@ def simulate_lens_with_light_profile():
 imaging = simulate_lens_with_light_profile()
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.5
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
 # As I said above, performing this fit is the same as usual, we just give the lens galaxy a light profile.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.SphericalSersic(
         centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
@@ -201,15 +201,15 @@ lens_galaxy = al.galaxy(
 )
 
 # These are all the usual things we do when setting up a fit.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # This fit now subtracts the lens galaxy's light from the image and fits the resulting source-only image with the
 # inversion. When we plotters the image, a new panel on the sub-plotters appears showing the model image of the lens galaxy.
@@ -219,7 +219,7 @@ al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
 
 # Of course if the lens subtraction is rubbish so is our fit, so we can be sure that our lens model wants to fit the
 # lens galaxy's light accurately (below, I've increased the lens galaxy intensity from 0.2 to 0.3).
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.SphericalSersic(
         centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8, sersic_index=4.0
@@ -229,7 +229,7 @@ lens_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

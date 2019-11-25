@@ -98,8 +98,8 @@ al.plot.profile.deflections_x(mass_profile=sis_mass_profile, grid=grid)
 # Mass profiles have a range of other properties that are used for lensing calculations, a couple of which we've
 # plotted below:
 
-# Convergence - The surface mass density of the mass-profile in dimensionless units which are convenient for lensing calcuations.
-# Potential - The gravitational of the mass-profile again in convenient dimensionless units.
+# Convergence - The surface mass density of the mass-profile in dimensionless unit_label which are convenient for lensing calcuations.
+# Potential - The gravitational of the mass-profile again in convenient dimensionless unit_label.
 # Magnification - Describes how much brighter each image-pixel appears due to focusing of light rays by the mass-profile.
 
 # Extracting structures of these quantities fom PyAutoLens is exactly the same as for the image and deflection angles above.

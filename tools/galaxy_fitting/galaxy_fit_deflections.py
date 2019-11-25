@@ -33,19 +33,19 @@ grid = al.grid.uniform(shape_2d=(250, 250), pixel_scales=0.05, sub_size=4)
 
 # Now lets create two galaxies, using singular isothermal spheres. We'll put the two galaxies at different redshifts,
 # and the second galaxy will be much lower mass as if it is a 'perturber' of the main lens galaxy.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5, mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0)
 )
 
-perturber = al.galaxy(
+perturber = al.Galaxy(
     redshift=0.2, mass=al.mp.SphericalIsothermal(centre=(0.5, 0.5), einstein_radius=0.1)
 )
 
 # We only need the source galaxy to have a redshift - given we're not fitting an image it doens't need a light profile.
-source_galaxy = al.galaxy(redshift=1.0)
+source_galaxy = al.Galaxy(redshift=1.0)
 
 # We'll use a tracer to compute our multi-plane deflection angles.
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, perturber, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, perturber, source_galaxy])
 
 # We'll now extract the deflection angles from the tracer - we will extract the two deflection angle maps (y and x)
 # separately.
@@ -74,7 +74,7 @@ data_x = al.galaxy_data(
 # The fit will use a mask, which we setup like any other fit. Lets use a circular mask of 2.0"
 def mask_function_circular(shape_2d, pixel_scales):
     return al.mask.circular(
-        shape_2d=shape_2d, pixel_scales=pixel_scales, sub_size=1, radius_arcsec=2.5
+        shape_2d=shape_2d, pixel_scales=pixel_scales, sub_size=1, radius=2.5
     )
 
 

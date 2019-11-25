@@ -7,7 +7,7 @@ from astropy import cosmology
 
 # 1) Short-hand notation for setting up profiles and galaxies, to make code cleaner and easier to read.
 # 2) That a tracer can be given any number of galaxies.
-# 3) That by specifying redshifts and a cosmology, our results are converted to physical units of kiloparsecs (kpc).
+# 3) That by specifying redshifts and a cosmology, our results are converted to physical unit_label of kiloparsecs (kpc).
 
 # To begin, lets setup the grids we 'll ray-trace using. Lets do something crazy, and use a
 # higher resolution grid then before and set the sub grid size to 4x4 per pixel!
@@ -29,7 +29,7 @@ print(grid.shape)
 # 1) A light-profile, meaning its light will appear in the image.
 # 2) An external shear, which accounts for the deflection of light due to line-of-sight structures.
 # 3) A redshift, which the tracer will use to convert arc second coordinates to kpc.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.SphericalSersic(
         centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5, sersic_index=2.5
@@ -43,7 +43,7 @@ lens_galaxy = al.galaxy(
 print(lens_galaxy)
 
 # Lets also create a small satellite galaxy nearby the lens galaxy and at the same redshift.
-lens_satellite = al.galaxy(
+lens_satellite = al.Galaxy(
     redshift=0.5,
     light=al.lp.SphericalDevVaucouleurs(
         centre=(1.0, 0.0), intensity=2.0, effective_radius=0.2
@@ -72,7 +72,7 @@ al.plot.galaxy.deflections_x(
 
 # Now, lets make two source galaxies at redshift 1.0. Lets not use the terms 'light' and 'mass' to setup the light and
 # mass profiles. Instead, lets use more descriptive names of what we think each component represents ( e.g. a 'bulge' and 'disk').
-source_galaxy_0 = al.galaxy(
+source_galaxy_0 = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.SphericalDevVaucouleurs(
         centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3
@@ -82,7 +82,7 @@ source_galaxy_0 = al.galaxy(
     ),
 )
 
-source_galaxy_1 = al.galaxy(
+source_galaxy_1 = al.Galaxy(
     redshift=1.0,
     disk=al.lp.EllipticalExponential(
         centre=(-0.3, -0.5),
@@ -105,7 +105,7 @@ al.plot.galaxy.profile_image(galaxy=source_galaxy_1, grid=grid, title="Source Ga
 # 1) Using the galaxy redshift's, and image-plane and source-plane will be created with the appopriate galaxies.
 
 # Note that we've also supplied the tracer below with a Planck15 cosmology.
-tracer = al.tracer.from_galaxies(
+tracer = al.Tracer.from_galaxies(
     galaxies=[lens_galaxy, lens_satellite, source_galaxy_0, source_galaxy_1],
     cosmology=cosmology.Planck15,
 )
@@ -136,7 +136,7 @@ al.plot.plane.plane_grid(
 )
 
 # Lets plot the lensing quantities again. Note that, because we supplied our galaxies with redshifts and
-# our tracer with a cosmology, our units have been converted to kiloparsecs!
+# our tracer with a cosmology, our unit_label have been converted to kiloparsecs!
 # (This line can take a bit of time to run)
 al.plot.tracer.subplot(tracer=tracer, grid=grid)
 

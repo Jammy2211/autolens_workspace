@@ -8,7 +8,7 @@ import autolens as al
 # 3) Profiles are combined to make galaxies.
 # 4) Collections of galaxies (at the same redshift) form a plane.
 # 5) A tracer can make an image-plane + source-plane strong lens system.
-# 6) The Universe's cosmology can be input into this tracer to convert units to physical values.
+# 6) The Universe's cosmology can be input into this tracer to convert unit_label to physical values.
 # 7) The tracer's image can be used to simulate strong lens imaging observed on a real telescope.
 # 8) This data can be fitted, so to as quantify how well a model strong lens system represents the observed image.
 
@@ -31,19 +31,19 @@ imaging = al.imaging.from_fits(
 )
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -63,7 +63,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

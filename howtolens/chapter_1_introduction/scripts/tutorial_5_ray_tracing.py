@@ -13,7 +13,7 @@ image_plane_grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_s
 # For our lens galaxy, we'll use the same SIS mass profile as before.
 sis_mass_profile = al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
 
-lens_galaxy = al.galaxy(redshift=0.5, mass=sis_mass_profile)
+lens_galaxy = al.Galaxy(redshift=0.5, mass=sis_mass_profile)
 print(lens_galaxy)
 
 # And for our source galaxy, the same Sersic light profile
@@ -21,7 +21,7 @@ sersic_light_profile = al.lp.SphericalSersic(
     centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
 )
 
-source_galaxy = al.galaxy(redshift=1.0, light=sersic_light_profile)
+source_galaxy = al.Galaxy(redshift=1.0, light=sersic_light_profile)
 
 print(source_galaxy)
 
@@ -31,7 +31,7 @@ print(source_galaxy)
 # 1) The galaxies are ordered in ascending redshift.
 # 2) Planes are created at every one of these redshifts, with the galaxies at those redshifts associated with those
 #    planes.
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # This tracer is composed of a list of planes, in this case two planes (the image and source plane).
 print(tracer.planes)

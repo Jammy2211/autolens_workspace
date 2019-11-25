@@ -1,21 +1,21 @@
 galaxies
     lens
         light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
             axis_ratio                                                                    UniformPrior, lower_limit = 0.45, upper_limit = 0.95
             phi                                                                           UniformPrior, lower_limit = 40.0, upper_limit = 95.0
             intensity                                                                     UniformPrior, lower_limit = 0.02, upper_limit = 0.05
             effective_radius                                                              UniformPrior, lower_limit = 0.2, upper_limit = 0.6
-            centre
-                centre_0                                                                  0.0
-                centre_1                                                                  0.0
-            sersic_index                                                                  4.0
+            sersic_index                                                                  UniformPrior, lower_limit = 2.8, upper_limit = 3.7
         mass
             axis_ratio                                                                    UniformPrior, lower_limit = 0.45, upper_limit = 0.95
             phi                                                                           UniformPrior, lower_limit = 40.0, upper_limit = 95.0
-            einstein_radius                                                               UniformPrior, lower_limit = 0.7, upper_limit = 0.9
             centre
-                centre_0                                                                  0.0
-                centre_1                                                                  0.0
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.02
+            einstein_radius                                                               UniformPrior, lower_limit = 0.7, upper_limit = 0.9
         redshift                                                                          0.5
     source
         light

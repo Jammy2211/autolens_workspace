@@ -98,8 +98,8 @@ def make_pipeline(
         return al.mask.circular_annular(
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
-            inner_radius_arcsec=0.2,
-            outer_radius_arcsec=3.3,
+            inner_radius=0.2,
+            outer_radius=3.3,
         )
 
     ### PHASE 1 ###
@@ -108,7 +108,7 @@ def make_pipeline(
 
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 

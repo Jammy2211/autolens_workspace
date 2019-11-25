@@ -80,8 +80,8 @@ def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
         return al.mask.circular_annular(
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
-            inner_radius_arcsec=0.2,
-            outer_radius_arcsec=3.3,
+            inner_radius=0.2,
+            outer_radius=3.3,
         )
 
     ### PHASE 1 ###
@@ -90,7 +90,7 @@ def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
 
     # 1) Use an interpolation pixel scale of 0.1", to ensure fast deflection angle calculations.
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 

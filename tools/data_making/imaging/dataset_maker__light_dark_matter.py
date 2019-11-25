@@ -38,13 +38,13 @@ simulator = al.simulator.imaging(
     sub_size=4,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 
 # Setup the lens galaxy's light (elliptical Sersic), mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
 # this simulated lens.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lmp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -59,7 +59,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.03, phi=45.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -73,7 +73,7 @@ source_galaxy = al.galaxy(
 
 
 # Use these galaxies to setup a tracer, which will generate the image for the simulated Imaging dataset.
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # To make this figure, we need to pass the plotter a grid which it uses to create the image. The simulator has its
 # grid accessible as a property, which we can use to do this.
@@ -105,7 +105,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", data, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     bulge=al.lmp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -128,7 +128,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.02, phi=145.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(-0.05, -0.0),
@@ -140,7 +140,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # To simulate the imaging dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
 # image that is simulated, as well as its expoosure time, noise levels and psf.
@@ -150,7 +150,7 @@ simulator = al.simulator.imaging(
     sub_size=4,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 

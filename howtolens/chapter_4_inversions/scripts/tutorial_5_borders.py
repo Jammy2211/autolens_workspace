@@ -7,14 +7,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -26,7 +26,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(180, 180),
@@ -34,7 +34,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -48,7 +48,7 @@ al.plot.imaging.subplot(imaging=imaging)
 # So, what is a border? In the image-plane, a border is the set of exterior pixels in a mask that are at, well, its
 # border. Lets plot the image with a circular mask, and tell our imaging plotter to plotters the border as well.
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.5
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask_circular, include_border=True)
@@ -59,8 +59,8 @@ al.plot.imaging.subplot(imaging=imaging, mask=mask_circular, include_border=True
 mask_annular = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
-    inner_radius_arcsec=0.8,
-    outer_radius_arcsec=2.5,
+    inner_radius=0.8,
+    outer_radius=2.5,
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask_annular, include_border=True)
@@ -81,22 +81,22 @@ def perform_fit_with_source_galaxy_mask_and_border(
         imaging=imaging, mask=mask, inversion_uses_border=inversion_uses_border
     )
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # Okay, so lets first look at our mapper without using a border using our annular mask.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -159,7 +159,7 @@ al.plot.tracer.deflections_x(tracer=fit.tracer, grid=fit.grid)
 
 # Lets quickly use a larger circular mask to confirm that these pixels do exist, if we don't mask them.
 mask_circular_large = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=4.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=4.0
 )
 
 fit = perform_fit_with_source_galaxy_mask_and_border(
@@ -210,21 +210,21 @@ def simulate_image_x2_lenses():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy_0 = al.galaxy(
+    lens_galaxy_0 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07
         ),
     )
 
-    lens_galaxy_1 = al.galaxy(
+    lens_galaxy_1 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71
         ),
     )
 
-    source_galaxy_0 = al.galaxy(
+    source_galaxy_0 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.05, 0.05),
@@ -236,7 +236,7 @@ def simulate_image_x2_lenses():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(
+    tracer = al.Tracer.from_galaxies(
         galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy_0]
     )
 
@@ -246,7 +246,7 @@ def simulate_image_x2_lenses():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -257,7 +257,7 @@ def simulate_image_x2_lenses():
 imaging = simulate_image_x2_lenses()
 
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.8
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.8
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask_circular, include_border=True)
@@ -274,21 +274,21 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
         imaging=imaging, mask=mask, inversion_uses_border=inversion_uses_border
     )
 
-    lens_galaxy_0 = al.galaxy(
+    lens_galaxy_0 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07
         ),
     )
 
-    lens_galaxy_1 = al.galaxy(
+    lens_galaxy_1 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71
         ),
     )
 
-    tracer = al.tracer.from_galaxies(
+    tracer = al.Tracer.from_galaxies(
         galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy]
     )
 
@@ -322,7 +322,7 @@ al.plot.inversion.reconstruction(
 # # choose a big enough mask, the border won't be able to relocate all of the demanigified image pixels to the border
 # # edge.
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.5
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -335,7 +335,7 @@ al.plot.inversion.reconstruction(
 
 
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.7
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.7
 )
 
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -348,7 +348,7 @@ al.plot.inversion.reconstruction(
 
 
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.9
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.9
 )
 
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -361,7 +361,7 @@ al.plot.inversion.reconstruction(
 
 
 mask_circular = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.1
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.1
 )
 
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(

@@ -36,8 +36,8 @@ mask = al.mask.circular_annular(
     shape_2d=image.shape_2d,
     pixel_scales=image.pixel_scales,
     sub_size=1,
-    inner_radius_arcsec=0.5,
-    outer_radius_arcsec=2.5,
+    inner_radius=0.5,
+    outer_radius=2.5,
     centre=(0.0, 0.0),
 )
 

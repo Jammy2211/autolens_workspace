@@ -9,14 +9,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -28,7 +28,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -36,7 +36,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
     )
 
@@ -47,14 +47,14 @@ def simulate():
 imaging = simulate()
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=2.5
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask)
 
 # The lines of code below do everything we're used to, that is, setup an image, mask it, trace it via a tracer,
 # setup the rectangular mapper, etc.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
@@ -63,13 +63,13 @@ lens_galaxy = al.galaxy(
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=0.5),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -104,7 +104,7 @@ al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 # image-plane that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute
 # this grid directly from a pixelization, by passing it a grid.
 
-adaptive = al.pix.VoronoiMagnification(shp=(20, 20))
+adaptive = al.pix.VoronoiMagnification(shape=(20, 20))
 
 image_plane_sparse_grid = adaptive.sparse_grid_from_grid(grid=masked_imaging.grid)
 
@@ -115,11 +115,11 @@ al.plot.imaging.image(imaging=imaging, grid=image_plane_sparse_grid, mask=mask)
 # When we pass a tracer a source galaxy with this pixelization it automatically computes the ray-traced source-plane
 # Voronoi grid using the grid above. Thus, our Voronoi pixelization is used by the tracer's fit.
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0, pixelization=adaptive, regularization=al.reg.Constant(coefficient=1.0)
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # If we look at the lens fit, we'll that our source-plane no longer uses rectangular pixels, but Voronoi pixels!
 

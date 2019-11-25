@@ -119,15 +119,15 @@ def make_pipeline(
 
     def mask_function_circular(shape_2d, pixel_scales):
         return al.mask.circular(
-            shape_2d=shape_2d, pixel_scales=pixel_scales, radius_arcsec=3.0
+            shape_2d=shape_2d, pixel_scales=pixel_scales, radius=3.0
         )
 
     def mask_function_annular(shape_2d, pixel_scales):
         return al.mask.circular_annular(
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
-            inner_radius_arcsec=0.3,
-            outer_radius_arcsec=3.0,
+            inner_radius=0.3,
+            outer_radius=3.0,
         )
 
     ### PHASE 1 ###
@@ -137,7 +137,7 @@ def make_pipeline(
     # 1) Set our priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     # 2) Use a circular mask which includes the lens and source galaxy light.
 
-    light = af.PriorModel(mass=al.lp.EllipticalSersic)
+    light = af.PriorModel(al.lp.EllipticalSersic)
     light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
@@ -172,7 +172,7 @@ def make_pipeline(
         def modify_image(self, image, results):
             return image - phase1.result.unmasked_model_visibilities
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
     mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 

@@ -165,7 +165,7 @@ def make_pipeline(
             mass=af.last.model.galaxies.lens.mass,
             shear=af.last.model.galaxies.lens.shear,
             hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
-        ),
+        )
     )
 
     # If the lens light is fixed, over-write the pass prior above to fix the lens light model.

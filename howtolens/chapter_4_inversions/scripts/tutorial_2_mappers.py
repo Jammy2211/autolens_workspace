@@ -8,14 +8,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -27,7 +27,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -35,7 +35,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -53,19 +53,19 @@ grid = al.grid.uniform(
 
 # Our tracer will use the same lens galaxy and source galaxy that we used to simulate the imaging dataset(although, becuase
 # we're modeling the source with a pixel-grid, we don't need to supply its light profile).
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=grid)[1]
 
 # Next, we setup our pixelization and mapper using the tracer's source-plane grid.
-rectangular = al.pix.Rectangular(shp=(25, 25))
+rectangular = al.pix.Rectangular(shape=(25, 25))
 
 mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
@@ -114,8 +114,8 @@ mask = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
     sub_size=1,
-    inner_radius_arcsec=1.0,
-    outer_radius_arcsec=2.2,
+    inner_radius=1.0,
+    outer_radius=2.2,
 )
 
 # Lets quickly confirm the annuli capture the source's light.
@@ -124,7 +124,7 @@ al.plot.imaging.image(imaging=imaging, mask=mask)
 # As usual, we setup our image and mask up as lens dataset and create a tracer using its (now masked) al.
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
 

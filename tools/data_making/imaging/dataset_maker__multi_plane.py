@@ -38,12 +38,12 @@ simulator = al.simulator.imaging(
     sub_size=4,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 
 # Setup the lens galaxy's light mass (SIE) and source galaxy light (elliptical Sersic) for this simulated lens.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
@@ -51,7 +51,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -65,7 +65,7 @@ source_galaxy = al.galaxy(
 
 # Setup our line-of-sight (los) galaxies using Spherical Sersic profiles for their light and Singular
 # Isothermal Sphere (SIS) profiles. We'll use 3 galaxies, but you can add more if desired.
-los_0 = al.galaxy(
+los_0 = al.Galaxy(
     redshift=0.25,
     light=al.lp.SphericalSersic(
         centre=(4.0, 4.0), intensity=0.30, effective_radius=0.3, sersic_index=2.0
@@ -73,7 +73,7 @@ los_0 = al.galaxy(
     mass=al.mp.SphericalIsothermal(centre=(4.0, 4.0), einstein_radius=0.02),
 )
 
-los_1 = al.galaxy(
+los_1 = al.Galaxy(
     redshift=0.75,
     light=al.lp.SphericalSersic(
         centre=(3.6, -5.3), intensity=0.20, effective_radius=0.6, sersic_index=1.5
@@ -81,7 +81,7 @@ los_1 = al.galaxy(
     mass=al.mp.SphericalIsothermal(centre=(3.6, -5.3), einstein_radius=0.04),
 )
 
-los_2 = al.galaxy(
+los_2 = al.Galaxy(
     redshift=1.25,
     light=al.lp.SphericalSersic(
         centre=(-3.1, -2.4), intensity=0.35, effective_radius=0.4, sersic_index=2.5
@@ -91,7 +91,7 @@ los_2 = al.galaxy(
 
 # Use these galaxies to setup a multi-plane tracer, which will generate the image for the simulated Imaging
 # dataset. This tracer orders galaxies by redshift and performs ray-tracing based on their line-of-sight redshifts.
-tracer = al.tracer.from_galaxies(
+tracer = al.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy, los_0, los_1, los_2]
 )
 

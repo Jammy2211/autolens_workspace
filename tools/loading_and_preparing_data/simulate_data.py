@@ -9,7 +9,7 @@ def simulate_imaging():
 
     psf = al.kernel.from_gaussian(shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -17,14 +17,14 @@ def simulate_imaging():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -32,7 +32,7 @@ def simulate_imaging():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -43,7 +43,7 @@ def simulate_imaging_in_counts():
 
     psf = al.kernel.from_gaussian(shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0),
@@ -54,7 +54,7 @@ def simulate_imaging_in_counts():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0),
@@ -64,7 +64,7 @@ def simulate_imaging_in_counts():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -72,7 +72,7 @@ def simulate_imaging_in_counts():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -83,7 +83,7 @@ def simulate_imaging_with_large_stamp():
 
     psf = al.kernel.from_gaussian(shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -91,14 +91,14 @@ def simulate_imaging_with_large_stamp():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -106,7 +106,7 @@ def simulate_imaging_with_large_stamp():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -117,7 +117,7 @@ def simulate_imaging_with_small_stamp():
 
     psf = al.kernel.from_gaussian(shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -125,14 +125,14 @@ def simulate_imaging_with_small_stamp():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -140,7 +140,7 @@ def simulate_imaging_with_small_stamp():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -151,7 +151,7 @@ def simulate_imaging_with_offset_centre():
 
     psf = al.kernel.from_gaussian(shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -159,14 +159,14 @@ def simulate_imaging_with_offset_centre():
         mass=al.mp.SphericalIsothermal(centre=(1.0, 1.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -174,7 +174,7 @@ def simulate_imaging_with_offset_centre():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -185,7 +185,7 @@ def simulate_imaging_with_large_psf():
 
     psf = al.kernel.from_gaussian(shape_2d=(101, 101), sigma=0.05, pixel_scales=0.1)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -193,14 +193,14 @@ def simulate_imaging_with_large_psf():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -208,7 +208,7 @@ def simulate_imaging_with_large_psf():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -221,7 +221,7 @@ def simulate_imaging_with_psf_with_offset_centre():
         shape_2d=(21, 21), sigma=0.05, pixel_scales=0.1, centre=(0.1, 0.1)
     )
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
@@ -229,14 +229,14 @@ def simulate_imaging_with_psf_with_offset_centre():
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -244,7 +244,7 @@ def simulate_imaging_with_psf_with_offset_centre():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 

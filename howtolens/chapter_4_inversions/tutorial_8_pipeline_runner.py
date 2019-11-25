@@ -30,14 +30,14 @@ def simulate():
 
     grid = al.grid.uniform(shape_2d=(180, 180), pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.galaxy(
+    source_galaxy_0 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -49,7 +49,7 @@ def simulate():
         ),
     )
 
-    source_galaxy_1 = al.galaxy(
+    source_galaxy_1 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
@@ -61,7 +61,7 @@ def simulate():
         ),
     )
 
-    source_galaxy_2 = al.galaxy(
+    source_galaxy_2 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
@@ -73,7 +73,7 @@ def simulate():
         ),
     )
 
-    source_galaxy_3 = al.galaxy(
+    source_galaxy_3 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
@@ -85,7 +85,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(
+    tracer = al.Tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -101,7 +101,7 @@ def simulate():
         pixel_scales=0.05,
         exposure_time=300.0,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 

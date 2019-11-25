@@ -50,7 +50,7 @@ positions = al.positions([[[0.8, 1.45], [1.78, -0.4], [-0.95, 1.38], [-0.83, -1.
 # positions = [[[1.0, 1.0], [2.0, 0.5]], [[-1.0, -0.1], [2.0, 2.0], [3.0, 3.0]]]
 
 # Now lets plotters the image and positions, so we can check that the positions overlap different regions of the source.
-al.plot.array(array=image, positions=positions)
+al.plot.array(array=image, points=positions)
 
 # Now we're happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 # .dat file in our pipelines!

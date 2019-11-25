@@ -90,7 +90,7 @@ def make_pipeline(
     # use the default 3.0"  circular mask. In general, I haven't found the choice of mask to make a big difference,
     # albeit this does depend on how much off the lens galaxy's light the lensed source galaxy's light obstructs.
 
-    light = af.PriorModel(mass=al.lp.EllipticalSersic)
+    light = af.PriorModel(al.lp.EllipticalSersic)
     light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
@@ -126,15 +126,15 @@ def make_pipeline(
         return al.mask.circular_annular(
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
-            inner_radius_arcsec=0.3,
-            outer_radius_arcsec=3.0,
+            inner_radius=0.3,
+            outer_radius=3.0,
         )
 
     class LensSubtractedPhase(al.PhaseImaging):
         def modify_image(self, image, results):
             return image - results[-1].unmasked_model_visibilities_of_planes[0]
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
     mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 

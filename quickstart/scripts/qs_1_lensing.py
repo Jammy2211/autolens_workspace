@@ -78,7 +78,7 @@ mass_profile_1 = al.mp.EllipticalIsothermal(
     centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.0
 )
 
-galaxy = al.galaxy(
+galaxy = al.Galaxy(
     redshift=0.5,
     light_profile_0=light_profile_0,
     light_profile_1=light_profile_1,
@@ -108,18 +108,18 @@ al.plot.galaxy.deflections_x(galaxy=galaxy, grid=grid)
 
 # We can pass galaxies into a 'Tracer' to create this strong lens system.
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5, mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.SphericalSersic(
         centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # We can then pass our image-plane grid to the tracer to 'ray-trace' it through the strong lens system.
 traced_image = tracer.profile_image_from_grid(grid=grid)

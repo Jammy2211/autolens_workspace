@@ -39,13 +39,13 @@ simulator = al.simulator.imaging(
     sub_size=4,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 
 # Setup the lens galaxy's light (elliptical Sersic), mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
 # this simulated lens.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -61,7 +61,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -75,7 +75,7 @@ source_galaxy = al.galaxy(
 
 
 # Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset.
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Lets look at the tracer's image - this is the image we'll be simulating.
 
@@ -109,7 +109,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -125,7 +125,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.02, phi=145.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(-0.2, -0.3),
@@ -137,7 +137,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 
@@ -158,7 +158,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
@@ -166,7 +166,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -178,7 +178,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 
@@ -199,7 +199,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.3, axis_ratio=0.8, phi=60.0
@@ -207,7 +207,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.3, -0.4),
@@ -219,7 +219,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 
@@ -240,7 +240,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.9, phi=90.0
@@ -248,7 +248,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy_0 = al.galaxy(
+source_galaxy_0 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.25, 0.15),
@@ -260,7 +260,7 @@ source_galaxy_0 = al.galaxy(
     ),
 )
 
-source_galaxy_1 = al.galaxy(
+source_galaxy_1 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.7, -0.5),
@@ -272,7 +272,7 @@ source_galaxy_1 = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(
+tracer = al.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy_0, source_galaxy_1]
 )
 
@@ -294,7 +294,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -313,7 +313,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -325,7 +325,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 
@@ -349,7 +349,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     intervene_0=al.lp.SphericalExponential(
         centre=(1.0, 3.5), intensity=0.8, effective_radius=0.5
@@ -363,7 +363,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -375,7 +375,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 
@@ -403,11 +403,11 @@ simulator = al.simulator.imaging(
     sub_size=2,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
@@ -418,7 +418,7 @@ lens_galaxy = al.galaxy(
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.01, 0.01),
@@ -430,7 +430,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 imaging = simulator.from_tracer(tracer=tracer)
 

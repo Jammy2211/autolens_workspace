@@ -103,7 +103,7 @@ def make_pipeline(phase_folders=None):
                 ).unmasked_lens_power_lawane_model_image
             )
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 

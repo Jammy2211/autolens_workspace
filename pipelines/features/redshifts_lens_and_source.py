@@ -3,7 +3,7 @@ import autolens as al
 
 
 # In this pipeline, we'll demonstrate passing redshifts to a pipeline - which means that the results and images of this
-# pipeline will be returned in physical units (e.g. lengths in kpcs as well as arcsec, luminosities in magnitudes,
+# pipeline will be returned in physical unit_label (e.g. lengths in kpcs as well as arcsec, luminosities in magnitudes,
 # masses in solMass, etc).
 
 # The redshift of the lens and source are input parameters of all pipelines, and they take default values of 0.5 and
@@ -62,8 +62,8 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
         return al.mask.circular_annular(
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
-            inner_radius_arcsec=0.2,
-            outer_radius_arcsec=3.3,
+            inner_radius=0.2,
+            outer_radius=3.3,
         )
 
     ### PHASE 1 ###
@@ -72,7 +72,7 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
 
     # 1) Use the input value of redshifts from the pipeline.
 
-    mass = af.PriorModel(mass=al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 

@@ -44,7 +44,7 @@ import autolens as al
 
 # We'll use 3 sources whose effective radius and Sersic index are changed such that each is more compact that the last.
 
-source_galaxy_flat = al.galaxy(
+source_galaxy_flat = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -56,7 +56,7 @@ source_galaxy_flat = al.galaxy(
     ),
 )
 
-source_galaxy_compact = al.galaxy(
+source_galaxy_compact = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -68,7 +68,7 @@ source_galaxy_compact = al.galaxy(
     ),
 )
 
-source_galaxy_super_compact = al.galaxy(
+source_galaxy_super_compact = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -88,14 +88,14 @@ def simulate_for_source_galaxy(source_galaxy):
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -103,7 +103,7 @@ def simulate_for_source_galaxy(source_galaxy):
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
@@ -112,7 +112,7 @@ def simulate_for_source_galaxy(source_galaxy):
 
 
 # We'll use the same 3.0" mask to fit all three of our sources.
-mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
 
 # Now, lets simulator all 3 of our source's as imaging dataset.
 
@@ -137,20 +137,20 @@ def fit_imaging_with_voronoi_magnification_pixelization(
 
     masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
-        pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+        pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
         regularization=al.reg.Constant(coefficient=regularization_coefficient),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

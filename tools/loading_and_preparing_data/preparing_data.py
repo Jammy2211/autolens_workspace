@@ -61,12 +61,12 @@ al.plot.imaging.subplot(imaging=imaging)
 # in-built functions in PyAutoLens to convert the dataset to a good format for you. However, your life will be much easier
 # if you can just reduce it this way in the first place!
 
-# 1) Brightness units - the image's flux and noise-map values are in units of electrons per second (not electrons,
-#    counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other units, the default
+# 1) Brightness unit_label - the image's flux and noise-map values are in unit_label of electrons per second (not electrons,
+#    counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other unit_label, the default
 #    settings assume the image is in electrons per second (e.g. the priors on light profile image and
 #    regularization coefficient). Thus, images not in electrons per second should be converted!
 
-# Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or
+# Lets look at an image that is in unit_label of counts - its easy to tell because the peak values are in the 1000's or
 # 10000's.
 imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=dataset_path, folder_names=["imaging_in_counts"]
@@ -164,7 +164,7 @@ al.plot.imaging.subplot(imaging=imaging_small_stamp)
 mask = al.mask.circular(
     shape_2d=imaging_small_stamp.shape,
     pixel_scales=imaging_small_stamp.pixel_scales,
-    radius_arcsec=2.0,
+    radius=2.0,
 )
 
 # This gives an error because the mask's blurring region hits an edge.
@@ -183,7 +183,7 @@ imaging_small_stamp_padded = al.imaging.from_fits(
 mask = al.mask.circular(
     shape_2d=imaging_small_stamp_padded.shape,
     pixel_scales=imaging_small_stamp_padded.pixel_scales,
-    radius_arcsec=2.0,
+    radius=2.0,
 )
 
 al.plot.imaging.subplot(imaging=imaging_small_stamp_padded, mask=mask)

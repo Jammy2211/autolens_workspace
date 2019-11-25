@@ -20,7 +20,7 @@ sersic_light_profile = al.lp.EllipticalSersic(
     sersic_index=2.5,
 )
 
-galaxy_with_light_profile = al.galaxy(redshift=0.5, light=sersic_light_profile)
+galaxy_with_light_profile = al.Galaxy(redshift=0.5, light=sersic_light_profile)
 
 # We can print the galaxy to confirm its profile and its parameters
 print(galaxy_with_light_profile)
@@ -53,7 +53,7 @@ light_profile_3 = al.lp.SphericalSersic(
     centre=(1.0, -1.0), intensity=1.0, effective_radius=2.0, sersic_index=2.0
 )
 
-galaxy_with_3_light_profiles = al.galaxy(
+galaxy_with_3_light_profiles = al.Galaxy(
     redshift=0.5,
     light_1=light_profile_1,
     light_2=light_profile_2,
@@ -77,7 +77,7 @@ mass_profile_2 = al.mp.SphericalIsothermal(centre=(1.0, 1.0), einstein_radius=1.
 
 mass_profile_3 = al.mp.SphericalIsothermal(centre=(1.0, -1.0), einstein_radius=1.0)
 
-galaxy_with_3_mass_profiles = al.galaxy(
+galaxy_with_3_mass_profiles = al.Galaxy(
     redshift=0.5, mass_1=mass_profile_1, mass_2=mass_profile_2, mass_3=mass_profile_3
 )
 
@@ -126,7 +126,7 @@ mass_profile_4 = al.mp.EllipticalIsothermal(
     centre=(1.0, -1.0), axis_ratio=0.5, phi=45.0, einstein_radius=2.0
 )
 
-galaxy_with_many_profiles = al.galaxy(
+galaxy_with_many_profiles = al.Galaxy(
     redshift=0.5,
     light_1=light_profile_1,
     light_2=light_profile_2,

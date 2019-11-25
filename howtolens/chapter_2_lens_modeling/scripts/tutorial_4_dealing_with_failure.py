@@ -22,7 +22,7 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -37,7 +37,7 @@ def simulate():
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -49,7 +49,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -57,7 +57,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -87,8 +87,6 @@ lens = al.GalaxyModel(
 
 source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
-
-# We've called our lens galaxy 'lens' this time, for shorter more readable code.
 
 # By default, the prior on the (y,x) coordinates of a light / mass profile is a GaussianPrior with mean
 # 0.0" and sigma "1.0. However, visual inspection of our strong lens image tells us that its clearly around
@@ -187,10 +185,11 @@ al.plot.fit_imaging.subplot(fit=custom_prior_result.most_likely_fit)
 # aligned with its mass. This may, or may not, be a reasonable assumption, but it'll remove 4 parameters from the lens
 # model (the mass-profiles y, x, axis_ratio and phi), so its worth trying!
 
-
 lens = al.GalaxyModel(
     redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
 )
+
+source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # In the pass priors function we can 'pair' any two parameters by setting them equal to one another. This
 # removes the parameter on the left-hand side of the pairing from the lens model such that is always assumes
@@ -204,8 +203,6 @@ lens.mass.centre_1 = lens.light.centre_1
 lens.mass.axis_ratio = lens.light.axis_ratio
 
 lens.mass.phi = lens.light.phi
-
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # Again, we create this phase and run it. The non-linear search now has a less complex parameter space to search.
 light_traces_mass_phase = al.PhaseImaging(

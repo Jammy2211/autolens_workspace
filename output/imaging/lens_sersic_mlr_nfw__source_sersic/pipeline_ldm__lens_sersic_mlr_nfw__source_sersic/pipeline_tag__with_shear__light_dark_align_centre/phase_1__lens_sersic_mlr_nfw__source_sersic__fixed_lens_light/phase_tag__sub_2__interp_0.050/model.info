@@ -1,0 +1,27 @@
+galaxies
+    lens
+        light
+            mass_to_light_ratio                                                           LogUniformPrior, lower_limit = 1e-06, upper_limit = 10.0
+            axis_ratio                                                                    0.9868977101034715
+            phi                                                                           0.09673740196132105
+            intensity                                                                     0.8113226037889409
+            effective_radius                                                              0.998934006176683
+            sersic_index                                                                  0.998406611719511
+        dark
+            kappa_s                                                                       UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+            scale_radius                                                                  UniformPrior, lower_limit = 0.0, upper_limit = 30.0
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.008386929830089714, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 0.41415270458815945, sigma = 20.0
+        redshift                                                                          0.5
+    source
+        light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.04127585071087476, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.05162092043178266, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.9969399934922346, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 0.4756026373925824, sigma = 20.0
+            intensity                                                                     GaussianPrior, mean = 0.9989512913784125, sigma = 0.49947564568920627
+            effective_radius                                                              GaussianPrior, mean = 0.9995243112624166, sigma = 2.0
+            sersic_index                                                                  GaussianPrior, mean = 0.8027407117772425, sigma = 1.5
+        redshift                                                                          1.0

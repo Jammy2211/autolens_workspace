@@ -12,14 +12,14 @@ psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=2)
 
 # Now, lets setup our lens galaxy, source galaxy and tracer.
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
@@ -31,7 +31,7 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Lets look at the tracer's image - this is the image we'll be simulating.
 al.plot.tracer.profile_image(tracer=tracer, grid=grid)
@@ -60,7 +60,7 @@ simulator = al.simulator.imaging(
     sub_size=grid.sub_size,
     exposure_time=300.0,
     psf=psf,
-    background_sky_level=0.1,
+    background_level=0.1,
     add_noise=True,
 )
 

@@ -35,7 +35,7 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -50,7 +50,7 @@ def simulate():
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -62,7 +62,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(130, 130),
@@ -70,7 +70,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -126,7 +126,7 @@ al.plot.fit_imaging.subplot(fit=results.most_likely_fit, include_mask=True)
 # but I've put a few comments to remind you of whats happening).
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
@@ -134,7 +134,7 @@ masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 al.plot.imaging.image(imaging=imaging, mask=mask)
 
 # Make the tracer we use to Simulate the Imaging simulator
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -149,7 +149,7 @@ lens_galaxy = al.galaxy(
     ),
 )
 
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -161,9 +161,9 @@ source_galaxy = al.galaxy(
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-# Now, lets fit the lens-simulator with the tracer and plotters the fit. It looks a lot better than above, doesn't it?
+# Now, lets fit the lens-data with the tracer and plotters the fit. It looks a lot better than above, doesn't it?
 correct_fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 al.plot.fit_imaging.subplot(fit=correct_fit, include_mask=True)

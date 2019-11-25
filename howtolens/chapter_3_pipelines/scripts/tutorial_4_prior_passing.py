@@ -60,7 +60,7 @@ class MockPhase(object):
 # absolute errors on the centre.
 
 # However, there are parameters where using an absolute value does not make sense. Intensity is a good example of this.
-# The intensity of an image depends on its units, S/N, galaxy brightness, profile definition, etc. There is no single
+# The intensity of an image depends on its unit_label, S/N, galaxy brightness, profile definition, etc. There is no single
 # absolute value that one can use to generically link the intensity of any two proflies. Thus, it makes more sense
 # to link them using the relative value from a previous phase.
 

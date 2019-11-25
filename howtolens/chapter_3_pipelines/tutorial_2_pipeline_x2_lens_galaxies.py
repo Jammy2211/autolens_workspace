@@ -43,7 +43,7 @@ def make_pipeline(phase_folders=None):
             shape_2d=shape_2d,
             pixel_scales=pixel_scales,
             sub_size=2,
-            radius_arcsec=0.5,
+            radius=0.5,
             centre=(0.0, -1.0),
         )
 
@@ -87,7 +87,7 @@ def make_pipeline(phase_folders=None):
             shape=shape_2d,
             pixel_scales=pixel_scales,
             sub_size=2,
-            radius_arcsec=0.5,
+            radius=0.5,
             centre=(0.0, 1.0),
         )
 

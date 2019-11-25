@@ -17,14 +17,14 @@ def simulate():
 
     grid = al.grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -36,7 +36,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -44,7 +44,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
@@ -55,7 +55,7 @@ def simulate():
 # Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
-mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fits, we'll use a convenience
@@ -64,23 +64,23 @@ masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 def fit_masked_imaging_with_source_galaxy(masked_imaging, source_galaxy):
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # Next, we'll use the magnification based source to fit this simulator.
 
-source_magnification = al.galaxy(
+source_magnification = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -103,9 +103,9 @@ al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centre
 
 hyper_image = fit.model_image.in_1d
 
-source_adaptive_regularization = al.galaxy(
+source_adaptive_regularization = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.005, outer_coefficient=1.9, signal_scale=3.0
     ),
@@ -183,9 +183,9 @@ al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=
 # You may find solutions that raise an 'InversionException'. These solutions mean that the matrix used during the linear
 # algebra calculation was ill-defined, and could not be inverted. These solutions are removed by PyAutoLens during lens modeling.
 
-source_adaptive_regularization = al.galaxy(
+source_adaptive_regularization = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.001, outer_coefficient=0.2, signal_scale=2.0
     ),

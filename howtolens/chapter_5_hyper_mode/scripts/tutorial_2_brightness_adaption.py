@@ -20,14 +20,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -39,7 +39,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -47,7 +47,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
@@ -59,7 +59,7 @@ def simulate():
 
 imaging = simulate()
 mask = al.mask.circular(
-    shape_2d=(150, 150), pixel_scales=0.05, sub_size=1, radius_arcsec=3.0
+    shape_2d=(150, 150), pixel_scales=0.05, sub_size=1, radius=3.0
 )
 
 # To perform brightness adaption, we need create our masked imaging dataset.
@@ -68,20 +68,20 @@ masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 # Next, we're going to fit the image using our magnification based grid. The code below does all the usual steps
 # required to do this.
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
     ),
 )
 
-source_galaxy_magnification = al.galaxy(
+source_galaxy_magnification = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_magnification])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_magnification])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -97,11 +97,11 @@ al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 hyper_image = fit.model_image.in_1d_binned
 
 # Now lets take a look at brightness based adaption in action! Below, we define a source-galaxy using our new
-# 'VoronoiBrightnessImage' pixelization and use this to fit the lens-simulator. One should note that we also attach the
+# 'VoronoiBrightnessImage' pixelization and use this to fit the lens-data. One should note that we also attach the
 # hyper-galaxy-image to this galaxy because its pixelization uses this hyper-galaxy-image for adaption, thus the
 # galaxy needs to know what hyper-galaxy-image it should use!
 
-source_galaxy_brightness = al.galaxy(
+source_galaxy_brightness = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=10.0
@@ -110,7 +110,7 @@ source_galaxy_brightness = al.galaxy(
     hyper_galaxy_image=hyper_image,
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_brightness])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_brightness])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -181,7 +181,7 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 # Lets look at this in action. We'll inspect 3 cluster_weight_maps, using a weight_power of 0.0, 5.0 and 10.0,
 # setting the weight_floor to 0.0 such that it does not change the cluster weight map.
 
-source_weight_power_0 = al.galaxy(
+source_weight_power_0 = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=0.0
@@ -196,7 +196,7 @@ cluster_weight_power_0 = source_weight_power_0.pixelization.weight_map_from_hype
 
 al.plot.array(array=cluster_weight_power_0, mask=mask)
 
-source_weight_power_5 = al.galaxy(
+source_weight_power_5 = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0
@@ -211,7 +211,7 @@ cluster_weight_power_5 = source_weight_power_5.pixelization.weight_map_from_hype
 
 al.plot.array(array=cluster_weight_power_5, mask=mask)
 
-source_weight_power_10 = al.galaxy(
+source_weight_power_10 = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=10.0
@@ -231,19 +231,19 @@ al.plot.array(array=cluster_weight_power_10, mask=mask)
 # the source.
 
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -258,7 +258,7 @@ al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
 
 # Lets look at once example:
 
-source_weight_floor = al.galaxy(
+source_weight_floor = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.5, weight_power=10.0
@@ -273,7 +273,7 @@ cluster_weight_floor = source_weight_floor.pixelization.weight_map_from_hyper_im
 
 al.plot.array(array=cluster_weight_floor, mask=mask)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

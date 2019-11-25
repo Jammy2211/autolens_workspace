@@ -20,14 +20,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -39,7 +39,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -47,7 +47,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
@@ -58,7 +58,7 @@ def simulate():
 # Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
-mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fit, we'll use a
@@ -70,23 +70,23 @@ masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 def fit_masked_imaging_with_source_galaxy(masked_imaging, source_galaxy):
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.55
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
 # And now, we'll use the same magnification based source to fit this simulator.
 
-source_magnification = al.galaxy(
+source_magnification = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -112,7 +112,7 @@ hyper_image = fit.model_image.in_1d_binned
 # You'll note that, unlike before, this source galaxy receives two types of hyper-galaxy-images, a 'hyper_galaxy_image'
 # (like before) and a 'hyper_model_image' (which is new). I'll come back to this later.
 
-source_adaptive = al.galaxy(
+source_adaptive = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0
@@ -161,7 +161,7 @@ print("Evidence = ", fit.evidence)
 # what we're going to do, by making our source galaxy a 'hyper-galaxy', a galaxy which use's its hyper-galaxy image to
 # increase the noise in pixels where it has a large signal. Let take a look.
 
-source_hyper_galaxy = al.galaxy(
+source_hyper_galaxy = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0
@@ -211,7 +211,7 @@ print("Evidence using variances scaling by hyper-galaxy galaxy = ", fit.evidence
 
 # Lets look at a few contribution maps, generated using hyper-galaxy's with different contribution factors.
 
-source_contribution_factor_1 = al.galaxy(
+source_contribution_factor_1 = al.Galaxy(
     redshift=1.0,
     hyper_galaxy=al.HyperGalaxy(contribution_factor=1.0),
     hyper_galaxy_image=hyper_image,
@@ -224,7 +224,7 @@ contribution_map = source_contribution_factor_1.hyper_galaxy.contribution_map_fr
 
 al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
 
-source_contribution_factor_3 = al.galaxy(
+source_contribution_factor_3 = al.Galaxy(
     redshift=1.0,
     hyper_galaxy=al.HyperGalaxy(contribution_factor=3.0),
     hyper_galaxy_image=hyper_image,
@@ -237,7 +237,7 @@ contribution_map = source_contribution_factor_3.hyper_galaxy.contribution_map_fr
 
 al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
 
-source_hyper_galaxy = al.galaxy(
+source_hyper_galaxy = al.Galaxy(
     redshift=1.0,
     hyper_galaxy=al.HyperGalaxy(contribution_factor=5.0),
     hyper_galaxy_image=hyper_image,
@@ -266,7 +266,7 @@ al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
 
 # Lets compare two fits, one where a hyper-galaxy-galaxy scales the noise-map, and one where it dooesn't.
 
-source_no_hyper_galaxy = al.galaxy(
+source_no_hyper_galaxy = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0
@@ -285,7 +285,7 @@ al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=
 
 print("Evidence using baseline variances = ", fit.evidence)
 
-source_hyper_galaxy = al.galaxy(
+source_hyper_galaxy = al.Galaxy(
     redshift=1.0,
     pixelization=al.pix.VoronoiBrightnessImage(
         pixels=500, weight_floor=0.0, weight_power=5.0

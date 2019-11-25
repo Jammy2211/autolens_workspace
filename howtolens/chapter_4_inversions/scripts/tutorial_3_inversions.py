@@ -9,14 +9,14 @@ def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -28,7 +28,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(180, 180),
@@ -36,7 +36,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -49,8 +49,8 @@ imaging = simulate()
 mask = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
-    inner_radius_arcsec=1.0,
-    outer_radius_arcsec=2.2,
+    inner_radius=1.0,
+    outer_radius=2.2,
 )
 
 al.plot.imaging.image(imaging=imaging, mask=mask)
@@ -59,19 +59,19 @@ al.plot.imaging.image(imaging=imaging, mask=mask)
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
 
 # We'll use another rectangular pixelization and mapper to perform the reconstruction
-rectangular = al.pix.Rectangular(shp=(25, 25))
+rectangular = al.pix.Rectangular(shape=(25, 25))
 
 mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
@@ -103,14 +103,14 @@ def simulate_complex_source():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
             centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
         ),
     )
 
-    source_galaxy_0 = al.galaxy(
+    source_galaxy_0 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
@@ -122,7 +122,7 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_1 = al.galaxy(
+    source_galaxy_1 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
@@ -134,7 +134,7 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_2 = al.galaxy(
+    source_galaxy_2 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
@@ -146,7 +146,7 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_3 = al.galaxy(
+    source_galaxy_3 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
@@ -158,7 +158,7 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_4 = al.galaxy(
+    source_galaxy_4 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.85, -0.85),
@@ -170,7 +170,7 @@ def simulate_complex_source():
         ),
     )
 
-    source_galaxy_5 = al.galaxy(
+    source_galaxy_5 = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.75, -0.1),
@@ -182,7 +182,7 @@ def simulate_complex_source():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(
+    tracer = al.Tracer.from_galaxies(
         galaxies=[
             lens_galaxy,
             source_galaxy_0,
@@ -200,7 +200,7 @@ def simulate_complex_source():
         exposure_time=300.0,
         sub_size=1,
         psf=psf,
-        background_sky_level=0.1,
+        background_level=0.1,
         add_noise=True,
     )
 
@@ -214,15 +214,15 @@ imaging = simulate_complex_source()
 mask = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
-    inner_radius_arcsec=0.1,
-    outer_radius_arcsec=3.2,
+    inner_radius=0.1,
+    outer_radius=3.2,
 )
 
 al.plot.imaging.image(imaging=imaging, mask=mask)
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
 
@@ -289,13 +289,13 @@ al.plot.mapper.image_and_mapper(
 
 # Finally, let me show you how easy it is to fit an image with an inversion using the fitting module. Instead of giving
 # the source galaxy a light profile, we give it a pixelization and regularization, and pass it to a tracer.
-source_galaxy = al.galaxy(
+source_galaxy = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.Rectangular(shp=(40, 40)),
+    pixelization=al.pix.Rectangular(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Then, like before, we call on the fitting module to perform the fit to the lensing image. Indeed, we see
 # some pretty good looking residuals - we're certainly fitting the lensed source accurately!

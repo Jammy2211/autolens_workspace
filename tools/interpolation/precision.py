@@ -48,8 +48,8 @@ imaging = al.imaging.from_fits(
 mask = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
-    inner_radius_arcsec=inner_radius_arcsec,
-    outer_radius_arcsec=outer_radius_arcsec,
+    inner_radius=inner_radius_arcsec,
+    outer_radius=outer_radius_arcsec,
 )
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask, sub_size=sub_size)

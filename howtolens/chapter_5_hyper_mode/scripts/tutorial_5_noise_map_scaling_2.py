@@ -18,7 +18,7 @@ def simulate():
 
     grid = al.grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
-    lens_galaxy = al.galaxy(
+    lens_galaxy = al.Galaxy(
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -33,7 +33,7 @@ def simulate():
         ),
     )
 
-    source_galaxy = al.galaxy(
+    source_galaxy = al.Galaxy(
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
@@ -45,7 +45,7 @@ def simulate():
         ),
     )
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.simulator.imaging(
         shape_2d=(150, 150),
@@ -53,7 +53,7 @@ def simulate():
         exposure_time=300.0,
         sub_size=2,
         psf=psf,
-        background_sky_level=1.0,
+        background_level=1.0,
         add_noise=True,
         noise_seed=1,
     )
@@ -64,7 +64,7 @@ def simulate():
 # Lets simulate the dataset with lens light, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
-mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius_arcsec=3.0)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Again, we'll use a convenience function to fit the lens dataset we simulated above.
@@ -74,7 +74,7 @@ def fit_masked_imaging_with_lens_and_source_galaxy(
     masked_imaging, lens_galaxy, source_galaxy
 ):
 
-    tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
@@ -82,7 +82,7 @@ def fit_masked_imaging_with_lens_and_source_galaxy(
 # Now, lets use this function to fit the lens dataset. We'll use a lens model with the correct mass model but an
 # incorrect lens light profile. The source will use a magnification based grid.
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -98,9 +98,9 @@ lens_galaxy = al.galaxy(
 )
 
 
-source_magnification = al.galaxy(
+source_magnification = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -143,7 +143,7 @@ hyper_image_lens = fit.model_images_of_planes[0]
 
 hyper_image_source = fit.model_images_of_planes[1]
 
-lens_galaxy_hyper = al.galaxy(
+lens_galaxy_hyper = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
@@ -163,9 +163,9 @@ lens_galaxy_hyper = al.galaxy(
     hyper_galaxy_image=hyper_image_lens,  # <- The lens get its own hyper-galaxy image.
 )
 
-source_magnification_hyper = al.galaxy(
+source_magnification_hyper = al.Galaxy(
     redshift=1.0,
-    pixelization=al.pix.VoronoiMagnification(shp=(30, 30)),
+    pixelization=al.pix.VoronoiMagnification(shape=(30, 30)),
     regularization=al.reg.Constant(coefficient=3.3),
     hyper_galaxy=al.HyperGalaxy(
         contribution_factor=2.0, noise_factor=2.0, noise_power=3.0
@@ -234,7 +234,7 @@ hyper_background_noise = al.hyper_data.HyperBackgroundNoise(noise_scale=1.0)
 
 # To use these hyper-galaxy_data parameters, we pass them to a lens-fit just like we do our tracer.
 
-tracer = al.tracer.from_galaxies(
+tracer = al.Tracer.from_galaxies(
     galaxies=[lens_galaxy_hyper, source_magnification_hyper]
 )
 

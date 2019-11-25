@@ -51,16 +51,16 @@ image_plane_grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_s
 # in lensing, e.g. 'lens_galaxy' and 'source_galaxy'.
 mass_profile = al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
 
-lens_galaxy = al.galaxy(redshift=0.5, mass=mass_profile)
+lens_galaxy = al.Galaxy(redshift=0.5, mass=mass_profile)
 
 light_profile = al.lp.SphericalSersic(
     centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
 )
 
-source_galaxy = al.galaxy(redshift=1.0, light=light_profile)
+source_galaxy = al.Galaxy(redshift=1.0, light=light_profile)
 
 # Lets setup our image-plane. This plane takes the lens galaxy we made above.
-image_plane = al.plane(galaxies=[lens_galaxy])
+image_plane = al.Plane(galaxies=[lens_galaxy])
 
 # Just like we did with galaxies, we can compute quantities from the plane by passing it a grid.
 
@@ -97,7 +97,7 @@ print("Traced source-plane coordinates of grid pixel 1:")
 print(source_plane_grid[0, :])
 
 # We can also set up a source plane using our source galaxy.
-source_plane = al.plane(galaxies=[source_galaxy])
+source_plane = al.Plane(galaxies=[source_galaxy])
 
 # Lets inspect our grids - I bet our source-plane isn't the boring uniform grid we plotted in the first tutorial!
 al.plot.plane.plane_grid(

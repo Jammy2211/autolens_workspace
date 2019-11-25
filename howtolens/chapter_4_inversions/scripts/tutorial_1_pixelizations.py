@@ -7,14 +7,14 @@ import autolens as al
 # as we're going to reconstruct its light using a pixelization).
 grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=2)
 
-lens_galaxy = al.galaxy(
+lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6
     ),
 )
 
-tracer = al.tracer.from_galaxies(galaxies=[lens_galaxy, al.galaxy(redshift=1.0)])
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=grid)[1]
 
@@ -22,7 +22,7 @@ source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=grid)[1]
 
 # There are multiple pixelizations available in PyAutoLens. For now, we'll keep it simple and use a uniform
 # rectangular grid. As usual, the grid's 'shape' defines its (y,x) dimensions.
-rectangular = al.pix.Rectangular(shp=(25, 25))
+rectangular = al.pix.Rectangular(shape=(25, 25))
 
 # By itself, a pixelization doesn't tell us much. It has no grid of coordinates, no image, and nothing which tells it
 # about the lens we're fitting. This information comes when we use the pixelization to set up a 'mapper'. We'll use
@@ -69,9 +69,9 @@ al.plot.mapper.rectangular_mapper(
 
 # Finally, the mapper has lots more information about the pixelizations, for example, the arc-second
 # size and dimensions.
-print(mapper.pixelization_grid.shape_2d_arcsec)
-print(mapper.pixelization_grid.arc_second_maxima)
-print(mapper.pixelization_grid.arc_second_minima)
+print(mapper.pixelization_grid.shape_2d_scaled)
+print(mapper.pixelization_grid.scaled_maxima)
+print(mapper.pixelization_grid.scaled_minima)
 
 # And with that, we're done. This was a relatively gentle overview of pixelizations, but one that
 # was hopefully easy to follow. Think about the following questions before moving on to the next tutorial:
