@@ -264,7 +264,7 @@ def make_pipeline(
                 bulge=phase3.result.model.galaxies.lens.bulge,
                 disk=phase3.result.model.galaxies.lens.disk,
                 mass=phase2.result.model.galaxies.lens.mass,
-                shear=phase2.result.variale.galaxies.lens.shear,
+                shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(

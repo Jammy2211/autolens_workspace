@@ -40,10 +40,7 @@ imaging = al.imaging.from_fits(
 
 # The phase can be passed a mask, which we setup below as a 3.0" circle.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d,
-    pixel_scales=imaging.pixel_scales,
-    sub_size=1,
-    radius=3.0,
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=1, radius=3.0
 )
 
 # We can also specify a set of positions, which must be traced within a threshold value or else the mass model is.

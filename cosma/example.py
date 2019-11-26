@@ -16,10 +16,10 @@ import autofit as af
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The simulator path is over-written to the path '/cosma5/simulator/autolens/cosma_username/dataset_label' as opposed to the
+# 1) The simulator path is over-written to the path '/cosma5/data/autolens/cosma_username/dataset_label' as opposed to the
 #    autolens_workspace. As we discussed in the setup, on cosma we don't store our dataset_label in our autolens_workspace.
 
-# 2) The output path is over-written to the path '/cosma5/simulator/autolens/cosma_username/output' as opposed to
+# 2) The output path is over-written to the path '/cosma5/data/autolens/cosma_username/output' as opposed to
 #    the autolens_workspace. This is for the same reason as the dataset.
 
 # We need to specify where our dataset_label is stored and output is placed. In this example, we'll use the 'share' folder, but
@@ -29,7 +29,7 @@ data_folder_name = "share"
 
 # Lets use this to setup our cosma path, which is where our dataset_label and output are stored.
 cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path="/cosma5/simulator/autolens/", folder_names=[data_folder_name]
+    path="/cosma5/data/autolens/", folder_names=[data_folder_name]
 )
 
 # The simulator folder is the name of the folder our dataset_label is stored in, which in this case is 'example'. I would typically
@@ -38,12 +38,12 @@ cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 dataset_label = "imaging"
 
 # Next, lets use this path to setup the dataset path, which for this example is named 'example' and found at
-# '/cosma5/simulator/autolens/share/dataset/imaging/'
-cosma_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+# '/cosma5/data/autolens/share/dataset/imaging/'
+cosma_dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["dataset", dataset_label]
 )
 
-# We'll do the same for our output path, which is '/cosma5/simulator/autolens/share/output/imaging/'
+# We'll do the same for our output path, which is '/cosma5/data/autolens/share/output/imaging/'
 cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["output", dataset_label]
 )
@@ -119,10 +119,10 @@ dataset_name = dataset_name[cosma_array_id]
 pixel_scales = 0.2  # Make sure your pixel scale is correct!
 
 # We now use the dataset_name to load a the dataset-set on each job. The statement below combines
-# the cosma_data_path and and dataset_name to read dataset_label from the following directory:
-# '/cosma5/simulator/autolens/share/dataset/imaging/dataset_name'
+# the cosma_dataset_path and and dataset_name to read dataset_label from the following directory:
+# '/cosma5/data/autolens/share/dataset/imaging/dataset_name'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=cosma_data_path, folder_names=[dataset_name]
+    path=cosma_dataset_path, folder_names=[dataset_name]
 )
 
 # This loads the imaging dataset, as per usual.

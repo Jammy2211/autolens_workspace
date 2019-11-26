@@ -1,20 +1,20 @@
-Most likely model, Likelihood = -304840.67706698
+Most likely model, Likelihood = -304776.74694542
 
 galaxies
     lens
         bulge
-            axis_ratio                                                                    0.993
-            phi                                                                           0.629
-            intensity                                                                     0.985
-            effective_radius                                                              0.999
-            sersic_index                                                                  0.802
+            axis_ratio                                                                    0.992
+            phi                                                                           0.449
+            intensity                                                                     0.966
+            effective_radius                                                              1.000
+            sersic_index                                                                  0.804
         disk
             centre
-                centre_0                                                                  0.803
-                centre_1                                                                  0.960
-            axis_ratio                                                                    0.993
-            phi                                                                           0.777
-            intensity                                                                     0.326
+                centre_0                                                                  0.791
+                centre_1                                                                  0.967
+            axis_ratio                                                                    0.999
+            phi                                                                           0.408
+            intensity                                                                     0.338
             effective_radius                                                              0.999
 
 
@@ -23,38 +23,38 @@ Most probable model (3.0 sigma limits)
 galaxies
     lens
         bulge
-            axis_ratio                                                                    0.995 (0.990, 1.000)
-            phi                                                                           0.674 (0.398, 0.941)
-            intensity                                                                     0.983 (0.975, 0.987)
-            effective_radius                                                              0.999 (0.999, 1.000)
-            sersic_index                                                                  0.802 (0.799, 0.808)
+            axis_ratio                                                                    0.992 (0.991, 0.993)
+            phi                                                                           0.409 (-0.102, 0.936)
+            intensity                                                                     0.967 (0.965, 0.969)
+            effective_radius                                                              1.000 (0.999, 1.000)
+            sersic_index                                                                  0.803 (0.800, 0.806)
         disk
             centre
-                centre_0                                                                  0.803 (0.958, 0.966)
-                centre_1                                                                  0.961 (0.958, 0.966)
-            axis_ratio                                                                    0.981 (0.746, 0.899)
-            phi                                                                           0.788 (0.746, 0.899)
-            intensity                                                                     0.326 (0.317, 0.337)
-            effective_radius                                                              0.999 (0.998, 1.000)
+                centre_0                                                                  0.793 (0.954, 0.969)
+                centre_1                                                                  0.962 (0.954, 0.969)
+            axis_ratio                                                                    0.994 (0.045, 0.515)
+            phi                                                                           0.264 (0.045, 0.515)
+            intensity                                                                     0.338 (0.335, 0.341)
+            effective_radius                                                              0.999 (0.999, 1.000)
 
 Most probable model (1.0 sigma limits)
 
 galaxies
     lens
         bulge
-            axis_ratio                                                                    0.995 (0.993, 0.998)
-            phi                                                                           0.674 (0.600, 0.710)
-            intensity                                                                     0.983 (0.982, 0.985)
-            effective_radius                                                              0.999 (0.999, 1.000)
-            sersic_index                                                                  0.802 (0.801, 0.803)
+            axis_ratio                                                                    0.992 (0.992, 0.993)
+            phi                                                                           0.409 (0.225, 0.598)
+            intensity                                                                     0.967 (0.966, 0.968)
+            effective_radius                                                              1.000 (0.999, 1.000)
+            sersic_index                                                                  0.803 (0.801, 0.804)
         disk
             centre
-                centre_0                                                                  0.803 (0.959, 0.962)
-                centre_1                                                                  0.961 (0.959, 0.962)
-            axis_ratio                                                                    0.981 (0.759, 0.809)
-            phi                                                                           0.788 (0.759, 0.809)
-            intensity                                                                     0.326 (0.324, 0.327)
-            effective_radius                                                              0.999 (0.998, 0.999)
+                centre_0                                                                  0.793 (0.959, 0.965)
+                centre_1                                                                  0.962 (0.959, 0.965)
+            axis_ratio                                                                    0.994 (0.169, 0.339)
+            phi                                                                           0.264 (0.169, 0.339)
+            intensity                                                                     0.338 (0.337, 0.339)
+            effective_radius                                                              0.999 (0.999, 0.999)
 
 instances
 

@@ -64,10 +64,7 @@ imaging = al.imaging.from_fits(
 
 # We need to define and pass our mask to the hyper_galaxies pipeline from the beginning.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d,
-    pixel_scales=imaging.pixel_scales,
-    radius=3.0,
-    sub_size=1,
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0, sub_size=1
 )
 
 # Plot Imaging before running.

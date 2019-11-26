@@ -38,10 +38,7 @@ print(imaging.psf)
 # For the image we simulated, a 3" circular mask will do the job.
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d,
-    pixel_scales=imaging.pixel_scales,
-    sub_size=2,
-    radius=3.0,
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
 )
 
 print(mask)  # 1 = True, which means the pixel is masked. Edge pixels are indeed masked.

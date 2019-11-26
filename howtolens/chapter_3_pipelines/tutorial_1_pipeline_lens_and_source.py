@@ -147,9 +147,7 @@ def make_pipeline(phase_folders=None):
     # phases 1 and 2 meaning we can use it to initialize phase 3's priors!
 
     lens = al.GalaxyModel(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic,
-        mass=al.mp.EllipticalIsothermal,
+        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
     )
     source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 
@@ -162,33 +160,21 @@ def make_pipeline(phase_folders=None):
 
     # We can simply link every source galaxy parameter to its phase 2 inferred value, as follows
 
-    source.light.centre_0 = (
-        phase2.result.model.galaxies.source.light.centre_0
-    )
+    source.light.centre_0 = phase2.result.model.galaxies.source.light.centre_0
 
-    source.light.centre_1 = (
-        phase2.result.model.galaxies.source.light.centre_1
-    )
+    source.light.centre_1 = phase2.result.model.galaxies.source.light.centre_1
 
-    source.light.axis_ratio = (
-        phase2.result.model.galaxies.source.light.axis_ratio
-    )
+    source.light.axis_ratio = phase2.result.model.galaxies.source.light.axis_ratio
 
-    source.light.phi = (
-        phase2.result.model.galaxies.source.light.phi
-    )
+    source.light.phi = phase2.result.model.galaxies.source.light.phi
 
-    source.light.intensity = (
-        phase2.result.model.galaxies.source.light.intensity
-    )
+    source.light.intensity = phase2.result.model.galaxies.source.light.intensity
 
     source.light.effective_radius = (
         phase2.result.model.galaxies.source.light.effective_radius
     )
 
-    source.light.sersic_index = (
-        phase2.result.model.galaxies.source.light.sersic_index
-    )
+    source.light.sersic_index = phase2.result.model.galaxies.source.light.sersic_index
 
     # However, listing every parameter like this is ugly and becomes cumbersome if we have a lot of parameters.
 
@@ -210,9 +196,7 @@ def make_pipeline(phase_folders=None):
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=lens, source=source,
-        ),
+        galaxies=dict(lens=lens, source=source),
         optimizer_class=af.MultiNest,
     )
 

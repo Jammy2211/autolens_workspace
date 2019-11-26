@@ -2,32 +2,32 @@ galaxies
     lens
         light
             centre
-                centre_0                                                                  GaussianPrior, mean = 0.07100131384707159, sigma = 0.05
-                centre_1                                                                  GaussianPrior, mean = 0.060006167519682116, sigma = 0.05
-            axis_ratio                                                                    GaussianPrior, mean = 0.8941137300978773, sigma = 0.2
-            phi                                                                           GaussianPrior, mean = 0.668950502599605, sigma = 20.0
-            intensity                                                                     GaussianPrior, mean = 0.9966543357841936, sigma = 0.4983271678920968
-            effective_radius                                                              GaussianPrior, mean = 0.9961068564214673, sigma = 2.0
-            sersic_index                                                                  GaussianPrior, mean = 0.9790639074565188, sigma = 1.5
+                centre_0                                                                  GaussianPrior, mean = 0.24317891258955354, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.11572493655130436, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.6611544457848372, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 0.25887148548416106, sigma = 20.0
+            intensity                                                                     GaussianPrior, mean = 0.9537685221700233, sigma = 0.47688426108501164
+            effective_radius                                                              GaussianPrior, mean = 0.986475963712327, sigma = 2.0
+            sersic_index                                                                  GaussianPrior, mean = 0.9297570832440207, sigma = 1.5
         mass
-            axis_ratio                                                                    GaussianPrior, mean = 0.9697643554577932, sigma = 0.2
-            phi                                                                           GaussianPrior, mean = 0.8878626607620059, sigma = 20.0
-            einstein_radius                                                               GaussianPrior, mean = 0.9999877923902765, sigma = 0.04999938961951383
+            axis_ratio                                                                    GaussianPrior, mean = 0.7759234889698696, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 0.00681106342859823, sigma = 20.0
+            einstein_radius                                                               GaussianPrior, mean = 0.9999921184479031, sigma = 0.04999960592239516
             centre
-                centre_0                                                                  GaussianPrior, mean = 5.54357484484065e-05, sigma = 0.05
-                centre_1                                                                  GaussianPrior, mean = 4.4726210872163405e-05, sigma = 0.05
+                centre_0                                                                  GaussianPrior, mean = 0.8765270580612069, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.4748639860469687, sigma = 0.05
         shear
-            magnitude                                                                     GaussianPrior, mean = 3.8760323317783274e-05, sigma = 0.05
-            phi                                                                           GaussianPrior, mean = 0.4973871518603518, sigma = 20.0
+            magnitude                                                                     GaussianPrior, mean = 9.793330165147783e-06, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 0.5208409964035293, sigma = 20.0
         redshift                                                                          0.5
     source
         light
             centre
-                centre_0                                                                  GaussianPrior, mean = 0.5427677402519133, sigma = 0.05
-                centre_1                                                                  GaussianPrior, mean = 0.25116225433307365, sigma = 0.05
-            axis_ratio                                                                    GaussianPrior, mean = 0.9998937017445851, sigma = 0.2
-            phi                                                                           GaussianPrior, mean = 0.48901918718564, sigma = 20.0
-            intensity                                                                     GaussianPrior, mean = 0.6877802070916299, sigma = 0.34389010354581495
-            effective_radius                                                              GaussianPrior, mean = 0.9999708893701628, sigma = 2.0
-            sersic_index                                                                  GaussianPrior, mean = 0.8005093210812292, sigma = 1.5
+                centre_0                                                                  GaussianPrior, mean = 0.006466393741877061, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.06737595341780413, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.9999357696992683, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 0.5119228489741678, sigma = 20.0
+            intensity                                                                     GaussianPrior, mean = 0.8904462438705497, sigma = 0.44522312193527486
+            effective_radius                                                              GaussianPrior, mean = 0.9999856795214511, sigma = 2.0
+            sersic_index                                                                  GaussianPrior, mean = 0.8000183795629174, sigma = 1.5
         redshift                                                                          1.0

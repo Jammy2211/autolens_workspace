@@ -123,13 +123,13 @@ def make_pipeline(
     #    of this pipeline.
     # 2) Use a circular mask including both the lens and source galaxy light.
 
-    lens =al.GalaxyModel(
-            redshift=redshift_lens,
-            bulge=af.last.model.galaxies.lens.bulge,
-            disk=af.last.model.galaxies.lens.disk,
-            mass=af.last.model.galaxies.lens.mass,
-            shear=af.last.model.galaxies.lens.shear,
-        )
+    lens = al.GalaxyModel(
+        redshift=redshift_lens,
+        bulge=af.last.model.galaxies.lens.bulge,
+        disk=af.last.model.galaxies.lens.disk,
+        mass=af.last.model.galaxies.lens.mass,
+        shear=af.last.model.galaxies.lens.shear,
+    )
 
     # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
 

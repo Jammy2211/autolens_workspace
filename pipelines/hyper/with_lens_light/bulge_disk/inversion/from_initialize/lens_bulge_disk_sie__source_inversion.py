@@ -158,13 +158,13 @@ def make_pipeline(
     # 2) Use a circular mask including both the lens and source galaxy light.
 
     lens = al.GalaxyModel(
-            redshift=redshift_lens,
-            bulge=af.last.model.galaxies.lens.bulge,
-            disk=af.last.model.galaxies.lens.disk,
-            mass=af.last.model.galaxies.lens.mass,
-            shear=af.last.model.galaxies.lens.shear,
-            hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
-        )
+        redshift=redshift_lens,
+        bulge=af.last.model.galaxies.lens.bulge,
+        disk=af.last.model.galaxies.lens.disk,
+        mass=af.last.model.galaxies.lens.mass,
+        shear=af.last.model.galaxies.lens.shear,
+        hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
+    )
 
     # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
 
@@ -269,13 +269,13 @@ def make_pipeline(
     # 2) Use a circular mask including both the lens and source galaxy light.
 
     lens = al.GalaxyModel(
-            redshift=redshift_lens,
-            bulge=phase2.result.model.galaxies.lens.bulge,
-            disk=phase2.result.model.galaxies.lens.disk,
-            mass=phase2.result.model.galaxies.lens.mass,
-            shear=phase2.result.variale.galaxies.lens.shear,
-            hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
-        )
+        redshift=redshift_lens,
+        bulge=phase2.result.model.galaxies.lens.bulge,
+        disk=phase2.result.model.galaxies.lens.disk,
+        mass=phase2.result.model.galaxies.lens.mass,
+        shear=phase2.result.model.galaxies.lens.shear,
+        hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
+    )
 
     # If the lens light is fixed, over-write the pass prior above to fix the lens light model.
 

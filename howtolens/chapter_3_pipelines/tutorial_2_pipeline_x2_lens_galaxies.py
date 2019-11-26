@@ -51,13 +51,9 @@ def make_pipeline(phase_folders=None):
 
     left_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
 
-    left_lens.light.centre_0 = af.GaussianPrior(
-        mean=0.0, sigma=0.05
-    )
+    left_lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.05)
 
-    left_lens.light.centre_1 = af.GaussianPrior(
-        mean=-1.0, sigma=0.05
-    )
+    left_lens.light.centre_1 = af.GaussianPrior(mean=-1.0, sigma=0.05)
 
     # Given we are only fitting the very central region of the lens galaxy, we don't want to let a parameter
     # like the Sersic index vary. Lets fix it to 4.0.
@@ -93,22 +89,16 @@ def make_pipeline(phase_folders=None):
 
     right_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
 
-    right_lens.light.centre_0 = af.GaussianPrior(
-        mean=0.0, sigma=0.05
-    )
+    right_lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.05)
 
-    right_lens.light.centre_1 = af.GaussianPrior(
-        mean=1.0, sigma=0.05
-    )
+    right_lens.light.centre_1 = af.GaussianPrior(mean=1.0, sigma=0.05)
 
     right_lens.light.sersic_index = 4.0
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__right_lens_light",
         phase_folders=phase_folders,
-        galaxies=dict(
-            right_lens=right_lens,
-        ),
+        galaxies=dict(right_lens=right_lens),
         mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
@@ -138,24 +128,16 @@ def make_pipeline(phase_folders=None):
     # mass-profiles in this phase. Because the centres of the mass profiles were fixed in phases 1 and 2,
     # linking them using the 'variable' attribute means that they stay constant (which for now, is what we want).
 
-    left_lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-    right_lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
+    left_lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
+    right_lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 
-    left_lens.mass.centre_0 = (
-        phase1.result.model.galaxies.left_lens.light.centre_0
-    )
+    left_lens.mass.centre_0 = phase1.result.model.galaxies.left_lens.light.centre_0
 
-    left_lens.mass.centre_1 = (
-        phase1.result.model.galaxies.left_lens.light.centre_1
-    )
+    left_lens.mass.centre_1 = phase1.result.model.galaxies.left_lens.light.centre_1
 
-    right_lens.mass.centre_0 = (
-        phase2.result.model.galaxies.right_lens.light.centre_0
-    )
+    right_lens.mass.centre_0 = phase2.result.model.galaxies.right_lens.light.centre_0
 
-    right_lens.mass.centre_1 = (
-        phase2.result.model.galaxies.right_lens.light.centre_1
-    )
+    right_lens.mass.centre_1 = phase2.result.model.galaxies.right_lens.light.centre_1
 
     phase3 = LensSubtractedPhase(
         phase_name="phase_3__lens_x2_sie__source_exp",
@@ -179,61 +161,39 @@ def make_pipeline(phase_folders=None):
     # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
     left_lens = al.GalaxyModel(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic,
-        mass=al.mp.EllipticalIsothermal,
+        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
     )
 
-    left_lens.light = (
-        phase1.result.model.galaxies.left_lens.light
-    )
+    left_lens.light = phase1.result.model.galaxies.left_lens.light
 
     left_lens.mass = phase3.result.model.galaxies.left_lens.mass
 
     right_lens = al.GalaxyModel(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic,
-        mass=al.mp.EllipticalIsothermal,
+        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
     )
 
-    right_lens.light = (
-        phase2.result.model.galaxies.right_lens.light
-    )
+    right_lens.light = phase2.result.model.galaxies.right_lens.light
 
-    right_lens.mass = (
-        phase3.result.model.galaxies.right_lens.mass
-    )
+    right_lens.mass = phase3.result.model.galaxies.right_lens.mass
 
     # When we pass a a 'model' galaxy from a previous phase, parameters fixed to constants remain constant.
     # Because centre_0 and centre_1 of the mass profile were fixed to constants in phase 3, they're still
     # constants after the line after. We need to therefore manually over-ride their priors.
 
-    left_lens.mass.centre_0 = (
-        phase3.result.model.galaxies.left_lens.mass.centre_0
-    )
+    left_lens.mass.centre_0 = phase3.result.model.galaxies.left_lens.mass.centre_0
 
-    left_lens.mass.centre_1 = (
-        phase3.result.model.galaxies.left_lens.mass.centre_1
-    )
+    left_lens.mass.centre_1 = phase3.result.model.galaxies.left_lens.mass.centre_1
 
-    right_lens.mass.centre_0 = (
-        phase3.result.model.galaxies.right_lens.mass.centre_0
-    )
+    right_lens.mass.centre_0 = phase3.result.model.galaxies.right_lens.mass.centre_0
 
-    right_lens.mass.centre_1 = (
-        phase3.result.model.galaxies.right_lens.mass.centre_1
-    )
+    right_lens.mass.centre_1 = phase3.result.model.galaxies.right_lens.mass.centre_1
 
     # We also want the Sersic index's to be free parameters now, so lets change it from a constant to a
     # variable.
 
-    left_lens.light.sersic_index = af.GaussianPrior(
-        mean=4.0, sigma=2.0
-    )
+    left_lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
 
-    right_lens.light.sersic_index = af.GaussianPrior(
-        mean=4.0, sigma=2.0
-    )
+    right_lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
 
     # Things are much simpler for the source galaxies - just link them together!
 
@@ -241,7 +201,8 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_4__lens_x2_sersic_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(
-            left_lens=left_lens, right_lens=right_lens,
+            left_lens=left_lens,
+            right_lens=right_lens,
             source=phase3.result.model.galaxies.source,
         ),
         optimizer_class=af.MultiNest,

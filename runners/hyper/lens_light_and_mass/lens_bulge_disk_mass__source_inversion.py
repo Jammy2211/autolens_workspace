@@ -64,10 +64,7 @@ imaging = al.imaging.from_fits(
 
 # We need to define and pass our mask to the hyper_galaxies pipeline from the beginning.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d,
-    pixel_scales=imaging.pixel_scales,
-    radius=3.0,
-    sub_size=1,
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0, sub_size=1
 )
 
 # Plot Imaging before running.
@@ -129,7 +126,7 @@ al.plot.imaging.subplot(imaging=imaging, mask=mask)
 # - The Regularization scheme used by the inversion phases of this pipeline. (Default Constant)
 
 pipeline_settings = al.PipelineSettingsHyper(
-    hyper_galaxies=True,
+    hyper_galaxies=False,
     hyper_image_sky=False,
     hyper_background_noise=True,
     include_shear=True,

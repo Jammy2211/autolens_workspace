@@ -58,9 +58,7 @@ def simulate():
 # Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
-mask = al.mask.circular(
-    shape_2d=(150, 150), pixel_scales=0.05, sub_size=1, radius=3.0
-)
+mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, sub_size=1, radius=3.0)
 
 # To perform brightness adaption, we need create our masked imaging dataset.
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)

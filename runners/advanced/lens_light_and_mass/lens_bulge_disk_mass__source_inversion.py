@@ -129,7 +129,7 @@ pipeline_settings = al.PipelineSettings(
     align_bulge_disk_centre=False,
     align_bulge_disk_phi=False,
     align_bulge_disk_axis_ratio=False,
-    disk_as_sersic=False,
+    disk_as_sersic=True,
     pixelization=al.pix.VoronoiMagnification,
     regularization=al.reg.Constant,
 )

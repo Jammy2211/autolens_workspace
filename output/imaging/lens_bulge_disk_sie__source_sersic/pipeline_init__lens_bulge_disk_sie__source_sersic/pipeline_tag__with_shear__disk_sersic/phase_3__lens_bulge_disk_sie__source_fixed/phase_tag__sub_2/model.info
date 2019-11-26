@@ -1,0 +1,39 @@
+galaxies
+    lens
+        bulge
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+            effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.8, upper_limit = 8.0
+        disk
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+            effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.8, upper_limit = 8.0
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.9125232965264497
+            phi                                                                           0.8223583319906361
+            einstein_radius                                                               0.9991656216910267
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            axis_ratio                                                                    1.0
+            phi                                                                           0.009832040734646788
+            magnitude                                                                     0.007299945791987219
+    source
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.9960714776123237
+            phi                                                                           0.3884221075147424
+            intensity                                                                     0.8157367731049366
+            effective_radius                                                              0.9893428238826985
+            sersic_index                                                                  0.8172967164096018

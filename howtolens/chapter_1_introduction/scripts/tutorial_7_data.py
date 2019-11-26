@@ -54,7 +54,6 @@ print(padded_image.shape)
 # 3) Poisson noise: Due to the background sky, lens galaxy and source galaxy Poisson photon counts.
 
 simulator = al.simulator.imaging(
-    tracer=tracer,
     shape_2d=grid.shape_2d,
     pixel_scales=0.1,
     sub_size=grid.sub_size,

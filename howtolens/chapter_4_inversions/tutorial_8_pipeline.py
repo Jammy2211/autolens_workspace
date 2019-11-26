@@ -54,13 +54,9 @@ def make_pipeline(phase_folders=None):
 
     # We can customize the inversion's priors like we do our light and mass profiles.
 
-    source.pixelization.shape_0 = af.UniformPrior(
-        lower_limit=20.0, upper_limit=40.0
-    )
+    source.pixelization.shape_0 = af.UniformPrior(lower_limit=20.0, upper_limit=40.0)
 
-    source.pixelization.shape_1 = af.UniformPrior(
-        lower_limit=20.0, upper_limit=40.0
-    )
+    source.pixelization.shape_1 = af.UniformPrior(lower_limit=20.0, upper_limit=40.0)
 
     # The expected value of the regularization coefficient depends on the details of the dataset reduction and
     # source galaxy. A broad log-uniform prior is thus an appropriate way to sample the large range of

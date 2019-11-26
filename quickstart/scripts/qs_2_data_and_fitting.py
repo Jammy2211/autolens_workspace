@@ -32,10 +32,7 @@ al.plot.imaging.subplot(imaging=imaging)
 # interest.
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d,
-    pixel_scales=imaging.pixel_scales,
-    sub_size=2,
-    radius=3.0,
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
 )
 
 al.plot.imaging.subplot(imaging=imaging, mask=mask)

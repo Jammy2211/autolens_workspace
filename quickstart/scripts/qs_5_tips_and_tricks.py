@@ -18,7 +18,7 @@
 # 1) Use a large circular mask by adding the line
 #
 #     mask = al.mask.circular(
-#          shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius_arcsec=3.0)
+#          shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0)
 
 # 2) Creating your own custom mask, using the script 'autolens_workspace/tools/imaging/mask_maker.py'
 

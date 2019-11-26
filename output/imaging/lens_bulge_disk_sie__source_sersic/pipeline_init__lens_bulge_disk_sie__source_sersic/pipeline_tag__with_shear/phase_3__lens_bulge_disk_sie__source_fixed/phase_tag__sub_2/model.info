@@ -8,7 +8,7 @@ galaxies
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
             intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
             effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
-            sersic_index                                                                  UniformPrior, lower_limit = 0.8, upper_limit = 8.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.5, upper_limit = 8.0
         disk
             centre
                 centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
@@ -19,22 +19,20 @@ galaxies
             effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
         redshift                                                                          0.5
         mass
-            axis_ratio                                                                    0.889390815396415
-            phi                                                                           0.1575690572206961
-            einstein_radius                                                               0.990362758291184
+            axis_ratio                                                                    0.8932411122312989
+            phi                                                                           0.6571592843673172
+            einstein_radius                                                               0.9850026301061227
             slope                                                                         2.0
             core_radius                                                                   0.0
         shear
-            axis_ratio                                                                    0.889390815396415
-            phi                                                                           0.1575690572206961
-            einstein_radius                                                               0.990362758291184
-            slope                                                                         2.0
-            core_radius                                                                   0.0
+            axis_ratio                                                                    1.0
+            phi                                                                           0.04036558285231423
+            magnitude                                                                     0.012843545669774362
     source
         redshift                                                                          1.0
         light
-            axis_ratio                                                                    0.9803276543519439
-            phi                                                                           0.7071135727874909
-            intensity                                                                     0.7825275302782188
-            effective_radius                                                              0.989782550351249
-            sersic_index                                                                  0.8359416136722235
+            axis_ratio                                                                    0.9938892636780802
+            phi                                                                           0.6616896162408458
+            intensity                                                                     0.8016202367000524
+            effective_radius                                                              0.9029968838693805
+            sersic_index                                                                  0.8232144619600276

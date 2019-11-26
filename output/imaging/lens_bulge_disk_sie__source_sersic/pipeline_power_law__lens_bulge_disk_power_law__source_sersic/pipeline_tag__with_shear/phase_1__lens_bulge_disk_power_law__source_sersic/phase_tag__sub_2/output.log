@@ -1,5 +1,11 @@
-phase_1__lens_bulge_disk took 0:07:42.790570 to run
-phase_2__lens_sie__source_sersic took 0:30:21.123965 to run
-phase_1__lens_bulge_disk took 13:01:18.319843 to run
-phase_2__lens_sie__source_sersic took 12:54:48.016722 to run
-phase_3__lens_bulge_disk_sie__source_fixed took 12:58:54.342359 to run
+phase_1__lens_bulge_disk took 18:28:13.200828 to run
+phase_2__lens_sie__source_sersic took 18:21:52.627160 to run
+phase_3__lens_bulge_disk_sie__source_fixed took 17:50:44.375160 to run
+phase_1__lens_bulge_disk took 18:55:16.321317 to run
+phase_2__lens_sie__source_sersic took 18:48:31.018440 to run
+phase_3__lens_bulge_disk_sie__source_fixed took 18:17:13.951182 to run
+phase_1__lens_bulge_disk took 19:04:57.156235 to run
+phase_1__lens_bulge_disk took 19:08:12.656716 to run
+phase_2__lens_sie__source_sersic took 19:01:29.176566 to run
+phase_3__lens_bulge_disk_sie__source_fixed took 18:30:09.595600 to run
+phase_4__lens_bulge_disk_sie__source_sersic took 0:59:57.984888 to run

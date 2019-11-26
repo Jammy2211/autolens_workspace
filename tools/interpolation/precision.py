@@ -23,12 +23,12 @@ dataset_name = (
 pixel_scales = 0.1
 
 sub_size = 2
-inner_radius_arcsec = 0.0
-outer_radius_arcsec = 3.0
+inner_radius = 0.0
+outer_radius = 3.0
 
 print("sub grid size = " + str(sub_size))
-print("annular inner mask radius = " + str(inner_radius_arcsec) + "\n")
-print("annular outer mask radius = " + str(outer_radius_arcsec) + "\n")
+print("annular inner mask radius = " + str(inner_radius) + "\n")
+print("annular outer mask radius = " + str(outer_radius) + "\n")
 
 print()
 
@@ -48,8 +48,8 @@ imaging = al.imaging.from_fits(
 mask = al.mask.circular_annular(
     shape_2d=imaging.shape_2d,
     pixel_scales=imaging.pixel_scales,
-    inner_radius=inner_radius_arcsec,
-    outer_radius=outer_radius_arcsec,
+    inner_radius=inner_radius,
+    outer_radius=outer_radius,
 )
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask, sub_size=sub_size)

@@ -56,7 +56,10 @@ al.plot.array(array=image, title="SLACS1430+4105 Image", cmap="spring")
 # We can change the x / y axis unit_label from arc-seconds to kiloparsec, by inputting a kiloparsec to arcsecond conversion
 # factor (for SLACS1430+4105, the lens galaxy is at redshift 0.285, corresponding to the conversion factor below).
 al.plot.array(
-    array=image, title="SLACS1430+4105 Image", units_label="kpc", unit_conversion_factor=4.335
+    array=image,
+    title="SLACS1430+4105 Image",
+    units_label="kpc",
+    unit_conversion_factor=4.335,
 )
 
 # The matplotlib figure can be output to the hard-disk as a png, as follows.

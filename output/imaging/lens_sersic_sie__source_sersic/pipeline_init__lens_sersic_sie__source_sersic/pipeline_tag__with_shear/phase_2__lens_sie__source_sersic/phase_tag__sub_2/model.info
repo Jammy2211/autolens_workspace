@@ -5,18 +5,18 @@ galaxies
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
             einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
             centre
-                centre_0                                                                  GaussianPrior, mean = 0.07100131384707159, sigma = 0.05
-                centre_1                                                                  GaussianPrior, mean = 0.060006167519682116, sigma = 0.05
+                centre_0                                                                  GaussianPrior, mean = 0.24317891258955354, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.11572493655130436, sigma = 0.05
         shear
             magnitude                                                                     UniformPrior, lower_limit = 0.0, upper_limit = 0.25
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
         redshift                                                                          0.5
         light
-            axis_ratio                                                                    0.8998278427903152
-            phi                                                                           0.19556937909892316
-            intensity                                                                     0.9966645370844932
-            effective_radius                                                              0.9955164399157902
-            sersic_index                                                                  0.9814643608765758
+            axis_ratio                                                                    0.662649352437352
+            phi                                                                           0.26017800140458913
+            intensity                                                                     0.9545377918696257
+            effective_radius                                                              0.9862739667069769
+            sersic_index                                                                  0.9289536903627276
     source
         light
             centre

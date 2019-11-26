@@ -5,23 +5,23 @@ galaxies
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
             einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
             centre
-                centre_0                                                                  GaussianPrior, mean = 0.802631932068259, sigma = 0.16288567139342724
-                centre_1                                                                  GaussianPrior, mean = 0.9606445777525309, sigma = 0.05
+                centre_0                                                                  GaussianPrior, mean = 0.7930822208844956, sigma = 0.1757879633859737
+                centre_1                                                                  GaussianPrior, mean = 0.9616901754737208, sigma = 0.05
         shear
             magnitude                                                                     UniformPrior, lower_limit = 0.0, upper_limit = 0.25
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
         redshift                                                                          0.5
         bulge
-            axis_ratio                                                                    0.9926132376452391
-            phi                                                                           0.6293152857815764
-            intensity                                                                     0.9850716874219964
-            effective_radius                                                              0.9991078717530026
-            sersic_index                                                                  0.8022024847534339
+            axis_ratio                                                                    0.9924919377400148
+            phi                                                                           0.4493428197013406
+            intensity                                                                     0.965860384825114
+            effective_radius                                                              0.999526191294792
+            sersic_index                                                                  0.8042395560589928
         disk
-            axis_ratio                                                                    0.9934301644482049
-            phi                                                                           0.7765707871395694
-            intensity                                                                     0.32599568981018673
-            effective_radius                                                              0.9988866186565492
+            axis_ratio                                                                    0.9991511794884896
+            phi                                                                           0.4078639988361884
+            intensity                                                                     0.3384438985169792
+            effective_radius                                                              0.9993195169341244
             sersic_index                                                                  1.0
     source
         light
@@ -32,5 +32,5 @@ galaxies
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
             intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
             effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
-            sersic_index                                                                  UniformPrior, lower_limit = 0.8, upper_limit = 8.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.5, upper_limit = 8.0
         redshift                                                                          1.0
