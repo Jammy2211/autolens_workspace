@@ -5,7 +5,7 @@ import autolens as al
 
 # 1) Galaxies can be made from multiple light-profiles and mass-profiles.
 # 2) By taking multiple components, the summed image / deflection angle's of the profiles are computed.
-# 3) Galaxies have redshifts, defining where they are relative to one another in lensing calculations.
+# 3) Galaxies have redshifts, defining where they are relative to one another in lens calculations.
 
 # Lets use an identical grid to the previous example.
 grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=2)
@@ -155,5 +155,5 @@ al.plot.galaxy.deflections_x(galaxy=galaxy_with_many_profiles, grid=grid)
 
 # 1) We've learnt we can group profiles into galaxies, to essentially sum the contribution of each light profile to the
 #    galaxy image's intensity, or sum the contribution of each mass profile to the convergence, potential and
-#    deflection angles. In strong lensing, there are often multiple galaxies next to one another responsible for the
-#    lensing - how might we account for this?
+#    deflection angles. In strong lens, there are often multiple galaxies next to one another responsible for the
+#    lens - how might we account for this?

@@ -95,7 +95,7 @@ source_galaxy_1 = al.Galaxy(
 print(source_galaxy_0)
 print(source_galaxy_1)
 
-# Lets look at our source galaxies (before lensing)
+# Lets look at our source galaxies (before lens)
 al.plot.galaxy.profile_image(galaxy=source_galaxy_0, grid=grid, title="Source Galaxy 0")
 
 al.plot.galaxy.profile_image(galaxy=source_galaxy_1, grid=grid, title="Source Galaxy 1")
@@ -135,7 +135,7 @@ al.plot.plane.plane_grid(
     title="Source-plane Grid",
 )
 
-# Lets plot the lensing quantities again. Note that, because we supplied our galaxies with redshifts and
+# Lets plot the lens quantities again. Note that, because we supplied our galaxies with redshifts and
 # our tracer with a cosmology, our unit_label have been converted to kiloparsecs!
 # (This line can take a bit of time to run)
 al.plot.tracer.subplot(tracer=tracer, grid=grid)

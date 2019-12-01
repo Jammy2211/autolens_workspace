@@ -4,7 +4,7 @@ import autolens as al
 # an observed simulator-set (e.g. imaging).
 
 # In PyAutoLens, a grid is a set of two-dimensional (y,x) coordinates (in arc-seconds) that are deflected
-# and traced by a strong lensing system.
+# and traced by a strong lens system.
 
 # This coordinate grid is aligned with the image we analyze, such that each coordinate on a grid maps to the
 # centre of each image-pixel. Lets make a grid using 100 x 100 pixels, with a pixel scale (arcsecond-to-pixel

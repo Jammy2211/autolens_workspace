@@ -1,0 +1,63 @@
+Most likely model, Likelihood = 3576.97936682
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.751
+                shape_1                                                                   22.497
+        regularization
+            coefficient                                                                   1.077
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.484 (29.740, 31.278)
+                shape_1                                                                   22.615 (21.943, 23.335)
+        regularization
+            coefficient                                                                   1.075 (0.945, 1.204)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.484 (30.162, 30.775)
+                shape_1                                                                   22.615 (22.387, 22.865)
+        regularization
+            coefficient                                                                   1.075 (1.031, 1.120)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0
+        mass
+            axis_ratio                                                                    0.6854935781549772
+            phi                                                                           44.833452794073
+            einstein_radius                                                               1.6045017935189865
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            magnitude                                                                     0.05025946023429287
+            phi                                                                           88.07366463844957
+            axis_ratio                                                                    1.0
+    source
+        redshift                                                                          1.0
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0

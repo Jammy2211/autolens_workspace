@@ -297,7 +297,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-# Then, like before, we call on the fitting module to perform the fit to the lensing image. Indeed, we see
+# Then, like before, we call on the fitting module to perform the fit to the lens image. Indeed, we see
 # some pretty good looking residuals - we're certainly fitting the lensed source accurately!
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 

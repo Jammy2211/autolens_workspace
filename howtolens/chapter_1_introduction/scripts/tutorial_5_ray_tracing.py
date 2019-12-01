@@ -166,7 +166,7 @@ al.plot.tracer.convergence(tracer=tracer, grid=image_plane_grid)
 #                  'al.plot.plane.convergence(plane=tracer.image_plane). However, code appears neater if you can
 #                  just write 'tracer.convergence_from_grid' and 'al.plot.tracer.convergence(tracer=tracer).
 
-# 2) Multi-plane lensing - For now, we're focused on the simplest lensing configuration possible, an image-plane + source-plane
+# 2) Multi-plane lens - For now, we're focused on the simplest lens configuration possible, an image-plane + source-plane
 #                          configuration. However, there are strong lens system where there are more than 2 planes! In these
 #                          instances, the convergence, potential and deflections of each plane is different to the overall
 #                          values given by the tracer.

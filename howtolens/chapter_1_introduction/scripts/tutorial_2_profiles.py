@@ -58,7 +58,7 @@ al.plot.profile.image(light_profile=sersic_light_profile, grid=grid)
 # To perform ray-tracing, we need to create a 'mass-profile' from the mass profiles module, which we import as mp for
 # conciseness. A mass-profile is an analytic function that describes the distribution of mass in a galaxy, and therefore
 # can be used to derive its surface-density, gravitational potential and most importantly, its deflection angles. For
-# those unfamiliar with lensing, the deflection angles describe how light is bent by the mass-profile due to the
+# those unfamiliar with lens, the deflection angles describe how light is bent by the mass-profile due to the
 # curvature of space-time.
 
 # Lets create a singular isothermal sphere (SIS) mass-profile using the 'mass-profiles' module.
@@ -71,7 +71,7 @@ print(sis_mass_profile)
 # image above, they are computed on the sub-grid, so that we can bin up their values to compute more accurate deflection
 # angles.
 
-# (If you are new to gravitiational lensing, and are unclear on what a 'deflection-angle' means or what it is
+# (If you are new to gravitiational lens, and are unclear on what a 'deflection-angle' means or what it is
 # used for, then I'll explain all in tutorial 4 of this chapter. For now, just look at the pretty pictures
 # they make, and worry about what they mean in tutorial 4!).
 
@@ -95,10 +95,10 @@ print(mass_profile_deflections.in_2d_binned[50, 50])
 al.plot.profile.deflections_y(mass_profile=sis_mass_profile, grid=grid)
 al.plot.profile.deflections_x(mass_profile=sis_mass_profile, grid=grid)
 
-# Mass profiles have a range of other properties that are used for lensing calculations, a couple of which we've
+# Mass profiles have a range of other properties that are used for lens calculations, a couple of which we've
 # plotted below:
 
-# Convergence - The surface mass density of the mass-profile in dimensionless unit_label which are convenient for lensing calcuations.
+# Convergence - The surface mass density of the mass-profile in dimensionless unit_label which are convenient for lens calcuations.
 # Potential - The gravitational of the mass-profile again in convenient dimensionless unit_label.
 # Magnification - Describes how much brighter each image-pixel appears due to focusing of light rays by the mass-profile.
 

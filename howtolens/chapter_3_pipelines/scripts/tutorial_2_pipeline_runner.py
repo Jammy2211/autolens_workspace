@@ -1,5 +1,5 @@
 # Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can consist
-# of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
+# of multiple galaxies which each contribute to the strong lens. Multi-galaxy systems are challenging to
 # model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the
 # degeneracies between the mass-profiles of the two galaxies can be severe.
 

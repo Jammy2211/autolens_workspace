@@ -204,7 +204,7 @@ al.plot.mapper.image_and_mapper(
 # found that, provided your mask isn't too small, doesn't lead to systematic biases.
 
 # Next, I'm going to quickly highlight how important borders are when modeling multiple lens galaxies. Their complex
-# mass distribution and lensing configuration often produce very nasty edge effects where image pixels not just in the
+# mass distribution and lens configuration often produce very nasty edge effects where image pixels not just in the
 # centre of mask, but anywhere in the mask, trace beyond the source-plane border.
 def simulate_image_x2_lenses():
 

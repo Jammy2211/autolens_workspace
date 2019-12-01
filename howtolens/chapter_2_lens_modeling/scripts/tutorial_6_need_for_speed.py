@@ -67,7 +67,7 @@
 #    light profile, and its mass-profile is only a means to ultimately study the unlensed source. Can you subtract
 #    the lens model_galaxy's light and then discard it in every phase afterwards?
 
-# 2) There are 2 lens galaxies responsible for lensing the background source. That means, there are twice as many
+# 2) There are 2 lens galaxies responsible for lens the background source. That means, there are twice as many
 #    lens model_galaxy parameters. Can you setup phases that fit each model_galaxy individiually, before fitting them jointly?
 
 #  3) The source model_galaxy is really complex. Infact, in your strong lens you count 12 distinct multiple grid,

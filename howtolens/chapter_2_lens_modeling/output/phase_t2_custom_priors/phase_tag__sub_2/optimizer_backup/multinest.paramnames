@@ -1,6 +1,6 @@
 galaxies_source_light_centre_0                                        y_{\mathrm{l22}}
 galaxies_source_light_centre_1                                        x_{\mathrm{l22}}
-galaxies_source_light_intensity_value                                 I_{\mathrm{l22}}
+galaxies_source_light_intensity                                 I_{\mathrm{l22}}
 galaxies_lens_mass_centre_0                                           y_{\mathrm{m22}}
 galaxies_lens_mass_centre_1                                           x_{\mathrm{m22}}
 galaxies_lens_mass_einstein_radius                                    \theta_{\mathrm{m22}}

@@ -1,27 +1,27 @@
-Most likely model, Likelihood = -185500.14399442
+Most likely model, Likelihood = 4453.39498337
 
 galaxies
     lens
         mass
             centre
-                centre_0                                                                  0.000
-                centre_1                                                                  0.716
-            axis_ratio                                                                    0.990
-            phi                                                                           0.340
-            einstein_radius                                                               1.000
+                centre_0                                                                  0.001
+                centre_1                                                                  -0.002
+            axis_ratio                                                                    0.702
+            phi                                                                           44.980
+            einstein_radius                                                               1.599
         shear
-            magnitude                                                                     0.001
-            phi                                                                           0.108
+            magnitude                                                                     0.049
+            phi                                                                           90.726
     source
         light
             centre
-                centre_0                                                                  0.577
-                centre_1                                                                  0.007
-            axis_ratio                                                                    0.999
-            phi                                                                           0.879
-            intensity                                                                     0.651
-            effective_radius                                                              0.999
-            sersic_index                                                                  0.800
+                centre_0                                                                  0.101
+                centre_1                                                                  0.099
+            axis_ratio                                                                    0.799
+            phi                                                                           60.191
+            intensity                                                                     0.317
+            effective_radius                                                              0.964
+            sersic_index                                                                  2.438
 
 
 Most probable model (3.0 sigma limits)
@@ -30,24 +30,24 @@ galaxies
     lens
         mass
             centre
-                centre_0                                                                  0.000 (-0.000, 0.001)
-                centre_1                                                                  0.712 (0.708, 0.717)
-            axis_ratio                                                                    0.989 (0.984, 0.995)
-            phi                                                                           0.427 (0.146, 0.738)
-            einstein_radius                                                               1.000 (1.000, 1.000)
+                centre_0                                                                  0.001 (-0.002, 0.003)
+                centre_1                                                                  -0.002 (-0.005, 0.000)
+            axis_ratio                                                                    0.701 (0.693, 0.710)
+            phi                                                                           44.785 (44.008, 45.538)
+            einstein_radius                                                               1.600 (1.597, 1.603)
         shear
-            magnitude                                                                     0.001 (0.000, 0.002)
-            phi                                                                           0.193 (0.013, 0.394)
+            magnitude                                                                     0.049 (0.046, 0.052)
+            phi                                                                           90.611 (89.050, 92.175)
     source
         light
             centre
-                centre_0                                                                  0.576 (0.571, 0.580)
-                centre_1                                                                  0.006 (0.004, 0.008)
-            axis_ratio                                                                    0.999 (0.999, 1.000)
-            phi                                                                           0.871 (0.643, 1.003)
-            intensity                                                                     0.650 (0.648, 0.653)
-            effective_radius                                                              0.999 (0.999, 1.000)
-            sersic_index                                                                  0.800 (0.800, 0.801)
+                centre_0                                                                  0.101 (0.099, 0.103)
+                centre_1                                                                  0.099 (0.097, 0.101)
+            axis_ratio                                                                    0.798 (0.789, 0.807)
+            phi                                                                           60.271 (58.741, 61.866)
+            intensity                                                                     0.321 (0.306, 0.338)
+            effective_radius                                                              0.956 (0.928, 0.984)
+            sersic_index                                                                  2.424 (2.371, 2.476)
 
 Most probable model (1.0 sigma limits)
 
@@ -55,24 +55,24 @@ galaxies
     lens
         mass
             centre
-                centre_0                                                                  0.000 (0.000, 0.000)
-                centre_1                                                                  0.712 (0.711, 0.713)
-            axis_ratio                                                                    0.989 (0.988, 0.991)
-            phi                                                                           0.427 (0.326, 0.515)
-            einstein_radius                                                               1.000 (1.000, 1.000)
+                centre_0                                                                  0.001 (0.000, 0.002)
+                centre_1                                                                  -0.002 (-0.003, -0.001)
+            axis_ratio                                                                    0.701 (0.699, 0.704)
+            phi                                                                           44.785 (44.545, 45.024)
+            einstein_radius                                                               1.600 (1.599, 1.601)
         shear
-            magnitude                                                                     0.001 (0.001, 0.001)
-            phi                                                                           0.193 (0.122, 0.253)
+            magnitude                                                                     0.049 (0.048, 0.050)
+            phi                                                                           90.611 (90.104, 91.138)
     source
         light
             centre
-                centre_0                                                                  0.576 (0.575, 0.577)
-                centre_1                                                                  0.006 (0.006, 0.007)
-            axis_ratio                                                                    0.999 (0.999, 1.000)
-            phi                                                                           0.871 (0.835, 0.905)
-            intensity                                                                     0.650 (0.649, 0.651)
-            effective_radius                                                              0.999 (0.999, 1.000)
-            sersic_index                                                                  0.800 (0.800, 0.801)
+                centre_0                                                                  0.101 (0.101, 0.102)
+                centre_1                                                                  0.099 (0.099, 0.100)
+            axis_ratio                                                                    0.798 (0.795, 0.801)
+            phi                                                                           60.271 (59.765, 60.767)
+            intensity                                                                     0.321 (0.316, 0.327)
+            effective_radius                                                              0.956 (0.947, 0.966)
+            sersic_index                                                                  2.424 (2.407, 2.442)
 
 instances
 

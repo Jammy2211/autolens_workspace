@@ -1,0 +1,3 @@
+pipeline=pipeline_init__lens_sie__source_sersic + pipeline_inv__lens_sie__source_inversion + pipeline_power_law__lens_power_law__source_inversion
+phase=phase_1__source_inversion_initialization
+simulator=None

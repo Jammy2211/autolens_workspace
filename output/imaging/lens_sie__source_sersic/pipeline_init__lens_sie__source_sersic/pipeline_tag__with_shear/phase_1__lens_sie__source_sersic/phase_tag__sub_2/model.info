@@ -20,5 +20,5 @@ galaxies
             phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
             intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
             effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
-            sersic_index                                                                  UniformPrior, lower_limit = 0.8, upper_limit = 8.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.5, upper_limit = 8.0
         redshift                                                                          1.0

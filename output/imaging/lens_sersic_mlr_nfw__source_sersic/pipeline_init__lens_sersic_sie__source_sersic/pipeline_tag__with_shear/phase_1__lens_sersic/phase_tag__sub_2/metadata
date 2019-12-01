@@ -1,3 +1,0 @@
-pipeline=pipeline_init__lens_sersic_sie__source_sersic + pipeline_ldm__lens_sersic_mlr_nfw__source_sersic
-phase=phase_1__lens_sersic
-simulator=None

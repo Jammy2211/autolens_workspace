@@ -1,11 +1,11 @@
 galaxies_lens_mass_centre_0                                           y_{\mathrm{m49}}
 galaxies_lens_mass_centre_1                                           x_{\mathrm{m49}}
-galaxies_lens_mass_einstein_radius_value                              \theta_{\mathrm{m49}}
+galaxies_lens_mass_einstein_radius                              \theta_{\mathrm{m49}}
 galaxies_source_0_light_centre_0                                      y_{\mathrm{l49}}
 galaxies_source_0_light_centre_1                                      x_{\mathrm{l49}}
-galaxies_source_0_light_intensity_value                               I_{\mathrm{l49}}
+galaxies_source_0_light_intensity                               I_{\mathrm{l49}}
 galaxies_source_0_light_effective_radius_value                        R_{\mathrm{l49}}
 galaxies_source_1_light_centre_0                                      y_{\mathrm{l49}}
 galaxies_source_1_light_centre_1                                      x_{\mathrm{l49}}
-galaxies_source_1_light_intensity_value                               I_{\mathrm{l49}}
+galaxies_source_1_light_intensity                               I_{\mathrm{l49}}
 galaxies_source_1_light_effective_radius_value                        R_{\mathrm{l49}}

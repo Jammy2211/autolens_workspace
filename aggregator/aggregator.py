@@ -52,7 +52,7 @@ optimizers = aggregator.optimizers_with(pipeline=pipeline, phase=phase)
 # of phase 3 of our pipeline for the two images we modeled.
 
 # If we had modeled 100 images, we'd have 100 optimizers. Clearly, with that in mind, for the code below you should
-# be thinking how important the aggregator in manipulating large lensing simulated datasets.
+# be thinking how important the aggregator in manipulating large lens simulated datasets.
 
 print(optimizers)
 
