@@ -1,0 +1,30 @@
+Most likely model, Likelihood = -1601.77987107
+
+hyper_galaxy
+    contribution_factor                                                                   18.659
+    noise_factor                                                                          9.998
+    noise_power                                                                           0.799
+hyper_background_noise
+    noise_scale                                                                           -0.066
+
+
+Most probable model (3.0 sigma limits)
+
+hyper_galaxy
+    contribution_factor                                                                   15.397 (6.531, 23.295)
+    noise_factor                                                                          9.976 (9.576, 10.026)
+    noise_power                                                                           0.802 (0.779, 0.825)
+hyper_background_noise
+    noise_scale                                                                           -0.066 (-0.078, -0.055)
+
+Most probable model (1.0 sigma limits)
+
+hyper_galaxy
+    contribution_factor                                                                   15.397 (12.554, 18.817)
+    noise_factor                                                                          9.976 (9.878, 10.026)
+    noise_power                                                                           0.802 (0.794, 0.809)
+hyper_background_noise
+    noise_scale                                                                           -0.066 (-0.070, -0.062)
+
+instances
+

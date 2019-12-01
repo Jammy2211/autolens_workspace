@@ -1,0 +1,7 @@
+galaxies_source_hyper_galaxy_contribution_factor                      \omega0_{\mathrm{hg53}}
+galaxies_source_hyper_galaxy_noise_factor                             \omega1_{\mathrm{hg53}}
+galaxies_source_hyper_galaxy_noise_power                              \omega2_{\mathrm{hg53}}
+galaxies_source_pixelization_shape_0                                  y_{\mathrm{pix53}}
+galaxies_source_pixelization_shape_1                                  x_{\mathrm{pix53}}
+galaxies_source_regularization_coefficient                            \lambda_{\mathrm{reg53}}
+hyper_background_noise_noise_scale                                    \sigma1_{\mathrm{hnb32999}}

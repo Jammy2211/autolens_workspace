@@ -1,0 +1,50 @@
+Most likely model, Likelihood = 3644.90049108
+
+galaxies
+    lens
+        mass
+            slope                                                                         1.996
+        shear
+            magnitude                                                                     0.050
+            phi                                                                           91.575
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        mass
+            slope                                                                         1.996 (1.981, 2.012)
+        shear
+            magnitude                                                                     0.049 (0.049, 0.050)
+            phi                                                                           91.196 (89.339, 92.178)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        mass
+            slope                                                                         1.996 (1.991, 2.001)
+        shear
+            magnitude                                                                     0.049 (0.049, 0.050)
+            phi                                                                           91.196 (89.636, 91.946)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   0.9584210434644296
+        hyper_galaxy
+            contribution_factor                                                           21.358392422214994
+            noise_factor                                                                  26.330710091035883
+            noise_power                                                                   2.9598558111362516
+hyper_background_noise
+    noise_scale                                                                           0.0013336581936931008

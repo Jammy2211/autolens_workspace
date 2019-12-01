@@ -1,0 +1,93 @@
+Most likely model, Likelihood = 3650.48695497
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           19.122
+            noise_factor                                                                  17.806
+            noise_power                                                                   2.930
+        pixelization
+            shape
+                shape_0                                                                   25.593
+                shape_1                                                                   15.789
+        regularization
+            coefficient                                                                   0.916
+hyper_background_noise
+    noise_scale                                                                           0.002
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           13.006 (-1.161, 28.042)
+            noise_factor                                                                  8.459 (-1.662, 25.529)
+            noise_power                                                                   3.978 (1.627, 8.870)
+        pixelization
+            shape
+                shape_0                                                                   25.464 (16.652, 34.912)
+                shape_1                                                                   15.460 (11.837, 23.553)
+        regularization
+            coefficient                                                                   0.909 (0.815, 1.008)
+hyper_background_noise
+    noise_scale                                                                           0.002 (0.000, 0.003)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           13.006 (7.951, 18.149)
+            noise_factor                                                                  8.459 (3.230, 11.554)
+            noise_power                                                                   3.978 (2.190, 5.396)
+        pixelization
+            shape
+                shape_0                                                                   25.464 (22.489, 28.437)
+                shape_1                                                                   15.460 (12.520, 17.112)
+        regularization
+            coefficient                                                                   0.909 (0.877, 0.938)
+hyper_background_noise
+    noise_scale                                                                           0.002 (0.001, 0.002)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+            slope                                                                         1.9959712997829593
+            core_radius                                                                   0.0
+        shear
+            magnitude                                                                     0.04957300697812124
+            phi                                                                           91.57495251690095
+            axis_ratio                                                                    1.0
+        axis_ratio                                                                        0.7028153974242863
+        phi                                                                               44.88810852274631
+        einstein_radius                                                                   1.599039624657273
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0
+        sub_fraction                                                                      1.0
+        slope                                                                             1.9959712997829593
+        core_radius                                                                       0.0
+        magnitude                                                                         0.04957300697812124
+    source
+        redshift                                                                          1.0
+        coefficient                                                                       0.9584210434644296
+        contribution_factor                                                               21.358392422214994
+        noise_factor                                                                      26.330710091035883
+        noise_power                                                                       2.9598558111362516
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0
+        sub_fraction                                                                      1.0

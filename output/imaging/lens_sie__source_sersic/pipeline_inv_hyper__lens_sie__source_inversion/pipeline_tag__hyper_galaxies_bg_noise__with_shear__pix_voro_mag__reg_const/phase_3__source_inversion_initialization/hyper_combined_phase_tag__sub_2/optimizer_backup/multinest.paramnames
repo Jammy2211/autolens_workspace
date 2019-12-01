@@ -1,0 +1,4 @@
+galaxies_source_hyper_galaxy_contribution_factor                      \omega0_{\mathrm{hg49}}
+galaxies_source_hyper_galaxy_noise_factor                             \omega1_{\mathrm{hg49}}
+galaxies_source_hyper_galaxy_noise_power                              \omega2_{\mathrm{hg49}}
+hyper_background_noise_noise_scale                                    \sigma1_{\mathrm{hnb19539}}

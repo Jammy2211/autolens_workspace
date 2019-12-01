@@ -1,0 +1,30 @@
+galaxies
+    lens
+        mass
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.11447972451136032, sigma = 0.1
+                centre_1                                                                  GaussianPrior, mean = 0.12436171233851571, sigma = 0.1
+        shear
+            magnitude                                                                     UniformPrior, lower_limit = 0.0, upper_limit = 0.25
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+        redshift                                                                          0.5
+        light
+            axis_ratio                                                                    0.8774634336916363
+            phi                                                                           84.78113297621655
+            intensity                                                                     1.4406018983292765
+            effective_radius                                                              1.6154620750502307
+            sersic_index                                                                  0.5000013986936609
+    source
+        light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+            effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.5, upper_limit = 8.0
+        redshift                                                                          1.0

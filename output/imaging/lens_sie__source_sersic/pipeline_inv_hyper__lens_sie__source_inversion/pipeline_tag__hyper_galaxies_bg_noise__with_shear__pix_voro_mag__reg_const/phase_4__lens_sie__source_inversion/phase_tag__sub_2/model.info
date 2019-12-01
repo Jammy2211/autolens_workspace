@@ -1,0 +1,22 @@
+galaxies
+    lens
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.04942110956790189, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 90.92236553759521, sigma = 20.0
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   0.9584210434644296
+        hyper_galaxy
+            contribution_factor                                                           45.158081589834154
+            noise_factor                                                                  9.34047167394227
+            noise_power                                                                   3.0609385525954487
+hyper_background_noise
+    noise_scale                                                                           0.0008425184662119644

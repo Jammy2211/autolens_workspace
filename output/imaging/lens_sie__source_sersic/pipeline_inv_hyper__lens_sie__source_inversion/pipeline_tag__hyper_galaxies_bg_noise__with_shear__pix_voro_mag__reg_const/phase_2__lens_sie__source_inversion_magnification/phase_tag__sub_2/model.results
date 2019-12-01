@@ -1,0 +1,42 @@
+Most likely model, Likelihood = 3568.06085466
+
+galaxies
+    lens
+        shear
+            magnitude                                                                     0.050
+            phi                                                                           91.006
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        shear
+            magnitude                                                                     0.049 (0.049, 0.051)
+            phi                                                                           90.922 (89.247, 92.593)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        shear
+            magnitude                                                                     0.049 (0.049, 0.050)
+            phi                                                                           90.922 (90.350, 91.496)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   1.016310616365285
+hyper_background_noise
+    noise_scale                                                                           0.0008744874978297667

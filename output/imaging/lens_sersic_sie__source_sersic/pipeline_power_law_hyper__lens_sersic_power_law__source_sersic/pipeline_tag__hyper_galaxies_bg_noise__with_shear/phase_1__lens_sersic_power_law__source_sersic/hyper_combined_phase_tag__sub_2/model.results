@@ -1,0 +1,82 @@
+Most likely model, Likelihood = 3924.98907048
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           5.116
+            noise_factor                                                                  7.136
+            noise_power                                                                   2.053
+    source
+        hyper_galaxy
+            contribution_factor                                                           18.923
+            noise_factor                                                                  8.128
+            noise_power                                                                   2.987
+hyper_background_noise
+    noise_scale                                                                           0.001
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           16.437 (-5.431, 62.527)
+            noise_factor                                                                  8.329 (-0.494, 22.973)
+            noise_power                                                                   1.978 (1.249, 2.923)
+    source
+        hyper_galaxy
+            contribution_factor                                                           17.565 (-10.759, 52.869)
+            noise_factor                                                                  9.051 (-4.958, 29.300)
+            noise_power                                                                   9.014 (-2.024, 24.494)
+hyper_background_noise
+    noise_scale                                                                           0.001 (-0.000, 0.003)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           16.437 (4.511, 22.994)
+            noise_factor                                                                  8.329 (4.061, 10.981)
+            noise_power                                                                   1.978 (1.662, 2.222)
+    source
+        hyper_galaxy
+            contribution_factor                                                           17.565 (5.677, 27.404)
+            noise_factor                                                                  9.051 (1.607, 13.657)
+            noise_power                                                                   9.014 (4.027, 12.716)
+hyper_background_noise
+    noise_scale                                                                           0.001 (0.001, 0.002)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        light
+            axis_ratio                                                                    0.8785362242596987
+            phi                                                                           46.524653059115884
+            intensity                                                                     0.6085759022249292
+            effective_radius                                                              1.0690645179606528
+            sersic_index                                                                  4.862763397525223
+        mass
+            axis_ratio                                                                    0.6797330821051548
+            phi                                                                           44.599206573176886
+            einstein_radius                                                               1.6216715056053082
+            slope                                                                         2.068382194097706
+        shear
+            magnitude                                                                     0.05272784976542176
+            phi                                                                           93.39636448317918
+        contribution_factor                                                               5.991875383714805
+        noise_factor                                                                      6.986036066151621
+        noise_power                                                                       1.0303010690086367
+    source
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.7996427908847389
+            phi                                                                           59.770957953388745
+            intensity                                                                     0.38302535147349204
+            effective_radius                                                              0.8892766115199687
+            sersic_index                                                                  2.2806713506739227
+        contribution_factor                                                               15.996390487658319
+        noise_factor                                                                      11.251016734500741
+        noise_power                                                                       2.155833141963302

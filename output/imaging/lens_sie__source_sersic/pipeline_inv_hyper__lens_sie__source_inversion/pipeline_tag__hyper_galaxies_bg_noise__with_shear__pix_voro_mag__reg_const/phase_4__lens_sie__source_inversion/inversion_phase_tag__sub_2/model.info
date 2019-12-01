@@ -1,0 +1,39 @@
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+                shape_1                                                                   UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+        regularization
+            coefficient                                                                   LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+        redshift                                                                          1.0
+        hyper_galaxy
+            contribution_factor                                                           45.158081589834154
+            noise_factor                                                                  9.34047167394227
+            noise_power                                                                   3.0609385525954487
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0
+    lens
+        redshift                                                                          0.5
+        hyper_model_image
+            mask
+                sub_fraction                                                              1.0
+        hyper_galaxy_image
+            mask
+                sub_fraction                                                              1.0
+        shear
+            magnitude                                                                     0.04916084747613355
+            phi                                                                           90.69248258079146
+            axis_ratio                                                                    1.0
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+hyper_background_noise
+    noise_scale                                                                           UniformPrior, lower_limit = -1.0, upper_limit = 1.0

@@ -1,0 +1,16 @@
+These runners model strong lens images where the lens galaxy's light is not present. This may be because:
+
+- The strong lens image is a simulated image which omitted the lens light component.
+- The strong lens image's lens galaxy light was subtracted during data-reduction.
+- The strong lens imaging is observed at submm / radio wavelengths where only the lensed source's light is visible.
+
+The runners use pipelines that fit the different components of the strong lens as follows:
+
+LENS MASS:
+
+The runners use 'total-mass models' that represents all of the lens galaxy's matter (e.g. stellar and dark). The
+profiles used are elliptical Isothermal and Power-Law profiles.
+
+SOURCE LIGHT:
+
+The runners use either a a single elliptical Sersic profile or a pixelized source reconstruction (or 'inversion').

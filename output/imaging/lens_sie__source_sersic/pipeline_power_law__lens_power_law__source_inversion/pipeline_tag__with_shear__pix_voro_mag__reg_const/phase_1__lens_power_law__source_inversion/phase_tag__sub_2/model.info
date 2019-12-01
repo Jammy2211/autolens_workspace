@@ -1,0 +1,18 @@
+galaxies
+    lens
+        mass
+            slope                                                                         UniformPrior, lower_limit = 1.0, upper_limit = 3.0
+            centre
+                centre_0                                                                  GaussianPrior, mean = 5.467243160564472e-05, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = -0.0014783443337262308, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.6855112810811271, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 44.9479308958095, sigma = 20.0
+            einstein_radius                                                               GaussianPrior, mean = 1.6046625651881343, sigma = 0.3
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.05075631312322439, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 88.09421472340208, sigma = 20.0
+        redshift                                                                          0.5
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   0.9868151774860963

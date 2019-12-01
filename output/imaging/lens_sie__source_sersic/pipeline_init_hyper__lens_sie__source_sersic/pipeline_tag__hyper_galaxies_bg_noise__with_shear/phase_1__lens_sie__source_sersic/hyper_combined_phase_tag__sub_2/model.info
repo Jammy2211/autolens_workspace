@@ -1,0 +1,24 @@
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           GaussianPrior, mean = 9.847981895830234, sigma = 11.600273391783496
+            noise_factor                                                                  GaussianPrior, mean = 5.209506206783802, sigma = 7.062674744629824
+            noise_power                                                                   GaussianPrior, mean = 6.14696360203566, sigma = 5.921103449775025
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.7957279408753226
+            phi                                                                           59.87431443904217
+            intensity                                                                     0.31885332748951767
+            effective_radius                                                              0.9602110123478979
+            sersic_index                                                                  2.4314519589308192
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+        shear
+            magnitude                                                                     0.04898590938230677
+            phi                                                                           90.90590330355224
+hyper_background_noise
+    noise_scale                                                                           GaussianPrior, mean = -0.0005242012326551199, sigma = 0.1

@@ -1,0 +1,59 @@
+Most likely model, Likelihood = 3567.63225505
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           56.625
+            noise_factor                                                                  14.818
+            noise_power                                                                   3.143
+hyper_background_noise
+    noise_scale                                                                           0.001
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           18.734 (-10.680, 61.004)
+            noise_factor                                                                  9.725 (-6.260, 33.156)
+            noise_power                                                                   8.779 (-1.485, 23.933)
+hyper_background_noise
+    noise_scale                                                                           0.001 (-0.001, 0.003)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           18.734 (5.499, 28.618)
+            noise_factor                                                                  9.725 (2.584, 15.095)
+            noise_power                                                                   8.779 (2.947, 12.798)
+hyper_background_noise
+    noise_scale                                                                           0.001 (0.000, 0.002)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7028153974242863
+            phi                                                                           44.88810852274631
+            einstein_radius                                                               1.599039624657273
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            axis_ratio                                                                    1.0
+            phi                                                                           90.90590330355224
+            magnitude                                                                     0.04898590938230677
+        axis_ratio                                                                        1.0
+        phi                                                                               90.90590330355224
+        einstein_radius                                                                   1.599039624657273
+        slope                                                                             2.0
+        core_radius                                                                       0.0
+        magnitude                                                                         0.04898590938230677
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   1.016310616365285

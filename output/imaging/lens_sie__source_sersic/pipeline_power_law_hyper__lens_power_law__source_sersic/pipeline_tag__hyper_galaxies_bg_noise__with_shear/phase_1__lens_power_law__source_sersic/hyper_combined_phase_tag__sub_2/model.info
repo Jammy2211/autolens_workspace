@@ -1,0 +1,28 @@
+galaxies
+    source
+        hyper_galaxy
+            contribution_factor                                                           GaussianPrior, mean = 9.25145610398216, sigma = 15.55997017372901
+            noise_factor                                                                  GaussianPrior, mean = 4.567447869885637, sigma = 8.488576051354794
+            noise_power                                                                   GaussianPrior, mean = 6.4068342544282055, sigma = 5.999474455118841
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.7969864633167947
+            phi                                                                           60.24627792791264
+            intensity                                                                     0.32747560409946613
+            effective_radius                                                              0.9495918947114439
+            sersic_index                                                                  2.4039875322169064
+        contribution_factor                                                               17.65991496569866
+        noise_factor                                                                      4.58537404516299
+        noise_power                                                                       10.919772151436371
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7006140190618779
+            phi                                                                           44.63433397157555
+            einstein_radius                                                               1.6010756054977364
+            slope                                                                         2.0049319478741365
+        shear
+            magnitude                                                                     0.04850728246199229
+            phi                                                                           91.03723076467328
+hyper_background_noise
+    noise_scale                                                                           GaussianPrior, mean = -0.0007211427873186867, sigma = 0.1

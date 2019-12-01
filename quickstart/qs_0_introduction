@@ -1,0 +1,57 @@
+Welcome to the PyAutoLens quick start guide!
+
+This guide gives an overview of how PyAutoLens models lenses and will quickly set you up with the tools you
+need to model your own lenses. Basically, we'll gloss over a lot of the nitty-gritty details of how PyAutoLens
+*actually* works, so you can begin doing science as quickly as possible.
+
+If you look in the 'pipelines' and 'runners' folders, you'll see a vast library of templates that perform standard
+lens modeling tasks in PyAutoLens. This tutorial will basically explain how to use these scripts like a
+'black-box', so that you can begin doing science with PyAutoLens immediately. The templates are well tested, but as
+with any black-box its important that we don't use them to do something they weren't designed for!
+
+Before we begin, its worth making sure that the quick start guide is the right guide for you. In the workspace,
+you'll notice that there is also a 'howtolens' lecture series, which contains 5 chapters explaining lens modeling,
+Bayesian inference and PyAutoLens in a lot more detail. However, this lecture series takes a lot longer to
+complete - I'm talking weeks instead of hours! So, which guide should you use? I'd advise the following:
+
+- If you've got a couple of lenses that you want to quickly model to measure some standard properties (Einstein
+  masses, pixelized source reconstructions, Sersic index's, etc.) then go with the quick-start tutorial. Equally,
+  if you just want to mess around with PyAutoLens and get a rough feel for lens modeling, the quick start tutorial
+  is fine.
+
+- If you have a very large sample of lenses (> 20) or want to measure more challenging lensing quantities (mass
+  distributions, multi-plane lensing, etc.) I'd go for the howtolens tutorial. The reality is you're setting out on
+  a project that will require an investment of time anyway, so learning to use PyAutoLens properly is a
+  worthy investment!
+
+Of course, there is a third option - that you go through the quick-start guide and begin fitting your own lenses
+now, but then take on the howtolens lecture series on the side at a more leisurely pace. In fact, I'd probably
+recommend this option - as it'll give you an overview of everything PyAutoLens does before you take on the howtolens
+lecture series, giving you a bit more context!
+
+### JUYPTER NOTEBOOKS ###
+
+The quick start tutorials are supplied as Juypter Notebooks, which come with a '.ipynb' suffix. For those new to
+Python, Juypter Notebooks are a different way to write, view and use Python code. Compared to the traditional Python
+scripts, they allow:
+
+- Small blocks of code to be viewed and run at a time
+- Images and visualization from a code to be displayed directly underneath it.
+- Text script to appear between the blocks of code.
+
+This makes them an ideal way for us to give a quick-start of PyAutoLens therefore I recommend you get yourself
+a Juypter notebook viewer (https://jupyter.org/) if you havent't done so already.
+
+If you *really* want to use Python scripts, all tutorials are supplied a .py python files in the 'scripts' folder.
+
+Finally, its worth noting that for actual PyAutoLens use, I recommend you use Pyton scripts. Therefore, at the end of
+the quick start series you will notice that we will transition you to Python scripts.
+
+### HYPER MODE ###
+
+In the pipelines and runners folder, you'll notice a folder called 'hyper'. Hyper mode is PyAutoLens's most advanced
+feature-set, which adapts various aspects of the lens modeling procedure to the data it fits. I would recommend you
+only begin to look at these files once you are very familiar with PyAutoLens and lens modeling in general; the concepts
+in hyper-mode require some experience and knowledge of strong lens model to properly grasp!
+
+Hyper mode is explained in chapter 5 of the HowToLens lecture series.

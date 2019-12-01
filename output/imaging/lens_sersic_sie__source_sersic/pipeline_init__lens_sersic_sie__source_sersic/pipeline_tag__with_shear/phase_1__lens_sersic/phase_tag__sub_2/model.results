@@ -1,0 +1,48 @@
+Most likely model, Likelihood = -146068.76149943
+
+galaxies
+    lens
+        light
+            centre
+                centre_0                                                                  0.114
+                centre_1                                                                  0.124
+            axis_ratio                                                                    0.877
+            phi                                                                           84.781
+            intensity                                                                     1.441
+            effective_radius                                                              1.615
+            sersic_index                                                                  0.500
+
+
+Most probable model (3.0 sigma limits)
+
+galaxies
+    lens
+        light
+            centre
+                centre_0                                                                  0.114 (0.109, 0.120)
+                centre_1                                                                  0.124 (0.120, 0.129)
+            axis_ratio                                                                    0.878 (0.875, 0.882)
+            phi                                                                           84.766 (83.828, 85.680)
+            intensity                                                                     1.442 (1.436, 1.448)
+            effective_radius                                                              1.615 (1.612, 1.619)
+            sersic_index                                                                  0.500 (0.500, 0.500)
+
+Most probable model (1.0 sigma limits)
+
+galaxies
+    lens
+        light
+            centre
+                centre_0                                                                  0.114 (0.113, 0.116)
+                centre_1                                                                  0.124 (0.123, 0.126)
+            axis_ratio                                                                    0.878 (0.877, 0.880)
+            phi                                                                           84.766 (84.449, 85.083)
+            intensity                                                                     1.442 (1.440, 1.444)
+            effective_radius                                                              1.615 (1.614, 1.616)
+            sersic_index                                                                  0.500 (0.500, 0.500)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
