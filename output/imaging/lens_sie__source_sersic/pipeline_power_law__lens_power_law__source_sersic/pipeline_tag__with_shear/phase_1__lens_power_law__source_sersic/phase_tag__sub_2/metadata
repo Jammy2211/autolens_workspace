@@ -1,3 +1,0 @@
-pipeline=pipeline_init__lens_sie__source_sersic + pipeline_power_law__lens_power_law__source_sersic
-phase=phase_1__lens_power_law__source_sersic
-simulator=None

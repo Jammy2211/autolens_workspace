@@ -1,3 +1,0 @@
-pipeline=pipeline_init_hyper__lens_bulge_disk_sie__source_sersic + pipeline_inv_hyper__lens_bulge_disk_sie__source_inversion + pipeline_ldm__lens_bulge_disk_mlr_nfw__source_inversion
-phase=phase_1__lens_bulge_disk
-simulator=None

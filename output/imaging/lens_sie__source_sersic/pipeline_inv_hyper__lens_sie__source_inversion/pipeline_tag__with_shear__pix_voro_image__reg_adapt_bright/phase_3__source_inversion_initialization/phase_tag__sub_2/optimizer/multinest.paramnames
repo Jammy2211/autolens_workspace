@@ -1,6 +1,0 @@
-galaxies_source_pixelization_pixels                                   N_{\mathrm{pix49}}
-galaxies_source_pixelization_weight_floor                             Wf_{\mathrm{pix49}}
-galaxies_source_pixelization_weight_power                             Wp_{\mathrm{pix49}}
-galaxies_source_regularization_inner_coefficient                      \lambda1_{\mathrm{reg49}}
-galaxies_source_regularization_outer_coefficient                      \lambda2_{\mathrm{reg49}}
-galaxies_source_regularization_signal_scale                           V_{\mathrm{reg49}}

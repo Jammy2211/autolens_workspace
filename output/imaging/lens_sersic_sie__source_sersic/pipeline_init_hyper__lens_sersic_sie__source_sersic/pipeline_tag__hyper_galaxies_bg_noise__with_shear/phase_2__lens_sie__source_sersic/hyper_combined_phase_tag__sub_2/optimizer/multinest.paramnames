@@ -1,7 +1,0 @@
-galaxies_lens_hyper_galaxy_contribution_factor                        \omega0_{\mathrm{hg44}}
-galaxies_lens_hyper_galaxy_noise_factor                               \omega1_{\mathrm{hg44}}
-galaxies_lens_hyper_galaxy_noise_power                                \omega2_{\mathrm{hg44}}
-galaxies_source_hyper_galaxy_contribution_factor                      \omega0_{\mathrm{hg44}}
-galaxies_source_hyper_galaxy_noise_factor                             \omega1_{\mathrm{hg44}}
-galaxies_source_hyper_galaxy_noise_power                              \omega2_{\mathrm{hg44}}
-hyper_background_noise_noise_scale                                    \sigma1_{\mathrm{hnb168}}

@@ -4,11 +4,11 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.30.0** and **PyAutoFit v0.31.4** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.32.0** and **PyAutoFit v0.46.0** If you have any errors or issues using the workspace, try using these versions:
 
 ```
-pip install autolens
-pip install autofit
+pip install autolens==0.32.0
+pip install autofit==0.46.0
 ```
 
 ## Getting Started
@@ -50,7 +50,7 @@ export WORKSPACE=/path/to/autolens_workspace/
 
 You can test everything is working by running the example pipeline runner in the autolens_workspace
 ```
-python3 /path/to/autolens_workspace/runners/simple/runner__lens_sie__source_inversion.py
+python3 /path/to/autolens_workspace/runners/simple/lens_sie__source_inversion.py
 ```
 
 ## Support & Discussion
