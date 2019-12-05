@@ -1,0 +1,27 @@
+Bayesian Evidence                                                                         -28326.09206919
+Maximum Likelihood                                                                        -28166.39087922
+
+Most Likely Model:
+
+galaxies
+    lens
+        mass
+            axis_ratio                                                                    0.706
+            phi                                                                           41.973
+            einstein_radius                                                               1.616
+            centre
+                centre_0                                                                  0.005
+                centre_1                                                                  0.004
+        shear
+            magnitude                                                                     0.040
+            phi                                                                           93.050
+    source
+        light
+            centre
+                centre_0                                                                  0.099
+                centre_1                                                                  0.094
+            axis_ratio                                                                    0.792
+            phi                                                                           53.615
+            intensity                                                                     2.138
+            effective_radius                                                              0.195
+            sersic_index                                                                  0.843

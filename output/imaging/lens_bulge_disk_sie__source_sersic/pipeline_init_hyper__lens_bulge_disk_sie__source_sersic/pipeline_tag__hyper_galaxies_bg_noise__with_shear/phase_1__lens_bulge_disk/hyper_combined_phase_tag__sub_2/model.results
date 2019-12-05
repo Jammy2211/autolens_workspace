@@ -1,0 +1,54 @@
+Bayesian Evidence                                                                         -1980.76567399
+Maximum Likelihood                                                                        -1925.22861220
+
+Most Likely Model:
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           0.199
+            noise_factor                                                                  49.280
+            noise_power                                                                   1.581
+hyper_background_noise
+    noise_scale                                                                           0.000
+
+
+Most probable model (3.0 sigma limits):
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           0.208 (0.115, 0.303)
+            noise_factor                                                                  49.040 (47.234, 49.382)
+            noise_power                                                                   1.577 (1.536, 1.617)
+hyper_background_noise
+    noise_scale                                                                           0.002 (-0.001, 0.009)
+
+
+Most probable model (1.0 sigma limits):
+
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           0.208 (0.175, 0.242)
+            noise_factor                                                                  49.040 (48.869, 49.306)
+            noise_power                                                                   1.577 (1.564, 1.591)
+hyper_background_noise
+    noise_scale                                                                           0.002 (0.000, 0.003)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        bulge
+            axis_ratio                                                                    0.6990979992830365
+            phi                                                                           23.817472782431583
+            intensity                                                                     0.0025274371783560717
+            effective_radius                                                              2.4504960285704063
+            sersic_index                                                                  0.6469717706056286
+        disk
+            axis_ratio                                                                    0.8099160543945925
+            phi                                                                           71.86389417672778
+            intensity                                                                     0.5453916266714914
+            effective_radius                                                              2.538826916565956

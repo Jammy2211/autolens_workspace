@@ -1,36 +1,40 @@
-Most likely model, Likelihood = 3577.76802383
+Bayesian Evidence                                                                         3598.63384463
+Maximum Likelihood                                                                        3605.90652856
+
+Most Likely Model:
 
 galaxies
     source
         hyper_galaxy
-            contribution_factor                                                           17.328
-            noise_factor                                                                  22.893
-            noise_power                                                                   3.140
+            contribution_factor                                                           45.869
+            noise_factor                                                                  16.155
+            noise_power                                                                   3.161
 hyper_background_noise
-    noise_scale                                                                           0.001
+    noise_scale                                                                           0.000
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     source
         hyper_galaxy
-            contribution_factor                                                           16.109 (-9.871, 57.983)
-            noise_factor                                                                  8.450 (-4.824, 30.985)
-            noise_power                                                                   7.316 (-1.301, 18.495)
+            contribution_factor                                                           16.906 (-11.095, 53.121)
+            noise_factor                                                                  8.764 (-6.249, 28.246)
+            noise_power                                                                   8.291 (-1.221, 26.246)
 hyper_background_noise
     noise_scale                                                                           0.001 (-0.001, 0.003)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     source
         hyper_galaxy
-            contribution_factor                                                           16.109 (2.539, 25.093)
-            noise_factor                                                                  8.450 (1.522, 12.709)
-            noise_power                                                                   7.316 (2.985, 10.517)
+            contribution_factor                                                           16.906 (3.246, 26.520)
+            noise_factor                                                                  8.764 (2.853, 13.901)
+            noise_power                                                                   8.291 (2.744, 11.313)
 hyper_background_noise
-    noise_scale                                                                           0.001 (0.000, 0.002)
+    noise_scale                                                                           0.001 (0.000, 0.001)
 
 instances
 
@@ -38,19 +42,12 @@ galaxies
     lens
         redshift                                                                          0.5
         mass
-            axis_ratio                                                                    0.7028153974242863
-            phi                                                                           44.88810852274631
-            einstein_radius                                                               1.599039624657273
-            slope                                                                         2.0
-            core_radius                                                                   0.0
+            axis_ratio                                                                    0.6784339642526195
+            phi                                                                           44.239553029237044
+            einstein_radius                                                               1.6067043715390785
         shear
-            magnitude                                                                     0.049601569002790974
-            phi                                                                           91.00607888956978
-        axis_ratio                                                                        0.7028153974242863
-        phi                                                                               44.88810852274631
-        einstein_radius                                                                   1.599039624657273
-        slope                                                                             2.0
-        core_radius                                                                       0.0
+            magnitude                                                                     0.04802537773688755
+            phi                                                                           87.0284413106709
     source
         redshift                                                                          1.0
         regularization

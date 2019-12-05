@@ -1,0 +1,5 @@
+galaxies_lens_light_mass_to_light_ratio_value                         Psi_{\mathrm{l110}}
+galaxies_lens_dark_kappa_s                                            \kappa_{\mathrm{d110}}
+galaxies_lens_dark_scale_radius_value                                 Rs_{\mathrm{d110}}
+galaxies_lens_shear_magnitude                                         \gamma_{\mathrm{sh110}}
+galaxies_lens_shear_phi                                               \phi_{\mathrm{sh110}}

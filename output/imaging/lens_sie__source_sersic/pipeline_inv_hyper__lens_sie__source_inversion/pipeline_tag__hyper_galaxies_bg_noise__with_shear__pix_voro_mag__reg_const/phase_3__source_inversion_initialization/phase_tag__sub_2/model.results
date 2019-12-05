@@ -1,36 +1,40 @@
-Most likely model, Likelihood = 3568.02260061
+Bayesian Evidence                                                                         3529.74493283
+Maximum Likelihood                                                                        3538.35205441
+
+Most Likely Model:
 
 galaxies
     source
         pixelization
             shape
-                shape_0                                                                   30.904
-                shape_1                                                                   22.004
+                shape_0                                                                   24.570
+                shape_1                                                                   38.443
         regularization
-            coefficient                                                                   0.958
+            coefficient                                                                   1.179
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     source
         pixelization
             shape
-                shape_0                                                                   30.364 (29.702, 31.157)
-                shape_1                                                                   22.083 (20.245, 27.714)
+                shape_0                                                                   24.573 (23.827, 25.215)
+                shape_1                                                                   38.335 (37.513, 39.207)
         regularization
-            coefficient                                                                   0.955 (0.568, 1.343)
+            coefficient                                                                   1.198 (1.107, 1.285)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     source
         pixelization
             shape
-                shape_0                                                                   30.364 (30.090, 30.563)
-                shape_1                                                                   22.083 (20.245, 23.081)
+                shape_0                                                                   24.573 (24.356, 24.824)
+                shape_1                                                                   38.335 (38.058, 38.602)
         regularization
-            coefficient                                                                   0.955 (0.828, 1.079)
+            coefficient                                                                   1.198 (1.169, 1.229)
 
 instances
 
@@ -38,20 +42,20 @@ galaxies
     lens
         redshift                                                                          0.5
         mass
-            axis_ratio                                                                    0.7028153974242863
-            phi                                                                           44.88810852274631
-            einstein_radius                                                               1.599039624657273
+            axis_ratio                                                                    0.6784339642526195
+            phi                                                                           44.239553029237044
+            einstein_radius                                                               1.6067043715390785
             slope                                                                         2.0
             core_radius                                                                   0.0
         shear
             axis_ratio                                                                    1.0
-            phi                                                                           91.00607888956978
-            magnitude                                                                     0.049601569002790974
+            phi                                                                           87.0284413106709
+            magnitude                                                                     0.04802537773688755
     source
         redshift                                                                          1.0
         hyper_galaxy
-            contribution_factor                                                           17.328402050835226
-            noise_factor                                                                  22.892669633417917
-            noise_power                                                                   3.1399235039121214
+            contribution_factor                                                           45.868686269839266
+            noise_factor                                                                  16.154930590601595
+            noise_power                                                                   3.160867258129461
 hyper_background_noise
-    noise_scale                                                                           0.0007103342118236489
+    noise_scale                                                                           0.00024099136264785432

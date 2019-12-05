@@ -1,0 +1,48 @@
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           GaussianPrior, mean = 3.256472265182985, sigma = 1.9042977989861147
+            noise_factor                                                                  GaussianPrior, mean = 8.43475280679502, sigma = 4.21737640339751
+            noise_power                                                                   GaussianPrior, mean = 1.0505518530193867, sigma = 0.5252759265096933
+        redshift                                                                          0.5
+        bulge
+            axis_ratio                                                                    0.9005633839229232
+            phi                                                                           42.47138736649796
+            intensity                                                                     22.081936945981884
+            effective_radius                                                              0.10785595703872927
+            sersic_index                                                                  0.5008399726208841
+        disk
+            axis_ratio                                                                    0.7827980979150511
+            phi                                                                           51.52279073765322
+            intensity                                                                     1.061718509401678
+            effective_radius                                                              1.8577859878599599
+            sersic_index                                                                  1.0
+        mass
+            axis_ratio                                                                    0.9892812748161144
+            phi                                                                           63.429049424483644
+            einstein_radius                                                               1.494560188165169
+        shear
+            magnitude                                                                     0.023857119848305103
+            phi                                                                           50.401100929455346
+        contribution_factor                                                               0.38602175503589997
+        noise_factor                                                                      45.052411114422256
+        noise_power                                                                       1.4829119175588625
+        axis_ratio                                                                        0.7827980979150511
+        phi                                                                               51.52279073765322
+        intensity                                                                         1.061718509401678
+        effective_radius                                                                  1.8577859878599599
+        sersic_index                                                                      1.0
+    source
+        hyper_galaxy
+            contribution_factor                                                           GaussianPrior, mean = 10.465584926596737, sigma = 15.73337963789204
+            noise_factor                                                                  GaussianPrior, mean = 4.894707792649809, sigma = 8.158902233505959
+            noise_power                                                                   GaussianPrior, mean = 5.652325289209336, sigma = 6.256631987847796
+        redshift                                                                          1.0
+        light
+            axis_ratio                                                                    0.8860122302853581
+            phi                                                                           52.6558023554025
+            intensity                                                                     2.4900771783831632
+            effective_radius                                                              0.17492394026225971
+            sersic_index                                                                  0.7588145765221721
+hyper_background_noise
+    noise_scale                                                                           GaussianPrior, mean = 0.2872639323815274, sigma = 0.15954096542075696

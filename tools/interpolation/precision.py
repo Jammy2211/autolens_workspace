@@ -93,8 +93,12 @@ print("interpolation x error: ", np.mean(difference_x))
 print("interpolation x uncertainty: ", np.std(difference_x))
 print("interpolation x max error: ", np.max(difference_x))
 
-difference_y_2d = masked_imaging.grid.array_from_sub_array_1d(sub_array_1d=difference_y)
-difference_x_2d = masked_imaging.grid.array_from_sub_array_1d(sub_array_1d=difference_x)
+difference_y_2d = masked_imaging.grid.array_stored_1d_from_sub_array_1d(
+    sub_array_1d=difference_y
+)
+difference_x_2d = masked_imaging.grid.array_stored_1d_from_sub_array_1d(
+    sub_array_1d=difference_x
+)
 
 al.plot.array(array=difference_y_2d)
 al.plot.array(array=difference_x_2d)

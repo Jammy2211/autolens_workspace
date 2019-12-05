@@ -1,0 +1,20 @@
+galaxies
+    lens
+        hyper_galaxy
+            contribution_factor                                                           GaussianPrior, mean = 0.13533459916683296, sigma = 2.1707136906741327
+            noise_factor                                                                  GaussianPrior, mean = 9.653740110344625, sigma = 4.8268700551723125
+            noise_power                                                                   GaussianPrior, mean = 0.8374602858729847, sigma = 0.41873014293649236
+        redshift                                                                          0.5
+        bulge
+            axis_ratio                                                                    0.6990979992830365
+            phi                                                                           23.817472782431583
+            intensity                                                                     0.0025274371783560717
+            effective_radius                                                              2.4504960285704063
+            sersic_index                                                                  0.6469717706056286
+        disk
+            axis_ratio                                                                    0.8099160543945925
+            phi                                                                           71.86389417672778
+            intensity                                                                     0.5453916266714914
+            effective_radius                                                              2.538826916565956
+hyper_background_noise
+    noise_scale                                                                           GaussianPrior, mean = -0.2984616827253378, sigma = 0.1

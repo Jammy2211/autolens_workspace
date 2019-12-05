@@ -1,4 +1,7 @@
-Most likely model, Likelihood = 3560.78594363
+Bayesian Evidence                                                                         3560.78594363
+Maximum Likelihood                                                                        3571.81347950
+
+Most Likely Model:
 
 galaxies
     source
@@ -10,7 +13,7 @@ galaxies
             coefficient                                                                   1.016
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     source
@@ -21,7 +24,8 @@ galaxies
         regularization
             coefficient                                                                   1.002 (0.700, 1.506)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     source

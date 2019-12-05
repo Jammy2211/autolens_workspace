@@ -1,0 +1,36 @@
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            einstein_radius                                                               UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+        shear
+            magnitude                                                                     UniformPrior, lower_limit = 0.0, upper_limit = 0.25
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+        redshift                                                                          0.5
+        hyper_galaxy
+            contribution_factor                                                           8.630961558450515
+            noise_factor                                                                  39.01533644017577
+            noise_power                                                                   1.295300468311711
+        light
+            axis_ratio                                                                    0.8351579415650232
+            phi                                                                           52.53124155344187
+            intensity                                                                     1.7800931766514603
+            effective_radius                                                              1.5261191002980345
+            sersic_index                                                                  0.500540969382139
+    source
+        light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+                centre_1                                                                  GaussianPrior, mean = 0.0, sigma = 0.3
+            axis_ratio                                                                    UniformPrior, lower_limit = 0.2, upper_limit = 1.0
+            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
+            intensity                                                                     LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+            effective_radius                                                              UniformPrior, lower_limit = 0.0, upper_limit = 4.0
+            sersic_index                                                                  UniformPrior, lower_limit = 0.5, upper_limit = 8.0
+        redshift                                                                          1.0
+hyper_background_noise
+    noise_scale                                                                           0.002310797951970915

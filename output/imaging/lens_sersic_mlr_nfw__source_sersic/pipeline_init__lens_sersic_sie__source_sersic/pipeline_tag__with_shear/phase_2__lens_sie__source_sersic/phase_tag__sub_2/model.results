@@ -1,4 +1,7 @@
-Most likely model, Likelihood = -58248.89314916
+Bayesian Evidence                                                                         -58248.89314916
+Maximum Likelihood                                                                        -58175.37691031
+
+Most Likely Model:
 
 galaxies
     lens
@@ -24,7 +27,7 @@ galaxies
             sersic_index                                                                  0.727
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     lens
@@ -49,7 +52,8 @@ galaxies
             effective_radius                                                              0.134 (0.132, 0.136)
             sersic_index                                                                  0.724 (0.690, 0.757)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     lens

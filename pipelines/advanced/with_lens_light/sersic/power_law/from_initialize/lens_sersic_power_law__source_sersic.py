@@ -60,7 +60,9 @@ def make_pipeline(
     mass.centre = af.last.model.galaxies.lens.mass.centre
     mass.axis_ratio = af.last.model.galaxies.lens.mass.axis_ratio
     mass.phi = af.last.model.galaxies.lens.mass.phi
-    mass.einstein_radius = af.last.model_absolute(a=0.3).galaxies.lens.mass.einstein_radius
+    mass.einstein_radius = af.last.model_absolute(
+        a=0.3
+    ).galaxies.lens.mass.einstein_radius
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic_power_law__source_sersic",

@@ -1,0 +1,4 @@
+galaxies_source_pixelization_shape_0                                  y_{\mathrm{pix90914}}
+galaxies_source_pixelization_shape_1                                  x_{\mathrm{pix90914}}
+galaxies_source_regularization_coefficient                            \lambda_{\mathrm{reg90914}}
+hyper_background_noise_noise_scale                                    \sigma1_{\mathrm{hnb90930}}

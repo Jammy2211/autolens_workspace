@@ -1,39 +1,58 @@
-Most likely model, Likelihood = 3568.06085466
+Bayesian Evidence                                                                         3577.10381883
+Maximum Likelihood                                                                        3604.19529278
+
+Most Likely Model:
 
 galaxies
     lens
+        mass
+            centre
+                centre_0                                                                  -0.001
+                centre_1                                                                  -0.005
+            axis_ratio                                                                    0.678
+            phi                                                                           44.240
+            einstein_radius                                                               1.607
         shear
-            magnitude                                                                     0.050
-            phi                                                                           91.006
+            magnitude                                                                     0.048
+            phi                                                                           87.028
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     lens
+        mass
+            centre
+                centre_0                                                                  -0.001 (-0.003, 0.001)
+                centre_1                                                                  -0.006 (-0.013, 0.001)
+            axis_ratio                                                                    0.679 (0.665, 0.693)
+            phi                                                                           43.967 (41.681, 46.221)
+            einstein_radius                                                               1.607 (1.604, 1.609)
         shear
-            magnitude                                                                     0.049 (0.049, 0.051)
-            phi                                                                           90.922 (89.247, 92.593)
+            magnitude                                                                     0.047 (0.044, 0.050)
+            phi                                                                           87.218 (84.609, 89.829)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     lens
+        mass
+            centre
+                centre_0                                                                  -0.001 (-0.001, -0.000)
+                centre_1                                                                  -0.006 (-0.008, -0.003)
+            axis_ratio                                                                    0.679 (0.674, 0.684)
+            phi                                                                           43.967 (43.189, 44.750)
+            einstein_radius                                                               1.607 (1.606, 1.608)
         shear
-            magnitude                                                                     0.049 (0.049, 0.050)
-            phi                                                                           90.922 (90.350, 91.496)
+            magnitude                                                                     0.047 (0.045, 0.048)
+            phi                                                                           87.218 (86.329, 88.106)
 
 instances
 
 galaxies
     lens
         redshift                                                                          0.5
-        mass
-            axis_ratio                                                                    0.7028153974242863
-            phi                                                                           44.88810852274631
-            einstein_radius                                                               1.599039624657273
-            slope                                                                         2.0
-            core_radius                                                                   0.0
     source
         redshift                                                                          1.0
         regularization

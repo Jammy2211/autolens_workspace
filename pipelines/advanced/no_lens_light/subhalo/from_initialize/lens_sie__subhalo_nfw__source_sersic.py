@@ -81,7 +81,6 @@ def make_pipeline(
     )
 
     subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
-
     subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
     phase1 = GridPhase(

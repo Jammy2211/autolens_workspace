@@ -1,0 +1,3 @@
+pipeline=pipeline_init_hyper__lens_sersic_sie__source_sersic + pipeline_inv_hyper__lens_sersic_sie__source_inversion + pipeline_ldm__lens_sersic_mlr_nfw__source_inversion
+phase=phase_2__lens_sersic_sie__source_inversion_magnification
+simulator=None

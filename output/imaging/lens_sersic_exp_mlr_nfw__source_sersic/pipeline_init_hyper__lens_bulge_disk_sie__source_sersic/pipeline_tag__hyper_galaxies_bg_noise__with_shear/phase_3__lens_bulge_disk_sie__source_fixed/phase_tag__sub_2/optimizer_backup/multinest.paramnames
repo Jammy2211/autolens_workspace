@@ -1,0 +1,13 @@
+galaxies_lens_bulge_centre_0                                          y_{\mathrm{l69}}
+galaxies_lens_bulge_centre_1                                          x_{\mathrm{l69}}
+galaxies_lens_bulge_axis_ratio                                        q_{\mathrm{l69}}
+galaxies_lens_bulge_phi                                               \phi_{\mathrm{l69}}
+galaxies_lens_bulge_intensity_value                                   I_{\mathrm{l69}}
+galaxies_lens_bulge_effective_radius_value                            R_{\mathrm{l69}}
+galaxies_lens_bulge_sersic_index                                      n_{\mathrm{l69}}
+galaxies_lens_disk_centre_0                                           y_{\mathrm{l69}}
+galaxies_lens_disk_centre_1                                           x_{\mathrm{l69}}
+galaxies_lens_disk_axis_ratio                                         q_{\mathrm{l69}}
+galaxies_lens_disk_phi                                                \phi_{\mathrm{l69}}
+galaxies_lens_disk_intensity_value                                    I_{\mathrm{l69}}
+galaxies_lens_disk_effective_radius_value                             R_{\mathrm{l69}}

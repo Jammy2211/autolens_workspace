@@ -1,32 +1,32 @@
 galaxies
     source
         hyper_galaxy
-            contribution_factor                                                           GaussianPrior, mean = 10.753837689829979, sigma = 15.290063648362187
-            noise_factor                                                                  GaussianPrior, mean = 5.449136981223746, sigma = 8.189378951932449
-            noise_power                                                                   GaussianPrior, mean = 5.328953175110161, sigma = 6.063345375685479
+            contribution_factor                                                           GaussianPrior, mean = 13.349753521419998, sigma = 14.004377006705539
+            noise_factor                                                                  GaussianPrior, mean = 7.068922462923024, sigma = 6.397579816492446
+            noise_power                                                                   GaussianPrior, mean = 2.808233752878926, sigma = 7.181308703743132
         redshift                                                                          1.0
         regularization
-            coefficient                                                                   0.9584210434644296
-        contribution_factor                                                               17.328402050835226
-        noise_factor                                                                      22.892669633417917
-        noise_power                                                                       3.1399235039121214
+            coefficient                                                                   1.178891763034238
+        contribution_factor                                                               45.868686269839266
+        noise_factor                                                                      16.154930590601595
+        noise_power                                                                       3.160867258129461
     lens
         redshift                                                                          0.5
         mass
-            axis_ratio                                                                    0.7028153974242863
-            phi                                                                           44.88810852274631
-            einstein_radius                                                               1.599039624657273
+            axis_ratio                                                                    0.6784339642526195
+            phi                                                                           44.239553029237044
+            einstein_radius                                                               1.6067043715390785
             slope                                                                         2.0
             core_radius                                                                   0.0
         shear
             axis_ratio                                                                    1.0
-            phi                                                                           91.00607888956978
-            magnitude                                                                     0.049601569002790974
+            phi                                                                           87.0284413106709
+            magnitude                                                                     0.04802537773688755
         axis_ratio                                                                        1.0
-        phi                                                                               91.00607888956978
-        einstein_radius                                                                   1.599039624657273
+        phi                                                                               87.0284413106709
+        einstein_radius                                                                   1.6067043715390785
         slope                                                                             2.0
         core_radius                                                                       0.0
-        magnitude                                                                         0.049601569002790974
+        magnitude                                                                         0.04802537773688755
 hyper_background_noise
-    noise_scale                                                                           GaussianPrior, mean = -0.002370956465892493, sigma = 0.1
+    noise_scale                                                                           GaussianPrior, mean = -0.0037427630825147017, sigma = 0.1

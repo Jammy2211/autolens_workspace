@@ -1,0 +1,59 @@
+Bayesian Evidence                                                                         3579.33663143
+Maximum Likelihood                                                                        3606.55134491
+
+Most Likely Model:
+
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  -0.001
+                centre_1                                                                  -0.006
+            axis_ratio                                                                    0.678
+            phi                                                                           43.329
+            einstein_radius                                                               1.607
+        shear
+            magnitude                                                                     0.045
+            phi                                                                           87.201
+
+
+Most probable model (3.0 sigma limits):
+
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  -0.000 (-0.003, 0.001)
+                centre_1                                                                  -0.006 (-0.009, -0.002)
+            axis_ratio                                                                    0.679 (0.673, 0.689)
+            phi                                                                           43.476 (42.963, 45.082)
+            einstein_radius                                                               1.607 (1.604, 1.609)
+        shear
+            magnitude                                                                     0.045 (0.042, 0.050)
+            phi                                                                           87.248 (85.805, 88.787)
+
+
+Most probable model (1.0 sigma limits):
+
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  -0.000 (-0.001, 0.000)
+                centre_1                                                                  -0.006 (-0.007, -0.005)
+            axis_ratio                                                                    0.679 (0.677, 0.680)
+            phi                                                                           43.476 (43.222, 43.516)
+            einstein_radius                                                               1.607 (1.606, 1.608)
+        shear
+            magnitude                                                                     0.045 (0.044, 0.046)
+            phi                                                                           87.248 (86.749, 87.745)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+    source
+        redshift                                                                          1.0
+        regularization
+            coefficient                                                                   1.0867001755510226

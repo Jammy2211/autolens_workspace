@@ -1,2 +1,6 @@
 phase_4__lens_sersic_sie__source_sersic/hyper_combined_phase_tag__sub_2 took 0:03:58.515030 to run
 phase_1__lens_sersic_power_law__source_sersic took 0:44:17.222825 to run
+phase_4__lens_sersic_sie__source_sersic/hyper_combined_phase_tag__sub_2 took 2 days, 23:06:08.471551 to run
+phase_1__source_inversion_magnification_initialization took 0:02:41.451643 to run
+phase_4__lens_sersic_sie__source_sersic/hyper_combined_phase_tag__sub_2 took 3 days, 17:37:25.987365 to run
+phase_1__source_inversion_magnification_initialization took 18:31:17.924913 to run

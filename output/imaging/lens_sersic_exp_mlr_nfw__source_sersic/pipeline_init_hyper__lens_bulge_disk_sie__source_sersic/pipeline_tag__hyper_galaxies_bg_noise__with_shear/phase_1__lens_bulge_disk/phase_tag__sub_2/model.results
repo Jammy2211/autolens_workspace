@@ -1,0 +1,67 @@
+Bayesian Evidence                                                                         -154130.36480302
+Maximum Likelihood                                                                        -154063.67001509
+
+Most Likely Model:
+
+galaxies
+    lens
+        bulge
+            axis_ratio                                                                    0.901
+            phi                                                                           42.471
+            intensity                                                                     22.082
+            effective_radius                                                              0.108
+            sersic_index                                                                  0.501
+        disk
+            centre
+                centre_0                                                                  0.001
+                centre_1                                                                  0.001
+            axis_ratio                                                                    0.783
+            phi                                                                           51.523
+            intensity                                                                     1.062
+            effective_radius                                                              1.858
+
+
+Most probable model (3.0 sigma limits):
+
+galaxies
+    lens
+        bulge
+            axis_ratio                                                                    0.897 (0.859, 0.939)
+            phi                                                                           44.918 (35.280, 54.624)
+            intensity                                                                     22.204 (21.298, 22.988)
+            effective_radius                                                              0.108 (0.105, 0.110)
+            sersic_index                                                                  0.503 (0.496, 0.530)
+        disk
+            centre
+                centre_0                                                                  0.001 (-0.000, 0.003)
+                centre_1                                                                  0.002 (-0.000, 0.003)
+            axis_ratio                                                                    0.782 (51.057, 52.157)
+            phi                                                                           51.622 (51.057, 52.157)
+            intensity                                                                     1.061 (1.056, 1.066)
+            effective_radius                                                              1.859 (1.853, 1.865)
+
+
+Most probable model (1.0 sigma limits):
+
+galaxies
+    lens
+        bulge
+            axis_ratio                                                                    0.897 (0.882, 0.910)
+            phi                                                                           44.918 (41.660, 48.266)
+            intensity                                                                     22.204 (21.930, 22.502)
+            effective_radius                                                              0.108 (0.107, 0.108)
+            sersic_index                                                                  0.503 (0.496, 0.508)
+        disk
+            centre
+                centre_0                                                                  0.001 (0.001, 0.002)
+                centre_1                                                                  0.002 (0.001, 0.002)
+            axis_ratio                                                                    0.782 (51.441, 51.790)
+            phi                                                                           51.622 (51.441, 51.790)
+            intensity                                                                     1.061 (1.060, 1.063)
+            effective_radius                                                              1.859 (1.856, 1.861)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5

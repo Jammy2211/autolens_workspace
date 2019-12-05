@@ -1,0 +1,47 @@
+galaxies
+    lens
+        bulge
+            centre
+                centre_0                                                                  GaussianPrior, mean = -0.006538583394283577, sigma = 0.3227045387555736
+                centre_1                                                                  GaussianPrior, mean = -0.0077121452726444705, sigma = 0.3158628449840974
+            axis_ratio                                                                    GaussianPrior, mean = 0.8739524029262719, sigma = 0.2917563640783015
+            phi                                                                           GaussianPrior, mean = 67.08796205072794, sigma = 128.8535915925304
+            intensity                                                                     GaussianPrior, mean = 20.230913858764374, sigma = 49.58534009441809
+            effective_radius                                                              GaussianPrior, mean = 0.11510164047579993, sigma = 2.0
+            sersic_index                                                                  GaussianPrior, mean = 0.6330781151637914, sigma = 1.5
+        disk
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.05732221713027935, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.059925484622542144, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.8170510566989764, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 52.52189315244365, sigma = 20.0
+            intensity                                                                     GaussianPrior, mean = 0.9405496031927614, sigma = 0.4702748015963807
+            effective_radius                                                              GaussianPrior, mean = 1.7964518081364107, sigma = 2.0
+        mass
+            axis_ratio                                                                    GaussianPrior, mean = 0.9740267620823512, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 86.03924092902629, sigma = 127.73358662071266
+            einstein_radius                                                               GaussianPrior, mean = 1.4934214822768337, sigma = 0.07467107411384169
+            centre
+                centre_0                                                                  GaussianPrior, mean = -0.003635489141189988, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = -0.007108910801469786, sigma = 0.05
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.022221656672786597, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 48.118642619365005, sigma = 31.750807908554645
+        redshift                                                                          0.5
+        hyper_galaxy
+            contribution_factor                                                           2.2821774580596967
+            noise_factor                                                                  21.692136333095334
+            noise_power                                                                   1.3134420349929814
+    source
+        light
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.11555961841132825, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = 0.11836009450461592, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.8782218720893604, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 61.792571299288745, sigma = 99.14328166555921
+            intensity                                                                     GaussianPrior, mean = 2.4036751588988996, sigma = 1.2018375794494498
+            effective_radius                                                              GaussianPrior, mean = 0.1812104491900105, sigma = 2.0
+            sersic_index                                                                  GaussianPrior, mean = 0.7304629429629975, sigma = 1.5
+        redshift                                                                          1.0
+hyper_background_noise
+    noise_scale                                                                           0.028534566279246915

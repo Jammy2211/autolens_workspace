@@ -143,7 +143,7 @@ from pipelines.hyper.with_lens_light.sersic.inversion.from_initialize import (
     lens_sersic_sie__source_inversion,
 )
 from pipelines.hyper.with_lens_light.sersic.light_dark_mass.from_inversion import (
-    lens_sersic_mlr_nfw_source_inversion,
+    lens_sersic_mlr_nfw__source_inversion,
 )
 
 pipeline_initialize = lens_sersic_sie__source_sersic.make_pipeline(
@@ -154,7 +154,7 @@ pipeline_inversion = lens_sersic_sie__source_inversion.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
 )
 
-pipeline_light_dark = lens_sersic_mlr_nfw_source_inversion.make_pipeline(
+pipeline_light_dark = lens_sersic_mlr_nfw__source_inversion.make_pipeline(
     pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
 )
 

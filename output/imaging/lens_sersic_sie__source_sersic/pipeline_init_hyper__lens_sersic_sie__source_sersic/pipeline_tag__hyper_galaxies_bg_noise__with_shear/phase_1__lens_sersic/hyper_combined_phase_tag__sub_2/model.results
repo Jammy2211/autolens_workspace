@@ -1,4 +1,7 @@
-Most likely model, Likelihood = -1228.83569798
+Bayesian Evidence                                                                         -1228.83569798
+Maximum Likelihood                                                                        -1194.68970772
+
+Most Likely Model:
 
 galaxies
     lens
@@ -10,7 +13,7 @@ hyper_background_noise
     noise_scale                                                                           0.013
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 galaxies
     lens
@@ -21,7 +24,8 @@ galaxies
 hyper_background_noise
     noise_scale                                                                           0.011 (0.003, 0.017)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 galaxies
     lens

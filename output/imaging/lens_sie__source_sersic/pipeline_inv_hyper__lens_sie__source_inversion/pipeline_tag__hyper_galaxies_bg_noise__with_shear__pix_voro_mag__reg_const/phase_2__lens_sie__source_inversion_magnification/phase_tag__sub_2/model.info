@@ -1,15 +1,16 @@
 galaxies
     lens
-        shear
-            magnitude                                                                     UniformPrior, lower_limit = 0.0, upper_limit = 0.25
-            phi                                                                           UniformPrior, lower_limit = 0.0, upper_limit = 180.0
-        redshift                                                                          0.5
         mass
-            axis_ratio                                                                    0.7028153974242863
-            phi                                                                           44.88810852274631
-            einstein_radius                                                               1.599039624657273
-            slope                                                                         2.0
-            core_radius                                                                   0.0
+            centre
+                centre_0                                                                  GaussianPrior, mean = 0.0010064618594106411, sigma = 0.05
+                centre_1                                                                  GaussianPrior, mean = -0.0022314858481574727, sigma = 0.05
+            axis_ratio                                                                    GaussianPrior, mean = 0.7015881989731304, sigma = 0.2
+            phi                                                                           GaussianPrior, mean = 44.78530206633329, sigma = 20.0
+            einstein_radius                                                               GaussianPrior, mean = 1.5997309229557948, sigma = 0.07998654614778974
+        shear
+            magnitude                                                                     GaussianPrior, mean = 0.048853524230962155, sigma = 0.05
+            phi                                                                           GaussianPrior, mean = 90.6424792407672, sigma = 20.0
+        redshift                                                                          0.5
     source
         redshift                                                                          1.0
         regularization

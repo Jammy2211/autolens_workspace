@@ -1,0 +1,55 @@
+Bayesian Evidence                                                                         3567.55217277
+Maximum Likelihood                                                                        3578.30529795
+
+Most Likely Model:
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.858
+                shape_1                                                                   22.093
+        regularization
+            coefficient                                                                   1.087
+
+
+Most probable model (3.0 sigma limits):
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.654 (29.696, 31.560)
+                shape_1                                                                   22.611 (19.929, 26.880)
+        regularization
+            coefficient                                                                   1.102 (0.676, 1.676)
+
+
+Most probable model (1.0 sigma limits):
+
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   30.654 (30.367, 30.983)
+                shape_1                                                                   22.611 (20.831, 23.814)
+        regularization
+            coefficient                                                                   1.102 (0.676, 1.246)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7007800455245772
+            phi                                                                           44.71819114967482
+            einstein_radius                                                               1.6002453240380898
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            axis_ratio                                                                    1.0
+            phi                                                                           90.50147075171743
+            magnitude                                                                     0.048540792361582916
+    source
+        redshift                                                                          1.0

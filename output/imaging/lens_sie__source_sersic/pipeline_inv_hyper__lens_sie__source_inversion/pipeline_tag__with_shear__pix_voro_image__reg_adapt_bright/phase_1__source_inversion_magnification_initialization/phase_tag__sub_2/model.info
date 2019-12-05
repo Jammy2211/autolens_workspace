@@ -1,0 +1,21 @@
+galaxies
+    source
+        pixelization
+            shape
+                shape_0                                                                   UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+                shape_1                                                                   UniformPrior, lower_limit = 20.0, upper_limit = 45.0
+        regularization
+            coefficient                                                                   LogUniformPrior, lower_limit = 1e-06, upper_limit = 100000.0
+        redshift                                                                          1.0
+    lens
+        redshift                                                                          0.5
+        mass
+            axis_ratio                                                                    0.7007800455245772
+            phi                                                                           44.71819114967482
+            einstein_radius                                                               1.6002453240380898
+            slope                                                                         2.0
+            core_radius                                                                   0.0
+        shear
+            axis_ratio                                                                    1.0
+            phi                                                                           90.50147075171743
+            magnitude                                                                     0.048540792361582916

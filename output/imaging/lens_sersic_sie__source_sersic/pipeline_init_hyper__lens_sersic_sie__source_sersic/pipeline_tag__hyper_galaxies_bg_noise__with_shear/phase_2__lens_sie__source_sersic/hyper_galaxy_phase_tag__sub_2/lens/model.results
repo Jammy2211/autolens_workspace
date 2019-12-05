@@ -1,4 +1,7 @@
-Most likely model, Likelihood = -1079.92679326
+Bayesian Evidence                                                                         -1079.92679326
+Maximum Likelihood                                                                        -1056.48575793
+
+Most Likely Model:
 
 hyper_galaxy
     contribution_factor                                                                   3.644
@@ -8,7 +11,7 @@ hyper_background_noise
     noise_scale                                                                           0.124
 
 
-Most probable model (3.0 sigma limits)
+Most probable model (3.0 sigma limits):
 
 hyper_galaxy
     contribution_factor                                                                   3.639 (2.715, 4.576)
@@ -17,7 +20,8 @@ hyper_galaxy
 hyper_background_noise
     noise_scale                                                                           0.122 (0.106, 0.175)
 
-Most probable model (1.0 sigma limits)
+
+Most probable model (1.0 sigma limits):
 
 hyper_galaxy
     contribution_factor                                                                   3.639 (3.323, 3.974)

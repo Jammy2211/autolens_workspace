@@ -1,2 +1,7 @@
-galaxies_lens_shear_magnitude                                         \gamma_{\mathrm{sh40}}
-galaxies_lens_shear_phi                                               \phi_{\mathrm{sh40}}
+galaxies_lens_mass_centre_0                                           y_{\mathrm{m37}}
+galaxies_lens_mass_centre_1                                           x_{\mathrm{m37}}
+galaxies_lens_mass_axis_ratio                                         q_{\mathrm{m37}}
+galaxies_lens_mass_phi                                                \phi_{\mathrm{m37}}
+galaxies_lens_mass_einstein_radius_value                              \theta_{\mathrm{m37}}
+galaxies_lens_shear_magnitude                                         \gamma_{\mathrm{sh37}}
+galaxies_lens_shear_phi                                               \phi_{\mathrm{sh37}}

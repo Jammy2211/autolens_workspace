@@ -1,0 +1,87 @@
+Bayesian Evidence                                                                         3548.84502135
+Maximum Likelihood                                                                        3601.41889286
+
+Most Likely Model:
+
+galaxies
+    lens
+        light
+            mass_to_light_ratio                                                           0.329
+        dark
+            kappa_s                                                                       0.103
+            scale_radius                                                                  14.254
+        shear
+            magnitude                                                                     0.031
+            phi                                                                           43.280
+    source
+        light
+            centre
+                centre_0                                                                  0.106
+                centre_1                                                                  0.115
+            axis_ratio                                                                    0.782
+            phi                                                                           59.005
+            intensity                                                                     0.316
+            effective_radius                                                              1.016
+            sersic_index                                                                  2.450
+
+
+Most probable model (3.0 sigma limits):
+
+galaxies
+    lens
+        light
+            mass_to_light_ratio                                                           0.335 (0.320, 0.353)
+        dark
+            kappa_s                                                                       0.103 (0.096, 0.109)
+            scale_radius                                                                  13.396 (11.937, 15.608)
+        shear
+            magnitude                                                                     0.032 (0.030, 0.033)
+            phi                                                                           43.290 (42.693, 43.873)
+    source
+        light
+            centre
+                centre_0                                                                  0.108 (0.105, 0.112)
+                centre_1                                                                  0.117 (0.114, 0.120)
+            axis_ratio                                                                    0.783 (0.776, 0.791)
+            phi                                                                           58.910 (57.791, 59.953)
+            intensity                                                                     0.320 (0.307, 0.335)
+            effective_radius                                                              1.023 (0.989, 1.053)
+            sersic_index                                                                  2.439 (2.394, 2.481)
+
+
+Most probable model (1.0 sigma limits):
+
+galaxies
+    lens
+        light
+            mass_to_light_ratio                                                           0.335 (0.330, 0.340)
+        dark
+            kappa_s                                                                       0.103 (0.101, 0.106)
+            scale_radius                                                                  13.396 (12.644, 13.902)
+        shear
+            magnitude                                                                     0.032 (0.031, 0.032)
+            phi                                                                           43.290 (43.113, 43.469)
+    source
+        light
+            centre
+                centre_0                                                                  0.108 (0.107, 0.109)
+                centre_1                                                                  0.117 (0.116, 0.118)
+            axis_ratio                                                                    0.783 (0.780, 0.785)
+            phi                                                                           58.910 (58.622, 59.228)
+            intensity                                                                     0.320 (0.315, 0.325)
+            effective_radius                                                              1.023 (1.013, 1.033)
+            sersic_index                                                                  2.439 (2.424, 2.455)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+        light
+            axis_ratio                                                                    0.9132345716768806
+            phi                                                                           35.41237183541088
+            intensity                                                                     0.7148147395576836
+            effective_radius                                                              0.9769311302221212
+            sersic_index                                                                  4.518072763178528
+    source
+        redshift                                                                          1.0

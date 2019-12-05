@@ -1,0 +1,34 @@
+Bayesian Evidence                                                                         1972.03041764
+Maximum Likelihood                                                                        1978.14325097
+
+Most Likely Model:
+
+hyper_galaxy
+    contribution_factor                                                                   14.368
+    noise_factor                                                                          0.073
+    noise_power                                                                           8.907
+hyper_background_noise
+    noise_scale                                                                           0.066
+
+
+Most probable model (3.0 sigma limits):
+
+hyper_galaxy
+    contribution_factor                                                                   9.525 (-6.996, 26.714)
+    noise_factor                                                                          4.686 (-3.751, 13.291)
+    noise_power                                                                           6.708 (1.133, 12.208)
+hyper_background_noise
+    noise_scale                                                                           0.066 (0.061, 0.071)
+
+
+Most probable model (1.0 sigma limits):
+
+hyper_galaxy
+    contribution_factor                                                                   9.525 (2.678, 15.945)
+    noise_factor                                                                          4.686 (1.342, 7.863)
+    noise_power                                                                           6.708 (4.699, 8.828)
+hyper_background_noise
+    noise_scale                                                                           0.066 (0.064, 0.067)
+
+instances
+
