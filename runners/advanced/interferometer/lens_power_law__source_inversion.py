@@ -92,9 +92,7 @@ visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.
 
 # Next, we create the real-space mask which defines the real-space grid the model images of the strong lens system
 # are created on and used to transform to the uv-plane model data.
-real_space_mask = al.mask.circular(
-    shape_2d=(151, 151), pixel_scales=0.1, radius=3.0
-)
+real_space_mask = al.mask.circular(shape_2d=(151, 151), pixel_scales=0.1, radius=3.0)
 
 # Make a quick subplot to make sure the data looks as we expect.
 aplt.interferometer.subplot_interferometer(interferometer=interferometer)

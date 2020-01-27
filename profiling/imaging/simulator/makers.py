@@ -63,7 +63,9 @@ def simulate_imaging_from_galaxies_and_output_to_fits(
 
     aplt.imaging.subplot_imaging(
         imaging=imaging,
-        sub_plotter=aplt.SubPlotter(output=aplt.Output(filename="imaging", path=dataset_path, format="png"))
+        sub_plotter=aplt.SubPlotter(
+            output=aplt.Output(filename="imaging", path=dataset_path, format="png")
+        ),
     )
 
     aplt.imaging.individual(
@@ -72,13 +74,15 @@ def simulate_imaging_from_galaxies_and_output_to_fits(
         plot_noise_map=True,
         plot_psf=True,
         plot_signal_to_noise_map=True,
-        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png"))
+        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png")),
     )
 
     aplt.tracer.subplot_tracer(
         tracer=tracer,
         grid=simulator.grid,
-        sub_plotter=aplt.SubPlotter(output=aplt.Output(filename="tracer", path=dataset_path, format="png"))
+        sub_plotter=aplt.SubPlotter(
+            output=aplt.Output(filename="tracer", path=dataset_path, format="png")
+        ),
     )
 
     aplt.tracer.individual(
@@ -89,9 +93,8 @@ def simulate_imaging_from_galaxies_and_output_to_fits(
         plot_convergence=True,
         plot_potential=True,
         plot_deflections=True,
-        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png"))
+        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png")),
     )
-
 
 
 def make_lens_sie__source_smooth(data_resolutions, sub_size):
@@ -162,4 +165,3 @@ def make_lens_sie__source_cuspy(data_resolutions, sub_size):
             galaxies=[lens_galaxy, source_galaxy],
             sub_size=sub_size,
         )
-

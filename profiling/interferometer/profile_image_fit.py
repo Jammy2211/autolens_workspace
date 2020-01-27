@@ -67,7 +67,7 @@ real_space_mask = al.mask.circular(
 masked_interferometer = al.masked.interferometer(
     interferometer=interferometer,
     real_space_mask=real_space_mask,
-    visibilities_mask=np.full(fill_value=False, shape=total_visibilities)
+    visibilities_mask=np.full(fill_value=False, shape=total_visibilities),
 )
 
 print("Number of points = " + str(masked_interferometer.grid.sub_shape_1d) + "\n")
@@ -99,8 +99,8 @@ print("Time to create profile image = {}".format(diff / repeats))
 start = time.time()
 for i in range(repeats):
     visibilities = tracer.profile_visibilities_from_grid_and_transformer(
-        grid=masked_interferometer.grid,
-        transformer=masked_interferometer.transformer)
+        grid=masked_interferometer.grid, transformer=masked_interferometer.transformer
+    )
 diff = time.time() - start
 print("Time to create profile visibilities = {}".format(diff / repeats))
 

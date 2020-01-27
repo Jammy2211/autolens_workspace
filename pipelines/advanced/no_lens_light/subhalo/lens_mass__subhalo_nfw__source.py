@@ -41,6 +41,8 @@ def make_pipeline(
     signal_to_noise_limit=None,
     bin_up_factor=None,
     pixel_scale_interpolation_grid=None,
+    inversion_uses_border=True,
+    inversion_pixel_limit=None,
     parallel=False,
 ):
 
@@ -80,8 +82,6 @@ def make_pipeline(
                 self.model.galaxies.subhalo.mass.centre_1,
             ]
 
-
-
     subhalo = al.GalaxyModel(
         redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMassToConcentration
     )
@@ -101,7 +101,7 @@ def make_pipeline(
         galaxies=dict(
             lens=af.last.instance.galaxies.lens,
             subhalo=subhalo,
-            source=af.last.instance.galaxies.source
+            source=af.last.instance.galaxies.source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -110,6 +110,8 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
+        inversion_pixel_limit=inversion_pixel_limit,
         optimizer_class=af.MultiNest,
         number_of_steps=5,
     )
@@ -136,6 +138,8 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_uses_border=inversion_uses_border,
+        inversion_pixel_limit=inversion_pixel_limit,
         optimizer_class=af.MultiNest,
     )
 

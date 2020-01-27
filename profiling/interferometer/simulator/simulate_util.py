@@ -28,7 +28,13 @@ def load_test_interferometer(data_type, data_resolution):
 
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=data_path,
-        folder_names=["profiling", "interferometer", "dataset", data_type, data_resolution],
+        folder_names=[
+            "profiling",
+            "interferometer",
+            "dataset",
+            data_type,
+            data_resolution,
+        ],
     )
 
     return al.interferometer.from_fits(

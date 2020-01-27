@@ -117,9 +117,7 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.8
     phase1.optimizer.evidence_tolerance = 0.1
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        inversion=False,
-    )
+    phase1 = phase1.extend_with_multiple_hyper_phases(inversion=False)
 
     ### PHASE 2 ###
 
@@ -157,9 +155,7 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.5
     phase2.optimizer.evidence_tolerance = evidence_tolerance
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        inversion=False,
-    )
+    phase2 = phase2.extend_with_multiple_hyper_phases(inversion=False)
 
     ### PHASE 3 ###
 
@@ -197,9 +193,7 @@ def make_pipeline(
     phase3.optimizer.sampling_efficiency = 0.8
     phase3.optimizer.evidence_tolerance = 0.1
 
-    phase3 = phase3.extend_with_multiple_hyper_phases(
-        inversion=False,
-    )
+    phase3 = phase3.extend_with_multiple_hyper_phases(inversion=False)
 
     ### PHASE 4 ###
 
@@ -238,8 +232,6 @@ def make_pipeline(
     phase4.optimizer.sampling_efficiency = 0.5
     phase4.optimizer.evidence_tolerance = evidence_tolerance
 
-    phase4 = phase4.extend_with_multiple_hyper_phases(
-        inversion=True,
-    )
+    phase4 = phase4.extend_with_multiple_hyper_phases(inversion=True)
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

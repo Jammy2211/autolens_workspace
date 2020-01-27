@@ -44,8 +44,7 @@ def simulate_interferometer_from_galaxies_and_output_to_fits(
     interferometer_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=interferometer_path,
-        folder_names=["dataset", data_type, data_resolution],
+        path=interferometer_path, folder_names=["dataset", data_type, data_resolution]
     )
 
     interferometer.output_to_fits(
@@ -57,19 +56,25 @@ def simulate_interferometer_from_galaxies_and_output_to_fits(
 
     aplt.interferometer.subplot_interferometer(
         interferometer=interferometer,
-        sub_plotter=aplt.SubPlotter(output=aplt.Output(filename="intererometer", path=dataset_path, format="png"))
+        sub_plotter=aplt.SubPlotter(
+            output=aplt.Output(
+                filename="intererometer", path=dataset_path, format="png"
+            )
+        ),
     )
 
     aplt.interferometer.individual(
         interferometer=interferometer,
         plot_visibilities=True,
-        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png"))
+        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png")),
     )
 
     aplt.tracer.subplot_tracer(
         tracer=tracer,
         grid=simulator.grid,
-        sub_plotter=aplt.SubPlotter(output=aplt.Output(filename="tracer", path=dataset_path, format="png"))
+        sub_plotter=aplt.SubPlotter(
+            output=aplt.Output(filename="tracer", path=dataset_path, format="png")
+        ),
     )
 
     aplt.tracer.individual(
@@ -80,7 +85,7 @@ def simulate_interferometer_from_galaxies_and_output_to_fits(
         plot_convergence=True,
         plot_potential=True,
         plot_deflections=True,
-        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png"))
+        plotter=aplt.Plotter(output=aplt.Output(path=dataset_path, format="png")),
     )
 
 
@@ -152,4 +157,3 @@ def make_lens_sie__source_cuspy(data_resolutions, sub_size):
             galaxies=[lens_galaxy, source_galaxy],
             sub_size=sub_size,
         )
-

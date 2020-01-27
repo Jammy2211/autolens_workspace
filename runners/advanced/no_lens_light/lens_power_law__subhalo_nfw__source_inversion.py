@@ -60,7 +60,6 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
-import autolens.plot as aplt
 
 # Specify the dataset label and name, which we be used to determine the path we load the data from.
 dataset_label = "imaging"
@@ -117,8 +116,7 @@ from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
 # - The Regularization scheme used by of this pipeline (and all pipelines that follow).
 
 pipeline_source_settings = al.PipelineSourceSettings(
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
@@ -163,7 +161,10 @@ pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
 # information throughout the analysis to later phases.
 
 pipeline = (
-    pipeline_source__parametric + pipeline_source__inversion + pipeline_mass__power_law + pipeline_subhalo__nfw
+    pipeline_source__parametric
+    + pipeline_source__inversion
+    + pipeline_mass__power_law
+    + pipeline_subhalo__nfw
 )
 
 pipeline.run(dataset=imaging, mask=mask)

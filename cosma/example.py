@@ -29,7 +29,7 @@ import autofit as af
 #    the autolens_workspace. This is for the same reason as the dataset.
 
 # We need to specify where our dataset is stored and output is placed, which uses your cosma user (change this below).
-cosma_username = 'cosma_username'
+cosma_username = "cosma_username"
 
 # Lets use this to setup our cosma path, which is where our dataset and output are stored.
 

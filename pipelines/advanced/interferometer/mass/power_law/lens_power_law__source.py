@@ -99,8 +99,6 @@ def make_pipeline(
 
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        inversion=True,
-    )
+    phase1 = phase1.extend_with_multiple_hyper_phases(inversion=True)
 
     return al.PipelineDataset(pipeline_name, phase1)

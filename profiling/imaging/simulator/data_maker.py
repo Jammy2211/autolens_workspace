@@ -15,6 +15,4 @@ data_resolutions = ["lsst", "euclid", "hst", "hst_up", "ao"]
 makers.make_lens_sie__source_smooth(
     data_resolutions=data_resolutions, sub_size=sub_size
 )
-makers.make_lens_sie__source_cuspy(
-    data_resolutions=data_resolutions, sub_size=sub_size
-)
+makers.make_lens_sie__source_cuspy(data_resolutions=data_resolutions, sub_size=sub_size)
