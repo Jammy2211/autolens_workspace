@@ -1,6 +1,5 @@
 import autofit as af
 import autolens as al
-from autolens.pipeline import pipeline
 
 # This pipeline fits a strong lens which has two lens galaxies. It is composed of the following 4 phases:
 
@@ -34,19 +33,6 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 1 ###
 
-    # The left-hand galaxy is at (0.0", -1.0"), so we're going to use a small circular mask centred on its location to
-    # fit its light profile. Its important that light from the other lens galaxy and source galaxy don't contaminate
-    # our fit.
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            sub_size=2,
-            radius=0.5,
-            centre=(0.0, -1.0),
-        )
-
     # Let's restrict the priors on the centres around the pixel we know the galaxy's light centre peaks.
 
     left_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
@@ -66,26 +52,17 @@ def make_pipeline(phase_folders=None):
         galaxies=dict(
             left_lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
         ),
-        mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
     phase1.optimizer.sampling_efficiency = 0.5
+    phase1.optimizer.evidence_tolerance = 100.0
 
     ### PHASE 2 ###
 
     # Now do the exact same with the lens galaxy on the right at (0.0", 1.0")
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular(
-            shape=shape_2d,
-            pixel_scales=pixel_scales,
-            sub_size=2,
-            radius=0.5,
-            centre=(0.0, 1.0),
-        )
 
     right_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
 
@@ -99,13 +76,13 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_2__right_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(right_lens=right_lens),
-        mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 30
     phase2.optimizer.sampling_efficiency = 0.5
+    phase2.optimizer.evidence_tolerance = 100.0
 
     ### PHASE 3 ###
 
@@ -153,6 +130,7 @@ def make_pipeline(phase_folders=None):
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.5
+    phase3.optimizer.evidence_tolerance = 100.0
 
     ### PHASE 4 ###
 
@@ -212,4 +190,4 @@ def make_pipeline(phase_folders=None):
     phase4.optimizer.n_live_points = 60
     phase4.optimizer.sampling_efficiency = 0.5
 
-    return pipeline.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

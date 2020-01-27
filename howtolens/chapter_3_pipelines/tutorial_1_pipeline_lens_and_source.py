@@ -1,6 +1,5 @@
 import autofit as af
 import autolens as al
-from autolens.pipeline import pipeline
 
 # All pipelines begin with a comment describing the pipeline and a phase-by-phase description of what it does.
 
@@ -35,42 +34,13 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 1 ###
 
-    # In chapter 2, we learnt how to mask simulator. With pipelines we can change our mask between phases. Afterall,
-    # the bigger the mask, the slower the run-time. In the early phases of a pipeline we're not bothered about fitting
-    # all of the image. Aggresive masking (which removes lots of image-pixels) is an appealing way to get things running fast.
-
-    # In phase 1, we're only interested in fitting the lens's light, so we'll mask out the source-galaxy entirely.
-    # This'll give us a nice speed up and ensure the source's light doesn't impact our light-profile fit.
-
-    # We want a mask that is shaped like the source-galaxy. The shape of the source is an 'annulus' (e.g. a ring),
-    # so we're going to use an annular mask. For example, if an annulus is specified between an inner radius of 0.5"
-    # and outer radius of 2.0", all pixels in two rings between 0.5" and 2.0" are included in the analysis.
-
-    # But wait, we actually want the opposite of this! We want a masks where the pixels between 0.5" and 2.0" are not
-    # included! They're the pixels the source is actually located. Therefore, we're going to use an 'anti-annular
-    # mask', where the inner and outer radii are the regions we omit from the analysis. This means we need to specify
-    # a third mask radii, further out, such that simulator at these exterior edges of the image are masked.
-
-    # We can set a mask using a 'mask_function', which returns the mask used by a phase.
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular_anti_annular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            sub_size=2,
-            inner_radius=0.5,
-            outer_radius=1.6,
-            outer_radius_2=2.5,
-        )
-
-    # Next , wecreate the phase, using the same notation we learnt before (noting the masks function is passed to
+    # First, we create the phase, using the same notation we learnt before (noting the masks function is passed to
     # this phase ensuring the anti-annular masks above is used).
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
-        mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
 
@@ -79,24 +49,13 @@ def make_pipeline(phase_folders=None):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 30
     phase1.optimizer.sampling_efficiency = 0.5
+    phase1.optimizer.evidence_tolerance = 100.0
 
     ### PHASE 2 ###
 
     # In phase 2, we fit the source galaxy's light. Thus, we want to make 2 changes from the previous phase.
 
     # 1) We want to fit the lens subtracted image calculated in phase 1, instead of the observed image.
-    # 2) We want to mask the central regions of this image where there are residuals due to the lens light subtraction.
-
-    # We can use the mask function again, to modify the mask to an annulus. We'll use the same ring radii as before.
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular_annular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            sub_size=2,
-            inner_radius=0.5,
-            outer_radius=3.0,
-        )
 
     # To modify an image, we call a new function, 'modify image'. This function behaves like the pass-priors functions
     # before, whereby we create a python 'class' in a Phase to set it up.  This ensures it has access to the pipeline's
@@ -130,13 +89,13 @@ def make_pipeline(phase_folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        mask_function=mask_function,
         optimizer_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 50
     phase2.optimizer.sampling_efficiency = 0.3
+    phase2.optimizer.evidence_tolerance = 100.0
 
     ### PHASE 3 ###
 
@@ -204,4 +163,4 @@ def make_pipeline(phase_folders=None):
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pipeline.PipelineDataset(pipeline_name, phase1, phase2, phase3)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

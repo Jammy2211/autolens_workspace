@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # I think you'll agree, inversions are a very powerful tool for modeling strong lenses. Now that our source galaxies
 # comprise just a few parameters we've got a much less complex non-linear parameter space to deal with. This allows us
@@ -84,7 +85,7 @@ fit = perform_fit_with_lens__source_galaxy(
     lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # What happened!? This incorrect mass-model provides a really good_fit to the image! The residuals and chi-squared map
 # are as good as the ones we saw in the last tutorial.
@@ -113,7 +114,7 @@ correct_fit = perform_fit_with_lens__source_galaxy(
     lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-al.plot.fit_imaging.subplot(fit=correct_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=correct_fit, include=aplt.Include(mask=True))
 
 print("Bayesian Evidence of Incorrect Fit:")
 print(fit.evidence)
@@ -215,7 +216,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 # inversion. When we plotters the image, a new panel on the sub-plotters appears showing the model image of the lens galaxy.
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # Of course if the lens subtraction is rubbish so is our fit, so we can be sure that our lens model wants to fit the
 # lens galaxy's light accurately (below, I've increased the lens galaxy intensity from 0.2 to 0.3).
@@ -233,7 +234,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # And with that, we're done. Finally, I'll point out a few things about what we've covered to get you thinking about
 # the next tutorial on adaption.

@@ -8,52 +8,47 @@ import autolens as al
 # Phase 1:
 
 # Description: Perform the subhalo detection analysis.
-# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Lens Mass: EllipticalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
-# Previous Pipelines: initialize/lens_sie__source_sersic_from_init.py
-# Prior Passing: Lens mass (constant -> previous pipeline), source light (variable -> previous pipeline).
+# Previous Pipelines: source/parametric/lens_sie__source_sersic.py
+# Prior Passing: Lens mass (instance -> previous pipeline), source light (model -> previous pipeline).
 # Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
 
 # Phase 2:
 
 # Description: Refine the best-fit detected subhalo from the previous phase, by varying also the lens mass model..
-# Lens Mass: EllipitcalIsothermal + ExternalShear
+# Lens Mass: EllipticalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Subhalo: SphericalTruncatedNFWChallenge
-# Previous Pipelines: initialize/lens_sie__source_sersic_from_init.py
-# Prior Passing: Lens mass (variable -> previous pipeline), source light and subhalo mass (variable -> phase 2).
+# Previous Pipelines: source/parametric/lens_sie__source_sersic.py
+# Prior Passing: Lens mass (model -> previous pipeline), source light and subhalo mass (model -> phase 2).
 # Notes: None
 
 
 def make_pipeline(
-    pipeline_settings,
+    pipeline_general_settings,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
+    positions_threshold=None,
     sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
-    positions_threshold=None,
-    inner_mask_radii=None,
     pixel_scale_interpolation_grid=None,
     parallel=False,
 ):
 
-    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
+    ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
-    # will be the string specified below However, its good practise to use the 'tag.' function below, incase
-    # a pipeline does use customized tag names.
+    pipeline_name = "pipeline_subhalo_hyper__lens_sie__subhalo_nfw__source_sersic_mass"
 
-    pipeline_name = "pipeline_subhalo__lens_sie__subhalo_nfw__source_sersic"
+    # This pipeline's name is tagged according to whether:
 
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
-        include_shear=pipeline_settings.include_shear
-    )
+    # 1) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
+    phase_folders.append(pipeline_general_settings.tag)
 
     ### Phase 1 ###
 
@@ -76,11 +71,10 @@ def make_pipeline(
         redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMassToConcentration
     )
 
-    subhalo.mass.mass_at_200 = af.LogUniformPrior(
-        lower_limit=10.0e6, upper_limit=10.0e9
-    )
+    subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
 
     subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
+
     subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
     phase1 = GridPhase(
@@ -94,14 +88,17 @@ def make_pipeline(
             ),
             subhalo=subhalo,
             source=al.GalaxyModel(
-                redshift=redshift_source, light=af.last.instance.galaxies.source.light
+                redshift=redshift_source,
+                light=af.last.instance.galaxies.source.light,
+                hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
+        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        positions_threshold=positions_threshold,
-        inner_mask_radii=inner_mask_radii,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
         number_of_steps=5,
@@ -117,23 +114,24 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=af.last[-1].instance.galaxies.lens.mass,
-                shear=af.last[-1].instance.galaxies.lens.shear,
+                mass=af.last[-1].model.galaxies.lens.mass,
+                shear=af.last[-1].model.galaxies.lens.shear,
             ),
             subhalo=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=phase1.best_result.model.galaxies.subhalo.mass,
+                redshift=redshift_lens, mass=phase1.result.model.galaxies.subhalo.mass
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                light=phase1.best_result.model.galaxies.source.light,
+                light=phase1.result.model.galaxies.source.light,
+                hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
+        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        positions_threshold=positions_threshold,
-        inner_mask_radii=inner_mask_radii,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         optimizer_class=af.MultiNest,
     )
@@ -141,5 +139,11 @@ def make_pipeline(
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 80
     phase2.optimizer.sampling_efficiency = 0.3
+
+    phase2 = phase2.extend_with_multiple_hyper_phases(
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
+    )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

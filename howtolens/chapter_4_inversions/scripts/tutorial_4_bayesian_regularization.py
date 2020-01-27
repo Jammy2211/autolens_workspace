@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # So, we can use an inversion to reconstruct an image. Furthermore, this reconstruction provides the 'best-fit'
 # solution. And, when we inspect the fit with the fitting module, we see residuals indicative of a good fit.
@@ -85,7 +86,7 @@ source_galaxy = al.Galaxy(
 
 fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
-al.plot.fit_imaging.subplot(fit=fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit)
 
 # It looks pretty good! However, this is because I sneakily chose a regularization coefficient that gives a good looking
 # solution. If we reduce this regularization coefficient to zero, our source reconstruction goes weird.
@@ -97,7 +98,9 @@ source_galaxy = al.Galaxy(
 
 no_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
-al.plot.fit_imaging.subplot(fit=no_regularization_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=no_regularization_fit, include=aplt.Include(mask=True)
+)
 
 # So, what's happening here? Why does reducing the regularization do this to our source reconstruction?
 
@@ -117,8 +120,9 @@ al.plot.fit_imaging.subplot(fit=no_regularization_fit, include_mask=True)
 
 # If we change the 'normalization' variables of the plotter such that the color-map is restricted to a narrower
 # range of values, we can see that even without regularization we are still reconstructing the actual source galaxy.
-al.plot.inversion.reconstruction(
-    inversion=no_regularization_fit.inversion, norm_max=1.0, norm_min=-1.0
+aplt.inversion.reconstruction(
+    inversion=no_regularization_fit.inversion,
+    plotter=aplt.Plotter(cmap=aplt.ColorMap(norm_max=0.5, norm_min=-0.5)),
 )
 
 # Over-fitting is why regularization is necessary. Solutions like this completely ruin our attempts to model a
@@ -133,7 +137,9 @@ source_galaxy = al.Galaxy(
 
 high_regularization_fit = perform_fit_with_source_galaxy(source_galaxy=source_galaxy)
 
-al.plot.fit_imaging.subplot(fit=high_regularization_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=high_regularization_fit, include=aplt.Include(mask=True)
+)
 
 # So, we now understand regularization and its purpose. But there is one nagging question that remains, how do I choose
 # the regularization coefficient? We can't use our likelihood, as decreasing the regularization coefficient will always
@@ -204,7 +210,7 @@ print(10395.370224426646)
 print("New Bayesian Evidence:")
 print(fit.evidence)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # 2) Can you think of any other ways we might increase the evidence even further? If not - don't worry about - but
 #    you'll learn that PyAutoLens actually adapts its source reconstructions to the properties of the image that it is

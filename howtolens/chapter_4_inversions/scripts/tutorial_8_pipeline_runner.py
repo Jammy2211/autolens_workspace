@@ -22,6 +22,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
 def simulate():
@@ -109,7 +110,7 @@ def simulate():
 # Lets simulate the we'll fit, which is the same complex source as the
 # 'chapter_3_pipelines/tutorial_3_complex_source.py' tutorial.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # Lets import the pipeline and run it.
 from howtolens.chapter_4_inversions import tutorial_8_pipeline

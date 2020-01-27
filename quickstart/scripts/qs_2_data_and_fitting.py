@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # Lets fit a strong lens image in PyAutoLens, using mass-profiles, light-profiles, galaxies and a tracer. First, we
 # need some simulator, so lets load an example image that comes prepacked with PyAutoLens which we'll load from a fits file.
@@ -24,7 +25,7 @@ imaging = al.imaging.from_fits(
 # 3) The PSF, which defines how the image is blurred during simulator acquisition.
 # 4) The pixel-scale of the image defining the arcsecond to pixel conversion.
 
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # To fit an image we also specify a mask, which describes which sections of the image we fit. We mask out regions of
 # the image where the lens and source galaxies are not visible, (e.g. the edges). For our image a 3" circular mask
@@ -32,10 +33,10 @@ al.plot.imaging.subplot(imaging=imaging)
 # interest.
 
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Next, we create a 'lens dataset' object, which is a 'package' of all parts of a simulator-set we need to fit it:
 
@@ -71,7 +72,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
+aplt.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
 # To fit the image, we pass the lens dataset and tracer to a LensDataFit object. This performs the following steps:
 
@@ -84,7 +85,7 @@ al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # We can create a sub-plotters of the fit to an individual place in the tracer, showing:
 
@@ -93,7 +94,7 @@ al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
 # 3) The model image of that plane's galaxies
 # 4) The model galaxy in the (unlensed) source plane.
 
-al.plot.fit_imaging.subplot_of_planes(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_of_planes(fit=fit, include=aplt.Include(mask=True))
 
 # A fit also provides a likelihood, which is a single-figure estimate of how good the model image fitted the
 # simulated image (in unmasked pixels only!).
@@ -131,9 +132,9 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
-al.plot.fit_imaging.subplot_of_planes(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_of_planes(fit=fit, include=aplt.Include(mask=True))
 
 # Residuals now appear at the locations the source galaxy, producing increased chi-squareds which determine our
 # goodness-of-fit.

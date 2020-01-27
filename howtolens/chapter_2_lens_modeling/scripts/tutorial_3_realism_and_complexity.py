@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # Up to now, we've fitted some fairly crude and unrealistic lens models. For example, we've modeled the lens
 # galaxy's mass as a sphere. Given most lens galaxies are 'elliptical' galaxies, we should probably model
@@ -30,7 +31,7 @@ af.conf.instance = af.conf.Config(
     output_path=chapter_path + "output",
 )
 
-# Another simulator image function, which generates a different Imaging simulator-set from the first two tutorials.
+# Another simulator image function, which generates a different imaging dataset from the first two tutorials.
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
@@ -77,11 +78,15 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Simulate the Imaging simulator.
+# Simulate the imaging dataset.
 imaging = simulate()
 
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
 # When plotted, the lens light's is clearly visible in the centre of the image.
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Now lets fit it using a phase, noting that our galaxy-model corresponds to the one used in the dataset function above.
 
@@ -110,12 +115,12 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-# And lets look at the fit to the Imaging simulator.
-al.plot.fit_imaging.subplot(fit=results.most_likely_fit, include_mask=True)
+# And lets look at the fit to the imaging dataset.
+aplt.fit_imaging.subplot_fit_imaging(fit=results.most_likely_fit)
 
 # Uh-oh. That fit doesn't look very good, does it? If we compare our inferred parameters (look at the
 # 'autolens_workspace/howtolens/chapter_2_lens_modeling/output/t3_realism_and_complexity' folder to the actual
@@ -125,15 +130,11 @@ al.plot.fit_imaging.subplot(fit=results.most_likely_fit, include_mask=True)
 # likelihood than the correct solution? Lets make absolutely sure it doesnt: (you've seen all this code below before,
 # but I've put a few comments to remind you of whats happening).
 
-mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
-)
-
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-al.plot.imaging.image(imaging=imaging, mask=mask)
+aplt.imaging.image(imaging=imaging, mask=mask)
 
-# Make the tracer we use to Simulate the Imaging simulator
+# Make the tracer we use to Simulate the imaging dataset
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
@@ -166,7 +167,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 # Now, lets fit the lens-data with the tracer and plotters the fit. It looks a lot better than above, doesn't it?
 correct_fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=correct_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=correct_fit)
 
 # Finally, just to be sure, lets compare the two likelihoods.
 print("Likelihood of Non-linear Search:")

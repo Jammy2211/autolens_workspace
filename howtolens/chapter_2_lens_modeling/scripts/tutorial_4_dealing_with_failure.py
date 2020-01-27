@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # We finished the last tutorial on a sour note. Our non-linear search failed miserably, and we were unable to infer a
 # lens model which fitted our simulator. In this tutorial, we're going to right our past wrongs and infer
@@ -67,7 +68,11 @@ def simulate():
 # Simulate the imaging dataand plotters it.
 imaging = simulate()
 
-al.plot.imaging.subplot(imaging=imaging)
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 ### Approach 1 -  Prior Tuning ###
 
@@ -152,7 +157,7 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-custom_prior_result = custom_prior_phase.run(dataset=imaging)
+custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
@@ -161,7 +166,7 @@ print("MultiNest has finished run - you may now continue the notebook.")
 
 # Check out the PDF in the '/howstolens/chapter_2_lens_modeling/output/4_custom_priors/image' folder - what degeneracies
 # do you notice between parameters?
-al.plot.fit_imaging.subplot(fit=custom_prior_result.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=custom_prior_result.most_likely_fit)
 
 # Okay, so we've learnt that by tuning our priors to the lens we're fitting we can increase our chance of inferring the
 # global maxima lens model. Before moving onto the next approach, lets think about the advantages and disadvantages of prior
@@ -217,10 +222,10 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging)
+light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
-al.plot.fit_imaging.subplot(fit=light_traces_mass_phase_result.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=light_traces_mass_phase_result.most_likely_fit)
 
 # The results look pretty good. Our source galaxy fits the dataset pretty well and we've clearly inferred a model that
 # looks similar to the one above. However, inspection of the residuals shows that the fit wasn't quite as good as the
@@ -290,10 +295,10 @@ print(
     "folder for live output of the results, images and lens model."
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
-custom_non_linear_result = custom_non_linear_phase.run(dataset=imaging)
+custom_non_linear_result = custom_non_linear_phase.run(dataset=imaging, mask=mask)
 print("MultiNest has finished run - you may now continue the notebook.")
 
-al.plot.fit_imaging.subplot(fit=custom_non_linear_result.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=custom_non_linear_result.most_likely_fit)
 
 # Indeed, it does. Thus, we can always brute-force our way to a good lens model, if all else fails.
 

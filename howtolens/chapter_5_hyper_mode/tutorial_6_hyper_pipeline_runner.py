@@ -22,6 +22,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3. It also adds
 # lens galaxy light.
@@ -123,35 +124,39 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 ### HYPER PIPELINE SETTINGS ###
 
-# Hopefully, you're used to seeing us use PipelineSettings to customize the behaviour of a pipeline. If not, they're fairly
-# straight forward, they simmply allow us to choose how the pipeline behaves.
-
-# Hyper-fitting brings with it the following settings:
+# PipelineSettings customize the behaviour of a pipeline. Hyper-fitting brings with it the following settings:
 
 # - If hyper_galaxies-galaxies are used to scale the noise in each component of the image (default True)
-
+# - If the level of background noise is hyper throughout the pipeline (default True)
 # - If the background sky is modeled throughout the pipeline (default False)
 
-# - If the level of background noise is hyper throughout the pipeline (default True)
-
-pipeline_settings = al.PipelineSettingsHyper(
+pipeline_general_settings = al.PipelineGeneralSettings(
     hyper_galaxies=True,
-    hyper_image_sky=False,
-    hyper_background_noise=False,
-    include_shear=True,
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
+    hyper_background_noise=True,
+    hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
+    with_shear=True,
+    source_pixelization=al.pix.VoronoiBrightnessImage,
+    source_regularization=al.reg.AdaptiveBrightness,
+)
+
+# Source settings are required for the inversion. With hyper-mode on we can now use the VoronoiBrightnessImage
+# and AdaptiveBrightness classes which adapt to the source's surface-brightness.
+
+pipeline_source_settings = al.PipelineSourceSettings(
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
 # Lets import the pipeline and run it.
 from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=["howtolens", "c5_t6_hyper"]
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_source_settings=pipeline_source_settings,
+    phase_folders=["howtolens", "c5_t6_hyper"],
 )
 
 pipeline_hyper.run(dataset=imaging, mask=mask)

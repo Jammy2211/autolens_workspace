@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we'll fit the imaging dataset we simulated in the previous exercise. We'll do this using model
 # images generated via a tracer, and by comparing to the simulated image we'll get diagostics about the quality of the fit.
@@ -6,7 +7,7 @@ import autolens as al
 # First you need to change the path below to the chapter 1 directory so we can load the dataset we output previously.
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
 
-# The simulator path specifies where the dataset was output in the last tutorial, this time in the directory 'chapter_path/simulator'
+# The dataset path specifies where the dataset was output in the last tutorial, this time in the directory 'chapter_path/dataset'
 dataset_path = chapter_path + "dataset/"
 
 imaging = al.imaging.from_fits(
@@ -46,18 +47,7 @@ print(mask[48:53, 48:53])  # Whereas central pixels are False and therefore unma
 
 # We can use a imaging_plotter to compare the mask and the image - this is useful if we really want to 'tailor' a
 # mask to the lensed source's light (which in this example, we won't).
-al.plot.imaging.image(imaging=imaging, mask=mask)
-
-# We can also use the mask to 'zoom' our plotters around the masked region only - meaning that if our image is very large,
-# we can focus-in on the lens and source galaxies.
-
-# You'll see this is an option for pretty much every plotter in PyAutoLens, and is something we'll do often throughout
-# the tutorials.
-al.plot.imaging.image(imaging=imaging, mask=mask, zoom_around_mask=True)
-
-# We can also remove all pixels outside the mask in the plotters, meaning bright pixels outside the mask won't impact the
-# plotters's color range. Again, we'll do this throughout the code.
-al.plot.imaging.image(imaging=imaging, mask=mask)
+aplt.imaging.image(imaging=imaging, mask=mask)
 
 # Now we've loaded the imaging dataset and created a mask, we'll create a 'lens dataset' object, using the 'masked_imaging' module.
 
@@ -74,7 +64,7 @@ al.plot.imaging.image(imaging=imaging, mask=mask)
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
-al.plot.imaging.image(imaging=masked_imaging.imaging)
+aplt.imaging.image(imaging=masked_imaging.imaging)
 
 # By printing its attribute, we can see that it does indeed contain the mask, masked image, masked noise-map,
 # psf and so on.
@@ -140,7 +130,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
+aplt.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
 # To fit the image, we pass the lens dataset and tracer to the 'fit' module. This performs the following:
 
@@ -156,7 +146,7 @@ al.plot.tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, mask=True)
 
 # We can print the fit's attributes. As usual, we can choose whether to return the fits in 2d or 1d, and in 2d if we
 # don't specify where we'll get all zeros, as the edges were masked:
@@ -222,7 +212,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, mask=True)
 
 # Residuals now appear at the locations of the source galaxy, increasing the chi-squared values (which determine our
 # likelihood).
@@ -259,7 +249,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # Clearly, the model provides a terrible fit and this tracer is not a plausible representation of
 # the image-simulator (of course, we already knew that, given that we simulated it!)

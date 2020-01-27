@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # We've learnt nearly all the tools we need to model strong lenses, so I'm now going to quickly cover how you should
 # choose your mask. I'll also show you another neat trick to improve the speed and accuracy of your non-linear search.
@@ -45,9 +46,9 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Simulate the Imaging simulator.
+# Simulate the imaging dataset.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # When it comes to determining an appropriate mask for this image, the best approach is to set up a mask using the mask
 # module and pass it to a imaging plotter. You can then check visually if the mask is an appropriate size or not.
@@ -59,7 +60,7 @@ mask = al.mask.circular_annular(
     outer_radius=2.4,
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # So, lets decrease the inner radius to correct for this.
 mask = al.mask.circular_annular(
@@ -69,7 +70,7 @@ mask = al.mask.circular_annular(
     outer_radius=2.4,
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # When we run the phase, we don't pass it the mask as an arrays. Instead, we pass it the mask as a function. The reason
 # for this will become clear in the next chapter, but for now I would say you just accept this syntax.
@@ -129,8 +130,8 @@ phase_with_custom_mask = al.PhaseImaging(
 
 # We can easily check the image-positions are accurate by plotting them using our imaging plotter (they are the magenta
 # dots on the image).
-al.plot.imaging.subplot(
-    imaging=imaging, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]]
+aplt.imaging.subplot_imaging(
+    imaging=imaging, positions=[(1.6, 0.0), (0.0, 1.6), (-1.6, 0.0), (0.0, -1.6)]
 )
 
 # We can then tell our phase to use these positions in the analysis.
@@ -152,7 +153,9 @@ print(
 )
 
 phase_with_positions.run(
-    dataset=imaging, positions=[[[1.6, 0.0], [0.0, 1.6], [-1.6, 0.0], [0.0, -1.6]]]
+    dataset=imaging,
+    mask=mask,
+    positions=[(1.6, 0.0), (0.0, 1.6), (-1.6, 0.0), (0.0, -1.6)],
 )
 
 print("MultiNest has finished run - you may now continue the notebook.")
@@ -206,13 +209,13 @@ def simulate_two_galaxies():
 
 imaging = simulate_two_galaxies()
 
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # To specify the positions we break the positions list into two cells. They will be plotted in different colours to
 # represent the fact they trace from different source galaxies.
-al.plot.imaging.subplot(
+aplt.imaging.subplot_imaging(
     imaging=imaging,
-    positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]],
+    positions=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]],
 )
 
 # Again, we tell our phase to use the positions and pass this list of pixels to our phase when we run it.
@@ -229,7 +232,8 @@ phase_with_x2_positions = al.PhaseImaging(
 
 phase_with_x2_positions.run(
     dataset=imaging,
-    positions=[[[2.65, 0.0], [-0.55, 0.0]], [[-2.65, 0.0], [0.55, 0.0]]],
+    mask=mask,
+    positions=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]],
 )
 
 # And that completes our final tutorial in this chapter! At this point, I recommend that you checkout the

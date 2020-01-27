@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # In this pipeline, we'll perform a basic analysis which fits a source galaxy using an inversion and a
 # lens galaxy where its light is not included and fitted, using two phases:
@@ -81,12 +82,10 @@ def make_pipeline(phase_folders=None):
     phase2.optimizer.sampling_efficiency = 0.3
     phase2.optimizer.const_efficiency_mode = True
 
-    # This function 'extends' phase 2, with an additional 'inversion phase'. An inversion phase is a standard phase
-    # which automatically uses the best-fit model of the phase it is extending (in this example, phase 2) to refine the
-    # inversion by optimizing only the pixelization & regularization parameters.
+    # We now 'extend' phase 1 with an additional 'inversion phase' which uses the best-fit mass model of phase 1 above
+    # to refine the it inversion used, by fitting only the pixelization & regularization parameters.
 
-    # The results of this inversion phase are accessible in their own attribute of the results, called 'inversion, as
-    # we'll see in phase 3.
+    # The the inversion phase results are accessible as attributes of the phase results and used in phase 3 below.
 
     phase2 = phase2.extend_with_inversion_phase()
 

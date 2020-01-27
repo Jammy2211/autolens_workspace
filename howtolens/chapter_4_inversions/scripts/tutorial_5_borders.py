@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In the previous tutorial, we told our invrsion to use a border. Here, we'll discuss what this border does.
 
@@ -43,15 +44,17 @@ def simulate():
 
 # Lets have a quick look at the image.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # So, what is a border? In the image-plane, a border is the set of exterior pixels in a mask that are at, well, its
-# border. Lets plot the image with a circular mask, and tell our imaging plotter to plotters the border as well.
+# border. Lets plot the image with a circular mask, and tell our imaging plotter to plot the border as well.
 mask_circular = al.mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask_circular, include_border=True)
+aplt.imaging.subplot_imaging(
+    imaging=imaging, mask=mask_circular, include=aplt.Include(border=True)
+)
 
 # As you can see, for a circular mask, the border *is* the edge of our mask (the ring of black dots we're used to seeing
 # whenever we plotters a mask). For an annular mask, not every pixel on the edge of the mask is necessarily a part of its
@@ -63,7 +66,9 @@ mask_annular = al.mask.circular_annular(
     outer_radius=2.5,
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask_annular, include_border=True)
+aplt.imaging.subplot_imaging(
+    imaging=imaging, mask=mask_annular, include=aplt.Include(border=True)
+)
 
 # Indeed, a border is *only* the pixels at the exterior edge of our mask, which for the annular mask above means non of
 # the pixels at the inner radius = 0.8" edge are part of the border.
@@ -71,6 +76,7 @@ al.plot.imaging.subplot(imaging=imaging, mask=mask_annular, include_border=True)
 # So, what does a border actually do? To show you, we'll need to fit this image with a lens model and mapper and we'll
 # do that by using the same function as the previous tutorial (to perform a quick source galaxy fit) but with the
 # option to input a mask and use a border.
+
 def perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy, mask, inversion_uses_border
 ):
@@ -104,7 +110,9 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_annular, inversion_uses_border=False
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True)
+)
 
 # Everything looks fine - we get a reconstructed source on a visually appeasing source-plane grid. So, why are we
 # so worried about borders? Lets see what happens if we use a circular mask instead.
@@ -112,32 +120,35 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=False
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True)
+)
 
 # Woah - whats happened? There are lots of extra points on our source-plane grid which trace to extremely large radii
 # away from the central regions of the source-plane! These points are traced image-pixels (just like all the other
 # points) which correspond to the central image-pixels that our annular mask masked but that our circular mask didn't!
 
 # Lets quickly check this using a mapper plotter.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
+aplt.mapper.subplot_image_and_mapper(
+    image=fit.masked_imaging.image,
     mapper=fit.inversion.mapper,
-    mask=mask_circular,
-    include_grid=True,
-    image_pixels=[
-        [range(3765, 3795)],
-        [range(4065, 4095)],
-        [range(3865, 3895)],
-        [range(3965, 3995)],
-        [range(4165, 4195)],
+    include=aplt.Include(inversion_grid=True),
+    image_pixel_indexes=[
+        [3578, 3579, 3580, 3581, 3582],
+        [3678, 3679, 3680, 3681, 3682],
+        [3778, 3779, 3780, 3781, 3782],
+        [3878, 3879, 3880, 3881, 3882],
+        [3978, 3979, 3980, 3981, 3982],
+        [4078, 4079, 4080, 4081, 4082],
+        [4178, 4179, 4180, 4181, 4182],
     ],
 )
 
 # So, whats happening physically? Towards the centre of our EllipticalIsothermal mass profile the density profile
 # becomes extremely cuspy (rising very sharply). This cause extremely large deflection angles to be computed - lets
 # have a quick look.
-al.plot.tracer.deflections_y(tracer=fit.tracer, grid=fit.grid)
-al.plot.tracer.deflections_x(tracer=fit.tracer, grid=fit.grid)
+aplt.tracer.deflections_y(tracer=fit.tracer, grid=fit.grid)
+aplt.tracer.deflections_x(tracer=fit.tracer, grid=fit.grid)
 
 # This means that our central image pixels are highly demagnified, tracing to extremely large values in the source
 # plane! Physically, this isn't a problem - it just means that we don't see a 'central image' in most strong lenses
@@ -166,7 +177,9 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=False
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True)
+)
 
 # This second point is a *huge* problem, as allowing source-pixels to fit regions of our mask in this completely
 # unphysical way introduces extremely dangerous systematics into our source reconstruction and lens model analysis.
@@ -179,20 +192,15 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True)
+)
 
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
+aplt.mapper.subplot_image_and_mapper(
+    image=fit.masked_imaging.image,
     mapper=fit.inversion.mapper,
-    mask=mask_circular,
-    include_grid=True,
-    image_pixels=[
-        [range(3765, 3795)],
-        [range(4065, 4095)],
-        [range(3865, 3895)],
-        [range(3965, 3995)],
-        [range(4165, 4195)],
-    ],
+    include=aplt.Include(inversion_grid=True),
+    image_pixel_indexes=[[0, 1, 2, 3, 4, 5]],
 )
 
 # This successfully addresses both of the issues above! However, you might be thinking, isn't that a bit of a hack? Its
@@ -253,14 +261,16 @@ def simulate_image_x2_lenses():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Lets simulator our 2 lens system, define a new circular mask and plotters them.
+# Lets simulate our 2 lens system, define a new circular mask and plotters them.
 imaging = simulate_image_x2_lenses()
 
 mask_circular = al.mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.8
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask_circular, include_border=True)
+aplt.imaging.subplot_imaging(
+    imaging=imaging, mask=mask_circular, include=aplt.Include(border=True)
+)
 
 
 # We need to redefine our perform fit function, to use the x2 lens galaxy model.
@@ -301,8 +311,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=False
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 # However, when we relocate them, we get a good-looking source-plane with a well defined border and edge, thus ensuring
@@ -311,8 +321,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 # Multi-galaxy modeling is rife for border effects and if you have multiple lens galaxies I heartily recommend you
@@ -329,8 +339,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 
@@ -342,8 +352,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 
@@ -355,8 +365,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 
@@ -368,8 +378,8 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     source_galaxy=source_galaxy, mask=mask_circular, inversion_uses_border=True
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit.inversion, include_grid=True, include_border=True
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_grid=True, border=True)
 )
 
 # And with that, borders are done. In truth, borders should pretty much take care of themselves when you're

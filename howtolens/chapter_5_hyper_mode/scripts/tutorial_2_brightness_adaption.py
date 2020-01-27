@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In the previous tutorial we motivated a need to adapt our pixelization to the source's morphology, such that source
 # pixels congregates in the source's brightest regions regardless of where it is located in the source-plane. This
@@ -85,9 +86,13 @@ fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 # Lets have a quick look to make sure it has the same residuals we saw in tutorial 1.
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # Finally, we can use this fit to set up our hyper-galaxy-image. This hyper-galaxy-image isn't perfect,  as there are
 # residuals in the central regions of the reconstructed source. But it's *okay* and it'll certainly give us enough
@@ -112,9 +117,13 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_brightness
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # Would you look at that! Our reconstruction of the image no longer has residuals! By congregating more source pixels
 # in the brightest regions of the source reconstruction we get a better fit. Furthermore, we can check that this
@@ -192,7 +201,7 @@ cluster_weight_power_0 = source_weight_power_0.pixelization.weight_map_from_hype
     hyper_image=source_weight_power_0.hyper_galaxy_image
 )
 
-al.plot.array(array=cluster_weight_power_0, mask=mask)
+aplt.array(array=cluster_weight_power_0, mask=mask)
 
 source_weight_power_5 = al.Galaxy(
     redshift=1.0,
@@ -207,7 +216,7 @@ cluster_weight_power_5 = source_weight_power_5.pixelization.weight_map_from_hype
     hyper_image=source_weight_power_5.hyper_galaxy_image
 )
 
-al.plot.array(array=cluster_weight_power_5, mask=mask)
+aplt.array(array=cluster_weight_power_5, mask=mask)
 
 source_weight_power_10 = al.Galaxy(
     redshift=1.0,
@@ -222,7 +231,7 @@ cluster_weight_power_10 = source_weight_power_10.pixelization.weight_map_from_hy
     hyper_image=source_weight_power_10.hyper_galaxy_image
 )
 
-al.plot.array(array=cluster_weight_power_10, mask=mask)
+aplt.array(array=cluster_weight_power_10, mask=mask)
 
 # When we increase the weight-power the brightest regions of the hyper-galaxy-image become weighted higher relative to
 # the fainter regions. This means that t e KMeans algorithm will adapt its pixelization to the brightest regions of
@@ -233,19 +242,25 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # So, what does the weight_floor do? Increasing the weight-power congregates pixels around the source. However,
 # there is a risk that by congregating too many source pixels in its brightest regions we lose resolution further out,
@@ -269,13 +284,15 @@ cluster_weight_floor = source_weight_floor.pixelization.weight_map_from_hyper_im
     hyper_image=source_weight_floor.hyper_galaxy_image
 )
 
-al.plot.array(array=cluster_weight_floor, mask=mask)
+aplt.array(array=cluster_weight_floor, mask=mask)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # To end, lets think about the Bayesian evidence which goes to significantly higher values than a magnification-based
 # gird. At this point, it might be worth reminding yourself how the Bayesian evidence works by going back to the

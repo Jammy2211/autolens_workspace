@@ -1,6 +1,6 @@
 import autofit as af
 import autolens as al
-
+import autolens.plot as aplt
 import numpy as np
 
 import os
@@ -100,5 +100,5 @@ difference_x_2d = masked_imaging.grid.array_stored_1d_from_sub_array_1d(
     sub_array_1d=difference_x
 )
 
-al.plot.array(array=difference_y_2d)
-al.plot.array(array=difference_x_2d)
+aplt.array(array=difference_y_2d)
+aplt.array(array=difference_x_2d)

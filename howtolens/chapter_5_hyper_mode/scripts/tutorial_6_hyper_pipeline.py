@@ -1,12 +1,12 @@
 # so, you're probably wondering, how does hyper_galaxies-mode work in the context of pipelines? Afterall, there are a lot more
-# things we have to do now; pass hyper_galaxies-images between phases, use different pixelizations and regularization schemes,
+# things we have to do now; pass hyper-images between phases, use different pixelizations and regularization schemes,
 # and decide what parts of the noise-map we do and don't want to scale.
 
 ### HYPER IMAGE PASSING ###
 
-# So, lets start with hyper_galaxies-image passing. That is, how do we pass the model images of the lens and source galaxies
-# to later phases, so they can be used as hyper_galaxies-images? Well, I've got some good news, *we no nothing*. We've designed
-# PyAutoLens to automatically pass hyper_galaxies-images between phases, so you don't have to! Want use these features? Just
+# So, lets start with hyper-image passing. That is, how do we pass the model images of the lens and source galaxies
+# to later phases, so they can be used as hyper-images? Well, I've got some good news, *we no nothing*. We've designed
+# PyAutoLens to automatically pass hyper-images between phases, so you don't have to! Want use these features? Just
 # attach the classes to your GalaxyModel's like you would the light and mass models, nice!
 
 # However, PyAutoLens does need to know which model images we pass to which galaxies between phases. To do this,
@@ -80,13 +80,14 @@
 ### HYPER MASKING ###
 
 # There is one more rule you should know for hyper_galaxies-mode. That is, the mask *cannot* change between phases. This is
-# because of hyper_galaxies-image passing. Basically, if you were to change a mask such that it adds new, extra pixels that
-# were not modeled in the previous phase, these pixels wouldn't be contained in the hyper_galaxies-image. This causes some
+# because of hyper-image passing. Basically, if you were to change a mask such that it adds new, extra pixels that
+# were not modeled in the previous phase, these pixels wouldn't be contained in the hyper-image. This causes some
 # very nasty problems. So, instead, we simply ask that you use the same mask throughout the analysis. To ensure
 # this happens, for hyper_galaxies-pipelines we require that the mask is passed to the 'pipeline.run' function.
 
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # Okay, so for our example hyper_galaxies-pipeline, we're going to run 7 (!) phases. Conceptually, there isn't too much new
 # here compared to pipelines. But, we need so many phases to explain a few design choices that arise for
@@ -125,22 +126,21 @@ import autolens as al
 # pipeline.
 
 
-def make_pipeline(pipeline_settings, phase_folders=None):
+def make_pipeline(
+    pipeline_general_settings, pipeline_source_settings, phase_folders=None
+):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
-    # The pipeline name, tagging and phase folders work exactly like they did in previous phases. However, tagging now
-    # also includes the pixelization and regularization schemes, as these cannot be changed foro a hyper_galaxies-pipeline.
+    # This pipeline's name is tagged according to whether:
+
+    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
 
     pipeline_name = "pipeline__hyper_example"
 
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
-        pixelization=pipeline_settings.pixelization,
-        regularization=pipeline_settings.regularization,
-    )
-
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
+    phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
 
     ### PHASE 1 ###
 
@@ -166,9 +166,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # first phase's uniform piors.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
     )
 
     ### PHASE 2 ###
@@ -221,9 +221,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # background noise.
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
     )
 
     ### PHASE 3 ###
@@ -265,9 +265,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # The usual phase extension, which operates the same as the extension for phase 2.
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
     )
 
     ### PHASE 4 ###
@@ -276,14 +276,14 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # wondering, why do we bother with these at all? Why not jump straight to the brightness based pixelization and
     # adaptive regularization?
 
-    # Well, its to do with the hyper_galaxies-images of our source. At the end of phase 3, we've only fitted the source galaxy
+    # Well, its to do with the hyper-images of our source. At the end of phase 3, we've only fitted the source galaxy
     # using a single EllipticalSersic profile. What if the source galaxy is more complex than a Sersic? Or has
-    # multiple components? Our fit, put simply, won't be very good! This makes for a bad hyper_galaxies-image.
+    # multiple components? Our fit, put simply, won't be very good! This makes for a bad hyper-image.
 
     # So, its beneficial for us to introduce an intermediate inversion using a magnification based grid, that will fit
     # all components of the source accurately, so that we have a good quality hyper_galaxies image for the brightness based
     # pixelization and adaptive regularization. Its for this reason we've also omitted the hyper_galaxies source galaxy from
-    # the phases above; if the hyper_galaxies-image were poor, so is the hyper noise-map!
+    # the phases above; if the hyper-image were poor, so is the hyper noise-map!
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__source_inversion_initialize_magnification",
@@ -311,13 +311,13 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     phase4.optimizer.n_live_points = 20
     phase4.optimizer.sampling_efficiency = 0.8
 
-    # This is the usual phase extensions. Given we're only using this inversion to refine our hyper_galaxies-images, we won't
+    # This is the usual phase extensions. Given we're only using this inversion to refine our hyper-images, we won't
     # bother reoptimizing its hyper_galaxies-parameters
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
         inversion=False,
     )
 
@@ -354,9 +354,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     phase5.optimizer.sampling_efficiency = 0.2
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
         inversion=False,
     )
 
@@ -379,8 +379,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
             ),
             source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=pipeline_settings.pixelization,  # <- This is our brightness based pixelization provided it was input into the pipeline.
-                regularization=pipeline_settings.regularization,  # <- And this our adaptive regularization.
+                pixelization=pipeline_source_settings.pixelization,  # <- This is our brightness based pixelization provided it was input into the pipeline.
+                regularization=pipeline_source_settings.regularization,  # <- And this our adaptive regularization.
             ),
         ),
         hyper_image_sky=phase5.result.hyper_combined.instance.hyper_image_sky,
@@ -396,9 +396,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # are fully optimized in conjunction with the hyper_galaxies-galaxies and background noise-map.
 
     phase6 = phase6.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
         inversion=True,
     )
 
@@ -406,7 +406,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
 
     # To end, we'll reoptimize the lens light and mass models one final time, using all our hyper_galaxies-mode features.
 
-    # Finally, now we trust our source hyper_galaxies-image, we'll our source-hyper_galaxies galaxy in this phase.
+    # Finally, now we trust our source hyper-image, we'll our source-hyper_galaxies galaxy in this phase.
 
     phase7 = al.PhaseImaging(
         phase_name="phase_7__lens_sersic_sie__source_inversion",
@@ -436,20 +436,12 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     phase7.optimizer.sampling_efficiency = 0.2
 
     phase7 = phase7.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxies,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        include_background_sky=pipeline_general_settings.hyper_image_sky,
+        include_background_noise=pipeline_general_settings.hyper_background_noise,
         inversion=True,
     )
 
     return al.PipelineDataset(
-        pipeline_name,
-        phase1,
-        phase2,
-        phase3,
-        phase4,
-        phase5,
-        phase6,
-        phase7,
-        hyper_mode=True,
+        pipeline_name, phase1, phase2, phase3, phase4, phase5, phase6, phase7
     )

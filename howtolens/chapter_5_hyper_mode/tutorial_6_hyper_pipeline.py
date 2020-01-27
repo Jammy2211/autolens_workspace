@@ -38,7 +38,7 @@
 
 # There is one more major change to hyper-pipelines. That is, how do we fit for the hyper-parameters using our
 # non-linear search (e.g. MultiNest)? We don't fit for them simultaneously with the lens and source models, as this
-# creates an unnecessarily large paameter space which we'd fail to fit accurately and efficiently.
+# creates an unnecessarily large parameter space which we'd fail to fit accurately and efficiently.
 
 # Instead, we 'extend' phases with extra phases that specifically fit certain components of hyper-galaxy-model. You've
 # hopefully already seen the following code, which optimizes the parameters of an inversion (e.g. the pixelization and
@@ -55,24 +55,23 @@
 #     inversion=True
 # )
 
-# This extends the phase with 3 additional:
+# This extends the phase with 3 additional phases:
 
-# 1) Simultaneously fit the hyper-galaxies, background sky and background noise hyper parameters using the best-fit
+# 1) Fit the inversion parameters using the pixelization and regularization scheme that were used in the main phase.
+#    (e.g. a brightness-based pixelization and adaptive regularization scheme. The best-fit lens and source
+#    models are used. This is called the 'inversion' phase.
+
+# 2) Simultaneously fit the hyper-galaxies, background sky and background noise hyper parameters using the best-fit
 #    lens and source models from the main phase. Thus, this phase only scales the noise and the image. This is called
 #    the 'hyper-galaxy' phase.
-
-# 2) Fit the inversion parameters using the pixelization and regularization scheme that were used in the main phase.
-#    Typically, this fits a brightness-based pixelization and adaptive regularization scheme, but also works for a
-#    magnification based pixelization or constant regularization scheme. Again, the previous best-fit lens and source
-#    models are used. This is called the 'inversion' phase.
 
 # 3) Fit all of the components above using Gaussian priors centred on the resulting values in steps 1) and 2). This is
 #    important as there is trade-off between increasing the noise in the lens / source and changing the pixelization /
 #    regularization hyper-galaxy-parameters. This is called the 'hyper_combined' phase.
 
-# In the pipeline below we use the results of the 'hyper_combined' phase to setup the hyper-galaxies, hyper-simulator,
-# pixelizations and regularizations in the next phase. These components are setup as 'constants' and therefore fixed
-# during each main phase which fits for the lens and source models.
+# In the pipeline below we use the results of the 'hyper_combined' phase to setup the hyper-galaxies, hyper-image,
+# pixelizations and regularizations in the next phase. Typically, we set these components up as 'instances' whose
+# parameters are fixed during the main phases which fit the lens and source models.
 
 ### HYPER MASKING ###
 
@@ -182,7 +181,7 @@ def make_pipeline(pipeline_settings, phase_folders=None):
 
     # These are new to a hyper-galaxy-pipeline and will appear in every pass priors function. Basically, these
     # check whether a hyper-galaxy-feature is turned on. If it is, then it will have been fitted for in the previous
-    # phase's 'hyper_combined' phase, so its parameters are passed to this phase as constants.
+    # phase's 'hyper_combined' phase, so its parameters are passed to this phase as instances.
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
@@ -197,8 +196,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
             ),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        hyper_image_sky=phase1.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase1.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -244,8 +243,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 redshift=1.0, light=phase2.result.model.galaxies.source.light
             ),
         ),
-        hyper_image_sky=phase2.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase2.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -293,8 +292,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 regularization=al.reg.Constant,
             ),
         ),
-        hyper_image_sky=phase3.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase3.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -335,8 +334,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 regularization=phase4.result.instance.galaxies.source.regularization,
             ),
         ),
-        hyper_image_sky=phase4.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase4.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase4.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase4.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -374,8 +373,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 regularization=pipeline_settings.regularization,  # <- And this our adaptive regularization.
             ),
         ),
-        hyper_image_sky=phase5.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase5.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase5.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase5.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -417,8 +416,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
                 hyper_galaxy=phase6.result.hyper_combined.instance.galaxies.source.hyper_galaxy,
             ),
         ),
-        hyper_image_sky=phase6.result.hyper_combined.instance.hyper_image_sky,
-        hyper_background_noise=phase6.result.hyper_combined.instance.hyper_background_noise,
+        hyper_image_sky=phase6.result.hyper_combined.instance.optional.hyper_image_sky,
+        hyper_background_noise=phase6.result.hyper_combined.instance.optional.hyper_background_noise,
         optimizer_class=af.MultiNest,
     )
 
@@ -434,13 +433,5 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     )
 
     return al.PipelineDataset(
-        pipeline_name,
-        phase1,
-        phase2,
-        phase3,
-        phase4,
-        phase5,
-        phase6,
-        phase7,
-        hyper_mode=True,
+        pipeline_name, phase1, phase2, phase3, phase4, phase5, phase6, phase7
     )

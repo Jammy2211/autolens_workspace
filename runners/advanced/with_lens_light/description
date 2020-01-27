@@ -1,0 +1,43 @@
+These runners model strong lens images where the lens galaxy's light is present and therefore needs to be fitted and
+subtracted throughout the analysis.
+
+The runners use pipelines that fit the different components of the strong lens as follows:
+
+LENS LIGHT:
+
+The runners use either a single elliptical Sersic profile or a two-component bulge + disk model, where the bulge is
+an elliptical Sersic and the disk an elliptical Exponential profile. The geometry of the bulge + disk model can be
+customized by the runner.
+
+LENS MASS:
+
+The runners use 'total-mass models' that represents all of the lens galaxy's matter (e.g. stellar and dark). The
+profiles used are elliptical Isothermal and Power-Law profiles.
+
+SOURCE LIGHT:
+
+The runners use either a a single elliptical Sersic profile or a pixelized source reconstruction (or 'inversion').
+
+
+
+These runners model strong lens images where the lens galaxy's light is present and therefore needs to be fitted and
+subtracted throughout the analysis.
+
+The runners use pipelines that fit the different components of the strong lens as follows:
+
+LENS LIGHT AND MASS:
+
+The runners use either a single elliptical Sersic profile or a two-component bulge + disk model, where the bulge is
+an elliptical Sersic and the disk an elliptical Exponential profile. The geometry of the bulge + disk model can be
+customized by the runner.
+
+These light profiles are connected to the mass mdoel via a mass-to-light profile. Thus, they:
+
+- Exploit information in the lens galaxy's light to constrain the lens mass model.
+- Explicitly model the stellar mass distribution of the lens galaxy (unlike 'total mass models').
+
+The lens galaxy's dark matter is modeled simultaneously, using an spherical NFW profile.
+
+SOURCE LIGHT:
+
+The runners use either a a single elliptical Sersic profile or a pixelized source reconstruction (or 'inversion').

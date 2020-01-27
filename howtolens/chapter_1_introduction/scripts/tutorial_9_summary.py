@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
@@ -19,7 +20,7 @@ import autolens as al
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
 
-# The simulator path specifies where the dataset was output in the last tutorial, which is the directory 'chapter_path/simulator'
+# The dataset path specifies where the dataset was output in the last tutorial, which is the directory 'chapter_path/dataset'
 dataset_path = chapter_path + "dataset/"
 
 # Below, we do all the steps we learned this chapter - making galaxies, a tracer, fitting the dataset, etc.
@@ -88,14 +89,14 @@ print(fit.tracer.source_plane.galaxies[0].disk)
 print()
 
 # Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested
-# in. For example, if we want to plotters the image of the source galaxy mass profile, we can do this in a variety of
+# in. For example, if we want to plot the image of the source galaxy mass profile, we can do this in a variety of
 # different ways
-al.plot.tracer.profile_image(tracer=fit.tracer, grid=masked_imaging.grid)
+aplt.tracer.profile_image(tracer=fit.tracer, grid=masked_imaging.grid)
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
-al.plot.plane.profile_image(plane=fit.tracer.source_plane, grid=source_plane_grid)
+aplt.plane.profile_image(plane=fit.tracer.source_plane, grid=source_plane_grid)
 
-al.plot.galaxy.profile_image(
+aplt.galaxy.profile_image(
     galaxy=fit.tracer.source_plane.galaxies[0], grid=source_plane_grid
 )
 
@@ -103,16 +104,16 @@ al.plot.galaxy.profile_image(
 # attributes to extract different things about them. For example, we made our source-galaxy above with two light
 # profiles, a 'bulge' and 'disk. We can plot the image of each component individually, if we know how to
 # break-up the different components of the fit and tracer.
-al.plot.profile.image(
+aplt.lp.profile_image(
     light_profile=fit.tracer.source_plane.galaxies[0].bulge,
     grid=source_plane_grid,
-    title="Bulge image",
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Bulge image")),
 )
 
-al.plot.profile.image(
+aplt.lp.profile_image(
     light_profile=fit.tracer.source_plane.galaxies[0].disk,
     grid=source_plane_grid,
-    title="Disk image",
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Disk image")),
 )
 
 # And, we're done, not just with the tutorial, but the chapter!

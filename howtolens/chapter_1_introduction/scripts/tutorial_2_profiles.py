@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we'll create a grid of Cartesian (y,x) coordinates and pass it to the 'light_profiles'
 # module to create images on this grid and the 'mass_profiles' module to create deflection-angle maps on this grid.
@@ -52,8 +53,8 @@ print(light_profile_image.in_1d_binned[0])
 # its important that you understand PyAutoLens offers these 2D and 1D representations - as it'll help us later when we
 # cover fititng lens dataset!
 
-# We can use a profile plotter to plotters this intensity map (this maps the grid to 2D before plotting).
-al.plot.profile.image(light_profile=sersic_light_profile, grid=grid)
+# We can use a profile plotter to plot this intensity map (this maps the grid to 2D before plotting).
+aplt.lp.profile_image(light_profile=sersic_light_profile, grid=grid)
 
 # To perform ray-tracing, we need to create a 'mass-profile' from the mass profiles module, which we import as mp for
 # conciseness. A mass-profile is an analytic function that describes the distribution of mass in a galaxy, and therefore
@@ -92,8 +93,9 @@ print(mass_profile_deflections.in_2d_binned[50, 49])
 print(mass_profile_deflections.in_2d_binned[50, 50])
 
 # A profile plotter can plot these deflection angles.
-al.plot.profile.deflections_y(mass_profile=sis_mass_profile, grid=grid)
-al.plot.profile.deflections_x(mass_profile=sis_mass_profile, grid=grid)
+# (The black line is the 'critical curve' of the mass profile. We'll cover what this in a later tutorial.)
+aplt.mp.deflections_y(mass_profile=sis_mass_profile, grid=grid)
+aplt.mp.deflections_x(mass_profile=sis_mass_profile, grid=grid)
 
 # Mass profiles have a range of other properties that are used for lens calculations, a couple of which we've
 # plotted below:
@@ -111,11 +113,11 @@ mass_profile_magnification = sis_mass_profile.magnification_from_grid(grid=grid)
 
 # Plotting them is equally straight forward.
 
-al.plot.profile.convergence(mass_profile=sis_mass_profile, grid=grid)
+aplt.mp.convergence(mass_profile=sis_mass_profile, grid=grid)
 
-al.plot.profile.potential(mass_profile=sis_mass_profile, grid=grid)
+aplt.mp.potential(mass_profile=sis_mass_profile, grid=grid)
 
-al.plot.profile.magnification(mass_profile=sis_mass_profile, grid=grid)
+aplt.mp.magnification(mass_profile=sis_mass_profile, grid=grid)
 
 # Congratulations, you've completed your second PyAutoLens tutorial! Before moving on to the next one, experiment with
 # PyAutoLens by doing the following:

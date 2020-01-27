@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we'll create grids of Cartesian (y,x) coordinates, representing the arc-second coordinate grid of
 # an observed simulator-set (e.g. imaging).
@@ -12,25 +13,28 @@ import autolens as al
 grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05)
 
 # First, lets plotters this grid, which shows that it is a fairly bland uniform grid of dots.
-al.plot.grid(grid=grid, title="Fairly Bland Uniform Grid Of Dots")
+
+plotter = aplt.Plotter(labels=aplt.Labels(title="Fairly Bland Uniform Grid Of Dots"))
+
+aplt.grid(grid=grid, plotter=plotter)
 
 # We can print each coordinate of this grid, revealing that it consists of a set of arc-second coordinates
 # (where the spacing between each coordinate corresponds to the 'pixel_scales' of 0.05" defined above)
 print("(y,x) pixel 0:")
-print(grid.in_2d[0,0])
+print(grid.in_2d[0, 0])
 print("(y,x) pixel 1:")
-print(grid.in_2d[0,1])
+print(grid.in_2d[0, 1])
 print("(y,x) pixel 2:")
-print(grid.in_2d[0,2])
+print(grid.in_2d[0, 2])
 print("(y,x) pixel 100:")
-print(grid.in_2d[1,0])
+print(grid.in_2d[1, 0])
 print("etc.")
 
 # Grids in PyAutoLens are stored as both 1D and 2D NumPy arrays, because different calculations benefit from us
 # using the array in different formats. We can access both the 1D and 2D arrays automatically by specifying the input
 # as a 1D or 2D NumPy index.
 print("(y,x) pixel 0 (accessed in 2D):")
-print(grid.in_2d[0,0])
+print(grid.in_2d[0, 0])
 print("(y,x) pixel 0 (accessed in 1D):")
 print(grid.in_1d[0])
 

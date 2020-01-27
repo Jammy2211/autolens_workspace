@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # So, we've learnt that if our parameter space is too complex, our non-linear search might fail to find the global
 # maximum solution. However, we also learnt how to ensure this doesn't happen, by:
@@ -89,7 +90,11 @@ def simulate():
 # Simulate the imaging dataand set it up.
 imaging = simulate()
 
-al.plot.imaging.subplot(imaging=imaging)
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Lets use the same approach of making light trace mass that we did previously, but we'll make it slightly less complex then before.
 
@@ -152,12 +157,12 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-phase_1_results = phase_1.run(dataset=imaging)
+phase_1_results = phase_1.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # And indeed, we get a reasonably good model and fit to the dataset - in a much shorter space of time!
-al.plot.fit_imaging.subplot(fit=phase_1_results.most_likely_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=phase_1_results.most_likely_fit)
 
 # Now all we need to do is look at the results of phase 1 and tune our priors in phase 2 to those results. Lets
 # setup a custom phase that does exactly that.
@@ -237,12 +242,12 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-phase_2_results = phase_2.run(dataset=imaging)
+phase_2_results = phase_2.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # Look at that, the right lens model, again!
-al.plot.fit_imaging.subplot(fit=phase_2_results.most_likely_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=phase_2_results.most_likely_fit)
 
 # Our choice to link two phases together was a huge success. We managed to fit a complex and realistic model,
 # but were able to begin by making simplifying assumptions that eased our search of non-linear parameter space. We

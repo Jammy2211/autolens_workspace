@@ -60,6 +60,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 dataset_path = workspace_path + "dataset/imaging/imaging/lens_sie__source_sersic/"
 
@@ -70,7 +71,11 @@ imaging = al.imaging.from_fits(
     pixel_scales=0.1,
 )
 
-al.plot.imaging.subplot(imaging=imaging)
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # To set up the non-linear search we use a GalaxyModel. This behaves like a Galaxy object. However, whereas for a
 # Galaxy we manually specified the value of light and mass profile parameter, for a GalaxyModel these are inferred by
@@ -124,12 +129,12 @@ print(
     "This Jupyter notebook cell will progress once MultiNest has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-al.plot.fit_imaging.subplot(fit=results.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=results.most_likely_fit)
 
 # Congratulations, you've modeled your first lens with PyAutoLens!
 

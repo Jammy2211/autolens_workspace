@@ -1,0 +1,44 @@
+Preprocessing tools for preparing a dataset before an analysis:
+
+Masking
+
+    Create masks used to fit a dataset, which is output as a .fits file in the data's dataset folder.
+
+    - manual/mask_maker.py - Input geometric shapes (circles, annuli) to draw a mask.
+    - manual/mask_maker__irregular.py - Draw an irregular mask using the image's S/N map
+    - gui/mask_maker.py - A GUI tool for 'painting' on a mask.
+
+Positions
+
+    Mark the arc-second positions of the multiple images of a lensed source(s) in an image, which are output as a
+    .dat file in the data's dataset folder. Mass models which do not trace these positions within a threshold value to
+    one another in a pipeline are resampled.
+
+    - manual/positions_maker.py - Manually input the position coordinates.
+    - gui/positions_maker.py - A GUI tool for marking positions on an image via mouse clicks.
+
+Noise Map
+
+    Create a scaled noise-map of a dataset which is output as a .fits file in the data's dataset folder.
+
+    Scaled noise-maps are used to increase the noise in regions of an image where foreground objects / interlopers
+    obstruct the strong lens galaxy being fitted. By increaisng their noise to very high values they are ignored by the
+    fit.
+
+    - manual/noise_map_maker.py - Manually specify the regions where the noise is scaled.
+    - gui/noise_map_maker.py - A GUI tools to 'paint' where the noise-map is scaled.
+
+Lens Light Centres
+
+    Mark the centre of the lens light of the strong lens galaxy(s), which are output as a .dat file in the data's
+    dataset folder.
+
+    The lens light centres can be input into a pipeline to fix the lens light / mass model centres during a fit.
+
+    - manual/lens_light_centre_maker.py - Manually specify the lens light centre coordinates.
+    - gui/positions_maker.py - A GUI tool for marking the lens light centres on an image via mouse clicks.
+
+Preparing Data
+
+    This script / notebook describes standard conventions assumed for PyAutoLens data (E.g. image units, centering)
+    as well as how to convert data to these formats (e.g. change the units, resized the PSF) etc.

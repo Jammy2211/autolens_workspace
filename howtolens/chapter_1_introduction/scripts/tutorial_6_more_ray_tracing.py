@@ -1,5 +1,5 @@
 import autolens as al
-
+import autolens.plot as aplt
 from astropy import cosmology
 
 # In this example, we'll reinforce what we learnt about ray-tracing in the last tutorial and introduce the following
@@ -53,21 +53,39 @@ lens_satellite = al.Galaxy(
 print(lens_satellite)
 
 # Lets have a quick look at the appearance of our lens galaxy and its satellite
-al.plot.galaxy.profile_image(galaxy=lens_galaxy, grid=grid, title="Lens Galaxy")
-al.plot.galaxy.profile_image(galaxy=lens_satellite, grid=grid, title="Lens Satellite")
+aplt.galaxy.profile_image(
+    galaxy=lens_galaxy,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Galaxy")),
+)
+
+aplt.galaxy.profile_image(
+    galaxy=lens_satellite,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Satellite")),
+)
 
 # And their deflection angles - note that the satellite doesn't contribute much to the deflections
-al.plot.galaxy.deflections_y(
-    galaxy=lens_galaxy, grid=grid, title="Lens Galaxy Deflections (y)"
+
+aplt.galaxy.deflections_y(
+    galaxy=lens_galaxy,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Galaxy Deflections (y)")),
 )
-al.plot.galaxy.deflections_y(
-    galaxy=lens_satellite, grid=grid, title="Lens Satellite Deflections (y)"
+aplt.galaxy.deflections_y(
+    galaxy=lens_satellite,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Satellite Deflections (y)")),
 )
-al.plot.galaxy.deflections_x(
-    galaxy=lens_galaxy, grid=grid, title="Lens Galalxy Deflections (x)"
+aplt.galaxy.deflections_x(
+    galaxy=lens_galaxy,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Galalxy Deflections (x)")),
 )
-al.plot.galaxy.deflections_x(
-    galaxy=lens_satellite, grid=grid, title="Lens Satellite Deflections (x)"
+aplt.galaxy.deflections_x(
+    galaxy=lens_satellite,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Satellite Deflections (x)")),
 )
 
 # Now, lets make two source galaxies at redshift 1.0. Lets not use the terms 'light' and 'mass' to setup the light and
@@ -96,9 +114,17 @@ print(source_galaxy_0)
 print(source_galaxy_1)
 
 # Lets look at our source galaxies (before lens)
-al.plot.galaxy.profile_image(galaxy=source_galaxy_0, grid=grid, title="Source Galaxy 0")
+aplt.galaxy.profile_image(
+    galaxy=source_galaxy_0,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source Galaxy 0")),
+)
 
-al.plot.galaxy.profile_image(galaxy=source_galaxy_1, grid=grid, title="Source Galaxy 1")
+aplt.galaxy.profile_image(
+    galaxy=source_galaxy_1,
+    grid=grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source Galaxy 1")),
+)
 
 # Now lets pass our 4 galaxies to the ray_tracing module, which means the following will occur:
 
@@ -117,28 +143,30 @@ tracer = al.Tracer.from_galaxies(
 #    the lens galaxy and its satellite is computed.
 # 4) These deflection angles are used to trace every image-grid coordinate to a source-plane coordinate.
 # 5) The image of the source galaxies is computed by ray-tracing their light back to the image-plane.
-al.plot.tracer.profile_image(tracer=tracer, grid=grid)
+aplt.tracer.profile_image(tracer=tracer, grid=grid)
 
 # As we did previously, we can extract the grids of each plane and inspect the source-plane grid.
 
 traced_grids = tracer.traced_grids_of_planes_from_grid(grid=grid)
 
-al.plot.plane.plane_grid(
-    plane=tracer.source_plane, grid=traced_grids[1], title="Source-plane Grid"
+aplt.plane.plane_grid(
+    plane=tracer.source_plane,
+    grid=traced_grids[1],
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source-plane Grid")),
 )
 
 # We can zoom in on the 'centre' of the source-plane.
-al.plot.plane.plane_grid(
+aplt.plane.plane_grid(
     plane=tracer.source_plane,
     grid=traced_grids[1],
     axis_limits=[-0.2, 0.2, -0.2, 0.2],
-    title="Source-plane Grid",
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source-plane Grid")),
 )
 
 # Lets plot the lens quantities again. Note that, because we supplied our galaxies with redshifts and
 # our tracer with a cosmology, our unit_label have been converted to kiloparsecs!
 # (This line can take a bit of time to run)
-al.plot.tracer.subplot(tracer=tracer, grid=grid)
+aplt.tracer.subplot_tracer(tracer=tracer, grid=grid)
 
 # In the previous example, we saw that the tracer computed quantities we plotted (e.g. convergence, potential, etc.)
 # Now we've input a cosmology and galaxy redshifts, the tracer has attributes associated with its cosmology.

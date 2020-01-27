@@ -5,6 +5,7 @@ import autofit as af
 # we'll indivdually import the modules new to this chapter (and we'll import them as 'al' in chapter 3).
 
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we're going to find a lens model that provides a good fit to an image, without
 # assuming any knowledge of what the 'correct' lens model is.
@@ -104,10 +105,15 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Lets call the dataset function above, providing us with imaging datato fit.
+# Lets call the dataset function above, providing us with imaging data we fit.
 imaging = simulate()
 
-al.plot.imaging.subplot(imaging=imaging)
+# The non-linear fit also needs a mask, lets use a circular 3.0" mask.
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # To compute a lens model, we use a GalaxyModel, which behaves analogously to the Galaxy objects we're now used to.
 # However, whereas for a Galaxy we manually specified the value of every parameter of its light-profiles and mass-profiles,
@@ -141,7 +147,7 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
@@ -152,7 +158,7 @@ print("MultiNest has finished run - you may now continue the notebook.")
 # python code to see the results.
 
 # The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
-al.plot.fit_imaging.subplot(fit=results.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=results.most_likely_fit)
 
 # The fit looks good and we've therefore found a model close to the one I used to simulat the image with (you can
 # confirm this yourself if you want, by comparing the inferred parameters to those found in the dataset function above).

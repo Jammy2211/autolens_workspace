@@ -29,6 +29,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 )
 
 import autolens as al
+import autolens.plot as aplt
 
 # Load the imaging dataset.
 imaging = al.imaging.from_fits(
@@ -44,10 +45,10 @@ mask = al.mask.circular(
 )
 
 # We can also specify a set of positions, which must be traced within a threshold value or else the mass model is.
-positions = al.positions.from_file(positions_path=dataset_path + "/positions.dat")
+positions = al.coordinates.from_file(file_path=dataset_path + "/positions.dat")
 
 # Lets plot the imaging, mask and positions before we run the analysis.
-al.plot.imaging.subplot(imaging=imaging, mask=mask, positions=positions)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)
 
 # We're going to model our lens galaxy using a light profile (an elliptical Sersic) and mass profile
 # (a singular isothermal ellipsoid). We load these profiles from the 'light_profiles (lp)' and 'mass_profiles (mp)'.
@@ -80,6 +81,6 @@ phase.optimizer.n_live_points = 50
 phase.optimizer.sampling_efficiency = 0.5
 
 # We run the phase on the image, print the results and plotters the fit.
-result = phase.run(dataset=imaging)
+result = phase.run(dataset=imaging, mask=mask)
 
-al.plot.fit_imaging.subplot(fit=result.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=result.most_likely_fit)

@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In tutorial 1, we discussed how when our inversion didn't fit a compact source well we had skewed and undesirable
 # chi-squared distribution. A small subset of the lensed source's brightest pixels were fitted poorly, contributing to
@@ -58,7 +59,9 @@ def simulate():
 # Lets simulate the dataset, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
+
 mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
+
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Next, we're going to fit the image using our magnification based grid. To perform the fit, we'll use a
@@ -94,9 +97,13 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_magnification
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # The fit isn't great. The main structure of the lensed source is reconstructed, but there are residuals. These
 # residuals are worse than we saw in the previous tutorials (when source's compact central structure was the problem).
@@ -128,9 +135,13 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_adaptive
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 print("Evidence = ", fit.evidence)
 
@@ -180,7 +191,9 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_hyper_galaxy
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 # As expected, the chi-squared distribution looks *alot* better. The chi-squareds have reduced from the 200's to the
 # 50's, because the variances were increased. This is what we want, so lets make sure we see an appropriate increase in
@@ -222,7 +235,11 @@ contribution_map = source_contribution_factor_1.hyper_galaxy.contribution_map_fr
     hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
-al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
+aplt.array(
+    array=contribution_map,
+    mask=mask,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Contribution Map")),
+)
 
 source_contribution_factor_3 = al.Galaxy(
     redshift=1.0,
@@ -235,7 +252,11 @@ contribution_map = source_contribution_factor_3.hyper_galaxy.contribution_map_fr
     hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
-al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
+aplt.array(
+    array=contribution_map,
+    mask=mask,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Contribution Map")),
+)
 
 source_hyper_galaxy = al.Galaxy(
     redshift=1.0,
@@ -248,7 +269,11 @@ contribution_map = source_hyper_galaxy.hyper_galaxy.contribution_map_from_hyper_
     hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
-al.plot.array(array=contribution_map, title="Contribution Map", mask=mask)
+aplt.array(
+    array=contribution_map,
+    mask=mask,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Contribution Map")),
+)
 
 # By increasing the contribution factor we allocate more pixels with higher contributions (e.g. values closer to
 # 1.0) than pixels with lower values. This is all the contribution_factor does; it scales how we allocate contributions
@@ -281,7 +306,9 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_no_hyper_galaxy
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 print("Evidence using baseline variances = ", fit.evidence)
 
@@ -304,7 +331,9 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_hyper_galaxy
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 print("Evidence using variances scaling by hyper-galaxy galaxy = ", fit.evidence)
 

@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In the previous example, we made a mapper from a rectangular pixelization. However, it wasn't clear what a mapper
 # was actually mapping. Infact, it didn't do much mapping at all! Therefore, in this tutorial, we'll cover mapping.
@@ -42,9 +43,9 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Lets simulator our Imaging simulator.
+# Lets simulate our imaging dataset.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+aplt.imaging.subplot_imaging(imaging=imaging)
 
 # Now, lets set up our grids (using the image above).
 grid = al.grid.uniform(
@@ -69,30 +70,41 @@ rectangular = al.pix.Rectangular(shape=(25, 25))
 
 mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
-# We're going to plotters our mapper alongside the image we used to generate the source-plane grid.
-al.plot.mapper.image_and_mapper(imaging=imaging, mapper=mapper, include_grid=True)
+# We're going to plot our mapper alongside the image we used to generate the source-plane grid.
+aplt.mapper.subplot_image_and_mapper(
+    image=imaging.image, mapper=mapper, include=aplt.Include(inversion_grid=True)
+)
 
 # The pixels in the image map to the pixels in the source-plane, and visa-versa. Lets highlight a set of
 # image-pixels in both the image and source-plane.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
+aplt.mapper.subplot_image_and_mapper(
+    image=imaging.image,
     mapper=mapper,
-    include_grid=True,
-    image_pixels=[[range(0, 100)], [range(900, 1000)]],
+    include=aplt.Include(inversion_grid=True),
+    image_pixel_indexes=[
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+    ],
 )
 
 # That's nice, and we can see the mappings, but it isn't really what we want to know, is it? We really want to go the
 # other way, and see how our source-pixels map to the image. This is where mappers come into their own, as they let us
 # map all the points in a given source-pixel back to the image. Lets map source pixel 313, the central
 # source-pixel, to the image.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging, mapper=mapper, include_grid=True, source_pixels=[[312]]
+aplt.mapper.subplot_image_and_mapper(
+    image=imaging.image,
+    mapper=mapper,
+    include=aplt.Include(inversion_grid=True),
+    source_pixel_indexes=[[312]],
 )
 
 # And there we have it - multiple imaging in all its glory. Try changing the source-pixel indexes of the line below.
 # This will give you a feel for how different regions of the source-plane map to the image.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging, mapper=mapper, include_grid=True, source_pixels=[[312, 318], [412]]
+aplt.mapper.subplot_image_and_mapper(
+    image=imaging.image,
+    mapper=mapper,
+    include=aplt.Include(inversion_grid=True),
+    source_pixel_indexes=[[312, 318], [412]],
 )
 
 # Okay, so I think we can agree, mappers map things! More specifically, they map our source-plane pixels to pixels
@@ -102,11 +114,11 @@ al.plot.mapper.image_and_mapper(
 # image-pixels inside the mask. This removes the (many) image pixels at the edge of the image, where the source
 # isn't present. These pixels also pad-out the source-plane, thus by removing them our source-plane reduces in size.
 # Lets just have a quick look at these edges pixels:
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
+aplt.mapper.subplot_image_and_mapper(
+    image=imaging.image,
     mapper=mapper,
-    include_grid=True,
-    source_pixels=[[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]],
+    include=aplt.Include(inversion_grid=True),
+    source_pixel_indexes=[[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]],
 )
 
 # Lets use an annular mask, which will capture the ring-like shape of the lensed source galaxy.
@@ -119,7 +131,7 @@ mask = al.mask.circular_annular(
 )
 
 # Lets quickly confirm the annuli capture the source's light.
-al.plot.imaging.image(imaging=imaging, mask=mask)
+aplt.imaging.image(imaging=imaging, mask=mask)
 
 # As usual, we setup our image and mask up as lens dataset and create a tracer using its (now masked) al.
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
@@ -133,19 +145,20 @@ source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.
 mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
 # Lets have another look.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging, mask=mask, mapper=mapper, include_grid=True
+aplt.mapper.subplot_image_and_mapper(
+    image=masked_imaging.image,
+    mapper=mapper,
+    include=aplt.Include(mask=True, inversion_grid=True),
 )
 
 # Woah! Look how much closer we are to the source-plane (The axis sizes have decreased from ~ -2.5" -> 2.5" to
 # ~ -0.6" to 0.6"). We can now really see the diamond of points in the centre of the source-plane (for those who have
 # been reading up, this diamond is called the 'caustic').
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
-    mask=mask,
+aplt.mapper.subplot_image_and_mapper(
+    image=masked_imaging.image,
     mapper=mapper,
-    include_grid=True,
-    source_pixels=[[312], [314], [316], [318]],
+    include=aplt.Include(mask=True, inversion_grid=True),
+    source_pixel_indexes=[[312], [314], [316], [318]],
 )
 
 # Great - tutorial 2 down! We've learnt about mappers, which map things, and we used them to understand how the image

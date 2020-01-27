@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we'll use the 'mass_profiles' and 'light_profiles' modules introduced previously, along with the
 # 'galaxy' module to create Galaxy objects in PyAutoLens. We'll see that:
@@ -38,7 +39,7 @@ print(galaxy_image[0, 2])
 print("etc.")
 
 # A galaxy plotter allows us to the plotters the image, just like the profile plotters did for a light profile.
-al.plot.galaxy.profile_image(galaxy=galaxy_with_light_profile, grid=grid)
+aplt.galaxy.profile_image(galaxy=galaxy_with_light_profile, grid=grid)
 
 # We can pass galaxies as many profiles as we like. Lets create a galaxy with three light profiles.
 light_profile_1 = al.lp.SphericalSersic(
@@ -64,10 +65,10 @@ galaxy_with_3_light_profiles = al.Galaxy(
 print(galaxy_with_3_light_profiles)
 
 # If we plotters the galaxy, we see 3 blobs of light!
-al.plot.galaxy.profile_image(galaxy=galaxy_with_3_light_profiles, grid=grid)
+aplt.galaxy.profile_image(galaxy=galaxy_with_3_light_profiles, grid=grid)
 
 # We can also plotters each individual light profile using the 'subplot' galaxy plotter.
-al.plot.galaxy.profile_image_subplot(galaxy=galaxy_with_3_light_profiles, grid=grid)
+aplt.galaxy.profile_image_subplot(galaxy=galaxy_with_3_light_profiles, grid=grid)
 
 # Mass profiles interact with Galaxy objects in the exact same way as light profiles.
 # Lets create a galaxy with three SIS mass profiles.
@@ -84,15 +85,15 @@ galaxy_with_3_mass_profiles = al.Galaxy(
 # We can print a galaxy to confirm it possesses the sis mass-profiles above.
 print(galaxy_with_3_mass_profiles)
 
-# We can use a galaxy plotter to plotters these deflection angles.
+# We can use a galaxy plotter to plot these deflection angles.
 
 # (Deflection angles of mass-profiles add together just like the light-profile image's above)
-al.plot.galaxy.deflections_y(galaxy=galaxy_with_3_mass_profiles, grid=grid)
-al.plot.galaxy.deflections_x(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+aplt.galaxy.deflections_y(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+aplt.galaxy.deflections_x(galaxy=galaxy_with_3_mass_profiles, grid=grid)
 
 # I wonder what 3 summed convergence profiles or potential's look like ;)
-al.plot.galaxy.convergence(galaxy=galaxy_with_3_mass_profiles, grid=grid)
-al.plot.galaxy.potential(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+aplt.galaxy.convergence(galaxy=galaxy_with_3_mass_profiles, grid=grid)
+aplt.galaxy.potential(galaxy=galaxy_with_3_mass_profiles, grid=grid)
 
 # Finally, a galaxy can take both light and mass profiles, and there is no limit to how many we pass it.
 light_profile_1 = al.lp.SphericalSersic(
@@ -141,15 +142,15 @@ galaxy_with_many_profiles = al.Galaxy(
 # Suffice to say, the galaxy's images, convergence, potential and deflections look pretty
 # interesting.
 
-al.plot.galaxy.profile_image(galaxy=galaxy_with_many_profiles, grid=grid)
+aplt.galaxy.profile_image(galaxy=galaxy_with_many_profiles, grid=grid)
 
-al.plot.galaxy.convergence(galaxy=galaxy_with_many_profiles, grid=grid)
+aplt.galaxy.convergence(galaxy=galaxy_with_many_profiles, grid=grid)
 
-al.plot.galaxy.potential(galaxy=galaxy_with_many_profiles, grid=grid)
+aplt.galaxy.potential(galaxy=galaxy_with_many_profiles, grid=grid)
 
-al.plot.galaxy.deflections_y(galaxy=galaxy_with_many_profiles, grid=grid)
+aplt.galaxy.deflections_y(galaxy=galaxy_with_many_profiles, grid=grid)
 
-al.plot.galaxy.deflections_x(galaxy=galaxy_with_many_profiles, grid=grid)
+aplt.galaxy.deflections_x(galaxy=galaxy_with_many_profiles, grid=grid)
 
 # And we're done. Lets finished by just thinking about one question:
 

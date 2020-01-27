@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # We've learnt how to make galaxy objects out of light and mass profiles. Now, we'll use these galaxies to make a
 # strong-gravitational lens.
@@ -65,8 +66,8 @@ image_plane = al.Plane(galaxies=[lens_galaxy])
 # Just like we did with galaxies, we can compute quantities from the plane by passing it a grid.
 
 deflections = image_plane.deflections_from_grid(grid=image_plane_grid)
-deflections_y = deflections[:, :, 0]
-deflections_x = deflections[:, :, 1]
+deflections_y = deflections.in_2d[:, :, 0]
+deflections_x = deflections.in_2d[:, :, 1]
 
 print("deflection-angles of planes grid pixel 0:")
 print(deflections_y[0, 0])
@@ -77,9 +78,9 @@ print(deflections_y[0, 1])
 print(deflections_x[0, 1])
 
 # Plane plotters exist, which work analogously to profile plotters and galaxy plotters.
-al.plot.plane.deflections_y(plane=image_plane, grid=image_plane_grid)
+aplt.plane.deflections_y(plane=image_plane, grid=image_plane_grid)
 
-al.plot.plane.deflections_x(plane=image_plane, grid=image_plane_grid)
+aplt.plane.deflections_x(plane=image_plane, grid=image_plane_grid)
 
 # Throughout this chapter, we plotted lots of deflection angles. However, if you arn't familiar with strong
 # lens, you probably weren't entirely sure what they are actually used for.
@@ -100,20 +101,24 @@ print(source_plane_grid[0, :])
 source_plane = al.Plane(galaxies=[source_galaxy])
 
 # Lets inspect our grids - I bet our source-plane isn't the boring uniform grid we plotted in the first tutorial!
-al.plot.plane.plane_grid(
-    plane=image_plane, grid=image_plane_grid, title="Image-plane Grid"
+aplt.plane.plane_grid(
+    plane=image_plane,
+    grid=image_plane_grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Image-plane Grid")),
 )
 
-al.plot.plane.plane_grid(
-    plane=source_plane, grid=source_plane_grid, title="Source-plane Grid"
+aplt.plane.plane_grid(
+    plane=source_plane,
+    grid=source_plane_grid,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source-plane Grid")),
 )
 
-# We can zoom in on the 'centre' of the source-plane (remembering the lens galaxy was centred at (0.0", 0.0")
-al.plot.plane.plane_grid(
+# # We can zoom in on the 'centre' of the source-plane (remembering the lens galaxy was centred at (0.0", 0.0")
+aplt.plane.plane_grid(
     plane=source_plane,
     grid=source_plane_grid,
     axis_limits=[-0.1, 0.1, -0.1, 0.1],
-    title="Source-plane Grid",
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source-plane Grid")),
 )
 
 # We can also plotters both planes next to one another, and highlight specific points on the al. This means we can see
@@ -123,15 +128,15 @@ al.plot.plane.plane_grid(
 # (We are inputting the pixel index's into 'points' - the first set of points go from 0 -> 50, which is the top row of
 # the image-grid running from the left - as we said it would!)
 
-al.plot.plane.image_and_source_plane_subplot(
+aplt.plane.image_and_source_plane_subplot(
     image_plane=image_plane,
     source_plane=source_plane,
     grid=image_plane_grid,
-    points=[
-        [range(0, 50)],
-        [range(500, 550)],
-        [1550, 1650, 1750, 1850, 1950, 2050],
-        [8450, 8350, 8250, 8150, 8050, 7950],
+    indexes=[
+        range(0, 50),
+        range(500, 550),
+        [1350, 1450, 1550, 1650, 1750, 1850, 1950, 2050, 2150, 2250],
+        [6250, 8550, 8450, 8350, 8250, 8150, 8050, 7950, 7850, 7750],
     ],
 )
 
@@ -141,7 +146,7 @@ al.plot.plane.image_and_source_plane_subplot(
 # We can now ask the question - 'what does our source-galaxy look like in the image-plane'? That is, to us, the
 # observer on Earth, how does the source-galaxy appear after lens?. To do this, we simple trace the source
 # galaxy's light 'back' from the source-plane grid.
-al.plot.plane.profile_image(plane=source_plane, grid=source_plane_grid)
+aplt.plane.profile_image(plane=source_plane, grid=source_plane_grid)
 
 # It's a rather spectacular ring of light, but why is it a ring? Well:
 
@@ -160,12 +165,14 @@ al.plot.plane.profile_image(plane=source_plane, grid=source_plane_grid)
 # the source intrinsically appears in the source-plane (e.g. without lens). This is a useful thing to know, because
 # the source-s light is highly magnified, meaning astronomers can study it in a lot more detail than would
 # otherwise be possible!
-al.plot.plane.plane_image(plane=source_plane, grid=source_plane_grid, include_grid=True)
+aplt.plane.plane_image(
+    plane=source_plane, grid=source_plane_grid, include=aplt.Include(grid=True)
+)
 
 # Plotting the grid over the plane image obscures its appearance, which isn't ideal. We can of course tell
-# PyAutoLens not to plotters the grid.
-al.plot.plane.plane_image(
-    plane=source_plane, grid=source_plane_grid, include_grid=False
+# PyAutoLens not to plot the grid.
+aplt.plane.plane_image(
+    plane=source_plane, grid=source_plane_grid, include=aplt.Include(grid=False)
 )
 
 # For mass profiles, you can also plotters their 'critical curve' and 'caustics', which for those unfamiliar with lens
@@ -177,12 +184,17 @@ al.plot.plane.plane_image(
 # Caustic - Given the deflection angles of the mass profile at the critical curves, the caustic is where the critical
 #           curve 'maps' too.
 
-al.plot.plane.image_and_source_plane_subplot(
+aplt.plane.image_and_source_plane_subplot(
     image_plane=image_plane,
     source_plane=source_plane,
     grid=image_plane_grid,
-    include_critical_curves=True,
-    include_caustics=True,
+    indexes=[
+        range(0, 50),
+        range(500, 550),
+        [1550, 1650, 1750, 1850, 1950, 2050],
+        [8450, 8350, 8250, 8150, 8050, 7950],
+    ],
+    include=aplt.Include(critical_curves=True, caustics=True),
 )
 
 # The critical curves appear on the left hand image, the caustic on the right. Interestingly, there is one curve
@@ -190,11 +202,17 @@ al.plot.plane.image_and_source_plane_subplot(
 # see next.
 
 # We can plot the critical curves and caustics for any arrays image by supplying these bools to the plotter
-al.plot.plane.profile_image(
+aplt.plane.convergence(
     plane=image_plane,
     grid=image_plane_grid,
-    include_critical_curves=True,
-    include_caustics=True,
+    include=aplt.Include(critical_curves=True, caustics=True),
+)
+
+aplt.plane.image_and_source_plane_subplot(
+    image_plane=image_plane,
+    source_plane=source_plane,
+    grid=image_plane_grid,
+    include=aplt.Include(critical_curves=False, caustics=False),
 )
 
 # And, we're done. This is the first tutorial covering strong-lens and I highly recommend you take a moment

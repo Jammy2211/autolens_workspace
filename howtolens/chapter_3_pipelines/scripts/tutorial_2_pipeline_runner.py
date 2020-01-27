@@ -30,6 +30,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # This rather long simulator function generates an image with two strong lens galaxies.
 def simulate():
@@ -92,7 +93,14 @@ def simulate():
 
 # Lets Simulate the imaging datawe'll fit, which is a new image, finally!
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+
+# We need to choose our mask for the analysis. Given the lens light is present in the image we'll need to include
+# all of its light in the central regions of the image, so lets use a circular mask.
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Looking at the image, there are clearly two blobs of light corresponding to our two lens galaxies. The source's light
 # is also pretty complex - the arcs don't posses the rotational symmetry we're used to seeing up to now. Multi-galaxy
@@ -118,7 +126,7 @@ pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
     phase_folders=["howtolens", "c3_t2_x2_galaxies"]
 )
 
-pipeline_x2_galaxies.run(dataset=imaging)
+pipeline_x2_galaxies.run(dataset=imaging, mask=mask)
 
 # Now, read through the '_tutorial_2_pipeline_x2_galaxies.py_' pipeline, to get a complete view of how it works.
 # Once you've done that, come back here and we'll wrap up this tutorial.

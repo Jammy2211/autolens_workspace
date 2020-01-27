@@ -27,6 +27,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # This function simulates an image with a complex source.
 def simulate():
@@ -111,9 +112,14 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Lets Simulate the Imaging simulator.
+# Lets Simulate the imaging dataset.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Yep, that's a pretty complex source. There are clearly more than 4 peaks of light - I wouldn't like to guess whether
 # there is one or two sources (or more). You'll also notice I omitted the lens galaxy's light for this system. This is
@@ -126,7 +132,7 @@ pipeline_complex_source = tutorial_3_pipeline_complex_source.make_pipeline(
     phase_folders=["howtolens", "c3_t3_complex_source"]
 )
 
-pipeline_complex_source.run(dataset=imaging)
+pipeline_complex_source.run(dataset=imaging, mask=mask)
 
 # Okay, so with 4 sources, we still couldn't get a good a fit to the source that didn't leave residuals. However, I actually
 # simulated the lens with 4 sources. This means that there is a 'perfect fit' somewhere in parameter
@@ -134,12 +140,7 @@ pipeline_complex_source.run(dataset=imaging)
 
 # Lets confirm this, by manually fitting the imaging dataset with the true input model.
 
-masked_imaging = al.masked.imaging(
-    imaging=imaging,
-    mask=al.mask.circular(
-        shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
-    ),
-)
+masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 lens_galaxy = al.Galaxy(
     redshift=0.5,
@@ -208,11 +209,11 @@ tracer = al.Tracer.from_galaxies(
 
 true_fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=true_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=true_fit, mask=True)
 
-al.plot.fit_imaging.subplot_of_planes(fit=true_fit, include_mask=True)
+aplt.fit_imaging.subplot_of_planes(fit=true_fit, mask=True)
 
-# And indeed, we see an improved residual-map, chi-squared-mao, and so forth.
+# And indeed, we see an improved residual-map, chi-squared-map, and so forth.
 
 # The morale of this story is that if the source morphology is complex, there is no way we can build a pipeline to
 # fit it. For this tutorial, this was true even though our source model could actually fit the dataset perfectly. For

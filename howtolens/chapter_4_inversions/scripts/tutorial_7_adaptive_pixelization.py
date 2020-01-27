@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this tutorial we'll use a new pixelization, called the VoronoiMagnification pixelization. This pixelization
 # doesn't use a uniform grid of rectangular pixels, but instead uses an irregular 'Voronoi' pixels.
@@ -50,7 +51,7 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
-al.plot.imaging.subplot(imaging=imaging, mask=mask)
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # The lines of code below do everything we're used to, that is, setup an image, mask it, trace it via a tracer,
 # setup the rectangular mapper, etc.
@@ -73,7 +74,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # Okay, so lets think about the rectangular pixelization. Is this the optimal way to reconstruct our source? Are there
 # features in the source-plane that arn't ideal? How do you think we could do a better job?
@@ -83,7 +84,9 @@ al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
 # many lenses with!
 
 # So what is wrong with the grid? Well, lets think about the source reconstruction.
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # There is one clear problem, we are using a small number of the total source pixels to reconstruct the source. The
 # majority of source pixels are located away from the source. By my estimate, we're using just 16 pixels (the
@@ -110,7 +113,7 @@ image_plane_sparse_grid = adaptive.sparse_grid_from_grid(grid=masked_imaging.gri
 
 # We can plot this grid over the image, to see that it is a coarse grid over-laying the image itself.
 
-al.plot.imaging.image(imaging=imaging, grid=image_plane_sparse_grid, mask=mask)
+aplt.imaging.image(imaging=imaging, grid=image_plane_sparse_grid, mask=mask)
 
 # When we pass a tracer a source galaxy with this pixelization it automatically computes the ray-traced source-plane
 # Voronoi grid using the grid above. Thus, our Voronoi pixelization is used by the tracer's fit.
@@ -125,10 +128,19 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit,
+    include=aplt.Include(
+        mask=True,
+        inversion_image_pixelization_grid=True,
+        inversion_pixelization_grid=True,
+    ),
+)
 
 # And we can take a closer inspection of the inversion itself.
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # Clearly, this is an improvement. We're using fewer pixels than the rectangular grid (400, instead of 1600), but
 # reconstructing our source is far greater detail. A win all around? It sure is.

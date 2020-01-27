@@ -4,11 +4,10 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.32.0** and **PyAutoFit v0.46.0** If you have any errors or issues using the workspace, try using these versions:
+This version of the workspace are built and tested for using **PyAutoLens v0.35.0**.
 
 ```
-pip install autolens==0.32.0
-pip install autofit==0.46.0
+pip install autolens==0.35.0
 ```
 
 ## Getting Started
@@ -21,15 +20,17 @@ To begin, I'd check out the 'introduction' in the quickstart folder. This will e
 The workspace includes the following:
 
 - **Aggregator** - Manipulate large suites of model-fits via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
-- **Config** - Configuration files which customize the **PyAutoLens** analysis.
-- **Data** - Your data folder, including example data-sets distributed with **PyAutoLens**.
-- **Quick Start** - A quick start guide, so you can begin modeling your own lens data within hours.
+- **Config** - Configuration files which customize **PyAutoLens**'s behaviour.
+- **Dataset** - Where data is stored, including example datasets distributed with **PyAutoLens**.
 - **HowToLens** - The **HowToLens** lecture series.
 - **Output** - Where the **PyAutoLens** analysis and visualization are output.
-- **Pipelines** - Example pipelines for modeling strong lenses or to use a template for your own pipeline.
-- **Plotting** - Scripts enabling customized figures and images.
+- **Pipelines** - Example pipelines for modeling strong lenses.
+- **Plot** - Example scripts for customizing figures and images.
+- **Preprocessing** - Tools for preprocessing data before an analysis and creating auxilary data like masks.
+- **Quick Start** - A quick start guide, so you can begin modeling your own lens data within hours.
 - **Runners** - Scripts for running a **PyAutoLens** pipeline.
-- **Tools** - Tools for simulating strong lens data, creating masks and using many other **PyAutoLens** features.
+- **Simulators** - Scripts for simulating strong lens datasets with **PyAutoLens**.
+- **Tools** - Extra tools for using many other **PyAutoLens** features.
 
 ## Setup
 
@@ -50,7 +51,7 @@ export WORKSPACE=/path/to/autolens_workspace/
 
 You can test everything is working by running the example pipeline runner in the autolens_workspace
 ```
-python3 /path/to/autolens_workspace/runners/simple/lens_sie__source_inversion.py
+python3 /path/to/autolens_workspace/runners/beginner/no_lens_light/lens_sie__source_inversion.py
 ```
 
 ## Support & Discussion

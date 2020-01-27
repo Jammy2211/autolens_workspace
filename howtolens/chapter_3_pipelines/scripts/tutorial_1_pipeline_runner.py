@@ -70,6 +70,7 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # The same simulator function we used in chapter 2.
 def simulate():
@@ -117,7 +118,13 @@ def simulate():
 # Now lets Simulate the imaging datawhich we'll fit using the pipeline.
 imaging = simulate()
 
-al.plot.imaging.subplot(imaging=imaging)
+# We need to choose our mask for the analysis. Given the lens light is present in the image we'll need to include
+# all of its light in the central regions of the image, so lets use a circular mask.
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # To make a pipeline, we call one long function which is written in its own Python module,
 # '_tutorial_1_pipeline_lens__source.py_'. Before we check it out, lets get the pipeline running. To do this, we
@@ -134,7 +141,7 @@ pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
 )
 
 # To run a pipeline, we simply use its 'run' function, passing it the dataset we want to run the pipeline on. Simple, huh?
-pipeline_lens_and_source.run(dataset=imaging)
+pipeline_lens_and_source.run(dataset=imaging, mask=mask)
 
 # Okay, good job, we're running our first pipeline in PyAutoLens! But what does it *actually* do? Well, to find that
 # out, go to the script '_tutorial_1_pipeline_lens_and_source.py_', which contains a full description of the pipeline,

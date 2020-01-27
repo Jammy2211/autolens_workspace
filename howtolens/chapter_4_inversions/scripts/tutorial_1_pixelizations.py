@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # To begin chapter 4, we'll begin by learning about pixelizations, which we apply to a source-plane to reconstruct a
 # source galaxy's light.
@@ -33,9 +34,14 @@ mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 # This mapper is a 'RectangularMapper' - every pixelization generates it owns mapper.
 print(type(mapper))
 
-# By plotting our mapper, we now see our pixelization. Its a fairly boring grid of rectangular pixels.
-al.plot.mapper.rectangular_mapper(
-    mapper=mapper, include_grid=False, title="Fairly Boring Grid of Rectangular Pixels"
+# By plotting our mapper, we now see our pixelization. Its a fairly boring grid of rectangular pixels
+# (we'll cover what the 'inversion' means in a later tutorial).
+aplt.mapper_obj(
+    mapper=mapper,
+    include=aplt.Include(inversion_grid=True, inversion_pixelization_grid=True),
+    plotter=aplt.Plotter(
+        labels=aplt.Labels(title="Fairly Boring Grid of Rectangular Pixels")
+    ),
 )
 
 # However, the mapper does contain lots of interesting information about our pixelization, for example it contains both
@@ -58,13 +64,14 @@ print("Source-Plane Grid Pixel Centre 3:")
 print(mapper.grid.in_2d[0, 2])
 print("etc.")
 
-# Infact, we can plot the rectangular grid centre and the source-plane grid on our pixelization - to make it look
+# Infact, we can plot the source-plane grid and rectangular pixelization grid on our pixelization - to make it look
 # slightly less boring!
-al.plot.mapper.rectangular_mapper(
+aplt.mapper_obj(
     mapper=mapper,
-    include_grid=False,
-    include_centres=True,
-    title="Slightly less Boring Grid of Rectangular Pixels",
+    include=aplt.Include(inversion_grid=True, inversion_pixelization_grid=True),
+    plotter=aplt.Plotter(
+        labels=aplt.Labels(title="Slightly less Boring Grid of Rectangular Pixels")
+    ),
 )
 
 # Finally, the mapper has lots more information about the pixelizations, for example, the arc-second

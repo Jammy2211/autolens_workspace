@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # We've covered mappers, which, if I haven't emphasised it enough yet, map things. Now, we're going to look at how we
 # can use these mappers (which map things) to reconstruct the source galaxy - I hope you're excited!
@@ -53,7 +54,7 @@ mask = al.mask.circular_annular(
     outer_radius=2.2,
 )
 
-al.plot.imaging.image(imaging=imaging, mask=mask)
+aplt.imaging.image(imaging=imaging, mask=mask)
 
 # Next, lets set this image up as lens dataset and setup a tracer using the input lens galaxy model (we don't need
 # to provide the source's light profile, as we're using a mapper to reconstruct it).
@@ -75,8 +76,10 @@ rectangular = al.pix.Rectangular(shape=(25, 25))
 
 mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
-al.plot.mapper.image_and_mapper(
-    imaging=imaging, mask=mask, mapper=mapper, include_grid=True
+aplt.mapper.subplot_image_and_mapper(
+    image=masked_imaging.image,
+    mapper=mapper,
+    include=aplt.Include(mask=True, inversion_grid=True),
 )
 
 # And now, finally, we're going to use our mapper to invert the image using the 'inversions' module, which is imported
@@ -89,9 +92,11 @@ inversion = al.inversion(
 )
 
 # Our inversion has a reconstructed image and pixeilzation, whcih we can plot using an inversion plotter
-al.plot.inversion.reconstructed_image(inversion=inversion, mask=mask)
+aplt.inversion.reconstructed_image(inversion=inversion, include=aplt.Include(mask=True))
 
-al.plot.inversion.reconstruction(inversion=inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=inversion, include=aplt.Include(inversion_grid=True)
+)
 
 # And there we have it, we've successfully reconstructed, or, *inverted*, our source using the mapper's rectangular
 # grid. Whilst this source was simple (a blob of light in the centre of the source-plane), inversions come into their
@@ -218,7 +223,7 @@ mask = al.mask.circular_annular(
     outer_radius=3.2,
 )
 
-al.plot.imaging.image(imaging=imaging, mask=mask)
+aplt.imaging.image(imaging=imaging, mask=mask)
 
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
@@ -235,9 +240,11 @@ inversion = al.inversion(
 )
 
 # Lets inspect the complex source reconstruction.
-al.plot.inversion.reconstructed_image(inversion=inversion, mask=mask)
+aplt.inversion.reconstructed_image(inversion=inversion, include=aplt.Include(mask=True))
 
-al.plot.inversion.reconstruction(inversion=inversion, include_grid=True)
+aplt.inversion.reconstruction(
+    inversion=inversion, include=aplt.Include(inversion_grid=True)
+)
 
 # Pretty great, huh? If you ran the complex source pipeline, you'll remember that getting a model image that looked
 # that good simply *was not possible*. With an inversion, we can do it with ease - and without fitting 30+ parameters!
@@ -256,12 +263,11 @@ al.plot.inversion.reconstruction(inversion=inversion, include_grid=True)
 # inversions.inversions.Inversion
 
 # To begin, lets consider some random mappings between our mapper's source-pixels and the image.
-al.plot.mapper.image_and_mapper(
-    imaging=imaging,
+aplt.mapper.subplot_image_and_mapper(
+    image=masked_imaging.image,
     mapper=mapper,
-    mask=mask,
-    include_grid=True,
-    source_pixels=[[445], [285], [313], [132], [11]],
+    include=aplt.Include(mask=True, inversion_grid=True),
+    source_pixel_indexes=[[445], [285], [313], [132], [11]],
 )
 
 # These mappings are known before the inversion, which means pre-inversion we know two key pieces of information:
@@ -301,7 +307,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 # some pretty good looking residuals - we're certainly fitting the lensed source accurately!
 fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
-al.plot.fit_imaging.subplot(fit=fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
 # And, we're done, here are a few questions to get you thinking about inversions:
 

@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # To begin, make sure you have read the 'introduction' file carefully, as a clear understanding of
 # how the Bayesian evidence works is key to understanding this chapter!
@@ -162,11 +163,14 @@ fit_flat = fit_imaging_with_voronoi_magnification_pixelization(
     imaging=imaging_source_flat, mask=mask, regularization_coefficient=9.2
 )
 
-al.plot.fit_imaging.subplot(
-    fit=fit_flat, include_image_plane_pix=True, include_mask=True
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit_flat,
+    include=aplt.Include(inversion_image_pixelization_grid=True, mask=True),
 )
 
-al.plot.inversion.reconstruction(inversion=fit_flat.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit_flat.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 print(fit_flat.evidence)
 
@@ -179,11 +183,15 @@ fit_compact = fit_imaging_with_voronoi_magnification_pixelization(
     imaging=imaging_source_compact, mask=mask, regularization_coefficient=3.3
 )
 
-al.plot.fit_imaging.subplot(
-    fit=fit_compact, include_image_plane_pix=True, include_mask=True
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit_compact,
+    include=aplt.Include(inversion_image_pixelization_grid=True, mask=True),
 )
 
-al.plot.inversion.reconstruction(inversion=fit_compact.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit_compact.inversion,
+    include=aplt.Include(inversion_pixelization_grid=True),
+)
 
 print(fit_compact.evidence)
 
@@ -200,12 +208,14 @@ fit_super_compact = fit_imaging_with_voronoi_magnification_pixelization(
     imaging=imaging_source_super_compact, mask=mask, regularization_coefficient=3.1
 )
 
-al.plot.fit_imaging.subplot(
-    fit=fit_super_compact, include_image_plane_pix=True, include_mask=True
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit_super_compact,
+    include=aplt.Include(inversion_image_pixelization_grid=True, mask=True),
 )
 
-al.plot.inversion.reconstruction(
-    inversion=fit_super_compact.inversion, include_centres=True
+aplt.inversion.reconstruction(
+    inversion=fit_super_compact.inversion,
+    include=aplt.Include(inversion_pixelization_grid=True),
 )
 
 print(fit_super_compact.evidence)
@@ -239,8 +249,9 @@ print(fit_super_compact.evidence)
 # coefficient. This means that, every single source pixel receives the same 'level' of regularization, regardless of
 # whether it is reconstructing the bright central regions of the source or its faint exterior regions. Lets look:
 
-al.plot.inversion.regularization_weights(
-    inversion=fit_compact.inversion, include_centres=True
+aplt.inversion.regularization_weights(
+    inversion=fit_compact.inversion,
+    include=aplt.Include(inversion_pixelization_grid=True),
 )
 
 # As you can see, all pixels are regularized with our input regularization coefficient value of 3.6.
@@ -271,8 +282,9 @@ al.plot.inversion.regularization_weights(
 # Before we wrap up this tutorial, I want us to also consider the role of our noise-map and get you thinking about why
 # we might want to scale its variances. Lets look at the super-compact fit again;
 
-al.plot.fit_imaging.subplot(
-    fit=fit_super_compact, include_image_plane_pix=True, include_mask=True
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit_super_compact,
+    include=aplt.Include(inversion_image_pixelization_grid=True, mask=True),
 )
 
 # So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our simulator

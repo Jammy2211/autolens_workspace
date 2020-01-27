@@ -1,6 +1,5 @@
 import autofit as af
 import autolens as al
-from autolens.pipeline import pipeline
 
 # Up to now, we have passed the priors between phases using the 'customize priors' function. This works nicely, and
 # gives us a lot of control for how the prior on every individual parameter is specified. However, it also makes
@@ -48,6 +47,7 @@ def make_pipeline(phase_folders=None):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 40
     phase1.optimizer.sampling_efficiency = 0.5
+    phase1.optimizer.evidence_tolerance = 100.0
 
     # Now lets add another source component, using the previous model as the initialization on the lens / source
     # parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the fit.
@@ -73,6 +73,7 @@ def make_pipeline(phase_folders=None):
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 40
     phase2.optimizer.sampling_efficiency = 0.5
+    phase2.optimizer.evidence_tolerance = 100.0
 
     # Now lets do the same again, but with 3 source galaxy components.
 
@@ -94,6 +95,7 @@ def make_pipeline(phase_folders=None):
     phase3.optimizer.const_efficiency_mode = True
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.5
+    phase3.optimizer.evidence_tolerance = 100.0
 
     # And one more for luck!
 
@@ -117,4 +119,4 @@ def make_pipeline(phase_folders=None):
     phase4.optimizer.n_live_points = 50
     phase4.optimizer.sampling_efficiency = 0.5
 
-    return pipeline.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)
+    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

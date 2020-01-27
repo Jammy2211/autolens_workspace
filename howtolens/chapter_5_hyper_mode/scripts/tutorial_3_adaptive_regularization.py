@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In tutorial 1, we considered why our Constant regularization scheme was sub-optimal. Diffferent regions of the source
 # demand different levels of regularization, motivating a regularization scheme which adapts to the reconstructed
@@ -14,8 +15,6 @@ import autolens as al
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    grid = al.grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
@@ -88,15 +87,21 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_magnification
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 
 # Okay, so the inversion's fit looks just like it did in the previous tutorials. Lets quickly remind ourselves that the
 # effective regularization coefficient of each source pixel is our input coefficient value of 3.3.
 
-al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
+aplt.inversion.regularization_weights(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # Lets now look at adaptive regularization in action, by setting up a hyper-galaxy-image and using the
 # 'AdaptiveBrightness' regularization scheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
@@ -116,9 +121,13 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_adaptive_regularization
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
-al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
+aplt.inversion.regularization_weights(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
 # So, as expected, we now have a variable regularization scheme. The regularization of the source's brightest regions
 # is much lower than that of its outer regions. As discussed before, this is what we want. Lets quickly check that this
@@ -135,7 +144,9 @@ print("Evidence using adaptive regularization = ", fit.evidence)
 # chapter. This is because although the adaptive regularization scheme improves the fit, the magnification based grid
 # simply *does not*  have sufficient resolution to resolve the source's cuspy central light profile.
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 # So, how does adaptive regularization work?
 
@@ -196,11 +207,17 @@ fit = fit_masked_imaging_with_source_galaxy(
     masked_imaging=masked_imaging, source_galaxy=source_adaptive_regularization
 )
 
-al.plot.inversion.reconstruction(inversion=fit.inversion, include_centres=True)
+aplt.inversion.reconstruction(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
-al.plot.inversion.regularization_weights(inversion=fit.inversion, include_centres=True)
+aplt.inversion.regularization_weights(
+    inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)
+)
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 print("Evidence using adaptive regularization = ", fit.evidence)
 

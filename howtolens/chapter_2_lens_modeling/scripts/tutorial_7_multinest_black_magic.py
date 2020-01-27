@@ -1,6 +1,6 @@
 import autofit as af
 import autolens as al
-
+import autolens.plot as aplt
 import time
 
 # In this tutorial, I want to show you 'MultiNest black magic'. Basically, there are ways to get
@@ -65,9 +65,14 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Simulate the Imaging simulator.
+# Simulate the imaging dataset.
 imaging = simulate()
-al.plot.imaging.subplot(imaging=imaging)
+
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Lets first run the phase without black magic, which is performed as we're now used to.
 
@@ -99,12 +104,12 @@ print(
     " This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-phase_normal_results = phase_normal.run(dataset=imaging)
+phase_normal_results = phase_normal.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # Lets check we get a reasonably good model and fit to the dataset.
-al.plot.fit_imaging.subplot(fit=phase_normal_results.most_likely_fit, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(fit=phase_normal_results.most_likely_fit)
 
 print("Time without black magic = {}".format(time.time() - start))
 
@@ -138,14 +143,12 @@ print(
     " This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-phase_black_magic_results = phase_black_magic.run(dataset=imaging)
+phase_black_magic_results = phase_black_magic.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
 # Does our use of black magic impact the quality of our fit to the dataset?
-al.plot.fit_imaging.subplot(
-    fit=phase_black_magic_results.most_likely_fit, include_mask=True
-)
+aplt.fit_imaging.subplot_fit_imaging(fit=phase_black_magic_results.most_likely_fit)
 
 print("Time with black magic = {}".format(time.time() - start))
 
@@ -213,12 +216,14 @@ print(
     " This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-phase_too_much_black_magic_results = phase_too_much_black_magic.run(dataset=imaging)
+phase_too_much_black_magic_results = phase_too_much_black_magic.run(
+    dataset=imaging, mask=mask
+)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-al.plot.fit_imaging.subplot(
-    fit=phase_too_much_black_magic_results.most_likely_fit, include_mask=True
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=phase_too_much_black_magic_results.most_likely_fit
 )
 
 print("Time with too much black magic = {}".format(time.time() - start))
@@ -240,3 +245,49 @@ print("Time with too much black magic = {}".format(time.time() - start))
 # As we discussed in the previous tutorial, the whole premise of pipelines is we 'initialize' the lens model using a
 # less accurate but more efficienct analysis, and worry about getting the results 'perfect' at the end. Thus, we'll see
 # that in pipelines the early phases nearly always run in constant efficiency mode.
+
+
+# There is one more trick we can use to speed up MultiNest, which involves changing the 'evidence tolerance' (our runs
+# above assumed the defaut value of evidence tolerance of 0.8).
+
+phase_new_evidence_tolerance = al.PhaseImaging(
+    phase_name="phase_t7_new_evidence_tolerance",
+    galaxies=dict(
+        lens=al.GalaxyModel(
+            redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
+        ),
+        source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+    ),
+    optimizer_class=af.MultiNest,
+)
+
+phase_new_evidence_tolerance.optimizer.n_live_points = 60
+phase_new_evidence_tolerance.optimizer.sampling_efficiency = 0.5
+phase_new_evidence_tolerance.optimizer.const_efficiency_mode = True
+phase_new_evidence_tolerance.optimizer.evidence_tolerance = 10000.0
+
+# MultiNest samples parameter space until it believes there are no more regions of likelihood above a threshold value
+# left to sample. The evidence tolerance sets this threshold, whereby higher values mean MultiNest stops sampling sooner.
+# This is at the expense of not sampling the highest likelihood regions of parameter space in detail.
+
+# Lets run this phase with our new evidence tolerance and plot the best-fit result.
+phase_new_evidence_tolerance_result = phase_new_evidence_tolerance.run(
+    dataset=imaging, mask=mask
+)
+
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=phase_new_evidence_tolerance_result.most_likely_fit
+)
+
+# This was the fastest phase run of the entire tutorial! However, the resulting fit shown above doesn't look as good
+# as other results (albeit its still a decent fit). This is because MultiNest stopped sampling earlier than the other
+# runs, 'settling' with a decent fit but not refining it to the level of detail of other runs.
+
+# By not sampling parameter space thoroughly we'll get unreliable parameter errors on our lens model! If a detailed,
+# accurate and precise lens model is desired the evidence tolerance shoulld therefore be kept low, around the default
+# value of 0.8.
+
+# However, in the next chapter we'll run a lot of fits where we *don't* care about the lens model errors. All we want
+# is a reasonable estimate of the lens model to subsequent fit in a linked phase (like in tutorial 5). For this purpose,
+# setting high evidence tolerances is powerful way to get very fast analyses. We'll be exploiting this trick throughout
+# all of the following chapters.

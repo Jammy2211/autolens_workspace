@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In this example, we'll use the 'imaging' module to 'simulator' imaging of a strong lens made
 # using a tracer. By simulator, we mean that it will appear as if we had observed it using a real telescope,
@@ -34,9 +35,9 @@ source_galaxy = al.Galaxy(
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # Lets look at the tracer's image - this is the image we'll be simulating.
-al.plot.tracer.profile_image(tracer=tracer, grid=grid)
+aplt.tracer.profile_image(tracer=tracer, grid=grid)
 
-# To Simulate the Imaging simulator, we don't use the image plotted above. Instead, we use an image which has been generated
+# To Simulate the imaging dataset, we don't use the image plotted above. Instead, we use an image which has been generated
 # specifically for simulating an image, which pads the arrays it is computed on based on the shape of the PSF we
 # convolve the image with. This ensures edge-effects do not degrade our simulator's PSF convolution.
 normal_image = tracer.profile_image_from_grid(grid=grid)
@@ -66,13 +67,13 @@ simulator = al.simulator.imaging(
 imaging = simulator.from_tracer(tracer=tracer)
 
 # Lets plot the image - we can see the image has been blurred due to the telescope optics and noise has been added.
-al.plot.imaging.image(imaging=imaging)
+aplt.imaging.image(imaging=imaging)
 
 # Finally, lets output these files to.fits files, we'll begin to analyze them in the next tutorial!
 chapter_path = "/path/to/AutoLens/autolens_workspace/howtolens/chapter_1_introduction"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
 
-# The simulator path specifies where the dataset is output, this time in the directory 'chapter_path/simulator'
+# The dataset path specifies where the dataset is output, this time in the directory 'chapter_path/dataset'
 dataset_path = chapter_path + "dataset/"
 
 # Now output our simulated dataset to hard-disk.

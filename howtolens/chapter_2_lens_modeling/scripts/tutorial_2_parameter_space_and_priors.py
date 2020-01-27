@@ -1,5 +1,6 @@
 import autofit as af
 import autolens as al
+import autolens.plot as aplt
 
 # In the previous example, we used a non-linear search to infer the best-fit lens model of imaging-imaging of a strong lens.
 # In this example, we'll get a deeper intuition of how a non-linear search works.
@@ -113,10 +114,14 @@ def simulate():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Again, lets create the simulated Imaging simulator.
+# Again, lets create the simulated imaging dataset and mask.
 imaging = simulate()
 
-al.plot.imaging.subplot(imaging=imaging)
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 #  To change the priors on specific parameters, we create our galaxy models and then, simply, customize their priors.
 
@@ -159,9 +164,9 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-results_custom = custom_phase.run(dataset=imaging)
+results_custom = custom_phase.run(dataset=imaging, mask=mask)
 
-al.plot.fit_imaging.subplot(fit=results_custom.most_likely_fit)
+aplt.fit_imaging.subplot_fit_imaging(fit=results_custom.most_likely_fit)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 

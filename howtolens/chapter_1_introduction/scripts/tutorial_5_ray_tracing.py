@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # In the last tutorial, our use of planes was a bit clunky. We manually had to input grids to trace them, and keep track
 # of which grids were image-plane grids and which were source plane al. It was easy to make mistakes!
@@ -61,7 +62,7 @@ print("traced image pixel 3")
 print(traced_profile_image[0, 2])
 
 # This image appears as the Einstein ring we saw in the previous tutorial.
-al.plot.tracer.profile_image(tracer=tracer, grid=image_plane_grid)
+aplt.tracer.profile_image(tracer=tracer, grid=image_plane_grid)
 
 # We can also use the tracer to compute the traced grid of every plane, instead of getting the traced image itself:
 traced_grids = tracer.traced_grids_of_planes_from_grid(grid=image_plane_grid)
@@ -82,20 +83,21 @@ print(traced_grids[1][1])
 print("grid source-plane coordinate 3")
 print(traced_grids[1][2])
 
-# If we want, we can use the plane_plotters to plotters these grids like before.
-al.plot.plane.plane_grid(
-    plane=tracer.image_plane, grid=traced_grids[0], title="Image-plane Grid"
-)
+# We can use the plane_plotters to plot these grids like before.
 
-al.plot.plane.plane_grid(
-    plane=tracer.source_plane, grid=traced_grids[1], title="Source-plane Grid"
-)
+plotter = aplt.Plotter(labels=aplt.Labels(title="Image-plane Grid"))
 
-al.plot.plane.plane_grid(
+aplt.plane.plane_grid(plane=tracer.image_plane, grid=traced_grids[0], plotter=plotter)
+
+plotter = aplt.Plotter(labels=aplt.Labels(title="Source-plane Grid"))
+
+aplt.plane.plane_grid(plane=tracer.source_plane, grid=traced_grids[1], plotter=plotter)
+
+aplt.plane.plane_grid(
     plane=tracer.source_plane,
     grid=traced_grids[1],
     axis_limits=[-0.1, 0.1, -0.1, 0.1],
-    title="Source-plane Grid",
+    plotter=plotter,
 )
 
 # As discussed above, interacting directly with planes is a bit comberson. PyAutoLens has tools for plotting
@@ -107,7 +109,7 @@ al.plot.plane.plane_grid(
 # 4) The image-plane gravitational potential, computed using the lens galaxy's mass profile.
 # 5) The image-plane deflection angles, computed using the lens galaxy's mass profile.
 
-al.plot.tracer.subplot(tracer=tracer, grid=image_plane_grid)
+aplt.tracer.subplot_tracer(tracer=tracer, grid=image_plane_grid)
 
 # Just like for a plane, these quantities attributes can be computed by passing a grid (converted to 2D NumPy
 # structures the same dimensions as our input grid!).
@@ -151,20 +153,20 @@ print(image_plane_convergence[1, 0])
 
 # You can also plotters the above attributes on individual figures, using appropriate ray-tracing plotter (I've left most
 # commented out again for convinience)
-al.plot.tracer.convergence(tracer=tracer, grid=image_plane_grid)
+aplt.tracer.convergence(tracer=tracer, grid=image_plane_grid)
 
-# al.plot.tracer.potential(tracer=tracer, grid=image_plane_grid)
-# al.plot.tracer.deflections_y(tracer=tracer, grid=image_plane_grid)
-# al.plot.tracer.deflections_x(tracer=tracer, grid=image_plane_grid)
-# al.plot.tracer.profile_image(tracer=tracer, grid=image_plane_grid)
+# aplt.tracer.potential(tracer=tracer, grid=image_plane_grid)
+# aplt.tracer.deflections_y(tracer=tracer, grid=image_plane_grid)
+# aplt.tracer.deflections_x(tracer=tracer, grid=image_plane_grid)
+# aplt.tracer.profile_image(tracer=tracer, grid=image_plane_grid)
 
 # Before we finish, you might be wondering 'why do both the image-plane and tracer have the attributes convergence
 # / potential / deflection angles, when the two are identical'. Afterall, only mass profiles contribute to these
 # quantities, and only the image-plane has galaxies with measureable mass profiles! There are two reasons:
 
 # 1) Convinience - You could always write 'tracer.image_plane.convergence_from_grid' and
-#                  'al.plot.plane.convergence(plane=tracer.image_plane). However, code appears neater if you can
-#                  just write 'tracer.convergence_from_grid' and 'al.plot.tracer.convergence(tracer=tracer).
+#                  'aplt.plane.convergence(plane=tracer.image_plane). However, code appears neater if you can
+#                  just write 'tracer.convergence_from_grid' and 'aplt.tracer.convergence(tracer=tracer).
 
 # 2) Multi-plane lens - For now, we're focused on the simplest lens configuration possible, an image-plane + source-plane
 #                          configuration. However, there are strong lens system where there are more than 2 planes! In these

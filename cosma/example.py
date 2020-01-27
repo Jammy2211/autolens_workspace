@@ -8,48 +8,55 @@ import autofit as af
 ### NOTE - if you have not already, complete the setup in 'autolens_workspace/runners/cosma/setup' before continuing with this
 ### cosma pipeline script.
 
-# Welcome to the Cosma pipeline runner. Hopefully, you're familiar with runners at this point, and have been using them
+# Welcome to the Cosma pipeline runner. Hopefully, you're familiar with runners at this point and have been using them
 # with PyAutoLens to model lenses on your laptop. If not, I'd recommend you get used to doing that, before trying to
 # run PyAutoLens on a super-computer. You need some familiarity with the software and lens modeling before trying to
 # model a large sample of lenses on a supercomputer!
 
+# This exmaple assumes you are using cosma7 and outputting results to the cosma7 output directory:
+
+# '/cosma7/data/dp004/cosma_username/'.
+
+# If you are not using cosma7 but a different machine, you need to change this path accordingly.
+
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The simulator path is over-written to the path '/cosma5/data/autolens/cosma_username/dataset_label' as opposed to the
-#    autolens_workspace. As we discussed in the setup, on cosma we don't store our dataset_label in our autolens_workspace.
+# 1) The dataset path is over-written to the path '/cosma7/data/dp004/cosma_username/dataset_label' as opposed to the
+#    autolens_workspace. As we discussed, on cosma we don't store our data in our autolens_workspace.
 
-# 2) The output path is over-written to the path '/cosma5/data/autolens/cosma_username/output' as opposed to
+# 2) The output path is over-written to the path '/cosma7/data/dp004/cosma_username/output' as opposed to
 #    the autolens_workspace. This is for the same reason as the dataset.
 
-# We need to specify where our dataset_label is stored and output is placed. In this example, we'll use the 'share' folder, but
-# you can change the string below to your cosma username if you want to use your own personal directory.
-data_folder_name = "share"
-# data_folder_name = 'cosma_username'
+# We need to specify where our dataset is stored and output is placed, which uses your cosma user (change this below).
+cosma_username = 'cosma_username'
 
-# Lets use this to setup our cosma path, which is where our dataset_label and output are stored.
+# Lets use this to setup our cosma path, which is where our dataset and output are stored.
+
+# (If you are not using cosma7 you need to edit the path below).
+
 cosma_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path="/cosma5/data/autolens/", folder_names=[data_folder_name]
+    path="/cosma7/data/dp004/", folder_names=[cosma_username]
 )
 
-# The simulator folder is the name of the folder our dataset_label is stored in, which in this case is 'example'. I would typically
-# expect this would be named after your sample of lenses (e.g. 'slacs', 'bells'). If you are modelng just one
-# lens, it may be best to omit the dataset_label.
+# The dataset folder is the name of the folder our dataset is stored in, which in this case is 'imaging'. This should
+# be named after your sample of lenses (e.g. 'slacs', 'bells').
 dataset_label = "imaging"
 
-# Next, lets use this path to setup the dataset path, which for this example is named 'example' and found at
-# '/cosma5/data/autolens/share/dataset/imaging/'
+# Next, lets use this path to setup the dataset path, which for this example is named 'imaging' and found at
+# '/cosma7/data/dp004/cosma_username/dataset/imaging/'
 cosma_dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["dataset", dataset_label]
 )
 
-# We'll do the same for our output path, which is '/cosma5/data/autolens/share/output/imaging/'
+# We'll do the same for our output path, which is
+# '/cosma7/data/dp004/cosma_username/output/imaging/'
 cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_path, folder_names=["output", dataset_label]
 )
 
-# Next, we need the path to our Cosma autolens_workspace, which can be generated using a relative path given that our runner is
-# located in our Cosma autolens_workspace.
+# Next, we need the path to our Cosma autolens_workspace, which can be generated using a relative path assuming our
+# runner is located in our Cosma autolens_workspace.
 workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
@@ -120,7 +127,7 @@ pixel_scales = 0.2  # Make sure your pixel scale is correct!
 
 # We now use the dataset_name to load a the dataset-set on each job. The statement below combines
 # the cosma_dataset_path and and dataset_name to read dataset_label from the following directory:
-# '/cosma5/data/autolens/share/dataset/imaging/dataset_name'
+# '/cosma7/data/dp004/cosma_username/dataset/imaging/dataset_name'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=cosma_dataset_path, folder_names=[dataset_name]
 )
@@ -133,27 +140,32 @@ imaging = al.imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
+# Next, we create the mask we'll fit this data-set with.
+mask = al.mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
 ### PIPELINE SETTINGS ###
 
-pipeline_settings = al.PipelineSettings(include_shear=True)
+# I will assume that you are familiar with pipeline settings from the normal runner scripts.
 
-from pipelines.advanced.no_lens_light.initialize import lens_sie__source_sersic
-from pipelines.advanced.no_lens_light.power_law.from_initialize import (
-    lens_power_law__source_sersic,
+pipeline_general_settings = al.PipelineGeneralSettings(with_shear=True)
+
+pipeline_source_settings = al.PipelineSourceSettings(
+    pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
 )
 
-pipeline_initialize = lens_sie__source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
+from pipelines.beginner.no_lens_light import lens_sie__source_inversion
+
+pipeline = lens_sie__source_inversion.make_pipeline(
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_source_settings=pipeline_source_settings,
+    phase_folders=["beginner", dataset_label, dataset_name],
 )
 
-pipeline_power_law = lens_power_law__source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
-)
+pipeline.run(dataset=imaging, mask=mask)
 
-
-pipeline = pipeline_initialize + pipeline_power_law
-
-pipeline.run(dataset=imaging)
+### BATCH SCRIPTS ###
 
 # Finally, lets quickly look at the batch_cosma folder, for submitting jobs to cosma. There really isn't much different
 # from a cordelia batch script. It is simply that the last line has to use the 'srun' command to distribute each job

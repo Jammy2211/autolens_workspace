@@ -1,4 +1,5 @@
 import autolens as al
+import autolens.plot as aplt
 
 # Noise-map scaling is important when our mass model lead to an inaccurate source reconstruction . However, it serves
 # an even more important use, when another component of our lens model doesn't fit the dataset well. Can you think what it
@@ -15,8 +16,6 @@ import autolens as al
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    grid = al.grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
@@ -64,7 +63,9 @@ def simulate():
 # Lets simulate the dataset with lens light, draw a 3.0" mask and set up the lens dataset that we'll fit.
 
 imaging = simulate()
+
 mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
+
 masked_imaging = al.masked.imaging(imaging=imaging, mask=mask)
 
 # Again, we'll use a convenience function to fit the lens dataset we simulated above.
@@ -112,7 +113,9 @@ fit = fit_masked_imaging_with_lens_and_source_galaxy(
 
 print("Evidence using baseline variances = ", fit.evidence)
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 # Okay, so its clear that our poor lens light subtraction leaves residuals in the lens galaxy's centre. These pixels
 # are extremely high S/N, so they contribute large chi-squared values. For a real strong lens, we could not fit these
@@ -184,13 +187,23 @@ lens_contribution_map = lens_galaxy_hyper.hyper_galaxy.contribution_map_from_hyp
     hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_lens
 )
 
-al.plot.array(array=lens_contribution_map, title="Lens Contribution Map", mask=mask)
+aplt.array(
+    array=lens_contribution_map,
+    mask=mask,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Contribution Map")),
+)
+
 
 source_contribution_map = source_magnification_hyper.hyper_galaxy.contribution_map_from_hyper_images(
     hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_source
 )
 
-al.plot.array(array=source_contribution_map, title="Source Contribution Map", mask=mask)
+aplt.array(
+    array=source_contribution_map,
+    mask=mask,
+    plotter=aplt.Plotter(labels=aplt.Labels(title="Source Contribution Map")),
+)
+
 
 # The contribution maps decomposes the image into its different components. Next, we  use each contribution
 # map to scale different regions of the noise-map. From the fit above it was clear that both the lens and source
@@ -203,7 +216,9 @@ fit = fit_masked_imaging_with_lens_and_source_galaxy(
     source_galaxy=source_magnification_hyper,
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 print("Evidence using baseline variances = ", 8861.51)
 
@@ -245,7 +260,9 @@ al.fit(
     hyper_background_noise=hyper_background_noise,
 )
 
-al.plot.fit_imaging.subplot(fit=fit, include_image_plane_pix=True, include_mask=True)
+aplt.fit_imaging.subplot_fit_imaging(
+    fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
+)
 
 # Is there any reason to scale the background noise other than if the background sky subtraction has a large correction?
 # There is. Lots of pixels in an image do not contain the lensed source but are fitted by the inversion. As we've learnt
