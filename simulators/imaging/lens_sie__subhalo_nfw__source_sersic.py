@@ -13,7 +13,7 @@ import os
 # The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # (these files are already in the autolens_workspace and are remade running this script)
 dataset_label = "imaging"

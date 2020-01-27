@@ -12,7 +12,7 @@ import autolens as al
 # Fit the lens mass model as a power-law, using the source model from a previous pipeline.
 # Lens Mass: EllipticalPowerLaw + ExternalShear
 # Source Light: Previous Pipeline Source.
-# Previous Pipelines: no_lens_light/source/*/lens_sie__source_*py
+# Previous Pipeline: no_lens_light/source/*/lens_sie__source_*py
 # Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 

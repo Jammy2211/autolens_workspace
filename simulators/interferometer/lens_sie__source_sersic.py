@@ -13,7 +13,7 @@ import os
 # The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # (these files are already in the autolens_workspace and are remade running this script)
 dataset_label = "interferometer"
@@ -38,7 +38,7 @@ uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
 # To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
 # visibilities that are simulated, as well as its expoosure time, noise levels and uv-wavelengths.
 simulator = al.simulator.interferometer(
-    real_space_shape_2d=(100, 100),
+    real_space_shape_2d=(151, 151),
     real_space_pixel_scales=real_space_pixel_scales,
     uv_wavelengths=uv_wavelengths,
     sub_size=4,
@@ -84,7 +84,7 @@ aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
 interferometer = simulator.from_tracer(tracer=tracer)
 
 # Lets plot the simulated interferometer dataset before we output it to fits.
-aplt.interferometer.subplot_imaging(interferometer=interferometer)
+aplt.interferometer.subplot_interferometer(interferometer=interferometer)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 interferometer.output_to_fits(

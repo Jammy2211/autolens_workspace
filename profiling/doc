@@ -1,0 +1,14 @@
+Tools for profiling the computational run-speed of PyAutoLens, using different types of analysis, data and so fourth.
+
+Before running profiling tools, you must generate the profiling datasets by running the scripts
+
+    - profiling/imaging/simulator/data_maker.py
+    - profiling/interferometer/simulator/data_maker.py
+
+For imaging data, the profiling simulation suite simulates images representative of the following instruments:
+
+    - lsst (pixel_scale=0.2)
+    - euclid (pixel_scale=0.1)
+    - hst (pixel_scale=0.05)
+    - hst_up (pixel_scale=0.03)
+    - ao (pixel_scale=0.01)
