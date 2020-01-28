@@ -35,6 +35,8 @@ def make_pipeline(
     signal_to_noise_limit=None,
     bin_up_factor=None,
     pixel_scale_interpolation_grid=0.05,
+        inversion_uses_border=True,
+        inversion_pixel_limit=None,
 ):
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
@@ -115,6 +117,8 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+        inversion_pixel_limit=inversion_pixel_limit,
+        inversion_uses_border=inversion_uses_border,
         optimizer_class=af.MultiNest,
     )
 

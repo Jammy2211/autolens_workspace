@@ -53,7 +53,7 @@ Matplotlib uses the backend set in the config file autolens_workspace/config/vis
  
  ```
 [general]
-backend = TKAgg ; Alternatives: Qt5Agg, Qt4Agg, WXAgg, WX, Agg (outputs to .fits / .png but doesn't'show' figure)
+backend = TKAgg
 ``` 
 
 There have been reports that the default TKAgg backend causes crashes when running the test script below (either the 
