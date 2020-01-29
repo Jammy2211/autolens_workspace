@@ -94,7 +94,7 @@ aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 # 3) The model image of that plane's galaxies
 # 4) The model galaxy in the (unlensed) source plane.
 
-aplt.fit_imaging.subplot_of_planes(fit=fit, include=aplt.Include(mask=True))
+aplt.fit_imaging.subplots_of_all_planes(fit=fit, include=aplt.Include(mask=True))
 
 # A fit also provides a likelihood, which is a single-figure estimate of how good the model image fitted the
 # simulated image (in unmasked pixels only!).
@@ -134,7 +134,7 @@ fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 aplt.fit_imaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 
-aplt.fit_imaging.subplot_of_planes(fit=fit, include=aplt.Include(mask=True))
+aplt.fit_imaging.subplots_of_all_planes(fit=fit, include=aplt.Include(mask=True))
 
 # Residuals now appear at the locations the source galaxy, producing increased chi-squareds which determine our
 # goodness-of-fit.

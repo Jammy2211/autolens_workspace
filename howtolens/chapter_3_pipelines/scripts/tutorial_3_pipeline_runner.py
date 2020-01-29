@@ -211,7 +211,7 @@ true_fit = al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 aplt.fit_imaging.subplot_fit_imaging(fit=true_fit, mask=True)
 
-aplt.fit_imaging.subplot_of_planes(fit=true_fit, mask=True)
+aplt.fit_imaging.subplots_of_all_planes(fit=true_fit, mask=True)
 
 # And indeed, we see an improved residual-map, chi-squared-map, and so forth.
 

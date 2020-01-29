@@ -13,14 +13,18 @@ from skimage.transform import rescale
 
 
 class Scribbler:
-    def __init__(self, image, segment_names=None, title="Draw mask"):
+    def __init__(self, image, segment_names=None, title="Draw mask", cmap=None):
 
         self.im = image
 
         # create initial plot
         self.figure = plt.figure()
         self.ax = self.figure.add_subplot(111)
-        plt.imshow(image, interpolation="none")
+        if cmap is None:
+            plt.imshow(image, interpolation="none")
+        else:
+            norm = cmap.norm_from_array(array=image)
+            plt.imshow(image, cmap=cmap.cmap, norm=norm)
         plt.axis([0, image.shape[1], image.shape[0], 0])
         plt.axis("off")
         if title:

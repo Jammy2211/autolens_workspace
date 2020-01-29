@@ -110,4 +110,4 @@ pipeline = lens_sie__source_inversion.make_pipeline(
     phase_folders=["intermediate", dataset_label, dataset_name],
 )
 
-pipeline.run(dataset=imaging)
+pipeline.run(dataset=imaging, mask=mask)

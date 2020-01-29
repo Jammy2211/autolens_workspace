@@ -34,7 +34,15 @@ image = al.array.from_fits(
     file_path=dataset_path + "image.fits", pixel_scales=pixel_scales
 )
 
-scribbler = scribbler.Scribbler(image=image.in_2d)
+cmap = aplt.ColorMap(
+    norm="log",
+    norm_min=1.0e-4,
+    norm_max=0.4 * np.max(image),
+    linthresh=0.05,
+    linscale=0.1,
+)
+
+scribbler = scribbler.Scribbler(image=image.in_2d, cmap=cmap)
 mask = scribbler.show_mask()
 mask = al.mask.manual(mask_2d=mask, pixel_scales=pixel_scales)
 

@@ -82,7 +82,8 @@ def onclick(event):
 
         grid_arcsec = image_2d.geometry.grid_scaled_from_grid_pixels_1d(
             grid_pixels_1d=al.grid.manual_2d(
-                grid=[[[y_pixels_max, x_pixels_max]]], pixel_scales=pixel_scales
+                grid=[[[y_pixels_max + 0.5, x_pixels_max + 0.5]]],
+                pixel_scales=pixel_scales,
             )
         )
         y_arcsec = grid_arcsec[0, 0]

@@ -100,7 +100,7 @@ A description of the general.ini visualization config.
         
         The light_profile_centres appearance is specified by the [light_profile_centres] section of the 
         'figures.ini' and 'subplots.ini' configs.
-        
+
         If there are multiple galaxies with light profiles in a plane or tracer, light profile centres of the same
         galaxy are colored the same according to the 'colors' specified in the configs above. By default, this color
         wheel matches the mass profile centres so that light and mass profile centres of the same galaxies are colored

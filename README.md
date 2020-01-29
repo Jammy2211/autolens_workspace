@@ -4,10 +4,10 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.35.2**.
+This version of the workspace are built and tested for using **PyAutoLens v0.35.4**.
 
 ```
-pip install autolens==0.35.2
+pip install autolens==0.35.4
 ```
 
 ## Getting Started
@@ -19,15 +19,15 @@ To begin, I'd check out the 'introduction' in the quickstart folder. This will e
 
 The workspace includes the following:
 
-- **Aggregator** - Manipulate large suites of model-fits via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
+- **Aggregator** - Manipulate large suites of modeling results via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
 - **Config** - Configuration files which customize **PyAutoLens**'s behaviour.
 - **Dataset** - Where data is stored, including example datasets distributed with **PyAutoLens**.
 - **HowToLens** - The **HowToLens** lecture series.
 - **Output** - Where the **PyAutoLens** analysis and visualization are output.
 - **Pipelines** - Example pipelines for modeling strong lenses.
 - **Plot** - Example scripts for customizing figures and images.
-- **Preprocessing** - Tools for preprocessing data before an analysis and creating auxilary data like masks.
-- **Quick Start** - A quick start guide, so you can begin modeling your own lens data within hours.
+- **Preprocessing** - Tools for preprocessing data before an analysis (e.g. creating a mask).
+- **Quick Start** - A quick start guide, so you can begin modeling your lenses within hours.
 - **Runners** - Scripts for running a **PyAutoLens** pipeline.
 - **Simulators** - Scripts for simulating strong lens datasets with **PyAutoLens**.
 - **Tools** - Extra tools for using many other **PyAutoLens** features.

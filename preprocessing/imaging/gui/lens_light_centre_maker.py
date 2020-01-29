@@ -14,7 +14,7 @@ workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
 # the positions will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/positions.dat'.
 dataset_label = "imaging"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "lens_sersic_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
@@ -39,16 +39,6 @@ image_2d = imaging.image.in_2d
 
 # For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
 # below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
-
-cmap = aplt.ColorMap(
-    norm="log",
-    norm_min=1.0e-4,
-    norm_max=0.4 * np.max(imaging.image),
-    linthresh=0.05,
-    linscale=0.1,
-)
-
-norm = cmap.norm_from_array(array=None)
 
 lens_light_centres = []
 
@@ -79,7 +69,8 @@ def onclick(event):
 
         grid_arcsec = image_2d.geometry.grid_scaled_from_grid_pixels_1d(
             grid_pixels_1d=al.grid.manual_2d(
-                grid=[[[y_pixels_max, x_pixels_max]]], pixel_scales=pixel_scales
+                grid=[[[y_pixels_max + 0.5, x_pixels_max + 0.5]]],
+                pixel_scales=pixel_scales,
             )
         )
         y_arcsec = grid_arcsec[0, 0]
@@ -96,7 +87,7 @@ n_y, n_x = imaging.image.shape_2d
 hw = int(n_x / 2) * pixel_scales
 ext = [-hw, hw, -hw, hw]
 fig = plt.figure(figsize=(14, 14))
-plt.imshow(imaging.image.in_2d, cmap="jet", extent=ext, norm=norm)
+plt.imshow(imaging.image.in_2d, cmap="jet", extent=ext)
 plt.colorbar()
 cid = fig.canvas.mpl_connect("button_press_event", onclick)
 plt.show()

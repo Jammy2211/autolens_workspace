@@ -35,8 +35,8 @@ def make_pipeline(
     signal_to_noise_limit=None,
     bin_up_factor=None,
     pixel_scale_interpolation_grid=0.05,
-        inversion_uses_border=True,
-        inversion_pixel_limit=None,
+    inversion_uses_border=True,
+    inversion_pixel_limit=None,
 ):
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
