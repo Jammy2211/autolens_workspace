@@ -93,6 +93,9 @@ def make_pipeline(
         lens.bulge.centre = pipeline_source_settings.lens_light_centre
         lens.disk.centre = pipeline_source_settings.lens_light_centre
 
+    if pipeline_source_settings.lens_light_bulge_only:
+        lens.disk = None
+
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk",
         phase_folders=phase_folders,
@@ -189,6 +192,9 @@ def make_pipeline(
     if pipeline_source_settings.lens_light_centre is not None:
         lens.bulge.centre = pipeline_source_settings.lens_light_centre
         lens.disk.centre = pipeline_source_settings.lens_light_centre
+
+    if pipeline_source_settings.lens_light_bulge_only:
+        lens.disk = None
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_bulge_disk_sie__source_fixed",

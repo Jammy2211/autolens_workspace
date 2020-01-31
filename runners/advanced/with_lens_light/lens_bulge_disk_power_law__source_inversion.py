@@ -126,6 +126,7 @@ pipeline_source_settings = al.PipelineSourceSettings(
     lens_light_centre=(0.0, 0.0),
     lens_mass_centre=(0.0, 0.0),
     align_light_mass_centre=False,
+    lens_light_bulge_only=True,
     fix_lens_light=True,
 )
 

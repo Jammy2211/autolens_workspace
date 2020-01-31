@@ -1,23 +1,18 @@
 import autofit as af
 import autolens as al
 
-# In this pipeline, we fit the lens light of a strong lens using a two component bulge + disk model.
+# In this pipeline, we fit the lens light of a strong lens using a single Sersic model.
 
 # The mass model and source are initialized using an already run 'source' pipeline. Although the lens light was
 # fitted in this pipeline, we do not use this model to set priors in this pipeline.
-
-# The bulge and disk are modeled using EllipticalSersic and EllipticalExponential profiles respectively. Their alignment
-# (centre, phi, axis_ratio) and whether the disk component is instead modeled using an EllipticalSersic profile
-# can be customized using the pipeline settings.
 
 # The pipeline is one phase:
 
 # Phase 1:
 
-# Fit the lens light using a bulge + disk model, with the lens mass and source fixed to the
-# result of the previous pipeline
+# Fit the lens light using a Sersic model, with the lens mass and source fixed to the result of the previous pipeline.
 
-# Lens Light & Mass: EllipticalSersic + EllipticalExponential
+# Lens Light & Mass: EllipticalSersic
 # Lens Mass: EllipticalIsothermal + ExternalShear
 # Source Light: Previous 'source' pipeline.
 # Previous Pipelines: with_lens_light/source/*/lens_bulge_disk_sie__source_*.py
@@ -48,15 +43,13 @@ def make_pipeline(
     )
 
     pipeline_name = (
-        "pipeline_light__bulge_disk__lens_bulge_disk_sie__source_" + source_tag
+        "pipeline_light__sersic__lens_sersic_sie__source_" + source_tag
     )
 
     # This pipeline's name is tagged according to whether:
 
     # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    # 2) The bulge + disk centres, rotational angles or axis ratios are aligned.
-    # 3) The disk component of the lens light model is an Exponential or Sersic profile.
-    # 4) The lens galaxy mass model includes an external shear.
+    # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_general_settings.tag + pipeline_light_settings.tag)
@@ -79,32 +72,13 @@ def make_pipeline(
     else:
         hyper_galaxy = None
 
-    # Model the disk as a Sersic if input.
-
-    if pipeline_light_settings.disk_as_sersic:
-        disk = af.PriorModel(al.lp.EllipticalSersic)
-    else:
-        disk = af.PriorModel(al.lp.EllipticalExponential)
-
     lens = al.GalaxyModel(
         redshift=redshift_lens,
         bulge=al.lp.EllipticalSersic,
-        disk=disk,
         mass=af.last.instance.galaxies.lens.mass,
         shear=af.last.instance.galaxies.lens.shear,
         hyper_galaxy=hyper_galaxy,
     )
-
-    # Adjust the alignment of the bulge and disk to the input of the pipeline settings.
-
-    if pipeline_light_settings.align_bulge_disk_centre:
-        lens.bulge.centre = lens.disk.centre
-
-    if pipeline_light_settings.align_bulge_disk_axis_ratio:
-        lens.bulge.axis_ratio = lens.disk.axis_ratio
-
-    if pipeline_light_settings.align_bulge_disk_phi:
-        lens.bulge.phi = lens.disk.phi
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk_sie__source_" + source_tag,
