@@ -109,15 +109,6 @@ def make_pipeline(
     # 1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
     # 2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for \
     #    the light profile in phase 1.
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular_annular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            inner_radius=0.3,
-            outer_radius=3.0,
-        )
-
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
     mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
     mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
@@ -136,7 +127,6 @@ def make_pipeline(
                 redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
-        mask_function=mask_function,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,

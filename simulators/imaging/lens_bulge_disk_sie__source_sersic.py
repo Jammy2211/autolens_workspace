@@ -88,7 +88,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
-# imaging dataset-set.
+# imaging dataset.
 imaging = simulator.from_tracer(tracer=tracer)
 
 # Lets plot the simulated imaging dataset before we output it to fits.

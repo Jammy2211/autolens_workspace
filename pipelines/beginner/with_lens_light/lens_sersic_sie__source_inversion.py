@@ -100,21 +100,6 @@ def make_pipeline(
     else:
         shear = None
 
-    # We will switch between a circular mask which includes the lens light and an annular mask which removes it.
-
-    def mask_function_circular(shape_2d, pixel_scales):
-        return al.mask.circular(
-            shape_2d=shape_2d, pixel_scales=pixel_scales, radius=3.0
-        )
-
-    def mask_function_annular(shape_2d, pixel_scales):
-        return al.mask.circular_annular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            inner_radius=0.3,
-            outer_radius=3.0,
-        )
-
     ### PHASE 1 ###
 
     # In phase 1, we fit only the lens galaxy's light, where we:
@@ -129,7 +114,6 @@ def make_pipeline(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
-        mask_function=mask_function_circular,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
@@ -170,7 +154,6 @@ def make_pipeline(
                 redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
-        mask_function=mask_function_annular,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
@@ -204,7 +187,6 @@ def make_pipeline(
                 light=phase1.result.model.galaxies.source.light,
             ),
         ),
-        mask_function=mask_function_circular,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
@@ -242,7 +224,6 @@ def make_pipeline(
                 regularization=pipeline_source_settings.regularization,
             ),
         ),
-        mask_function=mask_function_annular,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
@@ -279,7 +260,6 @@ def make_pipeline(
                 regularization=phase4.result.instance.galaxies.source.regularization,
             ),
         ),
-        mask_function=mask_function_circular,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,

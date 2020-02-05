@@ -72,23 +72,12 @@ mask = al.mask.circular_annular(
 
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# When we run the phase, we don't pass it the mask as an arrays. Instead, we pass it the mask as a function. The reason
-# for this will become clear in the next chapter, but for now I would say you just accept this syntax.
-def mask_function():
-    return al.mask.circular_annular(
-        shape_2d=imaging.shape_2d,
-        pixel_scales=imaging.pixel_scales,
-        inner_radius=0.6,
-        outer_radius=2.4,
-    )
-
 
 phase_with_custom_mask = al.PhaseImaging(
     phase_name="phase_t8_with_custom_mask",
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5), source=al.GalaxyModel(redshift=1.0)
     ),
-    mask_function=mask_function,  # <- We input the mask function here
     optimizer_class=af.MultiNest,
 )
 

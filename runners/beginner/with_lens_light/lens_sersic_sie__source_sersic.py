@@ -41,7 +41,7 @@ af.conf.instance = af.conf.Config(
 import autolens as al
 import autolens.plot as aplt
 
-# Specify the dataset label and name, which we be used to determine the path we load the data from.
+# Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
 dataset_name = "lens_sersic_sie__source_sersic"
 

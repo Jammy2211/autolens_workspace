@@ -61,7 +61,7 @@ af.conf.instance = af.conf.Config(
 
 import autolens as al
 
-# Specify the dataset label and name, which we be used to determine the path we load the data from.
+# Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
 dataset_name = "lens_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.05

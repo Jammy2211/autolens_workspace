@@ -162,9 +162,6 @@ pipeline_lens_and_source.run(dataset=imaging, mask=mask)
 #    radius distribution of your lens sample, you can choose masks radii that will masks out every source in your sample
 #    adequately (and even if some of the source is still there, who cares? The fit to the lens galaxy will be okay).
 
-#    You can also input custom masks to a pipeline which are used by default if a mask_function is not supplied. I
-#    haven't included a howtolens tutorial on this, but if you navigate to the autolens_workspace/pipelines/examples/
-#    folder you'll find an example pipeline describingn how to do this ('mask_and_positions.py').
 
 # 2) What if my source galaxy isn't a ring of light? Surely my Annulus masks won't match it?
 #

@@ -80,7 +80,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
-# interferometer dataset-set.
+# interferometer dataset.
 interferometer = simulator.from_tracer(tracer=tracer)
 
 # Lets plot the simulated interferometer dataset before we output it to fits.

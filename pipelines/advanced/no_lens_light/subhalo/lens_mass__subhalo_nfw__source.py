@@ -129,7 +129,7 @@ def make_pipeline(
                 redshift=redshift_lens,
                 mass=phase1.result.result.model.galaxies.subhalo.mass,
             ),
-            source=af.last.instance.galaxies.source,
+            source=af.last[-1].instance.galaxies.source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

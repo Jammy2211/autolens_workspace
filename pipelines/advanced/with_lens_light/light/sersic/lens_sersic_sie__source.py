@@ -42,9 +42,7 @@ def make_pipeline(
         source=af.last.instance.galaxies.source
     )
 
-    pipeline_name = (
-        "pipeline_light__sersic__lens_sersic_sie__source_" + source_tag
-    )
+    pipeline_name = "pipeline_light__sersic__lens_sersic_sie__source_" + source_tag
 
     # This pipeline's name is tagged according to whether:
 

@@ -125,7 +125,7 @@ dataset_name = dataset_name[cosma_array_id]
 
 pixel_scales = 0.2  # Make sure your pixel scale is correct!
 
-# We now use the dataset_name to load a the dataset-set on each job. The statement below combines
+# We now use the dataset_name to load a the dataset on each job. The statement below combines
 # the cosma_dataset_path and and dataset_name to read dataset_label from the following directory:
 # '/cosma7/data/dp004/cosma_username/dataset/imaging/dataset_name'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(

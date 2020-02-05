@@ -54,17 +54,6 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_tag)
 
-    # As there is no lens light component, we can use an annular mask throughout this pipeline which removes the
-    # central regions of the image.
-
-    def mask_function(shape_2d, pixel_scales):
-        return al.mask.circular_annular(
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            inner_radius=0.2,
-            outer_radius=3.3,
-        )
-
     ### PHASE 1 ###
 
     # In phase 1, we fit the lens galaxy's mass and one source galaxy, where we:
@@ -86,7 +75,6 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
                 redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
-        mask_function=mask_function,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -112,7 +100,6 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
                 redshift=2.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
-        mask_function=mask_function,
     )
 
     phase2.optimizer.const_efficiency_mode = True
