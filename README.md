@@ -4,10 +4,10 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.35.5**.
+This version of the workspace are built and tested for using **PyAutoLens v0.35.6**.
 
 ```
-pip install autolens==0.35.5
+pip install autolens==0.35.6
 ```
 
 ## Getting Started
