@@ -148,7 +148,9 @@ def make_pipeline(
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source,
+                light=al.lp.EllipticalSersic,
+                hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
@@ -204,6 +206,7 @@ def make_pipeline(
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 light=phase2.result.instance.galaxies.source.light,
+                hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
@@ -248,6 +251,7 @@ def make_pipeline(
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 light=phase2.result.model.galaxies.source.light,
+                hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
         hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,

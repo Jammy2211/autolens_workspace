@@ -71,7 +71,9 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = al.pipeline_settings.source_from_result(result=af.last)
+    source = al.pipeline_settings.source_from_result(
+        result=af.last, include_hyper_source=True
+    )
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source_" + source_tag,
