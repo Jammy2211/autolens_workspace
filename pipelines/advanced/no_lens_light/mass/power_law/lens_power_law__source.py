@@ -36,8 +36,9 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_source(
-        source=af.last.instance.galaxies.source
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+        pipeline_general_settings=pipeline_general_settings,
+        source=af.last.instance.galaxies.source,
     )
 
     pipeline_name = "pipeline_mass__power_law__lens_power_law__source_" + source_tag
@@ -48,7 +49,21 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_mass_settings.tag)
+    phase_folders.append(
+        pipeline_general_settings.tag_no_inversion + pipeline_mass_settings.tag
+    )
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_mass_settings.no_shear:
+        if af.last.model.galaxies.lens.shear is not None:
+            shear = af.last.model.galaxies.lens.shear
+        else:
+            shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -79,11 +94,7 @@ def make_pipeline(
         phase_name="phase_1__lens_power_law__source_" + source_tag,
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=mass,
-                shear=af.last.model.galaxies.lens.shear,
-            ),
+            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,

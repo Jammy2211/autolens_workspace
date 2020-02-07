@@ -73,7 +73,18 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
+    phase_folders.append(
+        pipeline_general_settings.tag_no_inversion + pipeline_source_settings.tag
+    )
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_source_settings.no_shear:
+        shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -144,7 +155,7 @@ def make_pipeline(
                 bulge=phase1.result.instance.galaxies.lens.bulge,
                 disk=phase1.result.instance.galaxies.lens.disk,
                 mass=mass,
-                shear=al.mp.ExternalShear,
+                shear=shear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(

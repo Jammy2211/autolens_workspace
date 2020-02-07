@@ -73,22 +73,25 @@ aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 ### PIPELINE SETTINGS ###
 
-# The'pipeline_settings' customize a pipeline's behaviour. Beginner pipelines only have one 'general' setting we'll
-# change, which determines whether an external shear is fitted for in the mass model or not (default=True).
+# The'pipeline_settings' customize a pipeline's behaviour.
 
-pipeline_general_settings = al.PipelineGeneralSettings(with_shear=True)
-
-# For pipelines which use an inversion, the pipeline source settings customize:
+# For pipelines which use an inversion, the pipeline general settings customize:
 
 # - The Pixelization used by the inversion of this pipeline.
 # - The Regularization scheme used by of this pipeline.
 
-pipeline_source_settings = al.PipelineSourceSettings(
+pipeline_general_settings = al.PipelineGeneralSettings(
     pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
 )
 
-# Pipeline settings 'tag' the output path of a pipeline. So, if 'with_shear' is True, the pipeline's output paths
-# are 'tagged' with the string 'with_shear'. The pixelization and regularization scheme are also both tagged.
+# The pipeline source settings determines whether there is no external shear in the mass model or not (default=True).
+# (You may think its odd that the 'source' settings controls the 'mass' model. The reason for this will be clear in
+# advanced pipelines).
+
+pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
+
+# Pipeline settings 'tag' the output path of a pipeline. So, if 'no_shear' is True, the pipeline's output paths
+# are 'tagged' with the string 'no_shear'. The pixelization and regularization scheme are also both tagged.
 
 # This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 # to different output folders and thus not clash with one another!

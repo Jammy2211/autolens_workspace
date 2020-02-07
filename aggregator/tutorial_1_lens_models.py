@@ -1,4 +1,4 @@
-from pathlib import Path
+import os
 
 import autofit as af
 import autoarray.plot as aplt
@@ -21,8 +21,8 @@ import autoarray.plot as aplt
 # images, etc.) are in .zip files, as opposed to folders that can be instantly accessed.
 
 # This is because when the lens model pipelines were run, the 'remove_files' option in the 'config/general.ini' was set
-# to  True, such that all results (other than the .zip file) were removed. This feature is implemented because
-# super-computers often have a limit on the number of files allowed per.
+# to  True. This means all results (other than the .zip file) were removed. This feature is implemented because
+# super-computers often have a limit on the number of files allowed per user.
 
 # Bare in mind the fact that all results are in .zip files - we'll come back to this point in a second.
 
@@ -33,13 +33,13 @@ import autoarray.plot as aplt
 
 # To begin, we setup the path to the output path we want to load results from, which in this case is the folder
 # 'autolens_workspace/output/aggregator_sample'.
-workspace_path = Path(__file__).parent.parent
-output_path = workspace_path / "output"
+workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
+output_path = workspace_path + "output"
 aggregator_results_path = output_path + "/aggregator_sample"
 
 # Now we'll use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path / "config"), output_path=str(aggregator_results_path)
+    config_path=str(workspace_path + "/config"), output_path=str(output_path)
 )
 
 # To set up the aggregator we simply pass it the folder of the results we want to load.
@@ -51,37 +51,40 @@ aggregator = af.Aggregator(directory=str(aggregator_results_path))
 
 ### MODEL RESULTS ###
 
-# We can now create a list of the 'non-linear outpus' of every fit, where an instance of the Output class acts as an
+# We can now create a list of the 'non-linear outputs' of every fit, where an instance of the Output class acts as an
 # interface between the results of the non-linear fit on your hard-disk and Python.
 
 # The fits to each lens used MultiNest, so we will create a list of instances of the MultiNestOutput class (if a
 # different non-linear sampler were used the appropriate non-linear output class would be used).
 multi_nest_outputs = aggregator.output
 
-# When we print this list of outputs, we will see 15 different MultiNestOutput instances. These corresponded to all 5
+# When we print this list of outputs, we will see 15 different MultiNestOutput instances. These correspond to all 5
 # phases of all 3 fits.
 print("MultiNest Outputs:")
-print(multi_nest_outputs, "\n")
+print(multi_nest_outputs)
+print("Total Outputs = ", len(multi_nest_outputs), "\n")
 
 # Lets get rid of the results of the initialization pipeline by passing the name of the main pipeline we want to
 # load the results of to the aggregator's filter method.
-pipeline_name = "pipeline_source__inversion__lens_sie_source_inversion"
+pipeline_name = "pipeline_source__inversion__lens_sie__source_inversion"
 multi_nest_outputs = aggregator.filter(pipeline=pipeline_name).output
 
 # As expected, this list now has only 12 MultiNestOutputs.
 print("Pipeline Name Filtered MultiNest Outputs:")
-print(multi_nest_outputs, "\n")
+print(multi_nest_outputs)
+print("Total Outputs = ", len(multi_nest_outputs), "\n")
 
 # Thats still a lot of outputs though! We can filter by phase name to get just the results of fitting the final phase
 # in our pipelines.
 phase_name = "phase_4__lens_sie__source_inversion"
 multi_nest_outputs = aggregator.filter(
-    pipeline=pipeline_name, phase_name=phase_name
+    pipeline=pipeline_name, phase=phase_name, phase_tag="phase_tag__sub_2"
 ).output
 
-# As expected, this list now has only 3 MultiNestOutputs.
+# As expected, this list now has only 3 MultiNestOutputs, one for each image we fitted.
 print("Phase Name Filtered MultiNest Outputs:")
-print(multi_nest_outputs, "\n")
+print(multi_nest_outputs)
+print("Total Outputs = ", len(multi_nest_outputs), "\n")
 
 # We can, use these outputs to create a list of the most-likely (e.g. highest likelihood) model of each fit to our
 # three images (in this phase).
@@ -90,6 +93,7 @@ most_likely_model_parameters = [
 ]
 print("Most Likely Model Parameter Lists:")
 print(most_likely_model_parameters, "\n")
+stop
 
 # This provides us with lists of all model parameters. However, this isn't that much use - which values correspond
 # to which parameters?

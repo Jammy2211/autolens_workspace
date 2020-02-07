@@ -32,13 +32,14 @@ import os
 
 ### THIS RUNNER ###
 
-# Using two source pipelines and a mass pipeline we will fit a power-law mass model and source using a pixelized
-# inversion.
+# Using two source pipelines, a light pipeline and a mass pipeline we will fit a power-law mass model and source using
+# a pixelized inversion.
 
 # We'll use the example pipelines:
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'.
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'.
-# 'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/lens_power_law__source.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_bulge_disk_sie__source_inversion.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/mass/power_law/lens_light_power_law__source.py'.
 
 # Check them out now for a detailed description of the analysis!
 
@@ -97,7 +98,8 @@ pipeline_general_settings = al.PipelineGeneralSettings(
     hyper_galaxies=True,
     hyper_image_sky=False,
     hyper_background_noise=True,
-    with_shear=True,
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
 )
 
 # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
@@ -121,12 +123,10 @@ from pipelines.advanced.with_lens_light.source.inversion.from_parametric import 
 # - Whether the lens light profile is fixed in later phases after initialization.
 
 pipeline_source_settings = al.PipelineSourceSettings(
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
     lens_light_centre=(0.0, 0.0),
     lens_mass_centre=(0.0, 0.0),
     align_light_mass_centre=False,
-    lens_light_bulge_only=True,
+    no_shear=False,
     fix_lens_light=True,
 )
 
@@ -178,6 +178,7 @@ pipeline_mass_settings = al.PipelineMassSettings(fix_lens_light=False)
 
 pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
     pipeline_general_settings=pipeline_general_settings,
+    pipeline_light_settings=pipeline_light_settings,
     pipeline_mass_settings=pipeline_mass_settings,
     phase_folders=["advanced", dataset_label, dataset_name],
 )

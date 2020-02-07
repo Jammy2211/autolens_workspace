@@ -38,6 +38,8 @@ import autolens as al
 dataset_label = "aggregator_sample"
 pixel_scales = 0.1
 
+output_label = "aggregator_sample_advanced"
+
 for dataset_name in [
     "lens_sie__source_sersic__0",
     "lens_sie__source_sersic__1",
@@ -100,13 +102,13 @@ for dataset_name in [
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
         pipeline_general_settings=pipeline_general_settings,
         pipeline_source_settings=pipeline_source_settings,
-        phase_folders=[dataset_label, dataset_name],
+        phase_folders=[output_label, dataset_name],
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
         pipeline_general_settings=pipeline_general_settings,
         pipeline_source_settings=pipeline_source_settings,
-        phase_folders=[dataset_label, dataset_name],
+        phase_folders=[output_label, dataset_name],
     )
 
     ### PIPELINE COMPOSITION AND RUN ###

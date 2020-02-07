@@ -1,17 +1,47 @@
 import os
 
-# Welcome to the pipeline runner. This tool allows you to load strong lens dataset, and pass it to pipelines for a
-# PyAutoLens analysis. To show you around, we'll load up some example dataset and run it through some of the example
-# pipelines that come distributed with PyAutoLens.
+### WELCOME ###
 
-# The runner is supplied as both this Python script and a Juypter notebook. Its up to you which you use - I personally
-# prefer the python script as provided you keep it relatively small, its quick and easy to comment out different lens
-# names and pipelines to perform different analyses. However, notebooks are a tidier way to manage visualization - so
-# feel free to use notebooks. Or, use both for a bit, and decide your favourite!
+# Welcome to the pipeline runner, which loads a strong lens dataset and analyses it using a lens modeling pipeline.
 
-# The pipeline runner is fairly self explanatory. Make sure to checkout the pipelines in the
-#  autolens_workspace/pipelines/examples/ folder - they come with detailed descriptions of what they do. I hope that you'll
-# expand on them for your own personal scientific needs
+# This script uses an 'advanced' pipeline. I'll be assuming that you are familiar with 'beginner' and 'intermediate'
+# pipelines, so if anything isn't clear check back to the their runners and pipelines!
+
+# First, lets consider some aspects of beginner and intermediate pipelines that were sub-optimal:
+
+# - They often repeated the same phases to initialize the lens model. For example, source inversion pipelines using
+#   hyper-features always repeated the same 4 phases to initialize the inversion (use a magnification based pixelization
+#   and then surface-brightness based one). This lead to lots of repetition and wasted processing time!
+
+# - Tweaking a pipeline to slightly change the model it fitted often required a rerun of the entire pipeline or
+#   for one to create a new pipeline that slightly changed its behaviour.
+
+# Advanced address these problems using pipeline composition, whereby multiple different pipelines each focused on
+# fitting a specific aspect of the lens model are added together. The results of the initial pipelines are then reused
+# when changing the model fitted in later pipelines. For example, we may initialize a source inversion using such a
+# pipeline and use this to fit a variety of different mass models with different pipelines.
+
+### SLAM (Source, Light and Mass) ###
+
+# Advanced pipelines are written following the SLAM method, whereby we first initialize the source fit to a lens,
+# followed by the lens's light and then the lens's mass.
+
+# If you think back to the beginner and intermediate pipelines this is exactly what they di. We'd get the inversion
+# up and running first, then refine the lens's light model and finally its mass. Advanced pipelines simply use
+# separate pipelines to do this, each of which has features that enable more customization of the model that is fitted.
+
+### THIS RUNNER ###
+
+# Using two source pipelines and a mass pipeline we will fit a power-law mass model and source using a pixelized
+# inversion.
+
+# We'll use the example pipelines:
+# 'autolens_workspace/pipelines/advanced/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_bulge_disk_sie__source_inversion.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/mass/light_dark/lens_bulge_disk_mlr_nfw__source.py'.
+
+# Check them out now for a detailed description of the analysis!
 
 ### AUTOFIT + CONFIG SETUP ###
 
@@ -29,33 +59,21 @@ af.conf.instance = af.conf.Config(
 )
 
 ### AUTOLENS + DATA SETUP ###
-
 import autolens as al
 import autolens.plot as aplt
 
-# Create the path to the dataset folder in your autolens_workspace.
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset"]
-)
-
-# It is convenient to specify the dataset type and dataset name as a string, so that if the pipeline is applied to multiple
-# images we don't have to change all of the path entries in the function below.
+# Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = (
-    "lens_bulge_disk_sie__source_sersic"
-)  # Example simulated image with lens light emission and a source galaxy.
+dataset_name = "lens_sersic_exp_mlr_nfw__source_sersic"
 pixel_scales = 0.1
-
-# dataset_name = 'slacs1430+4105' # Example HST imaging of the SLACS strong lens slacs1430+4150.
-# pixel_scales = 0.03
 
 # Create the path where the dataset will be loaded from, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=[dataset_label, dataset_name]
+    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# This loads the imaging dataset, as per usual.
+# Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
 imaging = al.imaging.from_fits(
     image_path=dataset_path + "image.fits",
     psf_path=dataset_path + "psf.fits",
@@ -63,116 +81,119 @@ imaging = al.imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
-# We need to define and pass our mask to the hyper_galaxies pipeline from the beginning.
+# Next, we create the mask we'll fit this data-set with.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0, sub_size=1
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-# Plot Imaging before running.
+# Make a quick subplot to make sure the data looks as we expect.
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 
-# Running a pipeline is easy, we simply import it from the pipelines folder and pass the lens dataset to its run function.
-# Below, we'll' use a 3 phase example pipeline to fit the dataset with a parametric lens light, mass and source light
-# profile. Checkout 'autolens_workspace/pipelines/examples/lens_sie__source_sersic_parametric.py' for a full description of
-# the pipeline.
+### PIPELINE SETUP + SETTINGS ###
 
-# The phase folders input determines the output directory structure of the pipeline, for example the input below makes
-# the directory structure:
-# 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/' or
-# 'autolens_workspace/output/imaging/lens_sie__source_sersic/lens_sie__source_sersic_parametric/'
+# Advanced pipelines still use general settings, which customize the hyper-mode features and inclusion of a shear.
 
-# For large samples of images, we can therefore easily group lenses that are from the same sample or modeled using the
-# same pipeline.
-
-
-### HYPER PIPELINE SETTINGS ###
-
-# In the advanced pipelines, we defined pipeline settings which controlled various aspects of the pipelines, such as
-# the model complexity and assumtpions we made about the lens and source galaxy models.
-
-# The pipeline settings we used in the advanced runners all still apply, but hyper_galaxies-fitting brings with it the following
-# new settings:
-
-# - If hyper_galaxies-galaxies are used to scale the noise in each component of the image (default True)
-
-# - If the background sky is modeled throughout the pipeline (default False)
-
-# - If the level of background noise is hyper throughout the pipeline (default True)
-
-
-### PIPELINE SETTINGS ###
-
-# When we add pipelines together, we can now define 'pipeline_settings' that dictate the behaviour of the entire
-# summed pipeline. They also tag the pipeline names, to ensure that if we model the same lens with different
-# pipeline settings the results on your hard-disk do not overlap.
-
-# This means we can customize various aspects of the analysis, which will be used by all pipelines that are
-# added together. In this example, our pipeline settings determine:
-
-# - If an ExternalShear is fitted for throughout the pipeline.
-
-# - If the centre of the bulge and disk components of the lens's light profile are aligned  (Default False).
-
-# - If the rotation angle of the bulge and disk components of the lens's light profile are aligned  (Default False).
-
-# - If the axis-ratios of the bulge and disk components of the lens's light profile are aligned  (Default False).
-
-# - If the Disk component is modeled as a Sersic profile instead of the default Exponential (Default False).
-
-# - If the centre of the spherical NFW Dark matter profile is aligned with the Bulge component's centre (default True).
-
-# - The Pixelization used by the inversion phases of this pipeline (Default VoronoiMagnification).
-
-# - The Regularization scheme used by the inversion phases of this pipeline. (Default Constant)
-
-pipeline_settings = al.PipelineSettings(
+pipeline_general_settings = al.PipelineGeneralSettings(
     hyper_galaxies=True,
     hyper_image_sky=False,
     hyper_background_noise=True,
-    with_shear=True,
-    align_bulge_disk_centre=False,
-    align_bulge_disk_phi=False,
-    align_bulge_disk_axis_ratio=False,
-    disk_as_sersic=False,
-    align_bulge_dark_centre=True,
-    source_pixelization=al.pix.VoronoiMagnification,
-    source_regularization=al.reg.Constant,
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
 )
 
-### EXAMPLE ###
+# We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
-# So, lets do it. Below, we are going to import, add and run 3 pipelines, which do the following:
+### SOURCE ###
 
-# 1) Initialize the lens and source models using a parametric source light profile.
-# 2) Use this initialization to model the source as an inversion, using the lens model from the first pipeline to
-#     initialize the priors.
-# 3) Use this initialized source inversion to fit a more complex mass model - specifically an elliptical power-law.
-
-from pipelines.advanced.with_lens_light.initialize import (
+from pipelines.advanced.with_lens_light.source.parametric import (
     lens_bulge_disk_sie__source_sersic,
 )
-
-from pipelines.advanced.with_lens_light.source.inversion.from_initialize import (
+from pipelines.advanced.with_lens_light.source.inversion.from_parametric import (
     lens_bulge_disk_sie__source_inversion,
 )
 
-from pipelines.advanced.with_lens_light.bulge_disk.light_dark_mass.from_inversion import (
-    lens_bulge_disk_mlr_nfw__source_inversion,
+# Advanced pipelines also use settings which specifically customize the source, lens light and mass analyses. You've
+# seen the source settings before, which for this pipeline are shown below and define:
+
+# - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
+# - The Regularization scheme used by of this pipeline (and all pipelines that follow).
+# - Whether the lens light and mass centres are fixed to input values (see tools/data_making/imaging/lens_light_centre_maker.py)
+# - Whether the centres of the light and mass profiles are aligned.
+# - Whether the lens light profile is fixed in later phases after initialization.
+
+pipeline_source_settings = al.PipelineSourceSettings(
+    lens_light_centre=(0.0, 0.0),
+    lens_mass_centre=(0.0, 0.0),
+    align_light_mass_centre=False,
+    lens_light_bulge_only=True,
+    no_shear=False,
+    fix_lens_light=True,
 )
 
-pipeline_initialize = lens_bulge_disk_sie__source_sersic.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
+pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_source_settings=pipeline_source_settings,
+    phase_folders=["advanced", dataset_label, dataset_name],
 )
 
-pipeline_inversion = lens_bulge_disk_sie__source_inversion.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
+pipeline_source__inversion = lens_bulge_disk_sie__source_inversion.make_pipeline(
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_source_settings=pipeline_source_settings,
+    phase_folders=["advanced", dataset_label, dataset_name],
 )
 
-pipeline_light_dark = lens_bulge_disk_mlr_nfw__source_inversion.make_pipeline(
-    pipeline_settings=pipeline_settings, phase_folders=[dataset_label, dataset_name]
+### Light ###
+
+from pipelines.advanced.with_lens_light.light.bulge_disk import (
+    lens_bulge_disk_sie__source,
 )
 
-pipeline = pipeline_initialize + pipeline_inversion + pipeline_light_dark
+# The mass settings for this pipeline are shown below, which define:
+
+# - Whether the centre, axis ratio and / or rotation angle of the bulge and disk are aligned.
+
+pipeline_light_settings = al.PipelineLightSettings(
+    align_bulge_disk_centre=True,
+    align_bulge_disk_axis_ratio=False,
+    align_bulge_disk_phi=False,
+)
+
+pipeline_light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_light_settings=pipeline_light_settings,
+    phase_folders=["advanced", dataset_label, dataset_name],
+)
+
+### MASS ###
+
+from pipelines.advanced.with_lens_light.mass.light_dark import (
+    lens_light_mlr_nfw__source,
+)
+
+# The mass settings for this pipeline are shown below, which define:
+
+# - Whether the lens light profile is fixed whilst modeling the mass.
+
+pipeline_mass_settings = al.PipelineMassSettings(fix_lens_light=False)
+
+pipeline_mass__power_law = lens_light_mlr_nfw__source.make_pipeline(
+    pipeline_general_settings=pipeline_general_settings,
+    pipeline_light_settings=pipeline_light_settings,
+    pipeline_mass_settings=pipeline_mass_settings,
+    phase_folders=["advanced", dataset_label, dataset_name],
+)
+
+### PIPELINE COMPOSITION AND RUN ###
+
+# We finally add the pipelines above together, which means that they will run back-to-back, as usual passing
+# information throughout the analysis to later phases.
+
+pipeline = (
+    pipeline_source__parametric
+    + pipeline_source__inversion
+    + pipeline_light__bulge_disk
+    + pipeline_mass__power_law
+)
 
 pipeline.run(dataset=imaging, mask=mask)

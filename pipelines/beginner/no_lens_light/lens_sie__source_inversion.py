@@ -68,9 +68,9 @@ def make_pipeline(
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model includes shear if this pipeline setting is True.
+    # Include the shear in the mass model if not switched off in the pipeline settings.
 
-    if pipeline_general_settings.with_shear:
+    if not pipeline_source_settings.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None
@@ -126,8 +126,8 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_source_settings.pixelization,
-                regularization=pipeline_source_settings.regularization,
+                pixelization=pipeline_general_settings.pixelization,
+                regularization=pipeline_general_settings.regularization,
             ),
         ),
         positions_threshold=positions_threshold,

@@ -29,6 +29,7 @@ import autolens as al
 
 def make_pipeline(
     pipeline_general_settings,
+    pipeline_source_settings,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -51,13 +52,13 @@ def make_pipeline(
     # 1) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag)
+    phase_folders.append(pipeline_general_settings.tag_no_inversion)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model includes shear if this pipeline setting is True.
+    # Include the shear in the mass model if not switched off in the pipeline settings.
 
-    if pipeline_general_settings.with_shear:
+    if not pipeline_source_settings.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None

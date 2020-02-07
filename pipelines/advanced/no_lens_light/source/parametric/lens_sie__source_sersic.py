@@ -41,8 +41,17 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(
-        pipeline_general_settings.tag + pipeline_source_settings.tag_no_inversion
+        pipeline_general_settings.tag_no_inversion + pipeline_source_settings.tag
     )
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_source_settings.no_shear:
+        shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -53,9 +62,7 @@ def make_pipeline(
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mp.EllipticalIsothermal,
-                shear=al.mp.ExternalShear,
+                redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source, light=al.lp.EllipticalSersic

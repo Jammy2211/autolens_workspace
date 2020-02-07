@@ -87,15 +87,13 @@ pipeline_general_settings = al.PipelineGeneralSettings(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
-    with_shear=True,
+    pixelization=al.pix.VoronoiBrightnessImage,  # <- These behave as they did for beginner pipelines.
+    regularization=al.reg.AdaptiveBrightness,
 )
 
-# Source settings are again required for an inversion. With hyper-mode on we can now use the VoronoiBrightnessImage
-# and AdaptiveBrightness classes which adapt to the source's surface-brightness.
+# Source settings are again required, again only controlling the presense of an external shear.
 
-pipeline_source_settings = al.PipelineSourceSettings(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
-)
+pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
 
 ### PIPELINE SETUP + RUN ###
 

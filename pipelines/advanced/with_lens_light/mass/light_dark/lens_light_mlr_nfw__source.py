@@ -34,6 +34,8 @@ import autolens as al
 
 def make_pipeline(
     pipeline_general_settings,
+    pipeline_light_settings,
+    pipeline_mass_settings,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -48,27 +50,61 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_ldm__lens_bulge_disk_mlr_nfw__source_inversion"
+    # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
+
+    lens_light_tag = al.pipeline_settings.lens_light_tag_from_lens(
+        lens=af.last.instance.galaxies.lens
+    )
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+        pipeline_general_settings=pipeline_general_settings,
+        source=af.last.instance.galaxies.source,
+    )
+
+    pipeline_name = (
+        "pipeline_mass__light_dark__lens_"
+        + lens_light_tag
+        + "_mlr_nfw__source_"
+        + source_tag
+    )
 
     # This pipeline's name is tagged according to whether:
 
+    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 2) The bulge + disk centres, rotational angles or axis ratios are aligned.
+    # 3) The disk component of the lens light model is an Exponential or Sersic profile.
     # 4) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag)
+    phase_folders.append(
+        pipeline_general_settings.tag_no_inversion
+        + pipeline_light_settings.tag
+        + pipeline_mass_settings.tag
+    )
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_mass_settings.no_shear:
+        if af.last.model.galaxies.lens.shear is not None:
+            shear = af.last.model.galaxies.lens.shear
+        else:
+            shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
     # In phase 1, we fit the lens galaxy's light and mass and one source galaxy, where we:
 
-    # 1) Fix the lens galaxy's light using the EllipticalSersic and EllipticalExponential of the previous
-    #    pipeline. This includes using the bulge-disk alignment assumed in that pipeline.
+    # 1) Fix the lens galaxy's light using the the light profile inferred in the previous 'light' pipeline, including
+    #    assumptions related to the geometric alignment of different components.
     # 2) Pass priors on the lens galaxy's SphericalNFW mass profile's centre using the EllipticalIsothermal fit of the
     #    previous pipeline, if the NFW centre is a free parameter.
     # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
     # 4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
 
-    if pipeline_settings.disk_as_sersic:
+    if pipeline_light_settings.disk_as_sersic:
         disk = af.PriorModel(al.lmp.EllipticalSersic)
     else:
         disk = af.PriorModel(al.lmp.EllipticalExponential)
@@ -78,7 +114,7 @@ def make_pipeline(
         bulge=al.lmp.EllipticalSersic,
         disk=disk,
         dark=al.mp.SphericalNFW,
-        shear=af.last.model.galaxies.lens.shear,
+        shear=shear,
         hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
     )
 
@@ -94,22 +130,22 @@ def make_pipeline(
     lens.disk.phi = af.last.instance.galaxies.lens.disk.phi
     lens.disk.intensity = af.last.instance.galaxies.lens.disk.intensity
     lens.disk.effective_radius = af.last.instance.galaxies.lens.disk.effective_radius
+    if pipeline_light_settings.disk_as_sersic:
+        lens.disk.sersic_index = af.last.instance.galaxies.lens.disk.sersic_index
 
     lens.dark.scale_radius = af.GaussianPrior(mean=30.0, sigma=5.0)
 
-    if pipeline_settings.disk_as_sersic:
-        lens.disk.sersic_index = af.last.instance.galaxies.lens.disk.sersic_index
-
-    if pipeline_settings.align_bulge_dark_centre:
-
+    if pipeline_mass_settings.align_bulge_dark_centre:
         lens.dark.centre = lens.bulge.centre
-
-    elif not pipeline_settings.align_bulge_dark_centre:
-
+    else:
         lens.dark.centre = af.last.model_absolute(a=0.05).galaxies.lens.bulge.centre
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_bulge_disk_mlr_nfw__source_inversion__fixed_lens_light",
+        phase_name="phase_1__lens_"
+        + lens_light_tag
+        + "_mlr_nfw__source_"
+        + source_tag
+        + "__fixed_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=lens,
@@ -136,7 +172,7 @@ def make_pipeline(
 
     ### PHASE 2 ###
 
-    # In phase 2, we fit the lens galaxy's light and mass and one source galaxy using the results of phase 1 as
+    # In phase 2, we fit the lens galaxy's light and mass and source galaxy using the results of phase 1 as
     # initialization
 
     phase2 = al.PhaseImaging(
@@ -145,8 +181,8 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=af.last[-1].model.galaxies.lens.bulge,
-                disk=af.last[-1].model.galaxies.lens.disk,
+                bulge=phase1.result.model.galaxies.lens.bulge,
+                disk=phase1.result.model.galaxies.lens.disk,
                 dark=phase1.result.model.galaxies.lens.dark,
                 shear=phase1.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,

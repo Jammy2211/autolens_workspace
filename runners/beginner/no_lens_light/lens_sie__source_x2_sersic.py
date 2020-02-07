@@ -73,13 +73,17 @@ aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 ### PIPELINE SETTINGS ###
 
-# The'pipeline_settings' customize a pipeline's behaviour. Beginner pipelines only have one 'general' setting we'll
-# change, which determines whether an external shear is fitted for in the mass model or not (default=True).
+# For pipelines which use a parametric source, beginner pipelines have no general settings to customize the analysis:
 
-pipeline_general_settings = al.PipelineGeneralSettings(with_shear=True)
+pipeline_general_settings = al.PipelineGeneralSettings()
 
-# Pipeline settings 'tag' the output path of a pipeline. So, if 'with_shear' is True, the pipeline's output paths
-# are 'tagged' with the string 'with_shear'.
+# The pipeline source settings determines whether there is no external shear in the mass model or not (default=True).
+# (You may think its odd that the 'source' settings controls the 'mass' model. The reason for this will be clear in
+# advanced pipelines).
+
+pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
+# Pipeline settings 'tag' the output path of a pipeline. So, if 'no_shear' is True, the pipeline's output paths
+# are 'tagged' with the string 'no_shear'.
 
 # This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 # to different output folders and thus not clash with one another!

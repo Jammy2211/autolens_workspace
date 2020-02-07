@@ -19,6 +19,7 @@ import autolens as al
 
 def make_pipeline(
     pipeline_general_settings,
+    pipeline_light_settings,
     pipeline_mass_settings,
     phase_folders=None,
     redshift_lens=0.5,
@@ -39,8 +40,9 @@ def make_pipeline(
     lens_light_tag = al.pipeline_settings.lens_light_tag_from_lens(
         lens=af.last.instance.galaxies.lens
     )
-    source_tag = al.pipeline_settings.source_tag_from_source(
-        source=af.last.instance.galaxies.source
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+        pipeline_general_settings=pipeline_general_settings,
+        source=af.last.instance.galaxies.source,
     )
 
     pipeline_name = (
@@ -57,7 +59,23 @@ def make_pipeline(
     # 3) The lens's light model is fixed or variable.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_mass_settings.tag)
+    phase_folders.append(
+        pipeline_general_settings.tag_no_inversion
+        + pipeline_light_settings.tag
+        + pipeline_mass_settings.tag
+    )
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_mass_settings.no_shear:
+        if af.last.model.galaxies.lens.shear is not None:
+            shear = af.last.model.galaxies.lens.shear
+        else:
+            shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -86,7 +104,7 @@ def make_pipeline(
     ).galaxies.lens.mass.einstein_radius
 
     lens.mass = mass
-    lens.shear = af.last.model.galaxies.lens.shear
+    lens.shear = shear
     lens.hyper_galaxy = (
         af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
     )
@@ -99,7 +117,10 @@ def make_pipeline(
     )
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_bulge_disk_power_law__source_" + source_tag,
+        phase_name="phase_1__lens_"
+        + lens_light_tag
+        + "_power_law__source_"
+        + source_tag,
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,

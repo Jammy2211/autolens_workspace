@@ -50,8 +50,9 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_source(
-        source=af.last.instance.galaxies.source
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+        pipeline_general_settings=pipeline_general_settings,
+        source=af.last.instance.galaxies.source,
     )
 
     pipeline_name = (
@@ -64,7 +65,7 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag)
+    phase_folders.append(pipeline_general_settings.tag_no_inversion)
 
     ### Phase 1 ###
 

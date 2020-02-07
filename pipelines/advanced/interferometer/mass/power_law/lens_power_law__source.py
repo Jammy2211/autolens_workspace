@@ -35,7 +35,7 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_source(
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
         source=af.last.instance.galaxies.source
     )
 

@@ -29,7 +29,7 @@ def make_pipeline(
     sub_size=2,
     signal_to_noise_limit=None,
     bin_up_factor=None,
-    pixel_scale_interpolation_grid=0.05,
+    pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
 ):
@@ -38,8 +38,9 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_source(
-        source=af.last.instance.galaxies.source
+    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+        pipeline_general_settings=pipeline_general_settings,
+        source=af.last.instance.galaxies.source,
     )
 
     pipeline_name = "pipeline_light__sersic__lens_sersic_sie__source_" + source_tag
@@ -50,7 +51,9 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_light_settings.tag)
+    phase_folders.append(
+        pipeline_general_settings.tag_no_inversion + pipeline_light_settings.tag
+    )
 
     ### PHASE 1 ###
 

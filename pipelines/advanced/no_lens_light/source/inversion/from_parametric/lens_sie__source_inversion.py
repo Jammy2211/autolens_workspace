@@ -191,8 +191,8 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_source_settings.pixelization,
-                regularization=pipeline_source_settings.regularization,
+                pixelization=pipeline_general_settings.pixelization,
+                regularization=pipeline_general_settings.regularization,
                 hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),

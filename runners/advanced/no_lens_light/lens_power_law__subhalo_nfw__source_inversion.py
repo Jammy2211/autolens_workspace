@@ -97,7 +97,8 @@ pipeline_general_settings = al.PipelineGeneralSettings(
     hyper_galaxies=True,
     hyper_image_sky=False,
     hyper_background_noise=True,
-    with_shear=True,
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
 )
 
 # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
@@ -115,9 +116,7 @@ from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
 # - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
 # - The Regularization scheme used by of this pipeline (and all pipelines that follow).
 
-pipeline_source_settings = al.PipelineSourceSettings(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
-)
+pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
 
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
     pipeline_general_settings=pipeline_general_settings,

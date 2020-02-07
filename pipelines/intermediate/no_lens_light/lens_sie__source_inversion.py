@@ -155,7 +155,7 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__lens_sie__source_sersic"
+    pipeline_name = "pipeline__lens_sie__source_inversion"
 
     # This pipeline's name is tagged according to whether:
 
@@ -166,6 +166,15 @@ def make_pipeline(
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
 
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline settings.
+
+    if not pipeline_source_settings.no_shear:
+        shear = al.mp.ExternalShear
+    else:
+        shear = None
+
     ### PHASE 1 ###
 
     # In phase 1, we fit the lens galaxy's mass and source galaxy.
@@ -175,9 +184,7 @@ def make_pipeline(
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mp.EllipticalIsothermal,
-                shear=al.mp.ExternalShear,
+                redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source, light=al.lp.EllipticalSersic
@@ -318,8 +325,8 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_source_settings.pixelization,
-                regularization=pipeline_source_settings.regularization,
+                pixelization=pipeline_general_settings.pixelization,
+                regularization=pipeline_general_settings.regularization,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
