@@ -18,8 +18,8 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_mass_settings,
+    general_setup,
+    mass_setup,
     real_space_mask,
     phase_folders=None,
     redshift_lens=0.5,
@@ -35,19 +35,19 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
+    source_tag = al.setup.source_tag_from_source(
         source=af.last.instance.galaxies.source
     )
 
-    pipeline_name = "pipeline_mass__power_law__lens_power_law__source_" + source_tag
+    pipeline_name = "pipeline_mass__power_law"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_mass_settings.tag)
+    phase_folders.append(setup.general.tag + setup.mass.tag)
 
     ### PHASE 1 ###
 
@@ -70,10 +70,10 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = al.pipeline_settings.source_from_result(result=af.last)
+    source = al.setup.source_from_result(result=af.last)
 
     phase1 = al.PhaseInterferometer(
-        phase_name="phase_1__lens_power_law__source_" + source_tag,
+        phase_name="phase_1__lens_power_law__source",
         phase_folders=phase_folders,
         real_space_mask=real_space_mask,
         galaxies=dict(

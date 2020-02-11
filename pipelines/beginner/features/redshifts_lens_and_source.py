@@ -43,10 +43,10 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     pipeline_name = "pipeline__feature"
     pipeline_tag = "redshifts"
 
-    # Unlike other features, the redshifts of the lens and source do not change the settings tag and phase path. Thus,
+    # Unlike other features, the redshifts of the lens and source do not change the setup tag and phase path. Thus,
     # our output will simply go to the phase path:
 
-    # phase_path = 'phase_name/settings'
+    # phase_path = 'phase_name/setup'
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'

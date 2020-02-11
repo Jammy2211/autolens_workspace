@@ -5,7 +5,7 @@ import time
 
 repeats = 1
 
-total_visibilities = 10000
+total_visibilities = 1000
 pixelization_shape_2d = (30, 30)
 
 real_space_shape_2d = (100, 100)
@@ -66,7 +66,7 @@ mask = al.mask.circular(
 )
 
 masked_interferometer = al.masked.interferometer(
-    interferometer=interferometer, real_space_mask=mask
+    interferometer=interferometer, real_space_mask=mask, visibilities_mask=np.full(fill_value=False, shape=interferometer.data.shape)
 )
 
 print("Number of points = " + str(masked_interferometer.grid.sub_shape_1d) + "\n")

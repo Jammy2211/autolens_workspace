@@ -71,22 +71,27 @@ mask = al.mask.circular(
 # Make a quick subplot to make sure the data looks as we expect.
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-### PIPELINE SETTINGS ###
+### PIPELINE SETUP ###
 
-# For pipelines which use a parametric source, beginner pipelines have no general settings to customize the analysis:
+# The'pipeline_setup' customize a pipeline's behaviour.
 
-pipeline_general_settings = al.PipelineGeneralSettings()
+# For a parametric source there are no customization options, but we must create the source setup anyway.
 
-# The pipeline source settings determines whether there is no external shear in the mass model or not (default=True).
-# (You may think its odd that the 'source' settings controls the 'mass' model. The reason for this will be clear in
-# advanced pipelines).
+source_setup = al.setup.Source()
 
-pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
-# Pipeline settings 'tag' the output path of a pipeline. So, if 'no_shear' is True, the pipeline's output paths
+# The pipeline mass setup determines whether there is no external shear in the mass model or not.
+
+mass_setup = al.setup.Mass(no_shear=False)
+
+# Pipeline setups 'tag' the output path of a pipeline. So, if 'no_shear' is True, the pipeline's output paths
 # are 'tagged' with the string 'no_shear'.
 
 # This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 # to different output folders and thus not clash with one another!
+
+# First, we group all of the setup above in a pipeline setup object.
+
+setup = al.setup.Setup(source=source_setup, mass=mass_setup)
 
 ### PIPELINE SETUP + RUN ###
 
@@ -99,8 +104,7 @@ pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
 from pipelines.beginner.no_lens_light import lens_sie__source_x2_sersic
 
 pipeline = lens_sie__source_x2_sersic.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,  # <- A shear is included depending on the settings above.
-    phase_folders=["beginner", dataset_label, dataset_name],
+    setup=setup, phase_folders=["beginner", dataset_label, dataset_name]
 )
 
 pipeline.run(dataset=imaging, mask=mask)

@@ -97,7 +97,7 @@ phase_with_custom_mask = al.PhaseImaging(
 #    likelihood.
 
 # As you use PyAutoLens more you will get a feel for how fast an analysis will run given a certain image resolution,
-# lens model complexity, non-linear search priors / settings, etc. As you develop this intuition, I would recommend you
+# lens model complexity, non-linear search priors / setup, etc. As you develop this intuition, I would recommend you
 # always aim to use masks as big as possible which still give a reasonable run-speed. Aggresive masking
 # will get your code running fast - but it could lead you to infer an incorrect lens model!
 

@@ -114,12 +114,12 @@ import autolens as al
 
 # Phew! Thats a lot of phases, so lets take a look.
 
-# For hyper-pipelines, we pass pipeline settings which detemine whether certain hyper-galaxy features are on or off. For
-# example, if pipeline_settings.hyper_galaxy is False, noise-scaling via hyper-galaxies is omitted  We also pass in the
+# For hyper-pipelines, we pass pipeline setup which detemine whether certain hyper-galaxy features are on or off. For
+# example, if pipeline_setup.hyper_galaxy is False, noise-scaling via hyper-galaxies is omitted  We also pass in the
 # pixelization / regularization schemes that will be used in phase 6 and 7 of the pipeline.
 
 
-def make_pipeline(pipeline_settings, phase_folders=None):
+def make_pipeline(pipeline_setup, phase_folders=None):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
@@ -128,9 +128,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
 
     pipeline_name = "pipeline__hyper_example"
 
-    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_settings(
-        pixelization=pipeline_settings.pixelization,
-        regularization=pipeline_settings.regularization,
+    pipeline_tag = al.pipeline_tagging.pipeline_tag_from_pipeline_setup(
+        pixelization=pipeline_setup.pixelization,
+        regularization=pipeline_setup.regularization,
     )
 
     phase_folders.append(pipeline_name)
@@ -160,9 +160,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # first phase's uniform piors.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
     )
 
     ### PHASE 2 ###
@@ -211,9 +211,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # background noise.
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
     )
 
     ### PHASE 3 ###
@@ -255,9 +255,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # The usual phase extension, which operates the same as the extension for phase 2.
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
     )
 
     ### PHASE 4 ###
@@ -305,9 +305,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # won't bother reoptimizing its hyper-galaxy-parameters
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
         inversion=False,
     )
 
@@ -344,9 +344,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     phase5.optimizer.sampling_efficiency = 0.2
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
         inversion=False,
     )
 
@@ -369,8 +369,8 @@ def make_pipeline(pipeline_settings, phase_folders=None):
             ),
             source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=pipeline_settings.pixelization,  # <- This is our brightness based pixelization provided it was input into the pipeline.
-                regularization=pipeline_settings.regularization,  # <- And this our adaptive regularization.
+                pixelization=pipeline_setup.pixelization,  # <- This is our brightness based pixelization provided it was input into the pipeline.
+                regularization=pipeline_setup.regularization,  # <- And this our adaptive regularization.
             ),
         ),
         hyper_image_sky=phase5.result.hyper_combined.instance.optional.hyper_image_sky,
@@ -386,9 +386,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     # are fully optimized in conjunction with the hyper-galaxies and background noise-map.
 
     phase6 = phase6.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
         inversion=True,
     )
 
@@ -426,9 +426,9 @@ def make_pipeline(pipeline_settings, phase_folders=None):
     phase7.optimizer.sampling_efficiency = 0.2
 
     phase7 = phase7.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_settings.hyper_galaxy,
-        include_background_sky=pipeline_settings.hyper_image_sky,
-        include_background_noise=pipeline_settings.hyper_background_noise,
+        hyper_galaxy=pipeline_setup.hyper_galaxy,
+        include_background_sky=pipeline_setup.hyper_image_sky,
+        include_background_noise=pipeline_setup.hyper_background_noise,
         inversion=True,
     )
 

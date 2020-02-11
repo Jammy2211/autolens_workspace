@@ -50,8 +50,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_source_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -65,23 +64,22 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__lens_bulge_disk_sie__source_sersic"
+    pipeline_name = "pipeline_source__parametric"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(
-        pipeline_general_settings.tag_no_inversion + pipeline_source_settings.tag
-    )
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.source.tag_no_inversion)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model if not switched off in the pipeline settings.
+    # Include the shear in the mass model if not switched off in the pipeline setup.
 
-    if not pipeline_source_settings.no_shear:
+    if not setup.source.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None
@@ -100,11 +98,11 @@ def make_pipeline(
 
     lens.bulge.centre = lens.disk.centre
 
-    if pipeline_source_settings.lens_light_centre is not None:
-        lens.bulge.centre = pipeline_source_settings.lens_light_centre
-        lens.disk.centre = pipeline_source_settings.lens_light_centre
+    if setup.source.lens_light_centre is not None:
+        lens.bulge.centre = setup.source.lens_light_centre
+        lens.disk.centre = setup.source.lens_light_centre
 
-    if pipeline_source_settings.lens_light_bulge_only:
+    if setup.source.lens_light_bulge_only:
         lens.disk = None
 
     phase1 = al.PhaseImaging(
@@ -123,9 +121,9 @@ def make_pipeline(
     phase1.optimizer.evidence_tolerance = evidence_tolerance
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     ### PHASE 2 ###
@@ -138,13 +136,13 @@ def make_pipeline(
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
-    if pipeline_source_settings.align_light_mass_centre:
+    if setup.source.align_light_mass_centre:
         mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
     else:
         mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
 
-    if pipeline_source_settings.lens_mass_centre is not None:
-        mass.centre = pipeline_source_settings.lens_mass_centre
+    if setup.source.lens_mass_centre is not None:
+        mass.centre = setup.source.lens_mass_centre
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
@@ -180,9 +178,9 @@ def make_pipeline(
     phase2.optimizer.evidence_tolerance = evidence_tolerance
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     ### PHASE 3 ###
@@ -202,11 +200,11 @@ def make_pipeline(
 
     lens.bulge.centre = lens.disk.centre
 
-    if pipeline_source_settings.lens_light_centre is not None:
-        lens.bulge.centre = pipeline_source_settings.lens_light_centre
-        lens.disk.centre = pipeline_source_settings.lens_light_centre
+    if setup.source.lens_light_centre is not None:
+        lens.bulge.centre = setup.source.lens_light_centre
+        lens.disk.centre = setup.source.lens_light_centre
 
-    if pipeline_source_settings.lens_light_bulge_only:
+    if setup.source.lens_light_bulge_only:
         lens.disk = None
 
     phase3 = al.PhaseImaging(
@@ -236,9 +234,9 @@ def make_pipeline(
     phase3.optimizer.evidence_tolerance = evidence_tolerance
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     ### PHASE 4 ###
@@ -281,9 +279,9 @@ def make_pipeline(
     phase4.optimizer.evidence_tolerance = evidence_tolerance
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

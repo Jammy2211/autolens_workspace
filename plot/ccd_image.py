@@ -33,7 +33,7 @@ image_path = dataset_path + "image.fits"
 # scale which allows us to convert the axes of the arrays to arc-second coordinates.
 image = al.array.from_fits(file_path=image_path, hdu=0, pixel_scales=0.03)
 
-# We can now use an arrays plotter to plotters the image. Lets first plotters it using the default PyAutoLens settings.
+# We can now use an arrays plotter to plotters the image. Lets first plotters it using the default PyAutoLens setup.
 plotter = aplt.Plotter(labels=aplt.Labels(title="SLACS1430+4105 Image"))
 aplt.array(array=image, plotter=plotter)
 

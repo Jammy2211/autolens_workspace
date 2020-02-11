@@ -124,7 +124,7 @@ import autolens as al
 # regularization and the previous lens mass model.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: pipeline_settings.pixelization + pipeline_settings.regularization
+# Source Light: setup.pixelization + setup.regularization
 # Prior Passing: Lens Mass (instance -> phase 3).
 # Notes:  Lens mass fixed, source inversion parameters vary.
 
@@ -133,14 +133,13 @@ import autolens as al
 # Refine the lens mass model using the inversion.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: pipeline_settings.pixelization + pipeline_settings.regularization
+# Source Light: setup.pixelization + setup.regularization
 # Prior Passing: Lens Mass (model -> phase 3), source inversion (instance -> phase 4).
 # Notes: Lens mass varies, source inversion parameters fixed.
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_source_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -159,18 +158,19 @@ def make_pipeline(
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
     # 3) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.source.tag_beginner + setup.mass.tag)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model if not switched off in the pipeline settings.
+    # Include the shear in the mass model if not switched off in the pipeline setup.
 
-    if not pipeline_source_settings.no_shear:
+    if not setup.mass.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None
@@ -203,15 +203,15 @@ def make_pipeline(
     phase1.optimizer.evidence_tolerance = evidence_tolerance
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     ### PHASE 2 ###
 
     # Phases 2 & 3 use a magnification based pixelization and constant regularization scheme to reconstruct the source.
-    # The pixelization & regularization input via the pipeline settings are not used until phases 4 & 5.
+    # The pixelization & regularization input via the pipeline setup are not used until phases 4 & 5.
 
     # This is because a pixelization / regularization that adapts to the source's surface brightness uses a previous
     # model image of that source (its 'hyper-image'). If the source's true morphology is irregular, or there are
@@ -256,9 +256,9 @@ def make_pipeline(
     phase2.optimizer.evidence_tolerance = 0.1
 
     phase2 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
         inversion=False,
     )
 
@@ -302,9 +302,9 @@ def make_pipeline(
     phase3.optimizer.evidence_tolerance = evidence_tolerance
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
         inversion=False,
     )
 
@@ -325,8 +325,8 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_general_settings.pixelization,
-                regularization=pipeline_general_settings.regularization,
+                pixelization=setup.source.pixelization,
+                regularization=setup.source.regularization,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
@@ -347,9 +347,9 @@ def make_pipeline(
     phase4.optimizer.evidence_tolerance = 0.1
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
         inversion=False,
     )
 
@@ -393,9 +393,9 @@ def make_pipeline(
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
         inversion=True,
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4, phase5)

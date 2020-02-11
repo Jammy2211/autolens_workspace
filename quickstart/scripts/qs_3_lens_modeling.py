@@ -97,8 +97,8 @@ phase = al.PhaseImaging(
     optimizer_class=af.MultiNest,
 )
 
-# We manually change some of the MultiNest settings to speed up lens modeling. In the HowToLens lecture series we
-# explain what changing these settings is *actually* doing.
+# We manually change some of the MultiNest setup to speed up lens modeling. In the HowToLens lecture series we
+# explain what changing these setup is *actually* doing.
 
 phase.optimizer.const_efficiency_mode = True
 phase.optimizer.n_live_points = 50
@@ -115,8 +115,8 @@ phase.optimizer.sampling_efficiency = 0.5
 #    output is found, as well as images displaying the best-fit lens model. Visualization is output on-the-fly by
 #    PyAutoLens, meaning you can watch the best-fit lens model improve as MultiNest runs in real time!
 
-# 2) Checkout 'autolens_workspace/config'. These config files controls general PyAutoLens settings that control
-#    visualization, default MultiNest settings and the priors of different light and mass profiles parmeters.
+# 2) Checkout 'autolens_workspace/config'. These config files controls general PyAutoLens setup that control
+#    visualization, default MultiNest setup and the priors of different light and mass profiles parmeters.
 
 # 3) Look at 'autolens_workspace/simulator'. This is where the dataset we load and fit is stored (e.g. .fits files of the
 #    image, noise-map and PSF).

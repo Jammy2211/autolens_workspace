@@ -92,5 +92,5 @@ def customize_priors(self, previous_results):
 # And with that, we're done. Linking priors is a bit of an art form, but one that tends to work really well. Its true
 # to say that things can go wrong - maybe we 'trim' out the solution we're looking for, or underestimate our errors a
 # bit due to making our priors too narrow. However, in general, things are okay, the point is that you should test_autoarray
-# pipelines with different settings, and settle on a setup that appears to be give consistent results but the faster
+# pipelines with different setup, and settle on a setup that appears to be give consistent results but the faster
 # run times.

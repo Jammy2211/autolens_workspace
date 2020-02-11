@@ -145,22 +145,20 @@ mask = al.mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-### PIPELINE SETTINGS ###
+### PIPELINE SETUP ###
 
-# I will assume that you are familiar with pipeline settings from the normal runner scripts.
+# I will assume that you are familiar with pipeline setup from the normal runner scripts.
 
-pipeline_general_settings = al.PipelineGeneralSettings(with_shear=True)
+general_setup = al.setup.General(with_shear=True)
 
-pipeline_source_settings = al.PipelineSourceSettings(
+source_setup = al.setup.Source(
     pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
 )
 
 from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
-    phase_folders=["beginner", dataset_label, dataset_name],
+    setup=setup, phase_folders=["beginner", dataset_label, dataset_name]
 )
 
 pipeline.run(dataset=imaging, mask=mask)

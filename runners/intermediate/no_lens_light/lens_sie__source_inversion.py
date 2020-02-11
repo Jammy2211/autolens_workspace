@@ -74,28 +74,36 @@ mask = al.mask.circular(
 # Make a quick subplot to make sure the data looks as we expect.
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-### PIPELINE SETTINGS ###
+### PIPELINE SETUP ###
 
-# In the beginner runners, we used the'pipeline_settings' to customize the pipeline's behaviour. Intermediate pipeline
-# use these pipeline settings to control the behaviour of hyper-mode, specifically:
+# In the beginner runners, we used the'pipeline_setup' to customize the pipeline's behaviour. Intermediate pipeline
+# use these pipeline setup to control the behaviour of hyper-mode, specifically:
 
-# - If hyper_galaxies-galaxies are used to scale the noise in each component of the image (default True)
-# - If the level of background noise is hyper throughout the pipeline (default True)
+# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+# - If the level of background noise is modeled throughout the pipeline (default True)
 # - If the background sky is modeled throughout the pipeline (default False)
 
-pipeline_general_settings = al.PipelineGeneralSettings(
+general_setup = al.setup.General(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
-    pixelization=al.pix.VoronoiBrightnessImage,  # <- These behave as they did for beginner pipelines.
+)
+
+# Source and mass setup are required as in the beginne pipelines.
+
+source_setup = al.setup.Source(
+    pixelization=al.pix.VoronoiBrightnessImage,
+    # <- These behave as they did for beginner pipelines.
     regularization=al.reg.AdaptiveBrightness,
 )
 
-# Source settings are again required, again only controlling the presense of an external shear.
-
-pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
+mass_setup = al.setup.Mass(no_shear=False)
 
 ### PIPELINE SETUP + RUN ###
+
+# First, we group all of the setup above in a pipeline setup object.
+
+setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_setup)
 
 # To run a pipeline we import it from the pipelines folder, make it and pass the lens data to its run function. Now we
 # are using hyper-features we can use the VoronoiBrightnessImage pixelization and AdaptiveBrightness regularization.
@@ -103,9 +111,7 @@ pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
 from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
-    phase_folders=["intermediate", dataset_label, dataset_name],
+    setup=setup, phase_folders=["intermediate", dataset_label, dataset_name]
 )
 
 pipeline.run(dataset=imaging, mask=mask)

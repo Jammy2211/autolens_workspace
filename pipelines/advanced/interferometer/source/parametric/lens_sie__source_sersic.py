@@ -18,8 +18,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_source_settings,
+    setup,
     real_space_mask,
     phase_folders=None,
     redshift_lens=0.5,
@@ -35,11 +34,11 @@ def make_pipeline(
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
+    phase_folders.append(setup.general.tag + setup.source.tag)
 
     ### PHASE 1 ###
 

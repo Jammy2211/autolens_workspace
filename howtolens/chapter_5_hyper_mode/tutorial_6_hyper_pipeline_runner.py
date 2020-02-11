@@ -126,15 +126,15 @@ mask = al.mask.circular(
 
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-### HYPER PIPELINE SETTINGS ###
+### HYPER PIPELINE SETUP ###
 
-# PipelineSettings customize the behaviour of a pipeline. Hyper-fitting brings with it the following settings:
+# PipelineSettings customize the behaviour of a pipeline. Hyper-fitting brings with it the following setup:
 
-# - If hyper_galaxies-galaxies are used to scale the noise in each component of the image (default True)
-# - If the level of background noise is hyper throughout the pipeline (default True)
+# - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+# - If the level of background noise is modeled throughout the pipeline (default True)
 # - If the background sky is modeled throughout the pipeline (default False)
 
-pipeline_general_settings = al.PipelineGeneralSettings(
+general_setup = al.setup.General(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
@@ -143,10 +143,10 @@ pipeline_general_settings = al.PipelineGeneralSettings(
     source_regularization=al.reg.AdaptiveBrightness,
 )
 
-# Source settings are required for the inversion. With hyper-mode on we can now use the VoronoiBrightnessImage
+# Source setup are required for the inversion. With hyper-mode on we can now use the VoronoiBrightnessImage
 # and AdaptiveBrightness classes which adapt to the source's surface-brightness.
 
-pipeline_source_settings = al.PipelineSourceSettings(
+source_setup = al.setup.Source(
     pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
@@ -154,9 +154,7 @@ pipeline_source_settings = al.PipelineSourceSettings(
 from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
-    phase_folders=["howtolens", "c5_t6_hyper"],
+    setup=setup, phase_folders=["howtolens", "c5_t6_hyper"]
 )
 
 pipeline_hyper.run(dataset=imaging, mask=mask)

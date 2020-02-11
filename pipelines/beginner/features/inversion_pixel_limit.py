@@ -43,17 +43,17 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
     pipeline_name = "pipeline__feature"
     pipeline_tag = "inversion_pixel_limit"
 
-    # When a phase is passed an 'inversion_pixel_limit', a settings tag is automatically generated and added to the
-    # phase path to make it clear what limit was used. The settings tag, phase name and phase paths are shown for 3
+    # When a phase is passed an 'inversion_pixel_limit', a setup tag is automatically generated and added to the
+    # phase path to make it clear what limit was used. The setup tag, phase name and phase paths are shown for 3
     # example inversion pixel limits:
 
-    # inversion_pixel_limit=50 -> phase_path=phase_name/settings_pix_lim_50
-    # inversion_pixel_limit=80 -> phase_path=phase_name/settings_pix_lim_80
+    # inversion_pixel_limit=50 -> phase_path=phase_name/setup_pix_lim_50
+    # inversion_pixel_limit=80 -> phase_path=phase_name/setup_pix_lim_80
 
-    # If the inversion pixel limit is None, the tag is an empty string, thus not changing the settings tag:
+    # If the inversion pixel limit is None, the tag is an empty string, thus not changing the setup tag:
 
-    # inversion_pixel_limit=None -> phase_path=phase_name/settings
-    # inversion_pixel_limit=1 -> phase_path=phase_name/settings
+    # inversion_pixel_limit=None -> phase_path=phase_name/setup
+    # inversion_pixel_limit=1 -> phase_path=phase_name/setup
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'

@@ -30,6 +30,24 @@ import os
 # up and running first, then refine the lens's light model and finally its mass. Advanced pipelines simply use
 # separate pipelines to do this, each of which has features that enable more customization of the model that is fitted.
 
+### PATH STRUCTURE ####
+
+# Advanced pipelines allow us to use the results of earlier pipelines to initialize fits to later pipelines. However,
+# we have to be very careful that our runs do not write to the the same set of non-linear outputs (e.g. MultiNest
+# output files). This is especially true given that we can customize so many aspects of a pipeline (the source
+# pixelization / reguarization, lens light model, whether we use a shear, etc.).
+
+# Thus, to make sure that every advanced pipeline writes results to a unique path the pipeline tags for the source,
+# light and mass we previously added together in intermediate pipelines now instead create their own folder.
+
+# For example, if an intermediate pipeline previous wrote to the path:
+
+# 'output/intermediate/imaging/lens_name/pipeline_name/general_tag/source_tag+light_tag+mass_tag/phase_name/phase_tag
+
+# An advanced pipeline will write to the path:
+
+# 'output/advanced/imaging/lens_name/pipeline_name/general_tag/source_tag/light_tag/mass_tag/phase_name/phase_tag
+
 ### THIS RUNNER ###
 
 # Using two source pipelines and a mass pipeline we will fit a power-law mass model and source using a pixelized
@@ -89,17 +107,30 @@ mask = al.mask.circular(
 # aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 
-### PIPELINE SETUP + SETTINGS ###
+### PIPELINE SETUP ###
 
-# Advanced pipelines still use general settings, which customize the hyper-mode features and inclusion of a shear.
+# Advanced pipelines use the same 'Source', 'Light' and 'Mass' setup objects we used in beginner and intermediate
+# pipelines. However, there are many additional options now available with these setup objects, that did not work
+# for beginner and intermediate pipelines. For an explanation, checkout:
 
-pipeline_general_settings = al.PipelineGeneralSettings(
-    hyper_galaxies=True,
-    hyper_image_sky=False,
-    hyper_background_noise=True,
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
+# - 'autolens_workspace/runners/advanced/doc_setup'
+
+# The setup of earlier pipelines inform the model fitted in later pipelines. For example:
+
+# - The pixelization and regularization scheme used in the source (inversion) pipeline will be used in the light and
+#   mass pipelines.
+
+general_setup = al.setup.General(
+    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=True
 )
+
+source_setup = al.setup.Source(
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+)
+
+mass_setup = al.setup.Mass(no_shear=False)
+
+setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_setup)
 
 # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
@@ -110,38 +141,20 @@ from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
     lens_sie__source_inversion,
 )
 
-# Advanced pipelines also use settings which specifically customize the source, lens light and mass analyses. You've
-# seen the source settings before, which for this pipeline are shown below and define:
-
-# - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
-# - The Regularization scheme used by of this pipeline (and all pipelines that follow).
-
-pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
-
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
-    phase_folders=["advanced", dataset_label, dataset_name],
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
-    phase_folders=["advanced", dataset_label, dataset_name],
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 ### MASS ###
 
 from pipelines.advanced.no_lens_light.mass.power_law import lens_power_law__source
 
-# The mass settings for this pipeline are shown below, which define:
-
-pipeline_mass_settings = al.PipelineMassSettings()
-
 pipeline_mass__power_law = lens_power_law__source.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_mass_settings=pipeline_mass_settings,
-    phase_folders=["advanced", dataset_label, dataset_name],
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 ### SUBHALO ###
@@ -149,8 +162,7 @@ pipeline_mass__power_law = lens_power_law__source.make_pipeline(
 from pipelines.advanced.no_lens_light.subhalo import lens_mass__subhalo_nfw__source
 
 pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    phase_folders=["advanced", dataset_label, dataset_name],
+    general_setup=general_setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 

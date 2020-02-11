@@ -64,27 +64,24 @@ for dataset_name in [
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
-    ### PIPELINE SETTINGS ###
+    ### PIPELINE SETUP ###
 
-    # The'pipeline_settings' customize a pipeline's behaviour. Beginner pipelines only have one 'general' setting we'll
-    # change, which determines whether an external shear is fitted for in the mass model or not (default=True).
+    # The'pipeline_setup' customize a pipeline's behaviour.
 
-    pipeline_general_settings = al.PipelineGeneralSettings(with_shear=True)
-
-    # For pipelines which use an inversion, the pipeline source settings customize:
+    # For pipelines which use an inversion, the pipeline source setup customize:
 
     # - The Pixelization used by the inversion of this pipeline.
     # - The Regularization scheme used by of this pipeline.
 
-    pipeline_source_settings = al.PipelineSourceSettings(
+    source_setup = al.setup.Source(
         pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
     )
 
-    # Pipeline settings 'tag' the output path of a pipeline. So, if 'with_shear' is True, the pipeline's output paths
-    # are 'tagged' with the string 'with_shear'. The pixelization and regularization scheme are also both tagged.
+    # The pipeline mass setup determines whether there is no external shear in the mass model or not.
 
-    # This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
-    # to different output folders and thus not clash with one another!
+    mass_setup = al.setup.Mass(no_shear=False)
+
+    setup = al.setup.Setup(source=source_setup, mass=mass_setup)
 
     ### PIPELINE SETUP + RUN ###
 
@@ -97,9 +94,7 @@ for dataset_name in [
     from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
     pipeline = lens_sie__source_inversion.make_pipeline(
-        pipeline_general_settings=pipeline_general_settings,
-        pipeline_source_settings=pipeline_source_settings,
-        phase_folders=[output_label, dataset_name],
+        setup=setup, phase_folders=[output_label, dataset_name]
     )
 
     pipeline.run(dataset=imaging, mask=mask)

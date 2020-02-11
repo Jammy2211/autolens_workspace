@@ -49,15 +49,15 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_tag)
 
-    # A settings tag is automatically added to the phase path, making it clear the 'position_threshold' value used.
+    # A setup tag is automatically added to the phase path, making it clear the 'position_threshold' value used.
     # The positions_threshold_tag and phase name are shown for 3 example values:
 
-    # positions_threshold=0.2 -> phase_path='phase_name/settings_pos_0.20'
-    # positions_threshold=0.25, -> phase_path='phase_name/settings_pos_0.25'
+    # positions_threshold=0.2 -> phase_path='phase_name/setup_pos_0.20'
+    # positions_threshold=0.25, -> phase_path='phase_name/setup_pos_0.25'
 
     # If the positions_threshold is None, the tag is an empty string, thus not changing the phase name:
 
-    # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name/settings
+    # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name/setup
 
     ### PHASE 1 ###
 

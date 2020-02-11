@@ -62,8 +62,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_source_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -89,13 +88,13 @@ def make_pipeline(
     # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag + pipeline_source_settings.tag)
+    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model if not switched off in the pipeline settings.
+    # Include the shear in the mass model if not switched off in the pipeline setup.
 
-    if not pipeline_source_settings.no_shear:
+    if not setup.mass.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None
@@ -216,8 +215,8 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=pipeline_general_settings.pixelization,
-                regularization=pipeline_general_settings.regularization,
+                pixelization=setup.source.pixelization,
+                regularization=setup.source.regularization,
             ),
         ),
         positions_threshold=positions_threshold,

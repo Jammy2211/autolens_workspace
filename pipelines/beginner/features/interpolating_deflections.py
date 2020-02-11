@@ -51,16 +51,16 @@ def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
     pipeline_name = "pipeline__feature"
     pipeline_tag = "interpolating_deflections"
 
-    # When a phase is passed a 'pixel_scale_interpolation_grid', a settings tag is automatically generated and
-    # added to the phase path to make it clear what interpolation was used. The settings tag, phase name and
+    # When a phase is passed a 'pixel_scale_interpolation_grid', a setup tag is automatically generated and
+    # added to the phase path to make it clear what interpolation was used. The setup tag, phase name and
     # phase paths are shown for 3 example 'pixel_scale_interpolation_grid' values:
 
-    # interpolation_pixel_scale=0.1 -> phase_path=phase_name/settings_interp_0.1
-    # interpolation_pixel_scale=0.05 -> phase_path=phase_name/settings_interp_0.05
+    # interpolation_pixel_scale=0.1 -> phase_path=phase_name/setup_interp_0.1
+    # interpolation_pixel_scale=0.05 -> phase_path=phase_name/setup_interp_0.05
 
-    # If the pixel_scale_interpolation_grid is None, the tag is an empty string, thus not changing the settings tag:
+    # If the pixel_scale_interpolation_grid is None, the tag is an empty string, thus not changing the setup tag:
 
-    # interpolation_pixel_scale=None -> phase_path=phase_name/settings
+    # interpolation_pixel_scale=None -> phase_path=phase_name/setup
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'

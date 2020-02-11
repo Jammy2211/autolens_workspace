@@ -64,7 +64,7 @@ aplt.imaging.subplot_imaging(imaging=imaging)
 
 # 1) Brightness unit_label - the image's flux and noise-map values are in unit_label of electrons per second (not electrons,
 #    counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other unit_label, the default
-#    settings assume the image is in electrons per second (e.g. the priors on light profile image and
+#    setup assume the image is in electrons per second (e.g. the priors on light profile image and
 #    regularization coefficient). Thus, images not in electrons per second should be converted!
 
 # Lets look at an image that is in unit_label of counts - its easy to tell because the peak values are in the 1000's or

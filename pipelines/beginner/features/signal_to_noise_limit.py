@@ -56,16 +56,16 @@ def make_pipeline(phase_folders=None, signal_to_noise_limit=20.0):
     pipeline_name = "pipeline__feature"
     pipeline_tag = "signal_to_noise_limit"
 
-    # When a phase is passed a signal_to_noise_limit, a settings tag is automatically generated and added to the phase
-    # path,to make it clear what signal-to-noise limit was used. The settings tag, phase name and phase paths are shown
+    # When a phase is passed a signal_to_noise_limit, a setup tag is automatically generated and added to the phase
+    # path,to make it clear what signal-to-noise limit was used. The setup tag, phase name and phase paths are shown
     # for 3 example signal-to-noise limits:
 
-    # signal_to_noise_limit=2 -> phase_path=phase_name/settings_snr_2
-    # signal_to_noise_limit=3 -> phase_path=phase_name/settings_snr_3
+    # signal_to_noise_limit=2 -> phase_path=phase_name/setup_snr_2
+    # signal_to_noise_limit=3 -> phase_path=phase_name/setup_snr_3
 
-    # If the signal_to_noise_limit is None, the tag is an empty string, thus not changing the settings tag:
+    # If the signal_to_noise_limit is None, the tag is an empty string, thus not changing the setup tag:
 
-    # signal_to_noise_limit=None -> phase_path=phase_name/settings
+    # signal_to_noise_limit=None -> phase_path=phase_name/setup
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'

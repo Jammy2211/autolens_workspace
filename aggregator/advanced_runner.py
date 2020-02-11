@@ -66,11 +66,11 @@ for dataset_name in [
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
-    ### PIPELINE SETUP + SETTINGS ###
+    ### PIPELINE SETUP ###
 
-    # Advanced pipelines still use general settings, which customize the hyper-mode features and inclusion of a shear.
+    # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    pipeline_general_settings = al.PipelineGeneralSettings(
+    general_setup = al.setup.General(
         hyper_galaxies=False,
         hyper_image_sky=False,
         hyper_background_noise=False,
@@ -88,26 +88,26 @@ for dataset_name in [
         lens_sie__source_inversion,
     )
 
-    # Advanced pipelines also use settings which specifically customize the source, lens light and mass analyses. You've
-    # seen the source settings before, which for this pipeline are shown below and define:
+    # Advanced pipelines also use setup which specifically customize the source, lens light and mass analyses. You've
+    # seen the source setup before, which for this pipeline are shown below and define:
 
     # - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
     # - The Regularization scheme used by of this pipeline (and all pipelines that follow).
 
-    pipeline_source_settings = al.PipelineSourceSettings(
+    source_setup = al.setup.Source(
         pixelization=al.pix.VoronoiBrightnessImage,
         regularization=al.reg.AdaptiveBrightness,
     )
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        pipeline_general_settings=pipeline_general_settings,
-        pipeline_source_settings=pipeline_source_settings,
+        general_setup=general_setup,
+        source_setup=source_setup,
         phase_folders=[output_label, dataset_name],
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        pipeline_general_settings=pipeline_general_settings,
-        pipeline_source_settings=pipeline_source_settings,
+        general_setup=general_setup,
+        source_setup=source_setup,
         phase_folders=[output_label, dataset_name],
     )
 

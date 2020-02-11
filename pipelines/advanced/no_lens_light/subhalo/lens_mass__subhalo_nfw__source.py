@@ -32,7 +32,8 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
+    setup,
+    mass_setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -48,24 +49,19 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
-
-    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
-        pipeline_general_settings=pipeline_general_settings,
-        source=af.last.instance.galaxies.source,
-    )
-
-    pipeline_name = (
-        "pipeline_subhalo__lens_power_law__subhalo_nfw__source_" + source_tag
-    )
+    pipeline_name = "pipeline_subhalo__nfw"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_general_settings.tag_no_inversion)
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(
+        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+    )
+    phase_folders.append(setup.mass.tag)
 
     ### Phase 1 ###
 
@@ -97,7 +93,7 @@ def make_pipeline(
     # previous pipeline.
 
     phase1 = GridPhase(
-        phase_name="phase_1__subhalo_search__source_" + source_tag,
+        phase_name="phase_1__subhalo_search__source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens,
@@ -149,9 +145,9 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.3
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

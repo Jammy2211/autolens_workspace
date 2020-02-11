@@ -3,7 +3,7 @@ A general description of configs in PyAutoLens is provided here, checkout their 
 
 ### General ###
 
-    Customizes general PyAutoLens settings such as the frequency of logging and backing up,
+    Customizes general PyAutoLens setup such as the frequency of logging and backing up,
 
 ### Priors ###
 
@@ -37,18 +37,18 @@ Plots:
 
 Figures:
 
-    Customize the matplotlib settings of how figures appear in PyAutoLens by default (e.g. their figsize, ticksize,
+    Customize the matplotlib setup of how figures appear in PyAutoLens by default (e.g. their figsize, ticksize,
     colormap, etc.).
 
 Subplots:
 
-    Customize the matplotlib settings of how subplots appear in PyAutoLens by default (e.g. their figsize, ticksize,
+    Customize the matplotlib setup of how subplots appear in PyAutoLens by default (e.g. their figsize, ticksize,
     colormap, etc.).
 
 
 ### Non-Linear ###
 
-    Customize the default non-linear optimizer settings used by PyAutoLens.
+    Customize the default non-linear optimizer setup used by PyAutoLens.
 
 
 ### Label ###

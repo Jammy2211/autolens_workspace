@@ -47,16 +47,16 @@ def make_pipeline(phase_folders=None, sub_size=2):
     phase_folders.append(pipeline_name)
     phase_folders.append(pipeline_tag)
 
-    # When a phase is passed a 'sub_size,' a settings tag is automatically generated and added to the phase path,
-    # to make it clear what sub-grid was used. The settings tag, phase name and phase paths are shown for 3
+    # When a phase is passed a 'sub_size,' a setup tag is automatically generated and added to the phase path,
+    # to make it clear what sub-grid was used. The setup tag, phase name and phase paths are shown for 3
     # example sub_sizes:
 
-    # sub_size=2 -> phase_path=phase_name/settings_sub_2
-    # sub_size=3 -> phase_path=phase_name/settings_sub_3
+    # sub_size=2 -> phase_path=phase_name/setup_sub_2
+    # sub_size=3 -> phase_path=phase_name/setup_sub_3
 
-    # If the sub-grid size is 1, the tag is an empty string, thus not changing the settings tag:
+    # If the sub-grid size is 1, the tag is an empty string, thus not changing the setup tag:
 
-    # sub_size=1 -> phase_path=phase_name/settings
+    # sub_size=1 -> phase_path=phase_name/setup
 
     ### PHASE 1 ###
 

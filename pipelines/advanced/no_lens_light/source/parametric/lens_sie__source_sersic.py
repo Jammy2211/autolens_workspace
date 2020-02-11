@@ -18,8 +18,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_source_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -32,23 +31,22 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__lens_sie__source_sersic"
+    pipeline_name = "pipeline_source__parametric"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(
-        pipeline_general_settings.tag_no_inversion + pipeline_source_settings.tag
-    )
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.source.tag_no_inversion)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model if not switched off in the pipeline settings.
+    # Include the shear in the mass model if not switched off in the pipeline setup.
 
-    if not pipeline_source_settings.no_shear:
+    if not setup.source.no_shear:
         shear = al.mp.ExternalShear
     else:
         shear = None
@@ -81,9 +79,9 @@ def make_pipeline(
     phase1.optimizer.evidence_tolerance = evidence_tolerance
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        hyper_galaxy=setup.general.hyper_galaxies,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1)

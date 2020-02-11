@@ -33,9 +33,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_light_settings,
-    pipeline_mass_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -52,40 +50,28 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    lens_light_tag = al.pipeline_settings.lens_light_tag_from_lens(
-        lens=af.last.instance.galaxies.lens
-    )
-    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
-        pipeline_general_settings=pipeline_general_settings,
-        source=af.last.instance.galaxies.source,
-    )
-
-    pipeline_name = (
-        "pipeline_mass__light_dark__lens_"
-        + lens_light_tag
-        + "_mlr_nfw__source_"
-        + source_tag
-    )
+    pipeline_name = "pipeline_mass__light_dark__bulge_disk"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The bulge + disk centres, rotational angles or axis ratios are aligned.
     # 3) The disk component of the lens light model is an Exponential or Sersic profile.
     # 4) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(setup.general.tag)
     phase_folders.append(
-        pipeline_general_settings.tag_no_inversion
-        + pipeline_light_settings.tag
-        + pipeline_mass_settings.tag
+        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
     )
+    phase_folders.append(setup.light.tag_from_lens(lens=af.last.instance.galaxies.lens))
+    phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###
 
-    # Include the shear in the mass model if not switched off in the pipeline settings.
+    # Include the shear in the mass model if not switched off in the pipeline setup.
 
-    if not pipeline_mass_settings.no_shear:
+    if not setup.mass.no_shear:
         if af.last.model.galaxies.lens.shear is not None:
             shear = af.last.model.galaxies.lens.shear
         else:
@@ -104,7 +90,7 @@ def make_pipeline(
     # 3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
     # 4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
 
-    if pipeline_light_settings.disk_as_sersic:
+    if setup.light.disk_as_sersic:
         disk = af.PriorModel(al.lmp.EllipticalSersic)
     else:
         disk = af.PriorModel(al.lmp.EllipticalExponential)
@@ -130,12 +116,12 @@ def make_pipeline(
     lens.disk.phi = af.last.instance.galaxies.lens.disk.phi
     lens.disk.intensity = af.last.instance.galaxies.lens.disk.intensity
     lens.disk.effective_radius = af.last.instance.galaxies.lens.disk.effective_radius
-    if pipeline_light_settings.disk_as_sersic:
+    if setup.light.disk_as_sersic:
         lens.disk.sersic_index = af.last.instance.galaxies.lens.disk.sersic_index
 
     lens.dark.scale_radius = af.GaussianPrior(mean=30.0, sigma=5.0)
 
-    if pipeline_mass_settings.align_bulge_dark_centre:
+    if setup.mass.align_bulge_dark_centre:
         lens.dark.centre = lens.bulge.centre
     else:
         lens.dark.centre = af.last.model_absolute(a=0.05).galaxies.lens.bulge.centre

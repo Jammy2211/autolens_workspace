@@ -25,7 +25,7 @@ imaging = al.imaging.from_fits(
 aplt.imaging.image(imaging=imaging)
 
 # Does the figure display correctly on your computer screen? If not, you can customize a number of
-# matplotlib settings using a Plotter object in PyAutoLens.
+# matplotlib setup using a Plotter object in PyAutoLens.
 
 plotter = aplt.Plotter(
     figure=aplt.Figure(figsize=(7, 7)),
@@ -35,7 +35,7 @@ plotter = aplt.Plotter(
 
 aplt.imaging.image(imaging=imaging, plotter=plotter)
 
-# Many matplotlib settings can be customized, but for now we're only concerned with making sure figures display cleanly
+# Many matplotlib setup can be customized, but for now we're only concerned with making sure figures display cleanly
 # in your Jupter Notebooks. However, for future reference, a descrition of all options can be found in the file
 # 'autolens_workspace/plot/mat_objs.py'.
 
@@ -87,7 +87,7 @@ aplt.imaging.image(imaging=imaging, plotter=plotter, include=aplt.Include(origin
 
 # Throughout the HowToLens lecture series you'll see lots more objects that can include on figures.
 #
-# Just like the matplotlib settings, you can customize what does and does not appear on figues by default using the
+# Just like the matplotlib setup, you can customize what does and does not appear on figues by default using the
 # config file 'autolens_workspace/config/visualize/general.ini'
 
 # Great! Hopefully, visualization in PyAutoLens is displaying nicely for us to get on with the HowToLens lecture

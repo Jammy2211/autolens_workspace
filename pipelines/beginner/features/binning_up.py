@@ -42,17 +42,17 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
     pipeline_name = "pipeline__feature"
     pipeline_tag = "binning_up"
 
-    # When a phase is passed a 'bin_up_factor', a settings tag is automatically generated and added to the phase path,
-    # to make it clear what binning up was used. The settings tag, phase name and phase paths are shown for 3
+    # When a phase is passed a 'bin_up_factor', a setup tag is automatically generated and added to the phase path,
+    # to make it clear what binning up was used. The setup tag, phase name and phase paths are shown for 3
     # example bin up factors:
 
-    # bin_up_factor=2 -> phase_path=phase_name/settings_bin_2
-    # bin_up_factor=3 -> phase_path=phase_name/settings_bin_3
+    # bin_up_factor=2 -> phase_path=phase_name/setup_bin_2
+    # bin_up_factor=3 -> phase_path=phase_name/setup_bin_3
 
-    # If the bin_up_factor is None or 1, the tag is an empty string, thus not changing the settings tag:
+    # If the bin_up_factor is None or 1, the tag is an empty string, thus not changing the setup tag:
 
-    # bin_up_factor=None -> phase_path=phase_name/settings
-    # bin_up_factor=1 -> phase_path=phase_name/settings
+    # bin_up_factor=None -> phase_path=phase_name/setup
+    # bin_up_factor=1 -> phase_path=phase_name/setup
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'

@@ -8,7 +8,7 @@ import autolens as al
 
 # The bulge and disk are modeled using EllipticalSersic and EllipticalExponential profiles respectively. Their alignment
 # (centre, phi, axis_ratio) and whether the disk component is instead modeled using an EllipticalSersic profile
-# can be customized using the pipeline settings.
+# can be customized using the pipeline setup.
 
 # The pipeline is one phase:
 
@@ -26,8 +26,7 @@ import autolens as al
 
 
 def make_pipeline(
-    pipeline_general_settings,
-    pipeline_light_settings,
+    setup,
     phase_folders=None,
     redshift_lens=0.5,
     positions_threshold=None,
@@ -43,26 +42,21 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.pipeline_settings.source_tag_from_pipeline_general_settings_and_source(
-        pipeline_general_settings=pipeline_general_settings,
-        source=af.last.instance.galaxies.source,
-    )
-
-    pipeline_name = (
-        "pipeline_light__bulge_disk__lens_bulge_disk_sie__source_" + source_tag
-    )
+    pipeline_name = "pipeline_light__bulge_disk"
 
     # This pipeline's name is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The bulge + disk centres, rotational angles or axis ratios are aligned.
     # 3) The disk component of the lens light model is an Exponential or Sersic profile.
     # 4) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
+    phase_folders.append(setup.general.tag)
     phase_folders.append(
-        pipeline_general_settings.tag_no_inversion + pipeline_light_settings.tag
+        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
     )
+    phase_folders.append(setup.light.tag)
 
     ### PHASE 1 ###
 
@@ -74,7 +68,7 @@ def make_pipeline(
     # If hyper-galaxy noise scaling is on, it may over-scale the noise making this new light profile fit the data less
     # well. This can be circumvented by including the noise scaling as a free parameter.
 
-    if pipeline_general_settings.hyper_galaxies:
+    if setup.general.hyper_galaxies:
         hyper_galaxy = af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy
         hyper_galaxy.noise_factor = (
             af.last.hyper_combined.model.galaxies.lens.hyper_galaxy.noise_factor
@@ -84,7 +78,7 @@ def make_pipeline(
 
     # Model the disk as a Sersic if input.
 
-    if pipeline_light_settings.disk_as_sersic:
+    if setup.light.disk_as_sersic:
         disk = af.PriorModel(al.lp.EllipticalSersic)
     else:
         disk = af.PriorModel(al.lp.EllipticalExponential)
@@ -98,19 +92,19 @@ def make_pipeline(
         hyper_galaxy=hyper_galaxy,
     )
 
-    # Adjust the alignment of the bulge and disk to the input of the pipeline settings.
+    # Adjust the alignment of the bulge and disk to the input of the pipeline setup.
 
-    if pipeline_light_settings.align_bulge_disk_centre:
+    if setup.light.align_bulge_disk_centre:
         lens.bulge.centre = lens.disk.centre
 
-    if pipeline_light_settings.align_bulge_disk_axis_ratio:
+    if setup.light.align_bulge_disk_axis_ratio:
         lens.bulge.axis_ratio = lens.disk.axis_ratio
 
-    if pipeline_light_settings.align_bulge_disk_phi:
+    if setup.light.align_bulge_disk_phi:
         lens.bulge.phi = lens.disk.phi
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_bulge_disk_sie__source_" + source_tag,
+        phase_name="phase_1__lens_bulge_disk_sie__source",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=af.last.instance.galaxies.source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
@@ -132,10 +126,10 @@ def make_pipeline(
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=pipeline_general_settings.hyper_galaxies,
+        hyper_galaxy=setup.general.hyper_galaxies,
         inversion=True,
-        include_background_sky=pipeline_general_settings.hyper_image_sky,
-        include_background_noise=pipeline_general_settings.hyper_background_noise,
+        include_background_sky=setup.general.hyper_image_sky,
+        include_background_noise=setup.general.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1)

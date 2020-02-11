@@ -98,11 +98,11 @@ real_space_mask = al.mask.circular(shape_2d=(151, 151), pixel_scales=0.1, radius
 aplt.interferometer.subplot_interferometer(interferometer=interferometer)
 
 
-### PIPELINE SETUP + SETTINGS ###
+### PIPELINE SETUP ###
 
-# Advanced pipelines still use general settings, which customize the hyper-mode features and inclusion of a shear.
+# Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-pipeline_general_settings = al.PipelineGeneralSettings(
+general_setup = al.setup.General(
     hyper_galaxies=False,
     hyper_image_sky=False,
     hyper_background_noise=False,
@@ -119,24 +119,22 @@ from pipelines.advanced.interferometer.source.inversion.from_parametric import (
     lens_sie__source_inversion,
 )
 
-# Advanced pipelines also use settings which specifically customize the source, lens light and mass analyses. You've
-# seen the source settings before, which for this pipeline are shown below and define:
+# Advanced pipelines also use setup which specifically customize the source, lens light and mass analyses. You've
+# seen the source setup before, which for this pipeline are shown below and define:
 
 # - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
 # - The Regularization scheme used by of this pipeline (and all pipelines that follow).
 
-pipeline_source_settings = al.PipelineSourceSettings(no_shear=False)
+source_setup = al.setup.Source(no_shear=False)
 
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
+    setup=setup,
     real_space_mask=real_space_mask,
     phase_folders=["advanced", dataset_label, dataset_name],
 )
 
 pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_source_settings=pipeline_source_settings,
+    setup=setup,
     real_space_mask=real_space_mask,
     phase_folders=["advanced", dataset_label, dataset_name],
 )
@@ -145,13 +143,12 @@ pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
 
 from pipelines.advanced.interferometer.mass.power_law import lens_power_law__source
 
-# The mass settings for this pipeline are shown below, which define:
+# The mass setup for this pipeline is shown below, which define:
 
-pipeline_mass_settings = al.PipelineMassSettings()
+mass_setup = al.setup.Mass()
 
 pipeline_mass__power_law = lens_power_law__source.make_pipeline(
-    pipeline_general_settings=pipeline_general_settings,
-    pipeline_mass_settings=pipeline_mass_settings,
+    setup=setup,
     real_space_mask=real_space_mask,
     phase_folders=["advanced", dataset_label, dataset_name],
 )
