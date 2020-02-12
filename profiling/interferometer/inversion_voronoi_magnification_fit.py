@@ -66,7 +66,9 @@ mask = al.mask.circular(
 )
 
 masked_interferometer = al.masked.interferometer(
-    interferometer=interferometer, real_space_mask=mask, visibilities_mask=np.full(fill_value=False, shape=interferometer.data.shape)
+    interferometer=interferometer,
+    real_space_mask=mask,
+    visibilities_mask=np.full(fill_value=False, shape=interferometer.data.shape),
 )
 
 print("Number of points = " + str(masked_interferometer.grid.sub_shape_1d) + "\n")

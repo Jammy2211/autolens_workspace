@@ -122,10 +122,7 @@ def make_pipeline(
         phase_folders=phase_folders,
         galaxies=dict(
             lens=af.last[-1].model.galaxies.lens,
-            subhalo=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=phase1.result.result.model.galaxies.subhalo.mass,
-            ),
+            subhalo=phase1.result.model.galaxies.subhalo,
             source=af.last[-1].instance.galaxies.source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,

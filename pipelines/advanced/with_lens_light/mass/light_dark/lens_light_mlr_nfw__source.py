@@ -127,11 +127,7 @@ def make_pipeline(
         lens.dark.centre = af.last.model_absolute(a=0.05).galaxies.lens.bulge.centre
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_"
-        + lens_light_tag
-        + "_mlr_nfw__source_"
-        + source_tag
-        + "__fixed_lens_light",
+        phase_name="phase_1__lens_light_mlr_nfw__source__fixed_lens_light",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=lens,
@@ -162,7 +158,7 @@ def make_pipeline(
     # initialization
 
     phase2 = al.PhaseImaging(
-        phase_name="phase_2__lens_bulge_disk_mlr_nfw__source_inversion",
+        phase_name="phase_2__lens_light_mlr_nfw__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
