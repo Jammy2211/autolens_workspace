@@ -4,14 +4,15 @@ import os
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
 
-# We will fit each lens with an SIE mass profile and each source using a pixelized inversion. The fit will use two
-# advanced pipelines which are added together to perform a 5 phase analysis, which will allow us to illustrate how the
+# We will fit each lens with an power-law mass profile and each source using a pixelized inversion. The fit will use 3
+# advanced pipelines which are added together to perform a 6 phase analysis, which will allow us to illustrate how the
 # results of different pipelines and phases can be loaded using the aggregator.
 
 # This script follows the scripts described in 'autolens_workspace/runners/advanced/' and the pipelines:
 
 # 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'
 # 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'
+# 'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/lens_power_law__source_inversion.py'
 
 # If anything doesn't make sense check those scripts out for details!
 
@@ -71,11 +72,16 @@ for dataset_name in [
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
     general_setup = al.setup.General(
-        hyper_galaxies=False,
-        hyper_image_sky=False,
-        hyper_background_noise=False,
-        with_shear=False,
+        hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
+
+    source_setup = al.setup.Source(
+        pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
+    )
+
+    mass_setup = al.setup.Mass(no_shear=False)
+
+    setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_setup)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
@@ -88,27 +94,18 @@ for dataset_name in [
         lens_sie__source_inversion,
     )
 
-    # Advanced pipelines also use setup which specifically customize the source, lens light and mass analyses. You've
-    # seen the source setup before, which for this pipeline are shown below and define:
-
-    # - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
-    # - The Regularization scheme used by of this pipeline (and all pipelines that follow).
-
-    source_setup = al.setup.Source(
-        pixelization=al.pix.VoronoiBrightnessImage,
-        regularization=al.reg.AdaptiveBrightness,
-    )
+    from pipelines.advanced.no_lens_light.mass.power_law import lens_power_law__source
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        general_setup=general_setup,
-        source_setup=source_setup,
-        phase_folders=[output_label, dataset_name],
+        setup=setup, phase_folders=[output_label, dataset_name]
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        general_setup=general_setup,
-        source_setup=source_setup,
-        phase_folders=[output_label, dataset_name],
+        setup=setup, phase_folders=[output_label, dataset_name]
+    )
+
+    pipeline_mass__power_law = lens_power_law__source.make_pipeline(
+        setup=setup, phase_folders=[output_label, dataset_name]
     )
 
     ### PIPELINE COMPOSITION AND RUN ###
@@ -116,6 +113,10 @@ for dataset_name in [
     # We finally add the pipelines above together, which means that they will run back-to-back, as usual passing
     # information throughout the analysis to later phases.
 
-    pipeline = pipeline_source__parametric + pipeline_source__inversion
+    pipeline = (
+        pipeline_source__parametric
+        + pipeline_source__inversion
+        + pipeline_mass__power_law
+    )
 
     pipeline.run(dataset=imaging, mask=mask)

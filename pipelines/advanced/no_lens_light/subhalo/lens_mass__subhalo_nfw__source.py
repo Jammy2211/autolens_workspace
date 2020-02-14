@@ -33,7 +33,6 @@ import autolens as al
 
 def make_pipeline(
     setup,
-    mass_setup,
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
