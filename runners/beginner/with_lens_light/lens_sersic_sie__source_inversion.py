@@ -111,9 +111,9 @@ setup = al.setup.Setup(source=source_setup, light=light_setup, mass=mass_setup)
 # 'autolens_workspace/output/beginner/dataset_label/dataset_name/' or equivalently
 # 'autolens_workspace/output/beginner/imaging/lens_sersic_sie__source_sersic/'
 
-from pipelines.beginner.with_lens_light import lens_sersic_sie__source_sersic
+from pipelines.beginner.with_lens_light import lens_sersic_sie__source_inversion
 
-pipeline = lens_sersic_sie__source_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["beginner", dataset_label, dataset_name]
 )
 

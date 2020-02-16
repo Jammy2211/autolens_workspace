@@ -9,7 +9,7 @@ import os
 # those scripts out for details!
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-aggregator_path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
+aggregator_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 ######## EXAMPLE LENS SYSTEM 1 ###########
 

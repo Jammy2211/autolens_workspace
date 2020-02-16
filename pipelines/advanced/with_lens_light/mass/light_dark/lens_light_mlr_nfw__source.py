@@ -3,7 +3,7 @@ import autolens as al
 
 # In this pipeline, we'll perform an analysis which fits an image with the lens light included, and a source galaxy
 # using an inversion, using a decomposed light and dark matter profile. The pipeline follows on from the
-# inversion pipeline 'pipelines/with_lens_light/inversion/from_source__parametric/lens_bulge_disk_sie__source_inversion.py'.
+# inversion pipeline 'pipelines/with_lens_light/inversion/from_source__parametric/lens_light_sie__source_inversion.py'.
 
 # Alignment of the centre, phi and axis-ratio of the light profile's EllipticalSersic and EllipticalExponential
 # profiles use the alignment specified in the previous pipeline.
@@ -52,7 +52,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__light_dark__bulge_disk"
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The bulge + disk centres, rotational angles or axis ratios are aligned.

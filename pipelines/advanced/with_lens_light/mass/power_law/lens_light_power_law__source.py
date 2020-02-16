@@ -37,7 +37,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__power_law"
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
@@ -74,7 +74,7 @@ def make_pipeline(
     # Setup the lens using the light model the 'light' pipeline, which will be fixed or fitted for depending on
     # the fix_lens_light parameter
 
-    lens = al.setup.lens_from_result(
+    lens = al.setup.lens_with_light_only_from_result(
         result=af.last, fix_lens_light=setup.mass.fix_lens_light
     )
 

@@ -50,14 +50,14 @@ import os
 
 ### THIS RUNNER ###
 
-# Using two source pipelines and a mass pipeline we will fit a power-law mass model and source using a pixelized
-# inversion.
+# Using two source pipelines, a light pipeline and a mass pipeline we will fit a power-law mass model and source using
+# a pixelized inversion.
 
 # We'll use the example pipelines:
 # 'autolens_workspace/pipelines/advanced/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
 # 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
 # 'autolens_workspace/pipelines/advanced/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
-# 'autolens_workspace/pipelines/advanced/with_lens_light/mass/light_dark/lens_bulge_disk_mlr_nfw__source.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/mass/power_law/lens_light_power_law__source.py'.
 
 # Check them out now for a detailed description of the analysis!
 
@@ -82,7 +82,7 @@ import autolens.plot as aplt
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = "lens_sersic_exp_mlr_nfw__source_sersic"
+dataset_name = "lens_gaussians_x3_sie__source_sersic"
 pixel_scales = 0.1
 
 # Create the path where the dataset will be loaded from, which in this case is
@@ -127,16 +127,19 @@ general_setup = al.setup.General(
 )
 
 source_setup = al.setup.Source(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
+    lens_light_centre=(0.0, 0.0),
+    lens_mass_centre=(0.0, 0.0),
+    align_light_mass_centre=False,
+    no_shear=False,
+    fix_lens_light=True,
+    number_of_gaussians=4,
 )
 
-light_setup = al.setup.Light(
-    align_bulge_disk_centre=True,
-    align_bulge_disk_axis_ratio=False,
-    align_bulge_disk_phi=False,
-)
+light_setup = al.setup.Light()
 
-mass_setup = al.setup.Mass(fix_lens_light=False)
+mass_setup = al.setup.Mass(no_shear=False)
 
 setup = al.setup.Setup(
     general=general_setup, source=source_setup, light=light_setup, mass=mass_setup
@@ -147,13 +150,13 @@ setup = al.setup.Setup(
 ### SOURCE ###
 
 from pipelines.advanced.with_lens_light.source.parametric import (
-    lens_bulge_disk_sie__source_sersic,
+    lens_gaussians_sie__source_sersic,
 )
 from pipelines.advanced.with_lens_light.source.inversion.from_parametric import (
     lens_light_sie__source_inversion,
 )
 
-pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
+pipeline_source__parametric = lens_gaussians_sie__source_sersic.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -163,21 +166,22 @@ pipeline_source__inversion = lens_light_sie__source_inversion.make_pipeline(
 
 ### Light ###
 
-from pipelines.advanced.with_lens_light.light.bulge_disk import (
-    lens_bulge_disk_sie__source,
+from pipelines.advanced.with_lens_light.light.gaussians import (
+    lens_gaussians_sie__source,
 )
 
-pipeline_light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
+
+pipeline_light__gaussians = lens_gaussians_sie__source.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 ### MASS ###
 
-from pipelines.advanced.with_lens_light.mass.light_dark import (
-    lens_light_mlr_nfw__source,
+from pipelines.advanced.with_lens_light.mass.power_law import (
+    lens_light_power_law__source,
 )
 
-pipeline_mass__power_law = lens_light_mlr_nfw__source.make_pipeline(
+pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -189,7 +193,7 @@ pipeline_mass__power_law = lens_light_mlr_nfw__source.make_pipeline(
 pipeline = (
     pipeline_source__parametric
     + pipeline_source__inversion
-    + pipeline_light__bulge_disk
+    + pipeline_light__gaussians
     + pipeline_mass__power_law
 )
 

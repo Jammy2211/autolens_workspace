@@ -58,7 +58,7 @@ def make_pipeline(
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag/'
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) The lens galaxy mass model includes an external shear.
 
@@ -80,14 +80,14 @@ def make_pipeline(
 
     # 1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
 
-    light = af.PriorModel(al.lp.EllipticalSersic)
-    light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-    light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    sersic = af.PriorModel(al.lp.EllipticalSersic)
+    sersic.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    sersic.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
-        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
+        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, sersic=sersic)),
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
@@ -110,8 +110,8 @@ def make_pipeline(
     # 2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for \
     #    the light profile in phase 1.
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
-    mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
-    mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
+    mass.centre_0 = phase1.result.model.galaxies.lens.sersic.centre_0
+    mass.centre_1 = phase1.result.model.galaxies.lens.sersic.centre_1
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
@@ -119,12 +119,12 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=phase1.result.instance.galaxies.lens.light,
+                sersic=phase1.result.instance.galaxies.lens.sersic,
                 mass=mass,
                 shear=shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,
@@ -151,13 +151,13 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                light=phase1.result.model.galaxies.lens.light,
+                sersic=phase1.result.model.galaxies.lens.sersic,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                light=phase2.result.model.galaxies.source.light,
+                sersic=phase2.result.model.galaxies.source.sersic,
             ),
         ),
         positions_threshold=positions_threshold,

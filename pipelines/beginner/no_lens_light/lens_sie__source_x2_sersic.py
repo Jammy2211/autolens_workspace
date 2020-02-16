@@ -46,7 +46,7 @@ def make_pipeline(
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag/'
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) The lens galaxy mass model includes an external shear.
 

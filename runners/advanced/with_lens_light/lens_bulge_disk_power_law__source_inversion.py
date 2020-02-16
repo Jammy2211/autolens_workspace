@@ -55,7 +55,7 @@ import os
 
 # We'll use the example pipelines:
 # 'autolens_workspace/pipelines/advanced/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
-# 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_bulge_disk_sie__source_inversion.py'.
+# 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
 # 'autolens_workspace/pipelines/advanced/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
 # 'autolens_workspace/pipelines/advanced/with_lens_light/mass/power_law/lens_light_power_law__source.py'.
 
@@ -156,14 +156,14 @@ from pipelines.advanced.with_lens_light.source.parametric import (
     lens_bulge_disk_sie__source_sersic,
 )
 from pipelines.advanced.with_lens_light.source.inversion.from_parametric import (
-    lens_bulge_disk_sie__source_inversion,
+    lens_light_sie__source_inversion,
 )
 
 pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
-pipeline_source__inversion = lens_bulge_disk_sie__source_inversion.make_pipeline(
+pipeline_source__inversion = lens_light_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 

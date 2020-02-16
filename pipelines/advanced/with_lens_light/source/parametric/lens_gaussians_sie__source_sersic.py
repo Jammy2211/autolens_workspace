@@ -2,13 +2,13 @@ import autofit as af
 import autolens as al
 
 # In this pipeline, we'll perform a parametric source analysis which fits a lens model (the lens's light, mass and
-# source's light). This pipeline uses four phases:
+# source's light). The lens's light is modeled as a sum of elliptical Gaussian profiles. This pipeline uses four phases:
 
 # Phase 1:
 
 # Fit and subtract the lens light model.
 
-# Lens Light: EllipticalSersic + EllipticalExponential
+# Lens Light: EllipticalGaussian(s)
 # Lens Mass: None
 # Source Light: None
 # Previous Pipelines: None
@@ -30,7 +30,7 @@ import autolens as al
 
 # Refit the lens light models using the mass model and source light profile fixed from phase 2.
 
-# Lens Light: EllipticalSersic + EllipticalExponential
+# Lens Light: EllticalGaussian(s)
 # Lens Mass: EllipticalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
@@ -41,7 +41,7 @@ import autolens as al
 
 # Refine the lens light and mass models and source light profile, using priors from the previous 2 phases.
 
-# Lens Light: EllipticalSersic + EllipticalExponential
+# Lens Light: EllipticalGaussian(s)
 # Lens Mass: EllipticalIsothermal + ExternalShear
 # Source Light: EllipticalSersic
 # Previous Pipelines: None
@@ -64,12 +64,13 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__bulge_disk"
+    pipeline_name = "pipeline_source__parametric__gaussians"
 
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
+    # 3) The number of Gaussians in the lens light model.
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
@@ -88,25 +89,33 @@ def make_pipeline(
 
     # In phase 1, we fit only the lens galaxy's light, where we:
 
-    # 1) Align the bulge and disk (y,x) centre..
+    # 1) Align the Gaussian's (y,x) centres.
+
+    gaussian_0 = af.PriorModel(al.lp.EllipticalGaussian)
+    gaussian_1 = af.PriorModel(al.lp.EllipticalGaussian)
+    gaussian_2 = af.PriorModel(al.lp.EllipticalGaussian)
+    gaussian_3 = af.PriorModel(al.lp.EllipticalGaussian)
+
+    gaussian_1.centre = gaussian_0.centre
+    gaussian_2.centre = gaussian_0.centre
+    gaussian_3.centre = gaussian_0.centre
+
+    if setup.source.lens_light_centre is not None:
+        gaussian_0.centre = setup.source.lens_light_centre
+        gaussian_1.centre = setup.source.lens_light_centre
+        gaussian_2.centre = setup.source.lens_light_centre
+        gaussian_3.centre = setup.source.lens_light_centre
 
     lens = al.GalaxyModel(
         redshift=redshift_lens,
-        bulge=al.lp.EllipticalSersic,
-        disk=al.lp.EllipticalExponential,
+        gaussian_0=gaussian_0,
+        gaussian_1=gaussian_1,
+        gaussian_2=gaussian_2,
+        gaussian_3=gaussian_3,
     )
 
-    lens.bulge.centre = lens.disk.centre
-
-    if setup.source.lens_light_centre is not None:
-        lens.bulge.centre = setup.source.lens_light_centre
-        lens.disk.centre = setup.source.lens_light_centre
-
-    if setup.source.lens_light_bulge_only:
-        lens.disk = None
-
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_bulge_disk",
+        phase_name="phase_1__lens_gaussians",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens),
         sub_size=sub_size,
@@ -126,6 +135,13 @@ def make_pipeline(
         include_background_noise=setup.general.hyper_background_noise,
     )
 
+    lens = al.setup.lens_from_result(
+        result=af.last,
+        hyper_result=af.last,
+        fix_lens_light=setup.source.fix_lens_light,
+        fix_lens_mass=True,
+    )
+
     ### PHASE 2 ###
 
     # In phase 2, we fit the lens galaxy's mass and source galaxy's light, where we:
@@ -137,9 +153,11 @@ def make_pipeline(
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
     if setup.source.align_light_mass_centre:
-        mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
+        mass.centre = phase1.result.instance.galaxies.lens.gaussian_0.centre
     else:
-        mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
+        mass.centre = phase1.result.model_absolute(
+            a=0.1
+        ).galaxies.lens.gaussian_0.centre
 
     if setup.source.lens_mass_centre is not None:
         mass.centre = setup.source.lens_mass_centre
@@ -150,8 +168,10 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=phase1.result.instance.galaxies.lens.bulge,
-                disk=phase1.result.instance.galaxies.lens.disk,
+                gaussian_0=phase1.result.instance.galaxies.lens.gaussian_0,
+                gaussian_1=phase1.result.instance.galaxies.lens.gaussian_1,
+                gaussian_2=phase1.result.instance.galaxies.lens.gaussian_2,
+                gaussian_3=phase1.result.instance.galaxies.lens.gaussian_3,
                 mass=mass,
                 shear=shear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
@@ -191,24 +211,17 @@ def make_pipeline(
 
     lens = al.GalaxyModel(
         redshift=redshift_lens,
-        bulge=al.lp.EllipticalSersic,
-        disk=al.lp.EllipticalExponential,
+        gaussian_0=gaussian_0,
+        gaussian_1=gaussian_1,
+        gaussian_2=gaussian_2,
+        gaussian_3=gaussian_3,
         mass=phase2.result.instance.galaxies.lens.mass,
         shear=phase2.result.instance.galaxies.lens.shear,
         hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
     )
 
-    lens.bulge.centre = lens.disk.centre
-
-    if setup.source.lens_light_centre is not None:
-        lens.bulge.centre = setup.source.lens_light_centre
-        lens.disk.centre = setup.source.lens_light_centre
-
-    if setup.source.lens_light_bulge_only:
-        lens.disk = None
-
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__lens_bulge_disk_sie__source_fixed",
+        phase_name="phase_3__lens_gaussians_sie__source_fixed",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=lens,
@@ -246,13 +259,15 @@ def make_pipeline(
     # 1) Set lens's light, mass, shear and source's light using the results of phases 1 and 2.
 
     phase4 = al.PhaseImaging(
-        phase_name="phase_4__lens_bulge_disk_sie__source_sersic",
+        phase_name="phase_4__lens_gaussians_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=phase3.result.model.galaxies.lens.bulge,
-                disk=phase3.result.model.galaxies.lens.disk,
+                gaussian_0=phase3.result.model.galaxies.lens.gaussian_0,
+                gaussian_1=phase3.result.model.galaxies.lens.gaussian_1,
+                gaussian_2=phase3.result.model.galaxies.lens.gaussian_2,
+                gaussian_3=phase3.result.model.galaxies.lens.gaussian_3,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,

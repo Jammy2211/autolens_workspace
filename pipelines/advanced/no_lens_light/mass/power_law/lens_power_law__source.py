@@ -37,7 +37,7 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__power_law"
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.

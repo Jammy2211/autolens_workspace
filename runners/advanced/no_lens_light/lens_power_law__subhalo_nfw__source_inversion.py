@@ -81,8 +81,8 @@ import autolens as al
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = "lens_sie__subhalo_nfw__source_sersic"
-pixel_scales = 0.05
+dataset_name = "lens_sie__subhalo_nfw__source_sersic__low_res"
+pixel_scales = 0.2
 
 # Create the path where the dataset will be loaded from, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
@@ -100,7 +100,7 @@ imaging = al.imaging.from_fits(
 
 # Next, we create the mask we'll fit this data-set with.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.0
 )
 
 # Make a quick subplot to make sure the data looks as we expect.
@@ -162,7 +162,7 @@ pipeline_mass__power_law = lens_power_law__source.make_pipeline(
 from pipelines.advanced.no_lens_light.subhalo import lens_mass__subhalo_nfw__source
 
 pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
-    general_setup=general_setup, phase_folders=["advanced", dataset_label, dataset_name]
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 

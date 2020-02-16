@@ -130,7 +130,7 @@ def make_pipeline(general_setup, source_setup, phase_folders=None):
 
     ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).

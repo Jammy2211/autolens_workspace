@@ -18,8 +18,7 @@ import autolens as al
 
 
 def make_pipeline(
-    general_setup,
-    mass_setup,
+    setup,
     real_space_mask,
     phase_folders=None,
     redshift_lens=0.5,
@@ -35,19 +34,31 @@ def make_pipeline(
 
     # A source tag distinguishes if the previous pipeline models used a parametric or inversion model for the source.
 
-    source_tag = al.setup.source_tag_from_source(
-        source=af.last.instance.galaxies.source
-    )
-
     pipeline_name = "pipeline_mass__power_law"
 
-    # This pipeline's name is tagged according to whether:
+    # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag + setup.mass.tag)
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(
+        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+    )
+    phase_folders.append(setup.mass.tag)
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline setup.
+
+    if not setup.mass.no_shear:
+        if af.last.model.galaxies.lens.shear is not None:
+            shear = af.last.model.galaxies.lens.shear
+        else:
+            shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -70,18 +81,14 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = al.setup.source_from_result(result=af.last)
+    source = al.setup.source_from_result(result=af.last, include_hyper_source=True)
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_power_law__source",
         phase_folders=phase_folders,
         real_space_mask=real_space_mask,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=mass,
-                shear=af.last.model.galaxies.lens.shear,
-            ),
+            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=source,
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

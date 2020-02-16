@@ -103,12 +103,16 @@ aplt.interferometer.subplot_interferometer(interferometer=interferometer)
 # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
 general_setup = al.setup.General(
-    hyper_galaxies=False,
-    hyper_image_sky=False,
-    hyper_background_noise=False,
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
+    hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
 )
+
+source_setup = al.setup.Source(
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+)
+
+mass_setup = al.setup.Mass(fix_lens_light=False)
+
+setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_setup)
 
 # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
@@ -118,14 +122,6 @@ from pipelines.advanced.interferometer.source.parametric import lens_sie__source
 from pipelines.advanced.interferometer.source.inversion.from_parametric import (
     lens_sie__source_inversion,
 )
-
-# Advanced pipelines also use setup which specifically customize the source, lens light and mass analyses. You've
-# seen the source setup before, which for this pipeline are shown below and define:
-
-# - The Pixelization used by the inversion of this pipeline (and all pipelines that follow).
-# - The Regularization scheme used by of this pipeline (and all pipelines that follow).
-
-source_setup = al.setup.Source(no_shear=False)
 
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
     setup=setup,
