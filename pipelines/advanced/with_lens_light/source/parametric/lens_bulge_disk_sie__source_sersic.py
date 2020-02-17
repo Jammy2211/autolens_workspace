@@ -68,7 +68,9 @@ def make_pipeline(
 
     # For pipeline tagging we need to set the source and lens light types.
     setup.set_source_type(source_type="sersic")
-    setup.set_light_type(light_type="") # Because lens-light bulge-disk subtraction is default use an empty string.
+    setup.set_light_type(
+        light_type=""
+    )  # Because lens-light bulge-disk subtraction is default use an empty string.
 
     # This pipeline is tagged according to whether:
 

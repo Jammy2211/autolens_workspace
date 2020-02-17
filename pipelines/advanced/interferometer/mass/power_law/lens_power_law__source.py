@@ -17,6 +17,49 @@ import autolens as al
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
 
+def source_with_previous_model_or_instance(include_hyper_source):
+    """Setup the source source model using the previous pipeline or phase results.
+
+    This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
+    pipelines determines if the source was modeled using parametric light profiles or an inversion.
+
+    If the source was parametric this function returns the source as a model, given that a parametric source should be
+    fitted for simultaneously with the mass model.
+
+    If the source was an inversion then it is returned as an instance, given that the inversion parameters do not need
+    to be fitted for alongside the mass model.
+
+    The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
+    model fitting.
+    """
+    if include_hyper_source:
+        hyper_galaxy = (
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
+        )
+        hyper_galaxy.noise_factor = (
+            af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
+        )
+    else:
+        hyper_galaxy = None
+
+    if af.last.model.galaxies.source.pixelization is None:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            sersic=af.last.model.galaxies.source.sersic,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+    else:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            pixelization=af.last.instance.galaxies.source.pixelization,
+            regularization=af.last.instance.galaxies.source.regularization,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+
 def make_pipeline(
     setup,
     real_space_mask,
@@ -36,6 +79,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__power_law"
 
+    # For pipeline tagging we need to set the mass type
+    setup.set_mass_type(mass_type="power_law")
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -43,9 +89,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(
-        setup.source.tag
-    )
+    phase_folders.append(setup.source.tag)
     phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###
@@ -81,7 +125,7 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = al.setup.source_from_result(result=af.last, include_hyper_source=True)
+    source = source_with_previous_model_or_instance(include_hyper_source=True)
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_power_law__source",

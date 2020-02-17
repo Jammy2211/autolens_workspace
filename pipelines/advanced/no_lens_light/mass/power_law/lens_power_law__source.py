@@ -16,6 +16,7 @@ import autolens as al
 # Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
+
 def source_with_previous_model_or_instance(include_hyper_source):
     """Setup the source source model using the previous pipeline or phase results.
 
@@ -89,9 +90,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(
-        setup.source.tag
-    )
+    phase_folders.append(setup.source.tag)
     phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###

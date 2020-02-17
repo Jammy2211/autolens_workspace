@@ -30,7 +30,10 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__lens_sie__source_sersic"
+    pipeline_name = "pipeline_source__parametric"
+
+    # For pipeline tagging we need to set the source type
+    setup.set_source_type(source_type="sersic")
 
     # This pipeline is tagged according to whether:
 
@@ -38,7 +41,17 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag + setup.source.tag)
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.source.tag)
+
+    ### SETUP SHEAR ###
+
+    # Include the shear in the mass model if not switched off in the pipeline setup.
+
+    if not setup.source.no_shear:
+        shear = al.mp.ExternalShear
+    else:
+        shear = None
 
     ### PHASE 1 ###
 
@@ -50,9 +63,7 @@ def make_pipeline(
         real_space_mask=real_space_mask,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens,
-                mass=al.mp.EllipticalIsothermal,
-                shear=al.mp.ExternalShear,
+                redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source, sersic=al.lp.EllipticalSersic

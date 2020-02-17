@@ -83,7 +83,6 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    setup.source.source_type_tag = setup.source.inversion_tag
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###

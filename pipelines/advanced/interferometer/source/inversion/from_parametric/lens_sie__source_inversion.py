@@ -71,6 +71,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_source__inversion__lens_sie__source_inversion"
 
+    # For pipeline tagging we need to set the source type
+    setup.set_source_type(source_type=setup.source.inversion_tag)
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -78,7 +81,8 @@ def make_pipeline(
     # 3) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag + setup.source.tag)
+    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
 

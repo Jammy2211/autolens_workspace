@@ -56,9 +56,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(
-        setup.source.tag
-    )
+    phase_folders.append(setup.source.tag)
     phase_folders.append(setup.light.tag)
 
     ### PHASE 1 ###
@@ -106,7 +104,7 @@ def make_pipeline(
     )
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_gaussians_sie__source",
+        phase_name="phase_1__lens_bulge_disk_sie__source",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=af.last.instance.galaxies.source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,

@@ -16,6 +16,7 @@ import autolens as al
 # Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
+
 def lens_with_previous_light_and_model_mass(setup):
     """Setup the lens galaxy model using the previous pipeline or phases results.
 
@@ -29,7 +30,9 @@ def lens_with_previous_light_and_model_mass(setup):
     else:
         lens = af.last.model.galaxies.lens
 
-    lens.hyper_galaxy = af.last.result.hyper_combied.instance.optional.galaxies.lens.hyper_galaxy
+    lens.hyper_galaxy = (
+        af.last.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
+    )
 
     return lens
 
@@ -77,7 +80,6 @@ def source_with_previous_model_or_instance(include_hyper_source):
         )
 
 
-
 def make_pipeline(
     setup,
     phase_folders=None,
@@ -109,9 +111,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(
-        setup.source.tag
-    )
+    phase_folders.append(setup.source.tag)
     phase_folders.append(setup.light.tag)
     phase_folders.append(setup.mass.tag)
 
@@ -140,9 +140,7 @@ def make_pipeline(
 
     # Setup the power-law mass profile and initialize its priors from the SIE.
 
-    lens = lens_with_previous_light_and_model_mass(
-        setup=setup
-    )
+    lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
