@@ -73,7 +73,7 @@ def make_pipeline(phase_folders=None, sub_size=2):
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
-            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
         ),
         sub_size=2,
     )
@@ -98,7 +98,7 @@ def make_pipeline(phase_folders=None, sub_size=2):
                 shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, light=phase1.result.model.galaxies.source.light
+                redshift=1.0, sersic=phase1.result.model.galaxies.source.sersic
             ),
         ),
         sub_size=sub_size,

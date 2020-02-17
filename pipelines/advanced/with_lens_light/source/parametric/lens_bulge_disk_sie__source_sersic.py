@@ -64,7 +64,11 @@ def make_pipeline(
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline_source__parametric__bulge_disk"
+    pipeline_name = "pipeline_source__parametric"
+
+    # For pipeline tagging we need to set the source and lens light types.
+    setup.set_source_type(source_type="sersic")
+    setup.set_light_type(light_type="") # Because lens-light bulge-disk subtraction is default use an empty string.
 
     # This pipeline is tagged according to whether:
 
@@ -73,7 +77,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(setup.source.tag_no_inversion)
+    phase_folders.append(setup.source.tag)
 
     ### SETUP SHEAR ###
 
@@ -158,7 +162,7 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                light=al.lp.EllipticalSersic,
+                sersic=al.lp.EllipticalSersic,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
@@ -214,7 +218,7 @@ def make_pipeline(
             lens=lens,
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                light=phase2.result.instance.galaxies.source.light,
+                sersic=phase2.result.instance.galaxies.source.sersic,
                 hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
@@ -259,7 +263,7 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                light=phase2.result.model.galaxies.source.light,
+                sersic=phase2.result.model.galaxies.source.sersic,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),

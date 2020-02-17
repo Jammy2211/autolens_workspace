@@ -55,7 +55,7 @@ def make_pipeline(
                 shear=al.mp.ExternalShear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,

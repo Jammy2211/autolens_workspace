@@ -52,6 +52,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__light_dark__bulge_disk"
 
+    # For pipeline tagging we need to set the mass type
+    setup.set_mass_type(mass_type="light_dark")
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -62,9 +65,9 @@ def make_pipeline(
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
     phase_folders.append(
-        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+        setup.source.tag
     )
-    phase_folders.append(setup.light.tag_from_lens(lens=af.last.instance.galaxies.lens))
+    phase_folders.append(setup.light.tag)
     phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###

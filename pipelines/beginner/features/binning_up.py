@@ -75,7 +75,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
-            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
         ),
         bin_up_factor=bin_up_factor,
     )
@@ -100,7 +100,7 @@ def make_pipeline(phase_folders=None, bin_up_factor=2):
                 shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, light=phase1.result.model.galaxies.source.light
+                redshift=1.0, sersic=phase1.result.model.galaxies.source.sersic
             ),
         ),
     )

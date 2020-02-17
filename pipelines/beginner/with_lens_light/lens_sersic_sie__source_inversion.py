@@ -88,7 +88,7 @@ def make_pipeline(
     # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag)
+    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag_beginner)
 
     ### SETUP SHEAR ###
 

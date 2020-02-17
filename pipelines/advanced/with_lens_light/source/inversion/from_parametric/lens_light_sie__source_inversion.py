@@ -59,6 +59,32 @@ import autolens as al
 # Prior Passing: Lens Light & Mass (model -> phase 3), source inversion (instance -> phase 3).
 # Notes: Lens light fixed, mass varies, source inversion parameters fixed.
 
+def lens_light_tag_from_setup(setup):
+
+    if setup.light.type_tag is "":
+        return ""
+    else:
+        return "__lens_" + setup.light.type_tag
+
+def lens_with_previous_light_and_model_mass(setup):
+    """Setup the lens galaxy model using the previous pipeline or phases results.
+
+    This function is required because the lens light model is not specified by the pipeline itself (e.g. this previous
+    pipeline determines if the lens light was modeled as a Sersic, bulge-disk, Gaussians, etc.)
+
+    So, we have to pass the lens light to this pipeline without explicitly referencing its light components."""
+
+    if setup.source.fix_lens_light:
+        lens = af.last[-1].instance.galaxies.lens
+        lens.mass = af.last[-1].model.galaxies.lens.mass
+        lens.shear = af.last[-1].model.galaxies.lens.shear
+    else:
+        lens = af.last[-1].model.galaxies.lens
+
+    lens.hyper_galaxy = af.last.result.hyper_combied.instance.optional.galaxies.lens.hyper_galaxy
+
+    return lens
+
 
 def make_pipeline(
     setup,
@@ -79,6 +105,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_source__inversion"
 
+    # For pipeline tagging we need to set the source type
+    setup.set_source_type(source_type=setup.source.inversion_tag)
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -87,12 +116,10 @@ def make_pipeline(
     # 4) The lens galaxy mass model includes an external shear.
     # 5) The lens light model used in the previous pipeline.
 
-    lens_light_tag = al.setup.lens_light_tag_from_lens(
-        lens=af.last.instance.galaxies.lens
-    )
+    lens_light_tag_from_setup(setup=setup)
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag + lens_light_tag)
+    phase_folders.append(setup.general.tag + setup.light.type_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
@@ -105,18 +132,11 @@ def make_pipeline(
     # assumed in the previous pipeline. They are setup as models or instances depending on the 'fix_lens_'light' and
     # 'fix_lens_mass' boolean inputs.
 
-    lens = al.setup.lens_from_result(
-        result=af.last,
-        hyper_result=af.last,
-        fix_lens_light=setup.source.fix_lens_light,
-        fix_lens_mass=True,
-    )
-
     phase1 = al.PhaseImaging(
         phase_name="phase_1__source_inversion_magnification_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=lens,
+            lens=af.last.instance.galaxies.lens,
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=al.pix.VoronoiMagnification,
@@ -155,12 +175,7 @@ def make_pipeline(
     # 2) Fix the lens light model to the results of the previous pipeline.
     # 3) Set priors on the lens galaxy mass from the previous pipeline.
 
-    lens = al.setup.lens_from_result(
-        result=af.last[-1],
-        hyper_result=phase1.result,
-        fix_lens_light=setup.source.fix_lens_light,
-        fix_lens_mass=False,
-    )
+    lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_light_sie__source_inversion_magnification",
@@ -205,18 +220,11 @@ def make_pipeline(
     # 1) Fix the lens light model to the results of the previous pipeline.
     # 2) Fix the lens mass model to the mass-model inferred in phase 2.
 
-    lens = al.setup.lens_from_result(
-        result=phase2.result,
-        hyper_result=phase2.result,
-        fix_lens_light=setup.source.fix_lens_light,
-        fix_lens_mass=True,
-    )
-
     phase3 = al.PhaseImaging(
         phase_name="phase_3__source_inversion_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=lens,
+            lens=phase2.result.instance.galaxies.lens,
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=setup.source.pixelization,
@@ -255,12 +263,7 @@ def make_pipeline(
     # 2) Fix the lens light model to the results of the previous pipeline.
     # 3) Set priors on the lens galaxy mass using the results of phase 2.
 
-    lens = al.setup.lens_from_result(
-        result=phase2.result,
-        hyper_result=phase3.result,
-        fix_lens_light=setup.source.fix_lens_light,
-        fix_lens_mass=False,
-    )
+    lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     # If they were aligned, unalign the lens light and mass given the model is now initialized.
 

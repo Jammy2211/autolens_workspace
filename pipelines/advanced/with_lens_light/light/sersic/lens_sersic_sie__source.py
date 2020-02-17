@@ -39,6 +39,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_light__sersic"
 
+    # For pipeline tagging we need to set the light type
+    setup.set_light_type(light_type="sersic")
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -47,7 +50,7 @@ def make_pipeline(
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
     phase_folders.append(
-        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+        setup.source.tag
     )
     phase_folders.append(setup.light.tag)
 

@@ -51,7 +51,7 @@ def make_pipeline(
     # 1) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.source.tag_beginner_no_inversion + "__" + setup.mass.tag)
+    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag_beginner)
 
     ### SETUP SHEAR ###
 
@@ -78,7 +78,7 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source_0=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,
@@ -114,10 +114,10 @@ def make_pipeline(
             ),
             source_0=al.GalaxyModel(
                 redshift=redshift_source,
-                light=phase1.result.model.galaxies.source_0.light,
+                sersic=phase1.result.model.galaxies.source_0.sersic,
             ),
             source_1=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,

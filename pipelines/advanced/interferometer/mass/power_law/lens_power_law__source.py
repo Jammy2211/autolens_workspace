@@ -44,7 +44,7 @@ def make_pipeline(
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
     phase_folders.append(
-        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+        setup.source.tag
     )
     phase_folders.append(setup.mass.tag)
 

@@ -70,7 +70,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
-            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
         ),
         positions_threshold=0.3,
     )
@@ -94,7 +94,7 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
                 redshift=0.5, mass=phase1.result.model.galaxies.lens.mass
             ),
             source=al.GalaxyModel(
-                redshift=1.0, light=phase1.result.model.galaxies.source.light
+                redshift=1.0, sersic=phase1.result.model.galaxies.source.sersic
             ),
         ),
     )

@@ -72,7 +72,7 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
                 redshift=redshift_lens, mass=mass, shear=al.mp.ExternalShear
             ),
             source_0=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
     )
@@ -97,7 +97,7 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
                 shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=2.0, light=phase1.result.model.galaxies.source.light
+                redshift=2.0, sersic=phase1.result.model.galaxies.source.sersic
             ),
         ),
     )

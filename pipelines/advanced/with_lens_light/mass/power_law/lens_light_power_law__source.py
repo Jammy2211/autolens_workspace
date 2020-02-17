@@ -16,6 +16,67 @@ import autolens as al
 # Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
+def lens_with_previous_light_and_model_mass(setup):
+    """Setup the lens galaxy model using the previous pipeline or phases results.
+
+    This function is required because the lens light model is not specified by the pipeline itself (e.g. the previous
+    pipeline determines if the lens light was modeled as a Sersic, bulge-disk, Gaussians, etc.)
+
+    So, we have to pass the lens light to this pipeline without explicitly referencing its light components."""
+
+    if setup.mass.fix_lens_light:
+        lens = af.last.instance.galaxies.lens
+    else:
+        lens = af.last.model.galaxies.lens
+
+    lens.hyper_galaxy = af.last.result.hyper_combied.instance.optional.galaxies.lens.hyper_galaxy
+
+    return lens
+
+
+def source_with_previous_model_or_instance(include_hyper_source):
+    """Setup the source source model using the previous pipeline or phase results.
+
+    This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
+    pipelines determines if the source was modeled using parametric light profiles or an inversion.
+
+    If the source was parametric this function returns the source as a model, given that a parametric source should be
+    fitted for simultaneously with the mass model.
+
+    If the source was an inversion then it is returned as an instance, given that the inversion parameters do not need
+    to be fitted for alongside the mass model.
+
+    The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
+    model fitting.
+    """
+    if include_hyper_source:
+        hyper_galaxy = (
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
+        )
+        hyper_galaxy.noise_factor = (
+            af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
+        )
+    else:
+        hyper_galaxy = None
+
+    if af.last.model.galaxies.source.pixelization is None:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            sersic=af.last.model.galaxies.source.sersic,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+    else:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            pixelization=af.last.instance.galaxies.source.pixelization,
+            regularization=af.last.instance.galaxies.source.regularization,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+
 
 def make_pipeline(
     setup,
@@ -37,6 +98,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_mass__power_law"
 
+    # For pipeline tagging we need to set the mass type
+    setup.set_mass_type(mass_type="power_law")
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -46,9 +110,9 @@ def make_pipeline(
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
     phase_folders.append(
-        setup.source.tag_from_source(source=af.last.instance.galaxies.source)
+        setup.source.tag
     )
-    phase_folders.append(setup.light.tag_from_lens(lens=af.last.instance.galaxies.lens))
+    phase_folders.append(setup.light.tag)
     phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###
@@ -74,11 +138,11 @@ def make_pipeline(
     # Setup the lens using the light model the 'light' pipeline, which will be fixed or fitted for depending on
     # the fix_lens_light parameter
 
-    lens = al.setup.lens_with_light_only_from_result(
-        result=af.last, fix_lens_light=setup.mass.fix_lens_light
-    )
-
     # Setup the power-law mass profile and initialize its priors from the SIE.
+
+    lens = lens_with_previous_light_and_model_mass(
+        setup=setup
+    )
 
     mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
@@ -91,14 +155,11 @@ def make_pipeline(
 
     lens.mass = mass
     lens.shear = shear
-    lens.hyper_galaxy = (
-        af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
-    )
 
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = al.setup.source_from_result(result=af.last, include_hyper_source=True)
+    source = source_with_previous_model_or_instance(include_hyper_source=True)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",

@@ -33,6 +33,9 @@ def make_pipeline(
 
     pipeline_name = "pipeline_source__parametric"
 
+    # For pipeline tagging we need to set the source type
+    setup.set_source_type(source_type="sersic")
+
     # This pipeline is tagged according to whether:
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
@@ -40,7 +43,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(setup.source.tag_no_inversion)
+    phase_folders.append(setup.source.tag)
 
     ### SETUP SHEAR ###
 
@@ -63,7 +66,7 @@ def make_pipeline(
                 redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,

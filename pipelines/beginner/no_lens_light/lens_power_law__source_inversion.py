@@ -74,7 +74,7 @@ def make_pipeline(
     # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag)
+    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag_beginner)
 
     ### SETUP SHEAR ###
 
@@ -102,7 +102,7 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,

@@ -63,7 +63,7 @@ def make_pipeline(
     # 1) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.source.tag_beginner_no_inversion + "__" + setup.mass.tag)
+    phase_folders.append(setup.source.tag_beginner + "__" + setup.mass.tag_beginner)
 
     ### SETUP SHEAR ###
 

@@ -164,7 +164,7 @@ def make_pipeline(
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
-    phase_folders.append(setup.source.tag_beginner + setup.mass.tag)
+    phase_folders.append(setup.source.tag_beginner + setup.mass.tag_beginner)
 
     ### SETUP SHEAR ###
 
@@ -187,7 +187,7 @@ def make_pipeline(
                 redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, light=al.lp.EllipticalSersic
+                redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
         positions_threshold=positions_threshold,
