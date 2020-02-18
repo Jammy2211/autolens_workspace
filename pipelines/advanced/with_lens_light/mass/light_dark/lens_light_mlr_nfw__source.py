@@ -32,6 +32,64 @@ import autolens as al
 # Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
 
 
+def source_is_inversion_from_setup(setup):
+    if setup.source.type_tag in "sersic":
+        return False
+    else:
+        return True
+
+
+def source_with_previous_model_or_instance(setup, include_hyper_source):
+    """Setup the source source model using the previous pipeline or phase results.
+
+    This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
+    pipelines determines if the source was modeled using parametric light profiles or an inversion.
+
+    If the source was parametric this function returns the source as a model, given that a parametric source should be
+    fitted for simultaneously with the mass model.
+
+    If the source was an inversion then it is returned as an instance, given that the inversion parameters do not need
+    to be fitted for alongside the mass model.
+
+    The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
+    model fitting.
+    """
+    if include_hyper_source:
+
+        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
+
+        hyper_galaxy.noise_factor = (
+            af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
+        )
+        hyper_galaxy.contribution_factor = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.contribution_factor
+        )
+        hyper_galaxy.noise_power = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.noise_power
+        )
+
+    else:
+
+        hyper_galaxy = None
+
+    if setup.source.type_tag in "sersic":
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            sersic=af.last.model.galaxies.source.sersic,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+    else:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            pixelization=af.last.instance.galaxies.source.pixelization,
+            regularization=af.last.instance.galaxies.source.regularization,
+            hyper_galaxy=hyper_galaxy,
+        )
+
+
 def make_pipeline(
     setup,
     phase_folders=None,

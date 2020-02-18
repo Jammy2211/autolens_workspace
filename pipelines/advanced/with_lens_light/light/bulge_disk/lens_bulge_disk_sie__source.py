@@ -25,6 +25,48 @@ import autolens as al
 # Notes: Can be customized to vary the lens mass and source.
 
 
+def source_with_previous_model_or_instance(setup):
+    """Setup the source source model using the previous pipeline or phase results.
+
+    This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
+    pipelines determines if the source was modeled using parametric light profiles or an inversion.
+
+    If the source was parametric this function returns the source as a model, given that a parametric source should be
+    fitted for simultaneously with the mass model.
+
+    If the source was an inversion then it is returned as an instance, given that the inversion parameters do not need
+    to be fitted for alongside the mass model.
+
+    The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
+    model fitting.
+    """
+
+    if setup.source.type_tag in "sersic":
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            sersic=af.last.hyper_combined.instance.galaxies.source.sersic,
+            hyper_galaxy=af.last.hyper_combined.instance.galaxies.source.hyper_galaxy,
+        )
+
+    else:
+
+        return al.GalaxyModel(
+            redshift=af.last.instance.galaxies.source.redshift,
+            pixelization=af.last.instance.galaxies.source.pixelization,
+            regularization=af.last.instance.galaxies.source.regularization,
+            hyper_galaxy=af.last.hyper_combined.instance.galaxies.source.hyper_galaxy,
+        )
+
+
+def source_is_inversion_from_setup(setup):
+
+    if setup.source.type_tag in "sersic":
+        return False
+    else:
+        return True
+
+
 def make_pipeline(
     setup,
     phase_folders=None,
@@ -70,43 +112,56 @@ def make_pipeline(
     # well. This can be circumvented by including the noise scaling as a free parameter.
 
     if setup.general.hyper_galaxies:
-        hyper_galaxy = af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy
+
+        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
+
         hyper_galaxy.noise_factor = (
             af.last.hyper_combined.model.galaxies.lens.hyper_galaxy.noise_factor
         )
+        hyper_galaxy.contribution_factor = (
+            af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy.contribution_factor
+        )
+        hyper_galaxy.noise_power = (
+            af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy.noise_power
+        )
+
     else:
+
         hyper_galaxy = None
 
-    gaussian_0 = af.PriorModel(al.lp.EllipticalGaussian)
-    gaussian_1 = af.PriorModel(al.lp.EllipticalGaussian)
-    gaussian_2 = af.PriorModel(al.lp.EllipticalGaussian)
-    gaussian_3 = af.PriorModel(al.lp.EllipticalGaussian)
+    # Model the disk as a Sersic if input.
 
-    gaussian_1.centre = gaussian_0.centre
-    gaussian_2.centre = gaussian_0.centre
-    gaussian_3.centre = gaussian_0.centre
-
-    if setup.source.lens_light_centre is not None:
-        gaussian_0.centre = setup.source.lens_light_centre
-        gaussian_1.centre = setup.source.lens_light_centre
-        gaussian_2.centre = setup.source.lens_light_centre
-        gaussian_3.centre = setup.source.lens_light_centre
+    if setup.light.disk_as_sersic:
+        disk = af.PriorModel(al.lp.EllipticalSersic)
+    else:
+        disk = af.PriorModel(al.lp.EllipticalExponential)
 
     lens = al.GalaxyModel(
         redshift=redshift_lens,
-        gaussian_0=gaussian_0,
-        gaussian_1=gaussian_1,
-        gaussian_2=gaussian_2,
-        gaussian_3=gaussian_3,
+        bulge=al.lp.EllipticalSersic,
+        disk=disk,
         mass=af.last.instance.galaxies.lens.mass,
         shear=af.last.instance.galaxies.lens.shear,
         hyper_galaxy=hyper_galaxy,
     )
 
+    # Adjust the alignment of the bulge and disk to the input of the pipeline setup.
+
+    if setup.light.align_bulge_disk_centre:
+        lens.bulge.centre = lens.disk.centre
+
+    if setup.light.align_bulge_disk_axis_ratio:
+        lens.bulge.axis_ratio = lens.disk.axis_ratio
+
+    if setup.light.align_bulge_disk_phi:
+        lens.bulge.phi = lens.disk.phi
+
+    source = source_with_previous_model_or_instance(setup=setup)
+
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk_sie__source",
         phase_folders=phase_folders,
-        galaxies=dict(lens=lens, source=af.last.instance.galaxies.source),
+        galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         positions_threshold=positions_threshold,
@@ -127,7 +182,7 @@ def make_pipeline(
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
         hyper_galaxy=setup.general.hyper_galaxies,
-        inversion=True,
+        inversion=source_is_inversion_from_setup(setup=setup),
         include_background_sky=setup.general.hyper_image_sky,
         include_background_noise=setup.general.hyper_background_noise,
     )

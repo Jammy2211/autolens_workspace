@@ -17,6 +17,13 @@ import autolens as al
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
 
+def source_is_inversion_from_setup(setup):
+    if setup.source.type_tag in "sersic":
+        return False
+    else:
+        return True
+
+
 def lens_with_previous_light_and_model_mass(setup):
     """Setup the lens galaxy model using the previous pipeline or phases results.
 
@@ -37,7 +44,7 @@ def lens_with_previous_light_and_model_mass(setup):
     return lens
 
 
-def source_with_previous_model_or_instance(include_hyper_source):
+def source_with_previous_model_or_instance(setup, include_hyper_source):
     """Setup the source source model using the previous pipeline or phase results.
 
     This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
@@ -53,16 +60,24 @@ def source_with_previous_model_or_instance(include_hyper_source):
     model fitting.
     """
     if include_hyper_source:
-        hyper_galaxy = (
-            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
-        )
+
+        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
+
         hyper_galaxy.noise_factor = (
             af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
         )
+        hyper_galaxy.contribution_factor = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.contribution_factor
+        )
+        hyper_galaxy.noise_power = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.noise_power
+        )
+
     else:
+
         hyper_galaxy = None
 
-    if af.last.model.galaxies.source.pixelization is None:
+    if setup.source.type_tag in "sersic":
 
         return al.GalaxyModel(
             redshift=af.last.instance.galaxies.source.redshift,
@@ -121,7 +136,7 @@ def make_pipeline(
 
     if not setup.mass.no_shear:
         if af.last.model.galaxies.lens.shear is not None:
-            shear = af.last.model.galaxies.lens.shear
+            shear = af.last[-1].model.galaxies.lens.shear
         else:
             shear = al.mp.ExternalShear
     else:
@@ -140,29 +155,57 @@ def make_pipeline(
 
     # Setup the power-law mass profile and initialize its priors from the SIE.
 
-    lens = lens_with_previous_light_and_model_mass(setup=setup)
+    # lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
-    mass.centre = af.last.model.galaxies.lens.mass.centre
-    mass.axis_ratio = af.last.model.galaxies.lens.mass.axis_ratio
-    mass.phi = af.last.model.galaxies.lens.mass.phi
-    mass.einstein_radius = af.last.model_absolute(
-        a=0.3
-    ).galaxies.lens.mass.einstein_radius
+    # -1 as the last phase was the light phase, with a fixed mass model.
 
-    lens.mass = mass
-    lens.shear = shear
+    mass.centre = af.last[-1].model.galaxies.lens.mass.centre
+    mass.axis_ratio = af.last[-1].model.galaxies.lens.mass.axis_ratio
+    mass.phi = af.last[-1].model.galaxies.lens.mass.phi
+    mass.einstein_radius = (
+        af.last[-1].model_absolute(a=0.3).galaxies.lens.mass.einstein_radius
+    )
+
+    # lens.mass = mass
+    # lens.shear = shear
+
+    if setup.mass.fix_lens_light:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            bulge=af.last.instance.galaxies.lens.bulge,
+            disk=af.last.instance.galaxies.lens.disk,
+            mass=mass,
+            shear=shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
+    else:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            bulge=af.last.model.galaxies.lens.bulge,
+            disk=af.last.model.galaxies.lens.disk,
+            mass=mass,
+            shear=shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
 
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = source_with_previous_model_or_instance(include_hyper_source=True)
+    # TODO : Pretty sure this function is broken, and works simply cause .model is the default.
+
+    source = source_with_previous_model_or_instance(
+        setup=setup, include_hyper_source=True
+    )
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",
         phase_folders=phase_folders,
-        galaxies=dict(lens=lens, source=source),
+        galaxies=dict(len=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         positions_threshold=positions_threshold,
@@ -182,7 +225,7 @@ def make_pipeline(
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        inversion=True,
+        inversion=source_is_inversion_from_setup(setup=setup),
         hyper_galaxy=setup.general.hyper_galaxies,
         include_background_sky=setup.general.hyper_image_sky,
         include_background_noise=setup.general.hyper_background_noise,

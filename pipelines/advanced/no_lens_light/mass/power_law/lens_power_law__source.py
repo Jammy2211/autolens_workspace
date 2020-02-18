@@ -17,7 +17,14 @@ import autolens as al
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
 
-def source_with_previous_model_or_instance(include_hyper_source):
+def source_is_inversion_from_setup(setup):
+    if setup.source.type_tag in "sersic":
+        return False
+    else:
+        return True
+
+
+def source_with_previous_model_or_instance(setup, include_hyper_source):
     """Setup the source source model using the previous pipeline or phase results.
 
     This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
@@ -32,17 +39,26 @@ def source_with_previous_model_or_instance(include_hyper_source):
     The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
     model fitting.
     """
+
     if include_hyper_source:
-        hyper_galaxy = (
-            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
-        )
+
+        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
+
         hyper_galaxy.noise_factor = (
             af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
         )
+        hyper_galaxy.contribution_factor = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.contribution_factor
+        )
+        hyper_galaxy.noise_power = (
+            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.noise_power
+        )
+
     else:
+
         hyper_galaxy = None
 
-    if af.last.model.galaxies.source.pixelization is None:
+    if setup.source.type_tag in "sersic":
 
         return al.GalaxyModel(
             redshift=af.last.instance.galaxies.source.redshift,
@@ -126,7 +142,9 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = source_with_previous_model_or_instance(include_hyper_source=True)
+    source = source_with_previous_model_or_instance(
+        setup=setup, include_hyper_source=True
+    )
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",
@@ -154,7 +172,7 @@ def make_pipeline(
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        inversion=True,
+        inversion=source_is_inversion_from_setup(setup=setup),
         hyper_galaxy=setup.general.hyper_galaxies,
         include_background_sky=setup.general.hyper_image_sky,
         include_background_noise=setup.general.hyper_background_noise,

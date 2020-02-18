@@ -1,4 +1,4 @@
-from pathlib import Path
+import os
 
 import autofit as af
 import autolens as al
@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 # models from a non-linear search and visualize and interpret results.
 
 # First, we set up the aggregator as we did in the previous tutorial.
-workspace_path = Path(__file__).parent.parent
-output_path = workspace_path / "output"
-aggregator_results_path = output_path / "aggregator_sample_beginner"
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+output_path = workspace_path + "output"
+aggregator_results_path = output_path + "/aggregator_sample_beginner"
 
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path / "config"), output_path=str(aggregator_results_path)
+    config_path=str(workspace_path + "/config"), output_path=str(output_path)
 )
 
 aggregator = af.Aggregator(directory=str(aggregator_results_path))
@@ -32,13 +32,24 @@ most_likely_model_instances = [
 ]
 
 # A model instance is a Galaxy instance of the pipeline's GalaxyModel. So, its just a list of galaxies which we
-# can pass to functions in PyAutoLens. Lets create the most-likely tracer of every fit and then plot their subplots.
+# can pass to functions in PyAutoLens.
+#
+# Lets create the most-likely tracer of every fit...
 most_likely_tracers = [
     al.Tracer.from_galaxies(galaxies=instance.galaxies)
     for instance in most_likely_model_instances
 ]
 
-[aplt.tracer.subplot_tracer(tracer=tracer) for tracer in most_likely_tracers]
+print("Most Likely Tracers: \n")
+print(most_likely_tracers, "\n")
+print("Total Tracers = ", len(most_likely_tracers))
+
+# ...  and plot their convergences.
+#
+# We'll use a grid of 100 x 100 pixels for now, and cover later how we use the actual grid of the data.
+grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.1)
+
+[aplt.tracer.convergence(tracer=tracer, grid=grid) for tracer in most_likely_tracers]
 
 # Because instances are just lists of galaxies we can directly extract attributes of the Galaxy class. Lets print
 # the Einstein mass of each of our most-likely lens galaxies.
@@ -123,8 +134,13 @@ def weighted_mean_and_standard_deviation(values, weights):
     return (average, np.sqrt(variance))
 
 
-# Now, we iterate over each MultiNestOutput, extracting all samples and computing ther masses and weights and compute
-# the weighted mean of these samples.
+# Now, we iterate over each MultiNestOutput, extracting all samples and computing ther masses and weights and
+# compute the weighted mean of these samples.
+
+# Computing an Einstein mass takes a bit of time, so be warned this cell could run for a few minutes! To speed
+# things up, you'll notice that we only perform the loop on samples whose probably is above 1.0e-4.
+
+sample_weight_threshold = 1.0e-4
 
 einstein_masses = []
 einstein_mass_errors = []
@@ -135,13 +151,18 @@ for multi_nest_output in multi_nest_outputs:
     sample_weights = []
 
     for sample_index in range(multi_nest_output.total_samples):
-        instance = multi_nest_output.sample_model_instance_from_sample_index(
+
+        sample_weight = multi_nest_output.sample_weight_from_sample_index(
             sample_index=sample_index
         )
-        sample_masses.append(instance.galaxies.lens.einstein_mass)
-        sample_weights.append(
-            multi_nest_output.sample_weight_from_sample_index(sample_index=sample_index)
-        )
+
+        if sample_weight > sample_weight_threshold:
+
+            instance = multi_nest_output.sample_model_instance_from_sample_index(
+                sample_index=sample_index
+            )
+            sample_masses.append(instance.galaxies.lens.einstein_mass)
+            sample_weights.append(sample_weight)
 
     value, error = weighted_mean_and_standard_deviation(
         values=sample_masses, weights=sample_weights

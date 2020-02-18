@@ -42,7 +42,7 @@ def source_with_previous_model_or_instance(include_hyper_source):
     else:
         hyper_galaxy = None
 
-    if af.last.model.galaxies.source.pixelization is None:
+    if setup.source.type_tag in "sersic":
 
         return al.GalaxyModel(
             redshift=af.last.instance.galaxies.source.redshift,
@@ -125,7 +125,9 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = source_with_previous_model_or_instance(include_hyper_source=True)
+    source = source_with_previous_model_or_instance(
+        setup=setup, include_hyper_source=True
+    )
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_power_law__source",

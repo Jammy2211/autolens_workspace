@@ -65,7 +65,7 @@ def lens_light_tag_from_setup(setup):
     if setup.light.type_tag is "":
         return ""
     else:
-        return "__lens_" + setup.light.type_tag
+        return "__light_" + setup.light.type_tag
 
 
 def lens_with_previous_light_and_model_mass(setup):
@@ -189,13 +189,20 @@ def make_pipeline(
     # 2) Fix the lens light model to the results of the previous pipeline.
     # 3) Set priors on the lens galaxy mass from the previous pipeline.
 
-    lens = lens_with_previous_light_and_model_mass(setup=setup)
+    # lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_light_sie__source_inversion_magnification",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=lens,
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                bulge=af.last[-1].instance.galaxies.lens.bulge,
+                disk=af.last[-1].instance.galaxies.lens.disk,
+                mass=af.last[-1].model.galaxies.lens.mass,
+                shear=af.last[-1].model.galaxies.lens.shear,
+                hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+            ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=phase1.result.instance.galaxies.source.pixelization,
@@ -234,16 +241,23 @@ def make_pipeline(
     # 1) Fix the lens light model to the results of the previous pipeline.
     # 2) Fix the lens mass model to the mass-model inferred in phase 2.
 
-    lens = phase2.result.instance.galaxies.lens
-    lens.hyper_galaxy = (
-        phase2.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
-    )
+    # lens = phase2.result.instance.galaxies.lens
+    # lens.hyper_galaxy = (
+    #     phase2.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
+    # )
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__source_inversion_initialization",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=lens,
+            lens=al.GalaxyModel(
+                redshift=redshift_lens,
+                bulge=phase2.result.instance.galaxies.lens.bulge,
+                disk=phase2.result.instance.galaxies.lens.disk,
+                mass=phase2.result.instance.galaxies.lens.mass,
+                shear=phase2.result.instance.galaxies.lens.shear,
+                hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+            ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
                 pixelization=setup.source.pixelization,
@@ -282,20 +296,39 @@ def make_pipeline(
     # 2) Fix the lens light model to the results of the previous pipeline.
     # 3) Set priors on the lens galaxy mass using the results of phase 2.
 
-    lens = lens_with_previous_light_and_model_mass(setup=setup)
+    # lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     # If they were aligned, unalign the lens light and mass given the model is now initialized.
 
     # TODO : Generaalize this if loop to any lens light profile
 
-    # if (
-    #     setup.source.align_light_mass_centre
-    #     or setup.source.lens_mass_centre is not None
-    # ):
-    #
-    #     lens.mass.centre = phase2.result.model_absolute(
-    #         a=0.05
-    #     ).galaxies.lens.bulge.centre
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+
+    if setup.source.lens_mass_centre is not None:
+
+        mass.centre.centre_0 = af.GaussianPrior(
+            mean=setup.source.lens_mass_centre[0], sigma=0.05
+        )
+        mass.centre.centre_1 = af.GaussianPrior(
+            mean=setup.source.lens_mass_centre[1], sigma=0.05
+        )
+
+    elif setup.source.align_light_mass_centre:
+
+        mass.centre = af.last[-3].model.galaxies.lens.bulge.centre
+
+    mass.axis_ratio = phase2.result.model.galaxies.lens.mass.axis_ratio
+    mass.phi = phase2.result.model.galaxies.lens.mass.phi
+    mass.einstein_radius = phase2.result.model.galaxies.lens.mass.einstein_radius
+
+    lens = al.GalaxyModel(
+        redshift=redshift_lens,
+        bulge=phase2.result.instance.galaxies.lens.bulge,
+        disk=phase2.result.instance.galaxies.lens.disk,
+        mass=mass,
+        shear=phase2.result.model.galaxies.lens.shear,
+        hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+    )
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_light_sie__source_inversion",

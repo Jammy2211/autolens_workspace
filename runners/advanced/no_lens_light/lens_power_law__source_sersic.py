@@ -26,7 +26,7 @@ import os
 # Advanced pipelines are written following the SLAM method, whereby we first initialize the source fit to a lens,
 # followed by the lens's light and then the lens's mass.
 
-# If you think back to the beginner and intermediate pipelines this is exactly what they di. We'd get the inversion
+# If you think back to the beginner and intermediate pipelines this is exactly what they did. We'd get the inversion
 # up and running first, then refine the lens's light model and finally its mass. Advanced pipelines simply use
 # separate pipelines to do this, each of which has features that enable more customization of the model that is fitted.
 
@@ -50,12 +50,10 @@ import os
 
 ### THIS RUNNER ###
 
-# Using two source pipelines and a mass pipeline we will fit a power-law mass model and source using a pixelized
-# inversion.
+# Using a source pipeline and a mass pipeline we will fit a power-law mass model and source using a parametric sersic.
 
 # We'll use the example pipelines:
 # 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'.
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'.
 # 'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/lens_power_law__source.py'.
 
 # Check them out now for a detailed description of the analysis!
@@ -78,11 +76,12 @@ af.conf.instance = af.conf.Config(
 ### AUTOLENS + DATA SETUP ###
 
 import autolens as al
+import autolens.plot as aplt
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = "lens_sie__subhalo_nfw__source_sersic"
-pixel_scales = 0.05
+dataset_name = "lens_sie__source_sersic"
+pixel_scales = 0.1
 
 # Create the path where the dataset will be loaded from, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
@@ -100,12 +99,11 @@ imaging = al.imaging.from_fits(
 
 # Next, we create the mask we'll fit this data-set with.
 mask = al.mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 # Make a quick subplot to make sure the data looks as we expect.
-# aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
-
+aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 ### PIPELINE SETUP ###
 
@@ -124,9 +122,7 @@ general_setup = al.setup.General(
     hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=True
 )
 
-source_setup = al.setup.Source(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
-)
+source_setup = al.setup.Source()
 
 mass_setup = al.setup.Mass(no_shear=False)
 
@@ -137,15 +133,8 @@ setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_set
 ### SOURCE ###
 
 from pipelines.advanced.no_lens_light.source.parametric import lens_sie__source_sersic
-from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
-    lens_sie__source_inversion,
-)
 
 pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
-)
-
-pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -157,25 +146,11 @@ pipeline_mass__power_law = lens_power_law__source.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
-### SUBHALO ###
-
-from pipelines.advanced.no_lens_light.subhalo import lens_mass__subhalo_nfw__source
-
-pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
-    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
-)
-
-
 ### PIPELINE COMPOSITION AND RUN ###
 
 # We finally add the pipelines above together, which means that they will run back-to-back, as usual passing
 # information throughout the analysis to later phases.
 
-pipeline = (
-    pipeline_source__parametric
-    + pipeline_source__inversion
-    + pipeline_mass__power_law
-    + pipeline_subhalo__nfw
-)
+pipeline = pipeline_source__parametric + pipeline_mass__power_law
 
 pipeline.run(dataset=imaging, mask=mask)
