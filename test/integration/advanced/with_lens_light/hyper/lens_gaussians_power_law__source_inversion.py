@@ -66,14 +66,16 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../../../".format(
+    os.path.dirname(os.path.realpath(__file__))
+)
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "/test/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -82,7 +84,7 @@ import autolens.plot as aplt
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = "lens_bulge_disk_sie__source_sersic"
+dataset_name = "lens_gaussians_x3_sie__source_sersic"
 pixel_scales = 0.1
 
 # Create the path where the dataset will be loaded from, which in this case is
@@ -134,13 +136,10 @@ source_setup = al.setup.Source(
     align_light_mass_centre=False,
     no_shear=False,
     fix_lens_light=True,
+    number_of_gaussians=4,
 )
 
-light_setup = al.setup.Light(
-    align_bulge_disk_centre=True,
-    align_bulge_disk_axis_ratio=False,
-    align_bulge_disk_phi=False,
-)
+light_setup = al.setup.Light()
 
 mass_setup = al.setup.Mass(no_shear=False)
 
@@ -153,21 +152,28 @@ setup = al.setup.Setup(
 ### SOURCE ###
 
 from pipelines.advanced.with_lens_light.source.parametric import (
-    lens_bulge_disk_sie__source_sersic,
+    lens_gaussians_sie__source_sersic,
+)
+from pipelines.advanced.with_lens_light.source.inversion.from_parametric import (
+    lens_light_sie__source_inversion,
 )
 
-pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
+pipeline_source__parametric = lens_gaussians_sie__source_sersic.make_pipeline(
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
+)
+
+pipeline_source__inversion = lens_light_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 ### Light ###
 
-from pipelines.advanced.with_lens_light.light.bulge_disk import (
-    lens_bulge_disk_sie__source,
+from pipelines.advanced.with_lens_light.light.gaussians import (
+    lens_gaussians_sie__source,
 )
 
 
-pipeline_light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
+pipeline_light__gaussians = lens_gaussians_sie__source.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -187,7 +193,10 @@ pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
 # information throughout the analysis to later phases.
 
 pipeline = (
-    pipeline_source__parametric + pipeline_light__bulge_disk + pipeline_mass__power_law
+    pipeline_source__parametric
+    + pipeline_source__inversion
+    + pipeline_light__gaussians
+    + pipeline_mass__power_law
 )
 
 pipeline.run(dataset=imaging, mask=mask)

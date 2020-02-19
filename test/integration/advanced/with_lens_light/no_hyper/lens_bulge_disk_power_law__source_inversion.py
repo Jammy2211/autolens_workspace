@@ -66,14 +66,16 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../../../".format(
+    os.path.dirname(os.path.realpath(__file__))
+)
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "/test/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -123,7 +125,7 @@ aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 # - The alignment of the bulge-disk lens light model used in the mass pipeline.
 
 general_setup = al.setup.General(
-    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=True
+    hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
 )
 
 source_setup = al.setup.Source(
@@ -155,8 +157,15 @@ setup = al.setup.Setup(
 from pipelines.advanced.with_lens_light.source.parametric import (
     lens_bulge_disk_sie__source_sersic,
 )
+from pipelines.advanced.with_lens_light.source.inversion.from_parametric import (
+    lens_light_sie__source_inversion,
+)
 
 pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
+    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
+)
+
+pipeline_source__inversion = lens_light_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -187,7 +196,10 @@ pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
 # information throughout the analysis to later phases.
 
 pipeline = (
-    pipeline_source__parametric + pipeline_light__bulge_disk + pipeline_mass__power_law
+    pipeline_source__parametric
+    + pipeline_source__inversion
+    + pipeline_light__bulge_disk
+    + pipeline_mass__power_law
 )
 
 pipeline.run(dataset=imaging, mask=mask)

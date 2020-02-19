@@ -66,14 +66,16 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../../../".format(
+    os.path.dirname(os.path.realpath(__file__))
+)
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "/test/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -123,7 +125,7 @@ aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 # - The alignment of the bulge-disk lens light model used in the mass pipeline.
 
 general_setup = al.setup.General(
-    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=True
+    hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
 )
 
 source_setup = al.setup.Source(

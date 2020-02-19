@@ -1,0 +1,172 @@
+Advanced pipelines have a number of additional settings that can be passed to the source, light or mass Setup
+objects.
+
+These options typically apply to only their corresponding pipeline, e.g. the Source setup options only change the
+beheviour of the source pipeline(s).
+
+They may also change the model fitted in later pipelines.
+
+# GENERAL #
+
+    Below, we given an example of a General setup using all options available to an advanced pipeline:
+
+    general_setup = al.setup.General(
+        hyper_galaxies=False,
+        hyper_background_noise=False,
+        hyper_image_sky=False,
+    )
+
+    hyper_galaxies : bool (default=False)
+
+        If true, hyper-galaxies are used to scale the noise-map between all phases of each pipeline.
+
+    hyper_background_noise : bool (default=False)
+
+        If true, the level of background noise is modeled throughout the pipeline.
+
+    hyper_image_sky : bool (default=False)
+
+        If true, the background sky is modeled throughout the pipeline.
+
+# SOURCE #
+
+    Below, we give an example of a Source setup using all options available to an advanced pipeline:
+
+    source_setup = al.setup.Source(
+        pixelization=al.pix.VoronoiBrightnessImage,
+        regularization=al.reg.AdaptiveBrightness,
+        lens_light_centre=(0.0, 0.0),
+        lens_mass_centre=(0.0, 0.0),
+        align_light_mass_centre=False,
+        no_shear=False,
+        lens_light_bulge_only=True,
+        fix_lens_light=True,
+    )
+
+
+    pixelization : al.pix
+
+        If a source inversion pipeline is run, this sets the pixelization used by the source inversion.
+        This pixelization will be used by all subsequent pipelines (e.g. light, mass, etc.).
+
+        If a source inversion pipeline is not run (e.g. only a parametric source pipeline is used) this pixelization
+        is not used and the parametric source model is used by all subsequent pipelines (e.g. light, mass, etc.).
+
+    regularization : al.reg
+
+        If a source inversion pipeline is run, this sets the regularization used by the source inversion.
+        This regularization will be used by all subsequent pipelines (e.g. light, mass, etc.).
+
+        If a source inversion pipeline is not run (e.g. only a parametric source pipeline is used) this regularization
+        is not used and the parametric source model is used by all subsequent pipelines (e.g. light, mass, etc.).
+
+    lens_light_centre : (float, float)
+
+        If input, the centre of the lens light profiles (An EllipticalSersic + EllipticalSersic) are fixed to the input
+        tuple instead of being fitted for as free parameters.
+
+    lens_mass_centre : (float, float)
+
+        If input, the centre of the lens mass profile (an EllipticalIsothermal) is fixed to the input tuple instead of
+        being fitted for as free parameters.
+
+    align_light_mass_centre : bool (default=False)
+
+        If True, the centre of the lens light profile(s) and mass profile(s) are aligned during the model-fitting.
+
+        If both the lens_light_centre and lens_mass_centre tuples are input, this option is disabled.
+
+    no_shear : bool (default=False)
+
+        If True, the source pipeline does not include a shear in the lens mass model.
+
+        This mass model is used in a subsequent 'light' pipeline.
+
+    lens_light_bulge_only : bool (default=False)
+
+        If True, the lens light model will only include its bulge component (e.g. x1 EllipticalSersic) as opposed to a
+        bulge and disk (e.g. EllipticalSersic + EllipticalExponential).
+
+    fix_lens_light : bool (default=True)
+
+        If True, the lens light model is fixed after phase 3 of the parametric source pipeline (e.g. in phase 4 and
+        all phases of the source inversion pipeline).
+
+
+# Light #
+
+    Below, we give an example of a Light setup using all options available to an advanced pipeline:
+
+    light_setup = al.setup.Light(
+        align_bulge_disk_centre=True,
+        align_bulge_disk_axis_ratio=False,
+        align_bulge_disk_phi=False,
+        disk_as_Sersic=True,
+    )
+
+    align_bulge_disk_centre : bool (default=True)
+
+        If a bulge_disk light pipeline is run, this determines if the centre of bulge and disk components are aligned
+        during the model fit.
+
+        This bulge-disk centroid alignment will be used in all subsequents pipelines (e.g. mass).
+
+    align_bulge_disk_axis_ratio : bool (default=False)
+
+        If a bulge_disk light pipeline is run, this determines if the axis_ratio's of bulge and disk components are
+        forced to be the same during the model fit.
+
+        This bulge-disk axis-ratio alignment will be used in all subsequents pipelines (e.g. mass).
+
+    align_bulge_disk_phi : bool (default=False)
+
+        If a bulge_disk light pipeline is run, this determines if the centre of bulge and disk components are aligned
+        during the model fit.
+
+        This bulge-disk rotational alignment will be used in all subsequents pipelines (e.g. mass).
+
+    disk_as_sersic : bool (default=False)
+
+        If True, the disk component of the bulge-disk lens light profile will be modeled using an EllipticalSersic
+        profile as opposed to an EllipticalExponential.
+
+        This disk model will be used in all subsequents pipelines (e.g. mass).
+
+
+# Mass #
+
+    Below, we give an example of a Mass setup using all options available to an advanced pipeline:
+
+    mass_setup = al.setup.Mass(
+        no_shear=False,
+        align_light_dark_centre=False,
+        align_bulge_dark_centre=False,
+        fix_lens_light=False,
+    )
+
+
+    no_shear : bool (default=False)
+
+        If True, the mass pipeline does not include a shear in the lens mass model.
+
+        This mass model is used in any subsequent pipeline.
+
+    align_light_dark_centre : bool (default=False)
+
+        If a light_dark mass pipeline is run using a light profile composed of a single light profile (e.g. just a
+        Sersic), this determines if the centre of the dark component (an NFW) and the light profile are forced to be the
+        same during the model fit.
+
+        This light-dark centroid alignment will be used in all subsequents pipelines.
+
+    align_bulge_dark_centre : bool (default=False)
+
+        If a light_dark mass pipeline is run using a light profile composed of a bulge-disk light profile, this
+        determines if the centre of the dark component (an NFW) and the bulge profile are forced to be the
+        same during the model fit.
+
+        This bulge-dark centroid alignment will be used in all subsequents pipelines.
+
+    fix_lens_light : bool (default=False)
+
+        If True, the lens light model is fixed during the mass pipeline.

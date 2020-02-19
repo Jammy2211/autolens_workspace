@@ -26,7 +26,7 @@ import os
 # Advanced pipelines are written following the SLAM method, whereby we first initialize the source fit to a lens,
 # followed by the lens's light and then the lens's mass.
 
-# If you think back to the beginner and intermediate pipelines this is exactly what they di. We'd get the inversion
+# If you think back to the beginner and intermediate pipelines this is exactly what they did. We'd get the inversion
 # up and running first, then refine the lens's light model and finally its mass. Advanced pipelines simply use
 # separate pipelines to do this, each of which has features that enable more customization of the model that is fitted.
 
@@ -50,14 +50,11 @@ import os
 
 ### THIS RUNNER ###
 
-# Using two source pipelines, a light pipeline and a mass pipeline we will fit a power-law mass model and source using
-# a pixelized inversion.
+# Using a source pipeline and a mass pipeline we will fit a power-law mass model and source using a parametric sersic.
 
 # We'll use the example pipelines:
-# 'autolens_workspace/pipelines/advanced/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
-# 'autolens_workspace/pipelines/advanced/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
-# 'autolens_workspace/pipelines/advanced/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
-# 'autolens_workspace/pipelines/advanced/with_lens_light/mass/power_law/lens_light_power_law__source.py'.
+# 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'.
+# 'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/lens_power_law__source.py'.
 
 # Check them out now for a detailed description of the analysis!
 
@@ -66,23 +63,26 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../../../".format(
+    os.path.dirname(os.path.realpath(__file__))
+)
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=workspace_path + "/test/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
+
 import autolens as al
 import autolens.plot as aplt
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
 dataset_label = "imaging"
-dataset_name = "lens_bulge_disk_sie__source_sersic"
+dataset_name = "lens_sie__source_sersic"
 pixel_scales = 0.1
 
 # Create the path where the dataset will be loaded from, which in this case is
@@ -107,7 +107,6 @@ mask = al.mask.circular(
 # Make a quick subplot to make sure the data looks as we expect.
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-
 ### PIPELINE SETUP ###
 
 # Advanced pipelines use the same 'Source', 'Light' and 'Mass' setup objects we used in beginner and intermediate
@@ -120,64 +119,32 @@ aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # - The pixelization and regularization scheme used in the source (inversion) pipeline will be used in the light and
 #   mass pipelines.
-# - The alignment of the bulge-disk lens light model used in the mass pipeline.
 
 general_setup = al.setup.General(
-    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=True
+    hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
 )
 
-source_setup = al.setup.Source(
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
-    lens_light_centre=(0.0, 0.0),
-    lens_mass_centre=(0.0, 0.0),
-    align_light_mass_centre=False,
-    no_shear=False,
-    fix_lens_light=True,
-)
-
-light_setup = al.setup.Light(
-    align_bulge_disk_centre=True,
-    align_bulge_disk_axis_ratio=False,
-    align_bulge_disk_phi=False,
-)
+source_setup = al.setup.Source()
 
 mass_setup = al.setup.Mass(no_shear=False)
 
-setup = al.setup.Setup(
-    general=general_setup, source=source_setup, light=light_setup, mass=mass_setup
-)
+setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_setup)
 
 # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
 ### SOURCE ###
 
-from pipelines.advanced.with_lens_light.source.parametric import (
-    lens_bulge_disk_sie__source_sersic,
-)
+from pipelines.advanced.no_lens_light.source.parametric import lens_sie__source_sersic
 
-pipeline_source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
-    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
-)
-
-### Light ###
-
-from pipelines.advanced.with_lens_light.light.bulge_disk import (
-    lens_bulge_disk_sie__source,
-)
-
-
-pipeline_light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
+pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
 ### MASS ###
 
-from pipelines.advanced.with_lens_light.mass.power_law import (
-    lens_light_power_law__source,
-)
+from pipelines.advanced.no_lens_light.mass.power_law import lens_power_law__source
 
-pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
+pipeline_mass__power_law = lens_power_law__source.make_pipeline(
     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
 )
 
@@ -186,8 +153,6 @@ pipeline_mass__power_law = lens_light_power_law__source.make_pipeline(
 # We finally add the pipelines above together, which means that they will run back-to-back, as usual passing
 # information throughout the analysis to later phases.
 
-pipeline = (
-    pipeline_source__parametric + pipeline_light__bulge_disk + pipeline_mass__power_law
-)
+pipeline = pipeline_source__parametric + pipeline_mass__power_law
 
 pipeline.run(dataset=imaging, mask=mask)

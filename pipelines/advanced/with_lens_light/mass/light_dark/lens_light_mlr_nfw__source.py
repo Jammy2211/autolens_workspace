@@ -210,6 +210,7 @@ def make_pipeline(
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.n_live_points = 40
     phase1.optimizer.sampling_efficiency = 0.2
+    phase1.optimizer.evidence_tolerance = 0.8
 
     ### PHASE 2 ###
 
@@ -250,6 +251,7 @@ def make_pipeline(
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 75
     phase2.optimizer.sampling_efficiency = 0.2
+    phase2.optimizer.evidence_tolerance = 0.8
 
     phase2 = phase2.extend_with_inversion_phase()
 

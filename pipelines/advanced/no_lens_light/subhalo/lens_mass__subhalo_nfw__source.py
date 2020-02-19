@@ -107,12 +107,13 @@ def make_pipeline(
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
         optimizer_class=af.MultiNest,
-        number_of_steps=5,
+        number_of_steps=4,
     )
 
     phase1.optimizer.const_efficiency_mode = False
-    phase1.optimizer.n_live_points = 75
+    phase1.optimizer.n_live_points = 40
     phase1.optimizer.sampling_efficiency = 0.5
+    phase1.optimizer.evidence_tolerance = 5.0
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__subhalo_refine",
@@ -137,6 +138,7 @@ def make_pipeline(
     phase2.optimizer.const_efficiency_mode = False
     phase2.optimizer.n_live_points = 80
     phase2.optimizer.sampling_efficiency = 0.3
+    phase2.optimizer.evidence_tolerance = 0.8
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
         hyper_galaxy=setup.general.hyper_galaxies,
