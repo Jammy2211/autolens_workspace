@@ -48,7 +48,7 @@ def source_with_previous_model_or_instance(setup):
         return al.GalaxyModel(
             redshift=af.last.instance.galaxies.source.redshift,
             sersic=af.last.hyper_combined.instance.galaxies.source.sersic,
-            hyper_galaxy=af.last.hyper_combined.instance.galaxies.source.hyper_galaxy,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
         )
 
     else:
@@ -57,7 +57,7 @@ def source_with_previous_model_or_instance(setup):
             redshift=af.last.instance.galaxies.source.redshift,
             pixelization=af.last.instance.galaxies.source.pixelization,
             regularization=af.last.instance.galaxies.source.regularization,
-            hyper_galaxy=af.last.hyper_combined.instance.galaxies.source.hyper_galaxy,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
         )
 
 
@@ -111,10 +111,10 @@ def make_pipeline(
             af.last.hyper_combined.model.galaxies.lens.hyper_galaxy.noise_factor
         )
         hyper_galaxy.contribution_factor = (
-            af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy.contribution_factor
+            af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy.contribution_factor
         )
         hyper_galaxy.noise_power = (
-            af.last.hyper_combined.instance.galaxies.lens.hyper_galaxy.noise_power
+            af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy.noise_power
         )
 
     else:

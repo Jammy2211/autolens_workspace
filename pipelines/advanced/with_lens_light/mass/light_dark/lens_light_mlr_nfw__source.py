@@ -62,10 +62,10 @@ def source_with_previous_model_or_instance(setup, include_hyper_source):
             af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
         )
         hyper_galaxy.contribution_factor = (
-            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.contribution_factor
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy.contribution_factor
         )
         hyper_galaxy.noise_power = (
-            af.last.hyper_combined.instance.galaxies.source.hyper_galaxy.noise_power
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy.noise_power
         )
 
     else:
