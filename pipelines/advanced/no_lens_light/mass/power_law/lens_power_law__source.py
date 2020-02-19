@@ -24,7 +24,7 @@ def source_is_inversion_from_setup(setup):
         return True
 
 
-def source_with_previous_model_or_instance(setup, include_hyper_source):
+def source_with_previous_model_or_instance(setup):
     """Setup the source source model using the previous pipeline or phase results.
 
     This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
@@ -40,7 +40,7 @@ def source_with_previous_model_or_instance(setup, include_hyper_source):
     model fitting.
     """
 
-    if include_hyper_source:
+    if setup.general.hyper_galaxies:
 
         hyper_galaxy = af.PriorModel(al.HyperGalaxy)
 
@@ -142,9 +142,7 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = source_with_previous_model_or_instance(
-        setup=setup, include_hyper_source=True
-    )
+    source = source_with_previous_model_or_instance(setup=setup)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",

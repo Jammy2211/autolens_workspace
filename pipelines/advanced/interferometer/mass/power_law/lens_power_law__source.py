@@ -32,7 +32,7 @@ def source_with_previous_model_or_instance(include_hyper_source):
     The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
     model fitting.
     """
-    if include_hyper_source:
+    if setup.general.hyper_galaxies:
         hyper_galaxy = (
             af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
         )
@@ -125,9 +125,7 @@ def make_pipeline(
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
-    source = source_with_previous_model_or_instance(
-        setup=setup, include_hyper_source=True
-    )
+    source = source_with_previous_model_or_instance(setup=setup)
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_power_law__source",

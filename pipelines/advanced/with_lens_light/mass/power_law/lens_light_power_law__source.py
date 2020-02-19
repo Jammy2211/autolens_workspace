@@ -44,7 +44,7 @@ def lens_with_previous_light_and_model_mass(setup):
     return lens
 
 
-def source_with_previous_model_or_instance(setup, include_hyper_source):
+def source_with_previous_model_or_instance(setup):
     """Setup the source source model using the previous pipeline or phase results.
 
     This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
@@ -59,7 +59,7 @@ def source_with_previous_model_or_instance(setup, include_hyper_source):
     The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
     model fitting.
     """
-    if include_hyper_source:
+    if setup.general.hyper_galaxies:
 
         hyper_galaxy = af.PriorModel(al.HyperGalaxy)
 
@@ -198,9 +198,7 @@ def make_pipeline(
 
     # TODO : Pretty sure this function is broken, and works simply cause .model is the default.
 
-    source = source_with_previous_model_or_instance(
-        setup=setup, include_hyper_source=True
-    )
+    source = source_with_previous_model_or_instance(setup=setup)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",
