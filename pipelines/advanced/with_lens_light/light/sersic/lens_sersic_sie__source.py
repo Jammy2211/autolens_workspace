@@ -147,9 +147,9 @@ def make_pipeline(
         optimizer_class=af.MultiNest,
     )
 
-    phase1.optimizer.const_efficiency_mode = True
+    phase1.optimizer.const_efficiency_mode = False
     phase1.optimizer.n_live_points = 50
-    phase1.optimizer.sampling_efficiency = 0.2
+    phase1.optimizer.sampling_efficiency = 0.5
     phase1.optimizer.evidence_tolerance = 0.8
 
     # If the source is parametric, the inversion hyper phase below will be skipped.
