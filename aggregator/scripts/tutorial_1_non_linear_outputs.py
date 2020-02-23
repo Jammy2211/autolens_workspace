@@ -99,7 +99,7 @@ print(most_likely_model_parameters, "\n")
 # This provides us with lists of all model parameters. However, this isn't that much use - which values correspond
 # to which parameters?
 
-# Its more useful to create the model instance of every fit.
+# Its more useful to create the model instance of every3YI  fit.
 most_likely_model_instances = [
     out.most_probable_model_instance for out in multi_nest_outputs
 ]

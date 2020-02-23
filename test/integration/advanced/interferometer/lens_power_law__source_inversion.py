@@ -54,9 +54,7 @@ import numpy as np
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../../../".format(
-    os.path.dirname(os.path.realpath(__file__))
-)
+workspace_path = "{}/../../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "config"

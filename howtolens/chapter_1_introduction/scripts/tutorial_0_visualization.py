@@ -1,7 +1,7 @@
 import autolens as al
-import autolens.plot as aplt
+import autoarray.plot as aplt
 
-# In this tutorial, we'll cover the visualization in PyAutoLens and make sure images display properly on your computer.
+# In this tutorial, we'll cover visualization in PyAutoArray and make sure images display properly on your computer.
 
 # First, lets load an image of a (simulated) strong lens. Don't worry too much about what the code below is
 # doing as it will be covered in a later tutorial.
@@ -12,7 +12,7 @@ chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/
 # The dataset path specifies where the dataset is located, this time in the directory 'chapter_path/dataset'
 dataset_path = chapter_path + "dataset/"
 
-# We now load a dataset from .fits files and create an instance of an 'imaging' object.
+# We now load this dataset from .fits files and create an instance of an 'imaging' object.
 imaging = al.imaging.from_fits(
     image_path=dataset_path + "image.fits",
     noise_map_path=dataset_path + "noise_map.fits",
@@ -24,8 +24,9 @@ imaging = al.imaging.from_fits(
 
 aplt.imaging.image(imaging=imaging)
 
-# Does the figure display correctly on your computer screen? If not, you can customize a number of
-# matplotlib setup using a Plotter object in PyAutoLens.
+# Does the figure display correctly on your computer screen?
+#
+# If not, you can customize a number of matplotlib setup options using a Plotter object in PyAutoArray.
 
 plotter = aplt.Plotter(
     figure=aplt.Figure(figsize=(7, 7)),
@@ -35,17 +36,17 @@ plotter = aplt.Plotter(
 
 aplt.imaging.image(imaging=imaging, plotter=plotter)
 
-# Many matplotlib setup can be customized, but for now we're only concerned with making sure figures display cleanly
-# in your Jupter Notebooks. However, for future reference, a descrition of all options can be found in the file
+# Many matplotlib setup options can be customized, but for now we're only concerned with making sure figures display
+# cleanly in your Jupter Notebooks. However, for future reference, a description of all options can be found in the file
 # 'autolens_workspace/plot/mat_objs.py'.
 
 # Ideally, we wouldn't need to specify a new plotter every time we plot an image we make, especially as you'll be
 # changing the same option to the same value over and over again (e.g. the figsize). Fortunately, the default values
-# used by PyAutoLens can be fully customized.
+# used by PyAutoArray can be fully customized.
 
 # Checkout the the file 'autolens_workspace/config/visualize/figures.ini'.
 
-# All default matplotlib values used by PyAutoLens are here. There's lots, so lets only focus on whats important for
+# All default matplotlib values used by PyAutoArray are here. There's lots, so lets only focus on whats important for
 # displaying figures correctly:
 
 # [figures] -> figsize
@@ -53,12 +54,12 @@ aplt.imaging.image(imaging=imaging, plotter=plotter)
 # [ticks] -> ysize, xsize
 
 # Don't worry about all the other options listed in this file for now, as they'll make a lot more sense once you
-# are familiar with PyAutoLens.
+# are familiar with PyAutoArray.
 
 # (Note that you will need to reset your Juypter notebook server for these changes to take effect, so make sure
 # you have the right values using the function above beforehand!)
 
-# In addition to individual 'figures' which use a 'plotter' to plot them, PyAutoLens also plots 'subplots' using a
+# In addition to individual 'figures' which use a 'plotter' to plot them, PyAutoArray also plots 'subplots' using a
 # 'sub_plotter'. Lets plot a subplot of our imaging data:
 
 aplt.imaging.subplot_imaging(imaging=imaging)
@@ -85,10 +86,10 @@ aplt.imaging.image(imaging=imaging, plotter=plotter, include=aplt.Include(origin
 
 aplt.imaging.image(imaging=imaging, plotter=plotter, include=aplt.Include(origin=False))
 
-# Throughout the HowToLens lecture series you'll see lots more objects that can include on figures.
-#
-# Just like the matplotlib setup, you can customize what does and does not appear on figues by default using the
+# Throughout the HowToArray lecture series you'll see lots more objects that can include on figures.
+
+# Just like the matplotlib setup, you can customize what does and does not appear on figures by default using the
 # config file 'autolens_workspace/config/visualize/general.ini'
 
-# Great! Hopefully, visualization in PyAutoLens is displaying nicely for us to get on with the HowToLens lecture
+# Great! Hopefully, visualization in PyAutoArray is displaying nicely for us to get on with the HowToArray lecture
 # series.

@@ -123,7 +123,12 @@ def make_pipeline(
     lens_light_tag_from_setup(setup=setup)
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag + setup.light.type_tag)
+    if setup.light.type_tag is not "":
+        light_tag = "__" + setup.light.type_tag
+    else:
+        light_tag = setup.light.type_tag
+
+    phase_folders.append(setup.general.tag + light_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###

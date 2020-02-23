@@ -1,9 +1,4 @@
 import autofit as af
-
-# In this chapter, we're not going to individually import every module we're used to importing. Instead, we can just
-# import autolens (as 'al'), which is what we'll do to import all the modules we're used to from chapter 1. However,
-# we'll indivdually import the modules new to this chapter (and we'll import them as 'al' in chapter 3).
-
 import autolens as al
 import autolens.plot as aplt
 

@@ -17,7 +17,14 @@ import autolens as al
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
 
-def source_with_previous_model_or_instance(include_hyper_source):
+def source_is_inversion_from_setup(setup):
+    if setup.source.type_tag in "sersic":
+        return False
+    else:
+        return True
+
+
+def source_with_previous_model_or_instance(setup):
     """Setup the source source model using the previous pipeline or phase results.
 
     This function is required because the source light model is not specified by the pipeline itself (e.g. the previous
@@ -33,13 +40,21 @@ def source_with_previous_model_or_instance(include_hyper_source):
     model fitting.
     """
     if setup.general.hyper_galaxies:
-        hyper_galaxy = (
-            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy
-        )
+
+        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
+
         hyper_galaxy.noise_factor = (
             af.last.hyper_combined.model.galaxies.source.hyper_galaxy.noise_factor
         )
+        hyper_galaxy.contribution_factor = (
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy.contribution_factor
+        )
+        hyper_galaxy.noise_power = (
+            af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy.noise_power
+        )
+
     else:
+
         hyper_galaxy = None
 
     if setup.source.type_tag in "sersic":

@@ -1,4 +1,4 @@
-from pathlib import Path
+import os
 
 import autofit as af
 import autolens as al
@@ -8,12 +8,12 @@ import autolens.plot as aplt
 # fits to the data.
 
 # Below, we set up the aggregator as we did in the previous tutorial.
-workspace_path = Path(__file__).parent.parent
-output_path = workspace_path / "output"
-aggregator_results_path = output_path / "aggregator_sample_beginner"
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+output_path = workspace_path + "output"
+aggregator_results_path = output_path + "/aggregator_sample_beginner"
 
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path / "config"), output_path=str(aggregator_results_path)
+    config_path=str(workspace_path + "/config"), output_path=str(output_path)
 )
 
 aggregator = af.Aggregator(directory=str(aggregator_results_path))

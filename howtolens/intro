@@ -11,13 +11,22 @@ scripts, they allow:
 - Text script to appear between the blocks of code.
 
 This makes them an ideal way for us to present the HowToLens lecture series, therefore I recommend you get yourself
-a Juypter notebook viewer (https://jupyter.org/) if you havent't done so already.
+a Juypter notebook viewer (https://jupyter.org/) if you havent done so already.
 
 If you *really* want to use Python scripts, all tutorials are supplied a .py python files in the 'scripts' folder of
 each chapter.
 
-Finally, its worth noting that for actual PyAutoLens use, I recommend you use Python scripts. Therefore, as you go
-through the lecture series you will notice that we will transition you to Python scripts in the third chapter.
+For actual PyAutoLens use, I recommend you use Python scripts. Therefore, as you go through the lecture series you will
+notice that we will transition you to Python scripts in the third chapter.
+
+### LENSING THEORY ###
+
+HowToLens assumes minimal previous knowledge of gravitational lensing and astronomy. However, it is benefitial to give
+yourself a basicaly theoretical grounding as you go through the lectures. I heartily recommend you have open the
+lecture course on gravitational lensing by Massimo Meneghetti below as you go through the tutorials, and refer to it
+for anything that isn't clear in HowToLens.
+
+http://www.ita.uni-heidelberg.de/~massimo/sub/Lectures/gl_all.pdf
 
 ### VISUALIZATION ###
 
@@ -32,9 +41,9 @@ are used to. For example, it is common for brackets to be placed on their own li
 the inputs of a function or class may be listed over many separate lines and the code in general takes up a lot more
 space then you are used to.
 
-This is all intentional, an is because we believe it makes the cleanest, most readable code possible. In fact - lots
-if people do, which is why we use an auto-formatter to produce the code in a standardized format. If you're interested
-in the style and would like to adapt it to your own code, check out the Python auto-code formatter 'black'.
+This is intentional, because we believe it makes the cleanest, most readable code possible. In fact - lots of people do,
+which is why we use an auto-formatter to produce the code in a standardized format. If you're interested in the style
+and would like to adapt it to your own code, check out the Python auto-code formatter 'black'.
 
 https://github.com/python/black
 
@@ -65,7 +74,7 @@ science investigations.
 
 ### QUICK START ###
 
-Alternative, PyAutoLens also comes with a quick-start. This gives a crash course in PyAutoLens, summarizing all of
+Alternatively, PyAutoLens also comes with a quick-start. This gives a crash course in PyAutoLens, summarizing all of
 chapters 1, 2, 3 and 4 in Juypter notebooks that will take only half a day to cover. You may also wish to start with
 the quick-start and then come back to the HowToLens lecture series now you're familiar with PyAutoLens as a whole.
 
