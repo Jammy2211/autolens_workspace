@@ -39,7 +39,7 @@ aplt.tracer.profile_image(tracer=tracer, grid=grid)
 
 # To Simulate the imaging dataset, we don't use the image plotted above. Instead, we use an image which has been generated
 # specifically for simulating an image, which pads the arrays it is computed on based on the shape of the PSF we
-# convolve the image with. This ensures edge-effects do not degrade our simulator's PSF convolution.
+# convolve the image with. This ensures edge-effects do not degrade our dataset's PSF convolution.
 normal_image = tracer.profile_image_from_grid(grid=grid)
 padded_image = tracer.padded_profile_image_from_grid_and_psf_shape(
     grid=grid, psf_shape_2d=psf.shape_2d

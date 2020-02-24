@@ -175,7 +175,7 @@ pipeline.run(dataset=imaging, mask=mask)
 
 # - Copy and paste this example.py script and rename it to your new runner (e.g. 'slacs.py').
 # - Either keep the data_folder_name as 'share', or change to your cosma username.
-# - Change the 'dataset_label' from example to your simulator folder (e.g. 'slacs', 'bells').
+# - Change the 'dataset_label' from example to your dataset folder (e.g. 'slacs', 'bells').
 # - Change the list of data_names to your dataset names (e.g. 'slacs0123+4567, 'bells3141+5926')
 # - Change the imported pipeline from the example above to the one you want to use.
 # - Create new batch scripts, by copying the example scripts and changing the job name, task number, arrays ids and

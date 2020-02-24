@@ -9,7 +9,7 @@ import autolens.plot as aplt
 # recontructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 # phase of the pipeline that we've begun calling the 'hyper-galaxy-image'.
 
-# This is the usual simulator function, using the compact source of the previous tutorials.
+# This is the usual simulate function, using the compact source of the previous tutorials.
 
 
 def simulate():

@@ -40,7 +40,7 @@ af.conf.instance = af.conf.Config(
     output_path=chapter_path + "output",
 )
 
-# Another simulator image function, for the same image as tutorial 4..
+# Another simulate image function, for the same image as tutorial 4..
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
@@ -129,7 +129,7 @@ lens.mass.centre_1 = 0.0
 # Now, you might be thinking, doesn't this prevent our phase from generalizing to other strong lenses?
 # What if the centre of their lens galaxy isn't at (0.0", 0.0")?
 
-# Well, this is true if our simulator reduction centres the lens galaxy somewhere else. But we get to choose where
+# Well, this is true if our dataset reduction centres the lens galaxy somewhere else. But we get to choose where
 # we centre it when we make the image. Therefore, I'd recommend you always centre the lens galaxy at the same
 # location, and (0.0", 0.0") seems the best choice!
 

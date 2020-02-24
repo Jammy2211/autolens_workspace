@@ -14,7 +14,7 @@ import autolens.plot as aplt
 # we'll begin by fitting it with a magnification based pixelization. Why? So we can use its model image to set up
 # the hyper-galaxy-image.
 
-# This is the usual simulator function, using the compact source of the previous tutorial.
+# This is the usual simulate function, using the compact source of the previous tutorial.
 
 
 def simulate():
@@ -142,20 +142,20 @@ print("Evidence using brightness based pixelization = ", fit.evidence)
 
 # So, we are now able to adapt our pixelization to the morphology of our lensed source galaxy. To my knowledge,
 # this is the *best* approach one can take in lens modeling. Its more tricky to implement (as I'll explain next)
-# and introduces extra hyper-galaxy-parametersr. But the pay-off is more than worth it, as we fit our image simulator
+# and introduces extra hyper-galaxy-parametersr. But the pay-off is more than worth it, as we fit our image data
 # better and (typically) end up using far fewer source pixels to fit the dataset because we don't 'waste' pixels
 # reconstructing regions of the source-plane where there is no signal.
 
 
 # Okay, so how does the hyper_image actually adapt our pixelization to the source's brightness? It uses a 'weighted
-# KMeans clustering algorithm', which is a standard algorithm for partioning simulator in statistics.
+# KMeans clustering algorithm', which is a standard algorithm for partioning data in statistics.
 
 # In simple terms, this algorithm works as follows:
 
-# 1) Give the KMeans algorithm a set of weighted simulator (e.g. determined from the hyper-galaxy image).
+# 1) Give the KMeans algorithm a set of weighted data (e.g. determined from the hyper-galaxy image).
 
 # 2) For a given number of K-clusters, this algorithm will find a set of (y,x) coordinates that equally partition
-#    the weighted simulator-set. Wherever the dataset has higher weighting, more clusters congregate and visa versa.
+#    the weighted data-set. Wherever the dataset has higher weighting, more clusters congregate and visa versa.
 
 # 3) The returned (y,x) 'clusters' then make up our source-pixel centres, where the brightest (e.g. higher weighted)
 #    regions of the hyper-galaxy-image will have more clusters! Like we did for the magnification based pixelization,

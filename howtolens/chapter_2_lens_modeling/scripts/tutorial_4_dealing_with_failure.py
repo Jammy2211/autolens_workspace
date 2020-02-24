@@ -3,7 +3,7 @@ import autolens as al
 import autolens.plot as aplt
 
 # We finished the last tutorial on a sour note. Our non-linear search failed miserably, and we were unable to infer a
-# lens model which fitted our simulator. In this tutorial, we're going to right our past wrongs and infer
+# lens model which fitted our data. In this tutorial, we're going to right our past wrongs and infer
 # the correct model - not just once, but three times!
 
 # You need to change the path below to the chapter 1 directory.
@@ -18,7 +18,7 @@ af.conf.instance = af.conf.Config(
 # Even with my custom config files the non-linear searches will take a bit of time to run in this tutorial if you choose
 # to run them yourselves.
 
-# Another simulator image function, albeit it generates a new image.
+# Another simulate image function, albeit it generates a new image.
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)

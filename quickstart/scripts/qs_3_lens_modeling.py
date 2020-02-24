@@ -11,7 +11,7 @@
 
 # I'll let you into a secret - this is the same lens model I used to simulate the image we're going to fit.
 
-# So, how do we infer the light and mass profile parameters that give a good fit to our simulator?
+# So, how do we infer the light and mass profile parameters that give a good fit to our dataset?
 
 # We could randomly guess a lens model, corresponding to some random set of parameters. We could use this model to
 # create a tracer and fit the image-simulator, and quantify how good the fit was using its likelihood. If we keep guessing
@@ -118,7 +118,7 @@ phase.optimizer.sampling_efficiency = 0.5
 # 2) Checkout 'autolens_workspace/config'. These config files controls general PyAutoLens setup that control
 #    visualization, default MultiNest setup and the priors of different light and mass profiles parmeters.
 
-# 3) Look at 'autolens_workspace/simulator'. This is where the dataset we load and fit is stored (e.g. .fits files of the
+# 3) Look at 'autolens_workspace/dataset'. This is where the dataset we load and fit is stored (e.g. .fits files of the
 #    image, noise-map and PSF).
 
 # 4) Finally, checkout 'autolens_workspace/tools'. This contains Python scripts for standard lens tasks, such as

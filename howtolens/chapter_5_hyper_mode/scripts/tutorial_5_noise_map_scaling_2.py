@@ -10,7 +10,7 @@ import autolens.plot as aplt
 # mass profile's mean we can't perfectly reconstruct the source's light, the same is true of the Sersic profiles
 # we use to fit the lens galaxy's light. Lets take a look.
 
-# This simulates the exact same simulator as the previous tutorial, but with the lens light included.
+# This simulates the exact same data as the previous tutorial, but with the lens light included.
 
 
 def simulate():
@@ -229,7 +229,7 @@ print("Evidence using hyper-galaxy-galaxy hyper variances = ", fit.evidence)
 # scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of the image
 # require different levels of noise-map scaling.
 
-# Finally, I want to quickly mention two more ways that we change our simulator during th fitting process. One scales
+# Finally, I want to quickly mention two more ways that we change our dataset during the fitting process. One scales
 # the background noise and one scales the image's background sky. To do this, we use the 'hyper_data' module in
 # PyAutoLens.
 
@@ -240,7 +240,7 @@ hyper_image_sky = al.hyper_data.HyperImageSky(sky_scale=1.0)
 
 # The sky_scale is literally just a constant value we add to every pixel of the observed image before
 # fitting it therefore increasing or decreasing the background sky level in the image .This means we can account for
-# an inaccurate background sky subtraction in our simulator reduction during PyAutoLens model fitting.
+# an inaccurate background sky subtraction in our dataset reduction during PyAutoLens model fitting.
 
 # We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the
 # 'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise-map.

@@ -110,6 +110,11 @@ def make_pipeline(
         gaussian_2.centre = setup.source.lens_light_centre
         gaussian_3.centre = setup.source.lens_light_centre
 
+    gaussian_0.sigma = af.UniformPrior(lower_limit=0.0, upper_limit=25.0)
+    gaussian_1.sigma = af.UniformPrior(lower_limit=0.0, upper_limit=25.0)
+
+    gaussian_0.add_assertion(assertion=gaussian_0.sigma < gaussian_1.sigma)
+
     lens = al.GalaxyModel(
         redshift=redshift_lens,
         gaussian_0=gaussian_0,

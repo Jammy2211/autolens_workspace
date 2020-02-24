@@ -40,7 +40,7 @@ def simulate_interferometer_from_galaxies_and_output_to_fits(
 
     interferometer = simulator.from_tracer(tracer=tracer)
 
-    # Now, lets output this simulated interferometer-simulator to the test_autoarray/simulator folder.
+    # Now, lets output this simulated interferometer-simulator to the test_autoarray/dataset folder.
     interferometer_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(

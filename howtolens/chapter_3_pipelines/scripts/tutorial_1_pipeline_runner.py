@@ -1,7 +1,7 @@
 # Welcome to your first pipeline runner, which we'll use to run the tutorial 1 pipeline.
 #
-# In PyAutoLens, every pipeline is a standalone function which 'makes' a pipeline. We then pass simulator to this pipeline and
-# run it. This keeps our pipelines and simulator separate, which is good practise, as it it encourages us to write pipelines
+# In PyAutoLens, every pipeline is a standalone function which 'makes' a pipeline. We then pass data to this pipeline and
+# run it. This keeps our pipelines and data separate, which is good practise, as it it encourages us to write pipelines
 # that generalize to as many lenses as possible!
 
 # So, lets begin by discussing the pipeline in this tutorial, which fits the lens and source galaxy of a strong lens.
@@ -44,7 +44,7 @@
 ### RUNNER FORMAT ###
 
 # A runner begins by setting up PyAutoFit, in particular the paths to the autolens_workspace, config files and where output
-# is stored. It is then followed by the setup of PyAutoLens, in particular where simulator is stored and loaded.
+# is stored. It is then followed by the setup of PyAutoLens, in particular where data is stored and loaded.
 
 # From here on, we'll use the configs in the 'autolens_workspace/config' folder, which are the default configs used
 # by all pipelines (e.g. not just this tutorial, but when you model your own images and lenses!).
@@ -72,7 +72,7 @@ af.conf.instance = af.conf.Config(
 import autolens as al
 import autolens.plot as aplt
 
-# The same simulator function we used in chapter 2.
+# The same simulate function we used in chapter 2.
 def simulate():
 
     psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)

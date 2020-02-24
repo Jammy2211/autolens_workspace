@@ -9,11 +9,11 @@
 # 2) The image and noise-map are in electrons per second.
 # 3) The PSF is cut-out to an odd-sized kernel with a reasonably small kernel size (e.g. 21x21).
 
-# PyAutoLens has built-in tools to convert your simulator to these requirements, checkout the scripts in
+# PyAutoLens has built-in tools to convert your dataset to these requirements, checkout the scripts in
 # 'autolens_workspace/tools/loading_and_preparing_data'.
 
 
-# Your simulator probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
+# Your dataset probably won't have a custom mask ready in a 'mask.fits' file. You have two options:
 
 # 1) Use a large circular mask by adding the line
 #
@@ -23,7 +23,7 @@
 # 2) Creating your own custom mask, using the script 'autolens_workspace/tools/imaging/mask_maker.py'
 
 
-# If your simulator doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
+# If your dataset doesn't contain the lens galaxy's light (this is often the case for radio / sub-mm imaging of strong
 # lenses, where only the source galaxy is visible) then you should use the 'lens_sie__source_inversion.py'
 # instead.
 

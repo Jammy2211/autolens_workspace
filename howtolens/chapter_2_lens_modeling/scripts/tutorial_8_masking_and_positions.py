@@ -88,7 +88,7 @@ phase_with_custom_mask = al.PhaseImaging(
 # bigger masks would *always* be better, for two reasons:
 
 # 1) The lensed source galaxy may have very faint emission that when you look at the plotters above you don't notice.
-#    Overly aggressive masking risks you masking out some of that light - simulator which would better constrain your
+#    Overly aggressive masking risks you masking out some of that light -data which would better constrain your
 #    lens model!
 
 # 2) When you fit an image with a model image the fit is performed only within the masked region. Outside of the
@@ -149,7 +149,7 @@ phase_with_positions.run(
 
 print("MultiNest has finished run - you may now continue the notebook.")
 # You may observe multiple source-galaxies each with their own set of multiple-images. If you have a means by
-# which to pair different positions to the same source galaxies (for example, spectroscopic simulator) you can set up
+# which to pair different positions to the same source galaxies (for example, spectroscopicdata) you can set up
 # multiple sets of positions which each have to trace to within the position threshold of one another for the lens
 # model to be accepted.
 
@@ -194,7 +194,7 @@ def simulate_two_galaxies():
     return simulator.from_tracer(tracer=tracer)
 
 
-# Simulate the new simulator.
+# Simulate the newdataset.
 
 imaging = simulate_two_galaxies()
 

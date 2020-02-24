@@ -3,13 +3,13 @@ import autolens as al
 import autolens.plot as aplt
 from tools.preprocessing.loading_and_preparing_data import simulate_data
 
-# To model simulator with PyAutoLens you first need to ensure it is in a format suitable for lens modeling. This tutorial
-# takes you through simulator preparation, introducing PyAutoLens's built in tools that convert simulator to a suitable format.
+# To modeldata with PyAutoLens you first need to ensure it is in a format suitable for lens modeling. This tutorial
+# takes you throughdata preparation, introducing PyAutoLens's built in tools that convertdata to a suitable format.
 
 # First, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory
 # and place simulator in the 'autolens_workspace/simulator' directory.
 
-# for this tutorial, we'll use the 'autolens_workspace/tools/loading_and_preparing_data/simulator' directory. The folder
+# for this tutorial, we'll use the 'autolens_workspace/tools/loading_and_preparing_data/dataset' directory. The folder
 # 'simulator' contains example simulator we'll use in this tutorial.
 
 path = (
@@ -41,7 +41,7 @@ imaging = al.imaging.from_fits(
 
 aplt.imaging.subplot_imaging(imaging=imaging)
 
-# If your simulator comes in one .fits file spread across multiple hdus you can specify the hdus of each image instead.
+# If your dataset comes in one .fits file spread across multiple hdus you can specify the hdus of each image instead.
 imaging = al.imaging.from_fits(
     image_path=imaging_path + "multiple_hdus.fits",
     image_hdu=0,
@@ -54,8 +54,8 @@ imaging = al.imaging.from_fits(
 
 aplt.imaging.subplot_imaging(imaging=imaging)
 
-# Lets think about the format of our simulator. There are numerous reasons why the image we just looked at is a good simulator-set
-# for lens modeling. I strongly recommend you reduce your simulator to conform to the standards discussed below - it'll make
+# Lets think about the format of our dataset. There are numerous reasons why the image we just looked at is a good simulator-set
+# for lens modeling. I strongly recommend you reduce your dataset to conform to the standards discussed below - it'll make
 # your time using PyAutoLens a lot simpler.
 
 # However, you may not have access to the dataset-reduction tools that made the dataset, so we've included a number of
@@ -82,7 +82,7 @@ imaging_in_counts = al.imaging.from_fits(
 
 aplt.imaging.subplot_imaging(imaging=imaging_in_counts)
 
-# If your simulator is in counts you can convert it to electrons per second by supplying the function above with an
+# If your dataset is in counts you can convert it to electrons per second by supplying the function above with an
 # exposure time and using the 'convert_arrays_from_counts' boolean flag.
 imaging_converted_to_eps = al.imaging.from_fits(
     image_path=imaging_path + "image.fits",

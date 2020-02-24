@@ -47,7 +47,7 @@ def simulate_imaging_from_galaxies_and_output_to_fits(
 
     imaging = simulator.from_tracer(tracer=tracer)
 
-    # Now, lets output this simulated imaging-data to the test_autoarray/simulator folder.
+    # Now, lets output this simulated imaging-data to the test_autoarray/dataset folder.
     imaging_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(

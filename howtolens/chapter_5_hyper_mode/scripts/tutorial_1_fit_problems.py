@@ -115,7 +115,7 @@ def simulate_for_source_galaxy(source_galaxy):
 # We'll use the same 3.0" mask to fit all three of our sources.
 mask = al.mask.circular(shape_2d=(150, 150), pixel_scales=0.05, radius=3.0)
 
-# Now, lets simulator all 3 of our source's as imaging dataset.
+# Now, lets simulate all 3 of our source's as imaging dataset.
 
 imaging_source_flat = simulate_for_source_galaxy(source_galaxy=source_galaxy_flat)
 
@@ -287,7 +287,7 @@ aplt.fit_imaging.subplot_fit_imaging(
     include=aplt.Include(inversion_image_pixelization_grid=True, mask=True),
 )
 
-# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our simulator
+# So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our dataset
 # have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared)
 # is going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset
 # of the dataset (e.g. < 5% of pixels) contributes to the majority of the likelihood (e.g. > 95% of the overall chi-squared).

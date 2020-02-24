@@ -40,9 +40,9 @@ aplt.imaging.image(imaging=imaging, plotter=plotter)
 # cleanly in your Jupter Notebooks. However, for future reference, a description of all options can be found in the file
 # 'autolens_workspace/plot/mat_objs.py'.
 
-# Ideally, we wouldn't need to specify a new plotter every time we plot an image we make, especially as you'll be
-# changing the same option to the same value over and over again (e.g. the figsize). Fortunately, the default values
-# used by PyAutoArray can be fully customized.
+# Ideally, we wouldn't need to specify a new plotter every time we plot an image, especially as you'll be changing
+# the same option to the same value over and over again (e.g. the figsize). Fortunately, the default values used by
+# PyAutoLens can be fully customized.
 
 # Checkout the the file 'autolens_workspace/config/visualize/figures.ini'.
 

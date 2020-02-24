@@ -14,7 +14,7 @@ import autolens.plot as aplt
 
 # So, lets simulate an image and fit it with a slightly incorrect mass model.
 
-# This is the usual simulator function, using the compact source of the previous tutorials.
+# This is the usual simulate function, using the compact source of the previous tutorials.
 
 
 def simulate():
@@ -85,7 +85,7 @@ def fit_masked_imaging_with_source_galaxy(masked_imaging, source_galaxy):
     return al.fit(masked_dataset=masked_imaging, tracer=tracer)
 
 
-# And now, we'll use the same magnification based source to fit this simulator.
+# And now, we'll use the same magnification based source to fit this data.
 
 source_magnification = al.Galaxy(
     redshift=1.0,
@@ -149,9 +149,9 @@ print("Evidence = ", fit.evidence)
 # there is no reasonable way to change our source pixelization or regularization to better fit the dataset. The problem is
 # with our lens's mass model!
 
-# This poses a major problem for our model-fitting. A small subset of our simulator has such large chi-squared values the
+# This poses a major problem for our model-fitting. A small subset of our dataset has such large chi-squared values the
 # non-linear search is going to seek solutions which reduce only these chi-squared values. For the image above, a small
-# subset of our simulator (e.g. < 5% of pixels) contributes to the majority of our likelihood (e.g. > 95% of the overall
+# subset of our dataset (e.g. < 5% of pixels) contributes to the majority of our likelihood (e.g. > 95% of the overall
 # chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness profile of
 # the lensed source galaxy to constrain our lens model, we end up using only a small subset of its brightest pixels.
 
@@ -279,7 +279,7 @@ aplt.array(
 # 1.0) than pixels with lower values. This is all the contribution_factor does; it scales how we allocate contributions
 # to the source galaxy. Now, we're going to use this contribution map to scale the noise-map, as follows:
 
-# 1) Multiply the baseline (e.g. unscaled) noise-map of the image-simulator by the contribution map made in step 3) above.
+# 1) Multiply the baseline (e.g. unscaled) noise-map of the image-data by the contribution map made in step 3) above.
 #    This means that only noise-map values where the contribution map has large values (e.g. near 1.0) are going to
 #    remain in this image, with the majority of values multiplied by contribution map values near 0.0.
 

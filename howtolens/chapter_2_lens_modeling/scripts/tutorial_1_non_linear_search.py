@@ -18,7 +18,7 @@ import autolens.plot as aplt
 # I'll let you into a secret - this is the same lens model used to Simulate the imaging datawe're going to fit and we're
 # going to infer the actual parameters I used.
 
-# So, how do we infer the light and mass profile parameters that give a good fit to our simulator?
+# So, how do we infer the light and mass profile parameters that give a good fit to our dataset?
 
 # Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this lens
 # model to create a tracer and fit the image-simulator, and quantify how good the fit was using its likelihood

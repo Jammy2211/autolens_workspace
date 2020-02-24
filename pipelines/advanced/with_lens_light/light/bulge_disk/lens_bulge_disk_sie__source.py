@@ -136,9 +136,15 @@ def make_pipeline(
     else:
         disk = af.PriorModel(al.lp.EllipticalExponential)
 
+    bulge = af.PriorModel(al.lp.EllipticalSersic)
+
+    # bulge.effective_radius = af.UniformPrior(lower_limit=0.0, upper_limit=4.0)
+    # disk.effective_radius = af.UniformPrior(lower_limit=0.0, upper_limit=4.0)
+    # bulge.add_assertion(bulge.effective_radius < disk.effective_radius)
+
     lens = al.GalaxyModel(
         redshift=redshift_lens,
-        bulge=al.lp.EllipticalSersic,
+        bulge=bulge,
         disk=disk,
         mass=af.last.instance.galaxies.lens.mass,
         shear=af.last.instance.galaxies.lens.shear,
