@@ -25,31 +25,28 @@ aggregator = af.Aggregator(directory=str(aggregator_results_path))
 pipeline_name = "pipeline__lens_sie__source_inversion"
 phase_name = "phase_3__source_inversion"
 
-multi_nest_outputs = aggregator.filter(phase=phase_name).output
+outputs = aggregator.filter(phase=phase_name).output
 
-most_likely_model_instances = [
-    out.most_probable_model_instance for out in multi_nest_outputs
-]
+instances = [out.mp_instance for out in outputs]
 
 # A model instance is a Galaxy instance of the pipeline's GalaxyModel. So, its just a list of galaxies which we
 # can pass to functions in PyAutoLens.
 #
 # Lets create the most-likely tracer of every fit...
-most_likely_tracers = [
-    al.Tracer.from_galaxies(galaxies=instance.galaxies)
-    for instance in most_likely_model_instances
+tracers = [
+    al.Tracer.from_galaxies(galaxies=instance.galaxies) for instance in instances
 ]
 
 print("Most Likely Tracers: \n")
-print(most_likely_tracers, "\n")
-print("Total Tracers = ", len(most_likely_tracers))
+print(tracers, "\n")
+print("Total Tracers = ", len(tracers))
 
 # ...  and plot their convergences.
 #
 # We'll use a grid of 100 x 100 pixels for now, and cover later how we use the actual grid of the data.
 grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.1)
 
-[aplt.tracer.convergence(tracer=tracer, grid=grid) for tracer in most_likely_tracers]
+[aplt.tracer.convergence(tracer=tracer, grid=grid) for tracer in tracers]
 
 # Because instances are just lists of galaxies we can directly extract attributes of the Galaxy class. Lets print
 # the Einstein mass of each of our most-likely lens galaxies.
@@ -58,8 +55,11 @@ grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.1)
 print("Most Likely Lens Einstein Masses:")
 print(
     [
-        instance.galaxies.lens.mass.einstein_mass
-        for instance in most_likely_model_instances
+        instance.galaxies.lens.einstein_mass_in_units(
+            redshift_object=instance.galaxies.lens.redshift,
+            redshift_source=instance.galaxies.source.redshift,
+        )
+        for instance in instances
     ]
 )
 print()
@@ -67,21 +67,16 @@ print()
 # Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each
 # SIE mass profile, including error bars at 3 sigma confidence.
 
-most_probable_model_instances = [
-    out.most_probable_model_instance for out in multi_nest_outputs
-]
+mp_instances = [out.mp_instance for out in outputs]
 upper_error_instances = [
-    out.model_errors_instance_at_upper_sigma_limit(sigma_limit=3.0)
-    for out in multi_nest_outputs
+    out.error_instance_at_upper_sigma(sigma=3.0) for out in outputs
 ]
 lower_error_instances = [
-    out.model_errors_instance_at_lower_sigma_limit(sigma_limit=3.0)
-    for out in multi_nest_outputs
+    out.error_instance_at_lower_sigma(sigma=3.0) for out in outputs
 ]
 
 einstein_radii = [
-    instance.galaxies.lens.mass.einstein_radius
-    for instance in most_probable_model_instances
+    instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
 ]
 einstein_radii_upper = [
     instance.galaxies.lens.mass.einstein_radius for instance in upper_error_instances
@@ -89,9 +84,7 @@ einstein_radii_upper = [
 einstein_radii_lower = [
     instance.galaxies.lens.mass.einstein_radius for instance in lower_error_instances
 ]
-axis_ratios = [
-    instance.galaxies.lens.mass.axis_ratio for instance in most_probable_model_instances
-]
+axis_ratios = [instance.galaxies.lens.mass.axis_ratio for instance in mp_instances]
 axis_ratios_upper = [
     instance.galaxies.lens.mass.axis_ratio for instance in upper_error_instances
 ]
@@ -145,23 +138,25 @@ sample_weight_threshold = 1.0e-4
 einstein_masses = []
 einstein_mass_errors = []
 
-for multi_nest_output in multi_nest_outputs:
+for output in outputs:
 
     sample_masses = []
     sample_weights = []
 
-    for sample_index in range(multi_nest_output.total_samples):
+    for sample_index in range(output.total_samples):
 
-        sample_weight = multi_nest_output.sample_weight_from_sample_index(
-            sample_index=sample_index
-        )
+        sample_weight = output.weight_from_sample_index(sample_index=sample_index)
 
         if sample_weight > sample_weight_threshold:
 
-            instance = multi_nest_output.sample_model_instance_from_sample_index(
-                sample_index=sample_index
+            instance = output.instance_from_sample_index(sample_index=sample_index)
+
+            einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
+                redshift_object=instance.galaxies.lens.redshift,
+                redshift_source=instance.galaxies.source.redshift,
             )
-            sample_masses.append(instance.galaxies.lens.einstein_mass)
+
+            sample_masses.append(einstein_mass)
             sample_weights.append(sample_weight)
 
     value, error = weighted_mean_and_standard_deviation(

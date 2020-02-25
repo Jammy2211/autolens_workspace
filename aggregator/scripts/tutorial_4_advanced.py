@@ -43,9 +43,9 @@ aggregator = af.Aggregator(directory=str(aggregator_results_path))
 
 pipeline_name = "pipeline_mass__power_law"
 phase_name = "phase_1__lens_power_law__source"
-multi_nest_outputs = aggregator.filter(pipeline=pipeline_name).output
+outputs = aggregator.filter(pipeline=pipeline_name).output
 
 # As expected, this list has 3 MultiNestOutputs.
 print("Pipeline Name Filtered MultiNest Outputs:")
-print(multi_nest_outputs)
-print("Total Outputs = ", len(multi_nest_outputs), "\n")
+print(outputs)
+print("Total Outputs = ", len(outputs), "\n")

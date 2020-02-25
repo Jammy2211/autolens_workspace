@@ -22,7 +22,7 @@ aggregator = af.Aggregator(directory=str(aggregator_results_path))
 pipeline_name = "pipeline__lens_sie__source_inversion"
 phase_name = "phase_3__source_inversion"
 
-multi_nest_outputs = aggregator.filter(phase=phase_name).output
+outputs = aggregator.filter(phase=phase_name).output
 
 # We can also use the aggregator to load the dataset of every lens our pipeline fitted. This returns the dataset
 # as the "Imaging" objects we passed to the pipeline when we ran them.
@@ -53,21 +53,18 @@ masked_imagings = [
 
 # Okay, we're good to go! Lets use each most likely instance to create the most-likely tracer, and fit the masked
 # imaging using this tracer for every lens.
-most_likely_model_instances = [
-    out.most_probable_model_instance for out in multi_nest_outputs
+instances = [out.most_likely_instance for out in outputs]
+
+tracers = [
+    al.Tracer.from_galaxies(galaxies=instance.galaxies) for instance in instances
 ]
 
-most_likely_tracers = [
-    al.Tracer.from_galaxies(galaxies=instance.galaxies)
-    for instance in most_likely_model_instances
-]
-
-most_likely_fits = [
+fits = [
     al.fit(masked_dataset=masked_imaging, tracer=tracer)
-    for masked_imaging, tracer in zip(masked_imagings, most_likely_tracers)
+    for masked_imaging, tracer in zip(masked_imagings, tracers)
 ]
 
-[aplt.fit_imaging.subplot_fit_imaging(fit=fit) for fit in most_likely_fits]
+[aplt.fit_imaging.subplot_fit_imaging(fit=fit) for fit in fits]
 
 # The benefit of inspecting fits using the aggregator, rather than the files outputs to the hard-disk, is that
 # we can customize the plots using the PyAutoLens plotters.
@@ -81,10 +78,7 @@ plotter = aplt.Plotter(
     units=aplt.Units(in_kpc=True),
 )
 
-[
-    aplt.fit_imaging.normalized_residual_map(fit=fit, plotter=plotter)
-    for fit in most_likely_fits
-]
+[aplt.fit_imaging.normalized_residual_map(fit=fit, plotter=plotter) for fit in fits]
 
 # Making this plot for a paper? You can output it to hard disk.
 

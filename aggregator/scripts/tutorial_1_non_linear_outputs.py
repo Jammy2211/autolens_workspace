@@ -57,23 +57,23 @@ aggregator = af.Aggregator(directory=str(aggregator_results_path))
 
 # The fits to each lens used MultiNest, so below we create a list of instances of the MultiNestOutput class (the
 # non-linear output class will change dependent on the non-linear optimizer used).
-multi_nest_outputs = aggregator.output
+outputs = aggregator.output
 
 # When we print this list of outputs we see 9 different MultiNestOutput instances. These correspond to all 3
 # phases of each pipeline's fit to all 3 images.
 print("MultiNest Outputs:\n")
-print(multi_nest_outputs)
-print("Total Outputs = ", len(multi_nest_outputs), "\n")
+print(outputs)
+print("Total Outputs = ", len(outputs), "\n")
 
 # If we want to remove the fits of the first 2 phases and just keep the MultiNestOutputs of the 3rd and final
 # phase of the pipeline we can do so by filtering for the phase's name.
 phase_name = "phase_3__source_inversion"
-multi_nest_outputs = aggregator.filter(phase=phase_name).output
+outputs = aggregator.filter(phase=phase_name).output
 
 # As expected, this list now has only 3 MultiNestOutputs, one for each image we fitted.
 print("Phase Name Filtered MultiNest Outputs:\n")
-print(multi_nest_outputs)
-print("Total Outputs = ", len(multi_nest_outputs), "\n")
+print(outputs)
+print("Total Outputs = ", len(outputs), "\n")
 
 # In this example, we only fitted the 3 images using one pipeline. But suppose we used multiple pipelines, like we do
 # in the advanced pipelines. In this case, the aggregator would load the MultiNestOutputs of all fits of all phases of
@@ -81,79 +81,65 @@ print("Total Outputs = ", len(multi_nest_outputs), "\n")
 
 # In such circumstances, we can filter by pipeline name.
 pipeline_name = "pipeline__lens_sie__source_inversion"
-multi_nest_outputs = aggregator.filter(pipeline=pipeline_name, phase=phase_name).output
+outputs = aggregator.filter(pipeline=pipeline_name, phase=phase_name).output
 
 # As expected, this list again has 3 MultiNestOutputs.
 print("Pipeline Name Filtered MultiNest Outputs:\n")
-print(multi_nest_outputs)
-print("Total Outputs = ", len(multi_nest_outputs), "\n")
+print(outputs)
+print("Total Outputs = ", len(outputs), "\n")
 
 # We can use the outputs to create a list of the most-likely (e.g. highest likelihood) model of each fit to our three
 # images (in this case in phase 3).
-most_likely_model_parameters = [
-    out.most_probable_model_parameters for out in multi_nest_outputs
-]
+vector = [out.mp_vector for out in outputs]
 print("Most Likely Model Parameter Lists:\n")
-print(most_likely_model_parameters, "\n")
+print(vector, "\n")
 
 # This provides us with lists of all model parameters. However, this isn't that much use - which values correspond
 # to which parameters?
 
 # Its more useful to create the model instance of every3YI  fit.
-most_likely_model_instances = [
-    out.most_probable_model_instance for out in multi_nest_outputs
-]
+instances = [out.mp_instance for out in outputs]
 print("Most Likely Model Instances:\n")
-print(most_likely_model_instances, "\n")
+print(instances, "\n")
 
 # A model instance contains all the model components of our fit - most importantly the list of galaxies we specified
 # in the pipeline.
-print(most_likely_model_instances[0].galaxies)
-print(most_likely_model_instances[1].galaxies)
-print(most_likely_model_instances[2].galaxies)
+print(instances[0].galaxies)
+print(instances[1].galaxies)
+print(instances[2].galaxies)
 
 # These galaxies will be named according to the pipeline (in this case, 'lens' and 'source').
-print(most_likely_model_instances[0].galaxies.lens)
+print(instances[0].galaxies.lens)
 print()
-print(most_likely_model_instances[1].galaxies.source)
+print(instances[1].galaxies.source)
 
 # Their light and mass profiles are also named according to the pipeline.
-print(most_likely_model_instances[0].galaxies.lens.mass)
+print(instances[0].galaxies.lens.mass)
 print()
-print(most_likely_model_instances[0].galaxies.lens.shear)
+print(instances[0].galaxies.lens.shear)
 print()
-print(most_likely_model_instances[1].galaxies.source.pixelization)
+print(instances[1].galaxies.source.pixelization)
 print()
-print(most_likely_model_instances[1].galaxies.source.regularization)
+print(instances[1].galaxies.source.regularization)
 
 # We can also access the 'most probable' model, which is the model computed by marginalizing over the MultiNest samples
 # of every parameter in 1D and taking the median of this PDF.
-most_probable_model_parameters = [
-    out.most_probable_model_parameters for out in multi_nest_outputs
-]
-most_probable_model_instances = [
-    out.most_probable_model_instance for out in multi_nest_outputs
-]
+mp_vector = [out.most_probable_vector for out in outputs]
+mp_instances = [out.most_probable_instance for out in outputs]
 
 print("Most Probable Model Parameter Lists:\n")
-print(most_probable_model_parameters, "\n")
+print(mp_vector, "\n")
 print("Most probable Model Instances:\n")
-print(most_probable_model_instances, "\n")
+print(mp_instances, "\n")
 
 # We can compute the upper and lower errors on each parameter at a given sigma limit.
-upper_errors = [
-    out.model_errors_at_upper_sigma_limit(sigma_limit=3.0) for out in multi_nest_outputs
-]
+upper_errors = [out.error_vector_at_upper_sigma(sigma=3.0) for out in outputs]
 upper_error_instances = [
-    out.model_errors_instance_at_upper_sigma_limit(sigma_limit=3.0)
-    for out in multi_nest_outputs
+    out.error_instance_at_upper_sigma(sigma=3.0) for out in outputs
 ]
-lower_errors = [
-    out.model_errors_at_lower_sigma_limit(sigma_limit=3.0) for out in multi_nest_outputs
-]
+lower_errors = [out.error_vector_at_lower_sigma(sigma=3.0) for out in outputs]
 lower_error_instances = [
-    out.model_errors_instance_at_lower_sigma_limit(sigma_limit=3.0)
-    for out in multi_nest_outputs
+    out.error_instance_at_lower_sigma(sigma=3.0) for out in outputs
 ]
 
 print("Errors Lists:\n")
@@ -169,8 +155,8 @@ print(lower_error_instances, "\n")
 # aggregator for images that we fit with many different models and many different pipelines, in which case comparing
 # the evidences allows us to perform Bayesian model comparison!
 print("Likelihoods:\n")
-print([out.maximum_log_likelihood for out in multi_nest_outputs])
-print([out.evidence for out in multi_nest_outputs])
+print([out.maximum_log_likelihood for out in outputs])
+print([out.evidence for out in outputs])
 
 # We can also print the "model_results" of all phases, which is string that summarizes every fit's lens model providing
 # quick inspection of all results.
