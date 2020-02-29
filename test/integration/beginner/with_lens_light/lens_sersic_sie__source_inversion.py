@@ -29,7 +29,7 @@ import autofit as af
 workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = workspace_path + "test/config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(

@@ -3,16 +3,16 @@ import autolens as al
 
 # In this pipeline, we fit the mass of a strong lens using a power-law + shear model.
 
-# The mass model and source are initialized using an already run 'source' pipeline.
+# The lens light, mass model and source are initialized using already run 'source' and 'light' pipelines.
 
 # The pipeline is one phases:
 
 # Phase 1:
 
 # Fit the lens mass model as a power-law, using the source model from a previous pipeline.
-# Lens Mass: EllipticalPowerLaw + ExternalShear
+# Lens Mass: Light + EllipticalPowerLaw + ExternalShear
 # Source Light: Previous Pipeline Source.
-# Previous Pipeline: no_lens_light/source/*/lens_sie__source_*py
+# Previous Pipelines: no_lens_light/source/*/lens_sie__source_*py
 # Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
 # Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 
@@ -22,6 +22,26 @@ def source_is_inversion_from_setup(setup):
         return False
     else:
         return True
+
+
+def lens_with_previous_light_and_model_mass(setup):
+    """Setup the lens galaxy model using the previous pipeline or phases results.
+
+    This function is required because the lens light model is not specified by the pipeline itself (e.g. the previous
+    pipeline determines if the lens light was modeled as a Sersic, bulge-disk, Gaussians, etc.)
+
+    So, we have to pass the lens light to this pipeline without explicitly referencing its light components."""
+
+    if setup.mass.fix_lens_light:
+        lens = af.last.instance.galaxies.lens
+    else:
+        lens = af.last.model.galaxies.lens
+
+    lens.hyper_galaxy = (
+        af.last.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy
+    )
+
+    return lens
 
 
 def source_with_previous_model_or_instance(setup):
@@ -39,7 +59,6 @@ def source_with_previous_model_or_instance(setup):
     The bool include_hyper_source determines if the hyper-galaxy used to scale the sources noises is included in the
     model fitting.
     """
-
     if setup.general.hyper_galaxies:
 
         hyper_galaxy = af.PriorModel(al.HyperGalaxy)
@@ -103,10 +122,12 @@ def make_pipeline(
 
     # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
     # 2) The lens galaxy mass model includes an external shear.
+    # 3) The lens's light model is fixed or variable.
 
     phase_folders.append(pipeline_name)
     phase_folders.append(setup.general.tag)
     phase_folders.append(setup.source.tag)
+    phase_folders.append(setup.light.tag)
     phase_folders.append(setup.mass.tag)
 
     ### SETUP SHEAR ###
@@ -115,7 +136,7 @@ def make_pipeline(
 
     if not setup.mass.no_shear:
         if af.last.model.galaxies.lens.shear is not None:
-            shear = af.last.model.galaxies.lens.shear
+            shear = af.last[-1].model.galaxies.lens.shear
         else:
             shear = al.mp.ExternalShear
     else:
@@ -123,12 +144,18 @@ def make_pipeline(
 
     ### PHASE 1 ###
 
-    # In phase 1, we fit the lens galaxy's mass and source, where we:
+    # In phase 1, we fit the lens galaxy's light and mass and one source galaxy, where we:
 
     # 1) Use the source galaxy of the 'source' pipeline.
-    # 2) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of previous pipelines.
+    # 2) Use the lens galaxy light of the 'light' pipeline.
+    # 3) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of previous pipelines.
+
+    # Setup the lens using the light model the 'light' pipeline, which will be fixed or fitted for depending on
+    # the fix_lens_light parameter
 
     # Setup the power-law mass profile and initialize its priors from the SIE.
+
+    # lens = lens_with_previous_light_and_model_mass(setup=setup)
 
     mass = af.PriorModel(al.mp.EllipticalBrokenPowerLaw)
 
@@ -139,18 +166,39 @@ def make_pipeline(
         a=0.3
     ).galaxies.lens.mass.einstein_radius
 
+    if setup.mass.fix_lens_light:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            bulge=af.last.instance.galaxies.lens.bulge,
+            disk=af.last.instance.galaxies.lens.disk,
+            mass=mass,
+            shear=shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
+    else:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            bulge=af.last.model.galaxies.lens.bulge,
+            disk=af.last.model.galaxies.lens.disk,
+            mass=mass,
+            shear=shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
+
+    # TODO : Pretty sure this function is broken, and works simply cause .model is the default.
 
     source = source_with_previous_model_or_instance(setup=setup)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_broken_power_law__source",
         phase_folders=phase_folders,
-        galaxies=dict(
-            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
-            source=source,
-        ),
+        galaxies=dict(len=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         positions_threshold=positions_threshold,
@@ -163,7 +211,7 @@ def make_pipeline(
         optimizer_class=af.MultiNest,
     )
 
-    phase1.optimizer.const_efficiency_mode = True
+    phase1.optimizer.const_efficiency_mode = False
     phase1.optimizer.n_live_points = 75
     phase1.optimizer.sampling_efficiency = 0.2
     phase1.optimizer.evidence_tolerance = 0.8

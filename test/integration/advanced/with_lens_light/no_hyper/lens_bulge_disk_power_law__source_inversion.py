@@ -71,7 +71,7 @@ workspace_path = "{}/../../../../../".format(
 )
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = workspace_path + "test/config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(

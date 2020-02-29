@@ -12,7 +12,7 @@ import autofit as af
 
 workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-config_path = workspace_path + "config"
+config_path = workspace_path + "test/config"
 
 af.conf.instance = af.conf.Config(
     config_path=workspace_path + "config", output_path=workspace_path + "/test/output"
