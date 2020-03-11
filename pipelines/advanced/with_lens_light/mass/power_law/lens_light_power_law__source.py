@@ -89,8 +89,8 @@ def source_with_previous_model_or_instance(setup):
 
         return al.GalaxyModel(
             redshift=af.last.instance.galaxies.source.redshift,
-            pixelization=af.last.instance.galaxies.source.pixelization,
-            regularization=af.last.instance.galaxies.source.regularization,
+            pixelization=af.last.hyper_combined.instance.galaxies.source.pixelization,
+            regularization=af.last.hyper_combined.instance.galaxies.source.regularization,
             hyper_galaxy=hyper_galaxy,
         )
 

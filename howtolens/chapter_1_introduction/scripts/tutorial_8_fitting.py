@@ -51,7 +51,7 @@ aplt.imaging.image(imaging=imaging, mask=mask)
 
 # Now we've loaded the imaging dataset and created a mask, we'll create a 'lens dataset' object, using the 'masked_imaging' module.
 
-# A lens dataset object is a 'package' of all parts of a simulator-set we need in order to fit it with a lens model:
+# A lens dataset object is a 'package' of all parts of a dataset we need in order to fit it with a lens model:
 
 # 1) The imaging-data, including the image, PSF (so that when we compare a tracer's image to the image data we
 #    can include blurring due to the telescope optics) and noise-map (so our goodness-of-fit measure accounts for

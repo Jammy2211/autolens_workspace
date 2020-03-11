@@ -4,10 +4,10 @@ Welcome to the **PyAutoLens** Workspace. If you haven't already, you should inst
 
 # Workspace Version
 
-This version of the workspace are built and tested for using **PyAutoLens v0.39.3**.
+This version of the workspace are built and tested for using **PyAutoLens v0.40.0**.
 
 ```
-pip install autolens==0.39.3
+pip install autolens==0.40.0
 ```
 
 ## Getting Started
@@ -49,16 +49,22 @@ Clone autolens workspace & set WORKSPACE enviroment variable:
 export WORKSPACE=/path/to/autolens_workspace/
 ```
 
-Matplotlib uses the backend set in the config file autolens_workspace/config/visualize/general.ini:
+Matplotlib uses the default backend on your computer, as set in the config file 
+autolens_workspace/config/visualize/general.ini:
  
+ ```
+[general]
+backend = default
+``` 
+
+There have been reports that using the default backend causes crashes when running the test script below (either the 
+code crashes without a error or your computer restarts). If this happens, change the config's backend until the test
+works (TKAgg has worked on Linux machines, Qt5Agg has worked on new MACs). For example:
+
  ```
 [general]
 backend = TKAgg
 ``` 
-
-There have been reports that the default TKAgg backend causes crashes when running the test script below (either the 
-code crashes without a error or your computer restarts). If this happens, change the config's backend until the test
-works (Qt5Agg has worked for new MACs).
 
 You can test everything is working by running the example pipeline runner in the autolens_workspace
 ```

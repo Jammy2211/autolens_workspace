@@ -107,7 +107,7 @@ general_setup = al.setup.General(
 )
 
 source_setup = al.setup.Source(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+    pixelization=al.pix.VoronoiMagnification, regularization=al.reg.AdaptiveBrightness
 )
 
 mass_setup = al.setup.Mass(fix_lens_light=False)

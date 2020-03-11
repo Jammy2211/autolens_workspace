@@ -95,7 +95,7 @@ def make_pipeline(
         galaxies=dict(
             lens=af.last.instance.galaxies.lens,
             subhalo=subhalo,
-            source=af.last.instance.galaxies.source,
+            source=af.last.hyper_combined.instance.galaxies.source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -121,7 +121,7 @@ def make_pipeline(
         galaxies=dict(
             lens=af.last[-1].model.galaxies.lens,
             subhalo=phase1.result.model.galaxies.subhalo,
-            source=af.last[-1].instance.galaxies.source,
+            source=af.last[-1].hyper_combined.instance.galaxies.source,
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

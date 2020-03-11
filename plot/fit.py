@@ -110,7 +110,7 @@ imaging = al.imaging.from_fits(
     pixel_scales=0.03,
 )
 
-pipeline = lens_sersic_sie__source_sersic.make_pipeline(
+pipeline = lens_sersic_sie__source_sersic.make_pipeline_no_lens_light(
     phase_folders=[dataset_label, dataset_name], with_shear=True
 )
 

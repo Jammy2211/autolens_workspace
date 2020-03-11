@@ -38,7 +38,7 @@ mask = al.mask.circular(
 
 aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# Next, we create a 'lens dataset' object, which is a 'package' of all parts of a simulator-set we need to fit it:
+# Next, we create a 'lens dataset' object, which is a 'package' of all parts of a dataset we need to fit it:
 
 # 1) The imaging-data, e.g. the image, PSF and noise-map.
 # 2) The mask.

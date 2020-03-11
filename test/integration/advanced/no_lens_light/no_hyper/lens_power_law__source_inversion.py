@@ -153,11 +153,11 @@ pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
 
 ### MASS ###
 
-from pipelines.advanced.no_lens_light.mass.power_law import lens_power_law__source
-
-pipeline_mass__power_law = lens_power_law__source.make_pipeline(
-    setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
-)
+# from pipelines.advanced.no_lens_light.mass.power_law import lens_power_law__source
+#
+# pipeline_mass__power_law = lens_power_law__source.make_pipeline(
+#     setup=setup, phase_folders=["advanced", dataset_label, dataset_name]
+# )
 
 ### PIPELINE COMPOSITION AND RUN ###
 
@@ -165,7 +165,12 @@ pipeline_mass__power_law = lens_power_law__source.make_pipeline(
 # information throughout the analysis to later phases.
 
 pipeline = (
-    pipeline_source__parametric + pipeline_source__inversion + pipeline_mass__power_law
+    pipeline_source__parametric
+    + pipeline_source__inversion  # + pipeline_mass__power_law
 )
 
+print(pipeline.phases[2].model.prior_count)
+
 pipeline.run(dataset=imaging, mask=mask)
+
+print(pipeline.phases[2].model.prior_count)

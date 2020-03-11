@@ -128,7 +128,7 @@ def make_pipeline(
         hyper_galaxy=setup.general.hyper_galaxies,
         include_background_sky=setup.general.hyper_image_sky,
         include_background_noise=setup.general.hyper_background_noise,
-        inversion=False,
+        inversion=True,
     )
 
     ### PHASE 2 ###

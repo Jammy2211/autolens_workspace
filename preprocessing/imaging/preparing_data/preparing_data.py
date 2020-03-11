@@ -26,8 +26,8 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 
 simulate_data.simulate_all_imaging(dataset_path=dataset_path)
 
-# First, lets load a simulator-set using the 'load_imaging_from_fits' function of the imaging module. This
-# simulator-set represents a good simulator-reduction that conforms to the formatting standards I describe in this tutorial!
+# First, lets load a dataset using the 'load_imaging_from_fits' function of the imaging module. This
+# dataset represents a good simulator-reduction that conforms to the formatting standards I describe in this tutorial!
 imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=dataset_path, folder_names=["imaging"]
 )
@@ -54,7 +54,7 @@ imaging = al.imaging.from_fits(
 
 aplt.imaging.subplot_imaging(imaging=imaging)
 
-# Lets think about the format of our dataset. There are numerous reasons why the image we just looked at is a good simulator-set
+# Lets think about the format of our dataset. There are numerous reasons why the image we just looked at is a good dataset
 # for lens modeling. I strongly recommend you reduce your dataset to conform to the standards discussed below - it'll make
 # your time using PyAutoLens a lot simpler.
 
