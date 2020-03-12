@@ -32,6 +32,10 @@ The workspace includes the following:
 - **Simulators** - Scripts for simulating strong lens datasets with **PyAutoLens**.
 - **Tools** - Extra tools for using many other **PyAutoLens** features.
 
+## Issues, Help and Problems
+
+If the installation below does not work or you have issues running scripts in the workspace, please post an issue on the [issues section of the autolens_workspace](https://github.com/Jammy2211/autolens_workspace/issues).
+
 ## Setup
 
 The workspace is independent from the autolens install (e.g. the 'site-packages' folder), meaning you can edit workspace 
