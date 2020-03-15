@@ -62,7 +62,10 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 2 ###
 
-    # Now do the exact same with the lens galaxy on the right at (0.0", 1.0")
+    # Now do the exact same with the lens galaxy on the right at (0.0", 1.0").
+
+    # We will additionally pass the left lens's light model as an instance, which as we learnted in the tutorial means
+    # its included in the model with fixed parameters.
 
     right_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
 
@@ -75,7 +78,9 @@ def make_pipeline(phase_folders=None):
     phase2 = al.PhaseImaging(
         phase_name="phase_2__right_lens_light",
         phase_folders=phase_folders,
-        galaxies=dict(right_lens=right_lens),
+        galaxies=dict(
+            left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
+        ),
         optimizer_class=af.MultiNest,
     )
 
@@ -86,27 +91,23 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 3 ###
 
-    # In the next phase, we fit the source of the lens subtracted image.
-
-    class LensSubtractedPhase(al.PhaseImaging):
-
-        # To modify the image, we want to subtract both the left-hand and right-hand lens galaxies. To do this, we need
-        # to subtract the unmasked model image of both galaxies!
-
-        def modify_image(self, image, results):
-
-            return (
-                image
-                - phase1.result.unmasked_model_images_of_planes[0]
-                - phase2.result.unmasked_model_images_of_planes[0]
-            )
+    # In the next phase, we fit the source of the lens subtracted image. We will of course use fixed lens light
+    # models for both the left and right lens galaxies.
 
     # We're going to link the centres of the light profiles computed above to the centre of the lens galaxy
     # mass-profiles in this phase. Because the centres of the mass profiles were fixed in phases 1 and 2,
     # linking them using the 'variable' attribute means that they stay constant (which for now, is what we want).
 
-    left_lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-    right_lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
+    left_lens = al.GalaxyModel(
+        redshift=0.5,
+        light=phase1.result.instance.galaxies.left_lens.light,
+        mass=al.mp.EllipticalIsothermal,
+    )
+    right_lens = al.GalaxyModel(
+        redshift=0.5,
+        light=phase2.result.instance.galaxies.right_lens.light,
+        mass=al.mp.EllipticalIsothermal,
+    )
 
     left_lens.mass.centre_0 = phase1.result.model.galaxies.left_lens.light.centre_0
 
@@ -116,7 +117,7 @@ def make_pipeline(phase_folders=None):
 
     right_lens.mass.centre_1 = phase2.result.model.galaxies.right_lens.light.centre_1
 
-    phase3 = LensSubtractedPhase(
+    phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_x2_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(
@@ -139,20 +140,16 @@ def make_pipeline(phase_folders=None):
     # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
     left_lens = al.GalaxyModel(
-        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
+        redshift=0.5,
+        light=phase1.result.model.galaxies.left_lens.light,
+        mass=phase3.result.model.galaxies.left_lens.mass,
     )
-
-    left_lens.light = phase1.result.model.galaxies.left_lens.light
-
-    left_lens.mass = phase3.result.model.galaxies.left_lens.mass
 
     right_lens = al.GalaxyModel(
-        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
+        redshift=0.5,
+        light=phase2.result.model.galaxies.right_lens.light,
+        mass=phase3.result.model.galaxies.right_lens.mass,
     )
-
-    right_lens.light = phase2.result.model.galaxies.right_lens.light
-
-    right_lens.mass = phase3.result.model.galaxies.right_lens.mass
 
     # When we pass a a 'model' galaxy from a previous phase, parameters fixed to constants remain constant.
     # Because centre_0 and centre_1 of the mass profile were fixed to constants in phase 3, they're still

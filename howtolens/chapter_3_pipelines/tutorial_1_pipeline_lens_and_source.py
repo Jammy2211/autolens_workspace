@@ -53,40 +53,24 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 2 ###
 
-    # In phase 2, we fit the source galaxy's light. Thus, we want to make 2 changes from the previous phase.
+    # In phase 2, we fit the source galaxy's light. Thus, we want to fix the lens light model to the model inferred
+    # in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
+    # 'instance' object, a trick we'll use again in the next pipeline in this chapter.
 
-    # 1) We want to fit the lens subtracted image calculated in phase 1, instead of the observed image.
+    # To be clear, when we pass an 'instance', we are telling PyAutoLens that we want it to pass the best-fit result of
+    # that phase and use those parameters as fixed values in the model. Thus, phase2 below essentially includes a lens
+    # light model that is used every time the model fit is performed, however the parameters of the lens light are no
+    # longer free parameters but instead fixed values.
 
-    # To modify an image, we call a new function, 'modify image'. This function behaves like the pass-priors functions
-    # before, whereby we create a python 'class' in a Phase to set it up.  This ensures it has access to the pipeline's
-    # 'results' (which you may have noticed was in the the customize_priors functions as well).
-
-    # To setup the modified image we take the observed image and subtract-off the model image from the
-    # previous phase, which, if you're keeping track, is an image of the lens galaxy. However, if we just used the
-    # 'model_image' in the fit, this would only include pixels that were masked. We want to subtract the lens off the
-    # entire image - fortunately, PyAutoLens automatically generates an 'unmasked_lens_plane_model_image' as well!
-
-    class LensSubtractedPhase(al.PhaseImaging):
-        def modify_image(self, image, results):
-            phase_1_results = results.from_phase("phase_1__lens_sersic")
-            return image - phase_1_results.unmasked_model_visibilities_of_planes[0]
-
-    # The function above demonstrates the most important thing about pipelines - that every phase has access to the
-    # results of all previous phases. This means we can feed information through the pipeline and therefore use the
-    # results of previous phases to setup new phases.
-
-    # You should see that this is done by using the phase_name of the phase we're interested in, which in the above
-    # code is named 'phase_1__lens_sersic' (you can check this on line 73 above).
-
-    # We'll do this again in phase 3 and throughout all of the pipelines in this chapter and the autolens_workspace examples.
-
-    # We setup phase 2 as per usual. Note that we don't need to pass the modify image function.
-
-    phase2 = LensSubtractedPhase(
+    phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                light=phase1.result.instance.galaxies.lens.light,
+                mass=al.mp.EllipticalIsothermal,
+            ),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         optimizer_class=af.MultiNest,
@@ -99,11 +83,8 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 3 ###
 
-    # Finally, in phase 3, we want to fit the lens and source simultaneously.
-
-    # We'll use the 'customize_priors' function that we all know and love to do this. However, we're going to use the
-    # 'results' argument that, in chapter 2, we ignored. This stores the results of the lens model of
-    # phases 1 and 2 meaning we can use it to initialize phase 3's priors!
+    # Finally, in phase 3, we want to fit the lens and source simultaneously. First, lets set up our lens as a
+    # GalaxyModel.
 
     lens = al.GalaxyModel(
         redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
@@ -151,6 +132,14 @@ def make_pipeline(phase_folders=None):
 
     lens.light = phase1.result.model.galaxies.lens.light
     lens.mass = phase2.result.model.galaxies.lens.mass
+
+    # Passing results as a 'model' contrasts our use of an 'instance' in phase2 above, when we passed the lens light
+    # parameters as fixed value that were not fitted. In summary:
+
+    # - model: This means we pass the best-fit parameters of a phase, and set them up in the next phase as free
+    #          parameters that are fitted for by MultiNest.
+
+    # - instance: This means we pass the best-fit parameters of a phase as fixed parameters that are not fitted for.
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
