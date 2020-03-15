@@ -121,8 +121,8 @@ source_galaxy = al.Galaxy(
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         axis_ratio=0.8,
-        phi=45.0,
-        intensity=1.0,
+        phi=60.0,
+        intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
     ),
