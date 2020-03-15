@@ -255,7 +255,7 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.8
     phase2.optimizer.evidence_tolerance = 0.1
 
-    phase2 = phase1.extend_with_multiple_hyper_phases(
+    phase2 = phase2.extend_with_multiple_hyper_phases(
         hyper_galaxy=setup.general.hyper_galaxies,
         include_background_sky=setup.general.hyper_image_sky,
         include_background_noise=setup.general.hyper_background_noise,
@@ -275,13 +275,13 @@ def make_pipeline(
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=af.last[-1].model.galaxies.lens.mass,
-                shear=af.last[-1].model.galaxies.lens.shear,
+                mass=phase1.result.model.galaxies.lens.mass,
+                shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                pixelization=phase1.result.instance.galaxies.source.pixelization,
-                regularization=phase1.result.instance.galaxies.source.regularization,
+                pixelization=phase2.result.instance.galaxies.source.pixelization,
+                regularization=phase2.result.instance.galaxies.source.regularization,
                 hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),

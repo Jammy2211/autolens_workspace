@@ -32,7 +32,7 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
 config_path = workspace_path + "test/config"
@@ -108,7 +108,7 @@ setup = al.setup.Setup(general=general_setup, source=source_setup, mass=mass_set
 # To run a pipeline we import it from the pipelines folder, make it and pass the lens data to its run function. Now we
 # are using hyper-features we can use the VoronoiBrightnessImage pixelization and AdaptiveBrightness regularization.
 
-from pipelines.beginner.no_lens_light import lens_sie__source_inversion
+from pipelines.intermediate.no_lens_light import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
     setup=setup, phase_folders=["intermediate", dataset_label, dataset_name]

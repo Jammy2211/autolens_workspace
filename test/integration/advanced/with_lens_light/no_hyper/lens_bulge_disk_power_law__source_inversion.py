@@ -144,7 +144,7 @@ light_setup = al.setup.Light(
     align_bulge_disk_phi=False,
 )
 
-mass_setup = al.setup.Mass(no_shear=False)
+mass_setup = al.setup.Mass(no_shear=False, fix_lens_light=True)
 
 setup = al.setup.Setup(
     general=general_setup, source=source_setup, light=light_setup, mass=mass_setup

@@ -654,7 +654,7 @@
                 "value": 0.2
             },
             "gaussian_limits": {
-                "lower": 0.0,
+                "lower": "-inf",
                 "upper": "inf"
             }
         }
@@ -769,7 +769,7 @@
                 "value": 0.2
             },
             "gaussian_limits": {
-                "lower": 0.0,
+                "lower": "-inf",
                 "upper": "inf"
             }
         }
