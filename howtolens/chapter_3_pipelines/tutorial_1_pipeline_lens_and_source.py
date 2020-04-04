@@ -41,7 +41,7 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     # We'll use the MultiNest black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
@@ -73,7 +73,7 @@ def make_pipeline(phase_folders=None):
             ),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -145,7 +145,7 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=source),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True

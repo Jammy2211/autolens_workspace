@@ -38,7 +38,7 @@ import autolens as al
 # regularization and the previous lens mass model.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Previous Pipelines: None
 # Prior Passing: Lens Mass (instance -> phase 2).
 # Notes:  Lens mass fixed, source inversion parameters vary.
@@ -48,7 +48,7 @@ import autolens as al
 # Refine the lens mass model using the inversion.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Previous Pipelines: source/parametric/lens_sie__source_sersic.py
 # Prior Passing: Lens Mass (model -> phase 2), source inversion (instance -> phase 3).
 # Notes: Lens mass varies, source inversion parameters fixed.
@@ -82,7 +82,7 @@ def make_pipeline(
     # 3) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.general.source_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
@@ -116,7 +116,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -162,7 +162,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -207,7 +207,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -229,13 +229,28 @@ def make_pipeline(
     # 1) Fix the source inversion parameters to the results of phase 3.
     # 2) Set priors on the lens galaxy mass using the results of phase 2.
 
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+
+    if setup.source.lens_mass_centre is not None:
+
+        mass.centre.centre_0 = af.GaussianPrior(
+            mean=setup.source.lens_mass_centre[0], sigma=0.05
+        )
+        mass.centre.centre_1 = af.GaussianPrior(
+            mean=setup.source.lens_mass_centre[1], sigma=0.05
+        )
+
+    mass.axis_ratio = phase2.result.model.galaxies.lens.mass.axis_ratio
+    mass.phi = phase2.result.model.galaxies.lens.mass.phi
+    mass.einstein_radius = phase2.result.model.galaxies.lens.mass.einstein_radius
+
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_sie__source_inversion",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                mass=phase2.result.model.galaxies.lens.mass,
+                mass=mass,
                 shear=phase2.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
@@ -253,7 +268,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

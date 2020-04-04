@@ -23,6 +23,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
+    transformer_class=al.TransformerNUFFT,
     positions_threshold=None,
     sub_size=2,
     evidence_tolerance=100.0,
@@ -41,7 +42,7 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.general.source_tag)
     phase_folders.append(setup.source.tag)
 
     ### SETUP SHEAR ###
@@ -69,9 +70,10 @@ def make_pipeline(
                 redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),
         ),
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True

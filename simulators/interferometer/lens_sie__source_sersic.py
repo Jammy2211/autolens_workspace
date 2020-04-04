@@ -25,8 +25,8 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# The real space pixel scale of the interferometer data used to simulate it.
-real_space_pixel_scales = 0.1
+# The grid use to create the image.
+grid = al.Grid.uniform(shape_2d=(151, 151), pixel_scales=0.1, sub_size=4)
 
 # To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below.
 uv_wavelengths_path = workspace_path + "dataset/" + dataset_label + "/uv_wavelengths/"
@@ -37,13 +37,10 @@ uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
 
 # To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
 # visibilities that are simulated, as well as its expoosure time, noise levels and uv-wavelengths.
-simulator = al.simulator.interferometer(
-    real_space_shape_2d=(151, 151),
-    real_space_pixel_scales=real_space_pixel_scales,
+simulator = al.SimulatorInterferometer(
     uv_wavelengths=uv_wavelengths,
-    sub_size=4,
-    exposure_time=300.0,
-    background_level=0.1,
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     noise_sigma=0.1,
 )
 
@@ -77,14 +74,14 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # To make this figure, we need to pass the plotter a grid which it uses to create the image. The simulator has its
 # grid accessible as a property, which we can use to do this.
-aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
 # interferometer dataset.
-interferometer = simulator.from_tracer(tracer=tracer)
+interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Lets plot the simulated interferometer dataset before we output it to fits.
-aplt.interferometer.subplot_interferometer(interferometer=interferometer)
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 interferometer.output_to_fits(

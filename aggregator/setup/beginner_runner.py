@@ -51,16 +51,29 @@ for dataset_name in [
         folder_names=["aggregator", "dataset", dataset_label, dataset_name],
     )
 
+    ### METADATA ###
+
+    # The lens name and metadata are accessible to the aggregator, to aid interpretation of results. The name is passed
+    # as a string and metadata as a dictionary.
+
+    name = dataset_name
+
+    metadata = {"redshihft_lens" : 0.5, "redshift_source" : 1.0, "velocity_dispersion" : 250000, "stellar mass" : 1e11}
+
+    ### DATASET ###
+
     # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-    imaging = al.imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=dataset_path + "image.fits",
         psf_path=dataset_path + "psf.fits",
         noise_map_path=dataset_path + "noise_map.fits",
         pixel_scales=pixel_scales,
+        name=name,
+        metadata=metadata,
     )
 
     # Next, we create the mask we'll fit this data-set with.
-    mask = al.mask.circular(
+    mask = al.Mask.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 

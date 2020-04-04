@@ -39,7 +39,7 @@ def make_pipeline(phase_folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.sampling_efficiency = 0.3
@@ -76,7 +76,7 @@ def make_pipeline(phase_folders=None):
             ),
             source=source,
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.sampling_efficiency = 0.3
@@ -100,11 +100,11 @@ def make_pipeline(phase_folders=None):
             ),
             source=al.GalaxyModel(
                 redshift=1.0,
-                pixelization=phase2.inversion.instance.galaxies.source.pixelization,
-                regularization=phase2.inversion.instance.galaxies.source.regularization,
+                pixelization=phase2.result.inversion.instance.galaxies.source.pixelization,
+                regularization=phase2.result.inversion.instance.galaxies.source.regularization,
             ),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.sampling_efficiency = 0.3

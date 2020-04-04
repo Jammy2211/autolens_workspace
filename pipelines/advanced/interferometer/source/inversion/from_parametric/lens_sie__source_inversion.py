@@ -38,7 +38,7 @@ import autolens as al
 # regularization and the previous lens mass model.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Previous Pipelines: None
 # Prior Passing: Lens Mass (instance -> phase 2).
 # Notes:  Lens mass fixed, source inversion parameters vary.
@@ -48,7 +48,7 @@ import autolens as al
 # Refine the lens mass model using the inversion.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Previous Pipelines: source/parametric/lens_sie__source_sersic.py
 # Prior Passing: Lens Mass (model -> phase 2), source inversion (instance -> phase 3).
 # Notes: Lens mass varies, source inversion parameters fixed.
@@ -60,6 +60,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
+        transformer_class=al.TransformerNUFFT,
     positions_threshold=None,
     sub_size=2,
     inversion_uses_border=True,
@@ -81,7 +82,7 @@ def make_pipeline(
     # 3) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.general.source_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
@@ -108,11 +109,12 @@ def make_pipeline(
             ),
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -146,11 +148,12 @@ def make_pipeline(
             ),
         ),
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -183,11 +186,12 @@ def make_pipeline(
             ),
         ),
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -221,11 +225,12 @@ def make_pipeline(
             ),
         ),
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

@@ -80,7 +80,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 )
 
 # This loads the interferometer dataset,.
-interferometer = al.interferometer.from_fits(
+interferometer = al.Interferometer.from_fits(
     visibilities_path=dataset_path + "visibilities.fits",
     noise_map_path=dataset_path + "noise_map.fits",
     uv_wavelengths_path=dataset_path + "uv_wavelengths.fits",
@@ -92,10 +92,10 @@ visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.
 
 # Next, we create the real-space mask which defines the real-space grid the model images of the strong lens system
 # are created on and used to transform to the uv-plane model data.
-real_space_mask = al.mask.circular(shape_2d=(151, 151), pixel_scales=0.1, radius=3.0)
+real_space_mask = al.Mask.circular(shape_2d=(151, 151), pixel_scales=0.1, radius=3.0)
 
 # Make a quick subplot to make sure the data looks as we expect.
-aplt.interferometer.subplot_interferometer(interferometer=interferometer)
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
 
 ### PIPELINE SETUP ###

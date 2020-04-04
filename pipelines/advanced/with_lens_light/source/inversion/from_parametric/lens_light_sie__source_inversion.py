@@ -44,7 +44,7 @@ import autolens as al
 
 # Lens Light: Previous Pipeline.
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Previous Pipelines: None
 # Prior Passing: Lens Light & Mass (instance -> phase 2).
 # Notes:  Lens light & mass fixed, source inversion parameters vary.
@@ -128,7 +128,7 @@ def make_pipeline(
     else:
         light_tag = setup.light.type_tag
 
-    phase_folders.append(setup.general.tag + light_tag)
+    phase_folders.append(setup.general.source_tag + light_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
@@ -172,7 +172,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -224,7 +224,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -279,7 +279,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -356,7 +356,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

@@ -26,17 +26,17 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scales = 0.1
 
 # Simulate a simple Gaussian PSF for the image.
-psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
+psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
 
 # Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 # its expoosure time, noise levels and psf.
-simulator = al.simulator.imaging(
+simulator = al.SimulatorImaging(
     shape_2d=(100, 100),
     pixel_scales=pixel_scales,
     sub_size=4,
-    exposure_time=300.0,
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
-    background_level=0.1,
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     add_noise=True,
 )
 
@@ -62,11 +62,11 @@ source_galaxy = al.Galaxy(
 # Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset.
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
 # imaging dataset.
-imaging = simulator.from_tracer(tracer=tracer)
+imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
@@ -92,17 +92,17 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scales = 0.1
 
 # Simulate a simple Gaussian PSF for the image.
-psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
+psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
 
 # Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 # its expoosure time, noise levels and psf.
-simulator = al.simulator.imaging(
+simulator = al.SimulatorImaging(
     shape_2d=(100, 100),
     pixel_scales=pixel_scales,
     sub_size=4,
-    exposure_time=300.0,
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
-    background_level=0.1,
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     add_noise=True,
 )
 
@@ -128,11 +128,11 @@ source_galaxy = al.Galaxy(
 # Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset.
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
 # imaging dataset.
-imaging = simulator.from_tracer(tracer=tracer)
+imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
@@ -158,17 +158,17 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 pixel_scales = 0.1
 
 # Simulate a simple Gaussian PSF for the image.
-psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
+psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
 
 # Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 # its expoosure time, noise levels and psf.
-simulator = al.simulator.imaging(
+simulator = al.SimulatorImaging(
     shape_2d=(100, 100),
     pixel_scales=pixel_scales,
     sub_size=4,
-    exposure_time=300.0,
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
-    background_level=0.1,
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     add_noise=True,
 )
 
@@ -194,11 +194,11 @@ source_galaxy = al.Galaxy(
 # Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset.
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
 # imaging dataset.
-imaging = simulator.from_tracer(tracer=tracer)
+imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(

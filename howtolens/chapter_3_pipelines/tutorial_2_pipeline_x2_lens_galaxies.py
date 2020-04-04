@@ -52,7 +52,7 @@ def make_pipeline(phase_folders=None):
         galaxies=dict(
             left_lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -81,7 +81,7 @@ def make_pipeline(phase_folders=None):
         galaxies=dict(
             left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -125,7 +125,7 @@ def make_pipeline(phase_folders=None):
             right_lens=right_lens,
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -180,7 +180,7 @@ def make_pipeline(phase_folders=None):
             right_lens=right_lens,
             source=phase3.result.model.galaxies.source,
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

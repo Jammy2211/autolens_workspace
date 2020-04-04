@@ -198,7 +198,7 @@ def make_pipeline(
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_broken_power_law__source",
         phase_folders=phase_folders,
-        galaxies=dict(len=lens, source=source),
+        galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         positions_threshold=positions_threshold,
@@ -208,7 +208,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = False
@@ -218,11 +218,13 @@ def make_pipeline(
 
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        inversion=source_is_inversion_from_setup(setup=setup),
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-    )
+    if not setup.general.hyper_fixed_after_source:
+
+        phase1 = phase1.extend_with_multiple_hyper_phases(
+            inversion=source_is_inversion_from_setup(setup=setup),
+            hyper_galaxy=setup.general.hyper_galaxies,
+            include_background_sky=setup.general.hyper_image_sky,
+            include_background_noise=setup.general.hyper_background_noise,
+        )
 
     return al.PipelineDataset(pipeline_name, phase1)

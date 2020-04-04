@@ -97,7 +97,7 @@ def make_pipeline(
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     # These lines customize MultiNest so that it samples non-linear parameter space faster. (Checkout
@@ -135,7 +135,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -170,7 +170,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True

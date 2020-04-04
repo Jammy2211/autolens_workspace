@@ -25,21 +25,20 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# The pixel scale of the image to be simulated
-pixel_scales = 0.1
+# The grid use to create the image.
+grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=4)
 
 # Simulate a simple Gaussian PSF for the image.
-psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
+psf = al.Kernel.from_gaussian(
+    shape_2d=(11, 11), sigma=0.1, pixel_scales=grid.pixel_scales
+)
 
 # To simulate the imaging dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
 # image that is simulated, as well as its expoosure time, noise levels and psf.
-simulator = al.simulator.imaging(
-    shape_2d=(100, 100),
-    pixel_scales=pixel_scales,
-    sub_size=4,
-    exposure_time=300.0,
+simulator = al.SimulatorImaging(
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
-    background_level=0.1,
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     add_noise=True,
 )
 
@@ -85,14 +84,14 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # To make this figure, we need to pass the plotter a grid which it uses to create the image. The simulator has its
 # grid accessible as a property, which we can use to do this.
-aplt.tracer.profile_image(tracer=tracer, grid=simulator.grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
 # We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
 # imaging dataset.
-imaging = simulator.from_tracer(tracer=tracer)
+imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Lets plot the simulated imaging dataset before we output it to fits.
-aplt.imaging.subplot_imaging(imaging=imaging)
+aplt.Imaging.subplot_imaging(imaging=imaging)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(

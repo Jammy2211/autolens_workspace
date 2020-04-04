@@ -31,18 +31,18 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-imaging = al.imaging.from_fits(
+imaging = al.Imaging.from_fits(
     image_path=dataset_path + "image.fits",
     psf_path=dataset_path + "psf.fits",
     noise_map_path=dataset_path + "noise_map.fits",
     pixel_scales=pixel_scales,
 )
 
-mask = al.mask.circular(
+mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
+aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # We simply import the interpolating deflections pipeline and pass the interpolation pixel scale up we want as an input
 # parameter (which for the pipeline below, is only used in phase 2).

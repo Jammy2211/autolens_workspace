@@ -42,7 +42,7 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.general.source_tag)
     phase_folders.append(setup.source.tag)
 
     ### SETUP SHEAR ###
@@ -58,12 +58,19 @@ def make_pipeline(
 
     # In phase 1, we fit the lens galaxy's mass and source galaxy.
 
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+
+    # Align the mass model centre with the input setup value, if input.
+
+    if setup.source.lens_mass_centre is not None:
+        mass.centre = setup.source.lens_mass_centre
+
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
-                redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
+                redshift=redshift_lens, mass=mass, shear=shear
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source, sersic=al.lp.EllipticalSersic
@@ -73,7 +80,7 @@ def make_pipeline(
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True

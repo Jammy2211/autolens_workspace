@@ -81,6 +81,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
+    transformer_class=al.TransformerNUFFT,
     positions_threshold=None,
     sub_size=2,
     pixel_scale_interpolation_grid=None,
@@ -151,12 +152,13 @@ def make_pipeline(
             source=source,
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        transformer_class=transformer_class,
         positions_threshold=positions_threshold,
         sub_size=sub_size,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -166,6 +168,8 @@ def make_pipeline(
 
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(inversion=True)
+    if not setup.general.hyper_fixed_after_source:
+
+        phase1 = phase1.extend_with_multiple_hyper_phases(inversion=True)
 
     return al.PipelineDataset(pipeline_name, phase1)

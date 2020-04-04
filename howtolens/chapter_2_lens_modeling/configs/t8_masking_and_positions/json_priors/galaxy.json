@@ -1,0 +1,10 @@
+{
+    "Redshift": {
+        "redshift": {}
+    },
+    "HyperGalaxy": {
+        "contribution_factor": {},
+        "noise_factor": {},
+        "noise_power": {}
+    }
+}

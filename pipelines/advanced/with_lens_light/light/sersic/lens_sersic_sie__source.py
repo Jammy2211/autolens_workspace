@@ -144,7 +144,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_pixel_limit=inversion_pixel_limit,
         inversion_uses_border=inversion_uses_border,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = False
@@ -154,11 +154,13 @@ def make_pipeline(
 
     # If the source is parametric, the inversion hyper phase below will be skipped.
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        inversion=source_is_inversion_from_setup(setup=setup),
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-    )
+    if not setup.general.hyper_fixed_after_source:
+
+        phase1 = phase1.extend_with_multiple_hyper_phases(
+            hyper_galaxy=setup.general.hyper_galaxies,
+            inversion=source_is_inversion_from_setup(setup=setup),
+            include_background_sky=setup.general.hyper_image_sky,
+            include_background_noise=setup.general.hyper_background_noise,
+        )
 
     return al.PipelineDataset(pipeline_name, phase1)

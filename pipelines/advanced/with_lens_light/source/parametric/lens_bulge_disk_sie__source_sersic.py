@@ -78,7 +78,7 @@ def make_pipeline(
     # 2) The lens galaxy mass model includes an external shear.
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.tag)
+    phase_folders.append(setup.general.source_tag)
     phase_folders.append(setup.source.tag)
 
     ### SETUP SHEAR ###
@@ -118,7 +118,7 @@ def make_pipeline(
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -146,6 +146,8 @@ def make_pipeline(
         mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
     else:
         mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
+
+    # Align the mass model centre with the input setup value, if input.
 
     if setup.source.lens_mass_centre is not None:
         mass.centre = setup.source.lens_mass_centre
@@ -175,7 +177,7 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = False
@@ -231,7 +233,7 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = False
@@ -276,7 +278,7 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

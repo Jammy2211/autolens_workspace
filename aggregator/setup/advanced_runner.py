@@ -1,5 +1,3 @@
-import os
-
 # This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
@@ -18,6 +16,7 @@ import os
 
 ### AUTOFIT + CONFIG SETUP ###
 
+import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
@@ -55,7 +54,7 @@ for dataset_name in [
     )
 
     # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-    imaging = al.imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=dataset_path + "image.fits",
         psf_path=dataset_path + "psf.fits",
         noise_map_path=dataset_path + "noise_map.fits",
@@ -63,7 +62,7 @@ for dataset_name in [
     )
 
     # Next, we create the mask we'll fit this data-set with.
-    mask = al.mask.circular(
+    mask = al.Mask.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -135,7 +134,7 @@ for dataset_name in [
     )
 
     # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-    imaging = al.imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=dataset_path + "image.fits",
         psf_path=dataset_path + "psf.fits",
         noise_map_path=dataset_path + "noise_map.fits",
@@ -143,7 +142,7 @@ for dataset_name in [
     )
 
     # Next, we create the mask we'll fit this data-set with.
-    mask = al.mask.circular(
+    mask = al.Mask.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -215,7 +214,7 @@ for dataset_name in [
     )
 
     # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-    imaging = al.imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=dataset_path + "image.fits",
         psf_path=dataset_path + "psf.fits",
         noise_map_path=dataset_path + "noise_map.fits",
@@ -223,7 +222,7 @@ for dataset_name in [
     )
 
     # Next, we create the mask we'll fit this data-set with.
-    mask = al.mask.circular(
+    mask = al.Mask.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -297,7 +296,7 @@ for dataset_name in [
     )
 
     # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-    imaging = al.imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=dataset_path + "image.fits",
         psf_path=dataset_path + "psf.fits",
         noise_map_path=dataset_path + "noise_map.fits",
@@ -305,7 +304,7 @@ for dataset_name in [
     )
 
     # Next, we create the mask we'll fit this data-set with.
-    mask = al.mask.circular(
+    mask = al.Mask.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 

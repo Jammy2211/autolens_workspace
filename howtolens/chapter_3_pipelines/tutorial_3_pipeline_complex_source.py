@@ -41,7 +41,7 @@ def make_pipeline(phase_folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -67,7 +67,7 @@ def make_pipeline(phase_folders=None):
                 light_1=al.lp.EllipticalSersic,
             ),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -89,7 +89,7 @@ def make_pipeline(phase_folders=None):
                 light_2=al.lp.EllipticalSersic,
             ),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -112,7 +112,7 @@ def make_pipeline(phase_folders=None):
                 light_3=al.lp.EllipticalSersic,
             ),
         ),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True

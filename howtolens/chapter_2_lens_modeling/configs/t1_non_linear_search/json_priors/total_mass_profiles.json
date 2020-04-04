@@ -1,0 +1,18 @@
+{
+    "SphericalIsothermal": {
+        "einstein_radius": {
+            "type": "Gaussian",
+            "lower_limit": 0.0,
+            "upper_limit": "inf",
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.05
+            },
+            "mean": 1.6,
+            "sigma": 0.01
+        }
+    },
+    "EllipticalIsothermal": {
+        "einstein_radius": {}
+    }
+}

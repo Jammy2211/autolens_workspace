@@ -31,7 +31,7 @@ import autolens as al
 #     ),
 #     hyper_image_sky=phase_last.result.hyper_combined.instance.optional.hyper_image_sky,
 #     hyper_background_noise=phase_last.result.hyper_combined.instance.optional.hyper_background_noise,
-#     optimizer_class=af.MultiNest,
+#     non_linear_class=af.MultiNest,
 # )
 
 # Above, we pass inferred hyper model components to the phase (the 'hyper_combined' attribute is described next).
@@ -124,7 +124,7 @@ import autolens as al
 # regularization and the previous lens mass model.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Prior Passing: Lens Mass (instance -> phase 3).
 # Notes:  Lens mass fixed, source inversion parameters vary.
 
@@ -133,7 +133,7 @@ import autolens as al
 # Refine the lens mass model using the inversion.
 
 # Lens Mass: EllipticalIsothermal + ExternalShear
-# Source Light: setup.pixelization + setup.regularization
+# Source Light: setup.source.pixelization + setup.source.regularization
 # Prior Passing: Lens Mass (model -> phase 3), source inversion (instance -> phase 4).
 # Notes: Lens mass varies, source inversion parameters fixed.
 
@@ -194,7 +194,7 @@ def make_pipeline(
         sub_size=sub_size,
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -247,7 +247,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -293,7 +293,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase3.optimizer.const_efficiency_mode = True
@@ -338,7 +338,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase4.optimizer.const_efficiency_mode = True
@@ -384,7 +384,7 @@ def make_pipeline(
         bin_up_factor=bin_up_factor,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase5.optimizer.const_efficiency_mode = True

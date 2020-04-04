@@ -31,14 +31,14 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-imaging = al.imaging.from_fits(
+imaging = al.Imaging.from_fits(
     image_path=dataset_path + "image.fits",
     psf_path=dataset_path + "psf.fits",
     noise_map_path=dataset_path + "noise_map.fits",
     pixel_scales=pixel_scales,
 )
 
-mask = al.mask.circular(
+mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -48,11 +48,11 @@ mask = al.mask.circular(
 
 # The autolens_workspace comes with positions already for this dataset already. If you look in
 # autolens_workspace/dataset/imaging/lens_sie__source_sersic/ you'll see a positions file!
-positions = al.coordinates.from_file(file_path=dataset_path + "positions.dat")
+positions = al.Coordinates.from_file(file_path=dataset_path + "positions.dat")
 
 # When we plotters the imaging dataset_label, we can:
 # - Pass the positions to show them on the image.
-aplt.imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)
+aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)
 
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the positions into the
 # 'pipeline.run() function.

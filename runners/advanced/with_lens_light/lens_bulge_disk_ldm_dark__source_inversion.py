@@ -92,7 +92,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 )
 
 # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
-imaging = al.imaging.from_fits(
+imaging = al.Imaging.from_fits(
     image_path=dataset_path + "image.fits",
     psf_path=dataset_path + "psf.fits",
     noise_map_path=dataset_path + "noise_map.fits",
@@ -100,12 +100,12 @@ imaging = al.imaging.from_fits(
 )
 
 # Next, we create the mask we'll fit this data-set with.
-mask = al.mask.circular(
+mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 # Make a quick subplot to make sure the data looks as we expect.
-aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
+aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 
 ### PIPELINE SETUP ###

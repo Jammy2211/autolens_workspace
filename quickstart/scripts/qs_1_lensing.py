@@ -1,47 +1,94 @@
+# %%
+"""
+__Config Issues__
+"""
+
+# %%
+"""
+If, when running the first notebook, you get an error related to config files. For example, it may state that the 
+label 'numba' could not be found in a config file, or something else related to configs, this means that you have not 
+set up your WORKSPACE path correctly to point to the folder autolens_workspace/config. To fix this, you can manually 
+add the config path to each notebook, by uncommenting and using the following code:
+"""
+
+# %%
+# import autofit as af
+#
+# workspace_path = "/path/to/user/autolens_workspace/"
+#
+# af.conf.instance = af.conf.Config(
+#     config_path=workspace_path + "config/",
+#     output_path=workspace_path + "output/",
+# )
+
+# %%
+"""
+__LENSING__
+
+To begin, lets import autolens.
+"""
+
+# %%
+#%matplotlib inline
+
 import autolens as al
 import autolens.plot as aplt
 
-### LENSING ####
+# %%
+"""
+Strong lens modeling uses grids of (y,x) coordinates (e.g. in arc-seconds) to trace light-rays that are deflected by 
+a strong lens galaxy. Before light is deflected, the grid of coordinates is the 'image-plane' grid.
 
-# Strong lens modeling uses grids of (y,x) coordinates (e.g. in arc-seconds) to trace light-rays that are deflected by
-# a strong lens galaxy. Before light is deflected, the grid of coordinates is the 'image-plane' grid.
+To begin, we make an image-plane grid with PyAutoLens. The grid below grid consists of 100 x 100 coordinates and has 
+a pixel-to-arcsecond conversion scale of 0.05".
+"""
 
-# To begin, we make an image-plane grid with PyAutoLens. The grid below grid consists of 100 x 100 coordinates and has
-# a pixel-to-arcsecond conversion scale of 0.05".
+# %%
+grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=1)
 
-grid = al.grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=1)
-
-aplt.grid(
+aplt.Grid(
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Image-Plane Uniform Grid")),
 )
 
-# To perform ray-tracing, we create a 'mass-profile'. A mass-profile is an analytic function that describes a
-# distribution of mass and is used to derive its convergence, gravitational potential and most importantly its
-# deflection angles, which describe how light is bent by the mass-profile's curvature of space-time.
+# %%
+"""
+To perform ray-tracing, we create a 'mass-profile'. A mass-profile is an analytic function that describes a 
+distribution of mass and is used to derive its convergence, gravitational potential and most importantly its 
+deflection angles, which describe how light is bent due to the mass-profile's curvature of space-time.
+"""
 
+# %%
 sis_mass_profile = al.mp.EllipticalIsothermal(
     centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.6
 )
 
 mass_profile_deflections = sis_mass_profile.deflections_from_grid(grid=grid)
 
-# The deflection angles trace the (y,x) grid from the image-plane to the source-plane (where the source appears
-# unlensed). We can subtract the deflection angles from the image-plane grid to get the source-plane grid.
+# %%
+"""
+The deflection angles trace the (y,x) grid from the image-plane to the source-plane (where the source appears unlensed). 
+We can subtract the deflection angles from the image-plane grid to get the source-plane grid.
+"""
 
+# %%
 source_plane_grid = grid - mass_profile_deflections
 
-aplt.grid(
+aplt.Grid(
     grid=source_plane_grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Source Plane Lensed Grid")),
 )
 
-# We use mass profiles to map between grids and therefore 'trace' light-rays through a strong lens system. Light
-# profiles represent the light using analytic profiles (e.g. a Sersic function).
+# %%
+"""
+We use mass profiles to map between grids and therefore 'trace' light-rays through a strong lens system. Light profiles 
+represent the light using analytic profiles (e.g. a Sersic function).
 
-# Below, we evaluate and plotters a Sersic light profile on the image-plane grid and lensed source-plane grid. This shows
-# how the galaxy's light is deflected by the mass profile above.
+Below, we evaluate and plot a Sersic light profile on the image-plane grid and lensed source-plane grid. This shows 
+how the galaxy's light is deflected by the mass profile above.
+"""
 
+# %%
 sersic_light_profile = al.lp.EllipticalSersic(
     centre=(0.0, 0.0),
     axis_ratio=0.8,
@@ -51,13 +98,13 @@ sersic_light_profile = al.lp.EllipticalSersic(
     sersic_index=2.5,
 )
 
-aplt.lp.profile_image(
+aplt.LightProfile.profile_image(
     light_profile=sersic_light_profile,
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Image-Plane Sersic Profile Image")),
 )
 
-aplt.lp.profile_image(
+aplt.LightProfile.profile_image(
     light_profile=sersic_light_profile,
     grid=source_plane_grid,
     plotter=aplt.Plotter(
@@ -65,14 +112,18 @@ aplt.lp.profile_image(
     ),
 )
 
-# We make 'Galaxy' objects from light and mass profiles to perform lens calculations, where:
+# %%
+"""
+We make 'Galaxy' objects from light and mass profiles to perform lensing calculations, where:
 
-# 1) Galaxies are made from multiple light-profiles and / or mass-profiles.
-# 2) Quantities like a galaxy's image and deflection angles are computed by summing those of its individual profiles.
-# 3) Galaxies have redshifts, defining where they are relative to one another for ray-tracing.
+1) Galaxies are made from multiple light-profiles and / or mass-profiles.
+2) Quantities like a galaxy's image and deflection angles are computed by summing those of its individual profiles.
+3) Galaxies have redshifts, defining where they are relative to one another for ray-tracing.
 
-# Below we make a galaxy from light and mass profiles and use this to plotters some of its quantities.
+Below we make a galaxy from light and mass profiles and use this to plot some of its quantities.
+"""
 
+# %%
 light_profile_0 = al.lp.SphericalExponential(
     centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0
 )
@@ -95,12 +146,17 @@ galaxy = al.Galaxy(
     mass_profile_1=mass_profile_1,
 )
 
-aplt.galaxy.profile_image(galaxy=galaxy, grid=grid)
-aplt.galaxy.deflections_y(galaxy=galaxy, grid=grid)
-aplt.galaxy.deflections_x(galaxy=galaxy, grid=grid)
+aplt.Galaxy.profile_image(galaxy=galaxy, grid=grid)
+aplt.Galaxy.deflections_y(galaxy=galaxy, grid=grid)
+aplt.Galaxy.deflections_x(galaxy=galaxy, grid=grid)
 
-# To perform ray-tracing we create multiple galaxies at different redshifts. Lets setup the 2-plane strong lens system below:
+# %%
+"""
+To perform ray-tracing we create multiple galaxies at different redshifts. Lets setup the 2-plane strong lens system 
+below:
+"""
 
+# %%
 #  Observer                  Image-Plane               Source-Plane
 #  (z=0, Earth)               (z = 0.5)                (z = 1.0)
 #
@@ -115,8 +171,12 @@ aplt.galaxy.deflections_x(galaxy=galaxy, grid=grid)
 #           \                                           / <----- And this is its other light-ray
 #            ------------------------------------------/
 
-# We can pass galaxies into a 'Tracer' to create this strong lens system.
+# %%
+"""
+We can pass galaxies into a 'Tracer' to create this strong lens system.
+"""
 
+# %%
 lens_galaxy = al.Galaxy(
     redshift=0.5, mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6)
 )
@@ -130,17 +190,32 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-# We can then pass our image-plane grid to the tracer to 'ray-trace' it through the strong lens system.
+# %%
+"""
+We can then pass our image-plane grid to the tracer to 'ray-trace' it through the strong lens system.
+"""
+
+# %%
 traced_image = tracer.profile_image_from_grid(grid=grid)
-aplt.tracer.profile_image(tracer=tracer, grid=grid)
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
 
-# PyAutoLens has subplot plotters that plotters all relevent quantities of an object. For a tracer, the subplot plots its
-# traced image, convergence, potential and deflection angles.
-aplt.tracer.subplot_tracer(tracer=tracer, grid=grid)
+# %%
+"""
+PyAutoLens has subplot plotters that plot all relevent quantities of an object. For a tracer, the subplot plots its 
+traced image, convergence, potential and deflection angles.
+"""
 
-# Hopefully you'll agree that performing ray-tracing in PyAutoLens is straight-forward! Before continuing,
-# try the following:
+# %%
+aplt.Tracer.subplot_tracer(tracer=tracer, grid=grid)
 
-# - Change the lens galaxy mass profile to an EllipticalIsothermal - what happens?
-# - Add more lens and source galaxies to the tracer.
-# - Change the resolution (pixel-scale) of the image-plane grid.
+# %%
+"""
+Hopefully you'll agree that performing ray-tracing in PyAutoLens is straight-forward! Before continuing, try 
+the following:
+
+- Change the lens galaxy mass profile to an EllipticalIsothermal - what happens?
+- Add more lens and source galaxies to the tracer.
+- Change the resolution (pixel-scale) of the image-plane grid.
+"""
+
+# %%

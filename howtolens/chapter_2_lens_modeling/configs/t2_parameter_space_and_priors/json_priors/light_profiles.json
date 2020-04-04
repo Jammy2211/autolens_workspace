@@ -1,0 +1,26 @@
+{
+    "SphericalExponential": {
+        "intensity": {
+            "type": "Gaussian",
+            "lower_limit": "-inf",
+            "upper_limit": "inf",
+            "width_modifier": {
+                "type": "Absolute",
+                "value": 0.1
+            },
+            "mean": 0.2,
+            "sigma": 0.01
+        },
+        "effective_radius": {
+            "type": "Gaussian",
+            "lower_limit": "-inf",
+            "upper_limit": "inf",
+            "width_modifier": {
+                "type": "Absolute",
+                "value": 2.0
+            },
+            "mean": 0.2,
+            "sigma": 0.01
+        }
+    }
+}

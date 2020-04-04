@@ -1,33 +1,58 @@
-# In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
-# using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a light profile,
-# to initialize the mass model, and then switch to an inversion.
+# %%
+"""
+In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
+using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a light profile,
+to initialize the mass model, and then switch to an inversion.
+"""
 
+# %%
 import os
-
-### AUTOFIT + CONFIG SETUP ###
-
 import autofit as af
 
-# Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+"""
+Setup the path to the autolens_workspace, using a relative directory name.
+"""
 
-# Setup the path to the config folder, using the autolens_workspace path.
+# %%
+workspace_path = "/path/to/user/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+
+# %%
+"""
+Setup the path to the config folder, using the autolens_workspace path.
+"""
+
+# %%
 config_path = workspace_path + "config"
 
-# Use this path to explicitly set the config path and output path.
+# %%
+"""
+Use this path to explicitly set the config path and output path.
+"""
+
+# %%
 af.conf.instance = af.conf.Config(
     config_path=config_path, output_path=workspace_path + "output"
 )
 
-### AUTOLENS + DATA SETUP ###
+# %%
+#%matplotlib inline
 
 import autolens as al
 import autolens.plot as aplt
 
-# This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
+# %%
+"""
+This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
+"""
+
+# %%
 def simulate():
 
-    psf = al.kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+
+    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
@@ -94,32 +119,49 @@ def simulate():
         ]
     )
 
-    simulator = al.simulator.imaging(
-        shape_2d=(180, 180),
-        pixel_scales=0.05,
-        exposure_time=300.0,
-        sub_size=2,
+    simulator = al.SimulatorImaging(
+        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
         psf=psf,
-        background_level=0.1,
+        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
         add_noise=True,
     )
 
-    return simulator.from_tracer(tracer=tracer)
+    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
+# %%
+"""
+Lets simulate the we'll fit, which is the same complex source as the
+'chapter_3_pipelines/tutorial_3_complex_source.py' tutorial.
+"""
 
-# Lets simulate the we'll fit, which is the same complex source as the
-# 'chapter_3_pipelines/tutorial_3_complex_source.py' tutorial.
+# %%
 imaging = simulate()
-aplt.imaging.subplot_imaging(imaging=imaging)
+aplt.Imaging.subplot_imaging(imaging=imaging)
 
-# Lets import the pipeline and run it.
+# %%
+"""
+Lets also use the same mask as before.
+"""
+mask = al.Mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+)
+
+# %%
+"""
+Lets import the pipeline and run it.
+"""
+
+# %%
 from howtolens.chapter_4_inversions import tutorial_8_pipeline
 
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(
     phase_folders=["howtolens", "c4_t8_inversion"]
 )
-pipeline_inversion.run(dataset=imaging)
+pipeline_inversion.run(dataset=imaging, mask=mask)
 
-# And with that, we now have a pipeline to model strong lenses using an inversion! Checkout the example pipeline in
-# 'autolens_workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an inversion pipeline that includes the lens light
-# component.
+# %%
+"""
+And with that, we now have a pipeline to model strong lenses using an inversion! Checkout the example pipeline in
+'autolens_workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an inversion pipeline that includes the lens light
+component.
+"""

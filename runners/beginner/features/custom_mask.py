@@ -31,7 +31,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-imaging = al.imaging.from_fits(
+imaging = al.Imaging.from_fits(
     image_path=dataset_path + "image.fits",
     psf_path=dataset_path + "psf.fits",
     noise_map_path=dataset_path + "noise_map.fits",
@@ -44,7 +44,7 @@ imaging = al.imaging.from_fits(
 
 # The example autolens_workspace dataset_label comes with a mask already, if you look in
 # autolens_workspace/dataset/imaging/lens_sie__source_sersic/ you'll see a mask.fits file!
-mask = al.mask.from_fits(
+mask = al.Mask.from_fits(
     file_path=dataset_path + "mask.fits", hdu=0, pixel_scales=pixel_scales
 )
 
@@ -52,7 +52,7 @@ mask = al.mask.from_fits(
 # - Pass the mask to show it on the image.
 # - Extract only the regions of the image in the mask, to remove contaminating bright sources away from the lens.
 # - zoom in around the mask to emphasize the lens.
-aplt.imaging.subplot_imaging(imaging=imaging, mask=mask)
+aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
 # 'pipeline.run() function.

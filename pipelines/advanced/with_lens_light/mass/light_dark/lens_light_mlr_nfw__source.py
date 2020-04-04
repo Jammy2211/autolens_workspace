@@ -204,7 +204,7 @@ def make_pipeline(
         signal_to_noise_limit=signal_to_noise_limit,
         bin_up_factor=bin_up_factor,
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase1.optimizer.const_efficiency_mode = True
@@ -245,7 +245,7 @@ def make_pipeline(
         pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     )
 
     phase2.optimizer.const_efficiency_mode = True
@@ -253,6 +253,13 @@ def make_pipeline(
     phase2.optimizer.sampling_efficiency = 0.2
     phase2.optimizer.evidence_tolerance = 0.8
 
-    phase2 = phase2.extend_with_inversion_phase()
+    if not setup.general.hyper_fixed_after_source:
+
+        phase2 = phase2.extend_with_multiple_hyper_phases(
+            inversion=source_is_inversion_from_setup(setup=setup),
+            hyper_galaxy=setup.general.hyper_galaxies,
+            include_background_sky=setup.general.hyper_image_sky,
+            include_background_noise=setup.general.hyper_background_noise,
+        )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)
