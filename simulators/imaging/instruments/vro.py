@@ -13,51 +13,40 @@ import os
 # The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # (these files are already in the autolens_workspace and are remade running this script)
-dataset_label = "imaging"
-dataset_name = "lens_bulge_disk_sie__source_sersic"
+dataset_label = "instruments"
+dataset_instrument = "vro"
+dataset_name = "lens_sie__source_sersic"
 
 # Create the path where the dataset will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+    path=workspace_path,
+    folder_names=["dataset", dataset_label, dataset_instrument, dataset_name],
 )
 
 # The grid use to create the image.
-grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=4)
+grid = al.Grid.uniform(shape_2d=(40, 40), pixel_scales=0.2, sub_size=4)
 
 # Simulate a simple Gaussian PSF for the image.
 psf = al.Kernel.from_gaussian(
-    shape_2d=(11, 11), sigma=0.1, pixel_scales=grid.pixel_scales
+    shape_2d=(31, 31), sigma=0.5, pixel_scales=grid.pixel_scales, renormalize=True
 )
 
 # To simulate the imaging dataset we first create a simulator, which defines the expoosure time, background sky,
 # noise levels and psf of the dataset that is simulated.
 simulator = al.SimulatorImaging(
-    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
+    exposure_time_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
     psf=psf,
-    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
+    background_sky_map=al.Array.full(fill_value=1.0, shape_2d=grid.shape_2d),
     add_noise=True,
 )
 
-# Setup the lens galaxy's light (elliptical Sersic + Exponential), mass (SIE+Shear) and source galaxy light
-# (elliptical Sersic) for this simulated lens.
-
+# Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
-    bulge=al.lp.EllipticalSersic(
-        centre=(0.0, 0.0),
-        axis_ratio=0.9,
-        phi=45.0,
-        intensity=0.3,
-        effective_radius=0.6,
-        sersic_index=3.0,
-    ),
-    disk=al.lp.EllipticalExponential(
-        centre=(0.0, 0.0), axis_ratio=0.7, phi=30.0, intensity=0.2, effective_radius=1.6
-    ),
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
@@ -75,7 +64,6 @@ source_galaxy = al.Galaxy(
         sersic_index=2.5,
     ),
 )
-
 
 # Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset.
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
@@ -100,3 +88,10 @@ imaging.output_to_fits(
     noise_map_path=dataset_path + "noise_map.fits",
     overwrite=True,
 )
+
+plotter = aplt.Plotter(
+    labels=aplt.Labels(title="Vera Rubin Observatory Image"),
+    output=aplt.Output(path=dataset_path, filename="image", format="png"),
+)
+
+aplt.Imaging.image(imaging=imaging, plotter=plotter)

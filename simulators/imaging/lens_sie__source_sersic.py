@@ -33,8 +33,8 @@ psf = al.Kernel.from_gaussian(
     shape_2d=(11, 11), sigma=0.1, pixel_scales=grid.pixel_scales
 )
 
-# To simulate the imaging dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
-# image that is simulated, as well as its expoosure time, noise levels and psf.
+# To simulate the imaging dataset we first create a simulator, which defines the expoosure time, background sky,
+# noise levels and psf of the dataset that is simulated.
 simulator = al.SimulatorImaging(
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
@@ -78,48 +78,6 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Lets plot the simulated imaging dataset before we output it to fits.
 aplt.Imaging.subplot_imaging(imaging=imaging)
-
-# Finally, lets output our simulated dataset to the dataset path as .fits files.
-imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    overwrite=True,
-)
-
-
-####################################### OTHER EXAMPLE IMAGES #####################################
-
-dataset_label = "imaging"
-dataset_name = "lens_sie__source_sersic__2"
-
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
-)
-
-lens_galaxy = al.Galaxy(
-    redshift=0.5,
-    mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.3, axis_ratio=0.8, phi=60.0
-    ),
-    shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
-)
-
-source_galaxy = al.Galaxy(
-    redshift=1.0,
-    light=al.lp.EllipticalSersic(
-        centre=(0.3, -0.4),
-        axis_ratio=0.6,
-        phi=40.0,
-        intensity=0.2,
-        effective_radius=1.2,
-        sersic_index=2.0,
-    ),
-)
-
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(

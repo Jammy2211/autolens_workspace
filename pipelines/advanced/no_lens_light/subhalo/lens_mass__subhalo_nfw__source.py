@@ -14,7 +14,7 @@ import autolens as al
 
 # Lens Mass: Previous mass pipeline model.
 # Source Light: Previous source pipeilne model.
-# Subhalo: SphericalTruncatedNFWChallenge
+# Subhalo: SphericalNFWLudlow
 # Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
 # Prior Passing: Lens mass (instance -> previous pipeline), source light (model -> previous pipeline).
 # Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
@@ -25,7 +25,7 @@ import autolens as al
 
 # Lens Mass: Previous mass pipeline model.
 # Source Light: Previous source pipeilne model.
-# Subhalo: SphericalTruncatedNFWChallenge
+# Subhalo: SphericalNFWLudlow
 # Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
 # Prior Passing: Lens mass & source light (model -> previous pipeline), subhalo mass (model -> phase 2).
 # Notes: None
@@ -152,9 +152,7 @@ def make_pipeline(
                 self.model.galaxies.subhalo.mass.centre_1,
             ]
 
-    subhalo = al.GalaxyModel(
-        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMCRLudlow
-    )
+    subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
 
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
     subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
@@ -195,9 +193,7 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.2
     phase1.optimizer.evidence_tolerance = 3.0
 
-    subhalo = al.GalaxyModel(
-        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMCRLudlow
-    )
+    subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
 
     subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
     subhalo.mass.centre = phase1.result.model_absolute(
