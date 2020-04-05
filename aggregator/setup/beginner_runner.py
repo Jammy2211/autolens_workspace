@@ -58,7 +58,12 @@ for dataset_name in [
 
     name = dataset_name
 
-    metadata = {"redshihft_lens" : 0.5, "redshift_source" : 1.0, "velocity_dispersion" : 250000, "stellar mass" : 1e11}
+    metadata = {
+        "redshihft_lens": 0.5,
+        "redshift_source": 1.0,
+        "velocity_dispersion": 250000,
+        "stellar mass": 1e11,
+    }
 
     ### DATASET ###
 

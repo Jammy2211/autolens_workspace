@@ -134,6 +134,7 @@ def simulate():
 
     return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
+
 # %%
 """
 Plot Imaging before running.

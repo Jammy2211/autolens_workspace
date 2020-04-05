@@ -66,7 +66,12 @@ The metadata is written as a Python dictionary and can have as many entires as d
 want to include int he interpretation of your lens models should be included here.
 """
 
-metadata = {"redshihft_lens": 0.5, "redshift_source": 1.0, "velocity_dispersion": 250000, "stellar mass": 1e11}
+metadata = {
+    "redshihft_lens": 0.5,
+    "redshift_source": 1.0,
+    "velocity_dispersion": 250000,
+    "stellar mass": 1e11,
+}
 
 # %%
 """
@@ -86,4 +91,4 @@ with open(metadata_file, "w+") as f:
 if os.path.exists(dataset_path + "metadata.json"):
     os.remove(dataset_path + "metadata.json")
 
-shutil.move("metadata.json", dataset_path + "metadata.json", )
+shutil.move("metadata.json", dataset_path + "metadata.json")

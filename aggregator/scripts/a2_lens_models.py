@@ -87,14 +87,14 @@ appropriate attributes of the aggregator along the way (e.g.model instances). Cr
 each operation one-by-one, freeing up the memory used by each operation before performing the next.
 """
 
+
 def make_tracer_generator(agg_obj):
 
     output = agg_obj.output
 
     # This uses the output of one instance to generate the tracer.
-    return al.Tracer.from_galaxies(
-        galaxies=output.most_likely_instance.galaxies
-    )
+    return al.Tracer.from_galaxies(galaxies=output.most_likely_instance.galaxies)
+
 
 # %%
 """
@@ -148,9 +148,9 @@ For illustration, lets do this with a list first:
 print("Most Likely Lens Einstein Masses:")
 for instance in ml_instances:
     einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
-            redshift_object=instance.galaxies.lens.redshift,
-            redshift_source=instance.galaxies.source.redshift
-        )
+        redshift_object=instance.galaxies.lens.redshift,
+        redshift_source=instance.galaxies.source.redshift,
+    )
     print(einstein_mass)
 print()
 
@@ -161,15 +161,17 @@ Now lets use a generator.
 
 # %%
 
+
 def print_most_likely_mass(agg_obj):
 
     output = agg_obj.output
 
     einstein_mass = output.instance.galaxies.lens.einstein_mass_in_units(
-            redshift_object=output.instance.galaxies.lens.redshift,
-            redshift_source=output.instance.galaxies.source.redshift
-        )
+        redshift_object=output.instance.galaxies.lens.redshift,
+        redshift_source=output.instance.galaxies.source.redshift,
+    )
     print(einstein_mass)
+
 
 print("Most Likely Lens Einstein Masses:")
 agg_phase_3.map(func=print_most_likely_mass)
@@ -216,7 +218,8 @@ le3_axis_ratios = [instance.galaxies.lens.mass.axis_ratio for instance in le3_in
 plt.errorbar(
     x=mp_einstein_radii,
     y=mp_axis_ratios,
-    marker=".", linestyle="",
+    marker=".",
+    linestyle="",
     xerr=[le3_einstein_radii, ue3_einstein_radii],
     yerr=[le3_axis_ratios, ue3_axis_ratios],
 )
@@ -265,6 +268,7 @@ Computing an Einstein mass takes a bit of time, so be warned this cell could run
 up, you'll notice that we only perform the loop on samples whose probably is above 1.0e-4.
 """
 
+
 def mass_error(agg_obj):
 
     output = agg_obj.output
@@ -272,7 +276,7 @@ def mass_error(agg_obj):
     sample_masses = []
     sample_weights = []
 
-    for sample_index in range(output.accepted_samples-1):
+    for sample_index in range(output.accepted_samples - 1):
 
         sample_weight = output.weight_from_sample_index(sample_index=sample_index)
 
@@ -291,6 +295,7 @@ def mass_error(agg_obj):
     return weighted_mean_and_standard_deviation(
         values=sample_masses, weights=sample_weights
     )
+
 
 einstein_masses, einstein_mass_errors = agg_phase_3.map(func=mass_error)
 

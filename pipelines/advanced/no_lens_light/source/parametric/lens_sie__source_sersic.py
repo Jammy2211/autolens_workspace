@@ -69,9 +69,7 @@ def make_pipeline(
         phase_name="phase_1__lens_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=al.GalaxyModel(
-                redshift=redshift_lens, mass=mass, shear=shear
-            ),
+            lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
                 redshift=redshift_source, sersic=al.lp.EllipticalSersic
             ),

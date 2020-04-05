@@ -48,9 +48,7 @@ lens_galaxy = al.Galaxy(
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
     ),
-    subhalo=al.mp.SphericalTruncatedNFWMassToConcentration(
-        centre=(1.6, 0.0), mass_at_200=1.0e10
-    ),
+    subhalo=al.mp.SphericalTruncatedNFWMCRDuffy(centre=(1.6, 0.0), mass_at_200=1.0e10),
     shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
 )
 
@@ -111,7 +109,10 @@ psf = al.Kernel.from_gaussian(
 # To simulate the imaging dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
 # image that is simulated, as well as its expoosure time, noise levels and psf.
 simulator = al.SimulatorImaging(
-    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d), psf=psf, background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d), add_noise=True
+    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
+    psf=psf,
+    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
+    add_noise=True,
 )
 
 # To make this figure, we need to pass the plotter a grid which it uses to create the image. The simulator has its

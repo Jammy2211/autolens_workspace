@@ -160,8 +160,6 @@ def make_pipeline(
     subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
     subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
 
-    subhalo.mass.redshift_object = subhalo.redshift
-
     # Setup the source model, which uses a variable parametric profile or fixed inversion model depending on the
     # previous pipeline.
 
@@ -171,8 +169,14 @@ def make_pipeline(
 
     subhalo.mass.redshift_source = source.redshift
 
-    phase1 = GridPhase(
-        phase_name="phase_1__subhalo_search__source",
+    # The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift.
+
+    subhalo.mass.redshift_object = af.UniformPrior(
+        lower_limit=0.0, upper_limit=subhalo.redshift
+    )
+
+    phase1a = GridPhase(
+        phase_name="phase_1a__subhalo_search__z_below_lens__source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
@@ -190,29 +194,22 @@ def make_pipeline(
         number_of_steps=5,
     )
 
-    phase1.optimizer.const_efficiency_mode = False
-    phase1.optimizer.n_live_points = 50
-    phase1.optimizer.sampling_efficiency = 0.2
-    phase1.optimizer.evidence_tolerance = 3.0
+    phase1a.optimizer.const_efficiency_mode = False
+    phase1a.optimizer.n_live_points = 50
+    phase1a.optimizer.sampling_efficiency = 0.2
+    phase1a.optimizer.evidence_tolerance = 3.0
 
-    subhalo = al.GalaxyModel(
-        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMCRLudlow
+    # The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift.
+
+    subhalo.mass.redshift_object = af.UniformPrior(
+        lower_limit=subhalo.redshift, upper_limit=source.redshift
     )
 
-    subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
-    subhalo.mass.centre = phase1.result.model_absolute(
-        a=0.5
-    ).galaxies.subhalo.mass.centre
-
-    source = source_with_previous_model_or_instance(
-        setup=setup, source_as_model=True, index=-1
-    )
-
-    phase2 = al.PhaseImaging(
-        phase_name="phase_2__subhalo_refine",
+    phase1b = GridPhase(
+        phase_name="phase_1b__subhalo_search__z_above_lens__source",
         phase_folders=phase_folders,
         galaxies=dict(
-            lens=af.last[-1].model.galaxies.lens, subhalo=subhalo, source=source
+            lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -224,17 +221,12 @@ def make_pipeline(
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
         non_linear_class=af.MultiNest,
+        number_of_steps=5,
     )
 
-    phase2.optimizer.const_efficiency_mode = False
-    phase2.optimizer.n_live_points = 80
-    phase2.optimizer.sampling_efficiency = 0.3
-    phase2.optimizer.evidence_tolerance = 0.8
+    phase1b.optimizer.const_efficiency_mode = False
+    phase1b.optimizer.n_live_points = 50
+    phase1b.optimizer.sampling_efficiency = 0.2
+    phase1b.optimizer.evidence_tolerance = 3.0
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-    )
-
-    return al.PipelineDataset(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1a, phase1b)

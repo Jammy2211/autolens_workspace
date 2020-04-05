@@ -108,7 +108,7 @@ def make_pipeline(
             ]
 
     subhalo = al.GalaxyModel(
-        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMassToConcentration
+        redshift=redshift_lens, mass=al.mp.SphericalTruncatedNFWMCRLudlow
     )
 
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)

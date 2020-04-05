@@ -64,6 +64,7 @@ generator.
 def make_dataset_generator(agg_obj):
     return agg_obj.dataset
 
+
 dataset_gen = agg_phase_3.map(func=make_dataset_generator)
 
 for dataset in dataset_gen:
@@ -102,6 +103,7 @@ Lets plot each dataset again now with its mask, using generators.
 def make_mask_generator(agg_obj):
     return agg_obj.mask
 
+
 dataset_gen = agg_phase_3.map(func=make_dataset_generator)
 mask_gen = agg_phase_3.map(func=make_mask_generator)
 
@@ -139,6 +141,7 @@ def make_fit_generator(agg_obj):
 
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
+
 fit_gen = agg_phase_3.map(func=make_fit_generator)
 
 for fit in fit_gen:
@@ -170,11 +173,13 @@ def make_fit_generator(agg_obj):
         pixel_scale_interpolation_grid=meta_dataset.pixel_scale_interpolation_grid,
         inversion_pixel_limit=meta_dataset.inversion_pixel_limit,
         inversion_uses_border=meta_dataset.inversion_uses_border,
-        positions_threshold=meta_dataset.positions_threshold)
+        positions_threshold=meta_dataset.positions_threshold,
+    )
 
     tracer = al.Tracer.from_galaxies(galaxies=output.most_likely_instance.galaxies)
 
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
+
 
 fit_gen = agg_phase_3.map(func=make_fit_generator)
 
@@ -200,6 +205,7 @@ def plot_fit(agg_obj):
     tracer = al.agg.tracer_from_agg_obj(agg_obj=agg_obj)
 
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
+
 
 fit_gen = agg_phase_3.map(func=make_fit_generator)
 

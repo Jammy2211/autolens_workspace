@@ -55,7 +55,7 @@ pipeline.
 pipeline_name = "pipeline_mass__power_law"
 phase_name = "phase_1__lens_power_law__source"
 
-agg_power_law =  agg.filter(phase=phase_name, pipeline=pipeline_name)
+agg_power_law = agg.filter(phase=phase_name, pipeline=pipeline_name)
 
 outputs = agg_power_law.output
 
@@ -80,7 +80,9 @@ As usual, filtering creates a new aggregator.
 agg_power_law_hyper_shear = agg_power_law.filter_contains(directory="hyper_galaxies")
 
 # This gives the 3 results from the 6 above that include a shear.
-agg_power_law_hyper_shear = agg_power_law_hyper_shear.filter_contains(directory="with_shear")
+agg_power_law_hyper_shear = agg_power_law_hyper_shear.filter_contains(
+    directory="with_shear"
+)
 
 # %%
 """
@@ -88,7 +90,9 @@ To make the code shorter this can be reduced to one line of code.
 """
 
 # %%
-agg_power_law_hyper_shear = agg_power_law.filter_contains(directory="hyper_galaxies").filter_contains(directory="with_shear")
+agg_power_law_hyper_shear = agg_power_law.filter_contains(
+    directory="hyper_galaxies"
+).filter_contains(directory="with_shear")
 
 # %%
 """
@@ -114,10 +118,18 @@ string.
 """
 
 # %%
-agg_power_law_no_shear = agg_power_law.filter_contains(directory="general/").filter_contains(directory="with_shear")
-agg_power_law_shear = agg_power_law.filter_contains(directory="general/").filter_contains(directory="with_shear")
-agg_power_law_hyper_no_shear = agg_power_law.filter_contains(directory="hyper_galaxies").filter_contains(directory="source__pix_voro_mag__reg_const/")
-agg_power_law_hyper_shear = agg_power_law.filter_contains(directory="hyper_galaxies").filter_contains(directory="source__pix_voro_mag__reg_const/")
+agg_power_law_no_shear = agg_power_law.filter_contains(
+    directory="general/"
+).filter_contains(directory="with_shear")
+agg_power_law_shear = agg_power_law.filter_contains(
+    directory="general/"
+).filter_contains(directory="with_shear")
+agg_power_law_hyper_no_shear = agg_power_law.filter_contains(
+    directory="hyper_galaxies"
+).filter_contains(directory="source__pix_voro_mag__reg_const/")
+agg_power_law_hyper_shear = agg_power_law.filter_contains(
+    directory="hyper_galaxies"
+).filter_contains(directory="source__pix_voro_mag__reg_const/")
 
 fit_gen = al.agg.FitImaging(aggregator=agg_power_law_no_shear)
 

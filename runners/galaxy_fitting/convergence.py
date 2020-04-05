@@ -41,14 +41,11 @@ grid = al.Grid.uniform(
 
 # Now lets create a galaxy, using a singular isothermal sphere.
 galaxy = al.Galaxy(
-    redshift=0.5,
-    mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0),
+    redshift=0.5, mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.0)
 )
 
 # Next, we generate the galaxy's convergence profile.
-convergence = galaxy.convergence_from_grid(
-    grid=grid,
-)
+convergence = galaxy.convergence_from_grid(grid=grid)
 
 # Now, we'll set this convergence up as our 'GalaxyData', which is the 'data' we fit via a non-linear search. To
 # perform a fit we need a noise-map to define our chi-squareds. Given we are fitting a direct lensing quantity the
@@ -59,17 +56,16 @@ noise_map = al.Array.full(
 data = al.GalaxyData(image=convergence, noise_map=noise_map, pixel_scale=pixel_scale)
 
 # The fit will use a mask, which we setup like any other fit
-mask = al.Mask.circular(shape=image_shape_2d, pixel_scale=pixel_scale, radius_arcsec=2.0
-    )
+mask = al.Mask.circular(
+    shape=image_shape_2d, pixel_scale=pixel_scale, radius_arcsec=2.0
+)
 
 # We can now use a 'PhaseGalaxy', to fit this convergence with a model galaxy, the mass-profiles of which we get to
 # choose. We'll fit it with a singular isothermal sphere and thus should infer the input model above.
 phase = al.PhaseGalaxy(
     phase_name="phase_galaxy_convergence_fit",
     use_convergence=True,
-    galaxies=dict(
-        lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal)
-    ),
+    galaxies=dict(lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal)),
     sub_grid_size=4,
     non_linear_class=af.MultiNest,
 )

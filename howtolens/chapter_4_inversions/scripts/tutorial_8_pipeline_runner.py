@@ -128,6 +128,7 @@ def simulate():
 
     return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
+
 # %%
 """
 Lets simulate the we'll fit, which is the same complex source as the

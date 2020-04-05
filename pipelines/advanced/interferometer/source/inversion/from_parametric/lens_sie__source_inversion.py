@@ -60,7 +60,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-        transformer_class=al.TransformerNUFFT,
+    transformer_class=al.TransformerNUFFT,
     positions_threshold=None,
     sub_size=2,
     inversion_uses_border=True,
