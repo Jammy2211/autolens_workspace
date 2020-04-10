@@ -19,7 +19,7 @@ af.conf.instance = af.conf.Config(
 )
 
 dataset_label = "imaging"
-dataset_name = "lens_sersic_sie__source_sersic"
+dataset_name = "lens_sie__source_sersic"
 pixel_scales = 0.1
 
 ### AUTOLENS + DATA SETUP ###
@@ -39,19 +39,21 @@ imaging = al.Imaging.from_fits(
 )
 
 # Okay, we need to load the mask from a .fits file, in the same fashion as the imaging above. To draw a mask for an
-# image, checkout the files
-# 'autolens_workspace/tools/data_making/mask_maker.py and autolens_workspace/tools/data_making/mask_maker__irregular.py'
+# image, checkout the tutorial
+# 'autolens_workspace/preprocess/imaging/p4_mask.ipynb'
 
-# The example autolens_workspace dataset_label comes with a mask already, if you look in
+# The example autolens_workspace dataset comes with a mask already, if you look in
 # autolens_workspace/dataset/imaging/lens_sie__source_sersic/ you'll see a mask.fits file!
 mask = al.Mask.from_fits(
     file_path=dataset_path + "mask.fits", hdu=0, pixel_scales=pixel_scales
 )
 
-# When we plotters the imaging dataset_label, we can:
+# When we plot the imaging dataset, we can:
+
 # - Pass the mask to show it on the image.
 # - Extract only the regions of the image in the mask, to remove contaminating bright sources away from the lens.
 # - zoom in around the mask to emphasize the lens.
+
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the mask into the
@@ -59,8 +61,6 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 from pipelines.beginner.with_lens_light import lens_sersic_sie__source_sersic
 
-pipeline = lens_sersic_sie__source_sersic.make_pipeline(
-    phase_folders=[dataset_label, dataset_name]
-)
+pipeline = lens_sersic_sie__source_sersic.make_pipeline(phase_folders=["features"])
 
 pipeline.run(dataset=imaging, mask=mask)

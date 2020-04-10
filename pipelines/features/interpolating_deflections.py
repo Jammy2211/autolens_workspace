@@ -48,8 +48,7 @@ def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline__feature"
-    pipeline_tag = "interpolating_deflections"
+    pipeline_name = "pipeline__feature__interpolating_deflections"
 
     # When a phase is passed a 'pixel_scale_interpolation_grid', a setup tag is automatically generated and
     # added to the phase path to make it clear what interpolation was used. The setup tag, phase name and
@@ -66,7 +65,6 @@ def make_pipeline(phase_folders=None, pixel_scale_interpolation_grid=0.05):
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
 
     ### PHASE 1 ###
 

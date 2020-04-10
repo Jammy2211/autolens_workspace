@@ -111,7 +111,7 @@ aplt.Imaging.noise_map(imaging=imaging, plotter=plotter)
 
 # %%
 """
-Of course, as we've seen in many other examples, a sub-plotters of the imaging dataset_label can be plotted. This can also take the
+Of course, as we've seen in many other examples, a sub-plotters of the imaging dataset can be plotted. This can also take the
 customization inputs above, but it should be noted that the options are applied to all images, and thus will most
 likely degrade a number of the sub-plotters images.
 """

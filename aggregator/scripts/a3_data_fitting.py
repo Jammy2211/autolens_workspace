@@ -38,51 +38,45 @@ Again, we create a list of the MultiNestOutputs of each phase.
 # %%
 pipeline_name = "pipeline__lens_sie__source_inversion"
 phase_name = "phase_3__source_inversion"
-agg_phase_3 = agg.filter(phase=phase_name)
-outputs = agg_phase_3.output
+agg_phase_3 = agg.filter(agg.phase == phase_name)
 
 # %%
 """
-We can also use the aggregator to load the dataset of every lens our pipeline fitted. This returns the dataset as 
-the "Imaging" objects we passed to the pipeline when we ran them.
+We can also use the aggregator to load the dataset of every lens our pipeline fitted. This generator returns the 
+dataset as the "Imaging" objects we passed to the pipeline when we ran them.
 """
 
 # %%
-datasets = agg_phase_3.dataset
+dataset_gen = agg_phase_3.values("dataset")
 
 print("Datasets:")
-print(datasets, "\n")
-print(datasets[0].image)
+print(dataset_gen, "\n")
+print(list(dataset_gen)[0].image)
 
-# %%
-"""
-However, as we have discussed, this is a bad idea - it ill cripple our memory use. Instead, we should create a dataset
-generator.
-"""
-
-# %%
-def make_dataset_generator(agg_obj):
-    return agg_obj.dataset
-
-
-dataset_gen = agg_phase_3.map(func=make_dataset_generator)
-
-for dataset in dataset_gen:
+for dataset in agg_phase_3.values("dataset"):
 
     aplt.Imaging.subplot_imaging(imaging=dataset)
 
 # %%
 """
-The name and metadata of the dataset are also availble, which will help us to label the lenses on our plots or 
-inspect our results in terms of measurements not part of our lens modeling.
+The name of the dataset we assigned when we ran the pipelines are also attatch, which will help us to label the lenses 
+on our plots or inspect our results in terms of measurements not part of our lens modeling.
 """
 
+# %%
 print("Dataset Names:")
-dataset_gen = agg_phase_3.map(func=make_dataset_generator)
+dataset_gen = agg_phase_3.values("dataset")
 print([dataset.name for dataset in dataset_gen])
-print("Dataset Metadatas:")
-dataset_gen = agg_phase_3.map(func=make_dataset_generator)
-print([dataset.metadata for dataset in dataset_gen])
+
+# %%
+"""
+The info dictionary we passed is also available.
+"""
+
+# %%
+print("Info:")
+info_gen = agg_phase_3.values("info")
+print([info for info in info_gen])
 
 # %%
 """
@@ -90,9 +84,9 @@ We'll also need the masks we used to fit the lenses, which the aggregator also p
 """
 
 # %%
-masks = agg_phase_3.mask
+mask_gen = agg_phase_3.values("mask")
 print("Masks:")
-print(masks, "\n")
+print(list(mask_gen), "\n")
 
 # %%
 """
@@ -100,25 +94,9 @@ Lets plot each dataset again now with its mask, using generators.
 """
 
 # %%
-def make_mask_generator(agg_obj):
-    return agg_obj.mask
 
-
-dataset_gen = agg_phase_3.map(func=make_dataset_generator)
-mask_gen = agg_phase_3.map(func=make_mask_generator)
-
-for dataset, mask in zip(dataset_gen, mask_gen):
-    aplt.Imaging.subplot_imaging(imaging=dataset, mask=mask)
-
-# %%
-"""
-As we saw for Tracer's in the last tutorial, PyAutoLens's aggregator module provides shortcuts for making the dataset
-generator and mask generator.
-"""
-
-# %%
-dataset_gen = al.agg.Dataset(aggregator=agg_phase_3)
-mask_gen = al.agg.Mask(aggregator=agg_phase_3)
+dataset_gen = agg_phase_3.values("dataset")
+mask_gen = agg_phase_3.values("mask")
 
 for dataset, mask in zip(dataset_gen, mask_gen):
     aplt.Imaging.subplot_imaging(imaging=dataset, mask=mask)
@@ -214,10 +192,15 @@ for fit in fit_gen:
 
 # %%
 """
-Of course, we also provide a convenience method to directly make the FitImaging generator!
+Of course, we also provide a convenience method to directly make the MaskedImaging and FitImaging generators!
 """
 
 # %%
+masked_imaging_gen = al.agg.MaskedImaging(aggregator=agg_phase_3)
+
+for masked_imaging in masked_imaging_gen:
+    print(masked_imaging.name)
+
 fit_gen = al.agg.FitImaging(aggregator=agg_phase_3)
 
 for fit in fit_gen:

@@ -39,10 +39,9 @@ Next, lets create a list of instances of the most-likely models of the final pha
 # %%
 pipeline_name = "pipeline__lens_sie__source_inversion"
 phase_name = "phase_3__source_inversion"
-agg_phase_3 = agg.filter(phase=phase_name)
-outputs = agg_phase_3.output
+agg_phase_3 = agg.filter(agg.phase == phase_name)
 
-ml_instances = [out.most_likely_instance for out in outputs]
+ml_instances = [out.most_likely_instance for out in agg_phase_3.values("output")]
 
 # %%
 """
@@ -74,20 +73,15 @@ for tracer in ml_tracers:
 
 # %%
 """
-Okay, so we can make a list of tracers and plot their convergences. However, there is a problem with using lists, what
-if we fitted a lot of lenses? Imagine we had fitted hundreds of images, with hundreds of tracers - we'd quickly 
-overload the memory on our laptop. Thats not good!
+Okay, so we can make a list of tracers and plot their convergences. However, we'll run into the same problem using 
+lists which we discussed in the previous tutorial. If we had fitted hundreds of images we'd have hundreds of tracers, 
+overloading the memory on our laptop.
 
-Therefore, for aggregator use, we will avoid using lists for any objects that could potentially be memory intensive.
-Instead, we'll use generators, as shown below. If you're not familiar with generators, they may take you a bit of time 
-to get your head round - but it'll be worth it.
-
-What is a generator? It essentially stores the objects as a means to generate it using a function, mapping the 
-appropriate attributes of the aggregator along the way (e.g.model instances). Crucially, unlike a list, it performs 
-each operation one-by-one, freeing up the memory used by each operation before performing the next.
+We will again avoid using lists for any objects that could potentially be memory intensive, using generators once 
+again.
 """
 
-
+# %%
 def make_tracer_generator(agg_obj):
 
     output = agg_obj.output
@@ -111,6 +105,7 @@ We can now iterate over our tracer generator to make the plots we desire.
 (We'll explain how to load the grid via the aggregator in the next tutorial)
 """
 
+# %%
 grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1)
 
 for tracer in tracer_gen:
@@ -160,8 +155,6 @@ Now lets use a generator.
 """
 
 # %%
-
-
 def print_most_likely_mass(agg_obj):
 
     output = agg_obj.output
@@ -185,7 +178,7 @@ These plots don't use anything too memory intensive - like a tracer - so we are 
 """
 
 # %%
-mp_instances = [out.most_probable_instance for out in outputs]
+mp_instances = [out.most_probable_instance for out in agg_phase_3.values("output")]
 mp_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
 ]
@@ -203,8 +196,12 @@ Now lets also include error bars at 3 sigma confidence.
 """
 
 # %%
-ue3_instances = [out.error_instance_at_upper_sigma(sigma=3.0) for out in outputs]
-le3_instances = [out.error_instance_at_lower_sigma(sigma=3.0) for out in outputs]
+ue3_instances = [
+    out.error_instance_at_upper_sigma(sigma=3.0) for out in agg_phase_3.values("output")
+]
+le3_instances = [
+    out.error_instance_at_lower_sigma(sigma=3.0) for out in agg_phase_3.values("output")
+]
 
 ue3_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in ue3_instances
@@ -268,7 +265,7 @@ Computing an Einstein mass takes a bit of time, so be warned this cell could run
 up, you'll notice that we only perform the loop on samples whose probably is above 1.0e-4.
 """
 
-
+# %%
 def mass_error(agg_obj):
 
     output = agg_obj.output

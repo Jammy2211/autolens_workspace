@@ -50,14 +50,14 @@ mask = al.Mask.circular(
 # autolens_workspace/dataset/imaging/lens_sie__source_sersic/ you'll see a positions file!
 positions = al.Coordinates.from_file(file_path=dataset_path + "positions.dat")
 
-# When we plotters the imaging dataset_label, we can:
+# When we plot the imaging dataset, we can:
 # - Pass the positions to show them on the image.
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)
 
 # Finally, we import and make the pipeline as described in the runner.py file, but pass the positions into the
 # 'pipeline.run() function.
 
-from pipelines.beginner.features import position_thresholding
+from pipelines.features import position_thresholding
 
 pipeline = position_thresholding.make_pipeline(
     phase_folders=[dataset_label, dataset_name]

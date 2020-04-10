@@ -44,7 +44,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # We simply import the sub_gridding pipeline and pass the sub-grid size we want as an input parameter (which
 # for the pipeline below, is only used in phase 2).
 
-from pipelines.beginner.features import sub_gridding
+from pipelines.features import sub_gridding
 
 pipeline = sub_gridding.make_pipeline(
     phase_folders=[dataset_label, dataset_name], sub_size=4

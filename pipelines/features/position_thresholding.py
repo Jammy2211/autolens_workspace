@@ -40,14 +40,12 @@ def make_pipeline(phase_folders=None, positions_threshold=None):
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline__feature"
-    pipeline_tag = "position_thresholding"
+    pipeline_name = "pipeline__feature__position_thresholding"
 
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
 
     # A setup tag is automatically added to the phase path, making it clear the 'position_threshold' value used.
     # The positions_threshold_tag and phase name are shown for 3 example values:

@@ -55,7 +55,7 @@ We can get the output of every non-linear search (e.g. all 3 phases) of every da
 """
 
 # %%
-non_linear_outputs = aggregator.output
+non_linear_outputs = aggregator.values("output")
 
 # %%
 """
@@ -63,7 +63,7 @@ From here, we can inspect results as we please, for example printing the most li
 """
 
 # %%
-print([output.most_likely_instance for output in non_linear_outputs])
+print([output.most_likely_instance for output in list(non_linear_outputs)])
 
 # %%
 """

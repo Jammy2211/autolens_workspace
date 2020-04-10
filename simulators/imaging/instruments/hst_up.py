@@ -18,13 +18,11 @@ workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 # (these files are already in the autolens_workspace and are remade running this script)
 dataset_label = "instruments"
 dataset_instrument = "hst_up"
-dataset_name = "lens_sie__source_sersic"
 
 # Create the path where the dataset will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path,
-    folder_names=["dataset", dataset_label, dataset_instrument, dataset_name],
+    path=workspace_path, folder_names=["dataset", dataset_label, dataset_instrument]
 )
 
 # The grid use to create the image.

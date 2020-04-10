@@ -1,47 +1,105 @@
-@classmethod
-def sma(
-    cls,
-    real_space_shape_2d=(151, 151),
-    real_space_pixel_scales=(0.05, 0.05),
-    sub_size=8,
-    primary_beam_shape_2d=None,
-    primary_beam_sigma=None,
-    exposure_time=100.0,
-    background_level=1.0,
-    noise_sigma=0.1,
-    noise_if_add_noise_false=0.1,
-    noise_seed=-1,
-):
-    """Default settings for an observation with the Large Synotpic Survey Telescope.
+import autofit as af
+import autolens as al
+import autolens.plot as aplt
+import os
 
-    This can be customized by over-riding the default input values."""
+# This tool allows one to make simulated datasets of strong lenses, which can be used to test example pipelines and
+# investigate strong lens modeling on simulated datasets where the 'true' answer is known.
 
-    uv_wavelengths_path = "{}/dataset/sma_uv_wavelengths.fits".format(
-        os.path.dirname(os.path.realpath(__file__))
-    )
+# The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
 
-    uv_wavelengths = array_util.numpy_array_1d_from_fits(
-        file_path=uv_wavelengths_path, hdu=0
-    )
+# The image will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
+# The noise-map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+# The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
-    if primary_beam_shape_2d is not None and primary_beam_sigma is not None:
-        primary_beam = kernel.Kernel.from_gaussian(
-            shape_2d=primary_beam_shape_2d,
-            sigma=primary_beam_sigma,
-            pixel_scales=real_space_pixel_scales,
-        )
-    else:
-        primary_beam = None
+# Setup the path to the autolens_workspace, using a relative directory name.
+workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 
-    return cls(
-        real_space_shape_2d=real_space_shape_2d,
-        real_space_pixel_scales=real_space_pixel_scales,
-        uv_wavelengths=uv_wavelengths,
-        sub_size=sub_size,
-        primary_beam=primary_beam,
-        exposure_time=exposure_time,
-        background_level=background_level,
-        noise_sigma=noise_sigma,
-        noise_if_add_noise_false=noise_if_add_noise_false,
-        noise_seed=noise_seed,
-    )
+# (these files are already in the autolens_workspace and are remade running this script)
+dataset_label = "instruments"
+dataset_instrument = "sma"
+
+# Create the path where the dataset will be output, which in this case is
+# '/autolens_workspace/dataset/interferometer/lens_sie__source_sersic/'
+dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    path=workspace_path, folder_names=["dataset", dataset_label, dataset_instrument]
+)
+
+# The grid use to create the image.
+grid = al.Grid.uniform(shape_2d=(151, 151), pixel_scales=0.05, sub_size=4)
+
+# To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below.
+uv_wavelengths_path = "{}/sma/".format(os.path.dirname(os.path.realpath(__file__)))
+
+uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
+    file_path=uv_wavelengths_path + "uv_wavelengths.fits", hdu=0
+)
+
+# To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale of the
+# visibilities that are simulated, as well as its expoosure time, noise levels and uv-wavelengths.
+simulator = al.SimulatorInterferometer(
+    uv_wavelengths=uv_wavelengths,
+    exposure_time_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
+    background_sky_map=al.Array.full(fill_value=1.0, shape_2d=grid.shape_2d),
+    noise_sigma=0.01,
+)
+
+# Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
+# this simulated lens.
+lens_galaxy = al.Galaxy(
+    redshift=0.5,
+    mass=al.mp.EllipticalIsothermal(
+        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+    ),
+    shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
+)
+
+source_galaxy = al.Galaxy(
+    redshift=1.0,
+    light=al.lp.EllipticalSersic(
+        centre=(0.1, 0.1),
+        axis_ratio=0.8,
+        phi=60.0,
+        intensity=0.3,
+        effective_radius=1.0,
+        sersic_index=2.5,
+    ),
+)
+
+# Use these galaxies to setup a tracer, which will generate the image for the simulated interferometer dataset.
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+
+# Lets look at the tracer's image - this is the image we'll be simulating.
+
+# To make this figure, we need to pass the plotter a grid which it uses to create the image. The simulator has its
+# grid accessible as a property, which we can use to do this.
+aplt.Tracer.profile_image(tracer=tracer, grid=grid)
+
+# We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
+# interferometer dataset.
+interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+
+# Lets plot the simulated interferometer dataset before we output it to fits.
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
+
+# Finally, lets output our simulated dataset to the dataset path as .fits files.
+interferometer.output_to_fits(
+    visibilities_path=dataset_path + "visibilities.fits",
+    noise_map_path=dataset_path + "noise_map.fits",
+    uv_wavelengths_path=dataset_path + "uv_wavelengths.fits",
+    overwrite=True,
+)
+
+plotter = aplt.Plotter(
+    labels=aplt.Labels(title="Visibilities"),
+    output=aplt.Output(path=dataset_path, filename="visibilities", format="png"),
+)
+
+aplt.Interferometer.visibilities(interferometer=interferometer, plotter=plotter)
+
+plotter = aplt.Plotter(
+    labels=aplt.Labels(title="UV-Wavelengths"),
+    output=aplt.Output(path=dataset_path, filename="uv_wavelengths", format="png"),
+)
+
+aplt.Interferometer.visibilities(interferometer=interferometer, plotter=plotter)

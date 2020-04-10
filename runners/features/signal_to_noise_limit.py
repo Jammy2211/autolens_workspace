@@ -10,7 +10,7 @@ import os
 
 import autofit as af
 
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 config_path = workspace_path + "config"
 
@@ -47,10 +47,10 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # We simply import the signal-to-noise limit pipeline and pass the signal-to-noise limit we want as an input parameter
 # (which for the pipeline below, is only used in phase 1).
 
-from pipelines.beginner.features import signal_to_noise_limit
+from pipelines.features import signal_to_noise_limit
 
 pipeline = signal_to_noise_limit.make_pipeline(
-    phase_folders=[dataset_label, dataset_name], signal_to_noise_limit=20.0
+    phase_folders=["features"], signal_to_noise_limit=20.0
 )
 
 pipeline.run(dataset=imaging, mask=mask)

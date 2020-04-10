@@ -42,13 +42,13 @@ imaging = al.Imaging.from_fits(
 # image, checkout the files
 # 'autolens_workspace/tools/data_making/mask_maker.py and autolens_workspace/tools/data_making/mask_maker__irregular.py'
 
-# The example autolens_workspace dataset_label comes with a mask already, if you look in
+# The example autolens_workspace dataset comes with a mask already, if you look in
 # autolens_workspace/dataset/imaging/lens_sie__source_sersic/ you'll see a mask.fits file!
 mask = al.Mask.from_fits(
     file_path=dataset_path + "mask.fits", hdu=0, pixel_scales=pixel_scales
 )
 
-# When we plotters the imaging dataset_label, we can:
+# When we plot the imaging dataset, we can:
 # - Pass the mask to show it on the image.
 # - Extract only the regions of the image in the mask, to remove contaminating bright sources away from the lens.
 # - zoom in around the mask to emphasize the lens.

@@ -24,6 +24,7 @@ def make_pipeline(
     redshift_lens=0.5,
     redshift_source=1.0,
     transformer_class=al.TransformerNUFFT,
+    auto_positions_factor=None,
     positions_threshold=None,
     sub_size=2,
     evidence_tolerance=100.0,
@@ -72,6 +73,7 @@ def make_pipeline(
         ),
         transformer_class=transformer_class,
         positions_threshold=positions_threshold,
+        auto_positions_factor=auto_positions_factor,
         sub_size=sub_size,
         non_linear_class=af.MultiNest,
     )

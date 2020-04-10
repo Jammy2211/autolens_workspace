@@ -50,16 +50,15 @@ for dataset_name in [
         path=workspace_path,
         folder_names=["aggregator", "dataset", dataset_label, dataset_name],
     )
+    ### Info ###
 
-    ### METADATA ###
-
-    # The lens name and metadata are accessible to the aggregator, to aid interpretation of results. The name is passed
-    # as a string and metadata as a dictionary.
+    # The dataset name and info are accessible to the aggregator, to aid interpretation of results. The name is passed
+    # as a string and info as a dictionary.
 
     name = dataset_name
 
-    metadata = {
-        "redshihft_lens": 0.5,
+    info = {
+        "redshift_lens": 0.5,
         "redshift_source": 1.0,
         "velocity_dispersion": 250000,
         "stellar mass": 1e11,
@@ -74,7 +73,6 @@ for dataset_name in [
         noise_map_path=dataset_path + "noise_map.fits",
         pixel_scales=pixel_scales,
         name=name,
-        metadata=metadata,
     )
 
     # Next, we create the mask we'll fit this data-set with.
@@ -115,4 +113,6 @@ for dataset_name in [
         setup=setup, phase_folders=[output_label, dataset_name]
     )
 
-    pipeline.run(dataset=imaging, mask=mask)
+    # Note how we pass the info the pipeline run function, meaning the info will be available to the aggregator.
+
+    pipeline.run(dataset=imaging, mask=mask, info=info)

@@ -40,8 +40,7 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
 
     ### SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS ###
 
-    pipeline_name = "pipeline__feature"
-    pipeline_tag = "inversion_pixel_limit"
+    pipeline_name = "pipeline__feature__inversion_pixel_limit"
 
     # When a phase is passed an 'inversion_pixel_limit', a setup tag is automatically generated and added to the
     # phase path to make it clear what limit was used. The setup tag, phase name and phase paths are shown for 3
@@ -59,7 +58,6 @@ def make_pipeline(phase_folders=None, inversion_pixel_limit=100):
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
 
     ### PHASE 1 ###
 

@@ -55,13 +55,11 @@ pipeline.
 pipeline_name = "pipeline_mass__power_law"
 phase_name = "phase_1__lens_power_law__source"
 
-agg_power_law = agg.filter(phase=phase_name, pipeline=pipeline_name)
-
-outputs = agg_power_law.output
+agg_power_law = agg.filter(agg.phase == phase_name, agg.pipeline == pipeline_name)
 
 print("Pipeline Name Filtered MultiNest Outputs:")
-print(outputs)
-print("Total Outputs = ", len(outputs), "\n")
+print(list(agg_power_law.values("output")))
+print("Total Outputs = ", len(list(agg_power_law.values("output"))), "\n")
 
 # %%
 """
@@ -77,22 +75,14 @@ As usual, filtering creates a new aggregator.
 # %%
 
 # This gives the 6 results with hyper galaxy fitting switch on.
-agg_power_law_hyper_shear = agg_power_law.filter_contains(directory="hyper_galaxies")
-
-# This gives the 3 results from the 6 above that include a shear.
-agg_power_law_hyper_shear = agg_power_law_hyper_shear.filter_contains(
-    directory="with_shear"
+agg_power_law_hyper_shear = agg_power_law.filter(
+    agg_power_law.directory.contains("hyper_galaxies")
 )
 
-# %%
-"""
-To make the code shorter this can be reduced to one line of code.
-"""
-
-# %%
-agg_power_law_hyper_shear = agg_power_law.filter_contains(
-    directory="hyper_galaxies"
-).filter_contains(directory="with_shear")
+# This gives the 3 results from the 6 above that include a shear.
+agg_power_law_hyper_shear = agg_power_law_hyper_shear.filter(
+    agg_power_law_hyper_shear.directory.contains("with_shear")
+)
 
 # %%
 """
@@ -118,20 +108,23 @@ string.
 """
 
 # %%
-agg_power_law_no_shear = agg_power_law.filter_contains(
-    directory="general/"
-).filter_contains(directory="with_shear")
-agg_power_law_shear = agg_power_law.filter_contains(
-    directory="general/"
-).filter_contains(directory="with_shear")
-agg_power_law_hyper_no_shear = agg_power_law.filter_contains(
-    directory="hyper_galaxies"
-).filter_contains(directory="source__pix_voro_mag__reg_const/")
-agg_power_law_hyper_shear = agg_power_law.filter_contains(
-    directory="hyper_galaxies"
-).filter_contains(directory="source__pix_voro_mag__reg_const/")
+agg_tmp = agg_power_law.filter(agg.directory.contains("general/"))
+agg_power_law_no_shear = agg_tmp.filter(agg_tmp.directory.contains("with_shear"))
 
-fit_gen = al.agg.FitImaging(aggregator=agg_power_law_no_shear)
+agg_tmp = agg_power_law.filter(agg.directory.contains("general/"))
+agg_power_law_shear = agg_tmp.filter(agg_power_law.directory.contains("with_shear"))
+
+agg_tmp = agg_power_law.filter(agg_power_law.directory.contains("hyper_galaxies"))
+agg_power_law_hyper_no_shear = agg_tmp.filter(
+    agg_tmp.directory.contains("source__pix_voro_mag__reg_const/")
+)
+
+agg_tmp = agg_power_law.filter(agg_power_law.directory.contains("hyper_galaxies"))
+agg_power_law_hyper_shear = agg_tmp.filter(
+    agg_tmp.directory.contains("source__pix_voro_mag__reg_const/")
+)
+
+fit_gen = al.agg.FitImaging(aggregator=agg_tmp)
 
 for fit in fit_gen:
     aplt.FitImaging.subplot_fit_imaging(fit=fit)
@@ -159,7 +152,9 @@ We can apply directory filtering using image names to achieve this.
 """
 
 # %%
-agg_dataset_0 = agg_power_law.filter_contains(directory="lens_sie__source_sersic__0")
+agg_dataset_0 = agg_power_law.filter(
+    agg_power_law.directory.contains("lens_sie__source_sersic__0")
+)
 
 fit_gen = al.agg.FitImaging(aggregator=agg_dataset_0)
 

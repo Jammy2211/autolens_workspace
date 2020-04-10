@@ -6,7 +6,7 @@ import os
 # searches in one phase to get results quickly.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # There is a x2 '/../../' because we are in the 'autolens_workspace/scripts/examples' folder, so we need to move up two
 # folders to get to the "autolens_workspace" folder.

@@ -196,4 +196,4 @@ pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
     setup=setup, phase_folders=["howtolens", "c5_t6_hyper"]
 )
 
-pipeline_hyper.run(dataset=imaging, mask=mask)
+# pipeline_hyper.run(dataset=imaging, mask=mask)

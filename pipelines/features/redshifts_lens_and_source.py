@@ -40,8 +40,7 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
     # a pipeline does use customized tag names.
 
-    pipeline_name = "pipeline__feature"
-    pipeline_tag = "redshifts"
+    pipeline_name = "pipeline__feature__redshifts"
 
     # Unlike other features, the redshifts of the lens and source do not change the setup tag and phase path. Thus,
     # our output will simply go to the phase path:
@@ -52,7 +51,6 @@ def make_pipeline(phase_folders=None, redshift_lens=0.5, redshift_source=1.0):
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(pipeline_tag)
 
     ### PHASE 1 ###
 

@@ -47,7 +47,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # We simply import the binning up pipeline and pass the level of binning up we want as an input parameter (which
 # for the pipeline below, is only used in phase 1).
 
-from pipelines.beginner.features import binning_up
+from pipelines.features import binning_up
 
 pipeline = binning_up.make_pipeline(
     phase_folders=[dataset_label, dataset_name], bin_up_factor=2

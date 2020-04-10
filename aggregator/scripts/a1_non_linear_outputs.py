@@ -72,27 +72,39 @@ lenses on a super computer and easily unzip all the results on your computer aft
 
 # %%
 """
-We can now create a list of the 'non-linear outputs' of every fit. An instance of the NonLinearOutput class acts as an 
+To begin, let me quickly explain what a generator is in Python, for those unaware. A generator is an object that 
+iterates over a function when it is called. The aggregator creates all objects as generators, rather than lists, or 
+dictionaries, or whatever.
+
+Why? Because lists store every entry in memory simultaneously. If you fit many lenses, you'll have lots of results and 
+therefore use a lot of memory. This will crash your laptop! On the other hand, a generator only stores the object in 
+memory when it runs the function; it is free to overwrite it afterwards. This, your laptop won't crash!
+
+There are two things to bare in mind with generators:
+
+1) A generator has no length, thus to determine how many entries of data it corresponds to you first must turn it to a 
+list.
+
+2) Once we use a generator, we cannot use it again - we'll need to remake it.
+
+We can now create a 'non-linear outputs' generator of every fit. An instance of the NonLinearOutput class acts as an 
 interface between the results of the non-linear fit on your hard-disk and Python.
-
-The fits to each lens used MultiNest, so below we create a list of instances of the MultiNestOutput class (the 
-non-linear output class will change dependent on the non-linear optimizer used).
 """
 
 # %%
-outputs = agg.output
+output_gen = agg.values("output")
 
 # %%
 """
-When we print this list of outputs we see 9 different MultiNestOutput instances. These correspond to all 3 phases of 
-each pipeline's fit to all 3 images.
+When we print this the length of this generator converted to a list of outputs we see 9 different MultiNestOutput 
+instances. These correspond to all 3 phases of each pipeline's fit to all 3 images.
 """
 
 # %%
 print("MultiNest Outputs: \n")
-print(outputs)
+print(output_gen)
 print()
-print("Total Outputs = ", len(outputs), "\n")
+print("Total Outputs = ", len(list(output_gen)), "\n")
 
 # %%
 """
@@ -102,18 +114,20 @@ the pipeline we can do so by filtering for the phase's name.
 
 # %%
 phase_name = "phase_3__source_inversion"
-outputs = agg.filter(phase=phase_name).output
+agg_filter = agg.filter(agg.phase == phase_name)
+output_gen = agg_filter.values("output")
 
 # %%
 """
-As expected, this list now has only 3 MultiNestOutputs, one for each image we fitted.
+As expected, this list now has only 3 MultiNestOutputs, one for each image we fitted (note how in the bottom print
+statement we remake the generator using the aggregator).
 """
 
 # %%
 print("Phase Name Filtered MultiNest Outputs: \n")
-print(outputs)
+print(list(output_gen))
 print()
-print("Total Outputs = ", len(outputs), "\n")
+print("Total Outputs = ", len(list(agg_filter.values("output"))), "\n")
 
 # %%
 """
@@ -121,13 +135,13 @@ In this example, we only fitted the 3 images using one pipeline. But suppose we 
 the advanced pipelines. In this case, the aggregator would load the MultiNestOutputs of all fits of all phases of all 
 pipelines!
 
-In such circumstances, we can filter by pipeline name.
+In such circumstances, we can filter by phase name and pipeline name.
 """
 
 # %%
 pipeline_name = "pipeline__lens_sie__source_inversion"
-agg_filter = agg.filter(pipeline=pipeline_name, phase=phase_name)
-outputs = agg_filter.output
+agg_filter = agg.filter(agg.phase == phase_name, agg.pipeline == pipeline_name)
+output_gen = agg_filter.values("output")
 
 # %%
 """
@@ -136,9 +150,9 @@ As expected, this list again has 3 MultiNestOutputs.
 
 # %%
 print("Pipeline Name Filtered MultiNest Outputs: \n")
-print(outputs)
+print(output_gen)
 print()
-print("Total Outputs = ", len(outputs), "\n")
+print("Total Outputs = ", len(list(agg_filter.values("output"))), "\n")
 
 # %%
 """
@@ -147,20 +161,21 @@ images (in this case in phase 3).
 """
 
 # %%
-ml_vector = [out.most_likely_vector for out in outputs]
+ml_vector = [out.most_likely_vector for out in agg_filter.values("output")]
 
 print("Most Likely Model Parameter Lists: \n")
 print(ml_vector, "\n")
 
 # %%
 """
-This provides us with lists of all model parameters. However, this isn't that much use - which values correspond to which parameters?
+This provides us with lists of all model parameters. However, this isn't that much use - which values correspond to 
+which parameters?
 
 Its more useful to create the model instance of every fit.
 """
 
 # %%
-ml_instances = [out.most_likely_instance for out in outputs]
+ml_instances = [out.most_likely_instance for out in agg_filter.values("output")]
 print("Most Likely Model Instances: \n")
 print(ml_instances, "\n")
 
@@ -205,8 +220,8 @@ of every parameter in 1D and taking the median of this PDF.
 """
 
 # %%
-mp_vector = [out.most_probable_vector for out in outputs]
-mp_instances = [out.most_probable_instance for out in outputs]
+mp_vector = [out.most_probable_vector for out in agg_filter.values("output")]
+mp_instances = [out.most_probable_instance for out in agg_filter.values("output")]
 
 print("Most Probable Model Parameter Lists: \n")
 print(mp_vector, "\n")
@@ -227,13 +242,21 @@ this will find their values from the degeneracy in the 'same direction' (e.g. bo
 """
 
 # %%
-uv3_vectors = [out.vector_at_upper_sigma(sigma=3.0) for out in outputs]
+uv3_vectors = [
+    out.vector_at_upper_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
 
-uv3_instances = [out.instance_at_upper_sigma(sigma=3.0) for out in outputs]
+uv3_instances = [
+    out.instance_at_upper_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
 
-lv3_vectors = [out.vector_at_lower_sigma(sigma=3.0) for out in outputs]
+lv3_vectors = [
+    out.vector_at_lower_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
 
-lv3_instances = [out.instance_at_lower_sigma(sigma=3.0) for out in outputs]
+lv3_instances = [
+    out.instance_at_lower_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
 
 print("Errors Lists: \n")
 print(uv3_vectors, "\n")
@@ -252,10 +275,18 @@ Here, "ue3" signifies the upper error at 3 sigma.
 # %%
 # These do not currently work due to a bug which will be fixed on Friday
 
-ue3_vectors = [out.error_vector_at_upper_sigma(sigma=3.0) for out in outputs]
-ue3_instances = [out.error_instance_at_upper_sigma(sigma=3.0) for out in outputs]
-le3_vectors = [out.error_vector_at_lower_sigma(sigma=3.0) for out in outputs]
-le3_instances = [out.error_instance_at_lower_sigma(sigma=3.0) for out in outputs]
+ue3_vectors = [
+    out.error_vector_at_upper_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
+ue3_instances = [
+    out.error_instance_at_upper_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
+le3_vectors = [
+    out.error_vector_at_lower_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
+le3_instances = [
+    out.error_instance_at_lower_sigma(sigma=3.0) for out in agg_filter.values("output")
+]
 
 print("Errors Lists: \n")
 print(ue3_vectors, "\n")
@@ -275,8 +306,8 @@ the evidences allows us to perform Bayesian model comparison!
 
 # %%
 print("Likelihoods: \n")
-print([out.maximum_log_likelihood for out in outputs])
-print([out.evidence for out in outputs])
+print([out.maximum_log_likelihood for out in agg_filter.values("output")])
+print([out.evidence for out in agg_filter.values("output")])
 
 # %%
 """
@@ -285,7 +316,7 @@ quick inspection of all results.
 """
 
 # %%
-results = agg.filter(pipeline=pipeline_name).model_results
+results = agg_filter.model_results
 print("Model Results Summary: \n")
 print(results, "\n")
 

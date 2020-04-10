@@ -10,7 +10,7 @@ import os
 
 import autofit as af
 
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 
 config_path = workspace_path + "config"
 
@@ -47,10 +47,10 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # We simply import the interpolating deflections pipeline and pass the interpolation pixel scale up we want as an input
 # parameter (which for the pipeline below, is only used in phase 2).
 
-from pipelines.beginner.features import interpolating_deflections
+from pipelines.features import interpolating_deflections
 
 pipeline = interpolating_deflections.make_pipeline(
-    phase_folders=[dataset_label, dataset_name], pixel_scale_interpolation_grid=0.05
+    phase_folders=["features"], pixel_scale_interpolation_grid=0.05
 )
 
 pipeline.run(dataset=imaging, mask=mask)

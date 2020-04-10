@@ -1,7 +1,7 @@
 import os
 
-# This pipeline runner demonstrates how to use the sub-gridding in pipelines. Checkout the pipeline
-# 'autolens_workspace/pipelines/beginner/features/sub_gridding.py' for a description binning up.
+# This pipeline runner demonstrates how to use the binning up in pipelines. Checkout the pipeline
+# 'autolens_workspace/pipelines/beginner/features/binning_up.py' for a description binning up.
 
 # I'll assume that you are familiar with how the beginner runners work, so if any code doesn't make sense familiarize
 # yourself with those first!
@@ -10,7 +10,10 @@ import os
 
 import autofit as af
 
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+
+config_path = workspace_path + "config"
+
 af.conf.instance = af.conf.Config(
     config_path=workspace_path + "config", output_path=workspace_path + "output"
 )
@@ -41,13 +44,11 @@ mask = al.Mask.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# We simply import the sub_gridding pipeline and pass the sub-grid size we want as an input parameter (which
-# for the pipeline below, is only used in phase 2).
+# We simply import the binning up pipeline and pass the level of binning up we want as an input parameter (which
+# for the pipeline below, is only used in phase 1).
 
-from pipelines.beginner.features import sub_gridding
+from pipelines.features import binning_up
 
-pipeline = sub_gridding.make_pipeline(
-    phase_folders=[dataset_label, dataset_name], sub_size=4
-)
+pipeline = binning_up.make_pipeline(phase_folders=["features"], bin_up_factor=2)
 
 pipeline.run(dataset=imaging, mask=mask)
