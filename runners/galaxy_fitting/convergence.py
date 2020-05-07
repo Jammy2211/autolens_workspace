@@ -21,11 +21,11 @@ import numpy as np
 import autofit as af
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -48,8 +48,8 @@ galaxy = al.Galaxy(
 convergence = galaxy.convergence_from_grid(grid=grid)
 
 # Now, we'll set this convergence up as our 'GalaxyData', which is the 'data' we fit via a non-linear search. To
-# perform a fit we need a noise-map to define our chi-squareds. Given we are fitting a direct lensing quantity the
-# actual values of this noise-map arn't particularly important, so we'll just use a noise-map of all 0.1's
+# perform a fit we need a noise map to define our chi-squareds. Given we are fitting a direct lensing quantity the
+# actual values of this noise map arn't particularly important, so we'll just use a noise map of all 0.1's
 noise_map = al.Array.full(
     fill_valu=0.1, shape_2d=image_shape_2d, pixel_scale=pixel_scale
 )

@@ -3,7 +3,7 @@ import autolens as al
 
 ### PIPELINE DESCRIPTION ###
 
-# In this pipeline, we'll demonstrate signal-to-noise limiting - which fits data where the noise-map is increased to
+# In this pipeline, we'll demonstrate signal-to-noise limiting - which fits data where the noise map is increased to
 # cap the highest signal-to-noise value. In this example, we will perform an initial analysis on an image with a
 # signal-to-noise limit of 10.0, and then fit the image using the unscaled signal-to-noise map.
 

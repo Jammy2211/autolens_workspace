@@ -17,8 +17,8 @@ add the config path to each notebook, by uncommenting and using the following co
 # workspace_path = "/path/to/user/autolens_workspace/"
 #
 # af.conf.instance = af.conf.Config(
-#     config_path=workspace_path + "config/",
-#     output_path=workspace_path + "output/",
+#     config_path=f"{workspace_path}/config/",
+#     output_path=f"{workspace_path}/output/",
 # )
 
 # %%

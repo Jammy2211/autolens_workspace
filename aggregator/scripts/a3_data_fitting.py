@@ -20,19 +20,19 @@ Below, we set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
-output_path = workspace_path + "output"
-agg_results_path = output_path + "/aggregator_sample_beginner"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+output_path = f"{workspace_path}/output"
+agg_results_path = f"{output_path}/aggregator/beginner"
 
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path + "/config"), output_path=str(output_path)
+    config_path=f"{workspace_path}/config", output_path=output_path
 )
 
 agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-Again, we create a list of the MultiNestOutputs of each phase.
+Again, we create a list of the NestedSamplerSampless of each phase.
 """
 
 # %%
@@ -109,13 +109,15 @@ To reperform the fit of each most-likely lens model we can use the following gen
 # %%
 def make_fit_generator(agg_obj):
 
-    output = agg_obj.output
+    output = agg_obj.samples
     dataset = agg_obj.dataset
     mask = agg_obj.mask
 
     masked_imaging = al.MaskedImaging(imaging=dataset, mask=mask)
 
-    tracer = al.Tracer.from_galaxies(galaxies=output.most_likely_instance.galaxies)
+    tracer = al.Tracer.from_galaxies(
+        galaxies=output.max_log_likelihood_instance.galaxies
+    )
 
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
@@ -139,7 +141,7 @@ actualy phase.
 # %%
 def make_fit_generator(agg_obj):
 
-    output = agg_obj.output
+    output = agg_obj.samples
     dataset = agg_obj.dataset
     mask = agg_obj.mask
     meta_dataset = agg_obj.meta_dataset
@@ -154,7 +156,9 @@ def make_fit_generator(agg_obj):
         positions_threshold=meta_dataset.positions_threshold,
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=output.most_likely_instance.galaxies)
+    tracer = al.Tracer.from_galaxies(
+        galaxies=output.max_log_likelihood_instance.galaxies
+    )
 
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
@@ -243,7 +247,7 @@ for fit in fit_gen:
 
     plotter = aplt.Plotter(
         output=aplt.Output(
-            path=workspace_path + "/output/path/of/file/",
+            path=f"{workspace_path}//output/path/of/file/",
             filename="publication",
             format="png",
         )

@@ -168,18 +168,18 @@ aplt.Inversion.reconstruction(
 """
 Would you look at that! Our reconstruction of the image no longer has residuals! By congregating more source 
 pixels in the brightest regions of the source reconstruction we get a better fit. Furthermore, we can check that 
-this provides an increase in Bayesian evidence, noting that the evidence of the compact source when using a 
+this provides an increase in Bayesian log evidence, noting that the log evidence of the compact source when using a 
 VoronoiMagnification pixelization was 14236:
 """
 
 # %%
 print("Evidence using magnification based pixelization = ", 14236.292117135737)
 
-print("Evidence using brightness based pixelization = ", fit.evidence)
+print("Evidence using brightness based pixelization = ", fit.log_evidence)
 
 # %%
 """
-It increases! By over 200, which, for a Bayesian evidence, is pretty damn large! By any measure, this pixelization 
+It increases! By over 200, which, for a Bayesian log evidence, is pretty damn large! By any measure, this pixelization 
 is a huge success. It turns out that we should have been adapting to the source's brightness all along! In doing so, 
 we will *always* reconstruct the detailed structure of the source's brightest regions with a sufficiently high 
 resolution. Hurrah!
@@ -354,11 +354,11 @@ aplt.Inversion.reconstruction(
 
 # %%
 """
-To end, lets think about the Bayesian evidence which goes to significantly higher values than a magnification-based 
-grid. At this point, it might be worth reminding yourself how the Bayesian evidence works by going back to the 
+To end, lets think about the Bayesian log evidence which goes to significantly higher values than a magnification-based 
+grid. At this point, it might be worth reminding yourself how the Bayesian log evidence works by going back to the 
 'introduction' text file.
 
-So, why do you think why adapting to the source's brightness increases the evidence?
+So, why do you think why adapting to the source's brightness increases the log evidence?
 
 It is because by adapting to the source's morphology we can now access solutions that fit the data really well 
 (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other al. For instance, a typical 

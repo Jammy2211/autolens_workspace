@@ -120,6 +120,7 @@ def make_pipeline(
     pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
+    number_of_steps=5,
     parallel=False,
 ):
 
@@ -187,7 +188,7 @@ def make_pipeline(
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
         non_linear_class=af.MultiNest,
-        number_of_steps=5,
+        number_of_steps=number_of_steps,
     )
 
     phase1.optimizer.const_efficiency_mode = False
@@ -195,45 +196,45 @@ def make_pipeline(
     phase1.optimizer.sampling_efficiency = 0.2
     phase1.optimizer.evidence_tolerance = 3.0
 
-    subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
+    # subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
+    #
+    # subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
+    # subhalo.mass.centre = phase1.result.model_absolute(
+    #     a=0.5
+    # ).galaxies.subhalo.mass.centre
+    #
+    # source = source_with_previous_model_or_instance(
+    #     setup=setup, source_as_model=True, index=-1
+    # )
+    #
+    # phase2 = al.PhaseImaging(
+    #     phase_name="phase_2__subhalo_refine",
+    #     phase_folders=phase_folders,
+    #     galaxies=dict(
+    #         lens=af.last[-1].model.galaxies.lens, source=source, subhalo=subhalo
+    #     ),
+    #     hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
+    #     hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+    #     positions_threshold=positions_threshold,
+    #     auto_positions_factor=auto_positions_factor,
+    #     sub_size=sub_size,
+    #     signal_to_noise_limit=signal_to_noise_limit,
+    #     bin_up_factor=bin_up_factor,
+    #     pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
+    #     inversion_uses_border=inversion_uses_border,
+    #     inversion_pixel_limit=inversion_pixel_limit,
+    #     non_linear_class=af.MultiNest,
+    # )
+    #
+    # phase2.optimizer.const_efficiency_mode = False
+    # phase2.optimizer.n_live_points = 80
+    # phase2.optimizer.sampling_efficiency = 0.3
+    # phase2.optimizer.evidence_tolerance = 0.8
+    #
+    # phase2 = phase2.extend_with_multiple_hyper_phases(
+    #     hyper_galaxy=setup.general.hyper_galaxies,
+    #     include_background_sky=setup.general.hyper_image_sky,
+    #     include_background_noise=setup.general.hyper_background_noise,
+    # )
 
-    subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
-    subhalo.mass.centre = phase1.result.model_absolute(
-        a=0.5
-    ).galaxies.subhalo.mass.centre
-
-    source = source_with_previous_model_or_instance(
-        setup=setup, source_as_model=True, index=-1
-    )
-
-    phase2 = al.PhaseImaging(
-        phase_name="phase_2__subhalo_refine",
-        phase_folders=phase_folders,
-        galaxies=dict(
-            lens=af.last[-1].model.galaxies.lens, subhalo=subhalo, source=source
-        ),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
-        positions_threshold=positions_threshold,
-        auto_positions_factor=auto_positions_factor,
-        sub_size=sub_size,
-        signal_to_noise_limit=signal_to_noise_limit,
-        bin_up_factor=bin_up_factor,
-        pixel_scale_interpolation_grid=pixel_scale_interpolation_grid,
-        inversion_uses_border=inversion_uses_border,
-        inversion_pixel_limit=inversion_pixel_limit,
-        non_linear_class=af.MultiNest,
-    )
-
-    phase2.optimizer.const_efficiency_mode = False
-    phase2.optimizer.n_live_points = 80
-    phase2.optimizer.sampling_efficiency = 0.3
-    phase2.optimizer.evidence_tolerance = 0.8
-
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-    )
-
-    return al.PipelineDataset(pipeline_name, phase1, phase2)
+    return al.PipelineDataset(pipeline_name, phase1)  # , phase2)

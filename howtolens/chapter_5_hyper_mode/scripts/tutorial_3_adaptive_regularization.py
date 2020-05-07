@@ -163,13 +163,13 @@ aplt.Inversion.regularization_weights(
 """
 So, as expected, we now have a variable regularization scheme. The regularization of the source's brightest regions 
 is much lower than that of its outer regions. As discussed before, this is what we want. Lets quickly check that this 
-does, indeed, increase the Bayesian evidence:
+does, indeed, increase the Bayesian log evidence:
 """
 
 # %%
 print("Evidence using constant regularization = ", 14236.292117135737)
 
-print("Evidence using adaptive regularization = ", fit.evidence)
+print("Evidence using adaptive regularization = ", fit.log_evidence)
 
 # %%
 """
@@ -228,7 +228,7 @@ the source-plane where no source-flux is present we will assume a high regulariz
 all source-pixels.
 
 Try looking at a couple of extra solutions which use with different inner and outer regularization coefficients or 
-signal scales. I doubt you'll notice a lot change visually, but the evidence certainly has a lot of room for manoveur 
+signal scales. I doubt you'll notice a lot change visually, but the log evidence certainly has a lot of room for manoveur 
 with different values.
 
 You may find solutions that raise an 'InversionException'. These solutions mean that the matrix used during the 
@@ -262,16 +262,16 @@ aplt.FitImaging.subplot_fit_imaging(
     fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
 )
 
-print("Evidence using adaptive regularization = ", fit.evidence)
+print("Evidence using adaptive regularization = ", fit.log_evidence)
 
 # %%
 """
 To end, lets consider what this adaptive regularization scheme means in the context of maximizing the Bayesian
-evidence. In the previous tutorial, we noted that by using a brightness-based adaptive pixelization we increased the 
-Bayesian evidence by allowing for new solutions which fit the data user fewer source pixels; the key criteria in 
+log_evidence. In the previous tutorial, we noted that by using a brightness-based adaptive pixelization we increased the 
+Bayesian log evidence by allowing for new solutions which fit the data user fewer source pixels; the key criteria in 
 making a source reconstruction 'more simple' and 'less complex'.
 
-As you might of guessed, adaptive regularization again increases the Bayesian evidence by making the source 
+As you might of guessed, adaptive regularization again increases the Bayesian log evidence by making the source 
 reconstruction simpler:
 
 1) Reducing regularization in the source's brightest regions produces a 'simpler' solution in that we are not 
@@ -281,6 +281,6 @@ over-smoothing our reconstruction of its brightest regions.
 effectively reducing the number of pixels used by the reconstruction.
 
 Together, brightness based pixelizations and regularization allow us to find the objectvely 'simplest' source 
-solution possible and therefore ensure that our Bayesian evidence's have a well defined maximum value they are 
+solution possible and therefore ensure that our Bayesian log evidence's have a well defined maximum value they are 
 seeking. This was not the case for magnification based pixelizations and constant regularization schemes.
 """

@@ -18,12 +18,12 @@ I'll let you into a secret - this is the same lens model I used to simulate the 
 So, how do we infer the light and mass profile parameters that give a good fit to our data?
 
 We could randomly guess a lens model, corresponding to some random set of parameters. We could use this model to
-create a tracer and fit the image-data, and quantify how good the fit was using its likelihood. If we keep guessing
-lens models, eventually we'd find one that provides a good fit (i.e. a high likelihood) to the data!
+create a tracer and fit the image-data, and quantify how good the fit was using its log likelihood. If we keep guessing
+lens models, eventually we'd find one that provides a good fit (i.e. a high log_likelihood) to the data!
 
 It may sound surprising, but this is the basis of how lens modeling works. However, we can do a lot better than
-random guesses. Instead, we track the likelihood of our previous guesses and guess, on average, more models which use
-combinations of light-profile and mass-profile parameters that gave higher likelihood solutions previously. If a set of
+random guesses. Instead, we track the log likelihood of our previous guesses and guess, on average, more models which use
+combinations of light-profile and mass-profile parameters that gave higher log_likelihood solutions previously. If a set of
 parameters provided a good fit to the data, another set with similar values probably will too!
 
 This is called a 'non-linear search' and its a fairly tool used in science. In the howtolens lectures, we go into
@@ -37,9 +37,9 @@ search in PyAutoLens operates as follows:
 a tracer.
 
 2) Use this tracer to perform a fit, which generates a model image and compares it to the observed strong lens image,
-providing a likelihood.
+providing a log likelihood.
 
-3) Repeat this many times, using the likelihoods of previous fits (typically those with a high likelihood) to find
+3) Repeat this many times, using the likelihoods of previous fits (typically those with a high log_likelihood) to find
 lens models with higher likelihoods.
 
 """
@@ -61,8 +61,8 @@ Setup the path to the workspace, using a directory path.
 """
 
 # %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/path/to/user/autolens_workspace"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -70,7 +70,7 @@ Setup the path to the config folder, using the workspace path.
 """
 
 # %%
-config_path = workspace_path + "config"
+config_path = f"{workspace_path}/config"
 
 # %%
 """
@@ -79,7 +79,7 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=f"{workspace_path}/output"
 )
 
 # %%
@@ -90,12 +90,12 @@ af.conf.instance = af.conf.Config(
 import autolens as al
 import autolens.plot as aplt
 
-dataset_path = workspace_path + "dataset/imaging/lens_sie__source_sersic/"
+dataset_path = f"{workspace_path}/dataset/imaging/lens_sie__source_sersic/"
 
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 
@@ -170,7 +170,7 @@ non-linear search can take a while to run. Maybe minutes, maybe hours, maybe day
    visualization, default MultiNest setup and the priors of different light and mass profiles parmeters.
 
 3) Look at 'autolens_workspace/dataset'. This is where the dataset we load and fit is stored (e.g. .fits files of the 
-   image, noise-map and PSF).
+   image, noise map and PSF).
 
 4) Feel free to checkout other folders in the autolens_workspace, which contain scripts for standard lensing tasks, 
    such as simuating strong lens images and drawing custom masks for lens fits.
@@ -188,11 +188,11 @@ print("MultiNest has finished run - you may now continue the notebook.")
 
 # %%
 """
-The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
+The best-fit solution (i.e. the highest log likelihood) is stored in the 'results', which we can plot as per usual.
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
 
 # %%
 """

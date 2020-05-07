@@ -1,7 +1,7 @@
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-from preprocessing.imaging.gui import scribbler
+from preprocess.imaging.gui import scribbler
 import numpy as np
 
 import os
@@ -11,7 +11,7 @@ import os
 # phase (if a mask function is not passed to that phase).
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the mask is stored in, e.g,
 # the mask will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/mask.fits'.
@@ -29,7 +29,7 @@ pixel_scales = 0.1
 
 # First, load the imaging dataset, so that the mask can be plotted over the strong lens image.
 image = al.Array.from_fits(
-    file_path=dataset_path + "image.fits", pixel_scales=pixel_scales
+    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
 )
 
 scribbler = scribbler.Scribbler(image=image.in_2d)

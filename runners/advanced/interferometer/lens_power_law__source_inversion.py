@@ -54,14 +54,14 @@ import numpy as np
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = f"{workspace_path}/config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=f"{workspace_path}/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -82,7 +82,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 # This loads the interferometer dataset,.
 interferometer = al.Interferometer.from_fits(
     visibilities_path=dataset_path + "visibilities.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     uv_wavelengths_path=dataset_path + "uv_wavelengths.fits",
 )
 

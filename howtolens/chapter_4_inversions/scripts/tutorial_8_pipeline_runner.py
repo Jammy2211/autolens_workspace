@@ -15,16 +15,8 @@ Setup the path to the autolens_workspace, using a relative directory name.
 """
 
 # %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
-
-# %%
-"""
-Setup the path to the config folder, using the autolens_workspace path.
-"""
-
-# %%
-config_path = workspace_path + "config"
+workspace_path = "/path/to/user/autolens_workspace"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -33,7 +25,7 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%

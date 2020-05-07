@@ -18,11 +18,11 @@ import numpy as np
 import autofit as af
 
 # Setup the path to the workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -66,7 +66,7 @@ deflections_x = tracer.deflections_from_grid(
 )[:, 1]
 deflections_x = al.ScaledSquarePixelArray(array=deflections_x, pixel_scale=pixel_scale)
 
-# Next we create each deflection angle map as its own GalaxyData object. A somewhat arbritary noise-map is required by
+# Next we create each deflection angle map as its own GalaxyData object. A somewhat arbritary noise map is required by
 # the fit.
 noise_map = al.ScaledSquarePixelArray(
     array=0.1 * np.ones(deflections_y.shape), pixel_scale=pixel_scale

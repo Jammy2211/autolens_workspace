@@ -6,14 +6,14 @@ import os
 # searches in one phase to get results quickly.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # There is a x2 '/../../' because we are in the 'autolens_workspace/scripts/examples' folder, so we need to move up two
 # folders to get to the "autolens_workspace" folder.
 
 # Use this path to explicitly set the config path and output papth
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # It is convenient to specify the lens name as a string, so that if the pipeline is applied to multiple images we \
@@ -83,4 +83,4 @@ phase.optimizer.sampling_efficiency = 0.5
 # We run the phase on the image, print the results and plotters the fit.
 result = phase.run(dataset=imaging, mask=mask)
 
-aplt.FitImaging.subplot_fit_imaging(fit=result.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)

@@ -9,11 +9,11 @@ import os
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
 
 # The image will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-# The noise-map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+# The noise map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
 # The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # (these files are already in the autolens_workspace and are remade running this script)
 dataset_label = "imaging"
@@ -25,7 +25,7 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# The grid use to create the image.
+# The grid used to simulate the image.
 grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=4)
 
 # Simulate a simple Gaussian PSF for the image.
@@ -95,8 +95,8 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     overwrite=True,
 )

@@ -10,7 +10,7 @@ your own imaging data instead of the example data we ran previously.
 First, we need to make sure the data conforms to the PyAutoLens inputs. This requires that:
 
 1) The image is a small (e.g. 501 x 501) cut-out of the strong lens, centred on the lens galaxy.
-2) The image and noise-map are in electrons per second.
+2) The image and noise map are in electrons per second.
 3) The PSF is cut-out to an odd-sized kernel with a reasonably small kernel size (e.g. 21x21).
 
 PyAutoLens has built-in tools to convert your data to these requirements, checkout the scripts in
@@ -97,7 +97,7 @@ places in the autolens_workspace:
     phases of a pipeline can be reused when fitting more complex models later on.
 
 3) 'pipelines/hyper' and 'runners/hyper'. Hyper functionality is where PyAutoLens adapt the model fit to the data 
-    its fitting. This includes fitting for the background sky subtracton in the image and scaling the noise-map to 
+    its fitting. This includes fitting for the background sky subtracton in the image and scaling the noise map to 
     prevent over-fitting small portions of the data. Only once you're confident with PyAutoLens would I recommend 
     that you start experimenting with this functionality!
 """

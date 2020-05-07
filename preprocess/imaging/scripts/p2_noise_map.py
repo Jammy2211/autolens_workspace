@@ -2,11 +2,11 @@
 """
 __Preprocess 2: Noise-map__
 
-The noise-map defines the uncertainty in every pixel of your strong lens image. Values are defined as the RMS standard
-deviation in every pixel (not the variances, HST WHT-map values, etc.). You MUST be certain that the noise-map is
+The noise map defines the uncertainty in every pixel of your strong lens image. Values are defined as the RMS standard
+deviation in every pixel (not the variances, HST WHT-map values, etc.). You MUST be certain that the noise map is
 the RMS standard deviations or else your analysis will be incorrect!
 
-This tutorial describes preprocessing your dataset's noise-map to adhere too the units and formats required by PyAutoLens.
+This tutorial describes preprocessing your dataset's noise map to adhere too the units and formats required by PyAutoLens.
 
 """
 
@@ -52,7 +52,7 @@ simulators.simulate_all_imaging(dataset_path=dataset_path)
 """
 __Loading Data From Individual Fits Files__
 
-First, lets load a noise-map as an Array. This noise-map represents a good data-reduction that conforms to the 
+First, lets load a noise map as an Array. This noise map represents a good data-reduction that conforms to the 
 formatting standards I describe in this tutorial!
 """
 
@@ -77,7 +77,7 @@ If in the previous preprocessing script you did any of the following to the imag
 2) Trimmed / padded the image.
 3) Recentered the image.
 
-You must perform identical operations on your noise-map (assuming it is in the same units and has the dimensions as the
+You must perform identical operations on your noise map (assuming it is in the same units and has the dimensions as the
 image. You can simply cut and paste the appropriate functions in below - I've commented out the appropriate functions
 you might of used.
 
@@ -106,9 +106,9 @@ you might of used.
 # %%
 """
 __Noise Conversions__
-There are many different ways the noise-map can be reduced. We are aiming to include conversion functions for all 
-common data-reductions. For example, the noise-map may be a HST WHT map, where RMS SD = 1.0/ sqrt(WHT). Note how 
-the values of the noise-map go to very large values in excess of 10000.
+There are many different ways the noise map can be reduced. We are aiming to include conversion functions for all 
+common data-reductions. For example, the noise map may be a HST WHT map, where RMS SD = 1.0/ sqrt(WHT). Note how 
+the values of the noise map go to very large values in excess of 10000.
 """
 
 # %%
@@ -123,7 +123,7 @@ weight_map = al.Array.from_fits(
 aplt.Array(array=weight_map)
 
 """
-This can be converted to a noise-map using the preprocess module.
+This can be converted to a noise map using the preprocess module.
 """
 
 noise_map = al.preprocess.noise_map_from_weight_map(weight_map=weight_map)

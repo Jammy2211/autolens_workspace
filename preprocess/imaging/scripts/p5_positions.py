@@ -31,7 +31,7 @@ Setup the path to the autolens_workspace, using the correct path name below.
 
 # %%
 workspace_path = "path/to/AutoLens/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -69,7 +69,7 @@ First, load the imaging dataset, so that the positions can be plotted over the s
 
 # %%
 image = al.Array.from_fits(
-    file_path=dataset_path + "image.fits", pixel_scales=pixel_scales
+    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
 )
 
 # %%
@@ -97,7 +97,7 @@ Now we're happy with the positions, lets output them to the dataset folder of th
 """
 
 # %%
-positions.output_to_file(file_path=dataset_path + "positions.dat", overwrite=True)
+positions.output_to_file(file_path=f"{dataset_path}/positions.dat", overwrite=True)
 
 # %%
 """

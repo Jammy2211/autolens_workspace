@@ -15,7 +15,7 @@ Setup the path to the autolens_workspace.
 """
 
 # %%
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -39,7 +39,7 @@ Create the path where the dataset will be loaded from, which in this case is
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
-image_path = dataset_path + "image.fits"
+image_path = f"{dataset_path}/image.fits"
 
 # %%
 """
@@ -86,8 +86,8 @@ plotter = aplt.Plotter(
 )
 aplt.Array(array=image, plotter=plotter)
 
-psf_path = workspace_path + "/dataset/slacs/" + dataset_name + "/psf.fits"
-noise_map_path = workspace_path + "/dataset/slacs/" + dataset_name + "/noise_map.fits"
+psf_path = f"{workspace_path}//dataset/slacs/" + dataset_name + "/psf.fits"
+noise_map_path = f"{workspace_path}//dataset/slacs/" + dataset_name + "/noise_map.fits"
 
 imaging = al.Imaging.from_fits(
     image_path=image_path,

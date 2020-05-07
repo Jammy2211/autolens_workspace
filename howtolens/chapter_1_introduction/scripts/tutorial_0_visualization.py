@@ -28,7 +28,7 @@ The dataset path specifies where the dataset is located, this time in the direct
 """
 
 # %%
-dataset_path = chapter_path + "dataset/"
+dataset_path = f"{chapter_path}/dataset"
 
 # %%
 """
@@ -37,9 +37,9 @@ We now load this dataset from .fits files and create an instance of an 'imaging'
 
 # %%
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 
@@ -60,9 +60,9 @@ If not, you can customize a number of matplotlib setup options using a Plotter o
 
 # %%
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 

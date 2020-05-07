@@ -2,7 +2,7 @@
 __Preprocess 8: - Scaled Dataset (Optional)__
 
 In this tool we mark regions of the image that has signal in the proximity of the lens and source that may impact our
-model fitting. By marking these regions we will scale the image to values near zero and the noise-map to large values
+model fitting. By marking these regions we will scale the image to values near zero and the noise map to large values
 such that our model-fit ignores these regions.
 
 Why not just mask these regions instead? The reason is because of inversions which reconstruct the lensed source's
@@ -27,7 +27,7 @@ Setup the path to the autolens_workspace, using a relative directory name.
 """
 
 # %%
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # %%
 """
@@ -41,7 +41,7 @@ dataset_name = "lens_sie__source_sersic__intervening_objects"
 
 # %%
 """
-Create the path where the noise-map will be output, which in this case is
+Create the path where the noise map will be output, which in this case is
 '/autolens_workspace/dataset/imaging/lens_sie__source_sersic_intervening_objects/'
 """
 
@@ -60,24 +60,24 @@ pixel_scales = 0.1
 
 # %%
 """
-First, load the dataset image, so that the location of galaxies is clear when scaling the noise-map.
+First, load the dataset image, so that the location of galaxies is clear when scaling the noise map.
 """
 
 # %%
 image = al.Array.from_fits(
-    file_path=dataset_path + "image.fits", pixel_scales=pixel_scales
+    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
 )
 
 aplt.Array(array=image)
 
 # %%
 """
-Next, load the noise-map, which we will use the scale the noise-map.
+Next, load the noise map, which we will use the scale the noise map.
 """
 
 # %%
 noise_map = al.Array.from_fits(
-    file_path=dataset_path + "noise_map.fits", pixel_scales=pixel_scales
+    file_path=f"{dataset_path}/noise_map.fits", pixel_scales=pixel_scales
 )
 
 aplt.Array(array=noise_map)
@@ -168,7 +168,7 @@ noise_map[mask == True] = 1.0e8
 
 # %%
 """
-The noise map and signal to noise map show the noise-map being scaled in the correct regions of the image.
+The noise map and signal to noise map show the noise map being scaled in the correct regions of the image.
 """
 
 # %%
@@ -196,7 +196,7 @@ mask.output_to_fits(file_path=dataset_path + "mask_scaled.fits", overwrite=True)
 
 # %%
 """
-The workspace also includes a GUI for image and noise-map scaling, which can be found at 
+The workspace also includes a GUI for image and noise map scaling, which can be found at 
 'autolens_workspace/preprocess/imaging/gui/scaled_dataset.py'. This tools allows you 'spray paint' on the image where 
 an you want to scale, allow irregular patterns (i.e. not rectangles) to be scaled.
 """

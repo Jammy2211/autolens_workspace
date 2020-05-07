@@ -45,12 +45,12 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/t5_linking_phases",
-    output_path=chapter_path + "output",
+    config_path=f"{chapter_path}/configs/t5_linking_phases",
+    output_path=f"{chapter_path}/output",
 )
 
 # %%
@@ -186,7 +186,7 @@ phase_1 = al.PhaseImaging(
 
 # %%
 """
-Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum likelihood 
+Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum log likelihood 
 with fewer MultiNest live points and a faster sampling rate?
 """
 
@@ -217,7 +217,7 @@ And indeed, we get a reasonably good model and fit to the data - in a much short
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_1_results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase_1_results.max_log_likelihood_fit)
 
 # %%
 """
@@ -318,7 +318,7 @@ Look at that, the right lens model, again!
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_2_results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase_2_results.max_log_likelihood_fit)
 
 # %%
 """

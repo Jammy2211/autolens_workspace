@@ -21,17 +21,8 @@ Setup the path to the autolens_workspace, using by filling in your path below.
 """
 
 # %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
-
-# %%
-"""
-Setup the path to the config folder, using the autolens_workspace path.
-"""
-
-# %%
-config_path = workspace_path + "config"
-output_path = workspace_path + "output"
+workspace_path = "/path/to/user/autolens_workspace"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -39,7 +30,10 @@ Use this path to explicitly set the config path and output path.
 """
 
 # %%
-af.conf.instance = af.conf.Config(config_path=config_path)
+output_path = f"{workspace_path}/output"
+af.conf.instance = af.conf.Config(
+    config_path=f"{workspace_path}/config", output_path=output_path
+)
 
 # %%
 """
@@ -55,7 +49,7 @@ We can get the output of every non-linear search (e.g. all 3 phases) of every da
 """
 
 # %%
-non_linear_outputs = aggregator.values("output")
+samples = aggregator.values("samples")
 
 # %%
 """
@@ -63,7 +57,7 @@ From here, we can inspect results as we please, for example printing the most li
 """
 
 # %%
-print([output.most_likely_instance for output in list(non_linear_outputs)])
+print([output.max_log_likelihood_instance for output in list(samples)])
 
 # %%
 """
@@ -76,7 +70,8 @@ The full set of aggregator tutorials can be found at the location 'autolens_work
 learn how to:
 
 - Use the aggregator to filter out results given a pipeline name or phase name.
-- Use the NonLinearOutput to produce many different results from the fit, including error estimates on parameters and plots of the probability density function of parameters in 1D and 2D.
+- Use the Samples to produce many different results from the fit, including error estimates on parameters and plots 
+  of the probability density function of parameters in 1D and 2D.
 - Reproduce visualizations of results, such as a tracer's images or the fit to a lens dataset.
 
 Even if you are only modeling a small sample of lenses, if you anticipate using PyAutoLens for the long-term I 

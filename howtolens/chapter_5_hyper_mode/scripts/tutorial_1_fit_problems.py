@@ -3,12 +3,12 @@
 __Fit Problems__
 
 To begin, make sure you have read the 'introduction' file carefully, as a clear understanding of how the Bayesian
-evidence works is key to understanding this chapter!
+log_evidence works is key to understanding this chapter!
 
 In the previous chapter we investigated two pixelizations; Rectanguar and VoronoiMagnification. We learnt that the
 latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where we
 had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
-which improved computational efficiency and the Bayesian evidence.
+which improved computational efficiency and the Bayesian log evidence.
 
 So far, we've used just one regularization scheme; Constant. As the name suggests, this regularization scheme applies
 just one regularization coefficient when regularizing source-pixels with one another. In case you've forgot, here is
@@ -18,16 +18,16 @@ a refresher of regularization, from chapter 4:
 
 When our inversion reconstructs a source, it doesn't *just* compute the set of fluxes that best-fit the image. It
 also 'regularizes' this solution, going to every pixel on our rectangular grid and comparing its reconstructed flux
-with its 4 neighboring pixels. If the difference in flux is large the solution is penalized, reducing its likelihood.
+with its 4 neighboring pixels. If the difference in flux is large the solution is penalized, reducing its log likelihood.
 You can think of this as us applying a prior that our source galaxy solution is 'smooth'.
 
-This adds a 'penalty term' to the likelihood of an inversion which is the summed difference between the reconstructed
+This adds a 'penalty term' to the log likelihood of an inversion which is the summed difference between the reconstructed
 fluxes of every source-pixel pair multiplied by the regularization coefficient. By setting the regularization
 coefficient to zero, we set this penalty term to zero, meaning that regularization is omitted.
 
 Why do we need to regularize our solution? Well, we just saw why - if we don't apply this smoothing, we 'over-fit'
 the image. More specifically, we over-fit the noise in the image, which is what the large flux values located at the
-exteriors of the source reconstruction are doing. Think about it, if your sole aim is to maximize the likelihood, the
+exteriors of the source reconstruction are doing. Think about it, if your sole aim is to maximize the log likelihood, the
 best way to do this is to fit *everything* accurately, including the noise.
 
 ----------------------------------------------
@@ -41,7 +41,7 @@ bright central regions of the source or its faint exterior regions.
 In this tutorial, we'll learn that our magnification-based pixelization and constant regularization schemes are far
 from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same mass profile but
 with different sources whose light profiles become gradually more compact. For all 3 fits, we'll use the same
-source-plane resolution and a regularization coefficient that maximize the Bayesian evidence. Thus, these are the
+source-plane resolution and a regularization coefficient that maximize the Bayesian log evidence. Thus, these are the
 'best' source reconstructions we can hope to achieve when adapting to the magnification.
 """
 
@@ -185,7 +185,7 @@ def fit_imaging_with_voronoi_magnification_pixelization(
 # %%
 """
 Lets fit our first source with the flattest light profile. One should note that this uses the highest regularization 
-coefficient of our 3 fits (as determined by maximizing the Bayesian evidence).
+coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
 
 # %%
@@ -202,7 +202,7 @@ aplt.Inversion.reconstruction(
     inversion=fit_flat.inversion, include=aplt.Include(inversion_pixelization_grid=True)
 )
 
-print(fit_flat.evidence)
+print(fit_flat.log_evidence)
 
 # %%
 """
@@ -227,7 +227,7 @@ aplt.Inversion.reconstruction(
     include=aplt.Include(inversion_pixelization_grid=True),
 )
 
-print(fit_compact.evidence)
+print(fit_compact.log_evidence)
 
 # %%
 """
@@ -256,7 +256,7 @@ aplt.Inversion.reconstruction(
     include=aplt.Include(inversion_pixelization_grid=True),
 )
 
-print(fit_super_compact.evidence)
+print(fit_super_compact.log_evidence)
 
 # %%
 """
@@ -310,19 +310,19 @@ much lower to avoid over-smoothing.
 
 2) On the flip side, the source reconstruction wants to assume a high regularization coefficient further out because 
 the source's flux gradient is flat (or there is no source signal at all). Higher regularization coefficients will 
-increase the Bayesian evidence because by smoothing more source-pixels it makes the solution 'simpler', given that 
+increase the Bayesian log evidence because by smoothing more source-pixels it makes the solution 'simpler', given that 
 correlating the flux in these source pixels the solution effectively uses fewer source-pixels (e.g. degrees of freedom).
 
 So, herein lies the pitfall of a constant regularization scheme. Some parts of the reconstructed source demand a 
 low regularization coefficient whereas other parts want a high value. Unfortunately, we end up with an intermediate 
 regularization coefficient that over-smooths the source's central regions whilst failing to fully correlate exterior 
-pixels. Thus, by using an adaptive regularization scheme, new solutions that further increase the Bayesian evidence 
+pixels. Thus, by using an adaptive regularization scheme, new solutions that further increase the Bayesian log evidence 
 become accessible.
 
 
 __Noise Map__
 
-Before we wrap up this tutorial, I want us to also consider the role of our noise-map and get you thinking about 
+Before we wrap up this tutorial, I want us to also consider the role of our noise map and get you thinking about 
 why we might want to scale its variances. Lets look at the super-compact fit again;
 """
 
@@ -337,20 +337,20 @@ aplt.FitImaging.subplot_fit_imaging(
 So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll note that a small subset of our data 
 have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared) is 
 going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset of 
-the data (e.g. < 5% of pixels) contributes to the majority of the likelihood (e.g. > 95% of the overall chi-squared). 
+the data (e.g. < 5% of pixels) contributes to the majority of the log likelihood (e.g. > 95% of the overall chi-squared). 
 This is *not* what we want, as instead of using the entire surface brightness profile of the lensed source galaxy to 
 fit our lens model, we end up using only a small subset of its brightest pixels.
 
-In the context of the Bayesian evidence things become even more problematic. The Bayesian evidence is trying to 
+In the context of the Bayesian log evidence things become even more problematic. The Bayesian log evidence is trying to 
 achieve a well-defined solution; a solution that provides a reduced chi-squared of 1. This solution is poorly defined 
 when the chi-squared image looks like the one above. When a subset of pixels have chi-squareds > 300, the only way 
 to achieve a reduced chi-squared 1 is to reduce the chi-squareds of other pixels to 0, e.g. by over-fitting their 
 noise. Thus, we quickly end up in a regime where the choice of regularization coefficient is ill defined.
 
 With that, we have motivated hyper_galaxy-mode. To put it simply, if we don't adapt our pixelizations, regularization
-and noise-map, we will get solutions which reconstruct the source poorly, regularize the source sub-optimally and 
+and noise map, we will get solutions which reconstruct the source poorly, regularize the source sub-optimally and 
 over-fit a small sub-set of image pixels. Clearly, we want an adaptive pixelization, regularization scheme and 
-noise-map, which what we'll cover tutorials 2, 3 and 4!
+noise map, which what we'll cover tutorials 2, 3 and 4!
 """
 
 # %%

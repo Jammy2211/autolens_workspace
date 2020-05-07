@@ -9,13 +9,13 @@ will use the the image of the strong lens slacs1430+4105 from a .fits file and p
 function autolens.dataset_label.plotters.plotters.plot_array.
 
 The customization functions demonstrated in this example are generic to any 2D arrays of dataset_label, and can therefore be
-applied to the plotting of noise-maps, PSF's, residual maps, chi-squared maps, etc.
+applied to the plotting of noise maps, PSF's, residual maps, chi-squared maps, etc.
 
 Setup the path to the autolens_workspace, using a relative directory name.
 """
 
 # %%
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -39,7 +39,7 @@ Create the path where the dataset will be loaded from, which in this case is
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
-image_path = dataset_path + "image.fits"
+image_path = f"{dataset_path}/image.fits"
 
 # %%
 """
@@ -108,7 +108,7 @@ The matplotlib figure can be output to the hard-disk as a png, as follows.
 plotter = aplt.Plotter(
     labels=aplt.Labels(title="SLACS1430+4105 Image"),
     output=aplt.Output(
-        path=workspace_path + "/plotting/plots/", filename="arrays", format="png"
+        path=f"{workspace_path}//plotting/plots/", filename="arrays", format="png"
     ),
 )
 
@@ -123,7 +123,7 @@ The arrays itself can be output to the hard-disk as a .fits file.
 plotter = aplt.Plotter(
     labels=aplt.Labels(title="SLACS1430+4105 Image"),
     output=aplt.Output(
-        path=workspace_path + "/plotting/plots/", filename="arrays", format="fits"
+        path=f"{workspace_path}//plotting/plots/", filename="arrays", format="fits"
     ),
 )
 

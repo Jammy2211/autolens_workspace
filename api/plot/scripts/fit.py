@@ -22,7 +22,7 @@
 # """
 #
 # # %%
-# workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+# workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 #
 # # %%
 # """
@@ -43,7 +43,7 @@
 # dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 #     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 # )
-# image_path = dataset_path + "image.fits"
+# image_path = f"{dataset_path}/image.fits"
 #
 # pipeline_name = "pipeline_lens_sie__source_sersic_parametric"
 # phase_name = "phase_3_both"

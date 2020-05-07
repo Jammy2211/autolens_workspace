@@ -121,7 +121,7 @@ chapter_path = "/path/to/AutoLens/workspace/howtolens/chapter_1_introduction"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
 
 # %%
-dataset_path = chapter_path + "dataset/"
+dataset_path = f"{chapter_path}/dataset"
 
 # %%
 """
@@ -130,9 +130,9 @@ Now output our simulated data to hard-disk.
 
 # %%
 imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     overwrite=True,
 )
 

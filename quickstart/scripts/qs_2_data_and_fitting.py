@@ -18,8 +18,8 @@ Change the path below to that of your workspace.
 """
 
 # %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/path/to/user/autolens_workspace"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
@@ -27,12 +27,12 @@ The data path specifies where the data is located and loaded from.
 """
 
 # %%
-dataset_path = workspace_path + "dataset/imaging/lens_sie__source_sersic/"
+dataset_path = f"{workspace_path}/dataset/imaging/lens_sie__source_sersic"
 
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 
@@ -41,7 +41,7 @@ imaging = al.Imaging.from_fits(
 To fit the data, we need the following four things:
 
 1) The image of the strong lens.
-2) A noise-map, which weights how much each image pixels contributes to the fit.
+2) A noise map, which weights how much each image pixels contributes to the fit.
 3) The PSF, which defines how the image is blurred during data acquisition.
 4) The pixel-scale of the image defining the arcsecond to pixel conversion.
 """
@@ -67,7 +67,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 Next, we create a 'MaskedImaging' object, which is a 'package' of all parts of a data-set we need to fit it:
 
-1) The imaging-data, e.g. the image, PSF and noise-map.
+1) The imaging-data, e.g. the image, PSF and noise map.
 2) The mask.
 3) A grid aligned with the image's pixels: ray-tracing uses the data's masked grid coordinates.
 """
@@ -114,9 +114,9 @@ To fit the image, we pass the masked imaging and tracer to a FitImaging object. 
 1) Blurs the tracer image with the lens data's PSF, ensuring that the telescope optics are accounted for by the fit. 
    This creates the fit's 'model_image'.
 2) Computes the difference between this model_image and the observed image, creating the fit's 'residual_map'.
-3) Divides the residuals by the noise-map and squares each value, creating the fit's 'chi_squared_map'.
-4) Sums up these chi-squared values and converts them to a 'likelihood', which quantifies how good the tracer's fit to 
-   the data was (higher likelihood = better fit).
+3) Divides the residuals by the noise map and squares each value, creating the fit's 'chi_squared_map'.
+4) Sums up these chi-squared values and converts them to a 'log_likelihood', which quantifies how good the tracer's fit to 
+   the data was (higher log_likelihood = better fit).
 """
 
 # %%
@@ -141,19 +141,19 @@ aplt.FitImaging.subplot_of_plane(
 
 # %%
 """
-A fit also provides a likelihood, which is a single-figure estimate of how good the model image fitted the simulated 
+A fit also provides a log likelihood, which is a single-figure estimate of how good the model image fitted the simulated 
 image (in unmasked pixels only!).
 """
 
 # %%
 print("Likelihood:")
-print(fit.likelihood)
+print(fit.log_likelihood)
 
 # %%
 """
 Above, we used the same tracer to create and fit the image, giving us a 'perfect' fit where the residuals and 
 chi-squareds showed no resdial features of the source galaxy's light. This solution will translate to one of the 
-highest-likelihood solutions.
+highest-log_likelihood solutions.
 
 Lets change the tracer so that it's near the correct solution but slightly off, by offsetting the lens galaxy by 0.02".
 """
@@ -194,14 +194,14 @@ aplt.FitImaging.subplot_of_plane(
 Residuals now appear at the locations the source galaxy, producing increased chi-squareds which determine our 
 goodness-of-fit.
 
-Lets compare the likelihood to the value we computed above (which was 4440.90):
+Lets compare the log likelihood to the value we computed above (which was 4440.90):
 """
 
 # %%
 print("Previous Likelihood:")
 print(4440.90)
 print("New Likelihood:")
-print(fit.likelihood)
+print(fit.log_likelihood)
 
 # %%
 """

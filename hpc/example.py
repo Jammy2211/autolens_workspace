@@ -57,10 +57,10 @@ cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names
 
 # Next, we need the path to our Cosma autolens_workspace, which can be generated using a relative path assuming our
 # runner is located in our Cosma autolens_workspace.
-workspace_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = f"{workspace_path}/config"
 
 # Lets now use the above paths to set the config path and output path for our Cosma run.
 af.conf.instance = af.conf.Config(
@@ -134,9 +134,9 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 
 # This loads the imaging dataset, as per usual.
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
 )
 

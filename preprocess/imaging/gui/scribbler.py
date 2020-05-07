@@ -6,7 +6,7 @@ matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from skimage.transform import rescale
 
-# This Scribbler tool is used for drawing custom masks and noise-maps via a GUI to images, see the other scripts in
+# This Scribbler tool is used for drawing custom masks and noise maps via a GUI to images, see the other scripts in
 # the gui folder for a description.
 
 # This script is Adapted from https://gist.github.com/brikeats/4f63f867fd8ea0f196c78e9b835150ab

@@ -9,7 +9,7 @@ import numpy as np
 # pipelines.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
 # the positions will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/positions.dat'.
@@ -30,9 +30,9 @@ pixel_scales = 0.1
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
 )
 image_2d = imaging.image.in_2d
@@ -80,7 +80,7 @@ def onclick(event):
         print("Max flux pixel:", y_pixels_max, x_pixels_max)
         print("Arc-sec Coordinate", y_arcsec, x_arcsec)
 
-        lens_light_centres.append([y_arcsec, x_arcsec])
+        lens_light_centres.append((y_arcsec, x_arcsec))
 
 
 n_y, n_x = imaging.image.shape_2d
@@ -94,11 +94,13 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-lens_light_centres = al.Coordinates(coordinates=[lens_light_centres])
+lens_light_centres = al.Coordinates(coordinates=lens_light_centres)
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 aplt.Array(array=imaging.image, light_profile_centres=lens_light_centres)
 
 # Now we're happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 # .dat file in our pipelines!
-lens_light_centres.output_to_file(file_path=dataset_path + "lens_light_centres.dat")
+lens_light_centres.output_to_file(
+    file_path=dataset_path + "lens_light_centres.dat", overwrite=True
+)

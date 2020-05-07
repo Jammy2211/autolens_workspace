@@ -29,8 +29,8 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_1_introduction/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_1_introduction"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction"
 
 # %%
 """
@@ -38,7 +38,7 @@ The data path specifies where the data was output in the last tutorial, which is
 """
 
 # %%
-dataset_path = chapter_path + "dataset/"
+dataset_path = f"{chapter_path}/dataset"
 
 # %%
 """
@@ -47,9 +47,9 @@ Below, we do all the steps we learned this chapter - making galaxies, a tracer, 
 
 # %%
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 

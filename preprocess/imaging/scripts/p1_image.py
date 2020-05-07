@@ -164,7 +164,7 @@ aplt.Array(array=image_converted_to_eps)
 
 # %%
 """
-In 'autolens_workspace/preprocess/prepare/noise_map.py' we show that a noise-map must also be in units of electrons 
+In 'autolens_workspace/preprocess/prepare/noise_map.py' we show that a noise map must also be in units of electrons 
 per second, and that the same functions as above can be used to do this.
 """
 

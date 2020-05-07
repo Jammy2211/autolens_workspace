@@ -21,7 +21,7 @@ A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase
 'previous_results[0].model.galaxy_name.profile_name.parameter_name'.
 
 This means that MultiNest specifically starts by searching the region of non-linear parameter space that corresponded to 
-highest likelihood solutions in the previous phase. Thus, we're setting our priors to look in the correct regions of 
+highest log likelihood solutions in the previous phase. Thus, we're setting our priors to look in the correct regions of 
 parameter space.
 
 3) The sigma of the Gaussian will use either: (i) the 1D error on the previous result's parameter or; (ii) the value 

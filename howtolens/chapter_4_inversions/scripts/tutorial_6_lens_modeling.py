@@ -120,7 +120,7 @@ as a demagnified version of the image. Clearly, this isn't a physical solution o
 non-linear search to find, but for inversions these solutions nevertheless exist.
 
 This isn't necessarily problematic for lens modeling. Afterall, the source reconstruction above is extremely complex, 
-in that it requires a lot of pixels to fit the image accurately. Indeed, its Bayesian evidence is much lower than the 
+in that it requires a lot of pixels to fit the image accurately. Indeed, its Bayesian log evidence is much lower than the 
 correct solution.
 """
 
@@ -145,13 +145,13 @@ correct_fit = perform_fit_with_lens__source_galaxy(
 aplt.FitImaging.subplot_fit_imaging(fit=correct_fit, include=aplt.Include(mask=True))
 
 print("Bayesian Evidence of Incorrect Fit:")
-print(fit.evidence)
+print(fit.log_evidence)
 print("Bayesian Evidence of Correct Fit:")
-print(correct_fit.evidence)
+print(correct_fit.log_evidence)
 
 # %%
 """
-The evidence *is* lower. However, the difference in evidence isn't *that large*. This is going to be a problem for 
+The log evidence *is* lower. However, the difference in log evidence isn't *that large*. This is going to be a problem for 
 our non-linear search, as its going to see *a lot* of solutions with really high evidences. Furthermore, these 
 solutions occupy the *vast majority* of parameter space (e.g. every single lens model that is wrong). This makes it 
 easy for the non-linear search to get lost searching through these unphysical solutions and, unfortunately, infer an 
@@ -301,7 +301,7 @@ the next tutorial on adaption.
 
 - The unphysical solutions above are clearly problematic. Whilst they have lower Bayesian evidences their existance 
 will still impact our inferred lens model. However, the pixelization's that we used in this chapter are not adapted 
-to the images they are fitting and this means that the correct solutions achieve much lower Bayesian evidence values 
+to the images they are fitting and this means that the correct solutions achieve much lower Bayesian log evidence values 
 than is actually possible. Thus, once we've covered adaption, these issues will be resolved!
 
 - When the lens galaxy's light is subtracted perfectly it leaves no residuals. However, if it isn't subtracted 

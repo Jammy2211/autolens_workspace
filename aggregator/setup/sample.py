@@ -14,26 +14,26 @@ aggregator_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 ######## EXAMPLE LENS SYSTEM 1 ###########
 
 # (these files are already in the autolens_workspace and are remade running this script)
-dataset_label = "aggregator_sample"
+
 dataset_name = "lens_sie__source_sersic__0"
 
 # Create the path where the dataset will be output.
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=aggregator_path, folder_names=["dataset", dataset_label, dataset_name]
+    path=aggregator_path, folder_names=["dataset", dataset_name]
 )
 
 # The pixel scale of the image to be simulated.
 pixel_scales = 0.1
 
+# The grid use to create the image.
+grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=4)
+
 # Simulate a simple Gaussian PSF for the image.
 psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
 
-# Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
-# its expoosure time, noise levels and psf.
+# To simulate the imaging dataset we first create a simulator, which defines the expoosure time, background sky,
+# noise levels and psf of the dataset that is simulated.
 simulator = al.SimulatorImaging(
-    shape_2d=(100, 100),
-    pixel_scales=pixel_scales,
-    sub_size=4,
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
     background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
@@ -70,9 +70,9 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     overwrite=True,
 )
 
@@ -80,12 +80,12 @@ imaging.output_to_fits(
 ######## EXAMPLE LENS SYSTEM 2 ###########
 
 # (these files are already in the autolens_workspace and are remade running this script)
-dataset_label = "aggregator_sample"
+
 dataset_name = "lens_sie__source_sersic__1"
 
 # Create the path where the dataset will be output.
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=aggregator_path, folder_names=["dataset", dataset_label, dataset_name]
+    path=aggregator_path, folder_names=["dataset", dataset_name]
 )
 
 # The pixel scale of the image to be simulated.
@@ -136,9 +136,9 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     overwrite=True,
 )
 
@@ -146,12 +146,12 @@ imaging.output_to_fits(
 ######## EXAMPLE LENS SYSTEM 3 ###########
 
 # (these files are already in the autolens_workspace and are remade running this script)
-dataset_label = "aggregator_sample"
+
 dataset_name = "lens_sie__source_sersic__2"
 
 # Create the path where the dataset will be output.
 dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=aggregator_path, folder_names=["dataset", dataset_label, dataset_name]
+    path=aggregator_path, folder_names=["dataset", dataset_name]
 )
 
 # The pixel scale of the image to be simulated.
@@ -202,8 +202,8 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 imaging.output_to_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     overwrite=True,
 )

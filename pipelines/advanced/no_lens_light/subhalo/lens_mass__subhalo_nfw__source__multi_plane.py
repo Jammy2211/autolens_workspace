@@ -120,6 +120,7 @@ def make_pipeline(
     pixel_scale_interpolation_grid=None,
     inversion_uses_border=True,
     inversion_pixel_limit=None,
+    number_of_steps=5,
     parallel=False,
 ):
 
@@ -191,7 +192,7 @@ def make_pipeline(
         inversion_uses_border=inversion_uses_border,
         inversion_pixel_limit=inversion_pixel_limit,
         non_linear_class=af.MultiNest,
-        number_of_steps=5,
+        number_of_steps=number_of_steps,
     )
 
     phase1a.optimizer.const_efficiency_mode = False

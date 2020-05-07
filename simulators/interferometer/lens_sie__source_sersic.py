@@ -9,11 +9,11 @@ import os
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
 
 # The image will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-# The noise-map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+# The noise map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
 # The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # (these files are already in the autolens_workspace and are remade running this script)
 dataset_label = "interferometer"
@@ -25,11 +25,11 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# The grid use to create the image.
+# The grid used to simulate the image.
 grid = al.Grid.uniform(shape_2d=(151, 151), pixel_scales=0.1, sub_size=4)
 
 # To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below.
-uv_wavelengths_path = workspace_path + "dataset/" + dataset_label + "/uv_wavelengths/"
+uv_wavelengths_path = f"{workspace_path}/dataset" + dataset_label + "/uv_wavelengths/"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
     file_path=uv_wavelengths_path + "uv_wavelengths.fits", hdu=0
@@ -86,7 +86,7 @@ aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 # Finally, lets output our simulated dataset to the dataset path as .fits files.
 interferometer.output_to_fits(
     visibilities_path=dataset_path + "visibilities.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     uv_wavelengths_path=dataset_path + "uv_wavelengths.fits",
     overwrite=True,
 )

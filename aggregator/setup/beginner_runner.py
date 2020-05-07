@@ -18,14 +18,14 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = f"{workspace_path}/config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=f"{workspace_path}/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -33,10 +33,8 @@ af.conf.instance = af.conf.Config(
 import autolens as al
 
 # Specify the dataset label and name, which we use to determine the path we load the data from.
-dataset_label = "aggregator_sample"
-pixel_scales = 0.1
 
-output_label = "aggregator_sample_beginner"
+pixel_scales = 0.1
 
 for dataset_name in [
     "lens_sie__source_sersic__0",
@@ -47,9 +45,9 @@ for dataset_name in [
     # Create the path where the dataset will be loaded from, which in this case is
     # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=workspace_path,
-        folder_names=["aggregator", "dataset", dataset_label, dataset_name],
+        path=workspace_path, folder_names=["dataset", dataset_name]
     )
+
     ### Info ###
 
     # The dataset name and info are accessible to the aggregator, to aid interpretation of results. The name is passed
@@ -66,11 +64,11 @@ for dataset_name in [
 
     ### DATASET ###
 
-    # Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
+    # Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files.
     imaging = al.Imaging.from_fits(
-        image_path=dataset_path + "image.fits",
-        psf_path=dataset_path + "psf.fits",
-        noise_map_path=dataset_path + "noise_map.fits",
+        image_path=f"{dataset_path}/image.fits",
+        psf_path=f"{dataset_path}/psf.fits",
+        noise_map_path=f"{dataset_path}/noise_map.fits",
         pixel_scales=pixel_scales,
         name=name,
     )
@@ -110,7 +108,7 @@ for dataset_name in [
     from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
     pipeline = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=[output_label, dataset_name]
+        setup=setup, phase_folders=["aggregator", "beginner", dataset_name]
     )
 
     # Note how we pass the info the pipeline run function, meaning the info will be available to the aggregator.

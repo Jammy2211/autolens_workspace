@@ -16,12 +16,12 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/t4_dealing_with_failure",
-    output_path=chapter_path + "output",
+    config_path=f"{chapter_path}/configs/t4_dealing_with_failure",
+    output_path=f"{chapter_path}/output",
 )
 
 # %%
@@ -205,7 +205,7 @@ form. Furthermore, the source's morphology can be pretty complex, making it diff
 
 # %%
 """
-We can now create this custom phase and run it. Our non-linear search will start in a high likelihood region of 
+We can now create this custom phase and run it. Our non-linear search will start in a high log_likelihood region of 
 parameter space.
 """
 
@@ -241,7 +241,7 @@ do you notice between parameters?
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
 
 # %%
 """
@@ -249,7 +249,7 @@ Okay, so we've learnt that by tuning our priors to the lens we're fitting we can
 global maxima lens model. Before moving onto the next approach, lets think about the advantages and disadvantages of 
 prior tuning:
 
-Advantage - We find the maximum likelihood solution in parameter space.
+Advantage - We find the maximum log likelihood solution in parameter space.
 Advantage - The phase took less time to run because the non-linear search explored less of parameter space.
 Disadvantage - If we specified one prior incorrectly the non-linear search would begin and therefore end at an 
 incorrect solution.
@@ -333,7 +333,9 @@ light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, ma
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
-aplt.FitImaging.subplot_fit_imaging(fit=light_traces_mass_phase_result.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(
+    fit=light_traces_mass_phase_result.max_log_likelihood_fit
+)
 
 # %%
 """
@@ -342,7 +344,7 @@ looks similar to the one above. However, inspection of the residuals shows that 
 custom-phase above.
 
 It turns out that when I simulated this image light didn't perfectly trace mass. The light-profile's axis-ratio was 
-0.9, whereas the mass-profiles was 0.8. The quality of the fit has suffered as a result and the likelihood we've 
+0.9, whereas the mass-profiles was 0.8. The quality of the fit has suffered as a result and the log likelihood we've 
 inferred is lower.
 
 Herein lies the pitfalls of making assumptions - they may make your model less realistic and your results worse! 
@@ -351,7 +353,7 @@ a bad idea if you're struggling to fit the data well.
 
 Again, lets consider the advantages and disadvantages of this approach:
 
-Advantage - By reducing parameter space's complexity we inferred a global maximum likelihood.
+Advantage - By reducing parameter space's complexity we inferred a global maximum log likelihood.
 Advantage - The phase is not specific to one lens - we could run it on many strong lens images.
 Disadvantage - Our model was less realistic and our fit suffered as a result.
 """
@@ -360,7 +362,7 @@ Disadvantage - Our model was less realistic and our fit suffered as a result.
 """
 __Approach 3: Look Harder__
 
-In approaches 1 and 2 we extended our non-linear search an olive branch and helped it find the highest likelihood 
+In approaches 1 and 2 we extended our non-linear search an olive branch and helped it find the highest log likelihood 
 regions of parameter space. In approach 3 ,we're going to tell it to just 'look harder'.
 
 Basically, every non-linear search algorithm has a set of parameters that govern how thoroughly it searches parameter 
@@ -388,9 +390,9 @@ custom_non_linear_phase = al.PhaseImaging(
 The 'optimizer' below is MultiNest, the non-linear search we're using.
 
 When MultiNest searches non-linear parameter space it places down a set of 'live-points', each of which corresponds 
-to a particular lens model (set of parameters) with an associted likelihood. When it samples a new lens model with a 
-higher likelihood than any of the currently active live points, this new lens model becomes an active point. As a 
-result, the active point with the lowest likelihood is discarded.
+to a particular lens model (set of parameters) with an associted log_likelihood. When it samples a new lens model with a 
+higher log_likelihood than any of the currently active live points, this new lens model becomes an active point. As a 
+result, the active point with the lowest log likelihood is discarded.
 
 The more live points MultiNest uses the more thoroughly it will sample parameter space. Lets increase the number of 
 points from the default value (50) to 100.
@@ -401,7 +403,7 @@ custom_non_linear_phase.optimizer.n_live_points = 100
 
 # %%
 """
-When MultiNest find a 'peak' likelihood in parameter space it begins to converge around this peak. It does this by 
+When MultiNest find a 'peak' log_likelihood in parameter space it begins to converge around this peak. It does this by 
 guessing lens models with similar parameters. However, this peak might not be the global maximum, and if MultiNest 
 converges too quickly around a peak it won't realise this before its too late.
 
@@ -428,7 +430,7 @@ print(
 custom_non_linear_result = custom_non_linear_phase.run(dataset=imaging, mask=mask)
 print("MultiNest has finished run - you may now continue the notebook.")
 
-aplt.FitImaging.subplot_fit_imaging(fit=custom_non_linear_result.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=custom_non_linear_result.max_log_likelihood_fit)
 
 # %%
 """

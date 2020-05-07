@@ -35,12 +35,12 @@ Below, we set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
-output_path = workspace_path + "output"
-agg_results_path = output_path + "/aggregator_sample_advanced"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+output_path = f"{workspace_path}/output"
+agg_results_path = f"{output_path}/aggregator/advanced"
 
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path + "/config"), output_path=str(output_path)
+    config_path=f"{workspace_path}/config", output_path=output_path
 )
 
 agg = af.Aggregator(directory=str(agg_results_path))
@@ -57,9 +57,9 @@ phase_name = "phase_1__lens_power_law__source"
 
 agg_power_law = agg.filter(agg.phase == phase_name, agg.pipeline == pipeline_name)
 
-print("Pipeline Name Filtered MultiNest Outputs:")
-print(list(agg_power_law.values("output")))
-print("Total Outputs = ", len(list(agg_power_law.values("output"))), "\n")
+print("Pipeline Name Filtered MultiNest Samples:")
+print(list(agg_power_law.values("samples")))
+print("Ttotal Samples Objects = ", len(list(agg_power_law.values("samples"))), "\n")
 
 # %%
 """

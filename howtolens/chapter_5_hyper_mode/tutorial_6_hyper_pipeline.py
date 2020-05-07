@@ -1,5 +1,5 @@
 # So, how does hyper-mode work in pipelines? There are a lot more things we have to do now; pass hyper-galaxy-images
-# between phases, use different pixelizations and regularization schemes, and decide what parts of the noise-map we do
+# between phases, use different pixelizations and regularization schemes, and decide what parts of the noise map we do
 # and don't want to scale.
 
 ### HYPER IMAGE PASSING ###
@@ -277,7 +277,7 @@ def make_pipeline(setup, phase_folders=None):
     # So, its beneficial for us to introduce an intermediate inversion using a magnification based grid, that fits
     # all components of the source accurately giving us a good quality hyper-galaxy image for the brightness based
     # pixelization and adaptive regularization. Its for this reason we've also omitted the hyper-galaxy source galaxy
-    # from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise-map!
+    # from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise map!
 
     # We switch the source model, so we update the source type tag.
     setup.set_source_type(source_type=setup.source.inversion_tag)
@@ -390,7 +390,7 @@ def make_pipeline(setup, phase_folders=None):
     phase6.optimizer.sampling_efficiency = 0.8
 
     # For this phase, we'll also extend it with an inversion phase. This ensures our pixelization and regularization
-    # are fully optimized in conjunction with the hyper-galaxies and background noise-map.
+    # are fully optimized in conjunction with the hyper-galaxies and background noise map.
 
     phase6 = phase6.extend_with_multiple_hyper_phases(
         hyper_galaxy=setup.general.hyper_galaxies,

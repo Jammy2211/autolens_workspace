@@ -35,9 +35,9 @@ Setup the path to the autolens_workspace, using the correct path name below.
 
 # %%
 workspace_path = "path/to/AutoLens/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
-preprocess_path = workspace_path + "/preprocess/imaging/"
+preprocess_path = f"{workspace_path}//preprocess/imaging/"
 
 # %%
 """

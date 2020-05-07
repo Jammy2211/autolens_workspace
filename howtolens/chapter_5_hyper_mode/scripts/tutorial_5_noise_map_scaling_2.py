@@ -132,7 +132,7 @@ fit = fit_masked_imaging_with_lens_and_source_galaxy(
     source_galaxy=source_magnification,
 )
 
-print("Evidence using baseline variances = ", fit.evidence)
+print("Evidence using baseline variances = ", fit.log_evidence)
 
 aplt.FitImaging.subplot_fit_imaging(
     fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
@@ -146,9 +146,9 @@ residual features using a more complex light profile. These types of residuals a
 caused by nasty, irregular morphological structures in the lens galaxy; nuclear star emission, nuclear rings, bars, etc.
 
 This skewed chi-squared distribution will cause all the same problems we discussed in the previous tutorial, like 
-over-fitting. However, for the source-reconstruction and Bayesian evidence the residuals are even more problematic 
-than before. Why? Because when we compute the Bayesian evidence for the source-inversion these pixels are included 
-like all the other image pixels. But, __they do not contain the source__. The Bayesian evidence is going to try 
+over-fitting. However, for the source-reconstruction and Bayesian log evidence the residuals are even more problematic 
+than before. Why? Because when we compute the Bayesian log evidence for the source-inversion these pixels are included 
+like all the other image pixels. But, __they do not contain the source__. The Bayesian log evidence is going to try 
 improve the fit to these pixels by reducing the level of regularization,  but its __going to fail miserably__, as they 
 map nowhere near the source!
 
@@ -233,9 +233,9 @@ aplt.Array(
 # %%
 """
 The contribution maps decomposes the image into its different components. Next, we  use each contribution map to 
-scale different regions of the noise-map. From the fit above it was clear that both the lens and source required the 
+scale different regions of the noise map. From the fit above it was clear that both the lens and source required the 
 noise to be scaled, but their different chi-squared values ( > 150 and ~ 30) means they require different levels of 
-noise-scaling. Lets see how much our fit improves and Bayesian evidence increases.
+noise-scaling. Lets see how much our fit improves and Bayesian log evidence increases.
 """
 
 # %%
@@ -251,15 +251,15 @@ aplt.FitImaging.subplot_fit_imaging(
 
 print("Evidence using baseline variances = ", 8861.51)
 
-print("Evidence using hyper-galaxy-galaxy hyper variances = ", fit.evidence)
+print("Evidence using hyper-galaxy-galaxy hyper variances = ", fit.log_evidence)
 
 
 # %%
 """
 Great, and with that, we've covered hyper galaxies. You might be wondering, what happens if there are multiple lens 
 galaxies? or multiple source galaxies? Well, as you'd expect, PyAutoLens will make each a hyper-galaxy and 
-therefore scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of 
-the image require different levels of noise-map scaling.
+therefore scale the noise map of that individual galaxy in the image. This is what we want, as different parts of 
+the image require different levels of noise map scaling.
 
 Finally, I want to quickly mention two more ways that we change our data during th fitting process. One scales the 
 background noise and one scales the image's background sky. To do this, we use the 'hyper_data' module in PyAutoLens.
@@ -281,7 +281,7 @@ therefore increasing or decreasing the background sky level in the image .This m
 inaccurate background sky subtraction in our data reduction during PyAutoLens model fitting.
 
 We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the 
-'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise-map.
+'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise map.
 """
 
 # %%
@@ -324,7 +324,7 @@ resolution.
 
 By increasing the background noise these pixels will go to much lower S/N values (<  1). The adaptive pixelization will 
 feel no need to fit them properly and begin to fit these regions of the source-plane with far fewer, much bigger 
-source pixels! This will again give us a net increase in Bayesian evidence, but more importantly, it will dramatically 
+source pixels! This will again give us a net increase in Bayesian log evidence, but more importantly, it will dramatically 
 reduce the number of source pixels we use to fit the data. And what does fewer source-pixels mean? Much, much faster
 run times. Yay!
 

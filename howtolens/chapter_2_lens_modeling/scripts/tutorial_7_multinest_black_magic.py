@@ -28,12 +28,12 @@ You need to change the path below to the chapter 2 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/t7_multinest_black_magic",
-    output_path=chapter_path + "output",
+    config_path=f"{chapter_path}/configs/t7_multinest_black_magic",
+    output_path=f"{chapter_path}/output",
 )
 
 # %%
@@ -151,7 +151,7 @@ If we ran the phase, we can check that we get a reasonably good model and fit to
 """
 
 # %%
-# aplt.FitImaging.subplot_fit_imaging(fit=phase_normal_results.most_likely_fit, mask=True)
+# aplt.FitImaging.subplot_fit_imaging(fit=phase_normal_results.max_log_likelihood_fit, mask=True)
 # print("Time without black magic = {}".format(time.time() - start))
 
 # %%
@@ -213,7 +213,9 @@ Does our use of black magic impact the quality of our fit to the data?
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_black_magic_results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(
+    fit=phase_black_magic_results.max_log_likelihood_fit
+)
 
 print("Time with black magic = {}".format(time.time() - start))
 
@@ -225,13 +227,13 @@ run speed?
 
 To begin, we should think a bit more about how MultiNest works. MultiNest first 'maps out' parameter space over large 
 scales using a set of live points (the number of which is defined by n_live_points). From these points it assesses
-what it thinks parameter space looks like and where it thinks the highest likelihood regions of parameter space are. 
-MultiNest then 'guesses' (on average) more lens models from these higher likelihood regions of parameter space, with 
-the hope that its live points will slowly converge around the maximum likelihood solution(s).
+what it thinks parameter space looks like and where it thinks the highest log likelihood regions of parameter space are. 
+MultiNest then 'guesses' (on average) more lens models from these higher log_likelihood regions of parameter space, with 
+the hope that its live points will slowly converge around the maximum log likelihood solution(s).
 
 How fast does MultiNest try to converge around these solutions? That is set by its sampling_efficiency. For example, 
 a sampling efficiency of 0.3 means that MultiNest targets that 30% of its sample will result in 'accepted' 
-live points (e.g. that they successfully sample a likelihood above at least one existing live point). For an efficiency 
+live points (e.g. that they successfully sample a log likelihood above at least one existing live point). For an efficiency 
 of 0.8, it'd do this 80% of the time. Clearly, the higher our efficiency, the faster MultiNest samples parameter space.
 
 However, if MultiNest is not confident it has a sufficiently good map of parameter space that it can begin to converge 
@@ -301,7 +303,7 @@ phase_too_much_black_magic_results = phase_too_much_black_magic.run(
 print("MultiNest has finished run - you may now continue the notebook.")
 
 aplt.FitImaging.subplot_fit_imaging(
-    fit=phase_too_much_black_magic_results.most_likely_fit
+    fit=phase_too_much_black_magic_results.max_log_likelihood_fit
 )
 
 print("Time with too much black magic = {}".format(time.time() - start))
@@ -329,8 +331,8 @@ that in pipelines the early phases nearly always run in constant efficiency mode
 
 # %%
 """
-There is one more trick we can use to speed up MultiNest, which involves changing the 'evidence tolerance' (our runs 
-above assumed the defaut value of evidence tolerance of 0.8).
+There is one more trick we can use to speed up MultiNest, which involves changing the 'log_evidence tolerance' (our runs 
+above assumed the defaut value of log evidence tolerance of 0.8).
 """
 
 # %%
@@ -352,11 +354,11 @@ phase_new_evidence_tolerance.optimizer.evidence_tolerance = 10000.0
 
 # %%
 """
-MultiNest samples parameter space until it believes there are no more regions of likelihood above a threshold 
-value left to sample. The evidence tolerance sets this threshold, whereby higher values mean MultiNest stops 
-sampling sooner. This is at the expense of not sampling the highest likelihood regions of parameter space in detail.
+MultiNest samples parameter space until it believes there are no more regions of log_likelihood above a threshold 
+value left to sample. The log evidence tolerance sets this threshold, whereby higher values mean MultiNest stops 
+sampling sooner. This is at the expense of not sampling the highest log likelihood regions of parameter space in detail.
 
-Lets run this phase with our new evidence tolerance and plot the best-fit result.
+Lets run this phase with our new log evidence tolerance and plot the best-fit result.
 """
 
 # %%
@@ -365,7 +367,7 @@ phase_new_evidence_tolerance_result = phase_new_evidence_tolerance.run(
 )
 
 aplt.FitImaging.subplot_fit_imaging(
-    fit=phase_new_evidence_tolerance_result.most_likely_fit
+    fit=phase_new_evidence_tolerance_result.max_log_likelihood_fit
 )
 
 # %%
@@ -375,11 +377,11 @@ other results (albeit its still a decent fit). This is because MultiNest stopped
 'settling' with a decent fit but not refining it to the level of detail of other runs.
 
 By not sampling parameter space thoroughly we'll get unreliable parameter errors on our lens model! If a detailed, 
-accurate and precise lens model is desired the evidence tolerance shoulld therefore be kept low, around the default 
+accurate and precise lens model is desired the log evidence tolerance shoulld therefore be kept low, around the default 
 value of 0.8.
 
 However, in the next chapter we'll run a lot of fits where we *don't* care about the lens model errors. All we want 
 is a reasonable estimate of the lens model to subsequent fit in a linked phase (like in tutorial 5). For this purpose, 
-setting high evidence tolerances is powerful way to get very fast analyses. We'll be exploiting this trick throughout 
+setting high log evidence tolerances is powerful way to get very fast analyses. We'll be exploiting this trick throughout 
 all of the following chapters.
 """

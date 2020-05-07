@@ -122,14 +122,14 @@ majority of source pixels are located away from the source. By my estimate, we'r
 4x4 grid) out of the 1600 pixels to actually fit the data! The remaining ~1500 pixels are doing *nothing* but fit noise.
 
 This is a waste and our analysis will take longer to run because of it. However, more importantly, it means that our 
-Bayesian regularization scheme is sub-optimal. In tutorial 4, we discussed how the Bayesian evidence of the 
+Bayesian regularization scheme is sub-optimal. In tutorial 4, we discussed how the Bayesian log evidence of the 
 regularization wants to obtain the *simplest* source solution possible. That is the solution which fits the data 
 well using the fewest source pixels. Clearly, if we dedicating a huge number of source pixels to doing *nothing*, our 
-source reconstruction will be unecessarily complex (and therefore lower evidence).
+source reconstruction will be unecessarily complex (and therefore lower log_evidence).
 
 If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions of 
 the source-plane, we could reconstruct the source using far fewer pixels. That'd be great both for computational 
-efficiency and increasing the Bayesian evidence and that is exactly what our Voronoi grid does.
+efficiency and increasing the Bayesian log evidence and that is exactly what our Voronoi grid does.
 
 To achieve this, we first compute an 'image-plane sparse grid', which is a set of sparse coordinates in the image-plane 
 that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute this grid 

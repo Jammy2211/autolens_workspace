@@ -18,7 +18,7 @@ They may also change the model fitted in later pipelines.
 
     hyper_galaxies : bool (default=False)
 
-        If true, hyper-galaxies are used to scale the noise-map between all phases of each pipeline.
+        If true, hyper-galaxies are used to scale the noise map between all phases of each pipeline.
 
     hyper_background_noise : bool (default=False)
 

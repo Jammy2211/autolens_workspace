@@ -21,31 +21,31 @@ This function has 3 parameters, x, y and z. The mappings between x, y and z and 
 space, albeit now in 3 dimensions. Nevertheless, one could still picture this parameter space as some 3 dimensional
 curved surface.
 
-The process of computing a likelihood in PyAutoLens can be visualized in exactly the same way. We have a set of
-lens model parameters, which we input into PyAutoLens's 'likelihood function'. Now, this likelihood function isn't
+The process of computing a log likelihood in PyAutoLens can be visualized in exactly the same way. We have a set of
+lens model parameters, which we input into PyAutoLens's 'log_likelihood function'. Now, this log likelihood function isn't
 something that we can write down analytically and its inherently non-linear. But, nevertheless, it is a function; if
-we put the same set of lens model parameters into it, we'll compute the same likelihood.
+we put the same set of lens model parameters into it, we'll compute the same log likelihood.
 
-We can write our likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
+We can write our log_likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
 mass-profile and light-profile parameters):
 
-f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a likelihood from PyAutoLens's tracer and lens_fit.
+f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's tracer and lens_fit.
 
 The point is, like we did for the simple functions above, we again have a parameter space! It can't be written
 down analytically and its undoubtedly very complex and non-linear. Fortunately, we've already learnt how to search
-it, and find the solutions which maximize our likelihood function!
+it, and find the solutions which maximize our log_likelihood function!
 
 Lets inspect the results of the last tutorial's non-linear search. We're going to look at what are called 'probably
-density functions' or PDF's for short. These represent where the highest likelihood regions of parameter space were
+density functions' or PDF's for short. These represent where the highest log likelihood regions of parameter space were
 found for each parameter.
 
 Navigate to the folder 'autolens_workspace/howtolens/chapter_2_lens_modeling/output_optimizer/1_non_linear_search/image'
 and open the 'pdf_triangle.png' figure. The Gaussian shaped lines running down the diagonal of this triangle represent
-1D estimates of the highest likelihood regions that were found in parameter space for each parameter.
+1D estimates of the highest log likelihood regions that were found in parameter space for each parameter.
 
-The remaining figures, which look like contour-maps, show the maximum likelihood regions in 2D between every parameter
+The remaining figures, which look like contour-maps, show the maximum log likelihood regions in 2D between every parameter
 pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other leads to a
-similar likelihood value. The 2D PDF between the source galaxy's light-profile's intensity (I_l4) and effective
+similar log_likelihood value. The 2D PDF between the source galaxy's light-profile's intensity (I_l4) and effective
 radius (R_l4) shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is similar to
 making it fainter and bigger!
 
@@ -99,12 +99,12 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/t2_parameter_space_and_priors",
-    output_path=chapter_path + "output",
+    config_path=f"{chapter_path}/configs/t2_parameter_space_and_priors",
+    output_path=f"{chapter_path}/output",
 )
 
 # %%
@@ -221,7 +221,7 @@ print(
 
 results_custom = custom_phase.run(dataset=imaging, mask=mask)
 
-aplt.FitImaging.subplot_fit_imaging(fit=results_custom.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results_custom.max_log_likelihood_fit)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
@@ -234,7 +234,7 @@ non-linear parameter space! Luckily, we're going to keep thinking about this in 
 you're not feeling too confident yet, you will be soon!
 
 Before continuing to the next tutorial, I want you think about whether anything could go wrong when we search a 
-non-linear parameter space. Is it possible that we won't find the highest likelihood lens model? Why might this be?
+non-linear parameter space. Is it possible that we won't find the highest log likelihood lens model? Why might this be?
 
 Try and list 3 reasons why this might happen. In the next tutorial, we'll learn about just that - failure!
 """

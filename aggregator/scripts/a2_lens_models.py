@@ -20,12 +20,12 @@ Frist, we set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/"
-output_path = workspace_path + "output"
-agg_results_path = output_path + "/aggregator_sample_beginner"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+output_path = f"{workspace_path}/output"
+agg_results_path = f"{output_path}/aggregator/beginner"
 
 af.conf.instance = af.conf.Config(
-    config_path=str(workspace_path + "/config"), output_path=str(output_path)
+    config_path=f"{workspace_path}/config", output_path=output_path
 )
 
 agg = af.Aggregator(directory=str(agg_results_path))
@@ -41,7 +41,9 @@ pipeline_name = "pipeline__lens_sie__source_inversion"
 phase_name = "phase_3__source_inversion"
 agg_phase_3 = agg.filter(agg.phase == phase_name)
 
-ml_instances = [out.most_likely_instance for out in agg_phase_3.values("output")]
+ml_instances = [
+    samps.max_log_likelihood_instance for samps in agg_phase_3.values("samples")
+]
 
 # %%
 """
@@ -84,10 +86,10 @@ again.
 # %%
 def make_tracer_generator(agg_obj):
 
-    output = agg_obj.output
+    output = agg_obj.samples
 
     # This uses the output of one instance to generate the tracer.
-    return al.Tracer.from_galaxies(galaxies=output.most_likely_instance.galaxies)
+    return al.Tracer.from_galaxies(galaxies=output.max_log_likelihood_instance.galaxies)
 
 
 # %%
@@ -155,9 +157,9 @@ Now lets use a generator.
 """
 
 # %%
-def print_most_likely_mass(agg_obj):
+def print_max_log_likelihood_mass(agg_obj):
 
-    output = agg_obj.output
+    output = agg_obj.samples
 
     einstein_mass = output.instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=output.instance.galaxies.lens.redshift,
@@ -167,7 +169,7 @@ def print_most_likely_mass(agg_obj):
 
 
 print("Most Likely Lens Einstein Masses:")
-agg_phase_3.map(func=print_most_likely_mass)
+agg_phase_3.map(func=print_max_log_likelihood_mass)
 
 # %%
 """
@@ -178,7 +180,7 @@ These plots don't use anything too memory intensive - like a tracer - so we are 
 """
 
 # %%
-mp_instances = [out.most_probable_instance for out in agg_phase_3.values("output")]
+mp_instances = [samps.most_probable_instance for samps in agg_phase_3.values("samples")]
 mp_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
 ]
@@ -197,10 +199,12 @@ Now lets also include error bars at 3 sigma confidence.
 
 # %%
 ue3_instances = [
-    out.error_instance_at_upper_sigma(sigma=3.0) for out in agg_phase_3.values("output")
+    samps.error_instance_at_upper_sigma(sigma=3.0)
+    for samps in agg_phase_3.values("samples")
 ]
 le3_instances = [
-    out.error_instance_at_lower_sigma(sigma=3.0) for out in agg_phase_3.values("output")
+    samps.error_instance_at_lower_sigma(sigma=3.0)
+    for samps in agg_phase_3.values("samples")
 ]
 
 ue3_einstein_radii = [
@@ -235,7 +239,7 @@ Instead, we need to compute the Einstein mass of every lens model sampled by Mul
 PDF of the Einstein mass. When combining the different Einstein masses we weight each value by its MultiNest sampling 
 probablity. This means that models which gave a poor fit to the data are downweighted appropriately.
 
-Below, we get an instance of every MultiNest sample using the MultiNestOutput, compute that models einstein mass, 
+Below, we get an instance of every MultiNest sample using the NestedSamplerSamples, compute that models einstein mass, 
 store them in a list and find the weighted median value with errors.
 
 This function takes the list of Einstein mass values with their sample weights and computed the weighted mean and 
@@ -258,7 +262,7 @@ def weighted_mean_and_standard_deviation(values, weights):
 
 # %%
 """
-Now, we iterate over each MultiNestOutput, extracting all samples and computing ther masses and weights and compute the 
+Now, we iterate over each NestedSamplerSamples, extracting all samples and computing ther masses and weights and compute the 
 weighted mean of these samples.
 
 Computing an Einstein mass takes a bit of time, so be warned this cell could run for a few minutes! To speed things 
@@ -268,12 +272,12 @@ up, you'll notice that we only perform the loop on samples whose probably is abo
 # %%
 def mass_error(agg_obj):
 
-    output = agg_obj.output
+    output = agg_obj.samples
 
     sample_masses = []
     sample_weights = []
 
-    for sample_index in range(output.accepted_samples - 1):
+    for sample_index in range(output.total_accepted_samples - 1):
 
         sample_weight = output.weight_from_sample_index(sample_index=sample_index)
 

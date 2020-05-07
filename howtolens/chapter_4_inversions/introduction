@@ -15,7 +15,7 @@ In particular, you'll learn how we:
 1) Pixelize our source-plane into a set of source-plane pixels that define mappings to image pixels.
 2) Invert this source-plane pixelization to fit the strongly lensed source and thus reconstruct its light.
 3) Apply a smoothness prior on our source reconstruction, called 'regularization', to ensure our solution is physical.
-4) Apply this prior in a Bayesian framework to objectively quantify our source reconstruction's likelihood.
+4) Apply this prior in a Bayesian framework to objectively quantify our source reconstruction's log likelihood.
 5) Define a border in the source-plane to prevent pixels tracing outside the source reconstruction.
 6) Can use alternative pixelizations that use irVoronoi pixels adapted to the lens's mass model.
 7) Use these features in PyAutoLelns pipelines.

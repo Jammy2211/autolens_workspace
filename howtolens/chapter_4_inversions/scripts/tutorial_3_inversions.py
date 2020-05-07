@@ -335,7 +335,7 @@ These mappings are known before the inversion, which means pre-inversion we know
 2) The flux values in every observed image-pixel, which are the values we want to fit successfully.
 
 It turns out that with these two pieces of information we can linearly solve for the set of source-pixel fluxes that 
-best-fit (e.g. maximize the likelihood of) our observed image. Essentially, we set up the mapping between source and 
+best-fit (e.g. maximize the log likelihood of) our observed image. Essentially, we set up the mapping between source and 
 image pixels as a large matrix and solve for the source-pixel fluxes in an analogous fashion to how you would solve a 
 set of simultaneous linear equations. This process is called a 'linear inversion'.
 

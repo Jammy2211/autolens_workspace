@@ -10,12 +10,10 @@ import os
 
 import autofit as af
 
-workspace_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
-
-config_path = workspace_path + "config"
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 af.conf.instance = af.conf.Config(
-    config_path=workspace_path + "config", output_path=workspace_path + "output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 dataset_label = "imaging"
@@ -32,9 +30,9 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
 )
 
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
 )
 

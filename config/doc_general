@@ -7,7 +7,7 @@ A description of the general.ini config.
 
     log_interval : int
 
-        The number of new best-fit (e.g. highest likelihood) models that must be sampled for PyAutoLens to log the
+        The number of new best-fit (e.g. highest log likelihood) models that must be sampled for PyAutoLens to log the
         results to the Python interpreter.
 
         A log_interval of -1 turns off logging.
@@ -22,7 +22,7 @@ A description of the general.ini config.
 
     backup_interval : int
 
-        The number of new best-fit (e.g. highest likelihood) models that must be sampled for PyAutoLens to backup the
+        The number of new best-fit (e.g. highest log likelihood) models that must be sampled for PyAutoLens to backup the
         results to the optimizer_backup folder of the phase.
 
         A backup_interval of -1 turns off backups.
@@ -36,7 +36,7 @@ A description of the general.ini config.
 
     model_results_output_interval : int
 
-        The number of new best-fit (e.g. highest likelihood) models that must be sampled for PyAutoLens to output a new
+        The number of new best-fit (e.g. highest log likelihood) models that must be sampled for PyAutoLens to output a new
         model.results file using the latest MultiNest samples and thus most up to data PDFs.
 
         A model_results_output_interval of -1 turns off backups.

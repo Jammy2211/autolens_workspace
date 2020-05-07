@@ -32,14 +32,14 @@ import os
 import autofit as af
 
 # Setup the path to the autolens_workspace, using a relative directory name.
-workspace_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # Setup the path to the config folder, using the autolens_workspace path.
-config_path = workspace_path + "config"
+config_path = f"{workspace_path}/config"
 
 # Use this path to explicitly set the config path and output path.
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=workspace_path + "output"
+    config_path=config_path, output_path=f"{workspace_path}/output"
 )
 
 ### AUTOLENS + DATA SETUP ###
@@ -58,11 +58,11 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
 )
 
-# Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
+# Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files.
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    psf_path=dataset_path + "psf.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
+    image_path=f"{dataset_path}/image.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
 )
 
@@ -84,8 +84,8 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # - If the background sky is modeled throughout the pipeline (default False)
 
 general_setup = al.setup.General(
-    hyper_galaxies=True,
-    hyper_background_noise=True,
+    hyper_galaxies=False,
+    hyper_background_noise=False,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
 )
 

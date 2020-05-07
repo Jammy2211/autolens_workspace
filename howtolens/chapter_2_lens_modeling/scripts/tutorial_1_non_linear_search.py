@@ -21,13 +21,13 @@ we're going to infer the actual parameters I used.
 So, how do we infer the light and mass profile parameters that give a good fit to our data?
 
 Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this
-lens model to create a tracer and fit the image-data, and quantify how good the fit was using its likelihood
+lens model to create a tracer and fit the image-data, and quantify how good the fit was using its log likelihood
 (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd find one that provides a good fit
-(i.e. high likelihood) to the data!
+(i.e. high log_likelihood) to the data!
 
 It may sound surprising, but this is actually the basis of how lens modeling works. However, we can do a lot better
-than random guessing. Instead, we track the likelihood of our previous guesses and guess more models using
-combinations of parameters that gave higher likelihood solutions previously. The idea is that if a set of parameters
+than random guessing. Instead, we track the log likelihood of our previous guesses and guess more models using
+combinations of parameters that gave higher log_likelihood solutions previously. The idea is that if a set of parameters
 provided a good fit to the data, another set with similar values probably will too.
 
 This is called a 'non-linear search' and its a fairly common problem faced by scientists. Over the next few tutorials,
@@ -42,10 +42,10 @@ picture that a non-linear search in PyAutoLens operates as follows:
 and a tracer.
 
 2) Pass this tracer through the fitting module, generating a model image and comparing this model image to the
-observed strong lens imaging data. This computes a likelihood.
+observed strong lens imaging data. This computes a log likelihood.
 
-3) Repeat this many times, using the likelihoods of previous fits (typically those with a high likelihood) to
-guide us to the lens models with the highest likelihood.
+3) Repeat this many times, using the likelihoods of previous fits (typically those with a high log_likelihood) to
+guide us to the lens models with the highest log likelihood.
 """
 
 # %%
@@ -72,8 +72,8 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
     config_path=chapter_path + "/configs/t1_non_linear_search",
@@ -199,11 +199,11 @@ This is where the results of the phase are written to your hard-disk (in the '1_
 completed, images and output will also appear in this folder, meaning that you don't need to keep running Python 
 code to see the results.
 
-The best-fit solution (i.e. the highest likelihood) is stored in the 'results', which we can plot as per usual.
+The best-fit solution (i.e. the highest log likelihood) is stored in the 'results', which we can plot as per usual.
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
 
 # %%
 """

@@ -11,9 +11,9 @@ import autolens as al
 
 # Below you'll note the following three hyper-model objects:
 
-# - hyper_galaxy - If used, the noise-map in the bright regions of the galaxy is scaled.
+# - hyper_galaxy - If used, the noise map in the bright regions of the galaxy is scaled.
 # - hyper_image_sky - If used, the background sky of the image being fitted is included as part of the model.
-# - hyper_background_noise - If used, the background noise of the noise-map is included as part of the model.
+# - hyper_background_noise - If used, the background noise of the noise map is included as part of the model.
 
 # An example of these objects being used to make a phase is as follows:
 

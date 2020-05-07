@@ -19,8 +19,8 @@ You need to change the path below to the chapter 2 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
     config_path=chapter_path + "/configs/t8_masking_and_positions",
@@ -130,7 +130,7 @@ Overly aggressive masking risks you masking out some of that light - data which 
 
 2) When you fit an image with a model image the fit is performed only within the masked region. Outside of the 
 masked region it is possible that the model image produces some source-galaxy light in a region of the image where 
-it isn't actually observed. If this region is masked, the poor fit in this region won't reduce the model's likelihood.
+it isn't actually observed. If this region is masked, the poor fit in this region won't reduce the model's log likelihood.
 
 As you use PyAutoLens more you will get a feel for how fast an analysis will run given a certain image resolution, 
 lens model complexity, non-linear search priors / setup, etc. As you develop this intuition, I would recommend you 
@@ -187,8 +187,10 @@ phase_with_positions = al.PhaseImaging(
 
 # %%
 """
-The positions are passed to the phase when we run it,as shown below.
+The positions are passed to the dataset of the phase we run it,as shown below.
 """
+
+imaging.positions = positions
 
 # %%
 print(
@@ -296,9 +298,7 @@ print(
     " This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-positions = al.Coordinates(
-    coordinates=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]]
-)
+imaging.positions = positions
 
 phase_with_x2_positions.run(dataset=imaging, mask=mask, positions=positions)
 

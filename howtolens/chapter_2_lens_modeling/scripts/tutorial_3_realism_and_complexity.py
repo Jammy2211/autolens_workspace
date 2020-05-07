@@ -36,12 +36,12 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling/"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling/"
+chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
 af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "configs/t3_realism_and_complexity/",
-    output_path=chapter_path + "output/",
+    config_path=f"{chapter_path}/configs/t3_realism_and_complexity/",
+    output_path=chapter_path + "/output",
 )
 
 # %%
@@ -162,7 +162,7 @@ And lets look at the fit to the Imaging data.
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=results.most_likely_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
 
 # %%
 """
@@ -171,7 +171,7 @@ Uh-oh. That fit doesn't look very good, does it? If we compare our inferred para
 (in the simulate function) you'll see that we have, indeed, fitted the wrong model.
 
 Yep, we've inferred the wrong lens model. Or have we? Maybe you're thinking that this model provides an even higher 
-likelihood than the correct solution? Lets make absolutely sure it doesnt: (you've seen all this code below before, 
+log_likelihood than the correct solution? Lets make absolutely sure it doesnt: (you've seen all this code below before, 
 but I've put a few comments to remind you of whats happening).
 """
 
@@ -227,23 +227,23 @@ Finally, just to be sure, lets compare the two likelihoods.
 
 # %%
 print("Likelihood of Non-linear Search:")
-print(results.most_likely_fit.likelihood)
+print(results.max_log_likelihood_fit.log_likelihood)
 print("Likelihood of Correct Model:")
-print(correct_fit.likelihood)
+print(correct_fit.log_likelihood)
 
 # %%
 """
-Well, there we have it, the input model has a much higher likelihood than the one our non-linear search inferred.
+Well, there we have it, the input model has a much higher log_likelihood than the one our non-linear search inferred.
 
 Clearly, our non-linear search failed. So, what happened? Where did it all go wrong?
 
 Lets think about 'complexity'. As we made our lens model more realistic, we also made it more complex. Our 
 non-linear parameter space went from 7 dimensions to 18. This means there was a much larger 'volume' of parameter 
 space to search. Maybe, therefore, our non-linear search got lost. It found some region of parameter space that it 
-thought was the highest likelihood region and focused the rest of its search there. But it was mistaken, there was 
-in fact another region of parameter space with even higher likelihood solutions.
+thought was the highest log likelihood region and focused the rest of its search there. But it was mistaken, there was 
+in fact another region of parameter space with even higher log_likelihood solutions.
 
-This region - the one our non-linear search failed to locate - is called the global maximum likelihood region, or 
+This region - the one our non-linear search failed to locate - is called the global maximum log likelihood region, or 
 'global maxima'. The region we found instead is called a 'local maxima' At its core, lens modeling is all about 
 learning how to get a non-linear search to find the global maxima region of parameter space, even when the lens model 
 is extremely complex.
@@ -255,7 +255,7 @@ unless you learn how to navigate parameter spaces better.
 
 
 And with that, we're done. In the next exercise, we'll learn how to deal with our failures and begin thinking about 
-how we can ensure our non-linear search finds the global-maximum likelihood solution. Before that, think about 
+how we can ensure our non-linear search finds the global-maximum log likelihood solution. Before that, think about 
 the following:
 
 1) When you look at an image of a strong lens, do you get a sense of roughly what values certain lens model 

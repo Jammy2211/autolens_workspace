@@ -17,7 +17,7 @@ First you need to change the path below to the chapter 1 directory so we can loa
 """
 
 # %%
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
+chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction"
 
 # %%
 """
@@ -25,12 +25,12 @@ The data path specifies where the data was output in the last tutorial, this tim
 """
 
 # %%
-dataset_path = chapter_path + "dataset/"
+dataset_path = f"{chapter_path}/dataset"
 
 imaging = al.Imaging.from_fits(
-    image_path=dataset_path + "image.fits",
-    noise_map_path=dataset_path + "noise_map.fits",
-    psf_path=dataset_path + "psf.fits",
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
     pixel_scales=0.1,
 )
 
@@ -41,7 +41,7 @@ in particular:
 
 1) The image.
 2) The Point Spread Function (PSF).
-3) Its noise-map.
+3) Its noise map.
 """
 
 # %%
@@ -99,7 +99,7 @@ the tutorials.
 A masked data object is a 'package' of all parts of a data-set we need in order to fit it with a lens model:
 
 1) The imaging-data, including the image, PSF (so that when we compare a tracer's image to the image instrument we 
-can include blurring due to the telescope optics) and noise-map (so our goodness-of-fit measure accounts for 
+can include blurring due to the telescope optics) and noise map (so our goodness-of-fit measure accounts for 
 noise in the observations).
 
 2) The mask, so that only the regions of the image with a signal are fitted.
@@ -114,7 +114,7 @@ aplt.Imaging.image(imaging=masked_imaging.imaging)
 
 # %%
 """
-By printing its attribute, we can see that it does indeed contain the mask, masked image, masked noise-map, psf and so on.
+By printing its attribute, we can see that it does indeed contain the mask, masked image, masked noise map, psf and so on.
 """
 
 # %%
@@ -133,7 +133,7 @@ print()
 
 # %%
 """
-The masked image and noise-map are again stored in 2D and 1D. 
+The masked image and noise map are again stored in 2D and 1D. 
 
 However, the 1D array now corresponds only to the pixels that were not masked, whereas for the 2D array, all edge 
 values are masked and are therefore zeros.
@@ -205,10 +205,10 @@ creates the fit's 'model_image'.
 
 2) Computes the difference between this model_image and the observed image-data, creating the fit's 'residual_map'.
 
-3) Divides the residual-map by the noise-map and squares each value, creating the fit's 'chi_squared_map'.
+3) Divides the residual-map by the noise map and squares each value, creating the fit's 'chi_squared_map'.
 
-4) Sums up these chi-squared values and converts them to a 'likelihood', which quantifies how good the tracer's fit to 
-the data was (higher likelihood = better fit).
+4) Sums up these chi-squared values and converts them to a 'log_likelihood', which quantifies how good the tracer's fit to 
+the data was (higher log_likelihood = better fit).
 """
 
 # %%
@@ -256,19 +256,19 @@ print(chi_squared_map[48:53, 48:53])
 
 # %%
 """
-The fit also gives a likelihood, which is a single-figure estimate of how good the model image fitted the simulated 
+The fit also gives a log likelihood, which is a single-figure estimate of how good the model image fitted the simulated 
 image (in unmasked pixels only!).
 """
 
 # %%
 print("Likelihood:")
-print(fit.likelihood)
+print(fit.log_likelihood)
 
 # %%
 """
 We used the same tracer to create and fit the image, giving an excellent fit. The residual-map and chi-squared-map, 
 show no signs of the source galaxy's light present, indicating a good fit. This solution will translate to one of the 
-highest-likelihood solutions possible.
+highest-log_likelihood solutions possible.
 
 Lets change the tracer, so that it's near the correct solution, but slightly off. Below, we slightly offset the lens 
 galaxy, by 0.005"
@@ -303,16 +303,16 @@ aplt.FitImaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 # %%
 """
 Residuals now appear at the locations of the source galaxy, increasing the chi-squared values (which determine 
-our likelihood).
+our log_likelihood).
 
-Lets compare the likelihood to the value we computed above (which was 4372.90):
+Lets compare the log likelihood to the value we computed above (which was 4372.90):
 """
 
 # %%
 print("Previous Likelihood:")
-print(4372.90)
+print(4593.8596)
 print("New Likelihood:")
-print(fit.likelihood)
+print(fit.log_likelihood)
 
 # %%
 """
@@ -352,15 +352,15 @@ aplt.FitImaging.subplot_fit_imaging(fit=fit, include=aplt.Include(mask=True))
 Clearly, the model provides a terrible fit and this tracer is not a plausible representation of the image-data 
 (of course, we already knew that, given that we simulated it!)
 
-The likelihood drops dramatically, as expected.
+The log likelihood drops dramatically, as expected.
 """
 
 # %%
 print("Previous Likelihoods:")
-print(4372.90)
-print(4205.47)
+print(4593.8596)
+print(4478.4995)
 print("New Likelihood:")
-print(fit.likelihood)
+print(fit.log_likelihood)
 
 # %%
 """

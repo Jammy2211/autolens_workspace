@@ -53,7 +53,6 @@ def make_pipeline(
     redshift_lens=0.5,
     redshift_source=1.0,
     auto_positions_factor=None,
-    auto_positions_factor=None,
     positions_threshold=None,
     sub_size=2,
     signal_to_noise_limit=None,
