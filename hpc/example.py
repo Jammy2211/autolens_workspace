@@ -59,9 +59,6 @@ cosma_output_path = af.path_util.make_and_return_path_from_path_and_folder_names
 # runner is located in our Cosma autolens_workspace.
 workspace_path = "{}/..".format(os.path.dirname(os.path.realpath(__file__)))
 
-# Setup the path to the config folder, using the autolens_workspace path.
-config_path = f"{workspace_path}/config"
-
 # Lets now use the above paths to set the config path and output path for our Cosma run.
 af.conf.instance = af.conf.Config(
     config_path=config_path, output_path=cosma_output_path

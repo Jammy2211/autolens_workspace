@@ -79,7 +79,7 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 af.conf.instance = af.conf.Config(
-    config_path=config_path, output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%
