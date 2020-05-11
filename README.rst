@@ -2,7 +2,7 @@ PyAutoLens Workspace
 ====================
 
 Welcome to the **PyAutoLens** Workspace. If you haven't already, you should install **PyAutoLens**, following the
-instructions at `PyAutoLens <https://github.com/Jammy2211/PyAutoLens>`_.
+instructions at `the PyAutoLens readthedocs <https://pyautolens.readthedocs.io/en/master/installation.html>`_.
 
 Workspace Version
 =================
@@ -16,10 +16,11 @@ This version of the workspace are built and tested for using **PyAutoLens v0.46.
 Getting Started
 ===============
 
-To begin, I'd check out the 'introduction' in the quickstart folder. This will explain the best way to get started with
+To begin, check out the 'introduction' in the quickstart folder. This will explain the best way to get started with
 **PyAutoLens**.
 
-# Workspace Contents
+Workspace Contents
+==================
 
 The workspace includes the following:
 
@@ -39,7 +40,7 @@ Issues, Help and Problems
 =========================
 
 If the installation below does not work or you have issues running scripts in the workspace, please post an issue on
-the [issues section of the autolens_workspace](https://github.com/Jammy2211/autolens_workspace/issues).
+the `issues section of the autolens_workspace <https://github.com/Jammy2211/autolens_workspace/issues>`_.
 
 Setup
 =====
@@ -84,7 +85,8 @@ You can test everything is working by running the example pipeline runner in the
 
     python3 /path/to/autolens_workspace/runners/beginner/no_lens_light/lens_sie__source_inversion.py
 
-## Support & Discussion
+ Support & Discussion
+=====================
 
 If you haven't already, go ahead and `email <https://github.com/Jammy2211>`_ me to get on our
 `Slack channel <https://pyautolens.slack.com/>`_.

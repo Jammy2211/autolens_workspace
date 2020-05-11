@@ -45,7 +45,7 @@ mask = al.Mask.circular(
 )
 
 # We can also specify a set of positions, which must be traced within a threshold value or else the mass model is.
-positions = al.Coordinates.from_file(file_path=dataset_path + "/positions.dat")
+positions = al.GridCoordinates.from_file(file_path=dataset_path + "/positions.dat")
 
 # Lets plot the imaging, mask and positions before we run the analysis.
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)

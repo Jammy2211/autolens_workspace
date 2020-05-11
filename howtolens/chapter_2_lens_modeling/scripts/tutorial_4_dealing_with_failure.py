@@ -207,6 +207,8 @@ form. Furthermore, the source's morphology can be pretty complex, making it diff
 """
 We can now create this custom phase and run it. Our non-linear search will start in a high log_likelihood region of 
 parameter space.
+
+(This takes a long time to run, so I have commented the run function out by default - but feel free to run it!).
 """
 
 # %%
@@ -227,7 +229,7 @@ print(
     "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
 )
 
-custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
+# custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
@@ -241,7 +243,7 @@ do you notice between parameters?
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
+# aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
 
 # %%
 """

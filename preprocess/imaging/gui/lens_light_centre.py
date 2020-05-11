@@ -94,7 +94,7 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-lens_light_centres = al.Coordinates(coordinates=lens_light_centres)
+lens_light_centres = al.GridCoordinates(coordinates=lens_light_centres)
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 aplt.Array(array=imaging.image, light_profile_centres=lens_light_centres)

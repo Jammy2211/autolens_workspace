@@ -70,7 +70,7 @@ def simulate():
             sersic_index=2.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(1.0, 0.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0
+            centre=(0.0, -1.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0
         ),
     )
 
@@ -85,7 +85,7 @@ def simulate():
             sersic_index=3.0,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(-1.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8
+            centre=(0.0, 1.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8
         ),
     )
 

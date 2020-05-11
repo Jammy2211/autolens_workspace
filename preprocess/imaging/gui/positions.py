@@ -107,7 +107,7 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-positions = al.Coordinates(coordinates=positions)
+positions = al.GridCoordinates(coordinates=positions)
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 aplt.Array(array=imaging.image, positions=positions)

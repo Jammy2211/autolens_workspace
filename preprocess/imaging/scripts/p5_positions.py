@@ -78,7 +78,7 @@ Now, create a set of positions, which is a Coordinate of (y,x) values.
 """
 
 # %%
-positions = al.Coordinates(
+positions = al.GridCoordinates(
     coordinates=[[(0.8, 1.45), (1.78, -0.4), (-0.95, 1.38), (-0.83, -1.04)]]
 )
 
@@ -113,7 +113,7 @@ multiply imaged regions of the source-plane (e.g. you would need something likes
 """
 
 # %%
-positions = al.Coordinates(
+positions = al.GridCoordinates(
     coordinates=[[(1.0, 1.0), (2.0, 0.5)], [(-1.0, -0.1), (2.0, 2.0), (3.0, 3.0)]]
 )
 
