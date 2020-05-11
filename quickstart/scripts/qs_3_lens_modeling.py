@@ -182,7 +182,7 @@ print(
     "This Jupyter notebook cell will progress once MultiNest has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+# results = phase.run(dataset=imaging, mask=mask)
 
 print("MultiNest has finished run - you may now continue the notebook.")
 
