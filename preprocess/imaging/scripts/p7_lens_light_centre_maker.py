@@ -80,7 +80,7 @@ Now, create a lens light centre, which is a Coordinate object of (y,x) values.
 """
 
 # %%
-lens_light_centre = al.GridCoordinates([[(0.0, 0.0)]])
+lens_light_centre = al.Coordinates([[(0.0, 0.0)]])
 
 # %%
 """
