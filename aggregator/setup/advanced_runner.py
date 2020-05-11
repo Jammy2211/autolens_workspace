@@ -42,9 +42,9 @@ for dataset_name in [
 ]:
 
     # Create the path where the dataset will be loaded from, which in this case is
-    # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+    # '/autolens_workspace/aggregator/dataset/imaging/lens_sie__source_sersic/'
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=workspace_path, folder_names=["dataset", dataset_name]
+        path=workspace_path, folder_names=["aggregator", "dataset", dataset_name]
     )
 
     # Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files.
