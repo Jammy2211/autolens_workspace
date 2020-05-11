@@ -88,18 +88,9 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=aggregator_path, folder_names=["dataset", dataset_name]
 )
 
-# The pixel scale of the image to be simulated.
-pixel_scales = 0.1
-
-# Simulate a simple Gaussian PSF for the image.
-psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
-
 # Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 # its expoosure time, noise levels and psf.
 simulator = al.SimulatorImaging(
-    shape_2d=(100, 100),
-    pixel_scales=pixel_scales,
-    sub_size=4,
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
     background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
@@ -154,18 +145,9 @@ dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
     path=aggregator_path, folder_names=["dataset", dataset_name]
 )
 
-# The pixel scale of the image to be simulated.
-pixel_scales = 0.1
-
-# Simulate a simple Gaussian PSF for the image.
-psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
-
 # Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 # its expoosure time, noise levels and psf.
 simulator = al.SimulatorImaging(
-    shape_2d=(100, 100),
-    pixel_scales=pixel_scales,
-    sub_size=4,
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
     background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
