@@ -1,0 +1,19 @@
+Welcome to the **PyAutoLens** examples!
+
+Here, you'll find example scripts of how to use **PyAutoLens**. If you're a new user, I recommend you inspect the
+examples in the following order:
+
+-> intro: An introduction to the **PyAutoLens** API.
+
+    -> lensing.py: Perform simple ray-tracing calculations with light-profiles, mass-profiles and galaxies.
+    -> fit.py: Fitting data of a strong lens.
+    -> pixelizations.py: Reconstructing a lensed source galaxy's light on pixel-grid.
+
+-> model: How to fit a lens model to data with **PyAutoLens**.
+
+    -> intro: Simple lens models fitting the lens galaxy's light, mass and source, using a parametric source model.
+    -> inversion: Lens models which fit the source-galaxy light using a pixel-grid and inversion.
+    -> customize: API to customize the lens model parameterization and non-linear search.
+    -> link: API to link results of one lens model to another.
+
+-> plot: API for customizing visualization with **PyAutoLens**.

@@ -12,7 +12,7 @@ import os
 # for example intervening line-of-sight galaxies that are near the lens, but not directly interfering with the
 # analysis of the lens and source galaxies.
 
-# Setup the path to the autolens_workspace, using a relative directory name.
+"""Setup the path to the autolens_workspace, using a relative directory name."""
 workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the mask is stored in, e.g,
@@ -22,8 +22,8 @@ dataset_name = "lens_sie__source_sersic__intervening_objects"
 
 # Create the path where the noise map will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic_intervening_objects/'
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
@@ -44,7 +44,7 @@ cmap = aplt.ColorMap(
 
 scribbler = scribbler.Scribbler(image=image.in_2d, cmap=cmap)
 mask = scribbler.show_mask()
-mask = al.Mask.manual(mask_2d=mask, pixel_scales=pixel_scales)
+mask = al.Mask.manual(mask=mask, pixel_scales=pixel_scales)
 
 # Here, we change the image flux values to zeros. If included, we add some random Gaussian noise to most close resemle
 # noise in the image.
@@ -70,7 +70,7 @@ aplt.Array(array=image)
 
 # Now we're happy with the image, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-image.output_to_fits(file_path=dataset_path + "image_scaled.fits", overwrite=True)
+image.output_to_fits(file_path=f"{dataset_path}/image_scaled.fits", overwrite=True)
 
 # Next, load the imaging noise map, which we will use the scale the noise map.
 noise_map = al.Array.from_fits(
@@ -90,8 +90,8 @@ aplt.Array(array=image / noise_map)
 # Now we're happy with the noise map, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
 noise_map.output_to_fits(
-    file_path=dataset_path + "noise_map_scaled.fits", overwrite=True
+    file_path=f"{dataset_path}/noise_map_scaled.fits", overwrite=True
 )
 
 # Lets also output the mask.
-mask.output_to_fits(file_path=dataset_path + "mask_scaled.fits", overwrite=True)
+mask.output_to_fits(file_path=f"{dataset_path}/mask_scaled.fits", overwrite=True)

@@ -2,12 +2,12 @@
 """
 __Planes__
 
-We've learnt how to make galaxy objects out of light and mass profiles. Now, we'll use these galaxies to make a
+We've learnt how to make galaxy objects out of light and *MassProfile*s. Now, we'll use these galaxies to make a
 strong-gravitational lens.
 
 For newcomers to lensing, a strong gravitation lens is a system where two (or more) galaxies align perfectly down our
-line of sight, such that the foreground galaxy's mass (represented as mass profiles) deflects the light (represented
-as light profiles) of the background source galaxy(s).
+line of sight, such that the foreground galaxy's mass (represented as *MassProfile*s) deflects the light (represented
+as *LightProfile*s) of the background source galaxy(s).
 
 When the alignment is just right and the lens is just massive enough, the background source galaxy appears multiple
 times. The schematic below shows a crude drawing of such a system, where two light-rays from the source are bending
@@ -40,10 +40,10 @@ In the schematic above, we used the terms 'Image-Plane' and 'Source-Plane'. In l
 collection of galaxies at the same redshift (that is, parallel to one another down our line-of-sight). Therefore:
 
 - If two or more lens galaxies are at the same redshift in the image-plane, they deflect light in the same way. 
-This means we can sum the convergences, potentials and deflection angles of their mass-profiles.
+This means we can sum the convergences, potentials and deflection angles of their *MassProfile*s.
 
 - If two or more source galaxies are at the same redshift in the source-plane, their light is ray-traced in the same 
-way. Therefore, when determining their lensed images, we can sum the lensed images of each galaxy's light-profiles.
+way. Therefore, when determining their lensed images, we can sum the lensed images of each galaxy's *LightProfile*s.
 
 So, lets do it - lets use the 'plane' module in AutoLens to create a strong lensing system like the one pictured above. 
 For simplicity, we'll assume 1 lens galaxy and 1 source galaxy.
@@ -215,8 +215,8 @@ It's a rather spectacular ring of light, but why is it a ring? Well:
 
 - Our lens galaxy was centred at (0.0", 0.0").
 - Our source-galaxy was centred at (0.0", 0.0").
-- Our lens galaxy had a spherical mass-profile.
-- Our source-galaxy a spherical light-profile.
+- Our lens galaxy had a spherical *MassProfile*.
+- Our source-galaxy a spherical *LightProfile*.
 
 Given the perfect symmetry of the system, every path the source's light takes around the lens galaxy is radially 
 identical. Thus, nothing else but a ring of light can form!
@@ -224,7 +224,7 @@ identical. Thus, nothing else but a ring of light can form!
 This is called an 'Einstein Ring' and its radius is called the 'Einstein Radius', which are both named after the man 
 who famously used gravitational lensing to prove his theory of general relativity.
 
-Finally, because we know our source-galaxy's light profile, we can also plot its 'plane-image'. This image is how the 
+Finally, because we know our source-galaxy's *LightProfile*, we can also plot its 'plane-image'. This image is how the 
 source intrinsically appears in the source-plane (e.g. without lensing). This is a useful thing to know, because the 
 source-s light is highly magnified, meaning astronomers can study it in a lot more detail than would otherwise be 
 possible!
@@ -248,13 +248,13 @@ aplt.Plane.plane_image(
 
 # %%
 """
-For mass profiles, you can also plot their 'critical curve' and 'caustics', which for those unfamiliar with lensing are 
+For *MassProfile*s, you can also plot their 'critical curve' and 'caustics', which for those unfamiliar with lensing are 
 defined as follows:
 
-__Critical Curve__ - Lines of infinite magnification where the mass profile perfectly 'focuses' light rays. Source 
+__Critical Curve__ - Lines of infinite magnification where the *MassProfile* perfectly 'focuses' light rays. Source 
 light near a critical curve appears much brighter than its true luminosity!
 
-__Caustic__ - Given the deflection angles of the mass profile at the critical curves, the caustic is where the 
+__Caustic__ - Given the deflection angles of the *MassProfile* at the critical curves, the caustic is where the 
 critical curve 'maps' too.
 """
 
@@ -283,7 +283,7 @@ In particular, try:
 
 1) Changing the lens galaxy's einstein radius - what happens to the source-plane's image?
 
-2) Change the SphericalIsothermal mass-profile to an EllipticalIsothermal mass-profile and set its axis_ratio to 0.8. 
+2) Change the SphericalIsothermal *MassProfile* to an EllipticalIsothermal *MassProfile* and set its axis_ratio to 0.8. 
 What happens to the number of source images?
 
 3) As discussed at the beginning, planes can be composed of multiple galaxies. Make an the image-plane with two 

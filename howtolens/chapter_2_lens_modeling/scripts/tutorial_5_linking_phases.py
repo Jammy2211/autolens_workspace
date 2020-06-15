@@ -25,7 +25,7 @@ The model we infer above will therefore be a lot less realistic. But it doesn't 
 we're going to relax these assumptions and get back our more realistic lens model. The beauty is that, by running the
 first phase, we can use its results to tune the priors of our second phase. For example:
 
-1) The first phase should give us a pretty good idea of the lens galaxy's light and mass profiles, for example its
+1) The first phase should give us a pretty good idea of the lens galaxy's light and *MassProfile*s, for example its
 intensity, effective radius and einstein radius.
 
 2) It should also give us a pretty good fit to the lensed source galaxy. This means we'll already know where in
@@ -48,7 +48,7 @@ You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{chapter_path}/configs/t5_linking_phases",
     output_path=f"{chapter_path}/output",
 )
@@ -69,14 +69,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.9,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.05),
             intensity=0.04,
             effective_radius=0.5,
             sersic_index=3.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=0.8
         ),
     )
 
@@ -84,8 +83,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.5,
-            phi=90.0,
+            elliptical_comps=(0.0, -0.333333),
             intensity=0.03,
             effective_radius=0.3,
             sersic_index=3.0,
@@ -124,7 +122,7 @@ Lets use the same approach of making light trace mass that we did previously, bu
 complex then before.
 
 In the galaxy model below we use two new inputs - 'align_axis_ratios' and'align_orientations'. These functions 
-align the axis_ratio and phi values of all of the lens galaxy's profiles (in this case, its light profile and mass 
+align the axis_ratio and phi values of all of the lens galaxy's profiles (in this case, its *LightProfile* and mass 
 profile). We did this in the previous phase using the 'customize_priors' function, but because this is a fairly 
 common thing to do to a GalaxyModel we made these these inputs available for your convenience.
 
@@ -181,7 +179,7 @@ Now lets create the phase.
 phase_1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
     galaxies=dict(lens=lens, source=source),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -191,8 +189,8 @@ with fewer MultiNest live points and a faster sampling rate?
 """
 
 # %%
-phase_1.optimizer.n_live_points = 30
-phase_1.optimizer.sampling_efficiency = 0.9
+phase_1.search.n_live_points = 30
+phase_1.search.sampling_efficiency = 0.9
 
 # %%
 """
@@ -296,11 +294,11 @@ than we're used to - I didn't have to edit the config files to get this phase to
 phase_2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
     galaxies=dict(lens=lens, source=source),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
-phase_2.optimizer.n_live_points = 30
-phase_2.optimizer.sampling_efficiency = 0.9
+phase_2.search.n_live_points = 30
+phase_2.search.sampling_efficiency = 0.9
 
 print(
     "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases"

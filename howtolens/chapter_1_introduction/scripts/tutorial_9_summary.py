@@ -5,7 +5,7 @@ __Summary__
 In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
 1) PyAutoLens uses Cartesian grids of (y,x) coordinates to perform ray-tracing.
-2) These grids are combined with light and mass profiles to compute images, convergences, potentials and deflection angles.
+2) These grids are combined with light and *MassProfile*s to compute images, convergences, potentials and deflection angles.
 3) Profiles are combined to make galaxies.
 4) Collections of galaxies (at the same redshift) form a plane.
 5) A tracer can make an image-plane + source-plane strong lens system.
@@ -62,7 +62,7 @@ masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
     ),
 )
 
@@ -70,16 +70,14 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=1.0,
         effective_radius=1.0,
         sersic_index=4.0,
     ),
     disk=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=1.0,
         effective_radius=1.0,
         sersic_index=1.0,
@@ -119,36 +117,34 @@ print()
 # %%
 """
 Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested in. 
-For example, if we want to plot the image of the source galaxy mass profile, we can do this in a variety of 
+For example, if we want to plot the image of the source galaxy *MassProfile*, we can do this in a variety of 
 different ways
 """
 
 # %%
-aplt.Tracer.profile_image(tracer=fit.tracer, grid=masked_imaging.grid)
+aplt.Tracer.image(tracer=fit.tracer, grid=masked_imaging.grid)
 
 source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.grid)[1]
-aplt.Plane.profile_image(plane=fit.tracer.source_plane, grid=source_plane_grid)
+aplt.Plane.image(plane=fit.tracer.source_plane, grid=source_plane_grid)
 
-aplt.Galaxy.profile_image(
-    galaxy=fit.tracer.source_plane.galaxies[0], grid=source_plane_grid
-)
+aplt.Galaxy.image(galaxy=fit.tracer.source_plane.galaxies[0], grid=source_plane_grid)
 
 # %%
 """
 As our fit and ray-tracing becomes more complex, it is useful to know how to decompose their different attributes to 
-extract different things about them. For example, we made our source-galaxy above with two light profiles, a 
+extract different things about them. For example, we made our source-galaxy above with two *LightProfile*s, a 
 'bulge' and 'disk. We can plot the image of each component individually, if we know how to break-up the different 
 components of the fit and tracer.
 """
 
 # %%
-aplt.LightProfile.profile_image(
+aplt.LightProfile.image(
     light_profile=fit.tracer.source_plane.galaxies[0].bulge,
     grid=source_plane_grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Bulge image")),
 )
 
-aplt.LightProfile.profile_image(
+aplt.LightProfile.image(
     light_profile=fit.tracer.source_plane.galaxies[0].disk,
     grid=source_plane_grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Disk image")),
@@ -176,7 +172,7 @@ directory if you're curious how to test code well!).
 Okay, enough self-serving praise for PyAutoLens, lets wrap up the chapter. You've learn a lot in this chapter, but 
 what you haven't learnt is how to 'model' a real strong gravitational lens.
 
-In the real world, we've no idea what the 'correct' set of light and mass profile parameters are that will give a 
+In the real world, we've no idea what the 'correct' set of light and *MassProfile* parameters are that will give a 
 good fit to a lens. Lens modeling is the process of finding the lens model which provides the best-fit, and that will 
 be the focus of our next set of tutorials.
 """

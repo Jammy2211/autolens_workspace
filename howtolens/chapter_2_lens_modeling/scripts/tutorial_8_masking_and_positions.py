@@ -22,9 +22,9 @@ You need to change the path below to the chapter 2 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "/configs/t8_masking_and_positions",
-    output_path=chapter_path + "/output",
+conf.instance = conf.Config(
+    config_path=f"{chapter_path}//configs/t8_masking_and_positions",
+    output_path=f"{chapter_path}//output",
 )
 
 # %%
@@ -114,7 +114,7 @@ phase_with_custom_mask = al.PhaseImaging(
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5), source=al.GalaxyModel(redshift=1.0)
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -157,13 +157,13 @@ removing the incorrect mass models makes the non-linear parameter space less com
 We can easily check the image-positions are accurate by plotting them using our imaging plotter (they are the magenta 
 dots on the image).
 
-To specify these positions, we use the *Coordinates* object, which is used by PyAutoLens in general to specify (y,x)
+To specify these positions, we use the *GridCoordinates* object, which is used by PyAutoLens in general to specify (y,x)
 coordinates.
 """
 
 # %%
 
-positions = al.Coordinates(
+positions = al.GridCoordinates(
     coordinates=[(1.6, 0.0), (0.0, 1.6), (-1.6, 0.0), (0.0, -1.6)]
 )
 
@@ -182,7 +182,7 @@ phase_with_positions = al.PhaseImaging(
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
     positions_threshold=2.0,  # <- We input a positions threshold here, to signify how far pixels must trace within one another.
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -269,7 +269,7 @@ These are plotted in different colours to represent that they trace from differe
 
 # %%
 
-positions = al.Coordinates(
+positions = al.GridCoordinates(
     coordinates=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]]
 )
 
@@ -289,7 +289,7 @@ phase_with_x2_positions = al.PhaseImaging(
         source_1=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
     positions_threshold=2.0,  # <- We input a positions threshold here, to signify how far pixels must trace within one another.
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 print(

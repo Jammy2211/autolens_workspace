@@ -8,7 +8,7 @@ import numpy as np
 # This tool allows one to input the lens light centre(s) of a strong lens(es), which can be used as a fixed value in
 # pipelines.
 
-# Setup the path to the autolens_workspace, using a relative directory name.
+"""Setup the path to the autolens_workspace, using a relative directory name."""
 workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
@@ -18,8 +18,8 @@ dataset_name = "lens_sersic_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
@@ -94,7 +94,7 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-lens_light_centres = al.Coordinates(coordinates=lens_light_centres)
+lens_light_centres = al.GridCoordinates(coordinates=lens_light_centres)
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 aplt.Array(array=imaging.image, light_profile_centres=lens_light_centres)
@@ -102,5 +102,5 @@ aplt.Array(array=imaging.image, light_profile_centres=lens_light_centres)
 # Now we're happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 # .dat file in our pipelines!
 lens_light_centres.output_to_file(
-    file_path=dataset_path + "lens_light_centres.dat", overwrite=True
+    file_path=f"{dataset_path}/lens_light_centres.dat", overwrite=True
 )

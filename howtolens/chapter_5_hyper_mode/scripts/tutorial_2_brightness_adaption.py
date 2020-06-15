@@ -37,7 +37,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -45,8 +45,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.7,
-            phi=135.0,
+            elliptical_comps=(0.2, 0.1),
             intensity=0.2,
             effective_radius=0.2,
             sersic_index=2.5,
@@ -95,7 +94,7 @@ required to do this.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -159,6 +158,9 @@ fit = al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 aplt.FitImaging.subplot_fit_imaging(
     fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
 )
+
+print(fit.figure_of_merit)
+stop
 
 aplt.Inversion.reconstruction(
     inversion=fit.inversion, include=aplt.Include(inversion_pixelization_grid=True)

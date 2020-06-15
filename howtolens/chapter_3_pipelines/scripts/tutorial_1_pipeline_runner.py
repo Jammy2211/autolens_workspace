@@ -21,14 +21,14 @@ This is a big triangle. As we fit models using more and more parameters, its onl
 
 As usual, you should notice some clear degeneracies between:
 
-1) The size (effective_radius, R_l) and intensity (intensity, I_l) of the light profiles.
-2) The mass normalization (einstein_radius, /Theta_m) and ellipticity (axis_ratio, q_m) of mass profiles.
+1) The size (effective_radius, R_l) and intensity (intensity, I_l) of the *LightProfile*s.
+2) The mass normalization (einstein_radius, /Theta_m) and ellipticity (axis_ratio, q_m) of *MassProfile*s.
 
 This isn't surprising. You can produce similar looking galaxies by trading out intensity for size, and you can
 produce similar mass distributions by compensating for a loss in lens mass by making it a bit less elliptical.
 
-What do you notice about the contours between the lens galaxy's light-profile and its mass-profile / the source
-galaxy's light profile? Look again.
+What do you notice about the contours between the lens galaxy's *LightProfile* and its *MassProfile* / the source
+galaxy's *LightProfile*? Look again.
 
 That's right - they're not degenerate. The covariance between these sets of parameters is minimal. Again, this makes
 sense - why would fitting the lens's light (which is an elliptical blob of light) be degenerate with fitting the
@@ -59,7 +59,7 @@ We'll also put the output in 'autolens_workspace/output', which is where output 
 # %%
 import os
 
-### AUTOFIT + CONFIG SETUP ###
+""" AUTOFIT + CONFIG SETUP """
 
 import autofit as af
 
@@ -78,14 +78,14 @@ Use this path to explicitly set the config path and output path.
 """
 
 # %%
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%
 #%matplotlib inline
 
-### AUTOLENS + DATA SETUP ###
+""" AUTOLENS + DATA SETUP """
 
 import autolens as al
 import autolens.plot as aplt
@@ -106,16 +106,15 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.9,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.05),
             intensity=0.04,
             effective_radius=0.5,
             sersic_index=3.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.9, phi=45.0, einstein_radius=1.0
+            centre=(0.0, 0.0), elliptical_comps=(0.0, 0.1), einstein_radius=1.0
         ),
-        shear=al.mp.ExternalShear(magnitude=0.05, phi=90.0),
+        shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
     )
 
     source_galaxy = al.Galaxy(

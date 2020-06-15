@@ -37,7 +37,7 @@ Now, lets setup our lens galaxy, source galaxy and tracer.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
     ),
 )
 
@@ -45,8 +45,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=1.0,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -61,7 +60,7 @@ Lets look at the tracer's image - this is the image we'll be simulating.
 """
 
 # %%
-aplt.Tracer.profile_image(tracer=tracer, grid=grid)
+aplt.Tracer.image(tracer=tracer, grid=grid)
 
 # %%
 """
@@ -71,8 +70,8 @@ To Simulate the Imaging data, we don't use the image plotted above. Instead, we 
 """
 
 # %%
-normal_image = tracer.profile_image_from_grid(grid=grid)
-padded_image = tracer.padded_profile_image_from_grid_and_psf_shape(
+normal_image = tracer.image_from_grid(grid=grid)
+padded_image = tracer.padded_image_from_grid_and_psf_shape(
     grid=grid, psf_shape_2d=psf.shape_2d
 )
 print(normal_image.shape)

@@ -11,6 +11,7 @@ This tutorial describes preprocessing your dataset's noise map to adhere too the
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -36,9 +37,7 @@ path = (
 )  # <----- You must include this slash on the end
 path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/preprocess/imaging/"
 
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=path, folder_names=["data_raw"]
-)
+dataset_path = af.util.create_path(path=path, folders=["data_raw"])
 
 # %%
 """
@@ -57,9 +56,7 @@ formatting standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
 
 noise_map = al.Array.from_fits(
     file_path=imaging_path + "noise_map.fits", pixel_scales=0.1
@@ -112,9 +109,7 @@ the values of the noise map go to very large values in excess of 10000.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_noise_map_wht"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_noise_map_wht"])
 
 weight_map = al.Array.from_fits(
     file_path=imaging_path + "noise_map.fits", pixel_scales=0.1

@@ -16,6 +16,7 @@ However, by retaining them in the mask but simply scaling their values these dis
 import numpy as np
 
 # %%
+from autoconf import conf
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -46,8 +47,8 @@ Create the path where the noise map will be output, which in this case is
 """
 
 # %%
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # %%
@@ -154,7 +155,7 @@ file in our pipelines!
 """
 
 # %%
-image.output_to_fits(file_path=dataset_path + "image_scaled.fits", overwrite=True)
+image.output_to_fits(file_path=f"{dataset_path}/image_scaled.fits", overwrite=True)
 
 # %%
 """
@@ -183,7 +184,7 @@ file in our pipelines!
 
 # %%
 noise_map.output_to_fits(
-    file_path=dataset_path + "noise_map_scaled.fits", overwrite=True
+    file_path=f"{dataset_path}/noise_map_scaled.fits", overwrite=True
 )
 
 # %%
@@ -192,7 +193,7 @@ Finally, we can output the scaled mask incase we need it in the future.
 """
 
 # %%
-mask.output_to_fits(file_path=dataset_path + "mask_scaled.fits", overwrite=True)
+mask.output_to_fits(file_path=f"{dataset_path}/mask_scaled.fits", overwrite=True)
 
 # %%
 """

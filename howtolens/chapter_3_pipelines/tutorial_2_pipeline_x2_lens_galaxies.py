@@ -3,11 +3,11 @@ import autolens as al
 
 # This pipeline fits a strong lens which has two lens galaxies. It is composed of the following 4 phases:
 
-# Phase 1) Fit the light profile of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+# Phase 1) Fit the *LightProfile* of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
 
-# Phase 2) Fit the light profile of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+# Phase 2) Fit the *LightProfile* of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
 
-# Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The mass-profiles of the two lens galaxies
+# Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The *MassProfile*s of the two lens galaxies
 #          can use the results of phases 1 and 2 to initialize their priors.
 
 # Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
@@ -52,13 +52,13 @@ def make_pipeline(phase_folders=None):
         galaxies=dict(
             left_lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.n_live_points = 30
-    phase1.optimizer.sampling_efficiency = 0.5
-    phase1.optimizer.evidence_tolerance = 100.0
+    phase1.search.const_efficiency_mode = True
+    phase1.search.n_live_points = 30
+    phase1.search.sampling_efficiency = 0.5
+    phase1.search.evidence_tolerance = 100.0
 
     ### PHASE 2 ###
 
@@ -81,21 +81,21 @@ def make_pipeline(phase_folders=None):
         galaxies=dict(
             left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase2.optimizer.const_efficiency_mode = True
-    phase2.optimizer.n_live_points = 30
-    phase2.optimizer.sampling_efficiency = 0.5
-    phase2.optimizer.evidence_tolerance = 100.0
+    phase2.search.const_efficiency_mode = True
+    phase2.search.n_live_points = 30
+    phase2.search.sampling_efficiency = 0.5
+    phase2.search.evidence_tolerance = 100.0
 
     ### PHASE 3 ###
 
     # In the next phase, we fit the source of the lens subtracted image. We will of course use fixed lens light
     # models for both the left and right lens galaxies.
 
-    # We're going to link the centres of the light profiles computed above to the centre of the lens galaxy
-    # mass-profiles in this phase. Because the centres of the mass profiles were fixed in phases 1 and 2,
+    # We're going to link the centres of the *LightProfile*s computed above to the centre of the lens galaxy
+    # *MassProfile*s in this phase. Because the centres of the *MassProfile*s were fixed in phases 1 and 2,
     # linking them using the 'variable' attribute means that they stay constant (which for now, is what we want).
 
     left_lens = al.GalaxyModel(
@@ -125,19 +125,19 @@ def make_pipeline(phase_folders=None):
             right_lens=right_lens,
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase3.optimizer.const_efficiency_mode = True
-    phase3.optimizer.n_live_points = 50
-    phase3.optimizer.sampling_efficiency = 0.5
-    phase3.optimizer.evidence_tolerance = 100.0
+    phase3.search.const_efficiency_mode = True
+    phase3.search.n_live_points = 50
+    phase3.search.sampling_efficiency = 0.5
+    phase3.search.evidence_tolerance = 100.0
 
     ### PHASE 4 ###
 
-    # In phase 4, we'll fit both lens galaxy's light and mass profiles, as well as the source-galaxy, simultaneously.
+    # In phase 4, we'll fit both lens galaxy's light and *MassProfile*s, as well as the source-galaxy, simultaneously.
 
-    # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
+    # Results are split over multiple phases, so we setup the light and *MassProfile*s of each lens separately.
 
     left_lens = al.GalaxyModel(
         redshift=0.5,
@@ -152,7 +152,7 @@ def make_pipeline(phase_folders=None):
     )
 
     # When we pass a a 'model' galaxy from a previous phase, parameters fixed to constants remain constant.
-    # Because centre_0 and centre_1 of the mass profile were fixed to constants in phase 3, they're still
+    # Because centre_0 and centre_1 of the *MassProfile* were fixed to constants in phase 3, they're still
     # constants after the line after. We need to therefore manually over-ride their priors.
 
     left_lens.mass.centre_0 = phase3.result.model.galaxies.left_lens.mass.centre_0
@@ -180,11 +180,11 @@ def make_pipeline(phase_folders=None):
             right_lens=right_lens,
             source=phase3.result.model.galaxies.source,
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase4.optimizer.const_efficiency_mode = True
-    phase4.optimizer.n_live_points = 60
-    phase4.optimizer.sampling_efficiency = 0.5
+    phase4.search.const_efficiency_mode = True
+    phase4.search.n_live_points = 60
+    phase4.search.sampling_efficiency = 0.5
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

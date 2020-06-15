@@ -41,13 +41,13 @@ def make_pipeline(phase_folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.n_live_points = 40
-    phase1.optimizer.sampling_efficiency = 0.5
-    phase1.optimizer.evidence_tolerance = 100.0
+    phase1.search.const_efficiency_mode = True
+    phase1.search.n_live_points = 40
+    phase1.search.sampling_efficiency = 0.5
+    phase1.search.evidence_tolerance = 100.0
 
     # Now lets add another source component, using the previous model as the initialization on the lens / source
     # parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the fit.
@@ -67,13 +67,13 @@ def make_pipeline(phase_folders=None):
                 light_1=al.lp.EllipticalSersic,
             ),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase2.optimizer.const_efficiency_mode = True
-    phase2.optimizer.n_live_points = 40
-    phase2.optimizer.sampling_efficiency = 0.5
-    phase2.optimizer.evidence_tolerance = 100.0
+    phase2.search.const_efficiency_mode = True
+    phase2.search.n_live_points = 40
+    phase2.search.sampling_efficiency = 0.5
+    phase2.search.evidence_tolerance = 100.0
 
     # Now lets do the same again, but with 3 source galaxy components.
 
@@ -89,13 +89,13 @@ def make_pipeline(phase_folders=None):
                 light_2=al.lp.EllipticalSersic,
             ),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase3.optimizer.const_efficiency_mode = True
-    phase3.optimizer.n_live_points = 50
-    phase3.optimizer.sampling_efficiency = 0.5
-    phase3.optimizer.evidence_tolerance = 100.0
+    phase3.search.const_efficiency_mode = True
+    phase3.search.n_live_points = 50
+    phase3.search.sampling_efficiency = 0.5
+    phase3.search.evidence_tolerance = 100.0
 
     # And one more for luck!
 
@@ -112,11 +112,11 @@ def make_pipeline(phase_folders=None):
                 light_3=al.lp.EllipticalSersic,
             ),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase4.optimizer.const_efficiency_mode = True
-    phase4.optimizer.n_live_points = 50
-    phase4.optimizer.sampling_efficiency = 0.5
+    phase4.search.const_efficiency_mode = True
+    phase4.search.n_live_points = 50
+    phase4.search.sampling_efficiency = 0.5
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

@@ -176,7 +176,7 @@ image is the same resolution and alignment as our lens data's masked image.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
     ),
 )
 
@@ -184,8 +184,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=60.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -194,7 +193,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-aplt.Tracer.profile_image(tracer=tracer, grid=masked_imaging.grid)
+aplt.Tracer.image(tracer=tracer, grid=masked_imaging.grid)
 
 # %%
 """
@@ -278,7 +277,7 @@ galaxy, by 0.005"
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.005, 0.005), einstein_radius=1.6, axis_ratio=0.7, phi=45.0
+        centre=(0.005, 0.005), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
     ),
 )
 
@@ -286,8 +285,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=60.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -325,7 +323,7 @@ Lets change the tracer, one more time, to a solution nowhere near the correct on
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.005, 0.005), einstein_radius=1.5, axis_ratio=0.72, phi=60.0
+        centre=(0.005, 0.005), einstein_radius=1.5, elliptical_comps=(0.0, 0.111111)
     ),
 )
 
@@ -333,8 +331,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.2, 0.0),
-        axis_ratio=0.8,
-        phi=60.0,
+        elliptical_comps=(0.0, 0.111111),
         intensity=0.5,
         effective_radius=0.8,
         sersic_index=2.5,

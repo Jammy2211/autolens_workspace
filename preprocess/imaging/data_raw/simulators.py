@@ -23,9 +23,7 @@ def simulate_all_imaging(dataset_path):
 
 def simulate_imaging(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging"]
-    )
+    imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
@@ -77,9 +75,7 @@ def simulate_imaging(dataset_path):
 
 def simulate_imaging_in_counts(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_in_counts"]
-    )
+    imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_counts"])
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
@@ -133,9 +129,7 @@ def simulate_imaging_in_counts(dataset_path):
 
 def simulate_imaging_in_adus(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_in_adus"]
-    )
+    imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_adus"])
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
@@ -189,8 +183,8 @@ def simulate_imaging_in_adus(dataset_path):
 
 def simulate_imaging_with_large_stamp(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_large_stamp"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_large_stamp"]
     )
 
     grid = al.Grid.uniform(shape_2d=(800, 800), pixel_scales=0.1, sub_size=1)
@@ -233,8 +227,8 @@ def simulate_imaging_with_large_stamp(dataset_path):
 
 def simulate_imaging_with_small_stamp(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_small_stamp"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_small_stamp"]
     )
 
     grid = al.Grid.uniform(shape_2d=(50, 50), pixel_scales=0.1, sub_size=1)
@@ -277,8 +271,8 @@ def simulate_imaging_with_small_stamp(dataset_path):
 
 def simulate_imaging_with_offset_centre(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_offset_centre"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_offset_centre"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
@@ -321,8 +315,8 @@ def simulate_imaging_with_offset_centre(dataset_path):
 
 def simulate_imaging_noise_map_wht(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_noise_map_wht"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_noise_map_wht"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
@@ -367,8 +361,8 @@ def simulate_imaging_noise_map_wht(dataset_path):
 
 def simulate_imaging_with_large_psf(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_large_psf"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_large_psf"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
@@ -411,8 +405,8 @@ def simulate_imaging_with_large_psf(dataset_path):
 
 def simulate_imaging_with_even_psf(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_even_psf"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_even_psf"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
@@ -459,8 +453,8 @@ def simulate_imaging_with_even_psf(dataset_path):
 
 def simulate_imaging_with_unnormalized_psf(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_unnormalized_psf"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_unnormalized_psf"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
@@ -505,8 +499,8 @@ def simulate_imaging_with_unnormalized_psf(dataset_path):
 
 def simulate_imaging_with_psf_with_offset_centre(dataset_path):
 
-    imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=dataset_path, folder_names=["imaging_with_off_centre_psf"]
+    imaging_path = af.util.create_path(
+        path=dataset_path, folders=["imaging_with_off_centre_psf"]
     )
 
     grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)

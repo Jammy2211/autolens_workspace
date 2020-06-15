@@ -26,7 +26,7 @@ image_plane_grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_s
 
 # %%
 """
-For our lens galaxy, we'll use the same SIS mass profile as before.
+For our lens galaxy, we'll use the same SIS *MassProfile* as before.
 """
 
 # %%
@@ -38,7 +38,7 @@ print(lens_galaxy)
 
 # %%
 """
-And for our source galaxy, the same Sersic light profile
+And for our source galaxy, the same Sersic *LightProfile*
 """
 
 # %%
@@ -89,19 +89,19 @@ print(tracer.source_plane)
 The most convenient part of the tracer is we can use it to perform fully 'ray-traced' images, without manually 
 setting up the planes to do this. The function below does the following
 
-1) Using the lens-galaxy's mass-profile, the deflection angle of every image-plane grid coordinate is computed.
+1) Using the lens-galaxy's *MassProfile*, the deflection angle of every image-plane grid coordinate is computed.
 2) These deflection angles are used to trace every image-plane coordinate to a source-plane coordinate.
-3) The light of each traced source-plane coordinate is evaluated using the source-plane galaxy's light profile.
+3) The light of each traced source-plane coordinate is evaluated using the source-plane galaxy's *LightProfile*.
 """
 
 # %%
-traced_profile_image = tracer.profile_image_from_grid(grid=image_plane_grid)
+traced_image = tracer.image_from_grid(grid=image_plane_grid)
 print("traced image pixel 1")
-print(traced_profile_image.in_2d[0, 0])
+print(traced_image.in_2d[0, 0])
 print("traced image pixel 2")
-print(traced_profile_image.in_2d[0, 1])
+print(traced_image.in_2d[0, 1])
 print("traced image pixel 3")
-print(traced_profile_image.in_2d[0, 2])
+print(traced_image.in_2d[0, 2])
 
 # %%
 """
@@ -109,7 +109,7 @@ This image appears as the Einstein ring we saw in the previous tutorial.
 """
 
 # %%
-aplt.Tracer.profile_image(tracer=tracer, grid=image_plane_grid)
+aplt.Tracer.image(tracer=tracer, grid=image_plane_grid)
 
 # %%
 """
@@ -161,11 +161,11 @@ PyAutoLens has tools for plotting a tracer. A ray-tracing subplot plots the foll
 
 2) The source-plane image, showing the source galaxy's true appearance (i.e. if it were not lensed).
 
-3) The image-plane convergence, computed using the lens galaxy's mass profile.
+3) The image-plane convergence, computed using the lens galaxy's *MassProfile*.
 
-4) The image-plane gravitational potential, computed using the lens galaxy's mass profile.
+4) The image-plane gravitational potential, computed using the lens galaxy's *MassProfile*.
 
-5) The image-plane deflection angles, computed using the lens galaxy's mass profile.
+5) The image-plane deflection angles, computed using the lens galaxy's *MassProfile*.
 """
 
 # %%
@@ -228,7 +228,7 @@ and uncomment the lines below!
 # %%
 """
 You can also plot the above attributes on individual figures, using appropriate ray-tracing plotter (I've left most 
-commented out again for convinience)
+commented out again for convenience)
 """
 
 # %%
@@ -237,15 +237,15 @@ aplt.Tracer.convergence(tracer=tracer, grid=image_plane_grid)
 # aplt.Tracer.potential(tracer=tracer, grid=image_plane_grid)
 # aplt.Tracer.deflections_y(tracer=tracer, grid=image_plane_grid)
 # aplt.Tracer.deflections_x(tracer=tracer, grid=image_plane_grid)
-# aplt.Tracer.profile_image(tracer=tracer, grid=image_plane_grid)
+# aplt.Tracer.image(tracer=tracer, grid=image_plane_grid)
 
 # %%
 """
 Before we finish, you might be wondering 'why do both the image-plane and tracer have the attributes convergence / 
-potential / deflection angles, when the two are identical'. Afterall, only mass profiles contribute to these
- quantities, and only the image-plane has galaxies with measureable  mass profiles! There are two reasons:
+potential / deflection angles, when the two are identical'. Afterall, only *MassProfile*s contribute to these
+ quantities, and only the image-plane has galaxies with measureable  *MassProfile*s! There are two reasons:
 
-1) Convinience - You could always write 'tracer.image_plane.convergence' and 
+1) convenience - You could always write 'tracer.image_plane.convergence' and 
 'aplt.Plane.convergence(plane=tracer.image_plane). However, code appears neater if you can just write 
 'tracer.convergence' and 'aplt.Tracer.convergence(tracer=tracer).
 

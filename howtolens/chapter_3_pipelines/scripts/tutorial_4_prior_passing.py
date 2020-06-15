@@ -43,7 +43,7 @@ being a good balance broadly sampling parameter space but not being so narrow im
 are two ways a value is specified using the priors/width file:
 
 1) Absolute value - 'a' - In this case, the error assumed on the parameter is the value given in the config file. For 
-example, for the width on centre_0 of a light profile, the config file reads centre_0 = a, 0.05. This means if the 
+example, for the width on centre_0 of a *LightProfile*, the config file reads centre_0 = a, 0.05. This means if the 
 error on the parameter centre_0 was less than 0.05 in the previous phase, the sigma of its GaussianPrior in this 
 phase will be 0.05.
 
@@ -75,7 +75,7 @@ phase 2, we would write:
 
 # %%
 """
-The prior on the lens galaxy's sersic light profile would thus be a GaussianPrior in phase 2, with mean=4.0 and 
+The prior on the lens galaxy's sersic *LightProfile* would thus be a GaussianPrior in phase 2, with mean=4.0 and 
 sigma=2.0.
 
 If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the 

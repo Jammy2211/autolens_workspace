@@ -13,6 +13,7 @@ This tutorial describes preprocessing your dataset's image to adhere too the uni
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -38,9 +39,7 @@ path = (
 )  # <----- You must include this slash on the end
 path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/preprocess/imaging/"
 
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=path, folder_names=["data_raw"]
-)
+dataset_path = af.util.create_path(path=path, folders=["data_raw"])
 
 # %%
 """
@@ -59,9 +58,7 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
 
 image = al.Array.from_fits(file_path=imaging_path + "image.fits", pixel_scales=0.1)
 
@@ -83,16 +80,14 @@ __1) Converting Data To Electrons Per Second__
 
 1) Brightness units - the image's flux values should be in units of electrons per second (as opposed to electrons, 
 counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other units, the default setup 
-assumes electrons per second (e.g. the priors on light profile intensity and regularization parameters). Thus, images 
+assumes electrons per second (e.g. the priors on *LightProfile* intensity and regularization parameters). Thus, images 
 not in electrons per second should be converted!
 
 Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or 10000's.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_in_counts"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_counts"])
 
 image_in_counts = al.Array.from_fits(
     file_path=imaging_path + "image.fits", pixel_scales=0.1
@@ -144,9 +139,7 @@ instrumental gain of the data.
 
 # %%
 
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_in_adus"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_adus"])
 
 image_in_adus = al.Array.from_fits(
     file_path=imaging_path + "image.fits", pixel_scales=0.1
@@ -180,8 +173,8 @@ Lets look at an example of a very large postage stamp - we can barely even see t
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_with_large_stamp"]
+imaging_path = af.util.create_path(
+    path=dataset_path, folders=["imaging_with_large_stamp"]
 )
 
 image_large_stamp = al.Array.from_fits(
@@ -211,8 +204,8 @@ include this region.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_with_small_stamp"]
+imaging_path = af.util.create_path(
+    path=dataset_path, folders=["imaging_with_small_stamp"]
 )
 
 # %%
@@ -286,13 +279,13 @@ convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
 ########## RECENTERING CURRENTLY DOES NOT WORK :( ###########
 
 # Lens Galaxy Centering - The lens galaxy should be in the centre of the image as opposed to a corner. This ensures
-# the origin of the lens galaxy's light and mass profiles are near the origin (0.0", 0.0") of the grid used to perform
-# ray-tracing. The defaults priors on light and mass profiles assume a origin of (0.0", 0.0").
+# the origin of the lens galaxy's light and *MassProfile*s are near the origin (0.0", 0.0") of the grid used to perform
+# ray-tracing. The defaults priors on light and *MassProfile*s assume a origin of (0.0", 0.0").
 
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.
 
-# imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=dataset_path,
+# imaging_path = af.util.create_path(path=dataset_path,
 #                                                                           folder_names=['imaging_offset_centre'])
 
 # imaging_offset_centre = al.Imaging.from_fits(image_path=path+'image.fits', pixel_scales=0.1,

@@ -13,6 +13,7 @@ results of the first pipeline of this chapter.
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -31,7 +32,7 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 output_path = f"{workspace_path}/output"
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=output_path
 )
 

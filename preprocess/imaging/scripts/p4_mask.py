@@ -8,6 +8,7 @@ This tutorial creates a mask for your dataset.
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -50,8 +51,8 @@ Create the path where the mask will be output, which in this case is
 """
 
 # %%
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # %%
@@ -134,7 +135,7 @@ file in our pipelines!
 """
 
 # %%
-mask.output_to_fits(file_path=dataset_path + "mask.fits", overwrite=True)
+mask.output_to_fits(file_path=f"{dataset_path}/mask.fits", overwrite=True)
 
 # %%
 """

@@ -3,10 +3,10 @@ import autolens as al
 
 # All pipelines begin with a comment describing the pipeline and a phase-by-phase description of what it does.
 
-# In this pipeline, we'll perform a basic analysis which fits a source galaxy using a parametric light profile and a
+# In this pipeline, we'll perform a basic analysis which fits a source galaxy using a parametric *LightProfile* and a
 # lens galaxy where its light is included and fitted, using three phases:
 
-# Phase 1) Fit the lens galaxy's light using an elliptical Sersic light profile.
+# Phase 1) Fit the lens galaxy's light using an elliptical Sersic *LightProfile*.
 
 # Phase 2) Use this lens subtracted image to fit the lens galaxy's mass (SIE) and source galaxy's light (Sersic).
 
@@ -41,15 +41,15 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
     # We'll use the MultiNest black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
 
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.n_live_points = 30
-    phase1.optimizer.sampling_efficiency = 0.5
-    phase1.optimizer.evidence_tolerance = 100.0
+    phase1.search.const_efficiency_mode = True
+    phase1.search.n_live_points = 30
+    phase1.search.sampling_efficiency = 0.5
+    phase1.search.evidence_tolerance = 100.0
 
     ### PHASE 2 ###
 
@@ -73,13 +73,13 @@ def make_pipeline(phase_folders=None):
             ),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase2.optimizer.const_efficiency_mode = True
-    phase2.optimizer.n_live_points = 50
-    phase2.optimizer.sampling_efficiency = 0.3
-    phase2.optimizer.evidence_tolerance = 100.0
+    phase2.search.const_efficiency_mode = True
+    phase2.search.n_live_points = 50
+    phase2.search.sampling_efficiency = 0.3
+    phase2.search.evidence_tolerance = 100.0
 
     ### PHASE 3 ###
 
@@ -120,14 +120,14 @@ def make_pipeline(phase_folders=None):
 
     # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
     # you can simply set the source galaxy equal to one another without specifying each parameter of every
-    # light and mass profile.
+    # light and *MassProfile*.
 
     source = (
         phase2.result.model.galaxies.source
     )  # This is identical to lines 196-203 above.
 
-    # For the lens galaxies we have a slightly weird circumstance where the light profiles requires the
-    # results of phase 1 and the mass profile the results of phase 2. When passing these as a 'model', we
+    # For the lens galaxies we have a slightly weird circumstance where the *LightProfile*s requires the
+    # results of phase 1 and the *MassProfile* the results of phase 2. When passing these as a 'model', we
     # can split them as follows
 
     lens.light = phase1.result.model.galaxies.lens.light
@@ -145,11 +145,11 @@ def make_pipeline(phase_folders=None):
         phase_name="phase_3__lens_sersic_sie__source_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=source),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase3.optimizer.const_efficiency_mode = True
-    phase3.optimizer.n_live_points = 50
-    phase3.optimizer.sampling_efficiency = 0.3
+    phase3.search.const_efficiency_mode = True
+    phase3.search.n_live_points = 50
+    phase3.search.sampling_efficiency = 0.3
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

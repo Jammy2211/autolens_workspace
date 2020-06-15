@@ -31,7 +31,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -39,8 +39,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=0.3,
             sersic_index=1.0,
@@ -86,7 +85,7 @@ def perform_fit_with_source_galaxy(source_galaxy):
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -238,7 +237,7 @@ best-fit the image *including* the penalty term due to comparing neighboring sou
 However, determining the regularization coefficient that maximizes the Bayesian log evidence remains a non-linear problem 
 and this becomes part of our non-linear search. The Bayesian log evidence also depends on the source resolution which 
 means the pixel-grid resolution may also be part of our non-linear search. Nevertheless, this is only 3 parameters - 
-there were 30+ when using light profiles to represent the source!
+there were 30+ when using *LightProfile*s to represent the source!
 
 Here are a few questions for you to think about.
 

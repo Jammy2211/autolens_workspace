@@ -27,7 +27,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -35,8 +35,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.7,
-            phi=135.0,
+            elliptical_comps=(0.2, 0.1),
             intensity=0.2,
             effective_radius=0.2,
             sersic_index=2.5,
@@ -77,14 +76,14 @@ grid = al.Grid.uniform(
 # %%
 """
 Our tracer will use the same lens galaxy and source galaxy that we used to Simulate the Imaging data (although, 
-becuase we're modeling the source with a pixel-grid, we don't need to supply its light profile).
+becuase we're modeling the source with a pixel-grid, we don't need to supply its *LightProfile*).
 """
 
 # %%
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -257,7 +256,7 @@ and source plane map to one another. Your exercises are:
 radius deviates from 1.6" (the input value of the simulated lens), what do you notice about where the points map from 
 the centre of the source-plane (where the source-galaxy is simulated, e.g. (0.0", 0.0"))?
 
-2) Incrementally increase the axis ratio of the lens's mass profile to 1.0. What happens to quadruple imaging?
+2) Incrementally increase the axis ratio of the lens's *MassProfile* to 1.0. What happens to quadruple imaging?
 
 3) Now, finally, think - how is all of this going to help us actually model lenses? We've said we're going to 
 reconstruct our source galaxies on the pixel-grid. So, how does knowing how each pixel maps to the image actually 

@@ -19,7 +19,7 @@ tutorial, I'll teach a really neat trick to get MultiNest running *super-fast*.
 
 __Algorithmic Optimization__
 
-Every operation AutoLens performs to fit a lens takes time. Every light profile intensity. Every mass profile
+Every operation AutoLens performs to fit a lens takes time. Every *LightProfile* intensity. Every *MassProfile*
 deflection angle. Convolving a model-image with a PSF can take a huge amount of time. As anyone who's written code
 before knows, the better the algorithm is written, the fast it'll run.
 
@@ -42,7 +42,7 @@ than me!
 __Data Quantity__
 
 The final factor driving run-speed is the quantity of data that is being modeled. For every image-pixel that we fit,
-we have to compute the light-profile image, the mass-profile deflection angles and convolve it with the telescope's
+we have to compute the *LightProfile* image, the *MassProfile* deflection angles and convolve it with the telescope's
 PSF. The larger that PSF is, the more convolution operations we have to perform too.
 
 In the previous exercises, we used images with a pixel scale of 0.1". I sneakily chose this value cause its fairly
@@ -69,7 +69,7 @@ Therefore, there are no exercises in this tutorial and no code to run. Instead, 
 you might write a pipeline to perform the following analyses:
 
 1) The only thing you care about is the highly magnified source-galaxy. You don't care about the lens galaxy's
-light profile, and its mass-profile is only a means to ultimately study the unlensed source. Can you subtract the
+*LightProfile*, and its *MassProfile* is only a means to ultimately study the unlensed source. Can you subtract the
 lens galaxy's light and then discard it in every phase afterwards?
 
 2) There are 2 lens galaxies responsible for lensing the background source. That means, there are twice as many

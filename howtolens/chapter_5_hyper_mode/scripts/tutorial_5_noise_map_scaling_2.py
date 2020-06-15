@@ -7,7 +7,7 @@ even more important use, when another component of our lens model doesn't fit th
 What could leave significant residuals in our model-fit? What might happen to also be the highest S/N values in our
 image, meaning these residuals contribute *even more* to the chi-squared distribution?
 
-Yep, you guessed it, it's the lens galaxy light profile fit and subtraction. Just like our overly simplified mass
+Yep, you guessed it, it's the lens galaxy *LightProfile* fit and subtraction. Just like our overly simplified mass
 profile's mean we can't perfectly reconstruct the source's light, the same is true of the Sersic profiles we use to
 fit the lens galaxy's light. Lets take a look.
 """
@@ -34,14 +34,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.9,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.05),
             intensity=0.5,
             effective_radius=0.8,
             sersic_index=3.0,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -49,8 +48,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.7,
-            phi=135.0,
+            elliptical_comps=(0.2, 0.1),
             intensity=0.2,
             effective_radius=0.2,
             sersic_index=2.5,
@@ -100,7 +98,7 @@ def fit_masked_imaging_with_lens_and_source_galaxy(
 # %%
 """
 Now, lets use this function to fit the lens data. We'll use a lens model with the correct mass model but an incorrect 
-lens light profile. The source will use a magnification based grid.
+lens *LightProfile*. The source will use a magnification based grid.
 """
 
 # %%
@@ -108,14 +106,13 @@ lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.9,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.05),
         intensity=0.4,
         effective_radius=0.8,
         sersic_index=3.0,
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -142,7 +139,7 @@ aplt.FitImaging.subplot_fit_imaging(
 """
 Okay, so its clear that our poor lens light subtraction leaves residuals in the lens galaxy's centre. These pixels 
 are extremely high S/N, so they contribute large chi-squared values. For a real strong lens, we could not fit these 
-residual features using a more complex light profile. These types of residuals are extremely common and they are 
+residual features using a more complex *LightProfile*. These types of residuals are extremely common and they are 
 caused by nasty, irregular morphological structures in the lens galaxy; nuclear star emission, nuclear rings, bars, etc.
 
 This skewed chi-squared distribution will cause all the same problems we discussed in the previous tutorial, like 
@@ -177,14 +174,13 @@ lens_galaxy_hyper = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.9,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.05),
         intensity=0.4,
         effective_radius=0.8,
         sersic_index=3.0,
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
     ),
     hyper_galaxy=al.HyperGalaxy(
         contribution_factor=0.3, noise_factor=4.0, noise_power=1.5

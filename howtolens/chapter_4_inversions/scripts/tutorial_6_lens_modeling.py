@@ -33,7 +33,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -41,8 +41,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=0.3,
             sersic_index=1.0,
@@ -94,7 +93,7 @@ This fit uses a lens galaxy with the wrong mass-model (I've reduced its Einstein
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=0.8
+        centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=0.8
     ),
 )
 
@@ -128,7 +127,7 @@ correct solution.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -159,11 +158,11 @@ incorrect lens model (e.g. a local maxima).
 
 There is no simple fix for this. The reality is that for an inversion these solutions exist. This is why pipelines 
 were initially conceived - as they offer a simple solution to this problem. We build a pipelin that begins by 
-modeling the source galaxy as a light profile, 'initializing' our lens mass model. Then, when we switch to an 
+modeling the source galaxy as a *LightProfile*, 'initializing' our lens mass model. Then, when we switch to an 
 inversion in the next phase, our mass model starts in the correct regions of parameter space and doesn'tget lost 
 sampling these incorrect solutions.
 
-Its not ideal, but its also not a big problem. Furthermore, light-profiles run faster computationally than inversions, 
+Its not ideal, but its also not a big problem. Furthermore, *LightProfile*s run faster computationally than inversions, 
 so we'd probably want to do this anyway!
 """
 
@@ -171,7 +170,7 @@ so we'd probably want to do this anyway!
 """
 Okay, so we've covered incorrect solutions, lets end by noting that we can model profiles and inversions at the same 
 time. We do this when we want to simultaneously fit and subtract the light of a lens galaxy and reconstruct its lensed 
-source using an inversion. To do this, all we have to do is give the lens galaxy a light profile.
+source using an inversion. To do this, all we have to do is give the lens galaxy a *LightProfile*.
 """
 
 # %%
@@ -187,7 +186,7 @@ def simulate_lens_with_light_profile():
             centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -195,8 +194,7 @@ def simulate_lens_with_light_profile():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=0.3,
             sersic_index=1.0,
@@ -230,7 +228,7 @@ mask = al.Mask.circular(
 
 # %%
 """
-As I said above, performing this fit is the same as usual, we just give the lens galaxy a light profile.
+As I said above, performing this fit is the same as usual, we just give the lens galaxy a *LightProfile*.
 """
 
 # %%
@@ -240,7 +238,7 @@ lens_galaxy = al.Galaxy(
         centre=(0.0, 0.0), intensity=0.2, effective_radius=0.8, sersic_index=4.0
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -284,7 +282,7 @@ lens_galaxy = al.Galaxy(
         centre=(0.0, 0.0), intensity=0.3, effective_radius=0.8, sersic_index=4.0
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
     ),
 )
 

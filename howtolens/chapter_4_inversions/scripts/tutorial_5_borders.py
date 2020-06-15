@@ -26,7 +26,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -34,8 +34,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=0.3,
             sersic_index=1.0,
@@ -123,7 +122,7 @@ def perform_fit_with_source_galaxy_mask_and_border(
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -194,7 +193,7 @@ aplt.Mapper.subplot_image_and_mapper(
 
 # %%
 """
-So, whats happening physically? Towards the centre of our EllipticalIsothermal mass profile the density profile becomes 
+So, whats happening physically? Towards the centre of our EllipticalIsothermal *MassProfile* the density profile becomes 
 extremely cuspy (rising very sharply). This cause extremely large deflection angles to be computed - lets have a quick 
 look.
 """
@@ -291,14 +290,14 @@ def simulate_image_x2_lenses():
     lens_galaxy_0 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07
+            centre=(1.1, 0.51), elliptical_comps=(0.0, 0.15), einstein_radius=1.07
         ),
     )
 
     lens_galaxy_1 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71
+            centre=(-0.20, -0.35), elliptical_comps=(0.06, 0.1053), einstein_radius=0.71
         ),
     )
 
@@ -306,8 +305,7 @@ def simulate_image_x2_lenses():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.05, 0.05),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=0.3,
             sersic_index=1.0,
@@ -363,14 +361,14 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     lens_galaxy_0 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(1.1, 0.51), axis_ratio=0.9, phi=110.0, einstein_radius=1.07
+            centre=(1.1, 0.51), elliptical_comps=(0.0, 0.15), einstein_radius=1.07
         ),
     )
 
     lens_galaxy_1 = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(-0.20, -0.35), axis_ratio=0.56, phi=16.0, einstein_radius=0.71
+            centre=(-0.20, -0.35), elliptical_comps=(0.06, 0.1053), einstein_radius=0.71
         ),
     )
 

@@ -23,6 +23,7 @@ import os
 import json
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -56,8 +57,8 @@ Create the path where the info will be output, which in this case is
 """
 
 # %%
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # %%
@@ -88,10 +89,10 @@ with open(info_file, "w+") as f:
     json.dump(info, f, indent=4)
 
 
-if os.path.exists(dataset_path + "info.json"):
-    os.remove(dataset_path + "info.json")
+if os.path.exists(f"{dataset_path}/info.json"):
+    os.remove(f"{dataset_path}/info.json")
 
-shutil.move("info.json", dataset_path + "info.json")
+shutil.move("info.json", f"{dataset_path}/info.json")
 
 # %%
 """

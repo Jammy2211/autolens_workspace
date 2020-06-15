@@ -27,7 +27,7 @@ something that we can write down analytically and its inherently non-linear. But
 we put the same set of lens model parameters into it, we'll compute the same log likelihood.
 
 We can write our log_likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
-mass-profile and light-profile parameters):
+*MassProfile* and *LightProfile* parameters):
 
 f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's tracer and lens_fit.
 
@@ -39,13 +39,13 @@ Lets inspect the results of the last tutorial's non-linear search. We're going t
 density functions' or PDF's for short. These represent where the highest log likelihood regions of parameter space were
 found for each parameter.
 
-Navigate to the folder 'autolens_workspace/howtolens/chapter_2_lens_modeling/output_optimizer/1_non_linear_search/image'
+Navigate to the folder 'autolens_workspace/howtolens/chapter_2_lens_modeling/output_search/1_non_linear_search/image'
 and open the 'pdf_triangle.png' figure. The Gaussian shaped lines running down the diagonal of this triangle represent
 1D estimates of the highest log likelihood regions that were found in parameter space for each parameter.
 
 The remaining figures, which look like contour-maps, show the maximum log likelihood regions in 2D between every parameter
 pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other leads to a
-similar log_likelihood value. The 2D PDF between the source galaxy's light-profile's intensity (I_l4) and effective
+similar log_likelihood value. The 2D PDF between the source galaxy's *LightProfile*'s intensity (I_l4) and effective
 radius (R_l4) shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is similar to
 making it fainter and bigger!
 
@@ -102,7 +102,7 @@ You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{chapter_path}/configs/t2_parameter_space_and_priors",
     output_path=f"{chapter_path}/output",
 )
@@ -171,7 +171,7 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential)
 To change priors, we use the 'prior' module of PyAutoFit (imported as af). These priors link our GalaxyModel to the 
 non-linear search. Thus, it tells PyAutoLens where to search non-linear parameter space.
 
-These two lines change the centre of the lens galaxy's mass-profile to UniformPriors around the coordinates 
+These two lines change the centre of the lens galaxy's *MassProfile* to UniformPriors around the coordinates 
 (-0.1", 0.1"). For real lens modeling, this might be done by visually inspecting the centre of emission of the lens 
 galaxy's light.
 
@@ -210,7 +210,7 @@ output of the non-linear search, you'll see that the priors have indeed been cha
 custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     galaxies=dict(lens=lens, source=source),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 print(

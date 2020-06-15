@@ -10,6 +10,7 @@ This tutorial describes preprocessing your dataset's psf to adhere too the units
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -35,9 +36,7 @@ path = (
 )  # <----- You must include this slash on the end
 path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/preprocess/imaging/"
 
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=path, folder_names=["data_raw"]
-)
+dataset_path = af.util.create_path(path=path, folders=["data_raw"])
 
 # %%
 """
@@ -56,9 +55,7 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
 
 psf = al.Kernel.from_fits(file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1)
 
@@ -77,8 +74,8 @@ Lets look at an image where a large PSF kernel is loaded.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_with_large_psf"]
+imaging_path = af.util.create_path(
+    path=dataset_path, folders=["imaging_with_large_psf"]
 )
 
 large_psf = al.Kernel.from_fits(
@@ -106,9 +103,7 @@ the convolution routine which can lead to systematics in the lens analysis.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_with_even_psf"]
-)
+imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_with_even_psf"])
 
 even_psf = al.Kernel.from_fits(
     file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1
@@ -147,8 +142,8 @@ being False.
 """
 
 # %%
-imaging_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=dataset_path, folder_names=["imaging_with_unnormalized_psf"]
+imaging_path = af.util.create_path(
+    path=dataset_path, folders=["imaging_with_unnormalized_psf"]
 )
 
 unnormalized_psf = al.Kernel.from_fits(

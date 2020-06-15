@@ -31,7 +31,7 @@ You need to change the path below to the chapter 2 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{chapter_path}/configs/t7_multinest_black_magic",
     output_path=f"{chapter_path}/output",
 )
@@ -39,7 +39,7 @@ af.conf.instance = af.conf.Config(
 # %%
 """
 This function simulates the image we'll fit in this tutorial. Unlike previous tutorial images, it includes the 
-light-profile of the lens galaxy.
+*LightProfile* of the lens galaxy.
 """
 
 # %%
@@ -53,14 +53,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.8,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.111111),
             intensity=0.2,
             effective_radius=0.8,
             sersic_index=3.0,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -114,7 +113,7 @@ phase_normal = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -168,7 +167,7 @@ phase_black_magic = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -179,9 +178,9 @@ explain all in a moment.
 """
 
 # %%
-phase_black_magic.optimizer.n_live_points = 60
-phase_black_magic.optimizer.sampling_efficiency = 0.5
-phase_black_magic.optimizer.const_efficiency_mode = True
+phase_black_magic.search.n_live_points = 60
+phase_black_magic.search.sampling_efficiency = 0.5
+phase_black_magic.search.const_efficiency_mode = True
 
 # %%
 """
@@ -269,12 +268,12 @@ phase_too_much_black_magic = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
-phase_too_much_black_magic.optimizer.n_live_points = 10
-phase_too_much_black_magic.optimizer.sampling_efficiency = 0.95
-phase_too_much_black_magic.optimizer.const_efficiency_mode = True
+phase_too_much_black_magic.search.n_live_points = 10
+phase_too_much_black_magic.search.sampling_efficiency = 0.95
+phase_too_much_black_magic.search.const_efficiency_mode = True
 
 # %%
 """
@@ -344,13 +343,13 @@ phase_new_evidence_tolerance = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
-phase_new_evidence_tolerance.optimizer.n_live_points = 60
-phase_new_evidence_tolerance.optimizer.sampling_efficiency = 0.5
-phase_new_evidence_tolerance.optimizer.const_efficiency_mode = True
-phase_new_evidence_tolerance.optimizer.evidence_tolerance = 10000.0
+phase_new_evidence_tolerance.search.n_live_points = 60
+phase_new_evidence_tolerance.search.sampling_efficiency = 0.5
+phase_new_evidence_tolerance.search.const_efficiency_mode = True
+phase_new_evidence_tolerance.search.evidence_tolerance = 10000.0
 
 # %%
 """

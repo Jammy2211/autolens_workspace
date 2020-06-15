@@ -5,20 +5,20 @@ __Non-linear Search__
 In this example, we're going to find a lens model that provides a good fit to an image, without assuming any knowledge
 of what the 'correct' lens model is.
 
-So, whats a 'lens model'? It is the combination of light profiles and mass profiles we use to represent a lens galaxy,
+So, whats a 'lens model'? It is the combination of *LightProfile*s and *MassProfile*s we use to represent a lens galaxy,
 source galaxy and therefore the strong lens ray-tracing configuration (i.e. a tracer).
 
 To begin, we have to choose the parametrization of our lens model. We don't need to specify the values of its light
-and mass profiles (e.g. the centre, einstein_radius, etc.) - only the profiles themselves. In this example,
+and *MassProfile*s (e.g. the centre, einstein_radius, etc.) - only the profiles themselves. In this example,
 we'll use the following lens model:
 
 1) A spherical Isothermal Sphere (SIS) for the lens galaxy's mass.
-2) A spherical exponential light profile for the source galaxy's light.
+2) A spherical exponential *LightProfile* for the source galaxy's light.
 
 I'll let you into a secret - this is the same lens model used to Simulate the Imaging data we're going to fit and
 we're going to infer the actual parameters I used.
 
-So, how do we infer the light and mass profile parameters that give a good fit to our data?
+So, how do we infer the light and *MassProfile* parameters that give a good fit to our data?
 
 Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this
 lens model to create a tracer and fit the image-data, and quantify how good the fit was using its log likelihood
@@ -38,7 +38,7 @@ We're going to use a non-linear search algorithm called 'MultiNest'. I highly re
 lens modeling. However, for now, lets not worry about the details of how MultiNest actually works. Instead, just
 picture that a non-linear search in PyAutoLens operates as follows:
 
-1) Randomly guess a lens model and use its light-profiles and mass-profiles to set up a lens galaxy, source galaxy
+1) Randomly guess a lens model and use its *LightProfile*s and *MassProfile*s to set up a lens galaxy, source galaxy
 and a tracer.
 
 2) Pass this tracer through the fitting module, generating a model image and comparing this model image to the
@@ -75,9 +75,9 @@ You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
-    config_path=chapter_path + "/configs/t1_non_linear_search",
-    output_path=chapter_path + "/output",
+conf.instance = conf.Config(
+    config_path=f"{chapter_path}//configs/t1_non_linear_search",
+    output_path=f"{chapter_path}//output",
 )
 
 # %%
@@ -139,10 +139,10 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # %%
 """
 To compute a lens model, we use a GalaxyModel, which behaves analogously to the Galaxy objects we're now used to. 
-However, whereas for a Galaxy we manually specified the value of every parameter of its light-profiles and 
-mass-profiles, for a GalaxyModel these are inferred by the non-linear search.
+However, whereas for a Galaxy we manually specified the value of every parameter of its *LightProfile*s and 
+*MassProfile*s, for a GalaxyModel these are inferred by the non-linear search.
 
-Lets model the lens galaxy with an SIS mass profile (which is what it was simulated with).
+Lets model the lens galaxy with an SIS *MassProfile* (which is what it was simulated with).
 """
 
 # %%
@@ -150,7 +150,7 @@ lens_galaxy_model = al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal)
 
 # %%
 """
-Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
+Lets model the source galaxy with a spherical exponential *LightProfile* (again, what it was simulated with).
 """
 
 # %%
@@ -171,7 +171,7 @@ potentially have a lot of galaxies - and this is the best way to keep track of t
 phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%

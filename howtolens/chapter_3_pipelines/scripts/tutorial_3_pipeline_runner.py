@@ -12,7 +12,7 @@ regime of 30-40+ parameters in our non-linear search. Even with a pipeline, that
 """
 
 # %%
-### AUTOFIT + CONFIG SETUP ###
+""" AUTOFIT + CONFIG SETUP """
 
 import autofit as af
 
@@ -31,7 +31,7 @@ Use this path to explicitly set the config path and output path.
 """
 
 # %%
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
@@ -56,7 +56,7 @@ def simulate():
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -64,8 +64,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=1.0,
             sersic_index=1.5,
@@ -76,8 +75,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
-            axis_ratio=0.7,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.15),
             intensity=0.1,
             effective_radius=0.2,
             sersic_index=3.0,
@@ -88,8 +86,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
-            axis_ratio=0.6,
-            phi=90.0,
+            elliptical_comps=(0.0, 0.222222),
             intensity=0.03,
             effective_radius=0.3,
             sersic_index=3.5,
@@ -100,8 +97,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
-            axis_ratio=0.9,
-            phi=140.0,
+            elliptical_comps=(0.05, 0.1),
             intensity=0.03,
             effective_radius=0.1,
             sersic_index=4.0,
@@ -180,7 +176,7 @@ masked_imaging = al.MaskedImaging(
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
     ),
 )
 
@@ -188,8 +184,7 @@ source_galaxy_0 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        axis_ratio=0.8,
-        phi=90.0,
+        elliptical_comps=(0.0, 0.1),
         intensity=0.2,
         effective_radius=1.0,
         sersic_index=1.5,
@@ -200,8 +195,7 @@ source_galaxy_1 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(-0.25, 0.25),
-        axis_ratio=0.7,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.15),
         intensity=0.1,
         effective_radius=0.2,
         sersic_index=3.0,
@@ -212,8 +206,7 @@ source_galaxy_2 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.45, -0.35),
-        axis_ratio=0.6,
-        phi=90.0,
+        elliptical_comps=(0.0, 0.222222),
         intensity=0.03,
         effective_radius=0.3,
         sersic_index=3.5,
@@ -224,8 +217,7 @@ source_galaxy_3 = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(-0.05, -0.0),
-        axis_ratio=0.9,
-        phi=140.0,
+        elliptical_comps=(0.0, 0.15),
         intensity=0.03,
         effective_radius=0.1,
         sersic_index=4.0,

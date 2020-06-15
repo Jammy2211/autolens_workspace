@@ -21,15 +21,14 @@ grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=2)
 
 # %%
 """
-Next, lets create a light profile using the 'light_profiles' module, which in PyAutoLens is imported as 'lp' for 
+Next, lets create a *LightProfile* using the 'light_profiles' module, which in PyAutoLens is imported as 'lp' for 
 conciseness. We'll use a Sersic function, which is an analytic function often use to depict galaxies.
 """
 
 # %%
 sersic_light_profile = al.lp.EllipticalSersic(
     centre=(0.0, 0.0),
-    axis_ratio=0.8,
-    phi=45.0,
+    elliptical_comps=(0.0, 0.111111),
     intensity=1.0,
     effective_radius=1.0,
     sersic_index=2.5,
@@ -45,12 +44,12 @@ print(sersic_light_profile)
 
 # %%
 """
-We can pass a grid to a light profile to compute its intensity at every grid coordinate. When we compute an array from 
+We can pass a grid to a *LightProfile* to compute its intensity at every grid coordinate. When we compute an array from 
 a grid using a '_from_grid' method like the one below, we have two options for how the calculation is performed.
 """
 
 # %%
-light_profile_image = sersic_light_profile.profile_image_from_grid(grid=grid)
+light_image = sersic_light_profile.image_from_grid(grid=grid)
 
 # %%
 """
@@ -59,12 +58,12 @@ both 2D and 1D.
 """
 
 # %%
-print(light_profile_image.shape_2d)
-print(light_profile_image.shape_1d)
-print(light_profile_image.in_2d[0, 0])
-print(light_profile_image.in_1d[0])
-print(light_profile_image.in_2d)
-print(light_profile_image.in_1d)
+print(light_image.shape_2d)
+print(light_image.shape_1d)
+print(light_image.in_2d[0, 0])
+print(light_image.in_1d[0])
+print(light_image.in_2d)
+print(light_image.in_1d)
 
 # %%
 """
@@ -73,10 +72,10 @@ which in this case is a 200 x 200 grid.
 """
 
 # %%
-print(light_profile_image.sub_shape_2d)
-print(light_profile_image.sub_shape_1d)
-print(light_profile_image.in_2d[0, 0])
-print(light_profile_image[0])
+print(light_image.sub_shape_2d)
+print(light_image.sub_shape_1d)
+print(light_image.in_2d[0, 0])
+print(light_image[0])
 
 # %%
 """
@@ -87,8 +86,8 @@ computing intensities at only one pixel coordinate inside a full pixel do not de
 
 # %%
 print("intensity of top-left grid pixel:")
-print(light_profile_image.in_2d_binned[0, 0])
-print(light_profile_image.in_1d_binned[0])
+print(light_image.in_2d_binned[0, 0])
+print(light_image.in_1d_binned[0])
 
 # %%
 """
@@ -101,14 +100,14 @@ We can use a profile plotter to plot this image.
 """
 
 # %%
-aplt.LightProfile.profile_image(light_profile=sersic_light_profile, grid=grid)
+aplt.LightProfile.image(light_profile=sersic_light_profile, grid=grid)
 
 # %%
 """
-To perform ray-tracing, we need to create a 'mass-profile' from the mass profiles module, which we import as mp for 
-conciseness. A mass-profile is an analytic function that describes the distribution of mass in a galaxy, and therefore 
+To perform ray-tracing, we need to create a '*MassProfile*' from the *MassProfile*s module, which we import as mp for 
+conciseness. A *MassProfile* is an analytic function that describes the distribution of mass in a galaxy, and therefore 
 can be used to derive its surface-density, gravitational potential and most importantly, its deflection angles. For 
-those unfamiliar with lensing, the deflection angles describe how light is bent by the mass-profile due to the 
+those unfamiliar with lensing, the deflection angles describe how light is bent by the *MassProfile* due to the 
 curvature of space-time.
 """
 
@@ -119,7 +118,7 @@ print(sis_mass_profile)
 
 # %%
 """
-Just like above, we can pass a grid to a mass-profile to compute its deflection angles. These are returned as the grids 
+Just like above, we can pass a grid to a *MassProfile* to compute its deflection angles. These are returned as the grids 
 we used in the previous tutorials, so have full access to the 2D / 1D methods and mappings. And, just like the image 
 above, they are computed on the sub-grid, so that we can bin up their values to compute more accurate deflection angles.
 
@@ -149,7 +148,7 @@ print(mass_profile_deflections.in_2d_binned[50, 50])
 """
 A profile plotter can plot these deflection angles.
 
-(The black line is the 'critical curve' of the mass profile. We'll cover what this in a later tutorial.)
+(The black line is the 'critical curve' of the *MassProfile*. We'll cover what this in a later tutorial.)
 """
 
 # %%
@@ -158,13 +157,13 @@ aplt.MassProfile.deflections_x(mass_profile=sis_mass_profile, grid=grid)
 
 # %%
 """
-Mass profiles have a range of other properties that are used for lensing calculations, a couple of which we've plotted 
+*MassProfile*s have a range of other properties that are used for lensing calculations, a couple of which we've plotted 
 images of below:
 
-Convergence - The surface mass density of the mass-profile in dimensionless unit_label which are convenient for lensing 
+Convergence - The surface mass density of the *MassProfile* in dimensionless unit_label which are convenient for lensing 
 calcuations.
-Potential - The gravitational of the mass-profile again in convenient dimensionless unit_label.
-Magnification - Describes how much brighter each image-pixel appears due to focusing of light rays by the mass-profile.
+Potential - The gravitational of the *MassProfile* again in convenient dimensionless unit_label.
+Magnification - Describes how much brighter each image-pixel appears due to focusing of light rays by the *MassProfile*.
 
 Extracting arrays of these quantities fom PyAutoLens is exactly the same as for the image and deflection angles above.
 """
@@ -193,8 +192,8 @@ aplt.MassProfile.magnification(mass_profile=sis_mass_profile, grid=grid)
 Congratulations, you've completed your second PyAutoLens tutorial! Before moving on to the next one, experiment with 
 PyAutoLens by doing the following:
 
-1) Change the light profile's effective radius and Sersic index - how does the image's appearance change?
-2) Change the mass profile's einstein radius - what happens to the deflection angles, potential and convergence?
-3) Experiment with different light-profiles and mass-profiles in the light_profiles and mass_profiles modules. 
-In particular, use the EllipticalIsothermal profile to introduce ellipticity into a mass profile.
+1) Change the *LightProfile*'s effective radius and Sersic index - how does the image's appearance change?
+2) Change the *MassProfile*'s einstein radius - what happens to the deflection angles, potential and convergence?
+3) Experiment with different *LightProfile*s and *MassProfile*s in the light_profiles and mass_profiles modules. 
+In particular, use the EllipticalIsothermal profile to introduce ellipticity into a *MassProfile*.
 """

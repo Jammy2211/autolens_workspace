@@ -3,7 +3,7 @@
 Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can
 consist of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
 model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the degeneracies
-between the mass-profiles of the two galaxies can be severe.
+between the *MassProfile*s of the two galaxies can be severe.
 
 However, we can still break their analysis down using a pipeline and give ourselves a shot at getting a good lens
 model. Here, we're going to fit a double lens system, fitting as much about each individual lens galaxy before fitting
@@ -15,7 +15,7 @@ pipeline that we can generalize to many lenses isn't currently possible with PyA
 """
 
 # %%
-### AUTOFIT + CONFIG SETUP ###
+""" AUTOFIT + CONFIG SETUP """
 
 import autofit as af
 
@@ -34,12 +34,12 @@ Use this path to explicitly set the config path and output path.
 """
 
 # %%
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%
-### AUTOLENS + DATA SETUP ###
+""" AUTOLENS + DATA SETUP """
 
 # %%
 #%matplotlib inline
@@ -63,14 +63,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, -1.0),
-            axis_ratio=0.8,
-            phi=55.0,
+            elliptical_comps=(0.25, 0.1),
             intensity=0.1,
             effective_radius=0.8,
             sersic_index=2.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, -1.0), axis_ratio=0.7, phi=45.0, einstein_radius=1.0
+            centre=(0.0, -1.0), elliptical_comps=(0.17647, 0.0), einstein_radius=1.0
         ),
     )
 
@@ -78,14 +77,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 1.0),
-            axis_ratio=0.8,
-            phi=100.0,
+            elliptical_comps=(0.0, 0.1),
             intensity=0.1,
             effective_radius=0.6,
             sersic_index=3.0,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 1.0), axis_ratio=0.8, phi=90.0, einstein_radius=0.8
+            centre=(0.0, 1.0), elliptical_comps=(0.0, -0.111111), einstein_radius=0.8
         ),
     )
 
@@ -133,13 +131,13 @@ Multi-galaxy ray-tracing is just a lot more complicated, which means so is model
 So, how can we break the lens modeling up? As follows:
 
 1) Fit and subtract the light of each lens galaxy individually - this will require some careful masking but is doable.
-2) Use these results to initialize each lens galaxy's mass-profile.
+2) Use these results to initialize each lens galaxy's *MassProfile*.
 
 So, with this in mind, we've written a pipeline composed of 4 phases:
 
-Phase 1) Fit the light profile of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
-Phase 2) Fit the light profile of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
-Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The mass-profiles of the two lens 
+Phase 1) Fit the *LightProfile* of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+Phase 2) Fit the *LightProfile* of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The *MassProfile*s of the two lens 
 galaxies can use the results of phases 1 and 2 to initialize their priors.
 Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 

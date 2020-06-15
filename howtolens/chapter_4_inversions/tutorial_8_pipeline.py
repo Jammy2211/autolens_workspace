@@ -39,11 +39,11 @@ def make_pipeline(phase_folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase1.optimizer.sampling_efficiency = 0.3
-    phase1.optimizer.const_efficiency_mode = True
+    phase1.search.sampling_efficiency = 0.3
+    phase1.search.const_efficiency_mode = True
 
     # Now, in phase 2, lets use the lens mass model to fit the source with an inversion.
 
@@ -53,7 +53,7 @@ def make_pipeline(phase_folders=None):
         regularization=al.reg.Constant,
     )
 
-    # We can customize the inversion's priors like we do our light and mass profiles.
+    # We can customize the inversion's priors like we do our light and *MassProfile*s.
 
     source.pixelization.shape_0 = af.UniformPrior(lower_limit=20.0, upper_limit=40.0)
 
@@ -76,11 +76,11 @@ def make_pipeline(phase_folders=None):
             ),
             source=source,
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase2.optimizer.sampling_efficiency = 0.3
-    phase2.optimizer.const_efficiency_mode = True
+    phase2.search.sampling_efficiency = 0.3
+    phase2.search.const_efficiency_mode = True
 
     # We now 'extend' phase 1 with an additional 'inversion phase' which uses the best-fit mass model of phase 1 above
     # to refine the it inversion used, by fitting only the pixelization & regularization parameters.
@@ -104,10 +104,10 @@ def make_pipeline(phase_folders=None):
                 regularization=phase2.result.inversion.instance.galaxies.source.regularization,
             ),
         ),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase3.optimizer.sampling_efficiency = 0.3
-    phase3.optimizer.const_efficiency_mode = True
+    phase3.search.sampling_efficiency = 0.3
+    phase3.search.const_efficiency_mode = True
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

@@ -87,10 +87,10 @@ import autolens as al
 # pipelines. But, the large number of phases are required to fully model the lens with hyper-mode features. An overview
 # of the pipeline is as follows:
 
-# Phase 1) Fit and subtract the lens galaxy's light profile.
+# Phase 1) Fit and subtract the lens galaxy's *LightProfile*.
 # Phase 1 Extension) Fit the lens galaxy's hyper-galaxy and background noise.
 
-# Phase 2) Fit the lens galaxy mass model and source light profile, using the lens subtracted image, using the lens
+# Phase 2) Fit the lens galaxy mass model and source *LightProfile*, using the lens subtracted image, using the lens
 #          hyper-galaxy noise map and background noise from phase 1.
 # Phase 2 Extension) Fit the lens / source hyper-galaxy and background noise.
 
@@ -128,7 +128,7 @@ def make_pipeline(setup, phase_folders=None):
 
     pipeline_name = "pipeline__hyper_example"
 
-    # For hyper pipeline tagging we need to set the source type.
+    # For hyper pipeline tagging we set the source type.
     setup.set_source_type(source_type="sersic")
 
     # This pipeline is tagged according to whether:
@@ -137,7 +137,7 @@ def make_pipeline(setup, phase_folders=None):
     # 2) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
 
     phase_folders.append(pipeline_name)
-    phase_folders.append(setup.general.source_tag)
+    phase_folders.append(setup.hyper.source_pipeline_tag)
     phase_folders.append(setup.source.tag)
 
     ### PHASE 1 ###
@@ -148,12 +148,12 @@ def make_pipeline(setup, phase_folders=None):
         phase_name="phase_1__lens_sersic",
         phase_folders=phase_folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.n_live_points = 30
-    phase1.optimizer.sampling_efficiency = 0.3
+    phase1.search.const_efficiency_mode = True
+    phase1.search.n_live_points = 30
+    phase1.search.sampling_efficiency = 0.3
 
     # This extends phase 1 with hyper-phases that fit for the hyper-galaxies, as described above. The extension below
     # adds two phases, a 'hyper-galaxy' phase which fits for the lens hyper-galaxy + the background noise, and a
@@ -164,14 +164,14 @@ def make_pipeline(setup, phase_folders=None):
     # first phase's uniform piors.
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
     )
 
     ### PHASE 2 ###
 
-    # This phase fits for the lens's mass model and source's light profile using the lens subtracted image from phase
+    # This phase fits for the lens's mass model and source's *LightProfile* using the lens subtracted image from phase
     # 1. The lens galaxy hyper-galaxy is included, such that high chi-squared values in the central regions of the
     # image due to a poor lens light subtraction are reduced by noise scaling and do not impact the fit.
 
@@ -202,12 +202,12 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase2.optimizer.const_efficiency_mode = False
-    phase2.optimizer.n_live_points = 50
-    phase2.optimizer.sampling_efficiency = 0.3
+    phase2.search.const_efficiency_mode = False
+    phase2.search.n_live_points = 50
+    phase2.search.sampling_efficiency = 0.3
 
     # This extends phase 2 with hyper-phases that fit for the hyper-galaxies, as described above. This extension again
     # adds two phases, a 'hyper-galaxy' phase and 'hyper_combined' phase. Unlike the extension to phase 1 which only
@@ -215,9 +215,9 @@ def make_pipeline(setup, phase_folders=None):
     # background noise.
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
     )
 
     ### PHASE 3 ###
@@ -249,19 +249,19 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase3.optimizer.const_efficiency_mode = True
-    phase3.optimizer.n_live_points = 75
-    phase3.optimizer.sampling_efficiency = 0.3
+    phase3.search.const_efficiency_mode = True
+    phase3.search.n_live_points = 75
+    phase3.search.sampling_efficiency = 0.3
 
     # The usual phase extension, which operates the same as the extension for phase 2.
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
     )
 
     ### PHASE 4 ###
@@ -301,21 +301,21 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase4.optimizer.const_efficiency_mode = True
-    phase4.optimizer.n_live_points = 20
-    phase4.optimizer.sampling_efficiency = 0.8
+    phase4.search.const_efficiency_mode = True
+    phase4.search.n_live_points = 20
+    phase4.search.sampling_efficiency = 0.8
 
     # This is the usual phase extensions. Given we're only using this inversion to refine our hyper-galaxy-images, we
     # won't bother reoptimizing its hyper-galaxy-parameters
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-        inversion=False,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
+        inversion_search=False,
     )
 
     ### PHASE 5 ###
@@ -343,18 +343,18 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase4.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase4.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase5.optimizer.const_efficiency_mode = True
-    phase5.optimizer.n_live_points = 75
-    phase5.optimizer.sampling_efficiency = 0.2
+    phase5.search.const_efficiency_mode = True
+    phase5.search.n_live_points = 75
+    phase5.search.sampling_efficiency = 0.2
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-        inversion=False,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
+        inversion_search=False,
     )
 
     ### PHASE 6 ###
@@ -382,21 +382,21 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase5.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase5.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase6.optimizer.const_efficiency_mode = True
-    phase6.optimizer.n_live_points = 20
-    phase6.optimizer.sampling_efficiency = 0.8
+    phase6.search.const_efficiency_mode = True
+    phase6.search.n_live_points = 20
+    phase6.search.sampling_efficiency = 0.8
 
     # For this phase, we'll also extend it with an inversion phase. This ensures our pixelization and regularization
     # are fully optimized in conjunction with the hyper-galaxies and background noise map.
 
     phase6 = phase6.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-        inversion=True,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
+        inversion_search=True,
     )
 
     ### PHASE 7 ###
@@ -425,18 +425,18 @@ def make_pipeline(setup, phase_folders=None):
         ),
         hyper_image_sky=phase6.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase6.result.hyper_combined.instance.optional.hyper_background_noise,
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
     )
 
-    phase7.optimizer.const_efficiency_mode = True
-    phase7.optimizer.n_live_points = 75
-    phase7.optimizer.sampling_efficiency = 0.2
+    phase7.search.const_efficiency_mode = True
+    phase7.search.n_live_points = 75
+    phase7.search.sampling_efficiency = 0.2
 
     phase7 = phase7.extend_with_multiple_hyper_phases(
-        hyper_galaxy=setup.general.hyper_galaxies,
-        include_background_sky=setup.general.hyper_image_sky,
-        include_background_noise=setup.general.hyper_background_noise,
-        inversion=True,
+        hyper_galaxy_search=setup.hyper.hyper_galaxies,
+        include_background_sky=setup.hyper.hyper_image_sky,
+        include_background_noise=setup.hyper.hyper_background_noise,
+        inversion_search=True,
     )
 
     return al.PipelineDataset(

@@ -10,7 +10,7 @@ import os
 # can then be loaded before a pipeline is run and passed to that pipeline so as to become the default masked used by a
 # phase (if a mask function is not passed to that phase).
 
-# Setup the path to the autolens_workspace, using a relative directory name.
+"""Setup the path to the autolens_workspace, using a relative directory name."""
 workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the mask is stored in, e.g,
@@ -20,8 +20,8 @@ dataset_name = "lens_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
-dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-    path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+dataset_path = af.util.create_path(
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
@@ -34,11 +34,11 @@ image = al.Array.from_fits(
 
 scribbler = scribbler.Scribbler(image=image.in_2d)
 mask = scribbler.show_mask()
-mask = al.Mask.manual(mask_2d=np.invert(mask), pixel_scales=pixel_scales)
+mask = al.Mask.manual(mask=np.invert(mask), pixel_scales=pixel_scales)
 
 # Now lets plot the image and mask, so we can check that the mask includes the regions of the image we want.
 aplt.Array(array=image, mask=mask)
 
 # Now we're happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 # file in our pipelines!
-mask.output_to_fits(file_path=dataset_path + "mask.fits", overwrite=True)
+mask.output_to_fits(file_path=f"{dataset_path}/mask.fits", overwrite=True)

@@ -1,11 +1,12 @@
 # %%
 """
 In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
-using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a light profile,
+using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a *LightProfile*,
 to initialize the mass model, and then switch to an inversion.
 """
 
 # %%
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -23,7 +24,7 @@ Use this path to explicitly set the config path and output path.
 """
 
 # %%
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
@@ -47,14 +48,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.7,
-            phi=80.0,
+            elliptical_comps=(0.0, 0.15),
             intensity=0.8,
             effective_radius=1.3,
             sersic_index=2.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=135.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -62,8 +62,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.1, 0.1),
-            axis_ratio=0.8,
-            phi=90.0,
+            elliptical_comps=(0.1, 0.0),
             intensity=0.2,
             effective_radius=1.0,
             sersic_index=1.5,
@@ -74,8 +73,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.25, 0.25),
-            axis_ratio=0.7,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.15),
             intensity=0.1,
             effective_radius=0.2,
             sersic_index=3.0,
@@ -86,8 +84,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.45, -0.35),
-            axis_ratio=0.6,
-            phi=90.0,
+            elliptical_comps=(0.0, 0.222222),
             intensity=0.03,
             effective_radius=0.3,
             sersic_index=3.5,
@@ -98,8 +95,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(-0.05, -0.0),
-            axis_ratio=0.9,
-            phi=140.0,
+            elliptical_comps=(0.05, 0.1),
             intensity=0.03,
             effective_radius=0.1,
             sersic_index=4.0,
@@ -157,7 +153,7 @@ The setup module customizes the behaviour of a pipeline. Hyper-fitting brings wi
 """
 
 # %%
-general_setup = al.setup.General(
+hyper = al.slam.Hyper(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
@@ -170,11 +166,11 @@ and AdaptiveBrightness classes which adapt to the source's surface-brightness.
 """
 
 # %%
-source_setup = al.setup.Source(
+source = al.slam.Source(
     pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
-setup = al.setup.Setup(general=general_setup, source=source_setup)
+setup = al.slam.SLaM(hyper=hyper, source=source)
 
 # %%
 """

@@ -21,7 +21,7 @@ notice that we will transition you to Python scripts in the third chapter.
 
 ### LENSING THEORY ###
 
-HowToLens assumes minimal previous knowledge of gravitational lensing and astronomy. However, it is benefitial to give
+HowToLens assumes minimal previous knowledge of gravitational lensing and astronomy. However, it is beneficial to give
 yourself a basicaly theoretical grounding as you go through the lectures. I heartily recommend you have open the
 lecture course on gravitational lensing by Massimo Meneghetti below as you go through the tutorials, and refer to it
 for anything that isn't clear in HowToLens.
@@ -58,7 +58,7 @@ import autofit as af
 
 workspace_path = "/path/to/user/autolens_workspace/"
 
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{workspace_path}/config/",
     output_path=f"{workspace_path}/output/",
 )
@@ -86,9 +86,9 @@ In chapter 1, we'll learn about strong gravitational lensing and PyAutoLens. At 
 be able to:
 
 1) Create uniform grids of (x,y) Cartesian coordinates.
-2) Combine these grids with light and mass profiles to make images, surface densities, gravitational potentials
+2) Combine these grids with light and *MassProfile*s to make images, surface densities, gravitational potentials
    and deflection angle-maps.
-3) Combine these light and mass profiles to make galaxies.
+3) Combine these light and *MassProfile*s to make galaxies.
 4) Perform ray-tracing with these galaxies, whereby a grid is ray-traced through an image-plane / source-plane
    strong lensing configuration.
 5) Simulate telescope imaging data of a strong gravitational lens.

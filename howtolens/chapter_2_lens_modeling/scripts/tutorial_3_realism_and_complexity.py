@@ -11,9 +11,9 @@ In this example, we'll start using a more realistic lens model.
 In my experience, the simplest lens model (e.g. that has the fewest parameters) that provides a good fit to real
 strong lenses is as follows:
 
-1) An elliptical Sersic light-profile for the lens galaxy's light.
-2) A singular isothermal ellipsoid (SIE) mass-profile for the lens galaxy's mass.
-3) An elliptical exponential light-profile for the source galaxy's light (to be honest, this is too simple, but
+1) An elliptical Sersic *LightProfile* for the lens galaxy's light.
+2) A singular isothermal ellipsoid (SIE) *MassProfile* for the lens galaxy's mass.
+3) An elliptical exponential *LightProfile* for the source galaxy's light (to be honest, this is too simple, but
 lets worry about that later).
 
 This has a total of 18 non-linear parameters, which is over double the number of parameters we've fitted up to now.
@@ -39,9 +39,9 @@ You need to change the path below to the chapter 1 directory.
 chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
 chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
 
-af.conf.instance = af.conf.Config(
+conf.instance = conf.Config(
     config_path=f"{chapter_path}/configs/t3_realism_and_complexity/",
-    output_path=chapter_path + "/output",
+    output_path=f"{chapter_path}//output",
 )
 
 # %%
@@ -60,14 +60,13 @@ def simulate():
         redshift=0.5,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.9,
-            phi=45.0,
+            elliptical_comps=(0.0, 0.05),
             intensity=0.04,
             effective_radius=0.5,
             sersic_index=3.5,
         ),
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=0.8
         ),
     )
 
@@ -75,8 +74,7 @@ def simulate():
         redshift=1.0,
         light=al.lp.EllipticalSersic(
             centre=(0.0, 0.0),
-            axis_ratio=0.5,
-            phi=90.0,
+            elliptical_comps=(0.0, -0.333333),
             intensity=0.03,
             effective_radius=0.3,
             sersic_index=3.0,
@@ -137,7 +135,7 @@ phase = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
 )
 
 # %%
@@ -185,14 +183,13 @@ lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.9,
-        phi=45.0,
+        elliptical_comps=(0.0, 0.05),
         intensity=0.04,
         effective_radius=0.5,
         sersic_index=3.5,
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=0.8
+        centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=0.8
     ),
 )
 
@@ -200,8 +197,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.5,
-        phi=90.0,
+        elliptical_comps=(0.3, 0.0),
         intensity=0.03,
         effective_radius=0.3,
         sersic_index=3.0,

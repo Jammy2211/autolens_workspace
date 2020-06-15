@@ -39,8 +39,8 @@ bright central regions of the source or its faint exterior regions.
 
 
 In this tutorial, we'll learn that our magnification-based pixelization and constant regularization schemes are far
-from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same mass profile but
-with different sources whose light profiles become gradually more compact. For all 3 fits, we'll use the same
+from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same *MassProfile* but
+with different sources whose *LightProfile*s become gradually more compact. For all 3 fits, we'll use the same
 source-plane resolution and a regularization coefficient that maximize the Bayesian log evidence. Thus, these are the
 'best' source reconstructions we can hope to achieve when adapting to the magnification.
 """
@@ -61,8 +61,7 @@ source_galaxy_flat = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.7,
-        phi=135.0,
+        elliptical_comps=(0.0, 0.15),
         intensity=0.2,
         effective_radius=0.5,
         sersic_index=1.0,
@@ -73,8 +72,7 @@ source_galaxy_compact = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.7,
-        phi=135.0,
+        elliptical_comps=(0.0, 0.15),
         intensity=0.2,
         effective_radius=0.2,
         sersic_index=2.5,
@@ -85,8 +83,7 @@ source_galaxy_super_compact = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
-        axis_ratio=0.7,
-        phi=135.0,
+        elliptical_comps=(0.0, 0.15),
         intensity=0.2,
         effective_radius=0.1,
         sersic_index=4.0,
@@ -109,7 +106,7 @@ def simulate_for_source_galaxy(source_galaxy):
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -167,7 +164,7 @@ def fit_imaging_with_voronoi_magnification_pixelization(
     lens_galaxy = al.Galaxy(
         redshift=0.5,
         mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), axis_ratio=0.8, phi=45.0, einstein_radius=1.6
+            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
         ),
     )
 
@@ -184,7 +181,7 @@ def fit_imaging_with_voronoi_magnification_pixelization(
 
 # %%
 """
-Lets fit our first source with the flattest light profile. One should note that this uses the highest regularization 
+Lets fit our first source with the flattest *LightProfile*. One should note that this uses the highest regularization 
 coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
 

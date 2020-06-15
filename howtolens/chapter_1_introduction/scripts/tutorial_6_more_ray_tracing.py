@@ -49,7 +49,7 @@ objects.
 
 We'll also give the lens galaxy some attributes we didn't in the last tutorial:
 
-1) A light-profile, meaning its light will appear in the image.
+1) A *LightProfile*, meaning its light will appear in the image.
 
 2) An external shear, which accounts for the deflection of light due to line-of-sight structures.
 
@@ -63,9 +63,9 @@ lens_galaxy = al.Galaxy(
         centre=(0.0, 0.0), intensity=2.0, effective_radius=0.5, sersic_index=2.5
     ),
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), axis_ratio=0.8, phi=90.0, einstein_radius=1.6
+        centre=(0.0, 0.0), elliptical_comps=(0.0, -0.111111), einstein_radius=1.6
     ),
-    shear=al.mp.ExternalShear(magnitude=0.05, phi=45.0),
+    shear=al.mp.ExternalShear(elliptical_comps=(0.05, 0.0)),
 )
 
 print(lens_galaxy)
@@ -92,13 +92,13 @@ Lets have a quick look at the appearance of our lens galaxy and its satellite.
 """
 
 # %%
-aplt.Galaxy.profile_image(
+aplt.Galaxy.image(
     galaxy=lens_galaxy,
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Galaxy")),
 )
 
-aplt.Galaxy.profile_image(
+aplt.Galaxy.image(
     galaxy=lens_satellite,
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Satellite")),
@@ -134,7 +134,7 @@ aplt.Galaxy.deflections_x(
 # %%
 """
 Now, lets make two source galaxies at redshift 1.0. Lets not use the terms 'light' and 'mass' to setup the light and 
-mass profiles. Instead, lets use more descriptive names of what we think each component represents ( e.g. a 'bulge' 
+*MassProfile*s. Instead, lets use more descriptive names of what we think each component represents ( e.g. a 'bulge' 
 and 'disk').
 """
 
@@ -145,7 +145,10 @@ source_galaxy_0 = al.Galaxy(
         centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3
     ),
     disk=al.lp.EllipticalExponential(
-        centre=(0.1, 0.2), axis_ratio=0.8, phi=45.0, intensity=3.0, effective_radius=2.0
+        centre=(0.1, 0.2),
+        elliptical_comps=(0.111111, 0.0),
+        intensity=3.0,
+        effective_radius=2.0,
     ),
 )
 
@@ -153,8 +156,7 @@ source_galaxy_1 = al.Galaxy(
     redshift=1.0,
     disk=al.lp.EllipticalExponential(
         centre=(-0.3, -0.5),
-        axis_ratio=0.6,
-        phi=80.0,
+        elliptical_comps=(0.1, 0.0),
         intensity=8.0,
         effective_radius=1.0,
     ),
@@ -169,13 +171,13 @@ Lets look at our source galaxies (before lensing)
 """
 
 # %%
-aplt.Galaxy.profile_image(
+aplt.Galaxy.image(
     galaxy=source_galaxy_0,
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Source Galaxy 0")),
 )
 
-aplt.Galaxy.profile_image(
+aplt.Galaxy.image(
     galaxy=source_galaxy_1,
     grid=grid,
     plotter=aplt.Plotter(labels=aplt.Labels(title="Source Galaxy 1")),
@@ -203,9 +205,9 @@ We can next plot the tracer's profile image, which is compute as follows:
 
 1) First, using the image-plane grid, the images of the lens galaxy and its satellite are computed.
 
-2) Using the mass-profile's of the lens and satellite, their deflection angles are computed.
+2) Using the *MassProfile*'s of the lens and satellite, their deflection angles are computed.
 
-3) These deflection angles are summed, such that the deflection of light due to every mass-profile and both the lens 
+3) These deflection angles are summed, such that the deflection of light due to every *MassProfile* and both the lens 
 galaxy and its satellite is computed.
 
 4) These deflection angles are used to trace every image-grid coordinate to a source-plane coordinate.
@@ -214,7 +216,7 @@ galaxy and its satellite is computed.
 """
 
 # %%
-aplt.Tracer.profile_image(tracer=tracer, grid=grid)
+aplt.Tracer.image(tracer=tracer, grid=grid)
 
 # %%
 """
