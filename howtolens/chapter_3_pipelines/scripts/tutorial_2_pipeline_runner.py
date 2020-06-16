@@ -3,7 +3,7 @@
 Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can
 consist of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
 model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the degeneracies
-between the *MassProfile*s of the two galaxies can be severe.
+between the _MassProfile_s of the two galaxies can be severe.
 
 However, we can still break their analysis down using a pipeline and give ourselves a shot at getting a good lens
 model. Here, we're going to fit a double lens system, fitting as much about each individual lens galaxy before fitting
@@ -55,7 +55,7 @@ This rather long simulate function generates an image with two strong lens galax
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -131,13 +131,13 @@ Multi-galaxy ray-tracing is just a lot more complicated, which means so is model
 So, how can we break the lens modeling up? As follows:
 
 1) Fit and subtract the light of each lens galaxy individually - this will require some careful masking but is doable.
-2) Use these results to initialize each lens galaxy's *MassProfile*.
+2) Use these results to initialize each lens galaxy's _MassProfile_.
 
 So, with this in mind, we've written a pipeline composed of 4 phases:
 
-Phase 1) Fit the *LightProfile* of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
-Phase 2) Fit the *LightProfile* of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
-Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The *MassProfile*s of the two lens 
+Phase 1) Fit the _LightProfile_ of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+Phase 2) Fit the _LightProfile_ of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+Phase 3) Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens 
 galaxies can use the results of phases 1 and 2 to initialize their priors.
 Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 
@@ -162,10 +162,10 @@ Once you've done that, come back here and we'll wrap up this tutorial.
 # %%
 """
 And, we're done. This pipeline takes a while to run, as is the nature of multi-galaxy modeling. Nevertheless, 
-the techniques we've learnt above can be applied to systems with even more galaxies, albeit the increases in 
+the techniques we've learnt above can be applied to systems with even more _Galaxy_'s albeit the increases in 
 parameters will slow down the non-linear search. Here are some more Q&A's
 
-1) This system had two very similar lens galaxies, with comparable amounts of light and mass. How common is this? 
+1) This system had two very similar lens galaxy's with comparable amounts of light and mass. How common is this? 
 Does it make it harder to model them?
 
 Typically, a 2 galaxy system has 1 massive galaxy (that makes up some 80%-90% of the overall light and mass), 

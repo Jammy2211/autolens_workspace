@@ -30,7 +30,7 @@ A description of the general.ini config.
     grid_results_interval : int
 
         For a GridSearch non-linear optimization (currently not used in any template PyAutoLens pipelines) this
-        interval sets after how many samples on the grid output is performed for.
+        interval sets after how many samples on the _Grid_ output is performed for.
 
         A grid_results_interval of -1 turns off output.
 
@@ -102,21 +102,21 @@ A description of the general.ini config.
 
 [calculation_grid]
 
-    The calculation grid is used to compute lensing quantities that do not inherently need a grid to be passed to them
+    The calculation _Grid_ is used to compute lensing quantities that do not inherently need a _Grid_ to be passed to them
     for them to be calculated. For example, the critical curves and caustics of a mass model should be computed in
-    a way that does not need a grid to be input.
+    a way that does not need a _Grid_ to be input.
 
-    The calculation grid is the homogenous grid used to calculate all lensing quantities of this nature. It is computed
+    The calculation _Grid_ is the homogenous _Grid_ used to calculate all lensing quantities of this nature. It is computed
     as follows:
 
-    1) Draw a rectangular 'bounding box' around the *MassProfile*'s convergence profile, where the four side of the
+    1) Draw a rectangular 'bounding box' around the _MassProfile_'s convergence profile, where the four side of the
        the box are at threshold values of convergence.
 
-    2) Use a grid of this box to compute the desired lensing quantity (e.g. the critical curve).
+    2) Use a _Grid_ of this box to compute the desired lensing quantity (e.g. the critical curve).
 
-    In a future version of PyAutoLens the calculation grid will be adaptive, such that the values input into this config
+    In a future version of PyAutoLens the calculation _Grid_ will be adaptive, such that the values input into this config
     file are the desired precision of the quantitiy being calculated (e.g. the area of the critical curve should not
-    change as the grid resolution is increased within a threshold value). Unfortunately, we've not yet had time
+    change as the _Grid_ resolution is increased within a threshold value). Unfortunately, we've not yet had time
     to implement this adaptive grid.
 
     convergence_threshold : float
@@ -125,7 +125,7 @@ A description of the general.ini config.
 
     pixels : int
 
-        The shape_2d of the grid inside the bounding box from which the lensing quantitiy is computed (e.g. it is shape
+        The shape_2d of the _Grid_ inside the bounding box from which the lensing quantitiy is computed (e.g. it is shape
         (pixels, pixels)).
 
 [inversion]
@@ -133,11 +133,11 @@ A description of the general.ini config.
     interpolated_grid_shape : str {image_grid, source_grid}
 
         In order to output inversion reconstructions (which could be on a Voronoi grid) to a .fits file, the
-        reconstruction is interpolated to a square grid of pixels. This option determines this grid:
+        reconstruction is interpolated to a square _Grid_ of pixels. This option determines this grid:
 
-            image_grid - The interpolated grid is the same shape, resolution and centering as the observed image-data.
+            image_grid - The interpolated _Grid_ is the same shape, resolution and centering as the observed image-data.
 
-            source_grid - The interpolated grid is zoomed to over-lay the source-plane reconstructed source and uses
+            source_grid - The interpolated _Grid_ is zoomed to over-lay the source-plane reconstructed source and uses
                           dimensions derived from the number of pixels used by the reconstruction.
 
     inversion_pixel_limit_overall : int

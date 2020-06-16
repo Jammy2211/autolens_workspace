@@ -27,9 +27,9 @@ something that we can write down analytically and its inherently non-linear. But
 we put the same set of lens model parameters into it, we'll compute the same log likelihood.
 
 We can write our log_likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
-*MassProfile* and *LightProfile* parameters):
+_MassProfile_ and _LightProfile_ parameters):
 
-f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's tracer and lens_fit.
+f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's _Tracer_ and lens_fit.
 
 The point is, like we did for the simple functions above, we again have a parameter space! It can't be written
 down analytically and its undoubtedly very complex and non-linear. Fortunately, we've already learnt how to search
@@ -45,7 +45,7 @@ and open the 'pdf_triangle.png' figure. The Gaussian shaped lines running down t
 
 The remaining figures, which look like contour-maps, show the maximum log likelihood regions in 2D between every parameter
 pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other leads to a
-similar log_likelihood value. The 2D PDF between the source galaxy's *LightProfile*'s intensity (I_l4) and effective
+similar log_likelihood value. The 2D PDF between the source-galaxy's _LightProfile_'s intensity (I_l4) and effective
 radius (R_l4) shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is similar to
 making it fainter and bigger!
 
@@ -57,7 +57,7 @@ These are our 'priors' - which define where we tell the non-linear search to sea
 two types of prior:
 
 1) UniformPrior - The values of a parameter are randomly drawn between a lower and upper limit. For example, the
-orientation angle phi of a profile typically assumes a uniform prior between 0.0 and 180.0 degrees.
+orientation angle phi of a _Profile_ typically assumes a uniform prior between 0.0 and 180.0 degrees.
 
 2) GaussianPrior - The values of a parameter are randomly drawn from a Gaussian distribution with a mean value and a
 width sigma. For example, an Einstein radius might assume a mean value of 1.0" and width of sigma = 1.0".
@@ -67,8 +67,8 @@ The default priors on all parameters can be found by navigating to the 'config/j
 config files like light_profiles.json. The convention is as follow:
 
 {
-    "SphericalIsothermal": { <- The name of the profile we are defining the default priors of.
-        "einstein_radius": { <- The parameter of the profile we are defining the default priors of.
+    "SphericalIsothermal": { <- The name of the _Profile_ we are defining the default priors of.
+        "einstein_radius": { <- The parameter of the _Profile_ we are defining the default priors of.
             "type": "Gaussian", <- The type of prior, in this case a GaussianPrior (other priors are Uniform, LogUniform, etc.)
             "lower_limit": 0.0, <- The lower physical limit allowed for values of this parameter.
             "upper_limit": "inf", <- The upper physical limit allowed for values of this parameter.
@@ -115,7 +115,7 @@ This function simulates the data we'll fit in this tutorial - which is identical
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
@@ -168,14 +168,14 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential)
 
 # %%
 """
-To change priors, we use the 'prior' module of PyAutoFit (imported as af). These priors link our GalaxyModel to the 
+To change priors, we use the 'prior' module of PyAutoFit (imported as af). These priors link our _GalaxyModel_ to the 
 non-linear search. Thus, it tells PyAutoLens where to search non-linear parameter space.
 
-These two lines change the centre of the lens galaxy's *MassProfile* to UniformPriors around the coordinates 
+These two lines change the centre of the lens galaxy's _MassProfile_ to UniformPriors around the coordinates 
 (-0.1", 0.1"). For real lens modeling, this might be done by visually inspecting the centre of emission of the lens 
-galaxy's light.
+_Galaxy_'s light.
 
-The word 'mass' corresponds to the word we used when setting up the GalaxyModel above.
+The word 'mass' corresponds to the word we used when setting up the _GalaxyModel_ above.
 """
 
 # %%

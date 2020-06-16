@@ -21,14 +21,14 @@ This is a big triangle. As we fit models using more and more parameters, its onl
 
 As usual, you should notice some clear degeneracies between:
 
-1) The size (effective_radius, R_l) and intensity (intensity, I_l) of the *LightProfile*s.
-2) The mass normalization (einstein_radius, /Theta_m) and ellipticity (axis_ratio, q_m) of *MassProfile*s.
+1) The size (effective_radius, R_l) and intensity (intensity, I_l) of the _LightProfile_s.
+2) The mass normalization (einstein_radius, /Theta_m) and ellipticity (axis_ratio, q_m) of _MassProfile_s.
 
 This isn't surprising. You can produce similar looking galaxies by trading out intensity for size, and you can
 produce similar mass distributions by compensating for a loss in lens mass by making it a bit less elliptical.
 
-What do you notice about the contours between the lens galaxy's *LightProfile* and its *MassProfile* / the source
-galaxy's *LightProfile*? Look again.
+What do you notice about the contours between the lens galaxy's _LightProfile_ and its _MassProfile_ / the source
+_Galaxy_'s _LightProfile_? Look again.
 
 That's right - they're not degenerate. The covariance between these sets of parameters is minimal. Again, this makes
 sense - why would fitting the lens's light (which is an elliptical blob of light) be degenerate with fitting the
@@ -41,7 +41,7 @@ in this tutorial, using a pipeline composed of a modest 3 phases:
 
 Phase 1) Fit the lens galaxy's light, ignoring the source.
 
-Phase 2) Fit the source galaxy's light, ignoring the lens.
+Phase 2) Fit the source-galaxy's light, ignoring the lens.
 
 Phase 3) Fit both simultaneously, using these results to initialize our starting location in parameter space.
 
@@ -98,7 +98,7 @@ The same simulate function we used in chapter 2.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 

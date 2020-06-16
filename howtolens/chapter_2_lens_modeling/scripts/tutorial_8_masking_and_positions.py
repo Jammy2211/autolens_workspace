@@ -35,7 +35,7 @@ Lets simulate the simple image we've used throughout this chapter.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
@@ -213,7 +213,7 @@ positions which each have to trace to within the position threshold of one anoth
 # %%
 def simulate_two_galaxies():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 

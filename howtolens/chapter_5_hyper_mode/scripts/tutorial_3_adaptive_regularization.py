@@ -25,7 +25,7 @@ This is the usual simulate function, using the compact source of the previous tu
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -176,8 +176,8 @@ Yep, and we again get an increase beyond 200! Of course, combining the adaptive 
 only further benefit our lens modeling!
 
 However, as shown below, we don't fit the source as well as the morphology based pixelization did in the last chapter. 
-This is because although the adaptive regularization scheme improves the fit, the magnification based grid simply 
-*does not*  have sufficient resolution to resolve the source's cuspy central *LightProfile*.
+This is because although the adaptive regularization scheme improves the fit, the magnification based _Grid_ simply 
+*does not*  have sufficient resolution to resolve the source's cuspy central _LightProfile_.
 """
 
 # %%
@@ -204,7 +204,7 @@ hyper-galaxy-image.
 
 2) Divide every pixel-signal by the number of image-pixels that map directly to that source-pixel. In doing so, all 
 pixel-signals are 'relative'. This means that source-pixels which by chance map to more image-pixels than their 
-neighbors will not have a higher pixel-signal, and visa versa. This ensures the specific pixelization grid does impact 
+neighbors will not have a higher pixel-signal, and visa versa. This ensures the specific pixelization _Grid_ does impact 
 the adaptive regularization pattern.
 
 3) Divide the pixel-signals by the maximum pixel signal so that they range between 0.0 and 1.0.

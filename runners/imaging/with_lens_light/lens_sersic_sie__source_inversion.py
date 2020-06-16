@@ -124,6 +124,11 @@ paths are 'tagged' with the string 'no_shear'.
 
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
+
+The 'phase_folders' below specify the path the pipeline results are written to, which is:
+
+    'autolens_workspace/output/dataset_label/dataset_name/' 
+    'autolens_workspace/output/imaging/lens_sersic_sie__source_sersic/'
 """
 
 # %%
@@ -135,15 +140,10 @@ setup = al.PipelineSetup(
 
 # %%
 """
-__Pipeline Run__
+__Pipeline Creation__
 
-To run a pipeline we import it from the pipelines folder, make it and pass the lens data to its run function.
-
-The 'phase_folders' below specify the path the pipeliine results are written to. Our output will go to the path
-'autolens_workspace/output/dataset_label/dataset_name/' 
-
-Or equivalently:
-'autolens_workspace/output/imaging/lens_sie__source_sersic/'
+To create a pipeline we import it from the pipelines folder and run its 'make_pipeline' function, inputting the 
+*Setup* and *PhaseSettings* above.
 """
 
 # %%
@@ -155,4 +155,12 @@ pipeline = lens_sersic_sie__source_inversion.make_pipeline(
     phase_folders=["pipelines", dataset_label, dataset_name],
 )
 
+# %%
+"""
+__Pipeline Run__
+
+Running a pipeline is the same as running a phase, we simply pass it our lens dataset and mask to its run function.
+"""
+
+# %%
 pipeline.run(dataset=imaging, mask=mask)

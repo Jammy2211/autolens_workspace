@@ -3,12 +3,12 @@ import autolens as al
 
 # All pipelines begin with a comment describing the pipeline and a phase-by-phase description of what it does.
 
-# In this pipeline, we'll perform a basic analysis which fits a source galaxy using a parametric *LightProfile* and a
+# In this pipeline, we'll perform a basic analysis which fits a source galaxy using a parametric _LightProfile_ and a
 # lens galaxy where its light is included and fitted, using three phases:
 
-# Phase 1) Fit the lens galaxy's light using an elliptical Sersic *LightProfile*.
+# Phase 1) Fit the lens galaxy's light using an elliptical Sersic _LightProfile_.
 
-# Phase 2) Use this lens subtracted image to fit the lens galaxy's mass (SIE) and source galaxy's light (Sersic).
+# Phase 2) Use this lens subtracted image to fit the lens galaxy's mass (SIE) and source-galaxy's light (Sersic).
 
 # Phase 3) Fit the lens's light, mass and source's light simultaneously using priors initialized from the above 2 phases.
 
@@ -53,7 +53,7 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 2 ###
 
-    # In phase 2, we fit the source galaxy's light. Thus, we want to fix the lens light model to the model inferred
+    # In phase 2, we fit the source-galaxy's light. Thus, we want to fix the lens light model to the model inferred
     # in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
     # 'instance' object, a trick we'll use again in the next pipeline in this chapter.
 
@@ -120,14 +120,14 @@ def make_pipeline(phase_folders=None):
 
     # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
     # you can simply set the source galaxy equal to one another without specifying each parameter of every
-    # light and *MassProfile*.
+    # light and _MassProfile_.
 
     source = (
         phase2.result.model.galaxies.source
     )  # This is identical to lines 196-203 above.
 
-    # For the lens galaxies we have a slightly weird circumstance where the *LightProfile*s requires the
-    # results of phase 1 and the *MassProfile* the results of phase 2. When passing these as a 'model', we
+    # For the lens galaxies we have a slightly weird circumstance where the _LightProfile_s requires the
+    # results of phase 1 and the _MassProfile_ the results of phase 2. When passing these as a 'model', we
     # can split them as follows
 
     lens.light = phase1.result.model.galaxies.lens.light

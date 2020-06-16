@@ -1,13 +1,13 @@
 # %%
 """
-Up to now, we've not paid much attention to the source galaxy's morphology. We've assumed its a single-component
+Up to now, we've not paid much attention to the source-galaxy's morphology. We've assumed its a single-component
 exponential profile, which is a fairly crude assumption. A quick look at any image of a real galaxy reveals a
 wealth of different structures that could be present - bulges, disks, bars, star-forming knots and so on. Furthermore,
 there could be more than one source-galaxy!
 
 In this example, we'll explore how far we can get trying to_fit a complex source using a pipeline. Fitting complex
 source's is an exercise in diminishing returns. Each component we add to our source model brings with it an
-extra 5-7, parameters. If there are 4 components, or multiple galaxies, we're quickly entering the somewhat nasty
+extra 5-7, parameters. If there are 4 components, or multiple _Galaxy_'s we're quickly entering the somewhat nasty
 regime of 30-40+ parameters in our non-linear search. Even with a pipeline, that is a lot of parameters to fit!
 """
 
@@ -49,7 +49,7 @@ This function simulates an image with a complex source.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

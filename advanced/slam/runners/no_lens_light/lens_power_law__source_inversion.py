@@ -70,13 +70,14 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 settings = al.PhaseSettingsImaging(
     grid_class=al.Grid,
+    sub_size=2,
     grid_inversion_class=al.GridInterpolate,
     pixel_scales_interp=0.1,
     inversion_pixel_limit=1500,
 )
 
 """
-__PIPELINE SETUP + SETTINGS__
+__PIPELINE SETUP__
 
 Advanced pipelines still use hyper settings, which customize the hyper-mode features and inclusion of a shear.
 """
@@ -97,7 +98,11 @@ mass = al.slam.Mass()
 
 slam = al.slam.SLaM(hyper=hyper, source=source, light=light, mass=mass)
 
-"""We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!"""
+"""
+__PIPELINE CREATION__
+
+We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
+"""
 
 from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.parametric import (
     lens_sie__source_sersic,
@@ -118,7 +123,7 @@ from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.power_law imp
     lens_power_law__source,
 )
 
-mass__mlr_nfw = lens_power_law__source.make_pipeline(
+mass__power_law = lens_power_law__source.make_pipeline(
     slam=slam, settings=settings, phase_folders=["slam", dataset_label]
 )
 
@@ -130,6 +135,6 @@ We finally add the pipelines above together, meaning they will run back-to-back,
 phases to later phases.
 """
 
-pipeline = source__parametric + source__inversion + mass__mlr_nfw
+pipeline = source__parametric + source__inversion + mass__power_law
 
 pipeline.run(dataset=imaging, mask=mask)

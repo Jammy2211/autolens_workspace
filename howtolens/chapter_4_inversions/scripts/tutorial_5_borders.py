@@ -19,7 +19,7 @@ To begin, lets simulate a simple image and use it to generate a rectangular mapp
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -168,7 +168,7 @@ aplt.Inversion.reconstruction(
 
 # %%
 """
-Woah - whats happened? There are lots of extra points on our source-plane grid which trace to extremely large radii 
+Woah - whats happened? There are lots of extra points on our source-plane _Grid_ which trace to extremely large radii 
 away from the central regions of the source-plane! These points are traced image-pixels (just like all the other points) 
 which correspond to the central image-pixels that our annular mask masked but that our circular mask didn't!
 
@@ -193,7 +193,7 @@ aplt.Mapper.subplot_image_and_mapper(
 
 # %%
 """
-So, whats happening physically? Towards the centre of our EllipticalIsothermal *MassProfile* the density profile becomes 
+So, whats happening physically? Towards the centre of our EllipticalIsothermal _MassProfile_ the density _Profile_ becomes 
 extremely cuspy (rising very sharply). This cause extremely large deflection angles to be computed - lets have a quick 
 look.
 """
@@ -212,12 +212,12 @@ distribution we would see the central image.
 This is a problem for our pixelization and mapper, which in the source-plane fits these demagnified pixels like any 
 other pixels. This has two negative consequences:
 
-1) The rectangular grid we 'overlay' over the source-plane is much larger than for the annular mask because it has to 
+1) The rectangular _Grid_ we 'overlay' over the source-plane is much larger than for the annular mask because it has to 
 expand to include the demagnified image-pixels. As a result, large source-pixels are used to reconstruct the central 
 regions of the source-plane (where the source galaxy is actually located), meaning we reconstruct the source-galaxy at 
 a lower effective resolution.
 
-2) The rectangular grid reconstructs the flux of the demanigified image pixels using source-pixels which contain 
+2) The rectangular _Grid_ reconstructs the flux of the demanigified image pixels using source-pixels which contain 
 *only* demagnified image pixels. However, these source-pixels *should* have other image-pixels traced within them from 
 pixels at large radii from the centre of the lens galaxy. Unfortunately, our circular mask masks these pixels out, 
 meaning they do not make it to our source-plane and are omitted from the source reconstruction.
@@ -283,7 +283,7 @@ centre of mask, but anywhere in the mask, trace beyond the source-plane border.
 # %%
 def simulate_image_x2_lenses():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

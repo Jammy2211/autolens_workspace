@@ -5,23 +5,23 @@ __Non-linear Search__
 In this example, we're going to find a lens model that provides a good fit to an image, without assuming any knowledge
 of what the 'correct' lens model is.
 
-So, whats a 'lens model'? It is the combination of *LightProfile*s and *MassProfile*s we use to represent a lens galaxy,
+So, whats a 'lens model'? It is the combination of _LightProfile_s and _MassProfile_s we use to represent a lens galaxy,
 source galaxy and therefore the strong lens ray-tracing configuration (i.e. a tracer).
 
 To begin, we have to choose the parametrization of our lens model. We don't need to specify the values of its light
-and *MassProfile*s (e.g. the centre, einstein_radius, etc.) - only the profiles themselves. In this example,
+and _MassProfile_s (e.g. the centre, einstein_radius, etc.) - only the profiles themselves. In this example,
 we'll use the following lens model:
 
 1) A spherical Isothermal Sphere (SIS) for the lens galaxy's mass.
-2) A spherical exponential *LightProfile* for the source galaxy's light.
+2) A spherical exponential _LightProfile_ for the source-galaxy's light.
 
 I'll let you into a secret - this is the same lens model used to Simulate the Imaging data we're going to fit and
 we're going to infer the actual parameters I used.
 
-So, how do we infer the light and *MassProfile* parameters that give a good fit to our data?
+So, how do we infer the light and _MassProfile_ parameters that give a good fit to our data?
 
 Well, we could randomly guess a lens model, corresponding to some random set of parameters. We could use this
-lens model to create a tracer and fit the image-data, and quantify how good the fit was using its log likelihood
+lens model to create a _Tracer_ and fit the image-data, and quantify how good the fit was using its log likelihood
 (recall chapter_1/tutorial_8). If we kept guessing lens models, eventually we'd find one that provides a good fit
 (i.e. high log_likelihood) to the data!
 
@@ -38,10 +38,10 @@ We're going to use a non-linear search algorithm called 'MultiNest'. I highly re
 lens modeling. However, for now, lets not worry about the details of how MultiNest actually works. Instead, just
 picture that a non-linear search in PyAutoLens operates as follows:
 
-1) Randomly guess a lens model and use its *LightProfile*s and *MassProfile*s to set up a lens galaxy, source galaxy
-and a tracer.
+1) Randomly guess a lens model and use its _LightProfile_s and _MassProfile_s to set up a lens galaxy, source galaxy
+and a _Tracer_.
 
-2) Pass this tracer through the fitting module, generating a model image and comparing this model image to the
+2) Pass this _Tracer_ through the fitting module, generating a model image and comparing this model image to the
 observed strong lens imaging data. This computes a log likelihood.
 
 3) Repeat this many times, using the likelihoods of previous fits (typically those with a high log_likelihood) to
@@ -88,7 +88,7 @@ This function simulates the image we'll fit in this tutorial.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
@@ -138,11 +138,11 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # %%
 """
-To compute a lens model, we use a GalaxyModel, which behaves analogously to the Galaxy objects we're now used to. 
-However, whereas for a Galaxy we manually specified the value of every parameter of its *LightProfile*s and 
-*MassProfile*s, for a GalaxyModel these are inferred by the non-linear search.
+To compute a lens model, we use a GalaxyModel, which behaves analogously to the _Galaxy_ objects we're now used to. 
+However, whereas for a _Galaxy_ we manually specified the value of every parameter of its _LightProfile_s and 
+_MassProfile_s, for a _GalaxyModel_ these are inferred by the non-linear search.
 
-Lets model the lens galaxy with an SIS *MassProfile* (which is what it was simulated with).
+Lets model the lens galaxy with an SIS _MassProfile_ (which is what it was simulated with).
 """
 
 # %%
@@ -150,7 +150,7 @@ lens_galaxy_model = al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal)
 
 # %%
 """
-Lets model the source galaxy with a spherical exponential *LightProfile* (again, what it was simulated with).
+Lets model the source galaxy with a spherical exponential _LightProfile_ (again, what it was simulated with).
 """
 
 # %%

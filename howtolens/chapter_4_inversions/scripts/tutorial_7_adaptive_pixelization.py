@@ -3,7 +3,7 @@
 __Adaptive Pixelization__
 
 In this tutorial we'll use a new pixelization, called the VoronoiMagnification pixelization. This pixelization
- doesn't use a uniform grid of rectangular pixels, but instead uses an irregular 'Voronoi' pixels. So, why do we
+ doesn't use a uniform _Grid_ of rectangular pixels, but instead uses an irregular 'Voronoi' pixels. So, why do we
  want to do that? Lets take another quick look at the rectangular grid..
 """
 
@@ -21,7 +21,7 @@ This simulates the same the image we've fitted in the past few tutorials.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -128,10 +128,10 @@ source reconstruction will be unecessarily complex (and therefore lower log_evid
 
 If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions of 
 the source-plane, we could reconstruct the source using far fewer pixels. That'd be great both for computational 
-efficiency and increasing the Bayesian log evidence and that is exactly what our Voronoi grid does.
+efficiency and increasing the Bayesian log evidence and that is exactly what our Voronoi _Grid_ does.
 
 To achieve this, we first compute an 'image-plane sparse grid', which is a set of sparse coordinates in the image-plane 
-that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute this grid 
+that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute this _Grid_ 
 directly from a pixelization, by passing it a grid.
 """
 
@@ -142,7 +142,7 @@ image_plane_sparse_grid = adaptive.sparse_grid_from_grid(grid=masked_imaging.gri
 
 # %%
 """
-We can plot this grid over the image, to see that it is a coarse grid over-laying the image itself.
+We can plot this _Grid_ over the image, to see that it is a coarse _Grid_ over-laying the image itself.
 """
 
 # %%
@@ -151,7 +151,7 @@ aplt.Imaging.image(imaging=imaging, grid=image_plane_sparse_grid, mask=mask)
 # %%
 """
 When we pass a tracer a source galaxy with this pixelization it automatically computes the ray-traced source-plane 
-Voronoi grid using the grid above. Thus, our Voronoi pixelization is used by the tracer's fit.
+Voronoi _Grid_ using the _Grid_ above. Thus, our Voronoi pixelization is used by the tracer's fit.
 """
 
 # %%
@@ -190,7 +190,7 @@ aplt.Inversion.reconstruction(
 
 # %%
 """
-Clearly, this is an improvement. We're using fewer pixels than the rectangular grid (400, instead of 1600), but 
+Clearly, this is an improvement. We're using fewer pixels than the rectangular _Grid_ (400, instead of 1600), but 
 reconstructing our source is far greater detail. A win all around? It sure is.
 
 On our rectangular grid, we regularized each source pixel with its 4 neighbors. We compared their fluxes, summed 
@@ -199,11 +199,11 @@ now comparing each source-pixel with all other source-pixels with which it share
 different source-pixels may be regularized with different numbers of source-pixels, depending on how many neighbors 
 are formed.
 
-This Voronoi magnification grid is still far from optimal. There are lots of source-pixels effectively fitting just 
+This Voronoi magnification _Grid_ is still far from optimal. There are lots of source-pixels effectively fitting just 
 noise. We may achieve even better solutions if the central regions of the source were reconstructed using even more 
 pixels. So, how do we improve on this? Well, you'll have to wait until chapter 5, when we introduce PyAutoLens's 
 adaptive functionality, or 'hyper-mode'.
 
-In the mean time, you may wish to experiment with using both Rectangular and VoronoiMagnification grids to fit 
+In the mean time, you may wish to experiment with using both Rectangular and VoronoiMagnification _Grid_'s to fit 
 lenses which can be easily achieve by changing the input pixeliation given to a pipeline.
 """

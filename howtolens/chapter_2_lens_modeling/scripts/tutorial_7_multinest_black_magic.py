@@ -39,13 +39,13 @@ conf.instance = conf.Config(
 # %%
 """
 This function simulates the image we'll fit in this tutorial. Unlike previous tutorial images, it includes the 
-*LightProfile* of the lens galaxy.
+_LightProfile_ of the lens galaxy.
 """
 
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 

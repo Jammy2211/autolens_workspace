@@ -3,11 +3,11 @@ import autolens as al
 
 # This pipeline fits a strong lens which has two lens galaxies. It is composed of the following 4 phases:
 
-# Phase 1) Fit the *LightProfile* of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+# Phase 1) Fit the _LightProfile_ of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
 
-# Phase 2) Fit the *LightProfile* of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+# Phase 2) Fit the _LightProfile_ of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
 
-# Phase 3) Use this lens-subtracted image to fit the source galaxy's light. The *MassProfile*s of the two lens galaxies
+# Phase 3) Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens galaxies
 #          can use the results of phases 1 and 2 to initialize their priors.
 
 # Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
@@ -33,7 +33,7 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 1 ###
 
-    # Let's restrict the priors on the centres around the pixel we know the galaxy's light centre peaks.
+    # Let's restrict the priors on the centres around the pixel we know the _Galaxy_'s light centre peaks.
 
     left_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
 
@@ -94,8 +94,8 @@ def make_pipeline(phase_folders=None):
     # In the next phase, we fit the source of the lens subtracted image. We will of course use fixed lens light
     # models for both the left and right lens galaxies.
 
-    # We're going to link the centres of the *LightProfile*s computed above to the centre of the lens galaxy
-    # *MassProfile*s in this phase. Because the centres of the *MassProfile*s were fixed in phases 1 and 2,
+    # We're going to link the centres of the _LightProfile_s computed above to the centre of the lens galaxy
+    # _MassProfile_s in this phase. Because the centres of the _MassProfile_s were fixed in phases 1 and 2,
     # linking them using the 'variable' attribute means that they stay constant (which for now, is what we want).
 
     left_lens = al.GalaxyModel(
@@ -135,9 +135,9 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 4 ###
 
-    # In phase 4, we'll fit both lens galaxy's light and *MassProfile*s, as well as the source-galaxy, simultaneously.
+    # In phase 4, we'll fit both lens galaxy's light and _MassProfile_s, as well as the source-galaxy, simultaneously.
 
-    # Results are split over multiple phases, so we setup the light and *MassProfile*s of each lens separately.
+    # Results are split over multiple phases, so we setup the light and _MassProfile_s of each lens separately.
 
     left_lens = al.GalaxyModel(
         redshift=0.5,
@@ -152,7 +152,7 @@ def make_pipeline(phase_folders=None):
     )
 
     # When we pass a a 'model' galaxy from a previous phase, parameters fixed to constants remain constant.
-    # Because centre_0 and centre_1 of the *MassProfile* were fixed to constants in phase 3, they're still
+    # Because centre_0 and centre_1 of the _MassProfile_ were fixed to constants in phase 3, they're still
     # constants after the line after. We need to therefore manually over-ride their priors.
 
     left_lens.mass.centre_0 = phase3.result.model.galaxies.left_lens.mass.centre_0

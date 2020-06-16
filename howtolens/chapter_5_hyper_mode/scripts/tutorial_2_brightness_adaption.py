@@ -30,7 +30,7 @@ This is the usual simulate function, using the compact source of the previous tu
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -364,7 +364,7 @@ So, why do you think why adapting to the source's brightness increases the log e
 
 It is because by adapting to the source's morphology we can now access solutions that fit the data really well 
 (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other al. For instance, a typical 
-magnification based grid uses resolutions of 40 x 40, or 1600 pixels. In contrast, a morphology based grid typically 
+magnification based _Grid_ uses resolutions of 40 x 40, or 1600 pixels. In contrast, a morphology based _Grid_ typically 
 uses just 300-800 pixels (depending on the source itself). Clearly, the easiest way to make our source solution simpler 
 is to use fewer pixels overall!
 

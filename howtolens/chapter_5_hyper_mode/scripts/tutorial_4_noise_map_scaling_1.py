@@ -30,7 +30,7 @@ This is the usual simulate function, using the compact source of the previous tu
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -182,7 +182,7 @@ with our lens's mass model!
 This poses a major problem for our model-fitting. A small subset of our data has such large chi-squared values the 
 non-linear search is going to seek solutions which reduce only these chi-squared values. For the image above, a 
 small subset of our data (e.g. < 5% of pixels) contributes to the majority of our log_likelihood (e.g. > 95% of the overall 
-chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness profile of 
+chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness _Profile_ of 
 the lensed source galaxy to constrain our lens model, we end up using only a small subset of its brightest pixels.
 
 This is even more problematic when we try and use the Bayesian log evidence to objectively quantify the quality of the 
@@ -262,7 +262,7 @@ We compute the contribution map as follows:
 
 3) Divide the image created in step 2) by its maximum value, such that all pixels range between 0.0 and 1.0.
 
-Lets look at a few contribution maps, generated using hyper-galaxy's with different contribution factors.
+Lets look at a few contribution maps, generated using hyper-_Galaxy_'s with different contribution factors.
 """
 
 # %%

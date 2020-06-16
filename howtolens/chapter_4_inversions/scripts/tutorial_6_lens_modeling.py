@@ -26,7 +26,7 @@ This is the usual simulate function.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -158,11 +158,11 @@ incorrect lens model (e.g. a local maxima).
 
 There is no simple fix for this. The reality is that for an inversion these solutions exist. This is why pipelines 
 were initially conceived - as they offer a simple solution to this problem. We build a pipelin that begins by 
-modeling the source galaxy as a *LightProfile*, 'initializing' our lens mass model. Then, when we switch to an 
+modeling the source galaxy as a _LightProfile_, 'initializing' our lens mass model. Then, when we switch to an 
 inversion in the next phase, our mass model starts in the correct regions of parameter space and doesn'tget lost 
 sampling these incorrect solutions.
 
-Its not ideal, but its also not a big problem. Furthermore, *LightProfile*s run faster computationally than inversions, 
+Its not ideal, but its also not a big problem. Furthermore, _LightProfile_s run faster computationally than inversions, 
 so we'd probably want to do this anyway!
 """
 
@@ -170,13 +170,13 @@ so we'd probably want to do this anyway!
 """
 Okay, so we've covered incorrect solutions, lets end by noting that we can model profiles and inversions at the same 
 time. We do this when we want to simultaneously fit and subtract the light of a lens galaxy and reconstruct its lensed 
-source using an inversion. To do this, all we have to do is give the lens galaxy a *LightProfile*.
+source using an inversion. To do this, all we have to do is give the lens galaxy a _LightProfile_.
 """
 
 # %%
 def simulate_lens_with_light_profile():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -228,7 +228,7 @@ mask = al.Mask.circular(
 
 # %%
 """
-As I said above, performing this fit is the same as usual, we just give the lens galaxy a *LightProfile*.
+As I said above, performing this fit is the same as usual, we just give the lens galaxy a _LightProfile_.
 """
 
 # %%

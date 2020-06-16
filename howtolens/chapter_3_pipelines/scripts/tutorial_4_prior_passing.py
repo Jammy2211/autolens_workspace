@@ -43,7 +43,7 @@ being a good balance broadly sampling parameter space but not being so narrow im
 are two ways a value is specified using the priors/width file:
 
 1) Absolute value - 'a' - In this case, the error assumed on the parameter is the value given in the config file. For 
-example, for the width on centre_0 of a *LightProfile*, the config file reads centre_0 = a, 0.05. This means if the 
+example, for the width on centre_0 of a _LightProfile_, the config file reads centre_0 = a, 0.05. This means if the 
 error on the parameter centre_0 was less than 0.05 in the previous phase, the sigma of its GaussianPrior in this 
 phase will be 0.05.
 
@@ -53,12 +53,12 @@ in the config file is specified as intensity = r, 0.5, then the sigma of the Gau
 best-fit value, i.e. sigma = 0.5 * 2.0 = 1.0.
 
 We use absolute and relative values for different parameters, depending on their properties. For example, using the 
-relative value of a parameter like the profile centre makes no sense. If our lens galaxy is centred at (0.0, 0.0), the
+relative value of a parameter like the _Profile_ centre makes no sense. If our lens galaxy is centred at (0.0, 0.0), the
 relative error will always be tiny and thus poorly defined. Therefore, the default configs in PyAutoLens use absolute 
 errors on the centre.
 
 However, there are parameters where using an absolute value does not make sense. Intensity is a good example of this. 
-The intensity of an image depends on its unit_label, S/N, galaxy brightness, profile definition, etc. There is no 
+The intensity of an image depends on its unit_label, S/N, galaxy brightness, _Profile_ definition, etc. There is no 
 single absolute value that one can use to generically link the intensity of any two proflies. Thus, it makes more 
 sense to link them using the relative value from a previous phase.
 
@@ -75,7 +75,7 @@ phase 2, we would write:
 
 # %%
 """
-The prior on the lens galaxy's sersic *LightProfile* would thus be a GaussianPrior in phase 2, with mean=4.0 and 
+The prior on the lens galaxy's sersic _LightProfile_ would thus be a GaussianPrior in phase 2, with mean=4.0 and 
 sigma=2.0.
 
 If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the 

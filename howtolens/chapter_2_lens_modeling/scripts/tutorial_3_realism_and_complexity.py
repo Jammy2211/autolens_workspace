@@ -3,7 +3,7 @@
 __Realism and Complexity__
 
 Up to now, we've fitted some fairly crude and unrealistic lens models. For example, we've modeled the lens galaxy's
-mass as a sphere. Given most lens galaxies are 'elliptical' galaxies, we should probably model their mass as
+mass as a sphere. Given most lens galaxies are 'elliptical' _Galaxy_'s we should probably model their mass as
 elliptical! We've also omitted the lens galaxy's light, which typically outshines the source galaxy.
 
 In this example, we'll start using a more realistic lens model.
@@ -11,9 +11,9 @@ In this example, we'll start using a more realistic lens model.
 In my experience, the simplest lens model (e.g. that has the fewest parameters) that provides a good fit to real
 strong lenses is as follows:
 
-1) An elliptical Sersic *LightProfile* for the lens galaxy's light.
-2) A singular isothermal ellipsoid (SIE) *MassProfile* for the lens galaxy's mass.
-3) An elliptical exponential *LightProfile* for the source galaxy's light (to be honest, this is too simple, but
+1) An elliptical Sersic _LightProfile_ for the lens galaxy's light.
+2) A singular isothermal ellipsoid (SIE) _MassProfile_ for the lens galaxy's mass.
+3) An elliptical exponential _LightProfile_ for the source-galaxy's light (to be honest, this is too simple, but
 lets worry about that later).
 
 This has a total of 18 non-linear parameters, which is over double the number of parameters we've fitted up to now.
@@ -52,7 +52,7 @@ Another simulate image function, which generates a different Imaging data-set fr
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -178,7 +178,7 @@ masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 
 aplt.Imaging.image(imaging=imaging, mask=mask)
 
-# Make the tracer we use to Simulate the Imaging data
+# Make the _Tracer_ we use to Simulate the Imaging data
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     light=al.lp.EllipticalSersic(
@@ -208,7 +208,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # %%
 """
-Now, lets fit the lens-data with the tracer and plot the fit. It looks a lot better than above, doesn't it?
+Now, lets fit the lens-data with the _Tracer_ and plot the fit. It looks a lot better than above, doesn't it?
 """
 
 # %%

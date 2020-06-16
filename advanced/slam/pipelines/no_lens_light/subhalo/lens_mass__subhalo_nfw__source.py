@@ -39,7 +39,7 @@ def make_pipeline(
     phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    number_of_steps=5,
+    grid_size=5,
     parallel=False,
 ):
 
@@ -78,9 +78,8 @@ def make_pipeline(
     subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
 
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
-    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
-    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.0, upper_limit=2.0)
-
+    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
     subhalo.mass.redshift_object = subhalo.redshift
 
     """
@@ -103,7 +102,7 @@ def make_pipeline(
         search=af.DynestyStatic(
             n_live_points=50, sampling_efficiency=0.2, evidence_tolerance=3.0
         ),
-        number_of_steps=number_of_steps,
+        number_of_steps=grid_size,
     )
 
     subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
@@ -132,9 +131,9 @@ def make_pipeline(
     )
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.general.hyper_galaxies,
-        include_background_sky=slam.general.hyper_image_sky,
-        include_background_noise=slam.general.hyper_background_noise,
+        hyper_galaxy_search=slam.hyper.hyper_galaxies,
+        include_background_sky=slam.hyper.hyper_image_sky,
+        include_background_noise=slam.hyper.hyper_background_noise,
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

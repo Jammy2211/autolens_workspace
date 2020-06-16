@@ -131,7 +131,7 @@ for dataset_name in [
         setup=setup,
         phase_folders=["aggregator", "grid_search", dataset_name],
         positions_threshold=1.0,
-        number_of_steps=2,
+        grid_size=2,
         parallel=False,
     )
 

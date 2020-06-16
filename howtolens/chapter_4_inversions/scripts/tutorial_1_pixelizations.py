@@ -3,7 +3,7 @@
 __Pixelizations__
 
 To begin chapter 4, we'll begin by learning about pixelizations, which we apply to a source-plane to reconstruct a
-source galaxy's light.
+source-galaxy's light.
 """
 
 # %%
@@ -14,8 +14,8 @@ import autolens.plot as aplt
 
 # %%
 """
-Lets setup a lensed source-plane grid, using a lens galaxy and tracer (our source galaxy doesn't have a 
-*LightProfile*,as we're going to reconstruct its light using a pixelization).
+Lets setup a lensed source-plane grid, using a lens galaxy and _Tracer_ (our source galaxy doesn't have a 
+_LightProfile_,as we're going to reconstruct its light using a pixelization).
 """
 
 # %%
@@ -45,9 +45,9 @@ rectangular = al.pix.Rectangular(shape=(25, 25))
 
 # %%
 """
-By itself, a pixelization doesn't tell us much. It has no grid of coordinates, no image, and nothing which tells it 
+By itself, a pixelization doesn't tell us much. It has no _Grid_ of coordinates, no image, and nothing which tells it 
 about the lens we're fitting. This information comes when we use the pixelization to set up a 'mapper'. We'll use 
-the (traced) source-plane grid to set up this mapper.
+the (traced) source-plane _Grid_ to set up this mapper.
 """
 
 # %%
@@ -63,7 +63,7 @@ print(type(mapper))
 
 # %%
 """
-By plotting our mapper, we now see our pixelization. Its a fairly boring grid of rectangular pixels.
+By plotting our mapper, we now see our pixelization. Its a fairly boring _Grid_ of rectangular pixels.
 
 (we'll cover what the 'inversion' means in a later tutorial).
 """
@@ -80,7 +80,7 @@ aplt.MapperObj(
 # %%
 """
 However, the mapper does contain lots of interesting information about our pixelization, for example its 
-pixelization grid tells us where the pixel centers are located.
+pixelization _Grid_ tells us where the pixel centers are located.
 """
 
 # %%
@@ -94,7 +94,7 @@ print("etc.")
 
 # %%
 """
-Infact, we can plot these centre on our grid - to make it look slightly less boring!
+Infact, we can plot these centre on our _Grid_ - to make it look slightly less boring!
 """
 
 # %%
@@ -108,7 +108,7 @@ aplt.MapperObj(
 
 # %%
 """
-The mapper also has the (source-plane) grid that we passed when we set it up. Lets check they're the same.
+The mapper also has the (source-plane) _Grid_ that we passed when we set it up. Lets check they're the same.
 """
 
 # %%
@@ -122,7 +122,7 @@ print("etc.")
 
 # %%
 """
-We can over-lay the grid on top. Its starting to look a bit less boring now!
+We can over-lay the _Grid_ on top. Its starting to look a bit less boring now!
 """
 
 # %%
@@ -136,7 +136,7 @@ aplt.MapperObj(
 
 # %%
 """
-Finally, the mapper's pixeliation grid has lots of information about the pixelization, for example, the arc-second 
+Finally, the mapper's pixeliation _Grid_ has lots of information about the pixelization, for example, the arc-second 
 size and dimensions.
 """
 

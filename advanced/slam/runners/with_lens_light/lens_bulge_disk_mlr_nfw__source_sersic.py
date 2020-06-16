@@ -110,11 +110,11 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.inversion
 )
 
 source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
+    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
 )
 
 source__inversion = lens_light_sie__source_inversion.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
+    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
 )
 
 from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk import (
@@ -122,7 +122,7 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk
 )
 
 light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
+    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
 )
 
 
@@ -131,7 +131,7 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.mass.light_dark 
 )
 
 mass__mlr_nfw = lens_light_mlr_nfw__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
+    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
 )
 
 

@@ -5,13 +5,13 @@ import autolens.plot as aplt
 # In this pipeline, we'll perform a basic analysis which fits a source galaxy using an inversion and a
 # lens galaxy where its light is not included and fitted, using two phases:
 
-# Phase 1) Fit the lens galaxy's mass (SIE) and source galaxy's light (Sersic).
+# Phase 1) Fit the lens galaxy's mass (SIE) and source-galaxy's light (Sersic).
 
-# Phase 2) Fit the lens galaxy's mass (SIE) and source galaxy's light using an inversion, where the SIE mass model
+# Phase 2) Fit the lens galaxy's mass (SIE) and source-galaxy's light using an inversion, where the SIE mass model
 #          priors are initialized from phase 1. This new SIE mass model will be used to refine the inversion's
 #          pixelization and regularization parameters.
 
-# Phase 3) Fit the lens galaxy's mass (SIE) and source galaxy's light using another inversion, which has had the
+# Phase 3) Fit the lens galaxy's mass (SIE) and source-galaxy's light using another inversion, which has had the
 #           pixelization and regularization refined from phase 2.
 
 
@@ -53,7 +53,7 @@ def make_pipeline(phase_folders=None):
         regularization=al.reg.Constant,
     )
 
-    # We can customize the inversion's priors like we do our light and *MassProfile*s.
+    # We can customize the inversion's priors like we do our light and _MassProfile_s.
 
     source.pixelization.shape_0 = af.UniformPrior(lower_limit=20.0, upper_limit=40.0)
 

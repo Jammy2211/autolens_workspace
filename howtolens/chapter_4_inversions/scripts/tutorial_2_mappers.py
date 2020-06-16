@@ -20,7 +20,7 @@ To begin, lets simulate and load an image - it'll be clear why we're doing this 
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -65,7 +65,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 
 # %%
 """
-Now, lets set up our grids (using the image above).
+Now, lets set up our _Grid_'s (using the image above).
 """
 
 # %%
@@ -75,8 +75,8 @@ grid = al.Grid.uniform(
 
 # %%
 """
-Our tracer will use the same lens galaxy and source galaxy that we used to Simulate the Imaging data (although, 
-becuase we're modeling the source with a pixel-grid, we don't need to supply its *LightProfile*).
+Our _Tracer_ will use the same lens galaxy and source galaxy that we used to Simulate the Imaging data (although, 
+becuase we're modeling the source with a pixel-grid, we don't need to supply its _LightProfile_).
 """
 
 # %%
@@ -201,7 +201,7 @@ aplt.Imaging.image(imaging=imaging, mask=mask)
 
 # %%
 """
-As usual, we setup our image and mask up as lens data and create a tracer using its (now masked) al.
+As usual, we setup our image and mask up as lens data and create a _Tracer_ using its (now masked) al.
 """
 
 # %%
@@ -213,7 +213,7 @@ source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=masked_imaging.
 
 # %%
 """
-Finally, we use the masked source-plane grid to setup a new mapper (using the same rectangular 25 x 25 pixelization as 
+Finally, we use the masked source-plane _Grid_ to setup a new mapper (using the same rectangular 25 x 25 pixelization as 
 before).
 """
 
@@ -256,7 +256,7 @@ and source plane map to one another. Your exercises are:
 radius deviates from 1.6" (the input value of the simulated lens), what do you notice about where the points map from 
 the centre of the source-plane (where the source-galaxy is simulated, e.g. (0.0", 0.0"))?
 
-2) Incrementally increase the axis ratio of the lens's *MassProfile* to 1.0. What happens to quadruple imaging?
+2) Incrementally increase the axis ratio of the lens's _MassProfile_ to 1.0. What happens to quadruple imaging?
 
 3) Now, finally, think - how is all of this going to help us actually model lenses? We've said we're going to 
 reconstruct our source galaxies on the pixel-grid. So, how does knowing how each pixel maps to the image actually 

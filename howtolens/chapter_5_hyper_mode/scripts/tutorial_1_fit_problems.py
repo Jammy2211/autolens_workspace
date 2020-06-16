@@ -17,7 +17,7 @@ a refresher of regularization, from chapter 4:
 -------------------------------------------- 
 
 When our inversion reconstructs a source, it doesn't *just* compute the set of fluxes that best-fit the image. It
-also 'regularizes' this solution, going to every pixel on our rectangular grid and comparing its reconstructed flux
+also 'regularizes' this solution, going to every pixel on our rectangular _Grid_ and comparing its reconstructed flux
 with its 4 neighboring pixels. If the difference in flux is large the solution is penalized, reducing its log likelihood.
 You can think of this as us applying a prior that our source galaxy solution is 'smooth'.
 
@@ -39,8 +39,8 @@ bright central regions of the source or its faint exterior regions.
 
 
 In this tutorial, we'll learn that our magnification-based pixelization and constant regularization schemes are far
-from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same *MassProfile* but
-with different sources whose *LightProfile*s become gradually more compact. For all 3 fits, we'll use the same
+from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same _MassProfile_ but
+with different sources whose _LightProfile_s become gradually more compact. For all 3 fits, we'll use the same
 source-plane resolution and a regularization coefficient that maximize the Bayesian log evidence. Thus, these are the
 'best' source reconstructions we can hope to achieve when adapting to the magnification.
 """
@@ -93,13 +93,13 @@ source_galaxy_super_compact = al.Galaxy(
 # %%
 """
 The function below uses each source galaxy to simulate the imaging data. It performs the usual tasks we are used to 
-seeing (make the PSF, galaxies, tracer, etc.).
+seeing (make the PSF, _Galaxy_'s tracer, etc.).
 """
 
 # %%
 def simulate_for_source_galaxy(source_galaxy):
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -181,7 +181,7 @@ def fit_imaging_with_voronoi_magnification_pixelization(
 
 # %%
 """
-Lets fit our first source with the flattest *LightProfile*. One should note that this uses the highest regularization 
+Lets fit our first source with the flattest _LightProfile_. One should note that this uses the highest regularization 
 coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
 
@@ -335,7 +335,7 @@ So, whats the problem? Look closely at the 'chi-squared image'. Here, you'll not
 have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared) is 
 going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset of 
 the data (e.g. < 5% of pixels) contributes to the majority of the log likelihood (e.g. > 95% of the overall chi-squared). 
-This is *not* what we want, as instead of using the entire surface brightness profile of the lensed source galaxy to 
+This is *not* what we want, as instead of using the entire surface brightness _Profile_ of the lensed source galaxy to 
 fit our lens model, we end up using only a small subset of its brightest pixels.
 
 In the context of the Bayesian log evidence things become even more problematic. The Bayesian log evidence is trying to 

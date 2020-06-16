@@ -1,7 +1,7 @@
 # %%
 """
 In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
-using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a *LightProfile*,
+using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a _LightProfile_,
 to initialize the mass model, and then switch to an inversion.
 """
 
@@ -40,7 +40,7 @@ lens galaxy light.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

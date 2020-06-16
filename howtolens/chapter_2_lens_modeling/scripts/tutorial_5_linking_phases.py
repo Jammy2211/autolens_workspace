@@ -25,7 +25,7 @@ The model we infer above will therefore be a lot less realistic. But it doesn't 
 we're going to relax these assumptions and get back our more realistic lens model. The beauty is that, by running the
 first phase, we can use its results to tune the priors of our second phase. For example:
 
-1) The first phase should give us a pretty good idea of the lens galaxy's light and *MassProfile*s, for example its
+1) The first phase should give us a pretty good idea of the lens galaxy's light and _MassProfile_s, for example its
 intensity, effective radius and einstein radius.
 
 2) It should also give us a pretty good fit to the lensed source galaxy. This means we'll already know where in
@@ -61,7 +61,7 @@ Another simulate image function, for the same image as tutorial 4..
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -122,9 +122,9 @@ Lets use the same approach of making light trace mass that we did previously, bu
 complex then before.
 
 In the galaxy model below we use two new inputs - 'align_axis_ratios' and'align_orientations'. These functions 
-align the axis_ratio and phi values of all of the lens galaxy's profiles (in this case, its *LightProfile* and mass 
+align the axis_ratio and phi values of all of the lens galaxy's profiles (in this case, its _LightProfile_ and mass 
 profile). We did this in the previous phase using the 'customize_priors' function, but because this is a fairly 
-common thing to do to a GalaxyModel we made these these inputs available for your convenience.
+common thing to do to a _GalaxyModel_ we made these these inputs available for your convenience.
 
 There is also an 'align_centres' method, but because we are fixing all centres to floats it is omitted.
 """

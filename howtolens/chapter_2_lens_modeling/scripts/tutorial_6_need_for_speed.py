@@ -19,7 +19,7 @@ tutorial, I'll teach a really neat trick to get MultiNest running *super-fast*.
 
 __Algorithmic Optimization__
 
-Every operation AutoLens performs to fit a lens takes time. Every *LightProfile* intensity. Every *MassProfile*
+Every operation AutoLens performs to fit a lens takes time. Every _LightProfile_ intensity. Every _MassProfile_
 deflection angle. Convolving a model-image with a PSF can take a huge amount of time. As anyone who's written code
 before knows, the better the algorithm is written, the fast it'll run.
 
@@ -30,7 +30,7 @@ speeding up, I strongly recommend that you look up Numba:
 
 http://numba.pydata.org/
 
-We've worked very hard to profile every line of code in PyAutoLens and we're confident its as fast, if not faster,
+We've worked very hard to _Profile_ every line of code in PyAutoLens and we're confident its as fast, if not faster,
 than any code written in C. In fact, we know this - I wrote the original version of AutoLens in Fortran (bless my
 poor soul) and we timed it against PyAutoLens. After invoking the magic of Numba, PyAutoLens ran 3 times faster than
 the Fortran code - I felt pretty smug at that point.
@@ -42,7 +42,7 @@ than me!
 __Data Quantity__
 
 The final factor driving run-speed is the quantity of data that is being modeled. For every image-pixel that we fit,
-we have to compute the *LightProfile* image, the *MassProfile* deflection angles and convolve it with the telescope's
+we have to compute the _LightProfile_ image, the _MassProfile_ deflection angles and convolve it with the telescope's
 PSF. The larger that PSF is, the more convolution operations we have to perform too.
 
 In the previous exercises, we used images with a pixel scale of 0.1". I sneakily chose this value cause its fairly
@@ -69,7 +69,7 @@ Therefore, there are no exercises in this tutorial and no code to run. Instead, 
 you might write a pipeline to perform the following analyses:
 
 1) The only thing you care about is the highly magnified source-galaxy. You don't care about the lens galaxy's
-*LightProfile*, and its *MassProfile* is only a means to ultimately study the unlensed source. Can you subtract the
+_LightProfile_, and its _MassProfile_ is only a means to ultimately study the unlensed source. Can you subtract the
 lens galaxy's light and then discard it in every phase afterwards?
 
 2) There are 2 lens galaxies responsible for lensing the background source. That means, there are twice as many

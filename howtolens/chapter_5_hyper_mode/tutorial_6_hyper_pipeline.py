@@ -9,7 +9,7 @@
 # passes hyper-images between phases!
 
 # However, PyAutoLens does need to know which hyper-images to pass to which galaxies. To do this, PyAutoLens uses
-# galaxy-names. When you create a GalaxyModel, you name the galaxies, for example below we've called the lens galaxy
+# galaxy-names. When you create a GalaxyModel, you name the _Galaxy_'s for example below we've called the lens galaxy
 # 'lens' and the source galaxy 'source':
 
 # phase1 = al.PhaseImaging(
@@ -87,10 +87,10 @@ import autolens as al
 # pipelines. But, the large number of phases are required to fully model the lens with hyper-mode features. An overview
 # of the pipeline is as follows:
 
-# Phase 1) Fit and subtract the lens galaxy's *LightProfile*.
+# Phase 1) Fit and subtract the lens galaxy's _LightProfile_.
 # Phase 1 Extension) Fit the lens galaxy's hyper-galaxy and background noise.
 
-# Phase 2) Fit the lens galaxy mass model and source *LightProfile*, using the lens subtracted image, using the lens
+# Phase 2) Fit the lens galaxy mass model and source _LightProfile_, using the lens subtracted image, using the lens
 #          hyper-galaxy noise map and background noise from phase 1.
 # Phase 2 Extension) Fit the lens / source hyper-galaxy and background noise.
 
@@ -171,7 +171,7 @@ def make_pipeline(setup, phase_folders=None):
 
     ### PHASE 2 ###
 
-    # This phase fits for the lens's mass model and source's *LightProfile* using the lens subtracted image from phase
+    # This phase fits for the lens's mass model and source's _LightProfile_ using the lens subtracted image from phase
     # 1. The lens galaxy hyper-galaxy is included, such that high chi-squared values in the central regions of the
     # image due to a poor lens light subtraction are reduced by noise scaling and do not impact the fit.
 
@@ -211,7 +211,7 @@ def make_pipeline(setup, phase_folders=None):
 
     # This extends phase 2 with hyper-phases that fit for the hyper-galaxies, as described above. This extension again
     # adds two phases, a 'hyper-galaxy' phase and 'hyper_combined' phase. Unlike the extension to phase 1 which only
-    # include a lens hyper-galaxy, this extension includes both the lens and source hyper-galaxy galaxies, as well as the
+    # include a lens hyper-galaxy, this extension includes both the lens and source hyper-galaxy _Galaxy_'s as well as the
     # background noise.
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
@@ -226,7 +226,7 @@ def make_pipeline(setup, phase_folders=None):
 
     # Although the above hyper-galaxy phase includes fitting for the source galaxy, at this early stage in the
     # pipeline we make a choice not to pass the hyper-galaxy of the source. Why? Because there is a good chance
-    # our simplistic single Sersic profile won't yet provide a good fit to the source.
+    # our simplistic single Sersic _Profile_ won't yet provide a good fit to the source.
     #
     # If this is the case, the hyper noise map won't be very good. It isn't until we are fitting the
     # source using an inversion that we begin to pass its hyper-galaxy, e.g. when we can be confident our fit

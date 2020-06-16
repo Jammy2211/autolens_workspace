@@ -35,7 +35,7 @@ Another simulate image function, albeit it generates a new image
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -115,7 +115,7 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # %%
 """
-By default, the prior on the (y,x) coordinates of a light / *MassProfile* is a GaussianPrior with mean 0.0" and 
+By default, the prior on the (y,x) coordinates of a light / _MassProfile_ is a GaussianPrior with mean 0.0" and 
 sigma "1.0. However, visual inspection of our strong lens image tells us that its clearly around x = 0.0" and y = 0.0", 
 so lets reduce where non-linear search looks for these parameters.
 """
@@ -131,7 +131,7 @@ lens.mass.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
 
 # %%
 """
-By default, the axis-ratio of our lens galaxy's elliptical *LightProfile* is a UniformPrior between 0.2 and 1.0. 
+By default, the axis-ratio of our lens galaxy's elliptical _LightProfile_ is a UniformPrior between 0.2 and 1.0. 
 However, by looking at the image it looks fairly circular, so lets use a GaussianPrior nearer 1.0.
 """
 
@@ -140,7 +140,7 @@ lens.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.15)
 
 # %%
 """
-We'll also assume that the *LightProfile*'s axis_ratio informs us of the *MassProfile*'s axis_ratio, but because this
+We'll also assume that the _LightProfile_'s axis_ratio informs us of the _MassProfile_'s axis_ratio, but because this
  may not strictly be true (e.g. because of dark matter) we'll use a wider prior.
 """
 
@@ -149,7 +149,7 @@ lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
 
 # %%
 """
-By default, the orientation of the galaxy's *LightProfile*, phi, uses a UniformPrior between 0.0 and 180.0 degrees. 
+By default, the orientation of the _Galaxy_'s _LightProfile_, phi, uses a UniformPrior between 0.0 and 180.0 degrees. 
 However, if you look really close at the image (and maybe adjust the color-map of the plotters) you'll notice that it 
 is elliptical and oriented around 45.0 degrees counter-clockwise from the x-axis. Lets update our prior
 """
@@ -167,7 +167,7 @@ lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
 
 # %%
 """
-The effective radius of a *LightProfile* is its 'half-light' radius, the radius at which 50% of its total luminosity 
+The effective radius of a _LightProfile_ is its 'half-light' radius, the radius at which 50% of its total luminosity 
 is internal to a circle defined within that radius. PyAutoLens assumes a UniformPrior on this quantity between 0.0" and 
 4.0", but inspection of the image (again, using a colormap scaling) shows the lens's light doesn't extend anywhere near 
 4.0", so lets reduce it.
@@ -266,8 +266,8 @@ complex, whilst still keeping it fairly realistic? Maybe there are some assumpti
 lens model parameters and therefore dimensionality of non-linear parameter space?
 
 Well, we can *always* make assumptions. Below, I'm going to create a phase that assumes that light-traces-mass. That 
-is, that our *LightProfile*'s centre, axis_ratio and orientation are perfectly aligned with its mass. This may, or may 
-not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the *MassProfile*s y, x, axis_ratio 
+is, that our _LightProfile_'s centre, axis_ratio and orientation are perfectly aligned with its mass. This may, or may 
+not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the _MassProfile_s y, x, axis_ratio 
 and phi), so its worth trying!
 """
 
@@ -290,7 +290,7 @@ lens.mass.centre_0 = lens.light.centre_0
 
 # %%
 """
-Now, the *MassProfile*'s y coordinate will only use the y coordinate of the *LightProfile*. 
+Now, the _MassProfile_'s y coordinate will only use the y coordinate of the _LightProfile_. 
 """
 
 # %%
@@ -298,7 +298,7 @@ lens.mass.centre_1 = lens.light.centre_1
 
 # %%
 """
-Lets do this with the remaining geometric parameters of the light and *MassProfile*s.
+Lets do this with the remaining geometric parameters of the light and _MassProfile_s.
 """
 
 # %%
@@ -343,8 +343,8 @@ The results look pretty good. Our source galaxy fits the data pretty well and we
 looks similar to the one above. However, inspection of the residuals shows that the fit wasn't quite as good as the 
 custom-phase above.
 
-It turns out that when I simulated this image light didn't perfectly trace mass. The *LightProfile*'s axis-ratio was 
-0.9, whereas the *MassProfile*s was 0.8. The quality of the fit has suffered as a result and the log likelihood we've 
+It turns out that when I simulated this image light didn't perfectly trace mass. The _LightProfile_'s axis-ratio was 
+0.9, whereas the _MassProfile_s was 0.8. The quality of the fit has suffered as a result and the log likelihood we've 
 inferred is lower.
 
 Herein lies the pitfalls of making assumptions - they may make your model less realistic and your results worse! 

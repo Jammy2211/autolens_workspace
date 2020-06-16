@@ -24,7 +24,7 @@ Lets use the same simple source as last time.
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -134,7 +134,7 @@ aplt.FitImaging.subplot_fit_imaging(
 So, what's happening here? Why does reducing the regularization do this to our source reconstruction?
 
 When our inversion reconstructs a source, it doesn't *just* compute the set of fluxes that best-fit the image. It 
-also 'regularizes' this solution, going to every pixel on our rectangular grid and comparing its reconstructed flux 
+also 'regularizes' this solution, going to every pixel on our rectangular _Grid_ and comparing its reconstructed flux 
 with its 4 neighboring pixels. If the difference in flux is large the solution is penalized, reducing its log likelihood. 
 You can think of this as us applying a prior that our source galaxy solution is 'smooth'.
 
@@ -237,7 +237,7 @@ best-fit the image *including* the penalty term due to comparing neighboring sou
 However, determining the regularization coefficient that maximizes the Bayesian log evidence remains a non-linear problem 
 and this becomes part of our non-linear search. The Bayesian log evidence also depends on the source resolution which 
 means the pixel-grid resolution may also be part of our non-linear search. Nevertheless, this is only 3 parameters - 
-there were 30+ when using *LightProfile*s to represent the source!
+there were 30+ when using _LightProfile_s to represent the source!
 
 Here are a few questions for you to think about.
 

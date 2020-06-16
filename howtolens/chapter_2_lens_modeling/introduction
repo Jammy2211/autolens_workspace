@@ -1,5 +1,5 @@
-At the end of the introduction tutorials, we could fit strong lensing imaging with a tracer. However, we simulated the
-image ourselves, which meant we knew the combination of *LightProfile*s and *MassProfile*s provided a good fit.
+At the end of the introduction tutorials, we could fit strong lensing imaging with a _Tracer_. However, we simulated the
+image ourselves, which meant we knew the combination of _LightProfile_s and _MassProfile_s provided a good fit.
 
 In this set of tutorials, we'll deal the situation that we face in the real world and assume we have no knowledge of
 which solutions actually provide a good fit. This process of finding the good solutions is called 'lens modeling',

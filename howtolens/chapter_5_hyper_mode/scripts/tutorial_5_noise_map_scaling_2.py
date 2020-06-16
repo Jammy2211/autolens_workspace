@@ -7,7 +7,7 @@ even more important use, when another component of our lens model doesn't fit th
 What could leave significant residuals in our model-fit? What might happen to also be the highest S/N values in our
 image, meaning these residuals contribute *even more* to the chi-squared distribution?
 
-Yep, you guessed it, it's the lens galaxy *LightProfile* fit and subtraction. Just like our overly simplified mass
+Yep, you guessed it, it's the lens galaxy _LightProfile_ fit and subtraction. Just like our overly simplified mass
 profile's mean we can't perfectly reconstruct the source's light, the same is true of the Sersic profiles we use to
 fit the lens galaxy's light. Lets take a look.
 """
@@ -26,7 +26,7 @@ This simulates the exact same data as the previous tutorial, but with the lens l
 # %%
 def simulate():
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -98,7 +98,7 @@ def fit_masked_imaging_with_lens_and_source_galaxy(
 # %%
 """
 Now, lets use this function to fit the lens data. We'll use a lens model with the correct mass model but an incorrect 
-lens *LightProfile*. The source will use a magnification based grid.
+lens _LightProfile_. The source will use a magnification based grid.
 """
 
 # %%
@@ -139,7 +139,7 @@ aplt.FitImaging.subplot_fit_imaging(
 """
 Okay, so its clear that our poor lens light subtraction leaves residuals in the lens galaxy's centre. These pixels 
 are extremely high S/N, so they contribute large chi-squared values. For a real strong lens, we could not fit these 
-residual features using a more complex *LightProfile*. These types of residuals are extremely common and they are 
+residual features using a more complex _LightProfile_. These types of residuals are extremely common and they are 
 caused by nasty, irregular morphological structures in the lens galaxy; nuclear star emission, nuclear rings, bars, etc.
 
 This skewed chi-squared distribution will cause all the same problems we discussed in the previous tutorial, like 
@@ -285,7 +285,7 @@ hyper_background_noise = al.hyper_data.HyperBackgroundNoise(noise_scale=1.0)
 
 # %%
 """
-To use these hyper-galaxy-instrument parameters, we pass them to a lens-fit just like we do our tracer.
+To use these hyper-galaxy-instrument parameters, we pass them to a lens-fit just like we do our _Tracer_.
 """
 
 # %%
