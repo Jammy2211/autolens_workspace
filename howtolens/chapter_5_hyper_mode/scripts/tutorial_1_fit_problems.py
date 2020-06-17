@@ -99,7 +99,7 @@ seeing (make the PSF, _Galaxy_'s tracer, etc.).
 # %%
 def simulate_for_source_galaxy(source_galaxy):
 
-    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

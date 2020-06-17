@@ -133,7 +133,7 @@ and interpolates the results to the native-resolution grid.
 A description of the *GridIterpolate* object can be found in the script 'autolens_workspace/examples/grids.py'.
 
 Different *PhaseSettings* are used in different example model scripts and a full description of all *PhaseSettings* 
-can be found in the example script 'autolens/workspace/examples/model/customize/settingspy' and the following 
+can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
 link -> <link>
 """
 

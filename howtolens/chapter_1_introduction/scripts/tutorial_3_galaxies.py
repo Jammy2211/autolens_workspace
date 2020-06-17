@@ -155,7 +155,7 @@ aplt.Galaxy.potential(galaxy=galaxy_with_3_mass_profiles, grid=grid)
 
 # %%
 """
-Finally, a galaxy can take both light and _MassProfile_s, and there is no limit to how many we pass it.
+Finally, a galaxy can take both light and mass profiles, and there is no limit to how many we pass it.
 """
 
 # %%

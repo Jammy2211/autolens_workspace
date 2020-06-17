@@ -135,9 +135,9 @@ def make_pipeline(phase_folders=None):
 
     ### PHASE 4 ###
 
-    # In phase 4, we'll fit both lens galaxy's light and _MassProfile_s, as well as the source-galaxy, simultaneously.
+    # In phase 4, we'll fit both lens galaxy's light and mass profiles, as well as the source-galaxy, simultaneously.
 
-    # Results are split over multiple phases, so we setup the light and _MassProfile_s of each lens separately.
+    # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
 
     left_lens = al.GalaxyModel(
         redshift=0.5,

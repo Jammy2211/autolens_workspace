@@ -1,11 +1,18 @@
 # %%
 """
-We finished the last tutorial on a sour note. Our non-linear search failed miserably, and we were unable to infer a lens model which fitted our data. In this tutorial, we're going to right our past wrongs and infer the correct model - not just once, but three times!
+In the last tutorial we showed how our non-linear search can potentially fail, and infer a local maxima solution.
+In this tutorial, we're going to learn how to stop this and infer the globally maximal lens model.
+
+In the previous tutorial, when we inferred a local maxima we knew that we had done so. For modeling a real lens,
+we do not know the 'true' lens model and it iss often  unclear if a solution is a global or local maximma. The tricks
+we learn in this tutorial are therefore equally important for verifying that a solution does indeed appear to be the
+global maxima.
 """
 
 # %%
 #%matplotlib inline
 
+from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -16,79 +23,61 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 conf.instance = conf.Config(
-    config_path=f"{chapter_path}/configs/t4_dealing_with_failure",
-    output_path=f"{chapter_path}/output",
+    config_path=f"{workspace_path}/config",
+    output_path=f"{workspace_path}/output/howtolens",
 )
 
 # %%
 """
-Even with my custom config files the non-linear searches will take a bit of time to run in this tutorial if you 
-choose to run them yourselves.
+We'll use the same strong lensing data as the previous tutorial, where:
 
-Another simulate image function, albeit it generates a new image
+    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+    - The lens galaxy's _MassProfile_ is an *EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
-def simulate():
+dataset_label = "chapter_2"
+dataset_name = "lens_sersic_sie__source_exp"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
 
-    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, 0.05),
-            intensity=0.04,
-            effective_radius=0.5,
-            sersic_index=3.5,
-        ),
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=0.8
-        ),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, -0.333333),
-            intensity=0.03,
-            effective_radius=0.3,
-            sersic_index=3.0,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
 
 # %%
 """
-Simulate the Imaging data and set up the mask.
+We'll create and use a smaller 2.0" _Mask_ again.
 """
 
 # %%
-imaging = simulate()
-
 mask = al.Mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.0
 )
 
+# %%
+"""
+When plotted, the lens light's is clearly visible in the centre of the image.
+"""
+
+# %%
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
+
+# %%
+"""
+Like in the previous tutorials, we use a_PhaseSettingsImaging_ object to specify our model-fitting procedure uses a 
+regular _Grid_.
+"""
+
+# %%
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
 
 # %%
 """
@@ -104,6 +93,10 @@ correct model. I've also let you know what we're changing the priors from (as in
 'config/priors/default' config files.)
 
 We'll call our lens and source galaxies 'lens' and 'source' this time, for shorter more readable code.
+
+In a later tutorial, we'll cover non-linear search approaches that are different to Dynesty, where one provides the
+non-linear search with a 'starting point' where it samples parameter space. In a similar fashion to prior tuning,
+giving these searches a good starting point will increase the chances of us finding the global maxima.
 """
 
 # %%
@@ -115,55 +108,40 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # %%
 """
-By default, the prior on the (y,x) coordinates of a light / _MassProfile_ is a GaussianPrior with mean 0.0" and 
+By default, the prior on the (y,x) coordinates of a _LightProfile_ / _MassProfile_ is a GaussianPrior with mean 0.0" and 
 sigma "1.0. However, visual inspection of our strong lens image tells us that its clearly around x = 0.0" and y = 0.0", 
 so lets reduce where non-linear search looks for these parameters.
 """
 
 # %%
 lens.light.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-
 lens.light.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-
 lens.mass.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-
 lens.mass.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
 
 # %%
 """
-By default, the axis-ratio of our lens galaxy's elliptical _LightProfile_ is a UniformPrior between 0.2 and 1.0. 
-However, by looking at the image it looks fairly circular, so lets use a GaussianPrior nearer 1.0.
+By default, the elliptical components of the of our lens galaxy's elliptical _LightProfile_ are UniformPriors 
+between -1.0 and 1.0, corresponding to the full range of possible ellipses with axis-ratio from 0.0 to 1.0 and 
+position angles from 0.0 to 180.0 degrees.
+
+However, looking close to the image it is clear that the lens galaxy's light is elliptical and oriented around 
+45.0 degrees counter-clockwise from the x-axis. We can update the priors on our elliptical components to reflect this.
 """
 
 # %%
-lens.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.15)
+lens.light.elliptical_comps_0 = af.GaussianPrior(mean=0.333333, sigma=0.1)
+lens.light.elliptical_comps_1 = af.GaussianPrior(mean=0.333333, sigma=0.1)
 
 # %%
 """
-We'll also assume that the _LightProfile_'s axis_ratio informs us of the _MassProfile_'s axis_ratio, but because this
- may not strictly be true (e.g. because of dark matter) we'll use a wider prior.
+Lets additionally assume that the _LightProfile_'s ellipticity informs us of the _MassProfile_'s ellipticity. Because 
+this may not strictly be true (e.g. because of dark matter) we'll use a wider prior.
 """
 
 # %%
-lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
-
-# %%
-"""
-By default, the orientation of the _Galaxy_'s _LightProfile_, phi, uses a UniformPrior between 0.0 and 180.0 degrees. 
-However, if you look really close at the image (and maybe adjust the color-map of the plotters) you'll notice that it 
-is elliptical and oriented around 45.0 degrees counter-clockwise from the x-axis. Lets update our prior
-"""
-
-# %%
-lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
-
-# %%
-"""
-Again, lets assume that the light's orientation roughly traces that of the mass.
-"""
-
-# %%
-lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
+lens.mass.elliptical_comps_0 = af.GaussianPrior(mean=0.333333, sigma=0.3)
+lens.mass.elliptical_comps_1 = af.GaussianPrior(mean=0.333333, sigma=0.3)
 
 # %%
 """
@@ -187,12 +165,12 @@ lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=1.0)
 
 # %%
 """
-Finally, the 'ring' that the lensed source forms clearly has a radius of about 0.8". This is its Einstein radius, so 
+Finally, the 'ring' that the lensed source forms clearly has a radius of about 1.2". This is its Einstein radius, so 
 lets change the prior from a UniformPrior between 0.0" and 4.0".
 """
 
 # %%
-lens.mass.einstein_radius = af.GaussianPrior(mean=0.8, sigma=0.2)
+lens.mass.einstein_radius = af.GaussianPrior(mean=1.2, sigma=0.2)
 
 # %%
 """
@@ -203,72 +181,71 @@ form. Furthermore, the source's morphology can be pretty complex, making it diff
 
 # %%
 """
-We can now create this custom phase and run it. Our non-linear search will start in a high log_likelihood region of 
-parameter space.
-
-(This takes a long time to run, so I have commented the run function out by default - but feel free to run it!).
+We can now create this custom phase and run it. Our non-linear search will now start by sampling higher likelihood 
+regions of parameter space, given our improved and more informed priors.
 """
 
 # %%
 custom_prior_phase = al.PhaseImaging(
     phase_name="phase_t4_tuned_priors",
+    settings=settings,
     galaxies=dict(
         lens=al.GalaxyModel(
             redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure"
+    "Dynesty has begun running - checkout the workspace/output/4_dealing_with_failure"
     "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+    "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
+custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
 
-print("MultiNest has finished run - you may now continue the notebook.")
-
-# %%
-"""
-Bam! We get a good model. The right model. A glorious model! We gave our non-linear search a helping hand, and it 
-repaid us in spades!
-
-Check out the PDF in the '/howstolens/chapter_2_lens_modeling/output/4_custom_priors/image' folder - what degeneracies 
-do you notice between parameters?
-"""
-
-# %%
-# aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
+print("Dynesty has finished run - you may now continue the notebook.")
 
 # %%
 """
-Okay, so we've learnt that by tuning our priors to the lens we're fitting we can increase our chance of inferring the 
-global maxima lens model. Before moving onto the next approach, lets think about the advantages and disadvantages of 
-prior tuning:
+Bam! We get a good model, which indeed corresponds to the global maxima. By giving our non-linear search a helping hand
+and informing it of where to sample parameter space, we can increase the odds that we find the global maxima solution.
+"""
 
-Advantage - We find the maximum log likelihood solution in parameter space.
-Advantage - The phase took less time to run because the non-linear search explored less of parameter space.
-Disadvantage - If we specified one prior incorrectly the non-linear search would begin and therefore end at an 
-incorrect solution.
-Disadvantage - Our phase was tailored to this specific strong lens. If we want to fit a large sample of lenses we'd 
-have to write a custom phase for every single one - this would take up a lot of our time!
+# %%
+aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
+
+# %%
+"""
+By tuning our priors to the lens we're fitting we can increase our chance of inferring the global maxima lens model. 
+Before moving onto the next approach, lets think about the advantages and disadvantages of prior tuning:
+
+Advantages: 
+
+    - We find the maximum log likelihood solution in parameter space.
+    - The phase took less time to run because the non-linear search explored less of parameter space.
+
+Disadvantages: 
+
+    - If we specified a prior incorrectly the non-linear search would begin and therefore end at an incorrect solution.
+    - Our phase was tailored to this specific strong lens. If we want to fit a large sample of lenses we'd 
+      have to write a custom phase for every single one - this would take up a lot of our time!
 """
 
 # %%
 """
 __Approach 2: Reducing Complexity__
 
-Previously, Our non-linear searched failed because we made the lens model more complex. Maybe we can make it less 
-complex, whilst still keeping it fairly realistic? Maybe there are some assumptions we can make to reduce the number of 
+Previously, Our non-linear searched failed because we made the lens model more complex. Can we can make it less complex, 
+whilst still keeping it fairly realistic? Maybe there are some assumptions we can make to reduce the number of 
 lens model parameters and therefore dimensionality of non-linear parameter space?
 
 Well, we can *always* make assumptions. Below, I'm going to create a phase that assumes that light-traces-mass. That 
-is, that our _LightProfile_'s centre, axis_ratio and orientation are perfectly aligned with its mass. This may, or may 
-not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the _MassProfile_s y, x, axis_ratio 
-and phi), so its worth trying!
+is, that our _LightProfile_'s centre, and elliptical components are perfectly aligned with its mass. This may, or may 
+not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the _MassProfile_s y, x, and 
+elliptical components), so its worth trying!
 """
 
 # %%
@@ -298,13 +275,12 @@ lens.mass.centre_1 = lens.light.centre_1
 
 # %%
 """
-Lets do this with the remaining geometric parameters of the light and _MassProfile_s.
+Lets do this with the elliptical components of the light and mass profiles.
 """
 
 # %%
-lens.mass.axis_ratio = lens.light.axis_ratio
-
-lens.mass.phi = lens.light.phi
+lens.mass.elliptical_comps_0 = lens.light.elliptical_comps_0
+lens.mass.elliptical_comps_1 = lens.light.elliptical_comps_1
 
 # %%
 """
@@ -314,24 +290,25 @@ Again, we create this phase and run it. The non-linear search now has a less com
 # %%
 light_traces_mass_phase = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
+    settings=settings,
     galaxies=dict(
         lens=al.GalaxyModel(
             redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure"
+    "Dynesty has begun running - checkout the workspace/output/4_dealing_with_failure"
     "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+    "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
 light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
 
-print("MultiNest has finished run - you may now continue the notebook.")
+print("Dynesty has finished run - you may now continue the notebook.")
 
 aplt.FitImaging.subplot_fit_imaging(
     fit=light_traces_mass_phase_result.max_log_likelihood_fit
@@ -343,19 +320,22 @@ The results look pretty good. Our source galaxy fits the data pretty well and we
 looks similar to the one above. However, inspection of the residuals shows that the fit wasn't quite as good as the 
 custom-phase above.
 
-It turns out that when I simulated this image light didn't perfectly trace mass. The _LightProfile_'s axis-ratio was 
-0.9, whereas the _MassProfile_s was 0.8. The quality of the fit has suffered as a result and the log likelihood we've 
-inferred is lower.
+It turns out that when I simulated this image light didn't perfectly trace mass. The _LightProfile_'s elliptical 
+components were (0.333333, 0.0) whereas the _MassProfile_s were (0.25, 0.0). The quality of the fit has suffered as a 
+result and the log likelihood we inferred is lower.
 
-Herein lies the pitfalls of making assumptions - they may make your model less realistic and your results worse! 
-Nevertheless, our lens model is clearly much better than it was in the previous tutorial, so making assumptions isn't 
-a bad idea if you're struggling to fit the data well.
+Herein lies the pitfalls of making assumptions - they may make your model less realistic and your fits worse! 
 
 Again, lets consider the advantages and disadvantages of this approach:
 
-Advantage - By reducing parameter space's complexity we inferred a global maximum log likelihood.
-Advantage - The phase is not specific to one lens - we could run it on many strong lens images.
-Disadvantage - Our model was less realistic and our fit suffered as a result.
+Advantages:
+
+    - By reducing parameter space's complexity we inferred a global maximum log likelihood.
+    - The phase is not specific to one lens - we could run it on many strong lens images.
+    
+Disadvantages:
+
+    - Our model was less realistic and our fit suffered as a result.
 """
 
 # %%
@@ -367,86 +347,27 @@ regions of parameter space. In approach 3 ,we're going to tell it to just 'look 
 
 Basically, every non-linear search algorithm has a set of parameters that govern how thoroughly it searches parameter 
 space. The more thoroughly it looks, the more likely it is that it'll find the global maximum lens model. However, 
-the search will also take longer - and we don't want it to take too long to get some results.
+the search will also take longer - and we don't want it to take too long to get us a result!
 
-Lets setup a phase and overwrite some of the non-linear search's parameters from the defaults it assumes in the 
-'config/non_linear.ini' config file:
-"""
+In tutorial 7, we'll discuss non-linear searches in more detail, so we'll defer a detailed discussion of setting up
+the non-linear searches until then.
 
-# %%
-custom_non_linear_phase = al.PhaseImaging(
-    phase_name="phase_t4_custom_non_linear",
-    galaxies=dict(
-        lens=al.GalaxyModel(
-            redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
-        ),
-        source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
-    ),
-    search=af.DynestyStatic(),
-)
+lets list the advantages and disadvantages of simply adjusting the non-linear search:
 
-# %%
-"""
-The 'search' below is MultiNest, the non-linear search we're using.
+Advantages:
 
-When MultiNest searches non-linear parameter space it places down a set of 'live-points', each of which corresponds 
-to a particular lens model (set of parameters) with an associted log_likelihood. When it samples a new lens model with a 
-higher log_likelihood than any of the currently active live points, this new lens model becomes an active point. As a 
-result, the active point with the lowest log likelihood is discarded.
+    Its easy to setup, we simpy change parameter of the non-linear search like n_live_points or the sampling_efficiency.
+    It generalizes to any strong lens.
+    We didn't have to make our model less realistic.
 
-The more live points MultiNest uses the more thoroughly it will sample parameter space. Lets increase the number of 
-points from the default value (50) to 100.
-"""
+Disadvantage:
+ 
+    Its potentially expensive. Very expensive. For very complex models, the run times can begin to take hours, days, 
+    weeks or, dare I say it, months!
 
-# %%
-custom_non_linear_phase.search.n_live_points = 100
-
-# %%
-"""
-When MultiNest find a 'peak' log_likelihood in parameter space it begins to converge around this peak. It does this by 
-guessing lens models with similar parameters. However, this peak might not be the global maximum, and if MultiNest 
-converges too quickly around a peak it won't realise this before its too late.
-
-The sampling efficiency therefore describes how quickly MultiNest converges around a peak. It assumes values between 
-0.0 and 1.0, where 1.0 corresponds to the fastest convergence but highest risk of not locating the global maximum. 
-Lets reduce the sampling efficiency from 0.8 to 0.5.
-"""
-
-# %%
-custom_non_linear_phase.search.sampling_efficiency = 0.5
-
-# %%
-"""
-These are the two most important MultiNest parameters controlling how it navigates parameter space, so lets run this 
-phase and see if our more detailed inspection of parameter space finds the correct lens model.
-"""
-
-# %%
-print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/4_dealing_with_failure"
-    "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
-)
-custom_non_linear_result = custom_non_linear_phase.run(dataset=imaging, mask=mask)
-print("MultiNest has finished run - you may now continue the notebook.")
-
-aplt.FitImaging.subplot_fit_imaging(fit=custom_non_linear_result.max_log_likelihood_fit)
-
-# %%
-"""
-Indeed, it does. Thus, we can always brute-force our way to a good lens model, if all else fails.
-
-Finally, lets list the advantages and disadvantages of this approach:
-
-Advantage - Its easy to setup, we just increase n_live_points or decrease sampling_efficiency.
-Advantage - It generalizes to any strong lens.
-Advantage - We didn't have to make our model less realistic.
-Disadvantage - Its expensive. Very expensive. The run-time of this phase was over 6 hours. For more complex models 
-we could be talking days or weeks (or, dare I say it, months).
-
-#o, there we have it, we can now fit strong lenses with PyAutoLens. And if it fails, we know how to get it to work. I 
-hope you're feeling pretty smug. You might even be thinking 'why should I bother with the rest of these tutorials, if 
-I can fit strong a lens already'.
+So, we can now fit strong lenses with PyAutoLens. And when it fails, we know how to get it to work. I hope you're 
+feeling pretty smug. You might even be thinking 'why should I bother with the rest of these tutorials, if I can fit 
+strong a lens already'.
 
 Well, my friend, I want you to think about the last disadvantage listed above. If modeling a single lens could really 
 take as long as a month, are you really willing to spend your valuable time waiting for this? I'm not, which is why I 
@@ -454,5 +375,5 @@ developed PyAutoLens, and in the next tutorial we'll see how we can get the best
 lens model that take mere hours to infer!
 
 Before doing that though, I want you to go over the advantages and disadvantages listed above again and think whether
- we could combine these different approaches to get the best of all worlds.
+we could combine these different approaches to get the best of all worlds.
 """

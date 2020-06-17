@@ -20,7 +20,7 @@ A GaussianPrior is ideal, as the 1D pdf results we compute at the end of a phase
 2) The mean of the GaussianPrior is the best-fit value of 
 'previous_results[0].model.galaxy_name.profile_name.parameter_name'.
 
-This means that MultiNest specifically starts by searching the region of non-linear parameter space that corresponded to 
+This means that Dynesty specifically starts by searching the region of non-linear parameter space that corresponded to 
 highest log likelihood solutions in the previous phase. Thus, we're setting our priors to look in the correct regions of 
 parameter space.
 

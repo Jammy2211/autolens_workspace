@@ -22,14 +22,14 @@ space, albeit now in 3 dimensions. Nevertheless, one could still picture this pa
 curved surface.
 
 The process of computing a log likelihood in PyAutoLens can be visualized in exactly the same way. We have a set of
-lens model parameters, which we input into PyAutoLens's 'log_likelihood function'. Now, this log likelihood function isn't
-something that we can write down analytically and its inherently non-linear. But, nevertheless, it is a function; if
-we put the same set of lens model parameters into it, we'll compute the same log likelihood.
+lens model parameters, which we input into PyAutoLens's 'log_likelihood function'. Now, this log likelihood function
+isn't something that we can write down analytically and its inherently non-linear. But, nevertheless, it is a function;
+if we put the same set of lens model parameters into it, we'll compute the same log likelihood.
 
 We can write our log_likelihood function as follows (using x_mp, y_mp, I_lp etc. as short-hand notation for the
 _MassProfile_ and _LightProfile_ parameters):
 
-f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's _Tracer_ and lens_fit.
+f(x_mp, y_mp, R_mp, x_lp, y_lp, I_lp, R_lp) = a log likelihood from PyAutoLens's _Tracer_ and _FitImaging_ objects.
 
 The point is, like we did for the simple functions above, we again have a parameter space! It can't be written
 down analytically and its undoubtedly very complex and non-linear. Fortunately, we've already learnt how to search
@@ -39,32 +39,33 @@ Lets inspect the results of the last tutorial's non-linear search. We're going t
 density functions' or PDF's for short. These represent where the highest log likelihood regions of parameter space were
 found for each parameter.
 
-Navigate to the folder 'autolens_workspace/howtolens/chapter_2_lens_modeling/output_search/1_non_linear_search/image'
+Navigate to the image folder in 'autolens_workspace/output/howtolens/phase_t1_non_linear_search'
 and open the 'pdf_triangle.png' figure. The Gaussian shaped lines running down the diagonal of this triangle represent
 1D estimates of the highest log likelihood regions that were found in parameter space for each parameter.
 
-The remaining figures, which look like contour-maps, show the maximum log likelihood regions in 2D between every parameter
-pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other leads to a
-similar log_likelihood value. The 2D PDF between the source-galaxy's _LightProfile_'s intensity (I_l4) and effective
-radius (R_l4) shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is similar to
-making it fainter and bigger!
+The remaining figures, which look like contour-maps, show the maximum log likelihood regions in 2D between every
+parameter pair. We often see that two parameters are 'degenerate', whereby increasing one and decreasing the other
+leads to a similar log_likelihood value. The 2D PDF between the source-galaxy's _LightProfile_'s intensity I and
+effective radius R shows such a degeneracy. This makes sense - making the source galaxy brighter and smaller is
+similar to making it fainter and bigger!
 
 So, how does PyAutoLens know where to look in parameter space? A parameter, say, the Einstein Radius, could in
-principle take any value between negative and positive infinity. AutoLens must of told it to only search regions of
+principle take any value between negative and positive infinity. PyAutoLens must of told it to only search regions of
 parameter space with 'reasonable' values (i.e. Einstein radii of around 1"-3").
 
-These are our 'priors' - which define where we tell the non-linear search to search parameter space. PyAutoLens uses
-two types of prior:
+These are our 'priors' - which define where we tell the non-linear search to search parameter space. These tutorials
+use two types of prior:
 
-1) UniformPrior - The values of a parameter are randomly drawn between a lower and upper limit. For example, the
-orientation angle phi of a _Profile_ typically assumes a uniform prior between 0.0 and 180.0 degrees.
+UniformPrior:
+    The values of a parameter are randomly drawn between a lower and upper limit. For example, the
+    orientation angle phi of a _Profile_ typically assumes a uniform prior between 0.0 and 180.0 degrees.
 
-2) GaussianPrior - The values of a parameter are randomly drawn from a Gaussian distribution with a mean value and a
-width sigma. For example, an Einstein radius might assume a mean value of 1.0" and width of sigma = 1.0".
+GaussianPrior:
+    The values of a parameter are randomly drawn from a Gaussian distribution with a mean value and a
+    width sigma. For example, an Einstein radius might assume a mean value of 1.0" and width of sigma = 1.0".
 
-
-The default priors on all parameters can be found by navigating to the 'config/json_priors/' folder, and inspecting
-config files like light_profiles.json. The convention is as follow:
+The default priors on all parameters can be found by navigating to the 'autolens_workspace/config/json_priors/' folder,
+and inspecting config files like light_profiles.json. The convention is as follow:
 
 {
     "SphericalIsothermal": { <- The name of the _Profile_ we are defining the default priors of.
@@ -76,8 +77,8 @@ config files like light_profiles.json. The convention is as follow:
                 "type": "Relative", <- Ignore these for now.
                 "value": 0.05
             },
-            "mean": 1.6, <- The 'mean' of the GaussianPrior, telling MultiNest where to sample parameter space.
-            "sigma": 0.01 <- The 'sigma' of the GaussianPrior, telling MultiNest how wide to sample this parameter.
+            "mean": 1.6, <- The 'mean' of the GaussianPrior, telling Dynesty where to sample parameter space.
+            "sigma": 0.01 <- The 'sigma' of the GaussianPrior, telling Dynesty how wide to sample this parameter.
         }
     },
 }
@@ -87,70 +88,51 @@ config files like light_profiles.json. The convention is as follow:
 # %%
 #%matplotlib inline
 
+from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
 
 # %%
 """
-Lets again setup the paths and config-overrides for this chapter, so the non-linear search runs fast.
-
-You need to change the path below to the chapter 1 directory.
+Lets again setup the config and output paths.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 conf.instance = conf.Config(
-    config_path=f"{chapter_path}/configs/t2_parameter_space_and_priors",
-    output_path=f"{chapter_path}/output",
+    config_path=f"{workspace_path}/config",
+    output_path=f"{workspace_path}/output/howtolens",
 )
 
 # %%
 """
-This function simulates the data we'll fit in this tutorial - which is identical to the previous tutorial.
+We'll use the same strong lensing data as the previous tutorial, where:
+
+    - The lens galaxy's *MassProfile* is a *SphericalIsothermal*.
+    - The source galaxy's *LightProfile* is a *SphericalExponential*.
 """
 
 # %%
-def simulate():
+dataset_label = "chapter_2"
+dataset_name = "lens_sis__source_exp"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
 
-    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.SphericalExponential(
-            centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
 
 # %%
 """
-Again, lets create the simulated Imaging data and mask.
+We'll create and use a 3.0" _Mask_ again.
 """
 
 # %%
-imaging = simulate()
-
 mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
@@ -180,7 +162,6 @@ The word 'mass' corresponds to the word we used when setting up the _GalaxyModel
 
 # %%
 lens.mass.centre_0 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
-
 lens.mass.centre_1 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
 
 # %%
@@ -202,6 +183,15 @@ source.light.effective_radius = af.UniformPrior(lower_limit=0.0, upper_limit=0.3
 
 # %%
 """
+Like in the previous tutorial, we use a_PhaseSettingsImaging_ object to specify our model-fitting procedure uses a 
+regular _Grid_.
+"""
+
+# %%
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+
+# %%
+"""
 We can now create this custom phase like we did a hyper phase before. If you look at the 'model.info' file in the 
 output of the non-linear search, you'll see that the priors have indeed been changed.
 """
@@ -209,21 +199,22 @@ output of the non-linear search, you'll see that the priors have indeed been cha
 # %%
 custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
+    settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
 print(
-    "MultiNest has begun running - checkout the autolens_workspace/howtolens/chapter_2_lens_modeling/output/2_custom_priors"
+    "Dynesty has begun running - checkout the autolens_workspace/output/2_custom_priors"
     "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+    "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
 results_custom = custom_phase.run(dataset=imaging, mask=mask)
 
 aplt.FitImaging.subplot_fit_imaging(fit=results_custom.max_log_likelihood_fit)
 
-print("MultiNest has finished run - you may now continue the notebook.")
+print("Dynesty has finished run - you may now continue the notebook.")
 
 # %%
 """

@@ -5,9 +5,9 @@ __Linking Phases__
 So, we've learnt that if our parameter space is too complex, our non-linear search might fail to find the global
 maximum solution. However, we also learnt how to ensure this doesn't happen, by:
 
-1) Tuning our priors to the strong lens we're fitting.
-2) Making our lens model less complex.
-3) Searching non-linear parameter space for longer.
+    1) Tuning our priors to the strong lens we're fitting.
+    2) Making our lens model less complex.
+    3) Searching non-linear parameter space for longer.
 
 However, each of the above approaches has disadvantages. The more we tune our priors, the less we can generalize our
 analysis to a different strong lens. The less complex we make our model, the less realistic it is. And if we rely too
@@ -25,16 +25,17 @@ The model we infer above will therefore be a lot less realistic. But it doesn't 
 we're going to relax these assumptions and get back our more realistic lens model. The beauty is that, by running the
 first phase, we can use its results to tune the priors of our second phase. For example:
 
-1) The first phase should give us a pretty good idea of the lens galaxy's light and _MassProfile_s, for example its
-intensity, effective radius and einstein radius.
+1) The first phase should give us a pretty good idea of the lens galaxy's light and mass profiles, for example its
+   intensity, effective radius and einstein radius.
 
 2) It should also give us a pretty good fit to the lensed source galaxy. This means we'll already know where in
-source-plane its is located and what its intensity and effective are.
+   source-plane its is located and what its intensity and effective are.
 """
 
 # %%
 #%matplotlib inline
 
+from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -45,106 +46,73 @@ You need to change the path below to the chapter 1 directory.
 """
 
 # %%
-chapter_path = "/path/to/user/autolens_workspace/howtolens/chapter_2_lens_modeling"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_2_lens_modeling"
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
-conf.instance = conf.Config(
-    config_path=f"{chapter_path}/configs/t5_linking_phases",
-    output_path=f"{chapter_path}/output",
+# %%
+"""
+We'll use the same strong lensing data as the previous tutorial, where:
+
+    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+    - The lens galaxy's _MassProfile_ is an *EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+"""
+
+# %%
+dataset_label = "chapter_2"
+dataset_name = "lens_sersic_sie__source_exp"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
 )
 
 # %%
 """
-Another simulate image function, for the same image as tutorial 4..
+We'll create and use a smaller 2.0" _Mask_ again.
 """
 
 # %%
-def simulate():
-
-    _Grid_ = al.Grid.uniform(shape_2d=(130, 130), pixel_scales=0.1, sub_size=1)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, 0.05),
-            intensity=0.04,
-            effective_radius=0.5,
-            sersic_index=3.5,
-        ),
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=0.8
-        ),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, -0.333333),
-            intensity=0.03,
-            effective_radius=0.3,
-            sersic_index=3.0,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
-
-# %%
-"""
-Simulate the Imaging data and set up the mask.
-"""
-
-# %%
-imaging = simulate()
-
 mask = al.Mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.0
 )
 
+# %%
+"""
+When plotted, the lens light's is clearly visible in the centre of the image.
+"""
+
+# %%
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # %%
 """
-Lets use the same approach of making light trace mass that we did previously, but we'll make it slightly less 
-complex then before.
-
-In the galaxy model below we use two new inputs - 'align_axis_ratios' and'align_orientations'. These functions 
-align the axis_ratio and phi values of all of the lens galaxy's profiles (in this case, its _LightProfile_ and mass 
-profile). We did this in the previous phase using the 'customize_priors' function, but because this is a fairly 
-common thing to do to a _GalaxyModel_ we made these these inputs available for your convenience.
-
-There is also an 'align_centres' method, but because we are fixing all centres to floats it is omitted.
+Like in the previous tutorial, we use a_PhaseSettingsImaging_ object to specify our model-fitting procedure uses a 
+regular _Grid_.
 """
 
 # %%
-lens = al.GalaxyModel(
-    redshift=0.5,
-    light=al.lp.EllipticalSersic,
-    mass=al.mp.EllipticalIsothermal,
-    align_axis_ratios=True,
-    align_orientations=True,
-)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
 
 # %%
 """
 As we've eluded to before, one can look at an image and immediately identify the centre of the lens galaxy. It's 
 that bright blob of light in the middle! Given that we know we're going to make the lens model more complex in the 
 next phase, lets take a more liberal approach than before and fix the lens centre to (y,x) = (0.0", 0.0").
+"""
 
+# %%
+lens = al.GalaxyModel(
+    redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
+)
+
+source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
+
+# %%
+"""
 You haven't actually seen a line like this one before. By setting a parameter to a number (and not a prior) it is be 
 removed from non-linear parameter space and always fixed to that value. Pretty neat, huh?
 """
@@ -154,6 +122,13 @@ lens.light.centre_0 = 0.0
 lens.light.centre_1 = 0.0
 lens.mass.centre_0 = 0.0
 lens.mass.centre_1 = 0.0
+
+# %%
+"""
+Lets use the same approach of making the ellipticity of the mass trace that of the light.
+"""
+lens.mass.elliptical_comps_0 = lens.light.elliptical_comps_0
+lens.mass.elliptical_comps_1 = lens.light.elliptical_comps_1
 
 # %%
 """
@@ -178,19 +153,10 @@ Now lets create the phase.
 # %%
 phase_1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
+    settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.8, evidence_tolerance=100.0),
 )
-
-# %%
-"""
-Lets go one step further. Now we know our parameter space is less complex, maybe we can find the maximum log likelihood 
-with fewer MultiNest live points and a faster sampling rate?
-"""
-
-# %%
-phase_1.search.n_live_points = 30
-phase_1.search.sampling_efficiency = 0.9
 
 # %%
 """
@@ -200,14 +166,14 @@ Lets run the phase, noting that our liberal approach to reducing the lens model 
 
 # %%
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases"
+    "Dynesty has begun running - checkout the workspace/output/5_linking_phases"
     "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+    "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-phase_1_results = phase_1.run(dataset=imaging, mask=mask)
+phase_1_result = phase_1.run(dataset=imaging, mask=mask)
 
-print("MultiNest has finished run - you may now continue the notebook.")
+print("Dynesty has finished run - you may now continue the notebook.")
 
 # %%
 """
@@ -215,7 +181,7 @@ And indeed, we get a reasonably good model and fit to the data - in a much short
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_1_results.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase_1_result.max_log_likelihood_fit)
 
 # %%
 """
@@ -245,43 +211,28 @@ values for now, I've chosen values that I know will ensure reasonable sampling, 
 ## LENS LIGHT PRIORS ###
 
 lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
 lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-lens.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.15)
-
-lens.light.phi = af.GaussianPrior(mean=45.0, sigma=15.0)
-
+lens.light.elliptical_comps_0 = af.GaussianPrior(mean=0.33333, sigma=0.15)
+lens.light.elliptical_comps_1 = af.GaussianPrior(mean=0.0, sigma=15.0)
 lens.light.intensity = af.GaussianPrior(mean=0.02, sigma=0.01)
-
 lens.light.effective_radius = af.GaussianPrior(mean=0.62, sigma=0.2)
-
 lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
 
 ### LENS MASS PRIORS ###
 
 lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
 lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-lens.mass.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.25)
-
-lens.mass.phi = af.GaussianPrior(mean=45.0, sigma=30.0)
-
+lens.mass.elliptical_comps_0 = af.GaussianPrior(mean=0.33333, sigma=0.15)
+lens.mass.elliptical_comps_1 = af.GaussianPrior(mean=0.0, sigma=15.0)
 lens.mass.einstein_radius = af.GaussianPrior(mean=0.8, sigma=0.1)
 
 ### SOURCE LIGHT PRIORS ###
 
 source.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
 source.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
 source.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.1)
-
 source.light.phi = af.GaussianPrior(mean=90.0, sigma=10.0)
-
 source.light.intensity = af.GaussianPrior(mean=0.14, sigma=0.05)
-
 source.light.effective_radius = af.GaussianPrior(mean=0.12, sigma=0.2)
 
 # %%
@@ -293,22 +244,20 @@ than we're used to - I didn't have to edit the config files to get this phase to
 # %%
 phase_2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
+    settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
-phase_2.search.n_live_points = 30
-phase_2.search.sampling_efficiency = 0.9
-
 print(
-    "MultiNest has begun running - checkout the workspace/howtolens/chapter_2_lens_modeling/output/5_linking_phases"
+    "Dynesty has begun running - checkout the workspace/output/5_linking_phases"
     "folder for live output of the results, images and lens model."
-    "This Jupyter notebook cell with progress once MultiNest has completed - this could take some time!"
+    "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
 phase_2_results = phase_2.run(dataset=imaging, mask=mask)
 
-print("MultiNest has finished run - you may now continue the notebook.")
+print("Dynesty has finished run - you may now continue the notebook.")
 
 # %%
 """
@@ -329,18 +278,28 @@ You're probably thinking though that there is one huge, giant, glaring flaw in a
 Phase 2 can't be generalized to another lens - it's priors are tuned to the image we fitted. If we had a lot of lenses, 
 we'd have to write a new phase_2 for every single one. This isn't ideal, is it?
 
-Well, let me reassure you, that PyAutoLens has you covered. In chapter 3, we'll cover 'pipelines'. As you might of 
-guessed, a pipeline comprises a set of phases that are linked together. This allows us to start with a simple, 
-easy-to-fit lens model, and gradually makes it more complex. Crucially, as the pipeline runs, we 'feed' the results of 
-previous phases through the pipeline, allowing us to tune our priors automatically, in a way that can be applied 
-generically to any strong lens.
-
-However, before moving forward, there's a couple more thing we need to discuss - which revolve around run-speed. 
-Lens modeling is a computationally expensive process and keeping the run times on the order of days, or less, can be 
-tricky. I'll give  you a sense of how we can do that in the next tutorial, and show you some neat tricks to get 
-PyAutoLens modeling lenses super-fast after that!
-
-Before that, have a quick think about this - what might be the main factors driving a phase's run-time?
+Fotunately, we can pass priors in PyAutoLens without specifying the specific values, using what we call promises. The
+code below sets up phase_2 with priors fully linked, but without specifying each individual prior!
 """
 
 # %%
+phase_2 = al.PhaseImaging(
+    phase_name="phase_t5_linking_phases_2",
+    settings=settings,
+    galaxies=dict(
+        lens=phase_1_result.model.galaxies.lens,
+        source=phase_1_result.model.galaxies.source
+    ),
+    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+)
+
+# %%
+"""
+Above, the result of our phase 1 fit are used to set up the priors on the lens and source _GalaxyModel_ objects. This 
+code *can* be generalized to any lens system!
+
+In chapter 3, we'll cover 'pipelines'. A pipeline comprises a set of phases that are linked together, allowing us to 
+start with a simple, easy-to-fit lens model, and gradually makes it more complex. Crucially, as the pipeline runs, 
+we 'feed' the results of previous phases through the pipeline, allowing us to tune our priors automatically, 
+in a way that can be applied generically to any strong lens.
+"""

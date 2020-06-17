@@ -86,9 +86,9 @@ In chapter 1, we'll learn about strong gravitational lensing and PyAutoLens. At 
 be able to:
 
 1) Create uniform _Grid_'s of (x,y) Cartesian coordinates.
-2) Combine these _Grid_'s with light and _MassProfile_s to make images, surface densities, gravitational potentials
+2) Combine these _Grid_'s with light and mass profiles to make images, surface densities, gravitational potentials
    and deflection angle-maps.
-3) Combine these light and _MassProfile_s to make galaxies.
+3) Combine these light and mass profiles to make galaxies.
 4) Perform ray-tracing with these _Galaxy_'s whereby a _Grid_ is ray-traced through an image-plane / source-plane
    strong lensing configuration.
 5) Simulate telescope imaging data of a strong gravitational lens.

@@ -21,7 +21,7 @@ This simulates the same the image we've fitted in the past few tutorials.
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

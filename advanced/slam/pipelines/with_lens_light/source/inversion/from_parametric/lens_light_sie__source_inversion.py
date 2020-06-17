@@ -272,7 +272,7 @@ def make_pipeline(
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
         inversion_search=slam.hyper.inversion_search,
-        hyper_galaxy_search=slam.hyper.hyper_galaxies,
+        hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
         hyper_combined_search=slam.hyper.hyper_combined_search,
         include_background_sky=slam.hyper.hyper_image_sky,
         include_background_noise=slam.hyper.hyper_background_noise,

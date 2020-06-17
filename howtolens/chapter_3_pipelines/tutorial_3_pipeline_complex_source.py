@@ -31,7 +31,7 @@ def make_pipeline(phase_folders=None):
     # einstein radius and the other lens-mass parameters.
 
     # This should run fine without any prior-passes. In general, a thick, giant ring of source light is something we
-    # can be confident MultiNest will fit without much issue, especially when the lens galaxy's light isn't included
+    # can be confident Dynesty will fit without much issue, especially when the lens galaxy's light isn't included
     # such that the parameter space is just 12 parameters.
 
     phase1 = al.PhaseImaging(

@@ -4,15 +4,16 @@ import autolens.plot as aplt
 import os
 
 """
-This script simulates imaging of a strong lens using decomposed light and dark matter profiles where:
+This script simulates imaging of a strong lens where:
 
-    - The lens galaxy's stellar *MassProfile* is an *EllipticalSersic*.
-    - The lens galaxy's dark *MassProfile* is a *SphericalNFW*.
-    - The source galaxy's *LightProfile* is an *EllipticalSersic*.
+    - The lens galaxy's *MassProfile* is a *SphericalIsothermal*.
+    - The source galaxy's *LightProfile* is a *SphericalExponential*.
+    
+This dataset is used in chapter 2, tutorials 1-3.
 """
 
 """Setup the path to the autolens_workspace, using a relative directory name."""
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
 
 """
 The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
@@ -22,15 +23,15 @@ gives it a descriptive name. They define the folder the dataset is output to on 
     - The noise map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
-dataset_label = "imaging"
-dataset_name = "lens_sersic_mlr_nfw__source_sersic"
+dataset_label = "chapter_2"
+dataset_name = "lens_sis__source_exp"
 
 """
 Create the path where the dataset will be output, which in this case is:
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/howtolens/dataset/chapter_2/lens_sis__source_exp/'
 """
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["howtolens", "dataset", dataset_label, dataset_name]
 )
 
 """
@@ -68,45 +69,41 @@ simulator = al.SimulatorImaging(
 )
 
 """
-Setup the lens galaxy's light (elliptical Sersic), mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
-this simulated lens.
+Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
+
+For lens modeling, defining ellipticity in terms of the  'elliptical_comps' improves the model-fitting procedure.
+
+However, for simulating a strong lens you may find it more intuitive to define the elliptical geometry using the 
+axis-ratio of the profile (axis_ratio = semi-major axis / semi-minor axis = b/a) and position angle phi, where phi is
+in degrees and defined counter clockwise from the positive x-axis.
+
+We can use the **PyAutoLens** *convert* module to determine the elliptical components from the axis-ratio and phi.
 """
 lens_galaxy = al.Galaxy(
     redshift=0.5,
-    light=al.lmp.EllipticalSersic(
-        centre=(0.0, 0.0),
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=45.0),
-        intensity=1.0,
-        effective_radius=0.8,
-        sersic_index=4.0,
-        mass_to_light_ratio=0.3,
-    ),
-    mass=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.1, scale_radius=20.0),
-    shear=al.mp.ExternalShear(elliptical_comps=(0.03, 0.0)),
+    mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.6),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
-        centre=(0.1, 0.1),
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
-        intensity=0.3,
-        effective_radius=1.0,
-        sersic_index=2.5,
+    light=al.lp.SphericalExponential(
+        centre=(0.0, 0.0), intensity=0.2, effective_radius=0.2
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated Imaging dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset."""
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+
+"""Lets look at the tracer's image - this is the image we'll be simulating."""
 aplt.Tracer.image(tracer=tracer, grid=grid)
 
 """
-We can then pass this simulator a tracer, which uses the tracer to create a ray-traced image which is simulated as
-imaging dataset following the setup of the dataset.
+We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an
+imaging dataset.
 """
 imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
-"""Lets plot the simulated Imaging dataset before we output it to fits."""
+"""Lets plot the simulated imaging dataset before we output it to fits."""
 aplt.Imaging.subplot_imaging(imaging=imaging)
 
 """Finally, lets output our simulated dataset to the dataset path as .fits files"""

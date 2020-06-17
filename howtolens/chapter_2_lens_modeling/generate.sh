@@ -1,4 +1,4 @@
-export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/
+export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
 rm -rf *.ipynb
 rm -rf .ipynb_checkpoints
 cd scripts

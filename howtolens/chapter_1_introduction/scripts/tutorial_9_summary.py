@@ -5,7 +5,7 @@ __Summary__
 In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 
     1) PyAutoLens uses Cartesian _Grid_'s of (y,x) coordinates to perform ray-tracing.
-    2) These _Grid_'s are combined with light and _MassProfile_s to compute images, convergences, potentials and
+    2) These _Grid_'s are combined with light and mass profiles to compute images, convergences, potentials and
        deflection angles.
     3) Profiles are combined to make galaxies.
     4) Collections of galaxies (at the same redshift) form a plane.
@@ -172,7 +172,7 @@ directory if you're curious how to test code well!).
 Okay, enough self-serving praise for PyAutoLens, lets wrap up the chapter. You've learn a lot in this chapter, but 
 what you haven't learnt is how to 'model' a real strong gravitational lens.
 
-In the real world, we've no idea what the 'correct' set of light and _MassProfile_ parameters are that will give a 
+In the real world, we've no idea what the 'correct' set of light and mass profile parameters are that will give a 
 good fit to a lens. Lens modeling is the process of finding the lens model which provides the best-fit, and that will 
 be the focus of our next set of tutorials.
 """

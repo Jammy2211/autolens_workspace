@@ -9,7 +9,7 @@
 # passes hyper-images between phases!
 
 # However, PyAutoLens does need to know which hyper-images to pass to which galaxies. To do this, PyAutoLens uses
-# galaxy-names. When you create a GalaxyModel, you name the _Galaxy_'s for example below we've called the lens galaxy
+# galaxy-names. When you create a _GalaxyModel_, you name the _Galaxy_'s for example below we've called the lens galaxy
 # 'lens' and the source galaxy 'source':
 
 # phase1 = al.PhaseImaging(
@@ -37,7 +37,7 @@
 ### HYPER PHASES ###
 
 # There is one more major change to hyper-pipelines. That is, how do we fit for the hyper-parameters using our
-# non-linear search (e.g. MultiNest)? We don't fit for them simultaneously with the lens and source models, as this
+# non-linear search (e.g. Dynesty)? We don't fit for them simultaneously with the lens and source models, as this
 # creates an unnecessarily large parameter space which we'd fail to fit accurately and efficiently.
 
 # Instead, we 'extend' phases with extra phases that specifically fit certain components of hyper-galaxy-model. You've
@@ -233,7 +233,7 @@ def make_pipeline(setup, phase_folders=None):
     # to the dataset is reliable!
 
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__lens_sersic_sie__source_sersic",
+        phase_name="phase_3__lens_sersic_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(

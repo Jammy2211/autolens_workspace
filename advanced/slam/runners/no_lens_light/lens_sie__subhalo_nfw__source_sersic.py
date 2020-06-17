@@ -104,11 +104,11 @@ source__parametric = lens_sie__source_sersic.make_pipeline(
     slam=slam, settings=settings, phase_folders=["slam", dataset_label]
 )
 
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.power_law import (
-    lens_power_law__source,
+from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.sie import (
+    lens_sie__source,
 )
 
-mass__sie = lens_power_law__source.make_pipeline(
+mass__sie = lens_sie__source.make_pipeline(
     slam=slam, settings=settings, phase_folders=["slam", dataset_label]
 )
 

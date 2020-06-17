@@ -11,7 +11,7 @@ particular, we will:
 
 To adapt these aspects of the analysis, we will introduce 'hyper-parameters' which change the pixelization,
 regularization scheme and noise map. To set these hyper-parameters, we'll perform a standard non-linear search (e.g.
-with MultiNest), like we are now used to doing to fit a lens model. However, this fit needs a well defined log_likelihood
+with Dynesty), like we are now used to doing to fit a lens model. However, this fit needs a well defined log_likelihood
 function that if we maximize means we have located what is objectively the 'best-fit' solution in parameter space
 to the strong lens imaging data.
 

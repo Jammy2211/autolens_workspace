@@ -26,7 +26,7 @@ This simulates the exact same data as the previous tutorial, but with the lens l
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

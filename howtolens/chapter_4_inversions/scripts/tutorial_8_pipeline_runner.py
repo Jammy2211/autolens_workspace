@@ -42,7 +42,7 @@ This function simulates the complex source, and is the same function we used in 
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

@@ -20,7 +20,7 @@ To begin, lets simulate and load an image - it'll be clear why we're doing this 
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

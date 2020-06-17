@@ -19,7 +19,7 @@ To begin, lets simulate a simple image and use it to generate a rectangular mapp
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -283,7 +283,7 @@ centre of mask, but anywhere in the mask, trace beyond the source-plane border.
 # %%
 def simulate_image_x2_lenses():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 

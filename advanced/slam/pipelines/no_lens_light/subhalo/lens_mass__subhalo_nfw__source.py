@@ -130,10 +130,4 @@ def make_pipeline(
         ),
     )
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.hyper.hyper_galaxies,
-        include_background_sky=slam.hyper.hyper_image_sky,
-        include_background_noise=slam.hyper.hyper_background_noise,
-    )
-
     return al.PipelineDataset(pipeline_name, phase1, phase2)

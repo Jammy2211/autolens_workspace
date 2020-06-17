@@ -53,7 +53,7 @@ def make_pipeline(phase_folders=None):
         regularization=al.reg.Constant,
     )
 
-    # We can customize the inversion's priors like we do our light and _MassProfile_s.
+    # We can customize the inversion's priors like we do our light and mass profiles.
 
     source.pixelization.shape_0 = af.UniformPrior(lower_limit=20.0, upper_limit=40.0)
 

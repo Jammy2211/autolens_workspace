@@ -60,7 +60,7 @@ def make_pipeline(
     source = slam.source_from_previous_pipeline()
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_power_law__source",
+        phase_name="phase_1__lens_sie__source",
         phase_folders=phase_folders,
         galaxies=dict(
             lens=al.GalaxyModel(
@@ -82,7 +82,7 @@ def make_pipeline(
 
         phase1 = phase1.extend_with_multiple_hyper_phases(
             inversion_search=slam.hyper.inversion_search,
-            hyper_galaxy_search=slam.hyper.hyper_galaxies,
+            hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
             include_background_sky=slam.hyper.hyper_image_sky,
             include_background_noise=slam.hyper.hyper_background_noise,
         )

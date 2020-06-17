@@ -44,7 +44,7 @@ def make_pipeline(phase_folders=None):
         search=af.DynestyStatic(),
     )
 
-    # We'll use the MultiNest black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
+    # We'll use the Dynesty black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
 
     phase1.search.const_efficiency_mode = True
     phase1.search.n_live_points = 30
@@ -120,7 +120,7 @@ def make_pipeline(phase_folders=None):
 
     # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
     # you can simply set the source galaxy equal to one another without specifying each parameter of every
-    # light and _MassProfile_.
+    # light and mass profile.
 
     source = (
         phase2.result.model.galaxies.source
@@ -137,12 +137,12 @@ def make_pipeline(phase_folders=None):
     # parameters as fixed value that were not fitted. In summary:
 
     # - model: This means we pass the best-fit parameters of a phase, and set them up in the next phase as free
-    #          parameters that are fitted for by MultiNest.
+    #          parameters that are fitted for by Dynesty.
 
     # - instance: This means we pass the best-fit parameters of a phase as fixed parameters that are not fitted for.
 
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__lens_sersic_sie__source_sersic",
+        phase_name="phase_3__lens_sersic_sie__source_exp",
         phase_folders=phase_folders,
         galaxies=dict(lens=lens, source=source),
         search=af.DynestyStatic(),

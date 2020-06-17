@@ -26,7 +26,7 @@ This is the usual simulate function.
 # %%
 def simulate():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
@@ -176,7 +176,7 @@ source using an inversion. To do this, all we have to do is give the lens galaxy
 # %%
 def simulate_lens_with_light_profile():
 
-    _Grid_ = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
 
     psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
 
