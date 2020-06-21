@@ -1,17 +1,26 @@
 # %%
 """
-In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
-using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a _LightProfile_,
-to initialize the mass model, and then switch to an inversion.
+__Pipeline__
+
+To illustrate lens modeling using an _Inversion_ and _Pipeline_, we'll go back to the complex source model-fit that we
+performed in tutorial 3 of chapter 3. This time, as you've probably guessed, we'll fit the complex source using an
+_Inversion_.
+
+We'll begin by modeling the source with a _LightProfile_, to initialize the mass model and avoid the unphysical
+solutions discussed in tutorial 6. We'll then switch to an _Inversion_.
 """
 
+""" AUTOFIT + CONFIG SETUP """
+
 # %%
-import os
+from autoconf import conf
 import autofit as af
 
+#%matplotlib inline
+
 # %%
 """
-Setup the path to the autolens_workspace, using a relative directory name.
+Setup the path to the workspace, using by filling in your path below.
 """
 
 # %%
@@ -29,128 +38,94 @@ conf.instance = conf.Config(
 )
 
 # %%
-#%matplotlib inline
+""" AUTOLENS + DATA SETUP """
 
 import autolens as al
 import autolens.plot as aplt
 
 # %%
 """
-This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3.
+We'll use strong lensing data, where:
+
+    - The lens galaxy's light is omitted.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
 """
 
 # %%
-def simulate():
+from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic_x4
 
-    grid = al.Grid.uniform(shape_2d=(180, 180), pixel_scales=0.05, sub_size=1)
+dataset_label = "chapter_4"
+dataset_name = "lens_sie__source_sersic_x4"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
 
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
 
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
-        ),
-    )
-
-    source_galaxy_0 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.1, 0.1),
-            elliptical_comps=(0.1, 0.0),
-            intensity=0.2,
-            effective_radius=1.0,
-            sersic_index=1.5,
-        ),
-    )
-
-    source_galaxy_1 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(-0.25, 0.25),
-            elliptical_comps=(0.0, 0.15),
-            intensity=0.1,
-            effective_radius=0.2,
-            sersic_index=3.0,
-        ),
-    )
-
-    source_galaxy_2 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.45, -0.35),
-            elliptical_comps=(0.0, 0.222222),
-            intensity=0.03,
-            effective_radius=0.3,
-            sersic_index=3.5,
-        ),
-    )
-
-    source_galaxy_3 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(-0.05, -0.0),
-            elliptical_comps=(0.05, 0.1),
-            intensity=0.03,
-            effective_radius=0.1,
-            sersic_index=4.0,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(
-        galaxies=[
-            lens_galaxy,
-            source_galaxy_0,
-            source_galaxy_1,
-            source_galaxy_2,
-            source_galaxy_3,
-        ]
-    )
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
-
-# %%
-"""
-Lets simulate the we'll fit, which is the same complex source as the
-'chapter_3_pipelines/tutorial_3_complex_source.py' tutorial.
-"""
-
-# %%
-imaging = simulate()
-aplt.Imaging.subplot_imaging(imaging=imaging)
-
-# %%
-"""
-Lets also use the same mask as before.
-"""
 mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
+
+aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
+
 # %%
 """
-Lets import the pipeline and run it.
+__Settings__
+
+The *PhaseSettingsImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
+these in chapter 2, and a full description of all settings can be found in the example script:
+
+    'autolens_workspace/examples/model/customize/settings.py'.
+
+The settings chosen here are applied to all phases in the pipeline.
+"""
+
+# %%
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+
+# %%
+"""
+__Pipeline_Setup_And_Tagging__:
+
+For this pipeline the pipeline setup customizes and tags:
+
+    - The Pixelization used by the inversion of this pipeline.
+    - The Regularization scheme used by of this pipeline.
+    - If there is an external shear in the mass model or not.
+"""
+
+# %%
+setup = al.PipelineSetup(
+    pixelization=al.pix.VoronoiMagnification,
+    regularization=al.reg.Constant,
+    no_shear=False,
+    folders=["howtolens", "c4_t8_inversion"],
+)
+
+# %%
+"""
+__Pipeline Creation__
+
+To create a pipeline we import it from the pipelines folder and run its 'make_pipeline' function, inputting the 
+*Setup* and *PhaseSettings* above.
 """
 
 # %%
 from howtolens.chapter_4_inversions import tutorial_8_pipeline
 
-pipeline_inversion = tutorial_8_pipeline.make_pipeline(
-    phase_folders=["howtolens", "c4_t8_inversion"]
-)
-pipeline_inversion.run(dataset=imaging, mask=mask)
+pipeline_inversion = tutorial_8_pipeline.make_pipeline(setup=setup, settings=settings)
+
+# Uncomment to run.
+# pipeline_inversion.run(dataset=imaging, mask=mask)
 
 # %%
 """
 And with that, we now have a pipeline to model strong lenses using an inversion! Checkout the example pipeline in
-'autolens_workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an inversion pipeline that includes the lens light
-component.
+'autolens_workspace/pipelines/examples/inversion_hyper_galaxies_bg_noise.py' for an example of an _Inversion_ pipeline 
+that includes the lens light component.
 """

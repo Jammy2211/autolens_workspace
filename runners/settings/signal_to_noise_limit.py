@@ -50,7 +50,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 from pipelines.settings import signal_to_noise_limit
 
 pipeline = signal_to_noise_limit.make_pipeline(
-    phase_folders=["settings"], signal_to_noise_limit=20.0
+    folders=["settings"], signal_to_noise_limit=20.0
 )
 
 pipeline.run(dataset=imaging, mask=mask)

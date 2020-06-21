@@ -2,7 +2,7 @@
 """
 __Imaging DATA__
 
-In this example, we'll use the 'imaging' module to simulate imaging of a strong lens made using a _Tracer_. By
+In this example, we'll use the 'imaging' module to simulate _Imaging_ of a strong lens made using a _Tracer_. By
 simulate, we mean that it will appear as if we had observed it using a real telescope, with this example making an
 image representative of Hubble Space Telescope imaging.
 """
@@ -24,7 +24,7 @@ psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=0.1)
 
 # %%
 """
-To simulate imaging dataset, we use a _Grid_, like usual.
+To simulate _Imaging_ dataset, we use a _Grid_, like usual.
 """
 
 # %%
@@ -81,7 +81,7 @@ print(padded_image.shape)
 
 # %%
 """
-Now, to simulate the imaging data, we pass the _Tracer_ and _Grid_ to the imaging module's simulate function. This adds
+Now, to simulate the _Imaging_ data, we pass the _Tracer_ and _Grid_ to the _Imaging_ module's simulate function. This adds
 the following effects to the image:
 
     1) Telescope optics: Using the Point Spread Function above.
@@ -118,11 +118,11 @@ The data path specifies where the data is output, this time in the directory 'ch
 """
 
 # %%
-chapter_path = "/path/to/AutoLens/workspace/howtolens/chapter_1_introduction"
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
+howtolens_path = "/path/to/AutoLens/workspace/howtolens"
+howtolens_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens"
 
 # %%
-dataset_path = f"{chapter_path}/dataset"
+dataset_path = f"{howtolens_path}/dataset/chapter_1"
 
 # %%
 """

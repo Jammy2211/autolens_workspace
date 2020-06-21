@@ -2,8 +2,8 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the a strong lens using a Sersic *LightProfile*, SIE mass proflie and parametric Sersic
-source.
+In this pipeline, we fit the a strong lens using an _EllipticalSersic_ _LightProfile_, _EllipticalIsothermal_ 
+_MassProfile_ and parametric _EllipticalSersic_ source.
 
 The pipeline is three phases:
 
@@ -19,7 +19,7 @@ Notes: None
 
 Phase 2:
 
-Fit the lens mass model and source *LightProfile*.
+Fit the lens mass model and source _LightProfile_.
 
 Lens Light: EllipticalSersic
 Lens Mass: EllipticalIsothermal + ExternalShear
@@ -40,12 +40,7 @@ Notes: None
 
 
 def make_pipeline(
-    setup,
-    settings,
-    phase_folders=None,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    evidence_tolerance=100.0,
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -58,8 +53,8 @@ def make_pipeline(
     1) The lens galaxy mass model includes an external shear.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(setup.tag)
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
     """SETUP SHEAR: Include the shear in the mass model if not switched off in the pipeline setup. """
 
@@ -71,17 +66,17 @@ def make_pipeline(
     """
     Phase 1: Fit only the lens galaxy's light, where we:
 
-    1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+        1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
 
-    sersic = af.PriorModel(al.lp.EllipticalSersic)
-    sersic.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-    sersic.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    light = af.PriorModel(al.lp.EllipticalSersic)
+    light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+    light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
-        phase_folders=phase_folders,
-        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, sersic=sersic)),
+        folders=setup.folders,
+        galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
         settings=settings,
         search=af.DynestyStatic(
             n_live_points=50,
@@ -93,27 +88,27 @@ def make_pipeline(
     """
     Phase 2: Fit the lens galaxy's mass and source galaxy's light, where we:
 
-    1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-    2) Set priors on the centre of the lens galaxy's *MassProfile* by linking them to those inferred for \
-       the *LightProfile* in phase 1.
+        1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
+        2) Set priors on the centre of the lens galaxy's _MassProfile_ by linking them to those inferred for 
+           the _LightProfile_ in phase 1.
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
-    mass.centre_0 = phase1.result.model.galaxies.lens.sersic.centre_0
-    mass.centre_1 = phase1.result.model.galaxies.lens.sersic.centre_1
+    mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
+    mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                sersic=phase1.result.instance.galaxies.lens.sersic,
+                light=phase1.result.instance.galaxies.lens.light,
                 mass=mass,
                 shear=shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, sersic=al.lp.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         settings=settings,
@@ -127,22 +122,22 @@ def make_pipeline(
     """
     Phase 3: Fit simultaneously the lens and source galaxies, where we:
 
-    1) Set the lens's light, mass, and source's light using the results of phases 1 and 2.
+        1) Set the lens's light, mass, and source's light using the results of phases 1 and 2.
     """
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sersic_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                sersic=phase1.result.model.galaxies.lens.sersic,
+                light=phase1.result.model.galaxies.lens.light,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                sersic=phase2.result.model.galaxies.source.sersic,
+                light=phase2.result.model.galaxies.source.light,
             ),
         ),
         settings=settings,

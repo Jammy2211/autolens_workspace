@@ -1,8 +1,10 @@
 # %%
 """
-In this tutorial, we'll go back to our complex source pipeline, but this time, as you've probably guessed, fit it
-using an inversion. As we discussed in tutorial 6, we'll begin by modeling the source with a _LightProfile_,
-to initialize the mass model, and then switch to an inversion.
+__Pipeline__
+
+To end, lets illustrate the use of hyper-mode in a pipeline.
+
+You can find many more example pipelines in the folder 'autolens_workspace/advanced/hyper'.
 """
 
 # %%
@@ -28,115 +30,37 @@ conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
+# %%
+""" AUTOLENS + DATA SETUP """
+
 import autolens as al
 import autolens.plot as aplt
 
 # %%
 """
-This function simulates the complex source, and is the same function we used in chapter 3, tutorial 3. It also adds
-lens galaxy light.
+We'll use strong lensing data, where:
+
+    - The lens galaxy's light is an _EllipticalSersic_.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
 """
 
 # %%
-def simulate():
+from autolens_workspace.howtolens.simulators.chapter_5 import (
+    lens_sersic_sie__source_sersic_x4,
+)
 
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
+dataset_label = "chapter_5"
+dataset_name = "lens_sersic_sie__source_sersic_x4"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
 
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
 
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, 0.15),
-            intensity=0.8,
-            effective_radius=1.3,
-            sersic_index=2.5,
-        ),
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.1, 0.0), einstein_radius=1.6
-        ),
-    )
-
-    source_galaxy_0 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.1, 0.1),
-            elliptical_comps=(0.1, 0.0),
-            intensity=0.2,
-            effective_radius=1.0,
-            sersic_index=1.5,
-        ),
-    )
-
-    source_galaxy_1 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(-0.25, 0.25),
-            elliptical_comps=(0.0, 0.15),
-            intensity=0.1,
-            effective_radius=0.2,
-            sersic_index=3.0,
-        ),
-    )
-
-    source_galaxy_2 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.45, -0.35),
-            elliptical_comps=(0.0, 0.222222),
-            intensity=0.03,
-            effective_radius=0.3,
-            sersic_index=3.5,
-        ),
-    )
-
-    source_galaxy_3 = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(-0.05, -0.0),
-            elliptical_comps=(0.05, 0.1),
-            intensity=0.03,
-            effective_radius=0.1,
-            sersic_index=4.0,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(
-        galaxies=[
-            lens_galaxy,
-            source_galaxy_0,
-            source_galaxy_1,
-            source_galaxy_2,
-            source_galaxy_3,
-        ]
-    )
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=1.0, shape_2d=grid.shape_2d),
-        add_noise=True,
-        noise_seed=1,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
-
-# %%
-"""
-Plot Imaging before running.
-"""
-
-# %%
-imaging = simulate()
-
-# %%
-"""
-Remember, we need to define and pass our mask to the hyper_galaxies pipeline from the beginning.
-"""
-
-# %%
 mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
@@ -145,33 +69,56 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # %%
 """
-The setup module customizes the behaviour of a pipeline. Hyper-fitting brings with it the following setup:
+__Settings__
 
-- If hyper-galaxies are used to scale the noise in each component of the image (default True)
-- If the level of background noise is modeled throughout the pipeline (default True)
-- If the background sky is modeled throughout the pipeline (default False)
+The *PhaseSettingsImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
+these in chapter 2, and a full description of all settings can be found in the example script:
+
+    'autolens_workspace/examples/model/customize/settings.py'.
+
+The settings chosen here are applied to all phases in the pipeline.
 """
 
 # %%
-hyper = al.slam.Hyper(
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+
+# %%
+"""
+__Pipeline_Setup_And_Tagging__:
+
+The setup module customizes the behaviour of a pipeline. Hyper-fitting brings with it the following setup:
+
+    - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+    - If the level of background noise is modeled throughout the pipeline (default True)
+    - If the background sky is modeled throughout the pipeline (default False)
+    
+Each of these features uses their own non-linear search in extended 'hyper phases', which are also specified in the
+_PipelineSetup-.
+"""
+
+# %%
+
+hyper_galaxies_search = af.DynestyStatic(
+    n_live_points=75, sampling_efficiency=0.5, evidence_tolerance=0.8
+)
+inversion_search = af.DynestyStatic(
+    n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=0.8
+)
+hyper_combined_search = af.DynestyStatic(
+    n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=0.8
+)
+
+setup = al.PipelineSetup(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
+    hyper_galaxies_search=hyper_galaxies_search,
+    inversion_search=inversion_search,
+    hyper_combined_search=hyper_combined_search,
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
+    folders=["howtolens", "c5_t6_hyper"],
 )
-
-# %%
-"""
-Source setup are required for the inversion. With hyper-mode on we can now use the VoronoiBrightnessImage
-and AdaptiveBrightness classes which adapt to the source's surface-brightness.
-"""
-
-# %%
-source = al.slam.Source(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
-)
-
-setup = al.slam.SLaM(hyper=hyper, source=source)
-
 # %%
 """
 Lets import the pipeline and run it.
@@ -180,8 +127,7 @@ Lets import the pipeline and run it.
 # %%
 from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
-pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(
-    setup=setup, phase_folders=["howtolens", "c5_t6_hyper"]
-)
+pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
 
+# Uncomment to run.
 # pipeline_hyper.run(dataset=imaging, mask=mask)

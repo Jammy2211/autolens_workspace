@@ -10,12 +10,12 @@ __THIS RUNNER__
 
 Using two source pipelines, a light pipeline and a mass pipeline we will fit a lens model where: 
 
-    - The lens galaxy's *LightProfile*'s are fitted with an EllipticalSersic + EllipticalExponential, representing
+    - The lens galaxy's _LightProfile_'s are fitted with an EllipticalSersic + EllipticalExponential, representing
       a bulge + disk model.
-    - The lens galaxy's stellar *MassProfile* is fitted using the EllipticalSersic + EllipticalExponential of the 
-      *LightProfile*, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
-    - The lens galaxy's nfw *MassProfile* is fitted with a SphericalNFW.
-    - The source galaxy's *LightProfile* is fitted with an *Inversion*.
+    - The lens galaxy's stellar _MassProfile_ is fitted using the EllipticalSersic + EllipticalExponential of the 
+      _LightProfile_, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
+    - The lens galaxy's nfw _MassProfile_ is fitted with a SphericalNFW.
+    - The source galaxy's _LightProfile_ is fitted with an *Inversion*.
 
 We'll use the SLaM pipelines:
 
@@ -98,7 +98,13 @@ light = al.slam.Light(
 
 mass = al.slam.Mass()
 
-slam = al.slam.SLaM(hyper=hyper, source=source, light=light, mass=mass)
+slam = al.slam.SLaM(
+    hyper=hyper,
+    source=source,
+    light=light,
+    mass=mass,
+    folders=["slam", dataset_label, dataset_name],
+)
 
 """We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!"""
 
@@ -110,11 +116,11 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.inversion
 )
 
 source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
+    slam=slam, settings=settings
 )
 
 source__inversion = lens_light_sie__source_inversion.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
+    slam=slam, settings=settings
 )
 
 from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk import (
@@ -122,7 +128,7 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk
 )
 
 light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
+    slam=slam, settings=settings
 )
 
 
@@ -130,9 +136,7 @@ from autolens_workspace.advanced.slam.pipelines.with_lens_light.mass.light_dark 
     lens_light_mlr_nfw__source,
 )
 
-mass__mlr_nfw = lens_light_mlr_nfw__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label, dataset_name]
-)
+mass__mlr_nfw = lens_light_mlr_nfw__source.make_pipeline(slam=slam, settings=settings)
 
 
 """

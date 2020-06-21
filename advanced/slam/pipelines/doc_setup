@@ -83,7 +83,7 @@ slam objects.
 
     disk_as_sersic : bool (default=False)
 
-        If True, the disk component of the bulge-disk lens *LightProfile* will be modeled using an EllipticalSersic
+        If True, the disk component of the bulge-disk lens _LightProfile_ will be modeled using an EllipticalSersic
         profile as opposed to an EllipticalExponential.
 
         This disk model will be used in all subsequents pipelines (e.g. mass).
@@ -108,15 +108,15 @@ slam objects.
 
     align_light_dark_centre : bool (default=False)
 
-        If a light_dark mass pipeline is run using a *LightProfile* composed of a single *LightProfile* (e.g. just a
-        Sersic), this determines if the centre of the dark component (an NFW) and the *LightProfile* are forced to be the
+        If a light_dark mass pipeline is run using a _LightProfile_ composed of a single _LightProfile_ (e.g. just a
+        Sersic), this determines if the centre of the dark component (an NFW) and the _LightProfile_ are forced to be the
         same during the model fit.
 
         This light-dark centroid alignment will be used in all subsequents pipelines.
 
     align_bulge_dark_centre : bool (default=False)
 
-        If a light_dark mass pipeline is run using a *LightProfile* composed of a bulge-disk *LightProfile*, this
+        If a light_dark mass pipeline is run using a _LightProfile_ composed of a bulge-disk _LightProfile_, this
         determines if the centre of the dark component (an NFW) and the bulge profile are forced to be the
         same during the model fit.
 

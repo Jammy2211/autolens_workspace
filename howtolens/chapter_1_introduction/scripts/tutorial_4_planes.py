@@ -113,7 +113,6 @@ _Plane_ plotters exist, which work analogously to _Profile_ plotters and _Galaxy
 
 # %%
 aplt.Plane.deflections_y(plane=image_plane, grid=image_plane_grid)
-
 aplt.Plane.deflections_x(plane=image_plane, grid=image_plane_grid)
 
 # %%
@@ -199,7 +198,7 @@ aplt.Plane.image_and_source_plane_subplot(
 
 # %%
 """
-Clearly, the source-plane's _Grid_ is very different to the image-planes! It's not uniform and its centrainly not boring!
+Clearly, the source-plane's _Grid_ is very different to the image-planes! It's not uniform and its certranly not boring!
 
 We can now ask the question - 'what does our source-galaxy look like in the image-plane'? That is, to us, the observer 
 on Earth, how does the source-galaxy appear after lensing?. To do this, we simple trace the source-galaxy's light 
@@ -207,7 +206,7 @@ on Earth, how does the source-galaxy appear after lensing?. To do this, we simpl
 """
 
 # %%
-aplt.Plane.convergence(plane=source_plane, grid=source_plane_grid)
+aplt.Plane.image(plane=source_plane, grid=source_plane_grid)
 
 # %%
 """

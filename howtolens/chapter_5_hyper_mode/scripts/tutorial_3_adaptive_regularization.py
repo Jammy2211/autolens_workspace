@@ -2,11 +2,11 @@
 """
 __Adaptive Regularization__
 
-In tutorial 1, we considered why our Constant regularization scheme was sub-optimal. Diffferent regions of the source
-demand different levels of regularization, motivating a regularization scheme which adapts to the reconstructed
+In tutorial 1, we considered why our _Constant_ _Regularization_scheme was sub-optimal. Diffferent regions of the
+source demand different levels of regularization, motivating a _Regularization_scheme which adapts to the reconstructed
 source's surface brightness.
 
-This raises the same question as before, how do we adapt our regularization scheme to the source before we've
+This raises the same question as before, how do we adapt our _Regularization_scheme to the source before we've
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 phase of the pipeline that we've begun calling the 'hyper-galaxy-image'.
 """
@@ -19,56 +19,39 @@ import autolens.plot as aplt
 
 # %%
 """
-This is the usual simulate function, using the compact source of the previous tutorials.
+You need to change the path below to your autolens workspace directory.
 """
 
 # %%
-def simulate():
-
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
-        ),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.2, 0.1),
-            intensity=0.2,
-            effective_radius=0.2,
-            sersic_index=2.5,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
-        add_noise=True,
-        noise_seed=1,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
-Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
+We'll use the same strong lensing data as the previous tutorial, where:
+
+    - The lens galaxy's light is omitted.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
-imaging = simulate()
+from autolens_workspace.howtolens.simulators.chapter_5 import lens_sie__source_sersic
 
-mask = al.Mask.circular(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2, radius=3.0)
+dataset_label = "chapter_5"
+dataset_name = "lens_sie__source_sersic"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
+
+mask = al.Mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
+)
 
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 
@@ -120,7 +103,7 @@ aplt.Inversion.reconstruction(
 # %%
 """
 Okay, so the inversion's fit looks just like it did in the previous tutorials. Lets quickly remind ourselves that 
-the effective regularization coefficient of each source pixel is our input coefficient value of 3.3.
+the effective regularization_coefficient of each source pixel is our input coefficient value of 3.3.
 """
 
 # %%
@@ -130,8 +113,8 @@ aplt.Inversion.regularization_weights(
 
 # %%
 """
-Lets now look at adaptive regularization in action, by setting up a hyper-galaxy-image and using the 
-'AdaptiveBrightness' regularization scheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
+Lets now look at adaptive _Regularization_in action, by setting up a hyper-galaxy-image and using the 
+'AdaptiveBrightness' _Regularization_scheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
 """
 
 # %%
@@ -160,24 +143,22 @@ aplt.Inversion.regularization_weights(
 
 # %%
 """
-So, as expected, we now have a variable regularization scheme. The regularization of the source's brightest regions 
+So, as expected, we now have a variable _Regularization_ scheme. The _Regularization_of the source's brightest regions 
 is much lower than that of its outer regions. As discussed before, this is what we want. Lets quickly check that this 
 does, indeed, increase the Bayesian log evidence:
 """
 
 # %%
-print("Evidence using constant regularization = ", 14236.292117135737)
-
-print("Evidence using adaptive regularization = ", fit.log_evidence)
+print("Evidence using constant _Regularization_= ", 4216)
+print("Evidence using adaptive _Regularization_= ", fit.log_evidence)
 
 # %%
 """
-Yep, and we again get an increase beyond 200! Of course, combining the adaptive pixelization and regularization will 
-only further benefit our lens modeling!
+Yep! Of course, combining the adaptive _Pixelization_and _Regularization_will only further benefit our lens modeling!
 
-However, as shown below, we don't fit the source as well as the morphology based pixelization did in the last chapter. 
-This is because although the adaptive regularization scheme improves the fit, the magnification based _Grid_ simply 
-*does not*  have sufficient resolution to resolve the source's cuspy central _LightProfile_.
+However, as shown below, we don't fit the source as well as the morphology based _Pixelization_ did in the last chapter. 
+This is because although the adaptive _Regularization_ scheme improves the fit, the magnification based 
+_Pixelization_ simply *does not*  have sufficient resolution to resolve the source's cuspy central _LightProfile_.
 """
 
 # %%
@@ -195,40 +176,40 @@ how much of the lensed source's signal we expect will be reconstructed. We call 
 
 If a source-pixel has a higher pixel-signal, we anticipate that it'll reconstruct more flux and we use this information 
 to regularize it less. Conversely, if the pixel-signal is close to zero, the source pixel will reconstruct near-zero 
-flux and regularization will smooth over these pixels by using a high regularization coefficient.
+flux and _Regularization_will smooth over these pixels by using a high regularization_coefficient.
 
 This works as follows:
 
-1) For every source pixel, compute its pixel-signal, the summed flux of all corresponding image-pixels in the 
-hyper-galaxy-image.
+    1) For every source pixel, compute its pixel-signal, the summed flux of all corresponding image-pixels in the 
+       hyper-galaxy-image.
+    
+    2) Divide every pixel-signal by the number of image-pixels that map directly to that source-pixel. In doing so, all 
+       pixel-signals are 'relative'. This means that source-pixels which by chance map to more image-pixels than their 
+       neighbors will not have a higher pixel-signal, and visa versa. This ensures the specific _Pixelization_
+       does impact the adaptive _Regularization_ pattern.
+    
+    3) Divide the pixel-signals by the maximum pixel signal so that they range between 0.0 and 1.0.
+    
+    4) Raise these values to the power of the hyper-galaxy-parameter *signal_scale*. For a *signal_scale* of 0.0, all 
+       pixels will therefore have the same final pixel-scale. As the *signal_scale* increases, a sharper transition of 
+       pixel-signal values arises between regions with high and low pixel-signals.
+    
+    5) Compute every source pixel's effective regularization_coefficient as:
+    
+       (inner_coefficient * pixel_signals + outer_coefficient * (1.0 - pixel_signals)) ** 2.0
+    
+       This uses two regularization_coefficients, one which is applied to pixels with high pixel-signals and one to 
+       pixels with low pixel-signals. Thus, pixels in the inner regions of the source may be given a lower level of 
+       _Regularization_than pixels further away, as desired.
 
-2) Divide every pixel-signal by the number of image-pixels that map directly to that source-pixel. In doing so, all 
-pixel-signals are 'relative'. This means that source-pixels which by chance map to more image-pixels than their 
-neighbors will not have a higher pixel-signal, and visa versa. This ensures the specific pixelization _Grid_ does impact 
-the adaptive regularization pattern.
-
-3) Divide the pixel-signals by the maximum pixel signal so that they range between 0.0 and 1.0.
-
-4) Raise these values to the power of the hyper-galaxy-parameter *signal_scale*. For a *signal_scale* of 0.0, all 
-pixels will therefore have the same final pixel-scale. As the *signal_scale* increases, a sharper transition of 
-pixel-signal values arises between regions with high and low pixel-signals.
-
-5) Compute every source pixel's effective regularization coefficient as:
-
-   (inner_coefficient * pixel_signals + outer_coefficient * (1.0 - pixel_signals)) ** 2.0
-
-   This uses two regularization coefficients, one which is applied to pixels with high pixel-signals and one to 
-   pixels with low pixel-signals. Thus, pixels in the inner regions of the source may be given a lower level of 
-   regularization than pixels further away, as desired.
-
-Thus, we now adapt our regularization scheme to the source's surface brightness. Where its brighter (and therefore 
-has a steeper flux gradient) we apply a lower level of regularization than further out. Furthermore, in the edges of 
-the source-plane where no source-flux is present we will assume a high regularization coefficients that smooth over 
+Thus, we now adapt our _Regularization_ scheme to the source's surface brightness. Where its brighter (and therefore 
+has a steeper flux gradient) we apply a lower level of _Regularization_ than further out. Furthermore, in the edges of 
+the source-plane where no source-flux is present we will assume a high regularization_coefficients that smooth over 
 all source-pixels.
 
-Try looking at a couple of extra solutions which use with different inner and outer regularization coefficients or 
-signal scales. I doubt you'll notice a lot change visually, but the log evidence certainly has a lot of room for manoveur 
-with different values.
+Try looking at a couple of extra solutions which use with different inner and outer regularization_coefficients or 
+signal scales. I doubt you'll notice a lot change visually, but the log evidence certainly has a lot of room for 
+manoveur with different values.
 
 You may find solutions that raise an 'InversionException'. These solutions mean that the matrix used during the 
 linear algebra calculation was ill-defined, and could not be inverted. These solutions are removed by PyAutoLens 
@@ -261,25 +242,25 @@ aplt.FitImaging.subplot_fit_imaging(
     fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
 )
 
-print("Evidence using adaptive regularization = ", fit.log_evidence)
+print("Evidence using adaptive _Regularization_= ", fit.log_evidence)
 
 # %%
 """
-To end, lets consider what this adaptive regularization scheme means in the context of maximizing the Bayesian
-log_evidence. In the previous tutorial, we noted that by using a brightness-based adaptive pixelization we increased the 
-Bayesian log evidence by allowing for new solutions which fit the data user fewer source pixels; the key criteria in 
-making a source reconstruction 'more simple' and 'less complex'.
+To end, lets consider what this adaptive _Regularization_scheme means in the context of maximizing the Bayesian
+log_evidence. In the previous tutorial, we noted that by using a brightness-based adaptive _Pixelization_ we increased 
+the Bayesian log evidence by allowing for new solutions which fit the data user fewer source pixels; the key criteria 
+in making a source reconstruction 'more simple' and 'less complex'.
 
-As you might of guessed, adaptive regularization again increases the Bayesian log evidence by making the source 
+As you might of guessed, adaptive _Regularization_again increases the Bayesian log evidence by making the source 
 reconstruction simpler:
 
-1) Reducing regularization in the source's brightest regions produces a 'simpler' solution in that we are not 
-over-smoothing our reconstruction of its brightest regions.
+    1) Reducing _Regularization_ in the source's brightest regions produces a 'simpler' solution in that we are not 
+    over-smoothing our reconstruction of its brightest regions.
+    
+    2) Increasing _Regularization_ in the outskirts produces a simpler solution by correlating more source-pixels, 
+    effectively reducing the number of pixels used by the reconstruction.
 
-2) Increasing regularization in the outskirts produces a simpler solution by correlating more source-pixels, 
-effectively reducing the number of pixels used by the reconstruction.
-
-Together, brightness based pixelizations and regularization allow us to find the objectvely 'simplest' source 
+Together, brightness based _Pixelization_'s and _Regularization_ allow us to find the objectively 'simplest' source 
 solution possible and therefore ensure that our Bayesian log evidence's have a well defined maximum value they are 
-seeking. This was not the case for magnification based pixelizations and constant regularization schemes.
+seeking. This was not the case for magnification based _Pixelization_'s and constant _Regularization_ schemes.
 """

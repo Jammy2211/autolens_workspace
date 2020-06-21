@@ -11,9 +11,9 @@ __THIS RUNNER__
 Using 1 source pipeline, a mass pipeline and a subhalo pipeline we will fit a lens model where: 
 
     - The lens galaxy's light is omitted from the data and model.
-    - The lens galaxy's *MassProfile* is fitted with an *EllipticalIsothermal*.
+    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
     - A dark matter subhalo's within the lens galaxy is fitted with a *SphericalNFWMCRLudLow*.
-    - The source galaxy is fitted with an *EllipticalSersic*.
+    - The source galaxy is fitted with an _EllipticalSersic_.
 
 We'll use the SLaM pipelines:
 
@@ -61,6 +61,7 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
+    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask.circular(
@@ -70,8 +71,7 @@ mask = al.Mask.circular(
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 settings = al.PhaseSettingsImaging(
-    grid_class=al.Grid,
-    sub_size=2,
+    grid_class=al.Grid, sub_size=2, auto_positions_factor=5.0
 )
 
 """
@@ -88,7 +88,9 @@ source = al.slam.Source(no_shear=True)
 
 mass = al.slam.Mass(no_shear=True)
 
-slam = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+slam = al.slam.SLaM(
+    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_label]
+)
 
 """
 __PIPELINE CREATION__
@@ -100,27 +102,20 @@ from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.parametric 
     lens_sie__source_sersic,
 )
 
-source__parametric = lens_sie__source_sersic.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
-)
+source__parametric = lens_sie__source_sersic.make_pipeline(slam=slam, settings=settings)
 
 from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.sie import (
     lens_sie__source,
 )
 
-mass__sie = lens_sie__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
-)
+mass__sie = lens_sie__source.make_pipeline(slam=slam, settings=settings)
 
 from autolens_workspace.advanced.slam.pipelines.no_lens_light.subhalo import (
     lens_mass__subhalo_nfw__source,
 )
 
 subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
-    slam=slam,
-    settings=settings,
-    phase_folders=["slam", dataset_label],
-    grid_size=2,
+    slam=slam, settings=settings, grid_size=2
 )
 
 """

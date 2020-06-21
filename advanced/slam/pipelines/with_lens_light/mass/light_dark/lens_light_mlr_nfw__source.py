@@ -6,37 +6,35 @@ In this pipeline, we'll perform an analysis which fits an image with the lens li
 using an inversion, using a decomposed light and dark matter profile. The pipeline follows on from the
 inversion pipeline 'pipelines/with_lens_light/inversion/from_source__parametric/lens_light_sie__source_inversion.py'.
 
-Alignment of the centre, phi and axis-ratio of the *LightProfile*'s EllipticalSersic and EllipticalExponential
+Alignment of the centre, phi and axis-ratio of the _LightProfile_'s EllipticalSersic and EllipticalExponential
 profiles use the alignment specified in the previous pipeline.
 
 The pipeline is two phases:
 
 Phase 1:
 
-Description: Fit the lens light and mass model as a decomposed profile, using an inversion for the Source.
-Lens Light & Mass: EllipticalSersic + EllipticalExponential
-Lens Mass: SphericalNFW + ExternalShear
-Source Light: VoronoiMagnification + Constant
-Previous Pipelines: with_lens_light/bulge_disk/inversion/from_source__parametric/lens_bulge_disk_sieexp_source_inversion.py
-Prior Passing: Lens Light (model -> previous pipeline), Lens Mass (default),
-               Source Inversion (model / instance -> previous pipeline)
-Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
+    Description: Fit the lens light and mass model as a decomposed profile, using an inversion for the Source.
+    Lens Light & Mass: EllipticalSersic + EllipticalExponential
+    Lens Mass: SphericalNFW + ExternalShear
+    Source Light: VoronoiMagnification + Constant
+    Previous Pipelines: with_lens_light/bulge_disk/inversion/from_source__parametric/lens_bulge_disk_sieexp_source_inversion.py
+    Prior Passing: Lens Light (model -> previous pipeline), Lens Mass (default),
+                   Source Inversion (model / instance -> previous pipeline)
+    Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
 
 Phase 2:
-
-Description: Refines the inversion parameters, using a fixed mass model from phase 1.
-Lens Light & Mass: EllipticalSersic
-Lens Mass: SphericalNFW + ExternalShear
-Source Light: VoronoiMagnification + Constant
-Previous Pipelines: None
-Prior Passing: Lens Light & Mass (instance -> phase 1), source inversion (model -> phase 1)
-Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
+    
+    Description: Refines the inversion parameters, using a fixed mass model from phase 1.
+    Lens Light & Mass: EllipticalSersic
+    Lens Mass: SphericalNFW + ExternalShear
+    Source Light: VoronoiMagnification + Constant
+    Previous Pipelines: None
+    Prior Passing: Lens Light & Mass (instance -> phase 1), source inversion (model -> phase 1)
+    Notes: Uses an interpolation pixel scale for fast power-law deflection angle calculations by default.
 """
 
 
-def make_pipeline(
-    slam, settings, phase_folders=None, redshift_lens=0.5, redshift_source=1.0
-):
+def make_pipeline(slam, settings, folders=None, redshift_lens=0.5, redshift_source=1.0):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -48,17 +46,17 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    2) The bulge + disk centres, rotational angles or axis ratios are aligned.
-    3) The disk component of the lens light model is an Exponential or Sersic profile.
-    4) The lens galaxy mass model includes an external shear.
+        1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+        2) The bulge + disk centres, rotational angles or axis ratios are aligned.
+        3) The disk component of the lens light model is an Exponential or Sersic profile.
+        4) The lens galaxy mass model includes an external shear.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(slam.hyper.tag)
-    phase_folders.append(slam.source.tag)
-    phase_folders.append(slam.light.tag)
-    phase_folders.append(slam.mass.tag)
+    slam.folders.append(pipeline_name)
+    slam.folders.append(slam.hyper.tag)
+    slam.folders.append(slam.source.tag)
+    slam.folders.append(slam.light.tag)
+    folders.append(slam.mass.tag)
 
     """SLaM: Set whether shear is Included in the mass model."""
 
@@ -67,12 +65,12 @@ def make_pipeline(
     """
     Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
 
-    1) Fix the lens galaxy's light using the the *LightProfile* inferred in the previous 'light' pipeline, including
-       assumptions related to the geometric alignment of different components.
-    2) Pass priors on the lens galaxy's SphericalNFW *MassProfile*'s centre using the EllipticalIsothermal fit of the
-       previous pipeline, if the NFW centre is a free parameter.
-    3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
-    4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
+        1) Fix the lens galaxy's light using the the _LightProfile_ inferred in the previous 'light' pipeline, including
+           assumptions related to the geometric alignment of different components.
+        2) Pass priors on the lens galaxy's SphericalNFW _MassProfile_'s centre using the EllipticalIsothermal fit of the
+           previous pipeline, if the NFW centre is a free parameter.
+        3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
+        4) Pass priors on the source galaxy's light using the EllipticalSersic of the previous pipeline.
     """
 
     """SLaM: Set whether the disk is modeled as a Sersic or Exponential."""
@@ -118,7 +116,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_light_mlr_nfw__source__fixed_lens_light",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
@@ -143,7 +141,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_light_mlr_nfw__source_inversion",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -171,11 +169,7 @@ def make_pipeline(
     if not slam.hyper.hyper_fixed_after_source:
 
         phase2 = phase2.extend_with_multiple_hyper_phases(
-            hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-            inversion_search=slam.hyper.inversion_search,
-            hyper_combined_search=slam.hyper.hyper_combined_search,
-            include_background_sky=slam.hyper.hyper_image_sky,
-            include_background_noise=slam.hyper.hyper_background_noise,
+            setup=slam.hyper, include_inversion=True
         )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

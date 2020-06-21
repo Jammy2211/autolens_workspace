@@ -51,6 +51,6 @@ for the pipeline below, is only used in phase 1).
 
 from pipelines.settings import binning_up
 
-pipeline = binning_up.make_pipeline(phase_folders=["features"], bin_up_factor=2)
+pipeline = binning_up.make_pipeline(folders=["features"], bin_up_factor=2)
 
 pipeline.run(dataset=imaging, mask=mask)

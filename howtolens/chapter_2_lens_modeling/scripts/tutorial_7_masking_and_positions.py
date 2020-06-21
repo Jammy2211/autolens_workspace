@@ -32,11 +32,13 @@ conf.instance = conf.Config(
 """
 We'll use the same strong lensing data as tutorials 1 & 2, where:
 
-    - The lens galaxy's *MassProfile* is a *SphericalIsothermal*.
-    - The source galaxy's *LightProfile* is a *SphericalExponential*.
+    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sis__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -51,7 +53,7 @@ imaging = al.Imaging.from_fits(
 # %%
 """
 When it comes to determining an appropriate mask for this image, the best approach is to set up a _Mask_ and pass it 
-to a imaging plotter. You can then check visually if the mask is an appropriate size or not. 
+to a _Imaging_ plotter. You can then check visually if the mask is an appropriate size or not. 
 
 Below, we choose an inner radius that cuts into our lensed source galaxy - clearly this isn't a good mask.
 """
@@ -97,13 +99,18 @@ Now we create our phase as usual, remember that we pass the mask to the run func
 
 # %%
 phase_with_custom_mask = al.PhaseImaging(
-    phase_name="phase_t8_with_custom_mask",
+    phase_name="phase_t7_with_custom_mask",
     settings=settings,
     galaxies=dict(
-        lens=al.GalaxyModel(redshift=0.5), source=al.GalaxyModel(redshift=1.0)
+        lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
+        source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
+
+phase_with_custom_mask.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -144,7 +151,7 @@ one another (which is controlled by the 'position_threshold' parameter input int
     2) By removing these solutions, a global-maximum solution may be reached instead of a local-maxima. This is 
        because removing the incorrect mass models makes the non-linear parameter space less complex.
 
-We can easily check the image-positions are accurate by plotting them using our imaging plotter (they are the magenta 
+We can easily check the image-positions are accurate by plotting them using our _Imaging_ _Plotter_ (they are the magenta 
 dots on the image).
 
 To specify these positions, we use the *GridCoordinates* object, which is used by PyAutoLens in general to specify (y,x)
@@ -167,14 +174,15 @@ to the _PhaseSettings_:
 
 # %%
 imaging = al.Imaging(
-    image_path=imaging.image,
-    noise_map_path=imaging.noise_map,
-    psf_path=imaging.psf,
-    pixel_scales=imaging.pixel_scales,
-    positions=positions
+    image=imaging.image,
+    noise_map=imaging.noise_map,
+    psf=imaging.psf,
+    positions=positions,
 )
 
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2, positions_threshold=2.0)
+settings = al.PhaseSettingsImaging(
+    grid_class=al.Grid, sub_size=2, positions_threshold=2.0
+)
 
 # %%
 """
@@ -183,18 +191,20 @@ We can then tell our phase to use these positions in the analysis.
 
 # %%
 phase_with_positions = al.PhaseImaging(
-    phase_name="phase_t8_with_positions",
+    phase_name="phase_t7_with_positions",
     settings=settings,
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 # %%
 print(
-    "Dynesty has begun running - checkout the workspace/output/t8_with_positions"
+    "Dynesty has begun running - checkout the workspace/output/t7_with_positions"
     " folder for live output of the results, images and lens model."
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
@@ -213,8 +223,10 @@ Lets load example data containing two distinct source galaxies.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp_x2
+
 dataset_label = "chapter_2"
-dataset_name = "lens_sis__source_exp"
+dataset_name = "lens_sis__source_exp_x2"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -234,7 +246,6 @@ These are plotted in different colours to represent that they trace from differe
 """
 
 # %%
-
 positions = al.GridCoordinates(
     coordinates=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]]
 )
@@ -248,34 +259,37 @@ Again, we pass the positions into our _Imaging_ data and set a positions thresho
 
 # %%
 imaging = al.Imaging(
-    image_path=imaging.image,
-    noise_map_path=imaging.noise_map,
-    psf_path=imaging.psf,
-    pixel_scales=imaging.pixel_scales,
-    positions=positions
+    image=imaging.image,
+    noise_map=imaging.noise_map,
+    psf=imaging.psf,
+    positions=positions,
 )
 
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2, positions_threshold=2.0)
+settings = al.PhaseSettingsImaging(
+    grid_class=al.Grid, sub_size=2, positions_threshold=2.0
+)
 
 phase_with_x2_positions = al.PhaseImaging(
-    phase_name="phase_t8_with_x2_positions",
+    phase_name="phase_t7_with_x2_positions",
     settings=settings,
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source_0=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
         source_1=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 print(
-    "Dynesty has begun running - checkout the workspace/output/t8_with_x2_positions"
+    "Dynesty has begun running - checkout the workspace/output/t7_with_x2_positions"
     " folder for live output of the results, images and lens model."
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
 
-phase_with_x2_positions.run(dataset=imaging, mask=mask, positions=positions)
+phase_with_x2_positions.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

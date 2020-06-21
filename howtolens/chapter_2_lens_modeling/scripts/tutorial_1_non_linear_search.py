@@ -42,7 +42,7 @@ picture that a non-linear search in PyAutoLens operates as follows:
 and a _Tracer_.
 
 2) Use this _Tracer_ and a _MaskedImaging_ to generate a model image and compare this model image to the
-observed strong lens imaging data using a _FitImaging_ object, providing the log likelihood.
+observed strong lens _Imaging_ data using a _FitImaging_ object, providing the log likelihood.
 
 3) Repeat this many times, using the likelihoods of previous fits (typically those with a high log_likelihood) to
 guide us to the lens models with the highest log likelihood.
@@ -89,11 +89,26 @@ we simulate strong lens data, checkout the scripts in the folder 'autolens_works
 
 The strong lens in this image was generated using:
 
-    - The lens galaxy's *MassProfile* is a *SphericalIsothermal*.
-    - The source galaxy's *LightProfile* is a *SphericalExponential*.
+    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
+
+Below, you'll notice the command:
+
+    'from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp'
+    
+This will crop up in nearly every tutorial from here on. This imports the simulator for the dataset we fit in the 
+tutorial, simulating the data and placing it in the folder:
+
+    'autolens_workspace/howtolens/dataset/chapter_2/lens_sis__source_exp'    
+    
+To see how the _Imaging_ dataset is simulated, feel free to checkout the simulators in the folder:
+
+    'autolens_workspace/howtolens/simmulators'
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sis__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -139,7 +154,7 @@ source_galaxy_model = al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponent
 
 # %%
 """
-We can use a _PhaseSettingsImaging_ object to customize how a _Tracer_ and _FitImaging_ are used to fit the imaging 
+We can use a _PhaseSettingsImaging_ object to customize how a _Tracer_ and _FitImaging_ are used to fit the _Imaging_ 
 dataset. Below, we specify:
 
     - That a regular *Grid* is used to fit create the model-image when fitting the data 
@@ -172,7 +187,9 @@ phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     settings=settings,
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 # %%
@@ -198,6 +215,18 @@ Now this is running you should checkout the 'autolens_workspace/output' folder.
 This is where the results of the phase are written to your hard-disk (in the '1_non_linear_search' folder). When its 
 completed, images and output will also appear in this folder, meaning that you don't need to keep running Python 
 code to see the results.
+
+In fact, even when a phase is running, it outputs the the current maximum log likelihood results of the lens model 
+to your hard-disk, on-the-fly. If you navigate to the output/howtolens folder, even before the phase has finished, 
+you'll see:
+
+    1) The 'image' folder, where the current maximum log likelihood lens model _Tracer_ and _FitImaging_ are visualized 
+       (again, this outputs on-the-fly).
+    2) The file 'samples/samples.csv', which contains a table-format list of every sample of the non-linear search
+       complete with log likelihood values.
+    3) The 'model.info' file, which lists all parameters of the lens model and their priors.
+    4) The 'model.results' file, which lists the current best-fit lens model (this outputs on-the-fly).
+    5) The 'output.log' file, where all Python interpreter output is directed.
 
 The best-fit solution (i.e. the maximum log likelihood) is stored in the 'results', which we can plot as per usual.
 """

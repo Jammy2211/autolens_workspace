@@ -64,7 +64,7 @@ print("etc.")
 
 # %%
 """
-A galaxy plotter allows us to the plot the image, just like the _Profile_ plotters did for a _LightProfile_.
+A galaxy _Plotter_ allows us to the plot the image, just like the _Profile_ plotters did for a _LightProfile_.
 """
 
 # %%
@@ -134,7 +134,7 @@ print(galaxy_with_3_mass_profiles)
 
 # %%
 """
-We can use a galaxy plotter to plot these deflection angles. (Deflection angles of _MassProfile_s add together just 
+We can use a galaxy _Plotter_ to plot these deflection angles. (Deflection angles of _MassProfile_s add together just 
 like the _LightProfile_ image's above)
 """
 

@@ -18,7 +18,7 @@ Notes: None
 
 Phase 2:
 
-Fit the lens mass model and source *LightProfile*, using the lens subtracted image from phase 1.
+Fit the lens mass model and source _LightProfile_, using the lens subtracted image from phase 1.
 
 Lens Light: None
 Lens Mass: EllipticalIsothermal + ExternalShear
@@ -29,7 +29,7 @@ Notes: Uses the lens light subtracted image from phase 1
 
 Phase 3:
 
-Refit the lens light models using the mass model and source *LightProfile* fixed from phase 2.
+Refit the lens light models using the mass model and source _LightProfile_ fixed from phase 2.
 
 Lens Light: EllticalGaussian(s)
 Lens Mass: EllipticalIsothermal + ExternalShear
@@ -40,7 +40,7 @@ Notes: None
 
 Phase 4:
 
-Refine the lens light and mass models and source *LightProfile*, using priors from the previous 2 phases.
+Refine the lens light and mass models and source _LightProfile_, using priors from the previous 2 phases.
 
 Lens Light: EllipticalGaussian(s)
 Lens Mass: EllipticalIsothermal + ExternalShear
@@ -52,12 +52,7 @@ Notes: None
 
 
 def make_pipeline(
-    setup,
-    settings,
-    phase_folders=None,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    evidence_tolerance=100.0,
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -72,8 +67,8 @@ def make_pipeline(
     """
     # 3) The number of Gaussians in the lens light model.
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(setup.tag)
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
     """
     Phase 1: Fit only the lens galaxy's light, where we:
@@ -114,7 +109,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_gaussians",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(lens=lens),
         settings=settings,
         search=af.DynestyStatic(
@@ -129,7 +124,7 @@ def make_pipeline(
 
     1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
     2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for \
-       the bulge of the *LightProfile* in phase 1.
+       the bulge of the _LightProfile_ in phase 1.
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
@@ -148,7 +143,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -160,7 +155,7 @@ def make_pipeline(
                 shear=shear,
             ),
             source=al.GalaxyModel(
-                redshift=redshift_source, sersic=al.lp.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         settings=settings,
@@ -189,12 +184,12 @@ def make_pipeline(
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_gaussians_sie__source_fixed",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                sersic=phase2.result.instance.galaxies.source.sersic,
+                light=phase2.result.instance.galaxies.source.light,
             ),
         ),
         settings=settings,
@@ -213,7 +208,7 @@ def make_pipeline(
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_gaussians_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -226,7 +221,7 @@ def make_pipeline(
             ),
             source=al.GalaxyModel(
                 redshift=redshift_source,
-                sersic=phase2.result.model.galaxies.source.sersic,
+                light=phase2.result.model.galaxies.source.light,
             ),
         ),
         settings=settings,

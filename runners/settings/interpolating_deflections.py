@@ -50,7 +50,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 from pipelines.settings import interpolating_deflections
 
 pipeline = interpolating_deflections.make_pipeline(
-    phase_folders=["features"], pixel_scales_interp=0.05
+    folders=["features"], pixel_scales_interp=0.05
 )
 
 pipeline.run(dataset=imaging, mask=mask)

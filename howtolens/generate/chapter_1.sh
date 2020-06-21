@@ -4,8 +4,7 @@ HOWTOLENS_PATH=$WORKSPACE_PATH"/howtolens"
 CHAPTER_PATH=$HOWTOLENS_PATH"/chapter_1_introduction"
 SCRIPTS_PATH=$CHAPTER_PATH"/scripts"
 
-export WORKSPACE=$HOWTOLENS_PATH
-
+rm -rf $HOWTOLENS_PATH/chapter_1/dataset/lens
 rm $CHAPTER_PATH/*.ipynb
 rm -rf $CHAPTER_PATH/.ipynb_checkpoints
 
@@ -21,4 +20,4 @@ rm __init__.ipynb
 
 export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
 
-cd HOWTOLENS_PATH/generate
+cd $HOWTOLENS_PATH/generate

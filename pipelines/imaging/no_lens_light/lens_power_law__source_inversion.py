@@ -11,49 +11,44 @@ The pipeline is four phases:
 
 Phase 1:
 
-Fit the lens mass model and source *LightProfile*.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Prior Passing: None.
-Notes: None.
+    Fit the lens mass model and source _LightProfile_.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Prior Passing: None.
+    Notes: None.
 
 Phase 2:
 
-Fit the source inversion using the lens *MassProfile* inferred in phase 1.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: VoronoiMagnification + Constant
-Prior Passing: Lens & Mass (instance -> phase1).
-Notes: Lens mass fixed, source inversion parameters vary.
+    Fit the source inversion using the lens _MassProfile_ inferred in phase 1.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: VoronoiMagnification + Constant
+    Prior Passing: Lens & Mass (instance -> phase1).
+    Notes: Lens mass fixed, source inversion parameters vary.
 
 Phase 3:
 
-Refines the lens light and SIE mass models using the source inversion of phase 2.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: pixelization (default=VoronoiMagnification) + regularization (default=Constant)
-Prior Passing: Lens Mass (model -> phase 1), Source Inversion (instance -> phase 2)
-Notes: Lens mass varies, source inversion parameters fixed.
+    Refines the lens light and SIE mass models using the source inversion of phase 2.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: pixelization (default=VoronoiMagnification) + regularization (default=Constant)
+    Prior Passing: Lens Mass (model -> phase 1), Source Inversion (instance -> phase 2)
+    Notes: Lens mass varies, source inversion parameters fixed.
 
 Phase 4:
 
-Fit the power-law mass model, using priors from the SIE mass model of phase 3 and a source inversion.
-
-Lens Mass: EllipticalPowerLaw + ExternalShear
-Source Light: pixelization (default=VoronoiMagnification) + regularization (default=Constant)
-Prior Passing: Lens Mass (model -> phase 3), Source Inversion (instance -> phase 3)
-Notes: Lens mass varies, source inversion parameters fixed.
+    Fit the power-law mass model, using priors from the SIE mass model of phase 3 and a source inversion.
+    
+    Lens Mass: EllipticalPowerLaw + ExternalShear
+    Source Light: pixelization (default=VoronoiMagnification) + regularization (default=Constant)
+    Prior Passing: Lens Mass (model -> phase 3), Source Inversion (instance -> phase 3)
+    Notes: Lens mass varies, source inversion parameters fixed.
 """
 
 
 def make_pipeline(
-    setup,
-    settings,
-    phase_folders=None,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    evidence_tolerance=100.0,
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -63,12 +58,12 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    1) The lens galaxy mass model includes an external shear.
-    2) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
+        1) The lens galaxy mass model includes an external shear.
+        2) The pixelization and regularization scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(setup.tag)
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
     """SETUP SHEAR: Include the shear in the mass model if not switched off in the pipeline setup. """
 
@@ -80,7 +75,7 @@ def make_pipeline(
     """
     Phase 1: Fit the lens galaxy's mass and source light, where we:
 
-    1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+        1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
@@ -90,11 +85,11 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
-                redshift=redshift_source, sersic=al.lp.EllipticalSersic
+                redshift=redshift_source, light=al.lp.EllipticalSersic
             ),
         ),
         settings=settings,
@@ -108,12 +103,12 @@ def make_pipeline(
     """
     Phase 2: Fit the input pipeline pixelization & regularization, where we:
 
-    1) Set lens's mass model using the results of phase 1.
+        1) Set lens's mass model using the results of phase 1.
     """
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__source_inversion_initialization",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -137,13 +132,13 @@ def make_pipeline(
     """
     Phase 3: Fit the lens's mass using the input pipeline pixelization & regularization, where we:
 
-    1) Fix the source inversion parameters to the results of phase 2.
-    2) Set priors on the lens galaxy mass using the results of phase 1.
+        1) Fix the source inversion parameters to the results of phase 2.
+        2) Set priors on the lens galaxy mass using the results of phase 1.
     """
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__source_inversion",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -179,11 +174,11 @@ def make_pipeline(
     """
     Phase 4: Fit the lens galaxy's mass with a power-law and a source inversion, where we:
 
-    1) Use the source inversion of phase 3's extended inversion phase.
-    2) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of phase 3.
+        1) Use the source inversion of phase 3's extended inversion phase.
+        2) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of phase 3.
     """
 
-    """Setup the power-law *MassProfile* and initialize its priors from the SIE."""
+    """Setup the power-law _MassProfile_ and initialize its priors from the SIE."""
 
     mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
@@ -195,7 +190,7 @@ def make_pipeline(
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_power_law__source_inversion",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,

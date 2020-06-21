@@ -1,64 +1,92 @@
 import autofit as af
 import autolens as al
 
-# Up to now, we have passed the priors between phases using the 'customize priors' function. This works nicely, and
-# gives us a lot of control for how the prior on every individual parameter is specified. However, it also makes
-# the pipeline code longer than it needs to be, and it does not check for typos or errors in the prior linking.
+"""
+In this pipeline, we fit the a strong lens using an _EllipticalIsothermal_ _MassProfile_ and a source composed of 4 
+parametric _EllipticalSersic_'s.
 
-# In this pipeline, we'll pass priors in a slight different way, where the results of a phase are directly passed to
-# the next phase. This does not change the behaviour of the pipeline from the previous pipelines, but as you'll see
-# reduces the amount of code.
+The pipeline is four phases:
 
-# All template pipelines found in the autolens_workspace use this method of prior passing, so its worth you learning!
+Phase 1:
+
+    Fit the _EllipticalIsothermal_ mass model and the first _EllipticalSersic_ light profile of the source.
+
+    Lens Light: None
+    Lens Mass: None
+    Source Light: None
+    Prior Passing: None
+    Notes: None
+
+Phase 2:
+
+    Add the second _EllipticalSersic_ to the source model.
+
+    Lens Light: None
+    Lens Mass: EllipticalIsothermal
+    Source Light: EllipticalSersic + EllipticalSersic
+    Prior Passing: Lens Mass (model -> phase 1), Source Light (model -> phase 1).
+    Notes: Uses the previous mass model and source model to initialize the non-linear search.
+
+Phase 3:
+
+    Add the third _EllipticalSersic_ to the source model.
+
+    Lens Light: None
+    Lens Mass: EllipticalIsothermal
+    Source Light: EllipticalSersic + EllipticalSersic + EllipticalSersic
+    Prior Passing: Lens Mass (model -> phase 2), Source Light (model -> phase 2).
+    Notes: Uses the previous mass model and source model to initialize the non-linear search.
+
+Phase 4:
+
+    Add the fourth _EllipticalSersic_ to the source model.
+
+    Lens Light: None
+    Lens Mass: EllipticalIsothermal
+    Source Light: EllipticalSersic + EllipticalSersic + EllipticalSersic + EllipticalSersic
+    Prior Passing: Lens Mass (model -> phase 3), Source Light (model -> phase 3).
+    Notes: Uses the previous mass model and source model to initialize the non-linear search.
+
+"""
 
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(setup, settings, folders=None):
 
-    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
-
-    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
-    # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
-    # a pipeline does use customized tag names.
+    """SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline__complex_source"
 
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/pipeline_tag/phase_name/phase_tag/'
-    phase_folders.append(pipeline_name)
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
-    # To begin, we need to initialize the lens's mass model. We should be able to do this by using a simple source
-    # model. It won't fit the complicated structure of the source, but it'll give us a reasonable estimate of the
-    # einstein radius and the other lens-mass parameters.
-
-    # This should run fine without any prior-passes. In general, a thick, giant ring of source light is something we
-    # can be confident Dynesty will fit without much issue, especially when the lens galaxy's light isn't included
-    # such that the parameter space is just 12 parameters.
+    """
+    Phase 1: Initialize the lens's mass model using a simple source.
+    
+    This won't fit the complicated structure of the source, but it'll give us a reasonable estimate of the
+    einstein radius and the other lens-mass parameters.
+    """
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        phase_name="phase_1__lens_sie__source_x1_sersic",
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase1.search.const_efficiency_mode = True
-    phase1.search.n_live_points = 40
-    phase1.search.sampling_efficiency = 0.5
-    phase1.search.evidence_tolerance = 100.0
-
-    # Now lets add another source component, using the previous model as the initialization on the lens / source
-    # parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the fit.
-
-    # To set up phase 2, we use the new method of passing priors, by directly passing the results of phase 1 to the
-    # appropirate model components. The 'variable' behaves exactly as it did in the 'customize_priors' function. Hopefully
-    # you'll agree the code below is a lot more concise than using the customize_priors functioon!
+    """
+    Phase 1: Add a second source component, using the previous model as the initialization on the lens / source
+             parameters. We'll vary the parameters of the lens mass model and first source galaxy component during the 
+             fit.
+    """
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_x2_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=phase1.result.model.galaxies.lens),
             source=al.GalaxyModel(
@@ -67,19 +95,16 @@ def make_pipeline(phase_folders=None):
                 light_1=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase2.search.const_efficiency_mode = True
-    phase2.search.n_live_points = 40
-    phase2.search.sampling_efficiency = 0.5
-    phase2.search.evidence_tolerance = 100.0
-
-    # Now lets do the same again, but with 3 source galaxy components.
+    """Phase 3: Same again, but with 3 source galaxy components."""
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sie__source_x3_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=phase2.result.model.galaxies.lens),
             source=al.GalaxyModel(
@@ -89,19 +114,16 @@ def make_pipeline(phase_folders=None):
                 light_2=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase3.search.const_efficiency_mode = True
-    phase3.search.n_live_points = 50
-    phase3.search.sampling_efficiency = 0.5
-    phase3.search.evidence_tolerance = 100.0
-
-    # And one more for luck!
+    """Phase 4: And one more for luck!"""
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_sie__source_x4_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=phase3.result.model.galaxies.lens),
             source=al.GalaxyModel(
@@ -112,11 +134,9 @@ def make_pipeline(phase_folders=None):
                 light_3=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=0.3
+        ),
     )
-
-    phase4.search.const_efficiency_mode = True
-    phase4.search.n_live_points = 50
-    phase4.search.sampling_efficiency = 0.5
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

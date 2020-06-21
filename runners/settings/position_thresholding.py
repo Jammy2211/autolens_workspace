@@ -61,6 +61,6 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=imaging.posit
 
 from pipelines.settings import position_thresholding
 
-pipeline = position_thresholding.make_pipeline(phase_folders=["settings"])
+pipeline = position_thresholding.make_pipeline(folders=["settings"])
 
 pipeline.run(dataset=imaging, mask=mask)

@@ -48,6 +48,6 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 from pipelines.settings import sub_gridding
 
-pipeline = sub_gridding.make_pipeline(phase_folders=["settings"], sub_size=4)
+pipeline = sub_gridding.make_pipeline(folders=["settings"], sub_size=4)
 
 pipeline.run(dataset=imaging, mask=mask)

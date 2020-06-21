@@ -52,7 +52,7 @@ positions = al.GridCoordinates.from_file(file_path=f"{dataset_path}//positions.d
 # Lets plot the imaging, mask and positions before we run the analysis.
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=positions)
 
-# We're going to model our lens galaxy using a *LightProfile* (an elliptical Sersic) and *MassProfile*
+# We're going to model our lens galaxy using a _LightProfile_ (an elliptical Sersic) and _MassProfile_
 # (a singular isothermal ellipsoid). We load these profiles from the 'light_profiles (lp)' and 'mass_profiles (mp)'.
 
 # To setup our model galaxies, we use a GalaxyModel, which represents a galaxy of which the parameters of its
@@ -67,7 +67,7 @@ source_galaxy_model = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 # parameters using a non-linear search (in this case, MultiNest).
 phase = al.PhaseImaging(
     phase_name="phase_example",
-    phase_folders=[dataset_label, dataset_name],
+    folders=[dataset_label, dataset_name],
     galaxies=dict(lens=lens_galaxy_model, source=source_galaxy_model),
     search=af.DynestyStatic(),
 )

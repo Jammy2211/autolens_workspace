@@ -7,57 +7,52 @@ source's light). This pipeline uses four phases:
 
 Phase 1:
 
-Fit and subtract the lens light model.
-
-Lens Light: EllipticalSersic + EllipticalExponential
-Lens Mass: None
-Source Light: None
-Previous Pipelines: None
-Prior Passing: None
-Notes: None
+    Fit and subtract the lens light model.
+    
+    Lens Light: EllipticalSersic + EllipticalExponential
+    Lens Mass: None
+    Source Light: None
+    Previous Pipelines: None
+    Prior Passing: None
+    Notes: None
 
 Phase 2:
 
-Fit the lens mass model and source *LightProfile*, using the lens subtracted image from phase 1.
-
-Lens Light: None
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Previous Pipelines: None
-Prior Passing: None
-Notes: Uses the lens light subtracted image from phase 1
+    Fit the lens mass model and source _LightProfile_, using the lens subtracted image from phase 1.
+    
+    Lens Light: None
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Previous Pipelines: None
+    Prior Passing: None
+    Notes: Uses the lens light subtracted image from phase 1
 
 Phase 3:
 
-Refit the lens light models using the mass model and source *LightProfile* fixed from phase 2.
-
-Lens Light: EllipticalSersic + EllipticalExponential
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Previous Pipelines: None
-Prior Passing: lens mass and source (instance -> phase 2)
-Notes: None
+    Refit the lens light models using the mass model and source _LightProfile_ fixed from phase 2.
+    
+    Lens Light: EllipticalSersic + EllipticalExponential
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Previous Pipelines: None
+    Prior Passing: lens mass and source (instance -> phase 2)
+    Notes: None
 
 Phase 4:
 
-Refine the lens light and mass models and source *LightProfile*, using priors from the previous 2 phases.
-
-Lens Light: EllipticalSersic + EllipticalExponential
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Previous Pipelines: None
-Prior Passing: Lens light (model -> phase 3), lens mass and source (model -> phase 2)
-Notes: None
+    Refine the lens light and mass models and source _LightProfile_, using priors from the previous 2 phases.
+    
+    Lens Light: EllipticalSersic + EllipticalExponential
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Previous Pipelines: None
+    Prior Passing: Lens light (model -> phase 3), lens mass and source (model -> phase 2)
+    Notes: None
 """
 
 
 def make_pipeline(
-    slam,
-    settings,
-    phase_folders=None,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    evidence_tolerance=100.0,
+    slam, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -71,18 +66,18 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    # 1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    # 2) The lens galaxy mass model includes an external shear.
+        1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+        2) The lens galaxy mass model includes an external shear.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(slam.source_pipeline_tag)
-    phase_folders.append(slam.source.tag)
+    slam.folders.append(pipeline_name)
+    slam.folders.append(slam.source_pipeline_tag)
+    slam.folders.append(slam.source.tag)
 
     """
     Phase 1: Fit only the lens galaxy's light, where we:
 
-    1) Align the bulge and disk (y,x) centre.
+        1) Align the bulge and disk (y,x) centre.
     """
 
     lens = al.GalaxyModel(
@@ -104,7 +99,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(lens=lens),
         settings=settings,
         search=af.DynestyStatic(
@@ -114,19 +109,14 @@ def make_pipeline(
         ),
     )
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-        hyper_combined_search=slam.hyper.hyper_combined_search,
-        include_background_sky=slam.hyper.hyper_image_sky,
-        include_background_noise=slam.hyper.hyper_background_noise,
-    )
+    phase1 = phase1.extend_with_multiple_hyper_phases(setup=slam.hyper)
 
     """
     Phase 2: Fit the lens galaxy's mass and source galaxy's light, where we:
 
-    1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-    2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for
-       the bulge of the *LightProfile* in phase 1.
+        1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
+        2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for
+           the bulge of the _LightProfile_ in phase 1.
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
@@ -146,7 +136,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -172,17 +162,12 @@ def make_pipeline(
         ),
     )
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-        hyper_combined_search=slam.hyper.hyper_combined_search,
-        include_background_sky=slam.hyper.hyper_image_sky,
-        include_background_noise=slam.hyper.hyper_background_noise,
-    )
+    phase2 = phase2.extend_with_multiple_hyper_phases(setup=slam.hyper)
 
     """
     Phase 3: Refit the lens galaxy's light using fixed mass and source instances from phase 2, where we:
 
-    # 1) Do not use priors from phase 1 to Fit the lens's light, assuming the source light may of impacted them.
+        1) Do not use priors from phase 1 to Fit the lens's light, assuming the source light may of impacted them.
     """
 
     lens = al.GalaxyModel(
@@ -204,7 +189,7 @@ def make_pipeline(
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_bulge_disk_sie__source_fixed",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
@@ -223,22 +208,17 @@ def make_pipeline(
         ),
     )
 
-    phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-        hyper_combined_search=slam.hyper.hyper_combined_search,
-        include_background_sky=slam.hyper.hyper_image_sky,
-        include_background_noise=slam.hyper.hyper_background_noise,
-    )
+    phase3 = phase3.extend_with_multiple_hyper_phases(setup=slam.hyper)
 
     """
     Phase 4: Simultaneously fit the lens and source galaxies, where we:
 
-    1) Set lens's light, mass, shear and source's light using models from phases 1 and 2.
+        1) Set lens's light, mass, shear and source's light using models from phases 1 and 2.
     """
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_bulge_disk_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -264,11 +244,6 @@ def make_pipeline(
         ),
     )
 
-    phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-        hyper_combined_search=slam.hyper.hyper_combined_search,
-        include_background_sky=slam.hyper.hyper_image_sky,
-        include_background_noise=slam.hyper.hyper_background_noise,
-    )
+    phase4 = phase4.extend_with_multiple_hyper_phases(setup=slam.hyper)
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

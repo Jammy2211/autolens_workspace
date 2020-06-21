@@ -1,4 +1,4 @@
-At the end of the introduction tutorials, we could fit strong lensing imaging with a _Tracer_. However, we simulated the
+At the end of the introduction tutorials, we could fit strong lensing _Imaging_ with a _Tracer_. However, we simulated the
 image ourselves, which meant we knew the combination of _LightProfile_s and _MassProfile_s provided a good fit.
 
 In this set of tutorials, we'll deal the situation that we face in the real world and assume we have no knowledge of

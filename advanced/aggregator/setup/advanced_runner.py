@@ -2,7 +2,7 @@
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
 
-# We will fit each lens with an power-law *MassProfile* and each source using a pixelized inversion. The fit will use 3
+# We will fit each lens with an power-law _MassProfile_ and each source using a pixelized inversion. The fit will use 3
 # advanced pipelines which are added together to perform a 6 phase analysis, which will allow us to illustrate how the
 # results of different pipelines and phases can be loaded using the aggregator.
 
@@ -90,15 +90,15 @@ for dataset_name in [
     from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     ### PIPELINE COMPOSITION AND RUN ###
@@ -169,15 +169,15 @@ Create the path where the dataset will be loaded from, which in this case is
     from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     ### PIPELINE COMPOSITION AND RUN ###
@@ -250,15 +250,15 @@ Create the path where the dataset will be loaded from, which in this case is
     from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     ### PIPELINE COMPOSITION AND RUN ###
@@ -331,15 +331,15 @@ Create the path where the dataset will be loaded from, which in this case is
     from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_source__inversion = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
-        setup=setup, phase_folders=["aggregator", "advanced", dataset_name]
+        setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
     ### PIPELINE COMPOSITION AND RUN ###

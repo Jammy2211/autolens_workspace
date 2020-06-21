@@ -252,7 +252,7 @@ print()
 
 # %%
 """
-Their light and *MassProfile*s are also named according to the pipeline.
+Their light and _MassProfile_s are also named according to the pipeline.
 """
 
 # %%

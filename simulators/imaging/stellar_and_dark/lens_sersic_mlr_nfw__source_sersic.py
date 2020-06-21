@@ -6,9 +6,9 @@ import os
 """
 This script simulates imaging of a strong lens using decomposed light and dark matter profiles where:
 
-    - The lens galaxy's stellar *MassProfile* is an *EllipticalSersic*.
-    - The lens galaxy's dark *MassProfile* is a *SphericalNFW*.
-    - The source galaxy's *LightProfile* is an *EllipticalSersic*.
+    - The lens galaxy's stellar _MassProfile_ is an _EllipticalSersic_.
+    - The lens galaxy's dark _MassProfile_ is a _SphericalNFW_.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 """Setup the path to the autolens_workspace, using a relative directory name."""

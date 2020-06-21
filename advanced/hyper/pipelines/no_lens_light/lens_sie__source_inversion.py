@@ -11,16 +11,16 @@ gain a clear understanding of hyper-mode.
 HYPER MODEL OBJECTS 
 
 Below you'll note the following three hyper-model objects:
-
-- hyper_galaxy - If used, the noise map in the bright regions of the galaxy is scaled.
-- hyper_image_sky - If used, the background sky of the image being fitted is included as part of the model.
-- hyper_background_noise - If used, the background noise of the noise map is included as part of the model.
+    
+    - hyper_galaxy - If used, the noise map in the bright regions of the galaxy is scaled.
+    - hyper_image_sky - If used, the background sky of the image being fitted is included as part of the model.
+    - hyper_background_noise - If used, the background noise of the noise map is included as part of the model.
 
 An example of these objects being used to make a phase is as follows:
 
 phase = al.PhaseImaging(
     phase_name="phase___hyper_example",
-    phase_folders=phase_folders,
+    folders=folders,
     galaxies=dict(
         lens=al.GalaxyModel(
             redshift=redshift_lens,
@@ -41,7 +41,7 @@ What does the 'optional' attribute mean? It means that the component is only pas
 hyper_image_sky is turned off (by settting hyper_image_sky to False in the PipelineGeneralSettings), this model
 component will not be passed. That is, it is optional.
 
-HYPER PHASES 
+__HYPER PHASES __
 
 The hyper-galaxies, hyper-image_sky and hyper-background-noise all have non-linear parameters we need to fit for
 during our modeling.
@@ -54,31 +54,31 @@ Instead, we 'extend' phases with extra phases that specifically fit certain comp
 hopefully already seen the following code, which optimizes just the parameters of an inversion (e.g. the
 pixelization and regularization):
 
-phase1 = phase1.extend_with_inversion_phase()
+    phase1 = phase1.extend_with_inversion_phase()
 
 Extending a phase with hyper phases is just as easy:
 
-phase = phase.extend_with_multiple_hyper_phases(
-        search=af.DynestyStatic(),
-        inversion=True,
-    hyper-galaxy=True,
-    include_background_sky=True,
-    include_background_noise=True,
-)
+    phase = phase.extend_with_multiple_hyper_phases(
+            search=af.DynestyStatic(),
+            inversion=True,
+        hyper-galaxy=True,
+        include_background_sky=True,
+        include_background_noise=True,
+    )
 
 This extends the phase with 3 additional phases which:
 
-1) Fit the inversion parameters using the pixelization and regularization scheme that were used in the main phase.
-   (e.g. a brightness-based pixelization and adaptive regularization scheme). The best-fit lens and source
-   models are used. This is called the 'inversion' phase.
-
-2) Simultaneously fit the hyper-galaxies, background sky and background noise hyper parameters using the best-fit
-   lens and source models from the main phase. This phase only scales the noise and the image. This is called
-   the 'hyper-galaxy' phase.
-
-3) Fit all of the components above using Gaussian priors centred on the resulting values of phases 1) and 2). This is
-   important as there is a trade-off between increasing the noise in the lens / source and changing the pixelization /
-   regularization hyper-galaxy-parameters. This is called the 'hyper_combined' phase.
+    1) Fit the inversion parameters using the pixelization and regularization scheme that were used in the main phase.
+       (e.g. a brightness-based pixelization and adaptive regularization scheme). The best-fit lens and source
+       models are used. This is called the 'inversion' phase.
+    
+    2) Simultaneously fit the hyper-galaxies, background sky and background noise hyper parameters using the best-fit
+       lens and source models from the main phase. This phase only scales the noise and the image. This is called
+       the 'hyper-galaxy' phase.
+    
+    3) Fit all of the components above using Gaussian priors centred on the resulting values of phases 1) and 2). This 
+       is important as there is a trade-off between increasing the noise in the lens / source and changing the 
+       pixelization regularization hyper-galaxy-parameters. This is called the 'hyper_combined' phase.
 
 Above, we used the results of the 'hyper_combined' phase to setup the hyper-galaxies, hyper_image_sky, and
 hyper_background_noise. Typically, we set these components up as 'instances' whose parameters are fixed during the
@@ -86,81 +86,79 @@ main phases which fit the lens and source models.
 
 PIPELINE DESCRIPTION 
 
-In this pipeline, we fit the a strong lens using a SIE mass proflie and a source which uses an inversion. The
-pipeline will use hyper-features, that adapt the inversion and other aspects of the model to the data being fitted.
+In this pipeline, we fit the a strong lens using a _EllipticalIsothermal_ mass profile and a source which uses an 
+inversion. The pipeline will use hyper-features, that adapt the inversion and other aspects of the model to the data
+being fitted.
 
 The pipeline is as follows:
 
 Phase 1:
 
-Fit the lens mass model and source *LightProfile*.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Prior Passing: None
-Notes: None
+    Fit the lens mass model and source _LightProfile_.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Prior Passing: None
+    Notes: None
 
 Phase 2:
 
-Fit the inversion's pixelization and regularization, using a magnification
-based pixel-grid and the previous lens mass model.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: VoronoiMagnification + Constant
-Prior Passing: Lens Mass (instance -> phase 1).
-Notes: Lens mass fixed, source inversion parameters vary.
+    Fit the inversion's pixelization and regularization, using a magnification
+    based pixel-grid and the previous lens mass model.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: VoronoiMagnification + Constant
+    Prior Passing: Lens Mass (instance -> phase 1).
+    Notes: Lens mass fixed, source inversion parameters vary.
 
 Phase 3:
-
-Refine the lens mass model using the source inversion.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: VoronoiMagnification + Constant
-Prior Passing: Lens Mass (model -> previous pipeline), source inversion (instance -> phase 2).
-Notes: Lens mass varies, source inversion parameters fixed.
+    
+    Refine the lens mass model using the source inversion.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: VoronoiMagnification + Constant
+    Prior Passing: Lens Mass (model -> previous pipeline), source inversion (instance -> phase 2).
+    Notes: Lens mass varies, source inversion parameters fixed.
 
 Phase 4:
 
-Fit the inversion's pixelization and regularization, using the input pixelization,
-regularization and the previous lens mass model.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: setup.pixelization + setup.regularization
-Prior Passing: Lens Mass (instance -> phase 3).
-Notes:  Lens mass fixed, source inversion parameters vary.
+    Fit the inversion's pixelization and regularization, using the input pixelization,
+    regularization and the previous lens mass model.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: setup.pixelization + setup.regularization
+    Prior Passing: Lens Mass (instance -> phase 3).
+    Notes:  Lens mass fixed, source inversion parameters vary.
 
 Phase 5:
-
-Refine the lens mass model using the inversion.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: setup.pixelization + setup.regularization
-Prior Passing: Lens Mass (model -> phase 3), source inversion (instance -> phase 4).
-Notes: Lens mass varies, source inversion parameters fixed.
+    
+    Refine the lens mass model using the inversion.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: setup.pixelization + setup.regularization
+    Prior Passing: Lens Mass (model -> phase 3), source inversion (instance -> phase 4).
+    Notes: Lens mass varies, source inversion parameters fixed.
 """
 
 
 def make_pipeline(
-    setup,
-    settings,
-    phase_folders=None,
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    evidence_tolerance=100.0,
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline__lens_sie__source_inversion"
 
-    # This pipeline is tagged according to whether:
+    """
+    This pipeline is tagged according to whether:
 
-    # 1) Hyper-fitting setup (galaxies, sky, background noise) are used.
-    # 2) The lens galaxy mass model includes an external shear.
-    # 3) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
+    1) Hyper-fitting setup (galaxies, sky, background noise) are used.
+    2) The lens galaxy mass model includes an external shear.
+    3) The pixelization and regularization scheme of the pipeline (fitted in phases 4 & 5).
+    """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(setup.tag)
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
     """SETUP SHEAR: Include the shear in the mass model if not switched off in the pipeline setup. """
 
@@ -169,13 +167,13 @@ def make_pipeline(
     else:
         shear = None
 
-    ### PHASE 1 ###
-
-    # In phase 1, we fit the lens galaxy's mass and source galaxy.
+    """
+    Phase 1: Fit the lens galaxy's mass and source galaxy.
+    """
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens, mass=al.mp.EllipticalIsothermal, shear=shear
@@ -192,15 +190,10 @@ def make_pipeline(
         ),
     )
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=setup.hyper_galaxies_search,
-        hyper_combined_search=setup.hyper_combined_search,
-        include_background_sky=setup.hyper_image_sky,
-        include_background_noise=setup.hyper_background_noise,
-    )
+    phase1 = phase1.extend_with_multiple_hyper_phases(setup=setup)
 
     """
-    PHASE 2:
+    Phase 2:
 
     Phases 2 & 3 use a magnification based pixelization and constant regularization scheme to reconstruct the source.
     The pixelization & regularization input via the pipeline setup are not used until phases 4 & 5.
@@ -212,12 +205,12 @@ def make_pipeline(
 
     In phase 2, we fit the pixelization and regularization, where we:
 
-    1) Fix the lens mass model to the mass-model inferred by the previous pipeline.
+        1) Fix the lens mass model to the mass-model inferred by the previous pipeline.
     """
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__source_inversion_magnification_initialization",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -242,24 +235,18 @@ def make_pipeline(
         ),
     )
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=setup.hyper_galaxies_search,
-        inversion_search=None,
-        hyper_combined_search=setup.hyper_combined_search,
-        include_background_sky=setup.hyper_image_sky,
-        include_background_noise=setup.hyper_background_noise,
-    )
+    phase2 = phase2.extend_with_multiple_hyper_phases(setup=setup)
 
     """
-    PHASE 3: Fit the lens's mass and source galaxy using the magnification inversion, where we:
+    Phase 3: Fit the lens's mass and source galaxy using the magnification inversion, where we:
 
-    # 1) Fix the source inversion parameters to the results of phase 2.
-    # 2) Set priors on the lens galaxy mass using the results of the previous pipeline.
+        1) Fix the source inversion parameters to the results of phase 2.
+        2) Set priors on the lens galaxy mass using the results of the previous pipeline.
     """
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sie__source_inversion_magnification",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -283,23 +270,17 @@ def make_pipeline(
         ),
     )
 
-    phase3 = phase3.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=setup.hyper_galaxies_search,
-        inversion_search=None,
-        hyper_combined_search=setup.hyper_combined_search,
-        include_background_sky=setup.hyper_image_sky,
-        include_background_noise=setup.hyper_background_noise,
-    )
+    phase3 = phase3.extend_with_multiple_hyper_phases(setup=setup)
 
     """
-    PHASE 4: Fit the input pipeline pixelization & regularization, where we:
+    Phase 4: Fit the input pipeline pixelization & regularization, where we:
 
-    1) Fix the lens mass model to the mass-model inferred in phase 3.
+        1) Fix the lens mass model to the mass-model inferred in phase 3.
     """
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__source_inversion_initialization",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -323,24 +304,18 @@ def make_pipeline(
         ),
     )
 
-    phase4 = phase4.extend_with_multiple_hyper_phases(
-        hyper_galaxy_search=setup.hyper_galaxies_search,
-        inversion_search=None,
-        hyper_combined_search=setup.hyper_combined_search,
-        include_background_sky=setup.hyper_image_sky,
-        include_background_noise=setup.hyper_background_noise,
-    )
+    phase4 = phase4.extend_with_multiple_hyper_phases(setup=setup)
 
     """
-    PHASE 5: Fit the lens's mass using the input pipeline pixelization & regularization, where we:
+    Phase 5: Fit the lens's mass using the input pipeline pixelization & regularization, where we:
 
-    1) Fix the source inversion parameters to the results of phase 4.
-    2) Set priors on the lens galaxy mass using the results of phase 3.
+        1) Fix the source inversion parameters to the results of phase 4.
+        2) Set priors on the lens galaxy mass using the results of phase 3.
     """
 
     phase5 = al.PhaseImaging(
         phase_name="phase_5__lens_sie__source_inversion",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,

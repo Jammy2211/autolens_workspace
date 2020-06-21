@@ -8,8 +8,8 @@ Welcome to the pipeline runner, which loads a strong lens dataset and analyses i
 
 Using a pipeline composed of five phases this runner fits imaging of a strong lens system, where: 
 
-    - The lens galaxy's *LightProfile* is fitted with an *EllipticalSersic*.
-    - The lens galaxy's *MassProfile* is fitted with an *EllipticalIsothermal*.
+    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
     - The source galaxy is fitted with an *EllipticlSersic*.
 
 This uses the pipeline (Check it out full description of the pipeline):
@@ -125,14 +125,16 @@ paths are 'tagged' with the string 'no_shear'.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The 'phase_folders' below specify the path the pipeline results are written to, which is:
+The 'folders' below specify the path the pipeline results are written to, which is:
 
     'autolens_workspace/output/dataset_label/dataset_name/' 
     'autolens_workspace/output/imaging/lens_sersic_sie__source_sersic/'
 """
 
 # %%
-setup = al.PipelineSetup(no_shear=False)
+setup = al.PipelineSetup(
+    no_shear=False, folders=["pipelines", dataset_label, dataset_name]
+)
 
 # %%
 """
@@ -145,11 +147,7 @@ To create a pipeline we import it from the pipelines folder and run its 'make_pi
 # %%
 from pipelines.imaging.with_lens_light import lens_sersic_sie__source_sersic
 
-pipeline = lens_sersic_sie__source_sersic.make_pipeline(
-    setup=setup,
-    settings=settings,
-    phase_folders=["pipelines", dataset_label, dataset_name],
-)
+pipeline = lens_sersic_sie__source_sersic.make_pipeline(setup=setup, settings=settings)
 
 # %%
 """

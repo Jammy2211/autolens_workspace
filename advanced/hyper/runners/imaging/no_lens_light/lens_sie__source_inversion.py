@@ -16,9 +16,11 @@ of previous phases in a pipeline to later phases, and then uses this model image
 - Adapt the regularization scheme to the surface-brightness of the source galaxy.
 - Scale the noise in regions of the image where the model give a poor fit (in both the lens and source galaxies).
 - Include uncertanties in the data-reduction into the model, such as the background sky level.
-__THIS RUNNER __describes how to set up and run a pipeline which uses hyper-mode. A full description of hyper-model is
-given in chapter 5 of the HowToLens lecture series.
+
 __THIS RUNNER __
+
+describes how to set up and run a pipeline which uses hyper-mode. A full description of hyper-model is
+given in chapter 5 of the HowToLens lecture series.
 
 Using a pipeline composed of three phases we will fit an SIE mass model and source using a pixelized inversion.
 
@@ -126,6 +128,7 @@ setup = al.PipelineSetup(
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     pixelization=al.pix.VoronoiBrightnessImage,
     regularization=al.reg.AdaptiveBrightness,
+    folders=["hyper", dataset_label, dataset_name],
 )
 
 # %%
@@ -138,9 +141,7 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 # %%
 from advanced.hyper.pipelines.no_lens_light import lens_sie__source_inversion
 
-pipeline = lens_sie__source_inversion.make_pipeline(
-    setup=setup, settings=settings, phase_folders=["hyper", dataset_label, dataset_name]
-)
+pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 
 # %%
 """

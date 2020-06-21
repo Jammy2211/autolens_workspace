@@ -1,190 +1,221 @@
 import autofit as af
 import autolens as al
 
-# This pipeline fits a strong lens which has two lens galaxies. It is composed of the following 4 phases:
+"""
+In this pipeline, we fit the a strong lens with two lens galaxies using  two _EllipticalSersic_ _LightProfile_'s, 
+two _EllipticalIsothermal_ _MassProfile_'s and a parametric _EllipticalSersic_ source.
 
-# Phase 1) Fit the _LightProfile_ of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+The pipeline assumes the lens galaxies are at (0.0", -1.0") and (0.0", 1.0") and is not a general pipeline
+and cannot be applied to any image of a strong lens.
 
-# Phase 2) Fit the _LightProfile_ of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+The pipeline is four phases:
 
-# Phase 3) Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens galaxies
-#          can use the results of phases 1 and 2 to initialize their priors.
+Phase 1:
 
-# Phase 4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
+    Fit the _LightProfile_ of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
+    
+    Lens Light: EllipticalSersic
+    Lens Mass: None
+    Source Light: None
+    Prior Passing: None
+    Notes: None
 
-# Because the pipeline assumes the lens galaxies are at (0.0", -1.0") and (0.0", 1.0"), it is not a general pipeline
-# and cannot be applied to any image of a strong lens.
+Phase 2:
+
+    Fit the _LightProfile_ of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
+    
+    Lens Light: EllipticalSersic + EllipticalSersic
+    Lens Mass: None
+    Source Light: None
+    Prior Passing: Lens Light (instance -> phase 1).
+    Notes: Uses the left lens subtracted image from phase 1.
+
+Phase 3:
+
+    Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens galaxies
+    can use the results of phases 1 and 2 to initialize their priors.
+
+    Lens Light: EllipticalSersic + EllipticalSersic
+    Lens Mass: EllipticalIsothermal + EllipticalIsothermal
+    Source Light: EllipticalSersic
+    Prior Passing: Lens light (instance -> phases 1 & 2).
+    Notes: None
+    
+Phase 4:
+
+    Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
+    
+    Lens Light: EllipticalSersic + EllipticalSersic
+    Lens Mass: EllipticalIsothermal + EllipticalIsothermal
+    Source Light: EllipticalSersic
+    Prior Passing: Lens light (model -> phases 1 & 2), Lens mass & Source light (model -> phase 3).
+    Notes: None
+    
+"""
 
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(setup, settings, folders=None):
 
-    ### SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
-
-    # We setup the pipeline name using the tagging module. In this case, the pipeline name is not given a tag and
-    # will be the string specified below. However, its good practise to use the 'tag.' function below, incase
-    # a pipeline does use customized tag names.
+    """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline__x2_galaxies"
 
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/pipeline_tag/phase_name/phase_tag/'
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
 
-    phase_folders.append(pipeline_name)
+    """
+    Phase 1: Fit the left lens galaxy's light, where we:
 
-    ### PHASE 1 ###
-
-    # Let's restrict the priors on the centres around the pixel we know the _Galaxy_'s light centre peaks.
+        1) Fix the centres to (0.0, -1.0), the pixel we know the left _Galaxy_'s light centre peaks.
+    """
 
     left_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
-
-    left_lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.05)
-
-    left_lens.light.centre_1 = af.GaussianPrior(mean=-1.0, sigma=0.05)
-
-    # Given we are only fitting the very central region of the lens galaxy, we don't want to let a parameter
-    # like the Sersic index vary. Lets fix it to 4.0.
-
-    left_lens.light.sersic_index = 4.0
+    left_lens.light.centre_0 = 0.0
+    left_lens.light.centre_1 = -1.0
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__left_lens_light",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             left_lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
         ),
-        search=af.DynestyStatic(),
+        settings=settings,
+        search=af.DynestyStatic(
+            n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase1.search.const_efficiency_mode = True
-    phase1.search.n_live_points = 30
-    phase1.search.sampling_efficiency = 0.5
-    phase1.search.evidence_tolerance = 100.0
+    """
+    Phase 2: Fit the lens galaxy on the right, where we:
 
-    ### PHASE 2 ###
-
-    # Now do the exact same with the lens galaxy on the right at (0.0", 1.0").
-
-    # We will additionally pass the left lens's light model as an instance, which as we learnted in the tutorial means
-    # its included in the model with fixed parameters.
+        1) Fix the centres to (0.0, 1.0), the pixel we know the right _Galaxy_'s light centre peaks.
+        2) Pass the left lens's light model as an instance, to improve the fitting of the right galaxy.
+    """
 
     right_lens = al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
-
-    right_lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.05)
-
-    right_lens.light.centre_1 = af.GaussianPrior(mean=1.0, sigma=0.05)
-
-    right_lens.light.sersic_index = 4.0
+    right_lens.light.centre_0 = 0.0
+    right_lens.light.centre_1 = 1.0
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__right_lens_light",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase2.search.const_efficiency_mode = True
-    phase2.search.n_live_points = 30
-    phase2.search.sampling_efficiency = 0.5
-    phase2.search.evidence_tolerance = 100.0
-
-    ### PHASE 3 ###
-
-    # In the next phase, we fit the source of the lens subtracted image. We will of course use fixed lens light
-    # models for both the left and right lens galaxies.
-
-    # We're going to link the centres of the _LightProfile_s computed above to the centre of the lens galaxy
-    # _MassProfile_s in this phase. Because the centres of the _MassProfile_s were fixed in phases 1 and 2,
-    # linking them using the 'variable' attribute means that they stay constant (which for now, is what we want).
+    """
+    Phase 3: Fit the source galaxy, where we: 
+    
+        1) Perform the lens light subtraction using the models inferred in phases 1 and 2.
+        2) Fix the centres of the mass profiles to (0.0, 1.0) and (0.0, -1.0).
+        
+    Note how when we construct the _GalaxyModel_ we are using the results above to set up the light profiles, but
+    using new mass profiles to set up the mass modeling.
+    """
 
     left_lens = al.GalaxyModel(
         redshift=0.5,
         light=phase1.result.instance.galaxies.left_lens.light,
         mass=al.mp.EllipticalIsothermal,
     )
+
     right_lens = al.GalaxyModel(
         redshift=0.5,
         light=phase2.result.instance.galaxies.right_lens.light,
         mass=al.mp.EllipticalIsothermal,
     )
 
-    left_lens.mass.centre_0 = phase1.result.model.galaxies.left_lens.light.centre_0
-
-    left_lens.mass.centre_1 = phase1.result.model.galaxies.left_lens.light.centre_1
-
-    right_lens.mass.centre_0 = phase2.result.model.galaxies.right_lens.light.centre_0
-
-    right_lens.mass.centre_1 = phase2.result.model.galaxies.right_lens.light.centre_1
+    left_lens.mass.centre_0 = 0.0
+    left_lens.mass.centre_1 = -1.0
+    right_lens.mass.centre_0 = 0.0
+    right_lens.mass.centre_1 = 1.0
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_x2_sie__source_exp",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             left_lens=left_lens,
             right_lens=right_lens,
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    phase3.search.const_efficiency_mode = True
-    phase3.search.n_live_points = 50
-    phase3.search.sampling_efficiency = 0.5
-    phase3.search.evidence_tolerance = 100.0
+    """
+    Phase 4: Fit both lens galaxy's light and mass profiles, as well as the source-galaxy, simultaneously, where we:
+    
+        1) Use the results of phases 1 and 2 to initialize the lens light models.
+        2) Use the results of phase 3 to initialize the lens mass and source light models.
 
-    ### PHASE 4 ###
+    Remember that in the above phases, we fixed the centres of the light and mass profiles. Thus, if we were to simply
+    setup these model components using the command:
+    
+        light=phase1.result.model.galaxies.left_lens.light
 
-    # In phase 4, we'll fit both lens galaxy's light and mass profiles, as well as the source-galaxy, simultaneously.
+    The model would be set up with these fixed centres! We want to treat the centres as free parameters in this phase,
+    requiring us to unpack the prior passing and setup the models using a PriorModel.
+    
+    """
 
-    # Results are split over multiple phases, so we setup the light and mass profiles of each lens separately.
+    left_light = af.PriorModel(al.lp.EllipticalSersic)
+    left_light.elliptical_comps = (
+        phase1.result.model.galaxies.left_lens.light.elliptical_comps
+    )
+    left_light.intensity = phase1.result.model.galaxies.left_lens.light.intensity
+    left_light.effective_radius = (
+        phase1.result.model.galaxies.left_lens.light.effective_radius
+    )
+    left_light.sersic_index = phase1.result.model.galaxies.left_lens.light.sersic_index
 
-    left_lens = al.GalaxyModel(
-        redshift=0.5,
-        light=phase1.result.model.galaxies.left_lens.light,
-        mass=phase3.result.model.galaxies.left_lens.mass,
+    left_mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    left_mass.elliptical_comps = (
+        phase3.result.model.galaxies.left_lens.mass.elliptical_comps
+    )
+    left_mass.einstein_radius = (
+        phase3.result.model.galaxies.left_lens.mass.einstein_radius
     )
 
-    right_lens = al.GalaxyModel(
-        redshift=0.5,
-        light=phase2.result.model.galaxies.right_lens.light,
-        mass=phase3.result.model.galaxies.right_lens.mass,
+    left_lens = al.GalaxyModel(redshift=0.5, light=left_light, mass=left_mass)
+
+    right_light = af.PriorModel(al.lp.EllipticalSersic)
+    right_light.elliptical_comps = (
+        phase2.result.model.galaxies.right_lens.light.elliptical_comps
+    )
+    right_light.intensity = phase2.result.model.galaxies.right_lens.light.intensity
+    right_light.effective_radius = (
+        phase2.result.model.galaxies.right_lens.light.effective_radius
+    )
+    right_light.sersic_index = (
+        phase2.result.model.galaxies.right_lens.light.sersic_index
     )
 
-    # When we pass a a 'model' galaxy from a previous phase, parameters fixed to constants remain constant.
-    # Because centre_0 and centre_1 of the _MassProfile_ were fixed to constants in phase 3, they're still
-    # constants after the line after. We need to therefore manually over-ride their priors.
+    right_mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    right_mass.elliptical_comps = (
+        phase3.result.model.galaxies.right_lens.mass.elliptical_comps
+    )
+    right_mass.einstein_radius = (
+        phase3.result.model.galaxies.right_lens.mass.einstein_radius
+    )
 
-    left_lens.mass.centre_0 = phase3.result.model.galaxies.left_lens.mass.centre_0
-
-    left_lens.mass.centre_1 = phase3.result.model.galaxies.left_lens.mass.centre_1
-
-    right_lens.mass.centre_0 = phase3.result.model.galaxies.right_lens.mass.centre_0
-
-    right_lens.mass.centre_1 = phase3.result.model.galaxies.right_lens.mass.centre_1
-
-    # We also want the Sersic index's to be free parameters now, so lets change it from a constant to a
-    # variable.
-
-    left_lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
-
-    right_lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
-
-    # Things are much simpler for the source galaxies - just link them together!
+    right_lens = al.GalaxyModel(redshift=0.5, light=right_light, mass=right_mass)
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_x2_sersic_sie__source_exp",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             left_lens=left_lens,
             right_lens=right_lens,
             source=phase3.result.model.galaxies.source,
         ),
-        search=af.DynestyStatic(),
+        search=af.DynestyStatic(
+            n_live_points=60, sampling_efficiency=0.5, evidence_tolerance=0.3
+        ),
     )
-
-    phase4.search.const_efficiency_mode = True
-    phase4.search.n_live_points = 60
-    phase4.search.sampling_efficiency = 0.5
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

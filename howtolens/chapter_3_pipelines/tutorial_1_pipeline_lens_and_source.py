@@ -1,155 +1,146 @@
 import autofit as af
 import autolens as al
 
-# All pipelines begin with a comment describing the pipeline and a phase-by-phase description of what it does.
+"""
+All pipelines begin with a comment describing the pipeline and a phase-by-phase description of what it does.
 
-# In this pipeline, we'll perform a basic analysis which fits a source galaxy using a parametric _LightProfile_ and a
-# lens galaxy where its light is included and fitted, using three phases:
+In this pipeline, we fit the a strong lens using an _EllipticalSersic_ _LightProfile_, _EllipticalIsothermal_ 
+_MassProfile_ and parametric _EllipticalSersic_ source.
 
-# Phase 1) Fit the lens galaxy's light using an elliptical Sersic _LightProfile_.
+The pipeline is three phases:
 
-# Phase 2) Use this lens subtracted image to fit the lens galaxy's mass (SIE) and source-galaxy's light (Sersic).
+Phase 1:
 
-# Phase 3) Fit the lens's light, mass and source's light simultaneously using priors initialized from the above 2 phases.
+Fit and subtract the lens light model.
+
+Lens Light: EllipticalSersic
+Lens Mass: None
+Source Light: None
+Prior Passing: None
+Notes: None
+
+Phase 2:
+
+Fit the lens mass model and source _LightProfile_.
+
+Lens Light: EllipticalSersic
+Lens Mass: EllipticalIsothermal + ExternalShear
+Source Light: EllipticalSersic
+Prior Passing: Lens Light (instance -> phase 1).
+Notes: Uses the lens subtracted image from phase 1.
+
+Phase 3:
+
+Refine the lens light and mass models and source light model using priors initialized from phases 1 and 2.
+
+Lens Light: EllipticalSersic
+Lens Mass: EllipticalIsothermal + ExternalShear
+Source Light: EllipticalSersic
+Prior Passing: Lens light (model -> phase 1), lens mass and source light (model -> phase 2).
+Notes: None
+"""
 
 
-def make_pipeline(phase_folders=None):
-
-    # Pipelines takes 'phase_folders' as input, which in conjunction with the pipeline name specify the path structure of
-    # the output. In the pipeline runner we pass the phase_folders ['howtolens, c3_t1_lens_and_source], which means the
-    # output of this pipeline go to the folder 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline__light_and_source'.
-
-    # By default, the pipeline folders is None, meaning the output go to the directory 'output/pipeline_name',
-    # which in this case would be 'output/pipeline_light_and_source'.
-
-    # In the example pipelines found in 'autolens_workspace/pipelines' folder, we pass the name of our strong lens dataset
-    # to the pipeline path. This allows us to fit a large sample of lenses using one pipeline and store all of their
-    # results in an ordered directory structure.
+def make_pipeline(setup, settings, folders=None):
 
     pipeline_name = "pipeline__light_and_source"
 
-    # This function uses the phase folders and pipeline name to set up the output directory structure,
-    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/pipeline_tag/phase_name/phase_tag/'
-    phase_folders.append(pipeline_name)
+    """
+    A pipelines takes the 'folders' as input, which together with the pipeline name specify the path structure 
+    of the output. In the pipeline runner we pass the folders ["howtolens", c3_t1_lens_and_source], making the
+    output of this pipeline 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline__light_and_source'.
 
-    ### PHASE 1 ###
+    The output path is also tagged according to the _PipelineSetup_, in an analagous fashion to how the 
+    _PhaseSettingsImaging_ tagged the output paths of phases. In this example, we do not use an _ExternalShear_
+    in the mass model, and the pipeline is tagged accordingly.
+    """
 
-    # First, we create the phase, using the same notation we learnt before (noting the masks function is passed to
-    # this phase ensuring the anti-annular masks above is used).
+    setup.folders.append(pipeline_name)
+    setup.folders.append(setup.tag)
+
+    """
+    Phase 1: Fit only the lens galaxy's light, where we:
+
+        1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+
+    We create the phase using the same notation as in chapter 2. Note how we are using the 'fast' _Dynesty_ settings
+    covered in chapter 2.
+    """
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
-        search=af.DynestyStatic(),
+        settings=settings,
+        search=af.DynestyStatic(
+            n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=100.0
+        ),
     )
 
-    # We'll use the Dynesty black magic we covered in tutorial 7 of chapter 2 to get this phase to run fast.
+    """
+    Phase 2: Fit the lens galaxy's mass and source galaxy's light, where we:
 
-    phase1.search.const_efficiency_mode = True
-    phase1.search.n_live_points = 30
-    phase1.search.sampling_efficiency = 0.5
-    phase1.search.evidence_tolerance = 100.0
+        1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
+        2) Set priors on the centre of the lens galaxy's _MassProfile_ by linking them to those inferred for 
+           the _LightProfile_ in phase 1.
+           
+    In phase 2, we fit the source-galaxy's light. Thus, we want to fix the lens light model to the model inferred
+    in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
+    'instance' object, a trick we use in nearly all pipelines!
 
-    ### PHASE 2 ###
+    By passing an 'instance', we are telling PyAutoLens that we want it to pass the maximum log likelihood result of
+    that phase and use those parameters as fixed values in the model. The model parameters passed as an 'instance' are
+    not free parameters fitted for by the non-linear search, thus this reduces the dimensionality of the non-linear 
+    search making model-fitting faster and more reliable. 
+     
+    Thus, phase2 includes the lens light model from phase 1, but it is completely fixed during the model-fit!
+    """
 
-    # In phase 2, we fit the source-galaxy's light. Thus, we want to fix the lens light model to the model inferred
-    # in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
-    # 'instance' object, a trick we'll use again in the next pipeline in this chapter.
-
-    # To be clear, when we pass an 'instance', we are telling PyAutoLens that we want it to pass the best-fit result of
-    # that phase and use those parameters as fixed values in the model. Thus, phase2 below essentially includes a lens
-    # light model that is used every time the model fit is performed, however the parameters of the lens light are no
-    # longer free parameters but instead fixed values.
+    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    mass.centre_0 = phase1.result.model.galaxies.lens.light.centre_0
+    mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
                 light=phase1.result.instance.galaxies.lens.light,
-                mass=al.mp.EllipticalIsothermal,
+                mass=mass,
             ),
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
-        search=af.DynestyStatic(),
+        settings=settings,
+        search=af.DynestyStatic(
+            n_live_points=50, sampling_efficiency=0.3, evidence_tolerance=100.0
+        ),
     )
 
-    phase2.search.const_efficiency_mode = True
-    phase2.search.n_live_points = 50
-    phase2.search.sampling_efficiency = 0.3
-    phase2.search.evidence_tolerance = 100.0
+    """
+    Phase 3: Fit simultaneously the lens and source galaxies, where we:
 
-    ### PHASE 3 ###
-
-    # Finally, in phase 3, we want to fit the lens and source simultaneously. First, lets set up our lens as a
-    # GalaxyModel.
-
-    lens = al.GalaxyModel(
-        redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
-    )
-    source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
-
-    # To link two priors together we invoke the 'model' attribute of the previous results. By invoking
-    # 'model', this means that:
-
-    # 1) The parameter will be a free-parameter fitted for by the non-linear search.
-    # 2) It will use a GaussianPrior based on the previous results as its initialization (we'll cover how this
-    #    Gaussian is setup in tutorial 4, for now just imagine it links the results in a sensible way).
-
-    # We can simply link every source galaxy parameter to its phase 2 inferred value, as follows
-
-    source.light.centre_0 = phase2.result.model.galaxies.source.light.centre_0
-
-    source.light.centre_1 = phase2.result.model.galaxies.source.light.centre_1
-
-    source.light.axis_ratio = phase2.result.model.galaxies.source.light.axis_ratio
-
-    source.light.phi = phase2.result.model.galaxies.source.light.phi
-
-    source.light.intensity = phase2.result.model.galaxies.source.light.intensity
-
-    source.light.effective_radius = (
-        phase2.result.model.galaxies.source.light.effective_radius
-    )
-
-    source.light.sersic_index = phase2.result.model.galaxies.source.light.sersic_index
-
-    # However, listing every parameter like this is ugly and becomes cumbersome if we have a lot of parameters.
-
-    # If, like in the above example, you are making all of the parameters of a lens or source galaxy variable,
-    # you can simply set the source galaxy equal to one another without specifying each parameter of every
-    # light and mass profile.
-
-    source = (
-        phase2.result.model.galaxies.source
-    )  # This is identical to lines 196-203 above.
-
-    # For the lens galaxies we have a slightly weird circumstance where the _LightProfile_s requires the
-    # results of phase 1 and the _MassProfile_ the results of phase 2. When passing these as a 'model', we
-    # can split them as follows
-
-    lens.light = phase1.result.model.galaxies.lens.light
-    lens.mass = phase2.result.model.galaxies.lens.mass
-
-    # Passing results as a 'model' contrasts our use of an 'instance' in phase2 above, when we passed the lens light
-    # parameters as fixed value that were not fitted. In summary:
-
-    # - model: This means we pass the best-fit parameters of a phase, and set them up in the next phase as free
-    #          parameters that are fitted for by Dynesty.
-
-    # - instance: This means we pass the best-fit parameters of a phase as fixed parameters that are not fitted for.
+        1) Set the lens's light, mass, and source's light using the results of phases 1 and 2.
+        
+    As in chapter 2, we can use the 'model' attribute to do this. Our _Dynesty_ search now uses slower and more 
+    thorough settings than the previous phases, to ensure we robustly quantify the errors.
+    """
 
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__lens_sersic_sie__source_exp",
-        phase_folders=phase_folders,
-        galaxies=dict(lens=lens, source=source),
-        search=af.DynestyStatic(),
+        phase_name="phase_3__lens_sersic_sie__source_sersic",
+        folders=setup.folders,
+        galaxies=dict(
+            lens=al.GalaxyModel(
+                redshift=0.5,
+                light=phase1.result.model.galaxies.lens.light,
+                mass=phase2.result.model.galaxies.lens.mass,
+            ),
+            source=al.GalaxyModel(
+                redshift=1.0, light=phase2.result.model.galaxies.source.light
+            ),
+        ),
+        settings=settings,
+        search=af.DynestyStatic(n_live_points=75, sampling_efficiency=0.3),
     )
-
-    phase3.search.const_efficiency_mode = True
-    phase3.search.n_live_points = 50
-    phase3.search.sampling_efficiency = 0.3
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

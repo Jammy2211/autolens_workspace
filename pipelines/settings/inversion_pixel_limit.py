@@ -18,7 +18,7 @@ This pipeline uses two phases:
 
 Phase 1:
 
-Fit the lens mass model and source *LightProfile* using an inversion with a pixel limit.
+Fit the lens mass model and source _LightProfile_ using an inversion with a pixel limit.
 
 Lens Mass: EllipticalIsothermal + ExternalShear
 Source Light: VoronoiMagnification
@@ -37,7 +37,7 @@ Notes: No pixel limit
 
 
 def make_pipeline(
-    phase_folders=None, settings=al.PhaseSettingsImaging(), inversion_pixel_limit=100
+    folders=None, settings=al.PhaseSettingsImaging(), inversion_pixel_limit=100
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -59,9 +59,9 @@ def make_pipeline(
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag//'
 
-    phase_folders.append(pipeline_name)
+    setup.folders.append(pipeline_name)
 
-    ### PHASE 1 ###
+    ### Phase 1 ###
 
     # In phase 1, we fit the lens galaxy's mass and one source galaxy, where we:
 
@@ -73,7 +73,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__x1_source",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
             source=al.GalaxyModel(
@@ -89,7 +89,7 @@ def make_pipeline(
     phase1.search.n_live_points = 80
     phase1.search.sampling_efficiency = 0.2
 
-    ### PHASE 2 ###
+    ### Phase 2 ###
 
     # In phase 2, we fit the lens galaxy's mass and two source galaxies, where we:
 
@@ -97,7 +97,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__x2_source",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,

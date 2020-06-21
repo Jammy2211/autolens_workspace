@@ -80,7 +80,7 @@ __1) Converting Data To Electrons Per Second__
 
 1) Brightness units - the image's flux values should be in units of electrons per second (as opposed to electrons, 
 counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other units, the default setup 
-assumes electrons per second (e.g. the priors on *LightProfile* intensity and regularization parameters). Thus, images 
+assumes electrons per second (e.g. the priors on _LightProfile_ intensity and regularization parameters). Thus, images 
 not in electrons per second should be converted!
 
 Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or 10000's.
@@ -279,8 +279,8 @@ convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
 ########## RECENTERING CURRENTLY DOES NOT WORK :( ###########
 
 # Lens Galaxy Centering - The lens galaxy should be in the centre of the image as opposed to a corner. This ensures
-# the origin of the lens galaxy's light and *MassProfile*s are near the origin (0.0", 0.0") of the grid used to perform
-# ray-tracing. The defaults priors on light and *MassProfile*s assume a origin of (0.0", 0.0").
+# the origin of the lens galaxy's light and _MassProfile_s are near the origin (0.0", 0.0") of the grid used to perform
+# ray-tracing. The defaults priors on light and _MassProfile_s assume a origin of (0.0", 0.0").
 
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.

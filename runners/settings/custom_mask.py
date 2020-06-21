@@ -68,7 +68,7 @@ setup = al.PipelineSetup(
 from pipelines.imaging.with_lens_light import lens_sersic_sie__source_sersic
 
 pipeline = lens_sersic_sie__source_sersic.make_pipeline(
-    setup=setup, phase_folders=["settings"]
+    setup=setup, folders=["settings"]
 )
 
 pipeline.run(dataset=imaging, mask=mask)

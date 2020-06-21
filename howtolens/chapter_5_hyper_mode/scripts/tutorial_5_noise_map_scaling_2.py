@@ -20,63 +20,41 @@ import autolens.plot as aplt
 
 # %%
 """
-This simulates the exact same data as the previous tutorial, but with the lens light included.
+You need to change the path below to your autolens workspace directory.
 """
 
 # %%
-def simulate():
-
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.0, 0.05),
-            intensity=0.5,
-            effective_radius=0.8,
-            sersic_index=3.0,
-        ),
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
-        ),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.2, 0.1),
-            intensity=0.2,
-            effective_radius=0.2,
-            sersic_index=2.5,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
-        add_noise=True,
-        noise_seed=1,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
-Lets simulate the data with lens light, draw a 3.0" mask and set up the lens data that we'll fit.
+We'll use the same strong lensing data as the previous tutorial, where:
+
+    - The lens galaxy's light is an _EllipticalSersic_.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
-imaging = simulate()
+from autolens_workspace.howtolens.simulators.chapter_5 import (
+    lens_sersic_sie__source_sersic,
+)
 
-mask = al.Mask.circular(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2, radius=3.0)
+dataset_label = "chapter_5"
+dataset_name = "lens_sersic_sie__source_sersic"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
+
+mask = al.Mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
+)
 
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 
@@ -153,7 +131,7 @@ This is a fundamental problem when simultaneously modeling the lens galaxy's lig
 inversion has no way to distinguish whether the flux it is reconstructing belongs to the lens or source. This is 
 why contribution maps are so valuable; by creating a contribution map for every galaxy in the image PyAutoLens has a 
 means by which to distinguish which flux belongs to each component in the image! This is further aided by the 
-pixelizations / regularizations that adapt to the source morphology, as not only are they adapting to where the 
+_Pixelization_'s / regularizations that adapt to the source morphology, as not only are they adapting to where the 
 source __is*__ they adapt to where __it isn't__ (and therefore where the lens galaxy is).
 
 Lets now create our hyper-galaxy-images and use them create the contribution maps of our lens and source galaxies. 
@@ -245,7 +223,7 @@ aplt.FitImaging.subplot_fit_imaging(
     fit=fit, include=aplt.Include(inversion_image_pixelization_grid=True, mask=True)
 )
 
-print("Evidence using baseline variances = ", 8861.51)
+print("Evidence using baseline variances = ", 3356.88)
 
 print("Evidence using hyper-galaxy-galaxy hyper variances = ", fit.log_evidence)
 
@@ -308,8 +286,8 @@ aplt.FitImaging.subplot_fit_imaging(
 """
 Is there any reason to scale the background noise other than if the background sky subtraction has a large 
 correction? There is. Lots of pixels in an image do not contain the lensed source but are fitted by the 
-inversion. As we've learnt in this chapter, this isn't problematic when we have our adaptive regularization scheme 
-because the regularization coefficient will be increased to large values.
+inversion. As we've learnt in this chapter, this isn't problematic when we have our adaptive _Regularization_ scheme 
+because the regularization_coefficient will be increased to large values.
 
 However, if you ran a full PyAutoLens analysis in hyper-galaxy-mode (which we cover in the next tutorial), you'd 
 find the method still dedicates a lot of source-pixels to fit these regions of the image, 
@@ -318,7 +296,7 @@ have a relatively high S/N values (of order 5-10) due to the lens galaxy (e.g. i
 inversion when reconstructing the data 'sees' pixels with a S/N > 1 and therefore wants to fit them with a high 
 resolution.
 
-By increasing the background noise these pixels will go to much lower S/N values (<  1). The adaptive pixelization will 
+By increasing the background noise these pixels will go to much lower S/N values (<  1). The adaptive _Pixelization_will 
 feel no need to fit them properly and begin to fit these regions of the source-plane with far fewer, much bigger 
 source pixels! This will again give us a net increase in Bayesian log evidence, but more importantly, it will dramatically 
 reduce the number of source pixels we use to fit the data. And what does fewer source-pixels mean? Much, much faster

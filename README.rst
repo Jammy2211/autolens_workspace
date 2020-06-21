@@ -7,11 +7,11 @@ instructions at `the PyAutoLens readthedocs <https://pyautolens.readthedocs.io/e
 Workspace Version
 =================
 
-This version of the workspace are built and tested for using **PyAutoLens v1.0.2**.
+This version of the workspace are built and tested for using **PyAutoLens v1.0.3**.
 
 .. code-block:: python
 
-    pip install autolens==1.0.2
+    pip install autolens==1.0.3
 
 Getting Started
 ===============
@@ -23,7 +23,8 @@ Workspace Contents
 
 The workspace includes the following:
 
-- **Examples** - Illustrative scripts of the **PyAutoLens** interface, for examples on how to perform lensing calculations, model lenses, etc.
+- **Examples** - Illustrative scripts of the **PyAutoLens** interface, for examples on how to perform lensing
+                 calculations, model lenses, etc.
 - **Config** - Configuration files which customize **PyAutoLens**'s behaviour.
 - **Dataset** - Where data is stored, including example datasets distributed with **PyAutoLens**.
 - **HowToLens** - The **HowToLens** lecture series.
@@ -35,7 +36,8 @@ The workspace includes the following:
 
 The **advanced** folder of the workspace includes:
 
-- **Aggregator** - Manipulate large suites of modeling results via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
+- **Aggregator** - Manipulate large suites of modeling results via Jupyter notebooks, using **PyAutoFit**'s in-built
+                   results database.
 
 HowToLens
 ---------

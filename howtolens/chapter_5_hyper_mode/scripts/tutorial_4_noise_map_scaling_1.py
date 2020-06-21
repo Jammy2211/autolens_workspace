@@ -2,12 +2,12 @@
 """
 __Noise-Map Scaling 1__
 
-In tutorial 1, we discussed how when our inversion didn't fit a compact source well we had skewed and undesirable
+In tutorial 1, we discussed how when our _Inversion_ didn't fit a compact source well we had skewed and undesirable
 chi-squared distribution. A small subset of the lensed source's brightest pixels were fitted poorly, contributing
 to the majority of our chi-squared signal. In terms of lens modeling, this meant that we would over-fit these regions
 of the image. We would prefer that our lens model provides a global fit to the entire lensed source galaxy.
 
-With our adaptive pixelization and regularization we are now able to fit the data to the noise-limit and remove this
+With our adaptive _Pixelization_and _Regularization_ we are now able to fit the data to the noise-limit and remove this
 skewed chi-squared distribution. So, why do we need to introduce noise map scaling? Well, we achieve a good fit when
 our lens's mass model is accurate (in the previous tutorials we used the *correct* lens mass model). But, what if our
 lens mass model isn't accurate? Well, we'll have residuals which will cause the same problem as before; a skewed
@@ -24,56 +24,39 @@ import autolens.plot as aplt
 
 # %%
 """
-This is the usual simulate function, using the compact source of the previous tutorials.
+You need to change the path below to your autolens workspace directory.
 """
 
 # %%
-def simulate():
-
-    grid = al.Grid.uniform(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2)
-
-    psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.05, pixel_scales=0.05)
-
-    lens_galaxy = al.Galaxy(
-        redshift=0.5,
-        mass=al.mp.EllipticalIsothermal(
-            centre=(0.0, 0.0), elliptical_comps=(0.111111, 0.0), einstein_radius=1.6
-        ),
-    )
-
-    source_galaxy = al.Galaxy(
-        redshift=1.0,
-        light=al.lp.EllipticalSersic(
-            centre=(0.0, 0.0),
-            elliptical_comps=(0.2, 0.1),
-            intensity=0.2,
-            effective_radius=0.2,
-            sersic_index=2.5,
-        ),
-    )
-
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-    simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
-        add_noise=True,
-        noise_seed=1,
-    )
-
-    return simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
+workspace_path = "/path/to/user/autolens_workspace/howtolens"
+workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
-Lets simulate the data, draw a 3.0" mask and set up the lens data that we'll fit.
+We'll use the same strong lensing data as the previous tutorial, where:
+
+    - The lens galaxy's light is omitted.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
-imaging = simulate()
+from autolens_workspace.howtolens.simulators.chapter_5 import lens_sie__source_sersic
 
-mask = al.Mask.circular(shape_2d=(150, 150), pixel_scales=0.05, sub_size=2, radius=3.0)
+dataset_label = "chapter_5"
+dataset_name = "lens_sie__source_sersic"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+
+imaging = al.Imaging.from_fits(
+    image_path=f"{dataset_path}/image.fits",
+    noise_map_path=f"{dataset_path}/noise_map.fits",
+    psf_path=f"{dataset_path}/psf.fits",
+    pixel_scales=0.1,
+)
+
+mask = al.Mask.circular(
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
+)
 
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 
@@ -129,12 +112,12 @@ aplt.Inversion.reconstruction(
 """
 The fit isn't great. The main structure of the lensed source is reconstructed, but there are residuals. These 
 residuals are worse than we saw in the previous tutorials (when source's compact central structure was the problem). 
-So, the obvious question is can our adaptive pixelization and regularization schemes address the problem?
+So, the obvious question is can our adaptive _Pixelization_ and _Regularization_schemes address the problem?
 
 Lets find out, using this solution as our hyper-galaxy-image. In this case, our hyper-galaxy-image isn't a perfect 
 fit to the data. This shouldn't be too problematic, as the solution still captures the source's overall structure. 
-The pixelization / regularization hyper-galaxy-parameters have enough flexibility in how they use this image to adapt 
-themselves, so the hyper-galaxy-image doesn't *need* to be perfect.
+The _Pixelization_ / _Regularization_hyper-galaxy-parameters have enough flexibility in how they use this image to 
+adapt themselves, so the hyper-galaxy-image doesn't *need* to be perfect.
 """
 
 # %%
@@ -176,14 +159,15 @@ print("Evidence = ", fit.log_evidence)
 # %%
 """
 The solution is better, but far from perfect. Furthermore, this solution maximizes the Bayesian log evidence, meaning 
-there is no reasonable way to change our source pixelization or regularization to better fit the data. The problem is 
-with our lens's mass model!
+there is no reasonable way to change our source _Pixelization_ or _Regularization_to better fit the data. The problem 
+is with our lens's mass model!
 
 This poses a major problem for our model-fitting. A small subset of our data has such large chi-squared values the 
 non-linear search is going to seek solutions which reduce only these chi-squared values. For the image above, a 
-small subset of our data (e.g. < 5% of pixels) contributes to the majority of our log_likelihood (e.g. > 95% of the overall 
-chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness _Profile_ of 
-the lensed source galaxy to constrain our lens model, we end up using only a small subset of its brightest pixels.
+small subset of our data (e.g. < 5% of pixels) contributes to the majority of our log_likelihood (e.g. > 95% of the 
+overall chi-squared). This is *not* what we want, as it means that instead of using the entire surface brightness 
+profile of the lensed source galaxy to constrain our lens model, we end up using only a small subset of its brightest 
+pixels.
 
 This is even more problematic when we try and use the Bayesian log evidence to objectively quantify the quality of the 
 fit, as it means it cannot obtain a solution that provides a reduced chi-squared of 1.
@@ -193,7 +177,7 @@ actually modeled this image with PyAutoLens it wouldn't go to this solution anyw
 Einstein radius of 1.6? That's true.
 
 However, for *real* strong gravitational lenses, there is no such thing as a 'correct mass model'. Real galaxies are 
-not EllipticalIsothermal profiles, or power-laws, or NFW's, or any of the symmetric and smooth analytic profiles we 
+not _EllipticalIsothermal profiles_, or power-laws, or NFW's, or any of the symmetric and smooth analytic profiles we 
 assume to model their mass. For real strong lenses our mass model will pretty much always lead to source-reconstruction 
 residuals, producing these skewed chi-squared distributions. PyAutoLens can't remove them by simply improving the 
 mass model.
@@ -250,17 +234,17 @@ __How does the HyperGalaxy that we attached to the source-galaxy above actually 
 
 First, it creates a 'contribution_map' from the hyper-galaxy-image of the lensed source galaxy. This uses the 
 'hyper_model_image', which is the overall model-image of the best-fit lens model. In this tutorial, because our 
-strong lens imaging only has a source galaxy emitting light, the hyper-galaxy-image of the source galaxy is the same 
+strong lens _Imaging_ only has a source galaxy emitting light, the hyper-galaxy-image of the source galaxy is the same 
 as the hyper_model_image. However, In the next tutorial, we'll introduce the lens galaxy's light, such that each 
 hyper-galaxy image is different to the hyper-galaxy model image!
 
 We compute the contribution map as follows:
 
-1) Add the 'contribution_factor' hyper-galaxy-parameter value to the 'hyper_model_image'.
-
-2) Divide the 'hyper_galaxy_image' by the hyper-galaxy-model image created in step 1).
-
-3) Divide the image created in step 2) by its maximum value, such that all pixels range between 0.0 and 1.0.
+    1) Add the 'contribution_factor' hyper-galaxy-parameter value to the 'hyper_model_image'.
+    
+    2) Divide the 'hyper_galaxy_image' by the hyper-galaxy-model image created in step 1).
+    
+    3) Divide the image created in step 2) by its maximum value, such that all pixels range between 0.0 and 1.0.
 
 Lets look at a few contribution maps, generated using hyper-_Galaxy_'s with different contribution factors.
 """
@@ -326,15 +310,16 @@ By increasing the contribution factor we allocate more pixels with higher contri
 than pixels with lower values. This is all the contribution_factor does; it scales how we allocate contributions to 
 the source galaxy. Now, we're going to use this contribution map to scale the noise map, as follows:
 
-1) Multiply the baseline (e.g. unscaled) noise map of the image-data by the contribution map made in step 3) above. 
-This means that only noise map values where the contribution map has large values (e.g. near 1.0) are going to remain 
-in this image, with the majority of values multiplied by contribution map values near 0.0.
-
-2) Raise the noise map generated in step 1) above to the power of the hyper-galaxy-parameter noise_power. Thus, for 
-large values of noise_power, the largest noise map values will be increased even more, raising their noise the most.
-
-3) Multiply the noise map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
-means by which PyAutoLens is able to scale the noise map values.
+    1) Multiply the baseline (e.g. unscaled) noise map of the image-data by the contribution map made in step 3) above. 
+      This means that only noise map values where the contribution map has large values (e.g. near 1.0) are going to 
+      remain in this image, with the majority of values multiplied by contribution map values near 0.0.
+    
+    2) Raise the noise map generated in step 1) above to the power of the hyper-galaxy-parameter noise_power. Thus, for 
+       large values of noise_power, the largest noise map values will be increased even more, raising their noise the 
+       most.
+    
+    3) Multiply the noise map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
+       means by which PyAutoLens is able to scale the noise map values.
 
 Lets compare two fits, one where a hyper-galaxy-galaxy scales the noise map, and one where it doesn't.
 """
@@ -399,17 +384,15 @@ think, is there anything else that you can think of that would mean we need to s
 it was the inadequacy of our mass-model that lead to significant residuals and a skewed chi-squared distribution. 
 What else might cause residuals? I'll give you a couple below;
 
-1) A mismatch between our model of the imaging data's Point Spread Function (PSF) and the true PSF of the telescope 
-optics of the data.
-
-2) Unaccounted for effects in our idata-reduction for the image, in particular the presense of correlated signal and 
-noise during the image's instrument reduction.
-
-3) A sub-optimal background sky subtraction of the image, which can leave large levels of signal in the outskirts of 
-the image that are not due to the strong lens system itself.
+    1) A mismatch between our model of the _Imaging_ data's Point Spread Function (PSF) and the true PSF of the 
+       telescope optics of the data.
+    
+    2) Unaccounted for effects in our idata-reduction for the image, in particular the presense of correlated signal and 
+       noise during the image's instrument reduction.
+    
+    3) A sub-optimal background sky subtraction of the image, which can leave large levels of signal in the outskirts of 
+       the image that are not due to the strong lens system itself.
 
 Oh, there's on more thing that can cause much worse residuals than all the effects above. That'll be the topic of 
 the next tutorial.
 """
-
-# %%

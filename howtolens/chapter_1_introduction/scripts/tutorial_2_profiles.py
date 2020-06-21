@@ -99,7 +99,7 @@ these _Array_'s as they returned to us from functions and not think about if the
 its important that you understand PyAutoLens offers these 2D and 1D representations - as it'll help us later when we 
 cover fititng lens data!
 
-We can use a _Profile_ plotter to plot this image.
+We can use a _Profile_ _Plotter_ to plot this image.
 """
 
 # %%
@@ -152,7 +152,7 @@ print(mass_profile_deflections.in_2d_binned[50, 50])
 
 # %%
 """
-A _Profile_ plotter can plot these deflection angles.
+A _Profile_ _Plotter_ can plot these deflection angles.
 
 (The black line is the 'critical curve' of the _MassProfile_. We'll cover what this in a later tutorial.)
 """

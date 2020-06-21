@@ -3,7 +3,7 @@ import os
 # This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 # using a beginner pipeline to illustrate aggregator functionality.
 
-# We will fit each lens with an SIE *MassProfile* and each source using a pixelized inversion. The fit will use a
+# We will fit each lens with an SIE _MassProfile_ and each source using a pixelized inversion. The fit will use a
 # beginner pipelines which performs a 3 phase analysis, which will allow us to illustrate how the results of different
 # phases can be loaded using the aggregator.
 
@@ -109,7 +109,7 @@ for dataset_name in [
 
     pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
         setup=setup,
-        phase_folders=["aggregator", "grid_search", dataset_name],
+        folders=["aggregator", "grid_search", dataset_name],
         positions_threshold=1.0,
     )
 
@@ -119,7 +119,7 @@ for dataset_name in [
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
         setup=setup,
-        phase_folders=["aggregator", "grid_search", dataset_name],
+        folders=["aggregator", "grid_search", dataset_name],
         positions_threshold=1.0,
     )
 
@@ -129,7 +129,7 @@ for dataset_name in [
 
     pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
         setup=setup,
-        phase_folders=["aggregator", "grid_search", dataset_name],
+        folders=["aggregator", "grid_search", dataset_name],
         positions_threshold=1.0,
         grid_size=2,
         parallel=False,

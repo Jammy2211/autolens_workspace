@@ -35,6 +35,8 @@ first phase, we can use its results to tune the priors of our second phase. For 
 # %%
 #%matplotlib inline
 
+import numpy as np
+
 from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
@@ -49,16 +51,25 @@ You need to change the path below to the chapter 1 directory.
 workspace_path = "/path/to/user/autolens_workspace/howtolens"
 workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
+conf.instance = conf.Config(
+    config_path=f"{workspace_path}/config",
+    output_path=f"{workspace_path}/output/howtolens",
+)
+
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
     - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an *EllipticalIsothermal_.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
     - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import (
+    lens_sersic_sie__source_exp,
+)
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -127,8 +138,7 @@ lens.mass.centre_1 = 0.0
 """
 Lets use the same approach of making the ellipticity of the mass trace that of the light.
 """
-lens.mass.elliptical_comps_0 = lens.light.elliptical_comps_0
-lens.mass.elliptical_comps_1 = lens.light.elliptical_comps_1
+lens.mass.elliptical_comps = lens.light.elliptical_comps
 
 # %%
 """
@@ -155,7 +165,9 @@ phase_1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.8, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.8, evidence_tolerance=100.0
+    ),
 )
 
 # %%
@@ -208,32 +220,68 @@ values for now, I've chosen values that I know will ensure reasonable sampling, 
 
 # %%
 
-## LENS LIGHT PRIORS ###
+"""LENS LIGHT PRIORS"""
 
-lens.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-lens.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-lens.light.elliptical_comps_0 = af.GaussianPrior(mean=0.33333, sigma=0.15)
-lens.light.elliptical_comps_1 = af.GaussianPrior(mean=0.0, sigma=15.0)
-lens.light.intensity = af.GaussianPrior(mean=0.02, sigma=0.01)
-lens.light.effective_radius = af.GaussianPrior(mean=0.62, sigma=0.2)
-lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=2.0)
+lens.light.centre.centre_0 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+lens.light.centre.centre_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+lens.light.elliptical_comps.elliptical_comps_0 = af.GaussianPrior(
+    mean=0.33333, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+)
+lens.light.elliptical_comps.elliptical_comps_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
+)
+lens.light.intensity = af.GaussianPrior(
+    mean=0.02, sigma=0.01, lower_limit=0.0, upper_limit=np.inf
+)
+lens.light.effective_radius = af.GaussianPrior(
+    mean=0.62, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
+)
+lens.light.sersic_index = af.GaussianPrior(
+    mean=4.0, sigma=2.0, lower_limit=0.0, upper_limit=np.inf
+)
 
-### LENS MASS PRIORS ###
+"""LENS MASS PRIORS"""
 
-lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-lens.mass.elliptical_comps_0 = af.GaussianPrior(mean=0.33333, sigma=0.15)
-lens.mass.elliptical_comps_1 = af.GaussianPrior(mean=0.0, sigma=15.0)
-lens.mass.einstein_radius = af.GaussianPrior(mean=0.8, sigma=0.1)
+lens.mass.centre.centre_0 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+lens.mass.centre.centre_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+lens.mass.elliptical_comps.elliptical_comps_0 = af.GaussianPrior(
+    mean=0.33333, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+)
+lens.mass.elliptical_comps.elliptical_comps_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
+)
+lens.mass.einstein_radius = af.GaussianPrior(
+    mean=0.8, sigma=0.1, lower_limit=0.0, upper_limit=np.inf
+)
 
-### SOURCE LIGHT PRIORS ###
+"""SOURCE LIGHT PRIORS"""
 
-source.light.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-source.light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-source.light.axis_ratio = af.GaussianPrior(mean=0.8, sigma=0.1)
-source.light.phi = af.GaussianPrior(mean=90.0, sigma=10.0)
-source.light.intensity = af.GaussianPrior(mean=0.14, sigma=0.05)
-source.light.effective_radius = af.GaussianPrior(mean=0.12, sigma=0.2)
+source.light.centre.centre_0 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+source.light.centre.centre_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+)
+source.light.elliptical_comps.elliptical_comps_0 = af.GaussianPrior(
+    mean=0.0, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+)
+source.light.elliptical_comps.elliptical_comps_1 = af.GaussianPrior(
+    mean=-0.33333, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
+)
+source.light.intensity = af.GaussianPrior(
+    mean=0.14, sigma=0.05, lower_limit=0.0, upper_limit=np.inf
+)
+source.light.effective_radius = af.GaussianPrior(
+    mean=0.27, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
+)
 
 # %%
 """
@@ -246,7 +294,9 @@ phase_2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 print(
@@ -278,28 +328,180 @@ You're probably thinking though that there is one huge, giant, glaring flaw in a
 Phase 2 can't be generalized to another lens - it's priors are tuned to the image we fitted. If we had a lot of lenses, 
 we'd have to write a new phase_2 for every single one. This isn't ideal, is it?
 
-Fotunately, we can pass priors in PyAutoLens without specifying the specific values, using what we call promises. The
+Fortunately, we can pass priors in PyAutoLens without specifying the specific values, using what we call promises. The
 code below sets up phase_2 with priors fully linked, but without specifying each individual prior!
 """
 
 # %%
-phase_2 = al.PhaseImaging(
-    phase_name="phase_t5_linking_phases_2",
+phase_2_pass = al.PhaseImaging(
+    phase_name="phase_t5_linking_phases_2_pass",
     settings=settings,
     galaxies=dict(
         lens=phase_1_result.model.galaxies.lens,
-        source=phase_1_result.model.galaxies.source
+        source=phase_1_result.model.galaxies.source,
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
+
+phase_2_pass.run(dataset=imaging, mask=mask)
 
 # %%
 """
-Above, the result of our phase 1 fit are used to set up the priors on the lens and source _GalaxyModel_ objects. This 
-code *can* be generalized to any lens system!
+By using the following API to link the result to the next model:
+ 
+lens = phase_1_result.model.galaxies.lens
+source = phase_1_result.model.galaxies.source
+ 
+The priors passed above retained the model parameterization of phase 1, including the fixed values of (0.0, 0.0) for
+the centres of the light and mass profiles and the alignment between their elliptical components. However, we often 
+want to pass priors *and* change the model parameterization.
 
-In chapter 3, we'll cover 'pipelines'. A pipeline comprises a set of phases that are linked together, allowing us to 
-start with a simple, easy-to-fit lens model, and gradually makes it more complex. Crucially, as the pipeline runs, 
-we 'feed' the results of previous phases through the pipeline, allowing us to tune our priors automatically, 
-in a way that can be applied generically to any strong lens.
+To do this, we have to use the __PriorModel__ object in AutoFit, which allows us to turn light and mass profiles into 
+'model components' whose parameters have priors that can be manipulated in an analogous fashion to to __GalaxyModel__.
+In fact, the individual components of the __GalaxyModel__ class have been __PriorModel__'s all along! 
+"""
+
+# %%
+print(lens.light)
+print(lens.mass)
+print(source.light)
+
+# %%
+"""
+We can thus set up the __GalaxyModel__ we desire, by first creating the individual __PriorModel__'s of each
+component and then passing the priors of each individual parameter. 
+"""
+
+# %%
+"""LENS LIGHT PRIORS"""
+
+light = af.PriorModel(al.lp.EllipticalSersic)
+
+light.elliptical_comps.elliptical_comps = (
+    phase_1_result.model.galaxies.lens.light.elliptical_comps
+)
+light.intensity = phase_1_result.model.galaxies.lens.light.intensity
+light.effective_radius = phase_1_result.model.galaxies.lens.light.effective_radius
+
+"""LENS MASS PRIORS"""
+
+mass = af.PriorModel(al.mp.EllipticalIsothermal)
+
+lens.mass.elliptical_comps.elliptical_comps = (
+    phase_1_result.model.galaxies.lens.mass.elliptical_comps
+)
+lens.mass.einstein_radius = phase_1_result.model.galaxies.lens.mass.einstein_radius
+
+lens = al.GalaxyModel(redshift=0.5, light=light, mass=mass)
+
+# %%
+"""
+We now create and run the phase, using the lens __GalaxyModel__ we created above.
+"""
+
+# %%
+phase_2_pass = al.PhaseImaging(
+    phase_name="phase_t5_linking_phases_2_pass_individual",
+    settings=settings,
+    galaxies=dict(lens=lens, source=phase_1_result.model.galaxies.source),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
+)
+
+phase_2_pass.run(dataset=imaging, mask=mask)
+
+# %%
+"""
+Don't worry too much about whether you fully understand the prior passing API yet, as this will be a key subject in
+chapter 3 when we consider pipelines. Furthermore, in the 'autolens_workspace/pipelines' directly you'll find
+numerous example pipelines that give examples of how to perform prior passing for many common lens models. 
+
+To end, lets consider how we passed priors using the 'model' attribute of the phase 1 results above. Its not fully 
+clear how these priors are passed. Do they use a UniformPrior or GaussianPrior? What are the limits / mean / width of 
+these priors?
+
+Lets say I link two parameters as follows:
+ 
+    mass.einstein_radius = phase_1_result.model.galaxies.lens.mass.einstein_radius
+
+By invoking the 'model' attribute, the passing of priors behaves following 3 rules:
+
+    1) The new parameter, in this case the einstein radius, uses a GaussianPrior. A GaussianPrior is ideal, as the 1D 
+       pdf results we compute at the end of a phase are easily summarized as a Gaussian.
+
+    2) The mean of the GaussianPrior is the value of the parameter estimated in phase 1 (e.g. the median of its 1D PDF).
+    
+      This ensures that Dynesty specifically starts by searching the region of non-linear parameter space that 
+      corresponds to highest log likelihood solutions in the previous phase. Thus, we're setting our priors to look in 
+      the 'correct' regions of parameter space.
+
+    3) The sigma of the Gaussian will use either: (i) the 1D error on the previous result's parameter or; (ii) the 
+       value specified in the appropriate 'config/json_priors/profile.json' config file's 'width_modifer' field (check 
+       these files out now).
+
+       The idea here is simple. We want a value of sigma that gives a GaussianPrior wide enough to search a broad 
+       region of parameter space, so that the lens model can change if a better solution is nearby. However, we want it 
+       to be narrow enough that we don't search too much of parameter space, as this will be slow or risk leading us 
+       into an incorrect solution! A natural choice is the errors of the parameter from the previous phase.
+
+       Unfortunately, this doesn't always work. Lens modeling is prone to an effect called 'over-fitting' where we 
+       underestimate the errors on our lens model parameters. This is especially true when we take the shortcuts in 
+       early phases - fast non-linear search settings, simplified lens models, etc.
+
+       Therefore, the 'width_modifier' in the json config files are our fallback. If the error on a parameter is 
+       suspiciously small, we instead use the value specified in the widths file. These values are chosen based on 
+       our experience as being a good balance broadly sampling parameter space but not being so narrow important 
+       solutions are missed. 
+       
+There are two ways a value is specified using the priors/width file:
+
+    1) Absolute value - 'a' - In this case, the error assumed on the parameter is the value given in the config file. 
+    For example, for the width on centre_0 of a _LightProfile_, the config file reads centre_0 = a, 0.05. This means if 
+    the error on the parameter centre_0 was less than 0.05 in the previous phase, the sigma of its GaussianPrior in 
+    this phase will be 0.05.
+    
+    2) Relative value - 'r' - In this case, the error assumed on the parameter is the % of the value of the 
+    estimate value given in the config file. For example, if the intensity estimated in the previous phase was 2.0, 
+    and the relative error in the config file is specified as intensity = r, 0.5, then the sigma of the GaussianPrior 
+    will be 50% of this value, i.e. sigma = 0.5 * 2.0 = 1.0.
+
+We use absolute and relative values for different parameters, depending on their properties. For example, using the 
+relative value of a parameter like the _Profile_ centre makes no sense. If our lens galaxy is centred at (0.0, 0.0), 
+the relative error will always be tiny and thus poorly defined. Therefore, the default configs in PyAutoLens use 
+absolute errors on the centre.
+
+However, there are parameters where using an absolute value does not make sense. Intensity is a good example of this. 
+The intensity of an image depends on its unit_label, S/N, galaxy brightness, etc. There is no single absolute value 
+that one can use to generically link the intensity of any two proflies. Thus, it makes more sense to link them using 
+the relative value from a previous phase.
+"""
+
+# %%
+"""
+__EXAMPLE__
+
+Lets go through an example using a real parameter. Lets say in phase 1 we fit the lens galaxy's light with an 
+elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0. To pass this as a prior to 
+phase 2, we would write:
+
+lens.light.sersic_index = phase1.result.model.lens.light.sersic_index
+
+The prior on the lens galaxy's sersic _LightProfile_ would thus be a GaussianPrior in phase 2, with mean=4.0 and 
+sigma=2.0.
+
+If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would use the value of the 
+Sersic index width in the priors/width config file to set sigma instead. In this case, the prior config file specifies 
+that we use an absolute value of 0.8 to link this af. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and 
+sigma=0.8.
+
+If the prior config file had specified that we use an relative value of 0.8, the GaussianPrior in phase 2 would have a 
+mean=4.0 and sigma=3.2.
+
+And with that, we're done. Linking priors is a bit of an art form, but one that tends to work really well. Its true to 
+say that things can go wrong - maybe we 'trim' out the solution we're looking for, or underestimate our errors a bit 
+due to making our priors too narrow. However, in general, things are okay, and the example pipelines in 
+'autolens_workspace/pipelines' have been thoroughly tested to ensure prior linking works effectively.
 """

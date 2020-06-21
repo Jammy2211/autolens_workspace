@@ -10,18 +10,16 @@ The pipeline is one phases:
 
 Phase 1:
 
-Fit the lens mass model as a power-law, using the source model from a previous pipeline.
-Lens Mass: Light + EllipticalPowerLaw + ExternalShear
-Source Light: Previous Pipeline Source.
-Previous Pipelines: no_lens_light/source/*/lens_sie__source_*py
-Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
-Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
+    Fit the lens mass model as a power-law, using the source model from a previous pipeline.
+    Lens Mass: Light + EllipticalPowerLaw + ExternalShear
+    Source Light: Previous Pipeline Source.
+    Previous Pipelines: no_lens_light/source/*/lens_sie__source_*py
+    Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
+    Notes: If the source is parametric, its parameters are varied, if its an inversion, they are fixed.
 """
 
 
-def make_pipeline(
-    slam, settings, phase_folders=None, redshift_lens=0.5, redshift_source=1.0
-):
+def make_pipeline(slam, settings, folders=None, redshift_lens=0.5, redshift_source=1.0):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -33,16 +31,16 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    2) The lens galaxy mass model includes an external shear.
-    3) The lens's light model is fixed or variable.
+        1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+        2) The lens galaxy mass model includes an external shear.
+        3) The lens's light model is fixed or variable.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(slam.hyper.tag)
-    phase_folders.append(slam.source.tag)
-    phase_folders.append(slam.light.tag)
-    phase_folders.append(slam.mass.tag)
+    slam.folders.append(pipeline_name)
+    slam.folders.append(slam.hyper.tag)
+    slam.folders.append(slam.source.tag)
+    slam.folders.append(slam.light.tag)
+    folders.append(slam.mass.tag)
 
     """SLaM: Set whether shear is Included in the mass model."""
 
@@ -51,9 +49,9 @@ def make_pipeline(
     """
     Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
 
-    1) Use the source galaxy of the 'source' pipeline.
-    2) Use the lens galaxy light of the 'light' pipeline.
-    3) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of previous pipelines.
+        1) Use the source galaxy of the 'source' pipeline.
+        2) Use the lens galaxy light of the 'light' pipeline.
+        3) Set priors on the lens galaxy mass using the EllipticalIsothermal and ExternalShear of previous pipelines.
     """
 
     mass = af.PriorModel(al.mp.EllipticalBrokenPowerLaw)
@@ -73,7 +71,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_broken_power_law__source",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -86,10 +84,7 @@ def make_pipeline(
     if not slam.hyper.hyper_fixed_after_source:
 
         phase1 = phase1.extend_with_multiple_hyper_phases(
-            inversion_search=slam.hyper.inversion_search,
-            hyper_galaxy_search=slam.hyper.hyper_galaxies_search,
-            include_background_sky=slam.hyper.hyper_image_sky,
-            include_background_noise=slam.hyper.hyper_background_noise,
+            setup=slam.hyper, include_inversion=True
         )
 
     return al.PipelineDataset(pipeline_name, phase1)

@@ -151,7 +151,7 @@ setup = al.slam.SLaM(hyper=hyper, source=source)
 from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
-    setup=setup, phase_folders=["beginner", dataset_label, dataset_name]
+    setup=setup, folders=["beginner", dataset_label, dataset_name]
 )
 
 pipeline.run(dataset=imaging, mask=mask)

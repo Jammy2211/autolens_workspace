@@ -6,8 +6,8 @@ import os
 """
 This script simulates imaging of a strong lens where:
 
-    - The lens galaxy's *MassProfile* is an *EllipticalIsothermal*.
-    - The source galaxy's *LightProfile* is four EllipticalSersic's.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The source galaxy's _LightProfile_ is four EllipticalSersic's.
     
 This produces a very complex lensed source galaxy, which is used to illustrate source reconstructions on pixel-grids
 using an *Inversion*.

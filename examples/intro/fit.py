@@ -71,12 +71,12 @@ aplt.Imaging.image(imaging=masked_imaging)
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of *LightProfile*, *MassProfile* and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of _LightProfile_, _MassProfile_ and *Galaxy*
 objects.
 
 The combination of *LightProfiles* and *MassProfiles* below is the same as those used to generate the lensed data-set,
 thus it produces a tracer whose image looks exactly like the dataset. As discssed in the lensing.py tutorial, this
-tracer can be extended to include additional *LightProfile*s's, *MassProfile*'s and *Galaxy*'s, for example if you 
+tracer can be extended to include additional _LightProfile_s's, _MassProfile_'s and *Galaxy*'s, for example if you 
 wanted to fit a tracer where the lens light is included.
 """
 lens_galaxy = al.Galaxy(
@@ -101,7 +101,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of *LightProfile*, *MassProfile* and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of _LightProfile_, _MassProfile_ and *Galaxy*
 objects. We can then use the *FitImaging* object to fit this tracer to the dataset. 
 
 The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer's 
@@ -118,9 +118,9 @@ aplt.FitImaging.model_image(fit=fit)
 """
 The fit creates the following:
 
-- The residual map: The model-image subtracted from the observed dataset's image.
-- The normalized residual map: The residual map divided by the noise-map.
-- The chi-squared map: The normalized residual map squared.
+    - The residual map: The model-image subtracted from the observed dataset's image.
+    - The normalized residual map: The residual map divided by the noise-map.
+    - The chi-squared map: The normalized residual map squared.
 
 We'll plot all 3 of these, alongside a subplot containing them all.
 

@@ -11,7 +11,7 @@ __THIS RUNNER__
 Using two source pipelines and a mass pipeline we will fit a lens model where: 
 
     - The lens galaxy's light is omitted from the data and model.
-    - The lens galaxy's *MassProfile* is fitted with an *EllipticalPowerLaw*
+    - The lens galaxy's _MassProfile_ is fitted with an *EllipticalPowerLaw*
     - The source galaxy is fitted with an *Inversion*.
 
 We'll use the SLaM pipelines:
@@ -96,7 +96,9 @@ light = al.slam.Light(
 
 mass = al.slam.Mass()
 
-slam = al.slam.SLaM(hyper=hyper, source=source, light=light, mass=mass)
+slam = al.slam.SLaM(
+    hyper=hyper, source=source, light=light, mass=mass, folders=["slam", dataset_label]
+)
 
 """
 __PIPELINE CREATION__
@@ -111,21 +113,17 @@ from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.inversion.f
     lens_sie__source_inversion,
 )
 
-source__parametric = lens_sie__source_sersic.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
-)
+source__parametric = lens_sie__source_sersic.make_pipeline(slam=slam, settings=settings)
 
 source__inversion = lens_sie__source_inversion.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
+    slam=slam, settings=settings
 )
 
 from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.power_law import (
     lens_power_law__source,
 )
 
-mass__power_law = lens_power_law__source.make_pipeline(
-    slam=slam, settings=settings, phase_folders=["slam", dataset_label]
-)
+mass__power_law = lens_power_law__source.make_pipeline(slam=slam, settings=settings)
 
 
 """

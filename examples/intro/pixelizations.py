@@ -23,7 +23,7 @@ import os
 To begin, lets load the imaging data that we'll reconstructed the lensed source galaxy's light of using a pixelization.
 
 Note how complex the lensed source galaxy looks, with multiple clumps of light - this would be very difficult to 
-represent using *LightProfile*'s!
+represent using _LightProfile_'s!
 """
 
 workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
@@ -60,7 +60,7 @@ First, lets use a *Rectangular* pixelization with resolution 40 x 40 and *Consta
 relatitvely high regularization-coefficient. The higher this coefficient, the more our source reconstruction will be
 smoothed.
 
-The lens galaxy's *EllipticalIsothermal* mass model is the true model used to simulate the data.
+The lens galaxy's _EllipticalIsothermal_ mass model is the true model used to simulate the data.
 """
 
 # %%

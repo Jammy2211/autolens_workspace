@@ -47,11 +47,13 @@ conf.instance = conf.Config(
 We'll use new strong lensing data, where:
 
     - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an *EllipticalIsothermal_.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
     - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -105,7 +107,9 @@ phase = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=80, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=80, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 # %%
@@ -161,7 +165,9 @@ phase_local_maxima = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=5, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=5, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 print(

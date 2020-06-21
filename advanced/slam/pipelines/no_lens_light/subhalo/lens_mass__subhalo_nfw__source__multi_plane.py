@@ -11,32 +11,31 @@ The pipeline is as follows:
 
 Phase 1:
 
-Perform the subhalo detection analysis.
-
-Lens Mass: Previous mass pipeline model.
-Source Light: Previous source pipeilne model.
-Subhalo: SphericalNFWLudlow
-Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
-Prior Passing: Lens mass (instance -> previous pipeline), source light (model -> previous pipeline).
-Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
+    Perform the subhalo detection analysis.
+    
+    Lens Mass: Previous mass pipeline model.
+    Source Light: Previous source pipeilne model.
+    Subhalo: SphericalNFWLudlow
+    Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
+    Prior Passing: Lens mass (instance -> previous pipeline), source light (model -> previous pipeline).
+    Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^10) and concentrations (6-24)
 
 Phase 2:
 
-Refine the best-fit detected subhalo from the previous phase, by varying also the lens mass model.
-
-Lens Mass: Previous mass pipeline model.
-Source Light: Previous source pipeilne model.
-Subhalo: SphericalNFWLudlow
-Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
-Prior Passing: Lens mass & source light (model -> previous pipeline), subhalo mass (model -> phase 2).
-Notes: None
+    Refine the best-fit detected subhalo from the previous phase, by varying also the lens mass model.
+    
+    Lens Mass: Previous mass pipeline model.
+    Source Light: Previous source pipeilne model.
+    Subhalo: SphericalNFWLudlow
+    Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
+    Prior Passing: Lens mass & source light (model -> previous pipeline), subhalo mass (model -> phase 2).
+    Notes: None
 """
 
 
 def make_pipeline(
     slam,
     settings,
-    phase_folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
     number_of_steps=5,
@@ -50,21 +49,21 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    2) The lens galaxy mass model includes an external shear.
+        1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+        2) The lens galaxy mass model includes an external shear.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(slam.hyper.tag)
-    phase_folders.append(slam.source.tag)
-    phase_folders.append(slam.mass.tag)
+    slam.folders.append(pipeline_name)
+    slam.folders.append(slam.hyper.tag)
+    slam.folders.append(slam.source.tag)
+    slam.folders.append(slam.mass.tag)
 
     """
     Phase 1: Attempt to detect subhalos, by performing a NxN grid search of MultiNest searches, where:
 
-    1) The lens model and source parameters are held fixed to the best-fit values of the previous pipeline.
-    2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
-    3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
+        1) The lens model and source parameters are held fixed to the best-fit values of the previous pipeline.
+        2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
+        3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
     """
 
     class GridPhase(af.as_grid_search(phase_class=al.PhaseImaging, parallel=parallel)):
@@ -97,7 +96,7 @@ def make_pipeline(
 
     phase1a = GridPhase(
         phase_name="phase_1a__subhalo_search__z_below_lens__source",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
         ),
@@ -118,7 +117,7 @@ def make_pipeline(
 
     phase1b = GridPhase(
         phase_name="phase_1b__subhalo_search__z_above_lens__source",
-        phase_folders=phase_folders,
+        folders=slam.folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
         ),

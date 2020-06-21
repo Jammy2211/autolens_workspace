@@ -227,7 +227,7 @@ and uncomment the lines below!
 
 # %%
 """
-You can also plot the above attributes on individual figures, using appropriate ray-tracing plotter (I've left most 
+You can also plot the above attributes on individual figures, using appropriate ray-tracing _Plotter_ (I've left most 
 commented out again for convenience)
 """
 

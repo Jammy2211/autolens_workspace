@@ -111,11 +111,13 @@ conf.instance = conf.Config(
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's *MassProfile* is a *SphericalIsothermal*.
-    - The source galaxy's *LightProfile* is a *SphericalExponential*.
+    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sis__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -201,7 +203,9 @@ custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
+    ),
 )
 
 print(

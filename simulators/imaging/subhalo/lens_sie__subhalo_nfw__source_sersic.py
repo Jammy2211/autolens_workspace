@@ -6,9 +6,9 @@ import os
 """
 This script simulates imaging of a strong lens where:
 
-    - The lens galaxy's *MassProfile* is an *EllipticalIsothermal*.
-    - The subhalo's *MassPprofile* is a *SphericalNFW*.
-    - The source galaxy's *LightProfile* is an *EllipticalSersic*.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+    - The subhalo's *MassPprofile* is a _SphericalNFW_.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 """Setup the path to the autolens_workspace, using a relative directory name."""

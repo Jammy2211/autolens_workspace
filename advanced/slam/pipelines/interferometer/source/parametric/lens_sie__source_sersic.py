@@ -9,23 +9,23 @@ The pipeline is as follows:
 
 Phase 1:
 
-Fit the lens mass model and source *LightProfile*.
-
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Previous Pipelines: None
-Prior Passing: None
-Notes: None
+    Fit the lens mass model and source _LightProfile_.
+    
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Previous Pipelines: None
+    Prior Passing: None
+    Notes: None
 """
 
 
 def make_pipeline(
     slam,
+    settings,
     real_space_mask,
-    phase_folders=None,
+    folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    settings=al.PhaseSettingsInterferometer(),
     evidence_tolerance=100.0,
 ):
 
@@ -39,13 +39,13 @@ def make_pipeline(
     """
     This pipeline is tagged according to whether:
 
-    1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-    2) The lens galaxy mass model includes an external shear.
+        1) Hyper-fitting settings (galaxies, sky, background noise) are used.
+        2) The lens galaxy mass model includes an external shear.
     """
 
-    phase_folders.append(pipeline_name)
-    phase_folders.append(slam.source_pipeline_tag)
-    phase_folders.append(slam.source.tag)
+    slam.folders.append(pipeline_name)
+    slam.folders.append(slam.source_pipeline_tag)
+    slam.folders.append(slam.source.tag)
 
     """
     Phase 1: Fit the lens galaxy's mass and source galaxy.
@@ -55,7 +55,7 @@ def make_pipeline(
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_sie__source_sersic",
-        phase_folders=phase_folders,
+        folders=folders,
         real_space_mask=real_space_mask,
         galaxies=dict(
             lens=al.GalaxyModel(

@@ -80,7 +80,7 @@ Many matplotlib options can be customized, but for now we're only concerned with
 your Jupter Notebooks. However, for future reference, a descrition of all options can be found in the file 
 'autolens_workspace/plot/mat_objs.py'.
 
-Ideally, we wouldn't need to specify a new plotter every time we plot an image we make, especially as you'll be 
+Ideally, we wouldn't need to specify a new _Plotter_ every time we plot an image we make, especially as you'll be 
 changing the same option to the same value over and over again (e.g. the figsize). Fortunately, the default values 
 used by PyAutoLens can be fully customized.
 
@@ -102,7 +102,7 @@ familiar with PyAutoLens.
 have the right values using the function above beforehand!)
 
 In addition to individual 'figures' which use a 'plotter' to plot them, PyAutoLens also plots 'subplots' using a 
-'sub_plotter'. Lets plot a subplot of our imaging data:
+'sub_plotter'. Lets plot a subplot of our _Imaging_ data:
 """
 
 # %%

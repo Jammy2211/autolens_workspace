@@ -2,7 +2,7 @@
 """
 __Fitting__
 
-In this example, we'll fit the imaging data we simulated in the previous exercise. We'll do this using model images
+In this example, we'll fit the _Imaging_ data we simulated in the previous exercise. We'll do this using model images
 generated via a _Tracer_, and by comparing to the simulated image we'll get diagnostics about the quality of the fit.
 """
 
@@ -77,7 +77,7 @@ print(mask[48:53, 48:53])  # Whereas central pixels are False and therefore unma
 
 # %%
 """
-We can use an _Imaging_ plotter to compare the mask and the image - this is useful if we really want to 'tailor' a 
+We can use an _Imaging_ _Plotter_ to compare the mask and the image - this is useful if we really want to 'tailor' a 
 mask to the lensed source's light (which in this example, we won't).
 """
 
@@ -89,7 +89,7 @@ aplt.Imaging.image(imaging=imaging, mask=mask)
 The _mask_ automatically 'zooms' our plot around the masked region only - meaning that if our image is very large, we 
 focus-in on the lens and source galaxies.
 
-You'll see this is an option for pretty much every plotter in PyAutoLens, and is something we'll do often throughout 
+You'll see this is an option for pretty much every _Plotter_ in PyAutoLens, and is something we'll do often throughout 
 the tutorials.
 """
 
@@ -104,7 +104,7 @@ to fit it with a lens model:
 
     2) The mask, so that only the regions of the image with a signal are fitted.
 
-    3) A _Grid_ aligned to the imaging data's pixels, so the tracer's image is generated on the same (masked) _Grid_ 
+    3) A _Grid_ aligned to the _Imaging_ data's pixels, so the tracer's image is generated on the same (masked) _Grid_ 
        as the image.
 """
 
@@ -167,7 +167,7 @@ print(masked_imaging.grid.in_1d)
 
 # %%
 """
-To fit an image, create an image using a _Tracer_. Lets use the same _Tracer_ we simulated the imaging instrument with 
+To fit an image, create an image using a _Tracer_. Lets use the same _Tracer_ we simulated the _Imaging_ instrument with 
 (thus, our fit is 'perfect').
 
 Its worth noting that below, we use the masked imaging's _Grid_ to setup the _Tracer_. This ensures that our 

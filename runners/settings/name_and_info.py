@@ -66,8 +66,6 @@ setup = al.PipelineSetup(
 
 from pipelines.imaging.no_lens_light import lens_sie__source_inversion
 
-pipeline = lens_sie__source_inversion.make_pipeline(
-    setup=setup, phase_folders=["features"]
-)
+pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, folders=["features"])
 
 pipeline.run(dataset=imaging, mask=mask, info=info)

@@ -11,7 +11,7 @@ In this chapter, you've learnt how create and fit strong lenses with PyAutoLens.
     4) Collections of galaxies (at the same redshift) form a plane.
     5) A _Tracer_ can make an image-plane + source-plane strong lens system.
     6) The Universe's cosmology can be input into this _Tracer_ to convert unit_label to physical values.
-    7) The tracer's image can be used to simulate strong lens imaging observed on a real telescope.
+    7) The tracer's image can be used to simulate strong lens _Imaging_ observed on a real telescope.
     8) This instrument can be fitted, so to as quantify how well a model strong lens system represents the observed image.
 
 In this summary, we'll consider how flexible the tools PyAutoLens gives you are to study every aspect of a strong lens

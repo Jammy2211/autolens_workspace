@@ -6,8 +6,8 @@ import os
 """
 This script simulates imaging of a strong lens where:
 
-    - The lens galaxy's *MassProfile* is an EllipticalBrokenPowerLaw.
-    - The source galaxy's *LightProfile* is an *EllipticalSersic*.
+    - The lens galaxy's _MassProfile_ is an EllipticalBrokenPowerLaw.
+    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
     - There are a number of intervening objects whose light nearly obscures that of the strong lens.
 
 This dataset is used in the preprocess script:

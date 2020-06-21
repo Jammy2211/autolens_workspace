@@ -91,14 +91,14 @@ be able to:
 3) Combine these light and mass profiles to make galaxies.
 4) Perform ray-tracing with these _Galaxy_'s whereby a _Grid_ is ray-traced through an image-plane / source-plane
    strong lensing configuration.
-5) Simulate telescope imaging data of a strong gravitational lens.
+5) Simulate telescope _Imaging_ data of a strong gravitational lens.
 6) Fit strong lensing data with model images generated via ray-tracing.
 7) Find the model which provides the best-fit to strong gravitational lens imaging.
 
 ### OVERVIEW OF CHAPTER 2 - Bayesian Inference and Non-linear Optimization ###
 
 In chapter 2, we'll cover Bayesian inference and non-linear analysis, in particular how we use these tools to
-fit imaging of a strong gravitational lens with a lens model. At the end, you'll understand:
+fit _Imaging_ of a strong gravitational lens with a lens model. At the end, you'll understand:
 
 1) The concept of a non-linear search and non-linear parameter space.
 2) How to perform a non-linear search with PyAutoLens to fit a lens model.

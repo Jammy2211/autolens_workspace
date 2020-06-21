@@ -37,7 +37,7 @@ Notes: No position thresholding.
 
 
 def make_pipeline(
-    phase_folders=None, settings=al.PhaseSettingsImaging(), positions_threshold=None
+    folders=None, settings=al.PhaseSettingsImaging(), positions_threshold=None
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -47,7 +47,7 @@ def make_pipeline(
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
 
-    phase_folders.append(pipeline_name)
+    setup.folders.append(pipeline_name)
 
     # A setup tag is automatically added to the phase path, making it clear the 'position_threshold' value used.
     # The positions_threshold_tag and phase name are shown for 3 example values:
@@ -59,7 +59,7 @@ def make_pipeline(
 
     # - positions_threshold=None, positions_threshold_tag='', phase_name=phase_name/setup
 
-    ### PHASE 1 ###
+    ### Phase 1 ###
 
     # In phase 1, we will:
 
@@ -67,10 +67,10 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__use_positions",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
-            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         settings=settings,
     )
@@ -79,7 +79,7 @@ def make_pipeline(
     phase1.search.n_live_points = 30
     phase1.search.sampling_efficiency = 0.3
 
-    ### PHASE 2 ###
+    ### Phase 2 ###
 
     # In phase 2, we will:
 
@@ -88,13 +88,13 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__no_positions",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5, mass=phase1.result.model.galaxies.lens.mass
             ),
             source=al.GalaxyModel(
-                redshift=1.0, sersic=phase1.result.model.galaxies.source.sersic
+                redshift=1.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
         settings=settings,

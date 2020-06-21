@@ -3,7 +3,7 @@ import os
 # This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 # using a beginner pipeline to illustrate aggregator functionality.
 
-# We will fit each lens with an SIE *MassProfile* and each source using a pixelized inversion. The fit will use a
+# We will fit each lens with an SIE _MassProfile_ and each source using a pixelized inversion. The fit will use a
 # beginner pipelines which performs a 3 phase analysis, which will allow us to illustrate how the results of different
 # phases can be loaded using the aggregator.
 
@@ -95,14 +95,14 @@ for dataset_name in [
 
     # To run a pipeline we import it from the pipelines folder, make it and pass the lens data to its run function.
 
-    # The 'phase_folders' below specify the path the pipeliine results are written to. Our output will go to the path
+    # The 'folders' below specify the path the pipeliine results are written to. Our output will go to the path
     # 'autolens_workspace/output/beginner/dataset_label/dataset_name/' or equivalently
     # 'autolens_workspace/output/beginner/imaging/lens_sie__source_sersic/'
 
     from pipelines.imaging.no_lens_light import lens_sie__source_inversion
 
     pipeline = lens_sie__source_inversion.make_pipeline(
-        setup=setup, phase_folders=["aggregator", dataset_name]
+        setup=setup, folders=["aggregator", dataset_name]
     )
 
     # Note how we pass the info the pipeline run function, meaning the info will be available to the aggregator.

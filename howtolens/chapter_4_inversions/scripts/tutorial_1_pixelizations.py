@@ -2,7 +2,7 @@
 """
 __Pixelizations__
 
-To begin chapter 4, we'll begin by learning about pixelizations, which we apply to a source-plane to reconstruct a
+To begin chapter 4, we'll begin by learning about _Pixelization_'s, which we apply to a source-plane to reconstruct a
 source-galaxy's light.
 """
 
@@ -34,9 +34,9 @@ source_plane_grid = tracer.traced_grids_of_planes_from_grid(grid=grid)[1]
 
 # %%
 """
-Next, lets set up a pixelization using the 'pixelizations' module, which we've imported as 'pix'.
+Next, lets set up a _Pixelization_using the 'pixelization' module, which is imported as 'pix' for short.
 
-There are multiple pixelizations available in PyAutoLens. For now, we'll keep it simple and use a uniform 
+There are multiple _Pixelization_'s available in PyAutoLens. For now, we'll keep it simple and use a uniform 
 rectangular grid. As usual, the grid's 'shape' defines its (y,x) dimensions.
 """
 
@@ -45,8 +45,8 @@ rectangular = al.pix.Rectangular(shape=(25, 25))
 
 # %%
 """
-By itself, a pixelization doesn't tell us much. It has no _Grid_ of coordinates, no image, and nothing which tells it 
-about the lens we're fitting. This information comes when we use the pixelization to set up a 'mapper'. We'll use 
+By itself, a _Pixelization_doesn't tell us much. It has no _Grid_ of coordinates, no image, and nothing which tells it 
+about the lens we're fitting. This information comes when we use the _Pixelization_to set up a _Mapper_. We'll use 
 the (traced) source-plane _Grid_ to set up this mapper.
 """
 
@@ -55,7 +55,7 @@ mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
 # %%
 """
-This mapper is a 'RectangularMapper' - every pixelization generates it owns mapper.
+This _Mapper_ is a 'RectangularMapper' - every _Pixelization_ generates it owns mapper.
 """
 
 # %%
@@ -63,7 +63,7 @@ print(type(mapper))
 
 # %%
 """
-By plotting our mapper, we now see our pixelization. Its a fairly boring _Grid_ of rectangular pixels.
+By plotting our mapper, we now see our _Pixelization_. Its a fairly boring _Grid_ of rectangular pixels.
 
 (we'll cover what the 'inversion' means in a later tutorial).
 """
@@ -79,8 +79,8 @@ aplt.MapperObj(
 
 # %%
 """
-However, the mapper does contain lots of interesting information about our pixelization, for example its 
-pixelization _Grid_ tells us where the pixel centers are located.
+However, the _Mapper_ does contain lots of interesting information about our _Pixelization_, for example its 
+pixelization_grid tells us where the pixel centers are located.
 """
 
 # %%
@@ -108,7 +108,7 @@ aplt.MapperObj(
 
 # %%
 """
-The mapper also has the (source-plane) _Grid_ that we passed when we set it up. Lets check they're the same.
+The _Mapper_ also has the (source-plane) _Grid_ that we passed when we set it up. Lets check they're the same.
 """
 
 # %%
@@ -136,7 +136,7 @@ aplt.MapperObj(
 
 # %%
 """
-Finally, the mapper's pixeliation _Grid_ has lots of information about the pixelization, for example, the arc-second 
+Finally, the mapper's pixeliation_grid has lots of information about the _Pixelization_, for example, the arc-second 
 size and dimensions.
 """
 
@@ -147,15 +147,13 @@ print(mapper.pixelization_grid.scaled_minima)
 
 # %%
 """
-And with that, we're done. This was a relatively gentle overview of pixelizations, but one that was hopefully easy to 
-follow. Think about the following questions before moving on to the next tutorial:
+And with that, we're done. This was a relatively gentle overview of _Pixelization_'s, but one that was hopefully easy 
+to follow. Think about the following questions before moving on to the next tutorial:
 
-1) Look at how the source-grid coordinates are distributed over the rectangular pixel-grid. Are these points 
-distributed evenly over the rectangular grid's pixels? Do some pixels have a lot more grid-points inside of them? 
-Do some pixels have no grid-points in them?
+    1) Look at how the source-grid coordinates are distributed over the rectangular pixel-grid. Are these points 
+    distributed evenly over the rectangular grid's pixels? Do some pixels have a lot more grid-points inside of them? 
+    Do some pixels have no grid-points in them?
 
-2) The rectangular pixelization's edges are aligned with the most exterior coordinates of the source-grid. This is 
-intentional - why do you think this is?
+    2) The rectangular pixelization's edges are aligned with the most exterior coordinates of the source-grid. This is 
+    intentional - why do you think this is?
 """
-
-# %%

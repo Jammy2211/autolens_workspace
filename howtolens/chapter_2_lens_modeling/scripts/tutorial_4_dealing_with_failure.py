@@ -12,6 +12,7 @@ global maxima.
 # %%
 #%matplotlib inline
 
+import numpy as np
 from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
@@ -36,11 +37,15 @@ conf.instance = conf.Config(
 We'll use the same strong lensing data as the previous tutorial, where:
 
     - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an *EllipticalIsothermal_.
+    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
     - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_2 import (
+    lens_sersic_sie__source_exp,
+)
+
 dataset_label = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
@@ -104,8 +109,6 @@ lens = al.GalaxyModel(
     redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
 )
 
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
-
 # %%
 """
 By default, the prior on the (y,x) coordinates of a _LightProfile_ / _MassProfile_ is a GaussianPrior with mean 0.0" and 
@@ -114,10 +117,10 @@ so lets reduce where non-linear search looks for these parameters.
 """
 
 # %%
-lens.light.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-lens.light.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-lens.mass.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
-lens.mass.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+lens.light.centre.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+lens.light.centre.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+lens.mass.centre.centre_0 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
+lens.mass.centre.centre_1 = af.UniformPrior(lower_limit=-0.05, upper_limit=0.05)
 
 # %%
 """
@@ -130,8 +133,12 @@ However, looking close to the image it is clear that the lens galaxy's light is 
 """
 
 # %%
-lens.light.elliptical_comps_0 = af.GaussianPrior(mean=0.333333, sigma=0.1)
-lens.light.elliptical_comps_1 = af.GaussianPrior(mean=0.333333, sigma=0.1)
+lens.light.elliptical_comps.elliptical_comps_0 = af.GaussianPrior(
+    mean=0.333333, sigma=0.1, lower_limit=-1.0, upper_limit=1.0
+)
+lens.light.elliptical_comps.elliptical_comps_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.1, lower_limit=-1.0, upper_limit=1.0
+)
 
 # %%
 """
@@ -140,8 +147,12 @@ this may not strictly be true (e.g. because of dark matter) we'll use a wider pr
 """
 
 # %%
-lens.mass.elliptical_comps_0 = af.GaussianPrior(mean=0.333333, sigma=0.3)
-lens.mass.elliptical_comps_1 = af.GaussianPrior(mean=0.333333, sigma=0.3)
+lens.mass.elliptical_comps.elliptical_comps_0 = af.GaussianPrior(
+    mean=0.333333, sigma=0.3, lower_limit=-1.0, upper_limit=1.0
+)
+lens.mass.elliptical_comps.elliptical_comps_1 = af.GaussianPrior(
+    mean=0.0, sigma=0.3, lower_limit=-1.0, upper_limit=1.0
+)
 
 # %%
 """
@@ -152,7 +163,9 @@ is internal to a circle defined within that radius. PyAutoLens assumes a Uniform
 """
 
 # %%
-lens.light.effective_radius = af.GaussianPrior(mean=0.5, sigma=0.8)
+lens.light.effective_radius = af.GaussianPrior(
+    mean=1.0, sigma=0.8, lower_limit=0.0, upper_limit=np.inf
+)
 
 # %%
 """
@@ -161,7 +174,9 @@ have Sersic indexes near 4. So lets change our Sersic index from a UniformPrior 
 """
 
 # %%
-lens.light.sersic_index = af.GaussianPrior(mean=4.0, sigma=1.0)
+lens.light.sersic_index = af.GaussianPrior(
+    mean=4.0, sigma=1.0, lower_limit=0.0, upper_limit=np.inf
+)
 
 # %%
 """
@@ -170,7 +185,9 @@ lets change the prior from a UniformPrior between 0.0" and 4.0".
 """
 
 # %%
-lens.mass.einstein_radius = af.GaussianPrior(mean=1.2, sigma=0.2)
+lens.mass.einstein_radius = af.GaussianPrior(
+    mean=1.2, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
+)
 
 # %%
 """
@@ -178,6 +195,8 @@ In this exercise, I'm not going to change any priors on the source galaxy. Whils
 strong lens and often tell you roughly where the source-galaxy is located (in the source-plane), it is something of art 
 form. Furthermore, the source's morphology can be pretty complex, making it difficult to come up with a good source prior!
 """
+
+source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # %%
 """
@@ -189,13 +208,10 @@ regions of parameter space, given our improved and more informed priors.
 custom_prior_phase = al.PhaseImaging(
     phase_name="phase_t4_tuned_priors",
     settings=settings,
-    galaxies=dict(
-        lens=al.GalaxyModel(
-            redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
-        ),
-        source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
+    galaxies=dict(lens=lens, source=source),
+    search=af.DynestyStatic(
+        n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
 print(
@@ -263,15 +279,7 @@ parameter on the right-hand side.
 """
 
 # %%
-lens.mass.centre_0 = lens.light.centre_0
-
-# %%
-"""
-Now, the _MassProfile_'s y coordinate will only use the y coordinate of the _LightProfile_. 
-"""
-
-# %%
-lens.mass.centre_1 = lens.light.centre_1
+lens.mass.centre = lens.light.centre
 
 # %%
 """
@@ -279,8 +287,7 @@ Lets do this with the elliptical components of the light and mass profiles.
 """
 
 # %%
-lens.mass.elliptical_comps_0 = lens.light.elliptical_comps_0
-lens.mass.elliptical_comps_1 = lens.light.elliptical_comps_1
+lens.mass.elliptical_comps = lens.light.elliptical_comps
 
 # %%
 """
@@ -291,13 +298,10 @@ Again, we create this phase and run it. The non-linear search now has a less com
 light_traces_mass_phase = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
     settings=settings,
-    galaxies=dict(
-        lens=al.GalaxyModel(
-            redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
-        ),
-        source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
+    galaxies=dict(lens=lens, source=source),
+    search=af.DynestyStatic(
+        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
     ),
-    search=af.DynestyStatic(n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0),
 )
 
 print(

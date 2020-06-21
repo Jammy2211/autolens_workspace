@@ -2,8 +2,8 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline we use sub-grids with different resoultions, that oversample the calculation of *LightProfile*
-intensities and *MassProfile* deflection angles. In general, a higher level of sub-gridding provides numerically
+In this pipeline we use sub-grids with different resoultions, that oversample the calculation of _LightProfile_
+intensities and _MassProfile_ deflection angles. In general, a higher level of sub-gridding provides numerically
 more precise results, at the expense of longer calculations and higher memory usage.
 
 The 'sub_size' is an input parameter of the pipeline, meaning we can run the pipeline with different binning up
@@ -11,12 +11,12 @@ factors using different runners.
 
 Phase names are tagged, ensuring phases using different sub-sizes have a unique output path.
 
-We'll perform a basic analysis which fits a lensed source galaxy using a parametric *LightProfile* where
+We'll perform a basic analysis which fits a lensed source galaxy using a parametric _LightProfile_ where
 the lens's light is omitted. This pipeline uses two phases:
 
 Phase 1:
 
-Fit the lens mass model and source *LightProfile* using x1 source with a sub grid size of 2.
+Fit the lens mass model and source _LightProfile_ using x1 source with a sub grid size of 2.
 
 Lens Mass: EllipticalIsothermal + ExternalShear
 Source Light: EllipticalSersic
@@ -34,7 +34,7 @@ Notes: Uses a sub grid size of 4.
 """
 
 
-def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_size=2):
+def make_pipeline(folders=None, settings=al.PhaseSettingsImaging(), sub_size=2):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -43,7 +43,7 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
     # This function uses the phase folders and pipeline name to set up the output directory structure,
     # e.g. 'autolens_workspace/output/pipeline_name/pipeline_tag/phase_name/phase_tag/'
 
-    phase_folders.append(pipeline_name)
+    setup.folders.append(pipeline_name)
 
     # When a phase is passed a 'sub_size,' a setup tag is automatically generated and added to the phase path,
     # to make it clear what sub-grid was used. The setup tag, phase name and phase paths are shown for 3
@@ -56,7 +56,7 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
 
     # sub_size=1 -> phase_path=phase_name/setup
 
-    ### PHASE 1 ###
+    ### Phase 1 ###
 
     # In phase 1, we fit the lens galaxy's mass and one source galaxy, where we:
 
@@ -68,10 +68,10 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__x1_source",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=mass, shear=al.mp.ExternalShear),
-            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         settings=settings.edit(sub_size=2),
     )
@@ -80,7 +80,7 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
     phase1.search.n_live_points = 80
     phase1.search.sampling_efficiency = 0.2
 
-    ### PHASE 2 ###
+    ### Phase 2 ###
 
     # In phase 2, we fit the lens galaxy's mass and two source galaxies, where we:
 
@@ -88,7 +88,7 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__x2_source",
-        phase_folders=phase_folders,
+        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -96,7 +96,7 @@ def make_pipeline(phase_folders=None, settings=al.PhaseSettingsImaging(), sub_si
                 shear=phase1.result.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, sersic=phase1.result.model.galaxies.source.sersic
+                redshift=1.0, light=phase1.result.model.galaxies.source.light
             ),
         ),
         settings=settings.edit(sub_size=sub_size),
