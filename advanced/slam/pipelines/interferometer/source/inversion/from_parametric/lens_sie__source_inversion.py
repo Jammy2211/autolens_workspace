@@ -110,7 +110,7 @@ def make_pipeline(
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, facc=0.8, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -141,7 +141,7 @@ def make_pipeline(
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50, facc=0.5, evidence_tolerance=evidence_tolerance
+            n_live_points=50, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -171,7 +171,7 @@ def make_pipeline(
         ),
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, facc=0.8, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -202,7 +202,7 @@ def make_pipeline(
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50, facc=0.5, evidence_tolerance=evidence_tolerance
+            n_live_points=50, evidence_tolerance=evidence_tolerance
         ),
     )
 

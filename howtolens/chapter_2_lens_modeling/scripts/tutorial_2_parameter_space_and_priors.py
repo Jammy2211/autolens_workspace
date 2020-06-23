@@ -203,7 +203,7 @@ custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
 print(
@@ -212,7 +212,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results_custom = custom_phase.run(dataset=imaging, mask=mask)
+# results_custom = custom_phase.run(dataset=imaging, mask=mask)
 
 aplt.FitImaging.subplot_fit_imaging(fit=results_custom.max_log_likelihood_fit)
 

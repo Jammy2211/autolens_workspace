@@ -99,14 +99,6 @@ n_live_points:
     space, increasing the probability that we locate the global maxima solution at the expense if taking longer to 
     convergence on this solution. Ideally, we would use as few live pooints as possible to locate the global maxima
     as quickly as possible.
-    
-sampling efficiency:
-
-    The ratio of accepted to total samples Dynesty targets, for example a sampling_efficiency of 0.6 targets that 60% 
-    of parameter space samples locate models with a higher log likelihood than the current sample of activate live 
-    points. A higher efficiency will converges on the high log_likelihood regions of parameter space faster at the risk 
-    of missing the global maxima solution. So, for fast run times, we want to use the highest value possible whilst 
-    still finding the global maxima solution.
 
 evidence_tolerance : float
 
@@ -141,7 +133,7 @@ phase_slow = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(n_live_points=150, facc=0.1, evidence_tolerance=0.8),
+    search=af.DynestyStatic(n_live_points=150, evidence_tolerance=0.8),
 )
 
 # %%
@@ -183,7 +175,7 @@ phase_fast = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(n_live_points=30, facc=0.9, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=30, evidence_tolerance=100.0),
 )
 
 # %%
@@ -193,7 +185,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_fast = phase_fast.run(dataset=imaging, mask=mask)
+# result_fast = phase_fast.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -264,7 +256,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_pso = phase_pso.run(dataset=imaging, mask=mask)
+# result_pso = phase_pso.run(dataset=imaging, mask=mask)
 
 print("PySwarms has finished run - you may now continue the notebook.")
 
@@ -319,7 +311,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
+# result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
 
 print("Emcee has finished run - you may now continue the notebook.")
 

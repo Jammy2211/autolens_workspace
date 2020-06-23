@@ -321,7 +321,7 @@ the source galaxy. Now, we're going to use this contribution map to scale the no
     3) Multiply the noise map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
        means by which PyAutoLens is able to scale the noise map values.
 
-Lets compare two fits, one where a hyper-galaxy-galaxy scales the noise map, and one where it doesn't.
+Lets compare two fits, one where a hyper-galaxy scales the noise map, and one where it doesn't.
 """
 
 # %%

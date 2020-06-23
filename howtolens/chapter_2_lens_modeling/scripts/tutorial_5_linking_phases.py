@@ -165,7 +165,7 @@ phase_1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, facc=0.8, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
 # %%
@@ -181,7 +181,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+# phase_1_result = phase_1.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -292,7 +292,7 @@ phase_2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
 print(
@@ -301,7 +301,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-phase_2_results = phase_2.run(dataset=imaging, mask=mask)
+# phase_2_results = phase_2.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -336,10 +336,10 @@ phase_2_pass = al.PhaseImaging(
         lens=phase_1_result.model.galaxies.lens,
         source=phase_1_result.model.galaxies.source,
     ),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
-phase_2_pass.run(dataset=imaging, mask=mask)
+# phase_2_pass.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -400,10 +400,10 @@ phase_2_pass = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2_pass_individual",
     settings=settings,
     galaxies=dict(lens=lens, source=phase_1_result.model.galaxies.source),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
-phase_2_pass.run(dataset=imaging, mask=mask)
+# phase_2_pass.run(dataset=imaging, mask=mask)
 
 # %%
 """

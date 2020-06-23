@@ -120,7 +120,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=0.8),
+        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

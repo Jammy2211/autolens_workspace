@@ -161,7 +161,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50, facc=0.6)
+search = af.DynestyStatic(n_live_points=50)
 
 # %%
 """

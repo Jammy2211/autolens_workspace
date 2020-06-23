@@ -98,13 +98,9 @@ _PipelineSetup-.
 
 # %%
 
-hyper_galaxies_search = af.DynestyStatic(
-    n_live_points=75, facc=0.5, evidence_tolerance=0.8
-)
-inversion_search = af.DynestyStatic(n_live_points=30, facc=0.5, evidence_tolerance=0.8)
-hyper_combined_search = af.DynestyStatic(
-    n_live_points=50, facc=0.5, evidence_tolerance=0.8
-)
+hyper_galaxies_search = af.DynestyStatic(n_live_points=75, evidence_tolerance=0.8)
+inversion_search = af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8)
+hyper_combined_search = af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8)
 
 setup = al.PipelineSetup(
     hyper_galaxies=True,

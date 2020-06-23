@@ -209,7 +209,7 @@ custom_prior_phase = al.PhaseImaging(
     phase_name="phase_t4_tuned_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=50, evidence_tolerance=100.0),
 )
 
 print(
@@ -218,7 +218,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
+# custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -297,7 +297,7 @@ light_traces_mass_phase = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
 print(
@@ -356,7 +356,7 @@ lets list the advantages and disadvantages of simply adjusting the non-linear se
 
 Advantages:
 
-    Its easy to setup, we simpy change parameter of the non-linear search like n_live_points or the sampling_efficiency.
+    Its easy to setup, we simpy change parameter of the non-linear search like n_live_points.
     It generalizes to any strong lens.
     We didn't have to make our model less realistic.
 

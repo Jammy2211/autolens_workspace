@@ -64,7 +64,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=80, facc=0.2, evidence_tolerance=evidence_tolerance
+            n_live_points=80, evidence_tolerance=evidence_tolerance
         ),
     )
 

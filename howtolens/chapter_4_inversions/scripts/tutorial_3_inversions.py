@@ -130,6 +130,8 @@ invert a really complex source!
 """
 
 # %%
+from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic_x5
+
 dataset_label = "chapter_4"
 dataset_name = "lens_sie__source_sersic_x5"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"

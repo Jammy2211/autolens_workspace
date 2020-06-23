@@ -187,12 +187,28 @@ phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     settings=settings,
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
 )
 
 # %%
 """
 To run the phase, we pass it the data we're going to fit a lens model to and the non-linear search begins!
+
+Model fits using a non-linear search can take a long time to run. Whilst the fit in this tutorial should take of order 
+~10 minutes, later tutorials will take upwards of hours! This is fine, afterall lens modeling is an inherently 
+computationally expensive exercise, but does make going through these tutorials problematic.
+
+Furthermore, in a Jupyter notebook, if you run the non-linear search (using the phase.run command below) you won't 
+be able to continue the notebook until it has finished. For this reason, we recommend that you run the non-linear
+search in these tutorials not via your Juypter notebook, but instead by running the tutorial script found in the
+'chapter_2_lens_modeling/scripts' folder. This can be run either using the 'python3 tutoial_1_non_linear_search.py' 
+command on your command line or via your IDE (if you are using one).
+
+The non-linear search outputs all results to your hard-disk, thus if it runs and finishes in the script, you can then
+run the Jupyter notebook cell and immediately load the results. This is how we recommend all non-linear searches are 
+performed in PyAutoLens and is therefore a good habit to get into. In these tutorials, we have commented the 
+'phase.run' command below in every cell to remind you that you should go to the tutorial script in the 
+'chapter_2_lens_modeling/scripts' folder, uncomment the line and run the entire script!
 """
 
 # %%
@@ -202,7 +218,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+# results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -226,7 +242,8 @@ you'll see:
     4) The 'model.results' file, which lists the current best-fit lens model (this outputs on-the-fly).
     5) The 'output.log' file, where all Python interpreter output is directed.
 
-The best-fit solution (i.e. the maximum log likelihood) is stored in the 'results', which we can plot as per usual.
+The best-fit solution (i.e. the maximum log likelihood) is stored in the 'results', which we can plot as per usual 
+(you must wait for the non-linear search to finish before you can get the 'results' variable).
 """
 
 # %%

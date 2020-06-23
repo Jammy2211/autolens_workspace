@@ -225,7 +225,7 @@ aplt.FitImaging.subplot_fit_imaging(
 
 print("Evidence using baseline variances = ", 3356.88)
 
-print("Evidence using hyper-galaxy-galaxy hyper variances = ", fit.log_evidence)
+print("Evidence using hyper-galaxy hyper variances = ", fit.log_evidence)
 
 
 # %%

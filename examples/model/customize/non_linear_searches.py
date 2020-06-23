@@ -119,7 +119,7 @@ that the method is very effective, always locating a solution that fits the lens
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50, facc=0.8)
+search = af.DynestyStatic(n_live_points=50)
 
 # %%
 """

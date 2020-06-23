@@ -107,7 +107,7 @@ phase = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=80, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=80, evidence_tolerance=100.0),
 )
 
 # %%
@@ -122,7 +122,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+# results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -163,7 +163,7 @@ phase_local_maxima = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=5, facc=0.5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=5, evidence_tolerance=100.0),
 )
 
 print(
@@ -172,7 +172,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results_local_maxima = phase_local_maxima.run(dataset=imaging, mask=mask)
+# results_local_maxima = phase_local_maxima.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

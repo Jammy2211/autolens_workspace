@@ -86,7 +86,7 @@ def make_pipeline(
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=75, facc=0.2, evidence_tolerance=0.8),
+        search=af.DynestyStatic(n_live_points=75, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:
