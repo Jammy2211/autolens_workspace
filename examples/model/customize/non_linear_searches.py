@@ -101,9 +101,55 @@ settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
 
 # %%
 """
-__Search__
+__Searches__
 
-Lets first use a fast _NonLinearSearch_ technique called an 'optimizer', which only seeks to maximize the log 
+Below we use the following non-linear searches:
+
+    1) Nested Sampler.
+    2) Optimize.
+    3) MCMC
+"""
+
+# %%
+"""
+__Nested Sampling__
+
+To begin, lets again use the nested sampling method _Dynesty_ that we have used in all examples up to now. We've seen 
+that the method is very effective, always locating a solution that fits the lens data well.
+"""
+
+# %%
+search = af.DynestyStatic(n_live_points=50, facc=0.8)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+the lens model.
+
+The phase_name and folders inputs below specify the path of the results in the output folder:  
+
+    '/autolens_workspace/output/examples/customize/lens_sie__source_sersic/phase__nested_sampling/
+    settings__grid_sub_2/dynesty__'.
+"""
+
+# %%
+phase = al.PhaseImaging(
+    phase_name="phase__non_linear_searches",
+    folders=["examples", "customize", dataset_name],
+    galaxies=dict(lens=lens, source=source),
+    settings=settings,
+    search=search,
+)
+
+# result = phase.run(dataset=imaging, mask=mask)
+
+# %%
+"""
+__Optimizer__
+
+Now, lets use a fast _NonLinearSearch_ technique called an 'optimizer', which only seeks to maximize the log 
 likelihood of the fit and does not attempt to infer the errors on the model parameters. Optimizers are useful when we
 want to find a lens model that fits the data well, but do not care about the full posterior of parameter space (e.g.
 the errors). 
@@ -119,7 +165,7 @@ example scripts, that often require > 20000 - 50000 iterations.
 """
 
 # %%
-search = af.PySwarmsGlobal(n_particles=10, iters=5)
+search = af.PySwarmsGlobal(n_particles=300, iters=750)
 
 # %%
 """
@@ -135,7 +181,38 @@ The phase_name and folders inputs below specify the path of the results in the o
 
 # %%
 phase = al.PhaseImaging(
-    phase_name="phase__particle_swarm",
+    phase_name="phase__non_linear_searches",
+    folders=["examples", "customize", dataset_name],
+    galaxies=dict(lens=lens, source=source),
+    settings=settings,
+    search=search,
+)
+
+# result = phase.run(dataset=imaging, mask=mask)
+
+# %%
+"""
+__MCMC__
+"""
+
+# %%
+search = af.Emcee(nwalkers=250, nsteps=2000)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+the lens model.
+
+The phase_name and folders inputs below specify the path of the results in the output folder:  
+
+    '/autolens_workspace/output/examples/customize/'.
+"""
+
+# %%
+phase = al.PhaseImaging(
+    phase_name="phase__non_linear_searches",
     folders=["examples", "customize", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,

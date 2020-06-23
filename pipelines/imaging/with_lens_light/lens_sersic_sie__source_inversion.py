@@ -102,9 +102,7 @@ def make_pipeline(
         galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50,
-            sampling_efficiency=0.5,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=50, facc=0.5, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -136,9 +134,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=60,
-            sampling_efficiency=0.2,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=60, facc=0.2, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -165,9 +161,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75,
-            sampling_efficiency=0.3,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=75, facc=0.3, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -194,9 +188,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=20,
-            sampling_efficiency=0.8,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=20, facc=0.8, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -224,7 +216,7 @@ def make_pipeline(
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=60, sampling_efficiency=0.4),
+        search=af.DynestyStatic(n_live_points=60, facc=0.4),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4, phase5)

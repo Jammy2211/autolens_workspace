@@ -87,7 +87,7 @@ def make_pipeline(
 
     phase1.search.const_efficiency_mode = True
     phase1.search.n_live_points = 80
-    phase1.search.sampling_efficiency = 0.2
+    phase1.search.facc = 0.2
 
     ### Phase 2 ###
 
@@ -115,6 +115,6 @@ def make_pipeline(
 
     phase2.search.const_efficiency_mode = True
     phase2.search.n_live_points = 50
-    phase2.search.sampling_efficiency = 0.3
+    phase2.search.facc = 0.3
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

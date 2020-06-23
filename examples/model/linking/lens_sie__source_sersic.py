@@ -232,7 +232,7 @@ prior linking now informs _Dynesty_ where to search parameter space.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=30, sampling_efficiency=0.8)
+search = af.DynestyStatic(n_live_points=30, facc=0.8)
 
 # %%
 """

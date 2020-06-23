@@ -80,7 +80,7 @@ phase = al.PhaseImaging(
 
 phase.search.const_efficiency_mode = True
 phase.search.n_live_points = 50
-phase.search.sampling_efficiency = 0.5
+phase.search.facc = 0.5
 
 # We run the phase on the image, print the results and plotters the fit.
 result = phase.run(dataset=imaging, mask=mask)

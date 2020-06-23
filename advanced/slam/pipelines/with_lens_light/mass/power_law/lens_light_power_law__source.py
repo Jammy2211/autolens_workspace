@@ -19,7 +19,7 @@ Phase 1:
 """
 
 
-def make_pipeline(slam, settings, folders=None, redshift_lens=0.5, redshift_source=1.0):
+def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -36,11 +36,13 @@ def make_pipeline(slam, settings, folders=None, redshift_lens=0.5, redshift_sour
         3) The lens's light model is fixed or variable.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.hyper.tag)
-    slam.folders.append(slam.source.tag)
-    slam.folders.append(slam.light.tag)
-    folders.append(slam.mass.tag)
+    folders = slam.folders + [
+        pipeline_name,
+        slam.hyper.tag,
+        slam.source.tag,
+        slam.light.tag,
+        slam.mass.tag,
+    ]
 
     """SLaM: Set whether shear is Included in the mass model."""
 
@@ -70,14 +72,12 @@ def make_pipeline(slam, settings, folders=None, redshift_lens=0.5, redshift_sour
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=75, sampling_efficiency=0.2, evidence_tolerance=0.8
-        ),
+        search=af.DynestyStatic(n_live_points=75, facc=0.2, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

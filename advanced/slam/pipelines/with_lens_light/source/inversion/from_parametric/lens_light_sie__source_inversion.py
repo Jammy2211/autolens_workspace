@@ -83,11 +83,11 @@ def make_pipeline(
         5) The lens light model used in the previous pipeline.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(
-        slam.source_pipeline_tag + slam.lens_light_tag_for_source_pipeline
-    )
-    slam.folders.append(slam.source.tag)
+    folders = slam.folders + [
+        pipeline_name,
+        slam.source_pipeline_tag + slam.lens_light_tag_for_source_pipeline,
+        slam.source.tag,
+    ]
 
     """
     Phase 1: fit the pixelization and regularization, where we:
@@ -97,7 +97,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__source_inversion_magnification_initialization",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -117,7 +117,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, sampling_efficiency=0.8),
+        search=af.DynestyStatic(n_live_points=20, facc=0.8),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
@@ -134,7 +134,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_light_sie__source_inversion_magnification",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -155,9 +155,7 @@ def make_pipeline(
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75,
-            sampling_efficiency=0.2,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=75, facc=0.2, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -174,7 +172,7 @@ def make_pipeline(
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__source_inversion_initialization",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -194,7 +192,7 @@ def make_pipeline(
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, sampling_efficiency=0.8),
+        search=af.DynestyStatic(n_live_points=20, facc=0.8),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
@@ -233,7 +231,7 @@ def make_pipeline(
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_light_sie__source_inversion",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
@@ -247,9 +245,7 @@ def make_pipeline(
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75,
-            sampling_efficiency=0.2,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=75, facc=0.2, evidence_tolerance=evidence_tolerance
         ),
     )
 

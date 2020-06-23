@@ -32571,3 +32571,312 @@
 2020-06-15 15:58:43,477 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-15 16:02:16,198 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-15 16:02:16,201 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-23 13:46:58,913 - autofit.tools.pipeline - INFO - Running Phase phase_1__source_sersic (Number 0)
+2020-06-23 13:48:08,564 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:08,565 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:08,863 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:08,863 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:09,174 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:09,174 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:09,487 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:09,488 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:10,017 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:10,017 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:10,333 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:10,334 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:10,588 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:10,589 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:10,922 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:10,922 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:11,210 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:11,210 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:11,486 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:11,486 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:11,771 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:11,771 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:12,051 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:12,051 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:12,345 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:12,345 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:12,632 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:12,633 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:12,935 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:12,935 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:13,170 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:13,170 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:13,700 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:13,700 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:14,043 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:14,049 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:14,587 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:14,587 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:14,875 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:14,875 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:15,251 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:15,251 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:15,567 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:15,567 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:15,888 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:15,888 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:16,206 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:16,206 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:16,492 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:16,492 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:16,793 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:16,793 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:17,052 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:17,052 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:17,316 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:17,316 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:17,572 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:17,572 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:17,836 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:17,836 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:18,079 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:18,079 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:18,316 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:18,317 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:18,558 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:18,558 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:18,866 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:18,866 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:19,102 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:19,102 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:19,340 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:19,341 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:19,571 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.0007249270051793392,N_eff=32.91139204625538). Using fallback (h=0.00012194314885116186)
+2020-06-23 13:48:19,571 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:58,199 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:58,199 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:58,529 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:58,529 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:58,743 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:58,743 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:59,042 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:59,042 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:59,282 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:59,282 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:59,542 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:59,542 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:59,766 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:59,766 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:48:59,987 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:48:59,988 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:00,210 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:00,210 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:00,476 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:00,476 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:00,706 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:00,706 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:00,937 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:00,937 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:01,159 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:01,159 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:01,377 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:01,377 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:01,598 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:01,599 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:01,830 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:01,830 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:02,058 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:02,059 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:02,291 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:02,291 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:02,530 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:02,530 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:02,756 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:02,756 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:02,994 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:02,994 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:03,245 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:03,245 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:03,472 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:03,473 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:03,719 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:03,719 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:03,944 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:03,945 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:04,166 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:04,166 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:04,401 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:04,402 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:04,629 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:04,629 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:04,853 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:04,853 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:05,079 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:05,080 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:05,307 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:05,307 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:05,533 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:05,533 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:05,759 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:05,759 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:05,990 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:05,990 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:06,215 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:06,215 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:06,477 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:06,477 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:06,726 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:06,726 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:24,741 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:24,741 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:24,979 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:24,979 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:25,209 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:25,209 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:25,548 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:25,548 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:25,788 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:25,788 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:26,075 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:26,076 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:26,312 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:26,312 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:26,575 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:26,575 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:26,862 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:26,862 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:27,109 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:27,109 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:27,377 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:27,377 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:27,616 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:27,616 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:27,973 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:27,973 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:28,501 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:28,502 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:29,244 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:29,244 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:30,010 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:30,011 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:30,933 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:30,933 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:31,641 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:31,644 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:32,309 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:32,311 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:32,953 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:32,968 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:33,764 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:33,764 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:34,447 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:34,454 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:35,383 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:35,396 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:36,083 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:36,088 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:36,670 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:36,672 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:37,479 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:37,493 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:38,068 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:38,068 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:38,968 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:38,968 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:39,575 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:39,576 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:40,159 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:40,159 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:41,005 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:41,006 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:41,465 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:41,465 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:41,759 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:41,759 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:42,210 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:42,210 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:42,807 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:42,807 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:43,202 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:43,202 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:49:43,778 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:49:43,779 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:38,231 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:38,232 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:38,603 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:38,604 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:38,891 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:38,891 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:39,156 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:39,156 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:39,377 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:39,377 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:39,621 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:39,621 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:39,850 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:39,850 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:40,077 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:40,077 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:40,310 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:40,310 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:40,544 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:40,544 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:40,774 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:40,774 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:41,004 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:41,005 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:41,236 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:41,237 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:41,464 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:41,464 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:41,696 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:41,696 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:41,933 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:41,933 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:42,195 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:42,195 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:42,449 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:42,449 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:42,694 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:42,694 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:43,024 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:43,024 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:43,254 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:43,254 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:43,535 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:43,536 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:43,755 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:43,756 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:44,034 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:44,034 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:44,274 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:44,274 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:44,541 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:44,541 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:44,784 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:44,784 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:45,106 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:45,106 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:45,502 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:45,502 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:46,039 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:46,039 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:46,511 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:46,511 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:47,035 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:47,036 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:47,527 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:47,527 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:48,102 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:48,102 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:48,908 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:48,909 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:49,591 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:49,592 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:49,982 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:50:49,982 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:50:50,210 - autofit.tools.pipeline - INFO - Running Phase phase_2__subhalo_search (Number 1)
+2020-06-23 13:55:44,359 - autofit.tools.pipeline - INFO - Running Phase phase_3__subhalo_refine (Number 2)
+2020-06-23 13:55:44,543 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:55:44,543 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:55:44,771 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:55:44,771 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:55:45,025 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:55:45,025 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:55:45,290 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:55:45,290 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-23 13:55:45,503 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
+2020-06-23 13:55:45,503 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value

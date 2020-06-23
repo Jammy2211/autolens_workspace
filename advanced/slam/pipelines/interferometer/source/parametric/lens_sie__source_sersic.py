@@ -43,9 +43,7 @@ def make_pipeline(
         2) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.source_pipeline_tag)
-    slam.folders.append(slam.source.tag)
+    folders = slam.folders + [pipeline_name, slam.source_pipeline_tag, slam.source.tag]
 
     """
     Phase 1: Fit the lens galaxy's mass and source galaxy.

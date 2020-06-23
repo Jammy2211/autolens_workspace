@@ -42,10 +42,12 @@ def make_pipeline(
         2) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.hyper.tag)
-    slam.folders.append(slam.source.tag)
-    slam.folders.append(slam.mass.tag)
+    folders = slam.folders + [
+        pipeline_name,
+        slam.hyper.tag,
+        slam.source.tag,
+        slam.mass.tag,
+    ]
 
     """SLaM: Set whether shear is Included in the mass model."""
 
@@ -84,9 +86,7 @@ def make_pipeline(
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=75, sampling_efficiency=0.2, evidence_tolerance=0.8
-        ),
+        search=af.DynestyStatic(n_live_points=75, facc=0.2, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

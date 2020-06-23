@@ -60,12 +60,10 @@ def make_pipeline(setup, settings, folders=None):
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=100.0),
     )
 
-    phase1.search.sampling_efficiency = 0.3
+    phase1.search.facc = 0.3
     phase1.search.const_efficiency_mode = True
 
     """
@@ -105,7 +103,7 @@ def make_pipeline(setup, settings, folders=None):
             source=source,
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, sampling_efficiency=0.3),
+        search=af.DynestyStatic(n_live_points=50, facc=0.3),
     )
 
     """
@@ -117,7 +115,7 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase2 = phase2.extend_with_inversion_phase(
-        inversion_search=af.DynestyStatic(n_live_points=50, sampling_efficiency=0.5)
+        inversion_search=af.DynestyStatic(n_live_points=50, facc=0.5)
     )
 
     """
@@ -141,7 +139,7 @@ def make_pipeline(setup, settings, folders=None):
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, sampling_efficiency=0.3),
+        search=af.DynestyStatic(n_live_points=50, facc=0.3),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

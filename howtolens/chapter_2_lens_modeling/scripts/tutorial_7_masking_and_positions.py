@@ -105,9 +105,7 @@ phase_with_custom_mask = al.PhaseImaging(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(
-        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
 )
 
 phase_with_custom_mask.run(dataset=imaging, mask=mask)
@@ -197,9 +195,7 @@ phase_with_positions = al.PhaseImaging(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(
-        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
 )
 
 # %%
@@ -277,9 +273,7 @@ phase_with_x2_positions = al.PhaseImaging(
         source_0=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
         source_1=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(
-        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
 )
 
 print(

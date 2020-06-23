@@ -156,7 +156,7 @@ pipeline = lens_power_law__source_inversion.make_pipeline(
 
 # %%
 """
-__Pipeline Run__
+__Pipeline Run__error.2394927.err
 
 Running a pipeline is the same as running a phase, we simply pass it our lens dataset and mask to its run function.
 """

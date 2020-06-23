@@ -73,9 +73,7 @@ def make_pipeline(setup, settings, folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
-        search=af.DynestyStatic(
-            n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
     )
 
     """
@@ -95,9 +93,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_1=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(
-            n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
     )
 
     """Phase 3: Same again, but with 3 source galaxy components."""
@@ -114,9 +110,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_2=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=100.0),
     )
 
     """Phase 4: And one more for luck!"""
@@ -134,9 +128,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_3=al.lp.EllipticalSersic,
             ),
         ),
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=0.3
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=0.3),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

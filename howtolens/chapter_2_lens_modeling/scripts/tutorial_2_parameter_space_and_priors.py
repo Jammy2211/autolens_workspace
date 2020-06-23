@@ -203,9 +203,7 @@ custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(
-        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
 )
 
 print(

@@ -66,7 +66,7 @@ following two properties:
       '/path/to/autolens_workspace/config'). 
 
     - The path to the PyAutoLens output folder, which is where the results of the non-linear search are written to 
-      your hard-disk, alongside visualization and other properties of the fit 
+      on your hard-disk, alongside visualization and other properties of the fit 
       (e.g. '/path/to/autolens_workspace/output/howtolens')
 
 (These will work autommatically if the WORKSPACE environment variable was set up correctly during installation. 
@@ -187,9 +187,7 @@ phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     settings=settings,
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    search=af.DynestyStatic(
-        n_live_points=40, sampling_efficiency=0.5, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=40, facc=0.5, evidence_tolerance=100.0),
 )
 
 # %%

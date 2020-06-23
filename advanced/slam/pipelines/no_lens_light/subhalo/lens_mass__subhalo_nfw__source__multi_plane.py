@@ -53,10 +53,12 @@ def make_pipeline(
         2) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.hyper.tag)
-    slam.folders.append(slam.source.tag)
-    slam.folders.append(slam.mass.tag)
+    folders = slam.folders + [
+        pipeline_name,
+        slam.hyper.tag,
+        slam.source.tag,
+        slam.mass.tag,
+    ]
 
     """
     Phase 1: Attempt to detect subhalos, by performing a NxN grid search of MultiNest searches, where:
@@ -96,16 +98,14 @@ def make_pipeline(
 
     phase1a = GridPhase(
         phase_name="phase_1a__subhalo_search__z_below_lens__source",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.2, evidence_tolerance=3.0
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.2, evidence_tolerance=3.0),
         number_of_steps=number_of_steps,
     )
 
@@ -117,16 +117,14 @@ def make_pipeline(
 
     phase1b = GridPhase(
         phase_name="phase_1b__subhalo_search__z_above_lens__source",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
         ),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.2, evidence_tolerance=3.0
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.2, evidence_tolerance=3.0),
         number_of_steps=5,
     )
 

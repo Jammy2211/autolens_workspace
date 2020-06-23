@@ -45,10 +45,12 @@ def make_pipeline(
         3) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.hyper.tag)
-    slam.folders.append(slam.source.tag)
-    slam.folders.append(slam.light.tag)
+    folders = slam.folders + [
+        pipeline_name,
+        slam.hyper.tag,
+        slam.source.tag,
+        slam.light.tag,
+    ]
 
     """
     Phase 1: Fit the lens galaxy's light, where we:
@@ -112,14 +114,12 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_gaussians_sie__source",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=0.8
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

@@ -70,9 +70,7 @@ def make_pipeline(
         2) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.source_pipeline_tag)
-    slam.folders.append(slam.source.tag)
+    folders = slam.folders + [pipeline_name, slam.source_pipeline_tag, slam.source.tag]
 
     """
     Phase 1: Fit only the lens galaxy's light, where we:
@@ -99,13 +97,11 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(lens=lens),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=40,
-            sampling_efficiency=0.3,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=40, facc=0.3, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -136,7 +132,7 @@ def make_pipeline(
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__lens_sie__source_sersic",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -156,9 +152,7 @@ def make_pipeline(
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50,
-            sampling_efficiency=0.5,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=50, facc=0.5, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -189,7 +183,7 @@ def make_pipeline(
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_bulge_disk_sie__source_fixed",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
@@ -202,9 +196,7 @@ def make_pipeline(
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75,
-            sampling_efficiency=0.5,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=75, facc=0.5, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -218,7 +210,7 @@ def make_pipeline(
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_bulge_disk_sie__source_sersic",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
@@ -238,9 +230,7 @@ def make_pipeline(
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75,
-            sampling_efficiency=0.3,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=75, facc=0.3, evidence_tolerance=evidence_tolerance
         ),
     )
 

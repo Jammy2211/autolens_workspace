@@ -37,9 +37,7 @@ def make_pipeline(
         2) The lens galaxy mass model includes an external shear.
     """
 
-    slam.folders.append(pipeline_name)
-    slam.folders.append(slam.source_pipeline_tag)
-    slam.folders.append(slam.source.tag)
+    folders = slam.folders + [pipeline_name, slam.source_pipeline_tag, slam.source.tag]
 
     """
     Phase 1: Fit the lens galaxy's mass and source galaxy.
@@ -55,7 +53,7 @@ def make_pipeline(
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sie__source_sersic",
-        folders=slam.folders,
+        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens, mass=mass, shear=slam.source.shear
@@ -66,9 +64,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=80,
-            sampling_efficiency=0.2,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=80, facc=0.2, evidence_tolerance=evidence_tolerance
         ),
     )
 

@@ -82,9 +82,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50,
-            sampling_efficiency=0.5,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=50, facc=0.5, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -111,9 +109,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=20,
-            sampling_efficiency=0.8,
-            evidence_tolerance=evidence_tolerance,
+            n_live_points=20, facc=0.8, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -140,7 +136,7 @@ def make_pipeline(
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, sampling_efficiency=0.5),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

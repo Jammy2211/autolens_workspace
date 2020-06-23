@@ -80,9 +80,7 @@ def make_pipeline(setup, settings, folders=None):
             left_lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)
         ),
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=30, facc=0.5, evidence_tolerance=100.0),
     )
 
     """
@@ -102,9 +100,7 @@ def make_pipeline(setup, settings, folders=None):
         galaxies=dict(
             left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
         ),
-        search=af.DynestyStatic(
-            n_live_points=30, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=30, facc=0.5, evidence_tolerance=100.0),
     )
 
     """
@@ -142,9 +138,7 @@ def make_pipeline(setup, settings, folders=None):
             right_lens=right_lens,
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
         ),
-        search=af.DynestyStatic(
-            n_live_points=50, sampling_efficiency=0.5, evidence_tolerance=100.0
-        ),
+        search=af.DynestyStatic(n_live_points=50, facc=0.5, evidence_tolerance=100.0),
     )
 
     """
@@ -213,9 +207,7 @@ def make_pipeline(setup, settings, folders=None):
             right_lens=right_lens,
             source=phase3.result.model.galaxies.source,
         ),
-        search=af.DynestyStatic(
-            n_live_points=60, sampling_efficiency=0.5, evidence_tolerance=0.3
-        ),
+        search=af.DynestyStatic(n_live_points=60, facc=0.5, evidence_tolerance=0.3),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)

@@ -141,9 +141,7 @@ phase_slow = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(
-        n_live_points=150, sampling_efficiency=0.1, evidence_tolerance=0.8
-    ),
+    search=af.DynestyStatic(n_live_points=150, facc=0.1, evidence_tolerance=0.8),
 )
 
 # %%
@@ -185,9 +183,7 @@ phase_fast = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(
-        n_live_points=30, sampling_efficiency=0.9, evidence_tolerance=100.0
-    ),
+    search=af.DynestyStatic(n_live_points=30, facc=0.9, evidence_tolerance=100.0),
 )
 
 # %%
