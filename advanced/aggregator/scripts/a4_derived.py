@@ -9,6 +9,7 @@ An example is the total luminosity of the lens or source galaxy, or total mass o
 estimated by a PyAutoLens model-fit, but are estimated from a combination of lens model parameters.
 """
 
+from autoconf import conf
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -24,7 +25,7 @@ Frist, we set up the aggregator as we did in the previous tutorial.
 # %%
 workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 output_path = f"{workspace_path}/output"
-agg_results_path = f"{output_path}/aggregator/beginner"
+agg_results_path = f"{output_path}/aggregator"
 
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=output_path
@@ -38,8 +39,7 @@ Next, lets create a list of instances of the most-likely models of the final pha
 """
 
 # %%
-pipeline_name = "pipeline__lens_sie__source_inversion"
-phase_name = "phase_3__source_inversion"
+phase_name = "phase__aggregator"
 agg_phase_3 = agg.filter(agg.phase == phase_name)
 
 # %%

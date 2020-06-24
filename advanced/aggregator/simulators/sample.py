@@ -3,15 +3,20 @@ import autolens as al
 import autolens.plot as aplt
 import os
 
-# This script creates a sample of three strong lenses, which are used to illustrate the aggregator.
+"""
+This script simulates a sample of three strong lenses, which are used to illustrate the aggregator.
 
-# It follows the scripts described in the '/autolens_workspace/simulators/', so if anything doesn't make sense check
-# those scripts out for details!
+It follows the scripts described in the '/autolens_workspace/simulators/', so if anything doesn't make sense check
+those scripts out for details!
+"""
 
 """Setup the path to the autolens_workspace, using a relative directory name."""
-aggregator_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
+workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
 
-######## EXAMPLE LENS SYSTEM 1 ###########
+"""The pixel scale of the datasets that are simulated."""
+pixel_scales = 0.1
+
+"""EXAMPLE LENS SYSTEM 1"""
 
 """
 The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
@@ -21,19 +26,18 @@ gives it a descriptive name. They define the folder the dataset is output to on 
     - The noise map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
-
+dataset_label = "aggregator"
 dataset_name = "lens_sie__source_sersic__0"
 
-# Create the path where the dataset will be output.
+"""Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=aggregator_path, folders=["dataset", dataset_name]
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
-"""The pixel scale of dataset to be simulated."""
-pixel_scales = 0.1
-
-# The grid use to create the image.
-grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1, sub_size=4)
+"""The grid use to create the image."""
+grid = al.GridIterate.uniform(
+    shape_2d=(100, 100), pixel_scales=0.1, fractional_accuracy=0.9999
+)
 
 """Simulate a simple Gaussian PSF for the image."""
 psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
@@ -52,7 +56,7 @@ simulator = al.SimulatorImaging(
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=0.8, elliptical_comps=(0.0, 0.111111)
+        centre=(0.0, 0.0), einstein_radius=0.8, elliptical_comps=(0.0, 0.25)
     ),
 )
 
@@ -60,7 +64,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        elliptical_comps=(0.0, 0.111111),
+        elliptical_comps=(0.0, 0.25),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.0,
@@ -87,7 +91,7 @@ imaging.output_to_fits(
 )
 
 
-######## EXAMPLE LENS SYSTEM 2 ###########
+"""EXAMPLE LENS SYSTEM 2"""
 
 """
 The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
@@ -97,16 +101,18 @@ gives it a descriptive name. They define the folder the dataset is output to on 
     - The noise map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
-
+dataset_label = "aggregator"
 dataset_name = "lens_sie__source_sersic__1"
 
-# Create the path where the dataset will be output.
+"""Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=aggregator_path, folders=["dataset", dataset_name]
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
-# Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
-# its expoosure time, noise levels and psf.
+"""
+Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
+its expoosure time, noise levels and psf.
+"""
 simulator = al.SimulatorImaging(
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
@@ -117,7 +123,7 @@ simulator = al.SimulatorImaging(
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.0, elliptical_comps=(0.17647, 0.0)
+        centre=(0.0, 0.0), einstein_radius=1.0, elliptical_comps=(0.25, 0.0)
     ),
 )
 
@@ -152,7 +158,7 @@ imaging.output_to_fits(
 )
 
 
-######## EXAMPLE LENS SYSTEM 3 ###########
+"""EXAMPLE LENS SYSTEM 3"""
 
 """
 The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
@@ -163,15 +169,18 @@ gives it a descriptive name. They define the folder the dataset is output to on 
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
 
+dataset_label = "aggregator"
 dataset_name = "lens_sie__source_sersic__2"
 
-# Create the path where the dataset will be output.
+"""Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=aggregator_path, folders=["dataset", dataset_name]
+    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
 )
 
-# Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
-# its expoosure time, noise levels and psf.
+"""
+Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
+its expoosure time, noise levels and psf.
+"""
 simulator = al.SimulatorImaging(
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     psf=psf,
@@ -182,7 +191,7 @@ simulator = al.SimulatorImaging(
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.2, elliptical_comps=(0.1, 0.0)
+        centre=(0.0, 0.0), einstein_radius=1.2, elliptical_comps=(0.25, 0.0)
     ),
 )
 

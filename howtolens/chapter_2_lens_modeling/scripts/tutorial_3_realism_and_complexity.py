@@ -52,7 +52,9 @@ We'll use new strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
+from autolens_workspace.howtolens.simulators.chapter_2 import (
+    lens_sersic_sie__source_exp,
+)
 
 dataset_label = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
@@ -72,7 +74,7 @@ We'll create and use a 2.5" _Mask_.
 
 # %%
 mask = al.Mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=2.5
 )
 
 # %%

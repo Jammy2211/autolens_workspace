@@ -2,8 +2,8 @@
 """
 __Aggregator 2: Lens Models__
 
-This tutorial builds on tutorial_1 of the aggregator autolens_workspace. Here, we use the aggregator to load models
-from a non-linear search and visualize and interpret results.
+This tutorial builds on the tutorial 'a1_samples', where we use the aggregator to load models from a non-linear
+search and visualize and interpret results.
 """
 
 # %%
@@ -16,13 +16,13 @@ import matplotlib.pyplot as plt
 
 # %%
 """
-Frist, we set up the aggregator as we did in the previous tutorial.
+First, set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
 workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 output_path = f"{workspace_path}/output"
-agg_results_path = f"{output_path}/aggregator/beginner"
+agg_results_path = f"{output_path}/aggregator"
 
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=output_path
@@ -30,25 +30,25 @@ conf.instance = conf.Config(
 
 agg = af.Aggregator(directory=str(agg_results_path))
 
-
 # %%
 """
-Next, lets create a list of instances of the most-likely models of the final phase of each fit.
+Next, lets create a list of instances of the maximum log likelihood models of each fit. Although we don't need to use
+the aggregator's filter tool, we'll use it below (and in all tutorials here after) so you are used to seeing it, as
+for general PyAutoLens use it will be important to filter your results!
 """
 
 # %%
-pipeline_name = "pipeline__lens_sie__source_inversion"
-phase_name = "phase_3__source_inversion"
-agg_phase_3 = agg.filter(agg.phase == phase_name)
+phase_name = "phase__aggregator"
+agg_filter = agg.filter(agg.phase == phase_name)
 
 ml_instances = [
-    samps.max_log_likelihood_instance for samps in agg_phase_3.values("samples")
+    samps.max_log_likelihood_instance for samps in agg_filter.values("samples")
 ]
 
 # %%
 """
-A model instance is a _Galaxy_ instance of the pipeline's _GalaxyModel_'s. So, its just a list of galaxies which we can 
-pass to functions in PyAutoLens. Lets create the most-likely tracer of every fit...
+A model instance contains a list of _Galaxy_ instances, which is what we are using to passing to functions in 
+PyAutoLens. Lets create the maximum log likelihood tracer of every fit.
 """
 
 # %%
@@ -56,15 +56,14 @@ ml_tracers = [
     al.Tracer.from_galaxies(galaxies=instance.galaxies) for instance in ml_instances
 ]
 
-print("Most Likely Tracers: \n")
+print("Maximum Log Likelihood Tracers: \n")
 print(ml_tracers, "\n")
 print("Total Tracers = ", len(ml_tracers))
 
 # %%
 """
-... and then plot their convergences.
-
-We'll just use a grid of 100 x 100 pixels for now, and cover later how we use the actual grid of the data.
+Now lets plot their convergences, using a grid of 100 x 100 pixels (noting that this isn't' necessarily the grid used
+to fit the data in the phase itself).
 """
 
 # %%
@@ -79,8 +78,7 @@ Okay, so we can make a list of tracers and plot their convergences. However, we'
 lists which we discussed in the previous tutorial. If we had fitted hundreds of images we'd have hundreds of tracers, 
 overloading the memory on our laptop.
 
-We will again avoid using lists for any objects that could potentially be memory intensive, using generators once 
-again.
+We can again avoid using lists for any objects that could potentially be memory intensive, using generators.
 """
 
 # %%
@@ -98,13 +96,11 @@ def make_tracer_generator(agg_obj):
 """
 
 # %%
-tracer_gen = agg_phase_3.map(func=make_tracer_generator)
+tracer_gen = agg_filter.map(func=make_tracer_generator)
 
 # %%
 """
-We can now iterate over our tracer generator to make the plots we desire. 
-
-(We'll explain how to load the grid via the aggregator in the next tutorial)
+We can now iterate over our tracer generator to make the plots we desire.
 """
 
 # %%
@@ -117,15 +113,15 @@ for tracer in tracer_gen:
 
 # %%
 """
-Its cumbersome always have to define a 'make_tracer_generator' function to make a tracer generator - give that you'll
-probably do the exact same thing in every Jupyter Notebook you ever write!
+Its cumbersome to always have to define a 'make_tracer_generator' function to make a tracer generator, given that 
+you'll probably do the exact same thing in every Jupyter Notebook you ever write!
 
-PyAutoLens's aggregator module (accessed as 'agg') has a convenience method to save you time and make your notebooks
+PyAutoLens's aggregator module (imported as 'agg') has convenience methods to save you time and make your notebooks
 cleaner.
 """
 
 # %%
-tracer_gen = al.agg.Tracer(aggregator=agg_phase_3)
+tracer_gen = al.agg.Tracer(aggregator=agg_filter)
 
 for tracer in tracer_gen:
     aplt.Tracer.convergence(tracer=tracer, grid=grid)
@@ -142,7 +138,7 @@ For illustration, lets do this with a list first:
 """
 
 # %%
-print("Most Likely Lens Einstein Masses:")
+print("Maximum Log Likelihood Lens Einstein Masses:")
 for instance in ml_instances:
     einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=instance.galaxies.lens.redshift,
@@ -168,19 +164,19 @@ def print_max_log_likelihood_mass(agg_obj):
     print(einstein_mass)
 
 
-print("Most Likely Lens Einstein Masses:")
-agg_phase_3.map(func=print_max_log_likelihood_mass)
+print("Maximum Log Likelihood Lens Einstein Masses:")
+agg_filter.map(func=print_max_log_likelihood_mass)
 
 # %%
 """
-Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each SIE mass 
-profile.
+Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each 
+_EllipticalIsothermal_ _MassProfile_.
 
-These plots don't use anything too memory intensive - like a tracer - so we are fine to go back to lists for this.
+These plots don't use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
 """
 
 # %%
-mp_instances = [samps.median_pdf_instance for samps in agg_phase_3.values("samples")]
+mp_instances = [samps.median_pdf_instance for samps in agg_filter.values("samples")]
 mp_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
 ]
@@ -200,11 +196,11 @@ Now lets also include error bars at 3 sigma confidence.
 # %%
 ue3_instances = [
     samps.error_instance_at_upper_sigma(sigma=3.0)
-    for samps in agg_phase_3.values("samples")
+    for samps in agg_filter.values("samples")
 ]
 le3_instances = [
     samps.error_instance_at_lower_sigma(sigma=3.0)
-    for samps in agg_phase_3.values("samples")
+    for samps in agg_filter.values("samples")
 ]
 
 ue3_einstein_radii = [

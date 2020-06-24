@@ -196,6 +196,7 @@ strong lens and often tell you roughly where the source-galaxy is located (in th
 form. Furthermore, the source's morphology can be pretty complex, making it difficult to come up with a good source prior!
 """
 
+# %%
 source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential)
 
 # %%

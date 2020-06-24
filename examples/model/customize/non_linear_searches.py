@@ -143,7 +143,7 @@ phase = al.PhaseImaging(
     search=search,
 )
 
-# result = phase.run(dataset=imaging, mask=mask)
+result = phase.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -165,7 +165,7 @@ example scripts, that often require > 20000 - 50000 iterations.
 """
 
 # %%
-search = af.PySwarmsGlobal(n_particles=300, iters=750)
+search = af.PySwarmsLocal(n_particles=100, iters=100)
 
 # %%
 """
@@ -188,7 +188,7 @@ phase = al.PhaseImaging(
     search=search,
 )
 
-# result = phase.run(dataset=imaging, mask=mask)
+result = phase.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -196,7 +196,7 @@ __MCMC__
 """
 
 # %%
-search = af.Emcee(nwalkers=250, nsteps=2000)
+search = af.Emcee(nwalkers=100, nsteps=100)
 
 # %%
 """

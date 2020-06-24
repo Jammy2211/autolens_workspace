@@ -23,7 +23,7 @@ Below, we set up the aggregator as we did in the previous tutorial.
 # %%
 workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 output_path = f"{workspace_path}/output"
-agg_results_path = f"{output_path}/aggregator/beginner"
+agg_results_path = f"{output_path}/aggregator"
 
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=output_path
@@ -33,40 +33,39 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-Again, we create a list of the NestSampless of each phase.
+Again, we create a list of the Samples of each phase.
 """
 
 # %%
-pipeline_name = "pipeline__lens_sie__source_inversion"
-phase_name = "phase_3__source_inversion"
-agg_phase_3 = agg.filter(agg.phase == phase_name)
+phase_name = "phase__aggregator"
+agg_filter = agg.filter(agg.phase == phase_name)
 
 # %%
 """
-We can also use the aggregator to load the dataset of every lens our pipeline fitted. This generator returns the 
-dataset as the "Imaging" objects we passed to the pipeline when we ran them.
+We can also use the aggregator to load the dataset of every lens our _Phase_ fitted. This generator returns the 
+dataset as the _Imaging_ objects we passed to the phase when we ran them.
 """
 
 # %%
-dataset_gen = agg_phase_3.values("dataset")
+dataset_gen = agg_filter.values("dataset")
 
 print("Datasets:")
 print(dataset_gen, "\n")
 print(list(dataset_gen)[0].image)
 
-for dataset in agg_phase_3.values("dataset"):
+for dataset in agg_filter.values("dataset"):
 
     aplt.Imaging.subplot_imaging(imaging=dataset)
 
 # %%
 """
-The name of the dataset we assigned when we ran the pipelines are also attatch, which will help us to label the lenses 
-on our plots or inspect our results in terms of measurements not part of our lens modeling.
+The name of the dataset we assigned when we ran the phase is also available, which helps us to label the lenses 
+on plots.
 """
 
 # %%
 print("Dataset Names:")
-dataset_gen = agg_phase_3.values("dataset")
+dataset_gen = agg_filter.values("dataset")
 print([dataset.name for dataset in dataset_gen])
 
 # %%
@@ -76,7 +75,7 @@ The info dictionary we passed is also available.
 
 # %%
 print("Info:")
-info_gen = agg_phase_3.values("info")
+info_gen = agg_filter.values("info")
 print([info for info in info_gen])
 
 # %%
@@ -85,7 +84,7 @@ We'll also need the masks we used to fit the lenses, which the aggregator also p
 """
 
 # %%
-mask_gen = agg_phase_3.values("mask")
+mask_gen = agg_filter.values("mask")
 print("Masks:")
 print(list(mask_gen), "\n")
 
@@ -96,15 +95,15 @@ Lets plot each dataset again now with its mask, using generators.
 
 # %%
 
-dataset_gen = agg_phase_3.values("dataset")
-mask_gen = agg_phase_3.values("mask")
+dataset_gen = agg_filter.values("dataset")
+mask_gen = agg_filter.values("mask")
 
 for dataset, mask in zip(dataset_gen, mask_gen):
     aplt.Imaging.subplot_imaging(imaging=dataset, mask=mask)
 
 # %%
 """
-To reperform the fit of each most-likely lens model we can use the following generator.
+To reperform the fit of each maximum log likelihood lens model we can use the following generator.
 """
 
 # %%
@@ -123,7 +122,7 @@ def make_fit_generator(agg_obj):
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
 
-fit_gen = agg_phase_3.map(func=make_fit_generator)
+fit_gen = agg_filter.map(func=make_fit_generator)
 
 for fit in fit_gen:
 
@@ -131,9 +130,8 @@ for fit in fit_gen:
 
 # %%
 """
-There's a problem though - what if our MaskedImaging was made with a custom phase input? For example, we may have used
-the option "inversion_uses_border" in our phase. The default input of this in MaskedImaging is False, so the generator
-above would have set up this object incorrect. Thats bad!
+There's a problem though, the MaskedImaging object is made with a custom phase input. For example, it receive a 
+'grid_class' defining which grid it uses to fit the data. This isn't included in the generator above. Thats bad!
 
 The output has a meta_dataset attribute containing all the information on how the MaskedImaging was created for the
 actualy phase.
@@ -164,7 +162,7 @@ def make_fit_generator(agg_obj):
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
 
-fit_gen = agg_phase_3.map(func=make_fit_generator)
+fit_gen = agg_filter.map(func=make_fit_generator)
 
 for fit in fit_gen:
     aplt.FitImaging.subplot_fit_imaging(fit=fit)
@@ -172,8 +170,7 @@ for fit in fit_gen:
 # %%
 """
 Thats a lot of input parameters! The good news is this means in the aggregator we can customize exactly how the 
-MaskedImaging is set up - we could check to see what happens if we switch the inversion border off, for example. The 
-bad news is this requires a lot of lines of code, which is prone to typos and errors. 
+MaskedImaging is set up. The bad news is this requires a lot of lines of code, which is prone to typos and errors. 
 
 If you are writing customized generator functions, the PyAutoLens aggregator module also provides convenience methods
 for setting up objects *within* a generator. Below, we make the MaskedImaging and Tracer using these methods, which
@@ -190,7 +187,7 @@ def plot_fit(agg_obj):
     return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
 
-fit_gen = agg_phase_3.map(func=make_fit_generator)
+fit_gen = agg_filter.map(func=make_fit_generator)
 
 for fit in fit_gen:
     aplt.FitImaging.subplot_fit_imaging(fit=fit)
@@ -201,12 +198,12 @@ Of course, we also provide a convenience method to directly make the MaskedImagi
 """
 
 # %%
-masked_imaging_gen = al.agg.MaskedImaging(aggregator=agg_phase_3)
+masked_imaging_gen = al.agg.MaskedImaging(aggregator=agg_filter)
 
 for masked_imaging in masked_imaging_gen:
     print(masked_imaging.name)
 
-fit_gen = al.agg.FitImaging(aggregator=agg_phase_3)
+fit_gen = al.agg.FitImaging(aggregator=agg_filter)
 
 for fit in fit_gen:
     aplt.FitImaging.subplot_fit_imaging(fit=fit)
@@ -221,7 +218,7 @@ in the PyAutoLens aggregator package to set up the fit.
 """
 
 # %%
-fit_gen = al.agg.FitImaging(aggregator=agg_phase_3)
+fit_gen = al.agg.FitImaging(aggregator=agg_filter)
 
 for fit in fit_gen:
 
@@ -242,7 +239,7 @@ Making this plot for a paper? You can output it to hard disk.
 """
 
 # %%
-fit_gen = al.agg.FitImaging(aggregator=agg_phase_3)
+fit_gen = al.agg.FitImaging(aggregator=agg_filter)
 
 for fit in fit_gen:
 

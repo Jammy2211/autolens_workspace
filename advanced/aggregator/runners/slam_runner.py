@@ -1,3 +1,9 @@
+import os
+import autofit as af
+
+"""
+__Aggregator: Pipeline Runner__
+
 # This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
@@ -13,11 +19,9 @@
 # 'autolens_workspace/pipelines/advanced/no_lens_light/mass/sie/lens_sie__source_inversion.py'
 
 # If anything doesn't make sense check those scripts out for details!
+"""
 
 """ AUTOFIT + CONFIG SETUP """
-
-import os
-import autofit as af
 
 """Setup the path to the autolens_workspace, using a relative directory name."""
 workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))

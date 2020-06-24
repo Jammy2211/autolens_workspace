@@ -247,7 +247,7 @@ phase_pso = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.PySwarmsGlobal(n_particles=50, iters=1000),
+    search=af.PySwarmsLocal(n_particles=50, iters=1000),
 )
 
 print(

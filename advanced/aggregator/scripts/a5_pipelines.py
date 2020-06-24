@@ -48,9 +48,28 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-We are famaliar with filtering by pipeline name and phase name, so lets get the results of the power-law advanced 
-pipeline.
+In this example, we only fitted the 3 images using one pipeline. But suppose we used multiple pipelines, like we do in 
+the advanced pipelines. In this case, the aggregator would load the NestSampless of all fits of all phases of all 
+pipelines!
+
+In such circumstances, we can filter by phase name and pipeline name.
 """
+
+# %%
+pipeline_name = "pipeline__lens_sie__source_inversion"
+agg_filter = agg.filter(agg.phase == phase_name, agg.pipeline == pipeline_name)
+samples_gen = agg_filter.values("samples")
+
+# %%
+"""
+As expected, this list again has 3 NestSampless.
+"""
+
+# %%
+print("Pipeline Name Filtered MultiNest Samples: \n")
+print(samples_gen)
+print()
+print("Ttotal Samples Objects = ", len(list(agg_filter.values("samples"))), "\n")
 
 # %%
 pipeline_name = "pipeline_mass__power_law"

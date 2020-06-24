@@ -152,7 +152,7 @@ def make_pipeline(
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50, evidence_tolerance=evidence_tolerance
+            n_live_points=75, evidence_tolerance=evidence_tolerance
         ),
     )
 
