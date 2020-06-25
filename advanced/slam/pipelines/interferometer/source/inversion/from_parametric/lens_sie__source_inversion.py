@@ -60,11 +60,8 @@ def make_pipeline(
     slam,
     settings,
     real_space_mask,
-    folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
-    inversion_uses_border=True,
-    inversion_pixel_limit=None,
     evidence_tolerance=100.0,
 ):
 
@@ -110,7 +107,7 @@ def make_pipeline(
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.8),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -171,7 +168,7 @@ def make_pipeline(
         ),
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=40, evidence_tolerance=0.8),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(include_inversion=False)

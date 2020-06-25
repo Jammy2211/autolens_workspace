@@ -22,9 +22,7 @@ Phase 1:
 """
 
 
-def make_pipeline(
-    slam, folders=None, redshift_lens=0.5, settings=al.PhaseSettingsImaging()
-):
+def make_pipeline(slam, settings, redshift_lens=0.5):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -92,7 +90,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8),
+        search=af.DynestyStatic(n_live_points=60, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

@@ -2620,3 +2620,11 @@
 2020-06-18 14:16:20,109 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-18 14:19:15,229 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-18 14:19:15,239 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 08:51:19,753 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 09:04:57,024 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:04:57,025 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:04:57,494 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:04:57,495 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:05:38,178 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:05:38,179 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 09:07:08,943 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)

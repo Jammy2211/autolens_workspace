@@ -103,7 +103,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
@@ -170,7 +170,7 @@ def make_pipeline(
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=0.1),
+        search=af.DynestyStatic(n_live_points=40, evidence_tolerance=0.8),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(

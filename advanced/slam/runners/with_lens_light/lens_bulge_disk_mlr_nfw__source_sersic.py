@@ -64,6 +64,7 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
+    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask.circular(
@@ -75,6 +76,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 settings = al.PhaseSettingsImaging(
     grid_class=al.Grid,
     grid_inversion_class=al.GridInterpolate,
+    positions_threshold=0.15,
     pixel_scales_interp=0.1,
     inversion_pixel_limit=1500,
 )

@@ -27,9 +27,7 @@ Phase 1:
 """
 
 
-def make_pipeline(
-    slam, folders=None, redshift_lens=0.5, settings=al.PhaseSettingsImaging()
-):
+def make_pipeline(slam, settings, redshift_lens=0.5):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -54,7 +52,8 @@ def make_pipeline(
         slam.light.tag,
     ]
 
-    """Phase 1: Fit the lens galaxy's light, where we:
+    """
+    Phase 1: Fit the lens galaxy's light, where we:
 
         1) Fix the lens galaxy's mass and source galaxy to the results of the previous pipeline.
         2) Vary the lens galaxy hyper noise factor if hyper-galaxies noise scaling is on.
@@ -116,7 +115,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8),
+        search=af.DynestyStatic(n_live_points=75, evidence_tolerance=0.8),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

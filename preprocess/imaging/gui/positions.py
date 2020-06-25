@@ -17,7 +17,7 @@ workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
 # the positions will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/positions.dat'.
 dataset_label = "imaging"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "lens_bulge_disk_mlr_nfw__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
 # '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'

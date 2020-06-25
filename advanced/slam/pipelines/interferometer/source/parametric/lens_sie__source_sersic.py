@@ -23,7 +23,6 @@ def make_pipeline(
     slam,
     settings,
     real_space_mask,
-    folders=None,
     redshift_lens=0.5,
     redshift_source=1.0,
     evidence_tolerance=100.0,

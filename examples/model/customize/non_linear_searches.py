@@ -165,7 +165,7 @@ example scripts, that often require > 20000 - 50000 iterations.
 """
 
 # %%
-search = af.PySwarmsLocal(n_particles=100, iters=100)
+search = af.PySwarmsLocal(n_particles=50, iters=5000)
 
 # %%
 """
@@ -196,7 +196,7 @@ __MCMC__
 """
 
 # %%
-search = af.Emcee(nwalkers=100, nsteps=100)
+search = af.Emcee(nwalkers=50, nsteps=1000)
 
 # %%
 """
