@@ -48,7 +48,7 @@ Phase 4:
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance-=0.8
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=0.8
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
