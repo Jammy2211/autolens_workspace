@@ -63,9 +63,7 @@ def make_pipeline(
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=100, evidence_tolerance=evidence_tolerance
-        ),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(setup=slam.hyper)

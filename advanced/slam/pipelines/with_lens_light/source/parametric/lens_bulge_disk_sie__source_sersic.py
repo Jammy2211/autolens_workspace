@@ -100,9 +100,7 @@ def make_pipeline(
         folders=folders,
         galaxies=dict(lens=lens),
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=75, evidence_tolerance=evidence_tolerance
-        ),
+        search=af.DynestyStatic(n_live_points=75),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(setup=slam.hyper)
@@ -151,9 +149,7 @@ def make_pipeline(
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=100, evidence_tolerance=evidence_tolerance
-        ),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase2 = phase2.extend_with_multiple_hyper_phases(setup=slam.hyper)
@@ -195,9 +191,7 @@ def make_pipeline(
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=100, evidence_tolerance=evidence_tolerance
-        ),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(setup=slam.hyper)
@@ -229,9 +223,7 @@ def make_pipeline(
         hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=100, evidence_tolerance=evidence_tolerance
-        ),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase4 = phase4.extend_with_multiple_hyper_phases(setup=slam.hyper)
