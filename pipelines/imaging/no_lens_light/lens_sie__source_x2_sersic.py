@@ -28,7 +28,7 @@ Phase 2:
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=0.8
+    setup, settings, redshift_lens=0.5, redshift_source=1.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -73,7 +73,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50, evidence_tolerance=evidence_tolerance
+            n_live_points=50
         ),
     )
 

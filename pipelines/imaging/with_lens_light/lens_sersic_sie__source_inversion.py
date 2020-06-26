@@ -62,7 +62,7 @@ Notes: Lens mass varies, source inversion parameters fixed.
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=0.8
+    setup, settings, redshift_lens=0.5, redshift_source=1.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -102,7 +102,7 @@ def make_pipeline(
         galaxies=dict(lens=al.GalaxyModel(redshift=redshift_lens, light=light)),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=50, evidence_tolerance=evidence_tolerance
+            n_live_points=50
         ),
     )
 
@@ -134,7 +134,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=60, evidence_tolerance=evidence_tolerance
+            n_live_points=60
         ),
     )
 
@@ -161,7 +161,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=100, evidence_tolerance=evidence_tolerance
+            n_live_points=100
         ),
     )
 
@@ -188,7 +188,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=20, evidence_tolerance=evidence_tolerance
+            n_live_points=20
         ),
     )
 

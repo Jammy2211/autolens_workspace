@@ -119,7 +119,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=80, evidence_tolerance=0.8),
+        search=af.DynestyStatic(n_live_points=80),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

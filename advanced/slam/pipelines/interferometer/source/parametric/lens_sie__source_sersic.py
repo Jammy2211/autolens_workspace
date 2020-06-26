@@ -25,7 +25,6 @@ def make_pipeline(
     real_space_mask,
     redshift_lens=0.5,
     redshift_source=1.0,
-    evidence_tolerance=0.8,
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -69,6 +68,5 @@ def make_pipeline(
     )
 
     phase1.search.n_live_points = 80
-    phase1.search.evidence_tolerance = evidence_tolerance
 
     return al.PipelineDataset(pipeline_name, phase1)

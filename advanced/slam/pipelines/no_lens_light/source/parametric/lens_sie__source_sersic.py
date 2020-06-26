@@ -20,7 +20,7 @@ Phase 1:
 
 
 def make_pipeline(
-    slam, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=0.8
+    slam, settings, redshift_lens=0.5, redshift_source=1.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
