@@ -45,7 +45,7 @@ def make_pipeline(
     redshift_source=1.0,
     fix_source_in_detect=False,
     fix_lens_in_detect=False,
-    evidence_tolerance=5.0,
+    evidence_tolerance-=0.8,
     grid_size=2,
     parallel=False,
 ):
@@ -134,7 +134,7 @@ def make_pipeline(
             source=af.last.instance.galaxies.source,
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+        search=af.DynestyStatic(n_live_points=40, evidence_tolerance-=0.8),
         number_of_steps=grid_size,
     )
 

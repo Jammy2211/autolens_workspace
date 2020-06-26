@@ -143,16 +143,23 @@ def make_fit_generator(agg_obj):
     output = agg_obj.samples
     dataset = agg_obj.dataset
     mask = agg_obj.mask
-    meta_dataset = agg_obj.meta_dataset
+    settings = (
+        agg_obj.settings
+    )  # The PhaseSettingsImaging used in the 'phase_runner.py script.
 
     masked_imaging = al.MaskedImaging(
         imaging=dataset,
         mask=mask,
-        psf_shape_2d=meta_dataset.settings.psf_shape_2d,
-        pixel_scales_interp=meta_dataset.settings.pixel_scales_interp,
-        inversion_pixel_limit=meta_dataset.settings.inversion_pixel_limit,
-        inversion_uses_border=meta_dataset.settings.inversion_uses_border,
-        positions_threshold=meta_dataset.settings.positions_threshold,
+        grid_class=settings.grid_class,
+        grid_inversion_class=settings.grid_inversion_class,
+        fractional_accuracy=settings.fractional_accuracy,
+        sub_steps=settings.sub_steps,
+        pixel_scales_interp=settings.pixel_scales_interp,
+        psf_shape_2d=settings.psf_shape_2d,
+        inversion_pixel_limit=settings.inversion_pixel_limit,
+        inversion_uses_border=settings.inversion_uses_border,
+        inversion_stochastic=settings.inversion_stochastic,
+        positions_threshold=settings.positions_threshold,
     )
 
     tracer = al.Tracer.from_galaxies(
@@ -174,7 +181,7 @@ MaskedImaging is set up. The bad news is this requires a lot of lines of code, w
 
 If you are writing customized generator functions, the PyAutoLens aggregator module also provides convenience methods
 for setting up objects *within* a generator. Below, we make the MaskedImaging and Tracer using these methods, which
-perform the same functions as the generator above.
+perform the same functions as the generator above, including the PhaseImagingSettings.
 """
 
 # %%
@@ -245,7 +252,7 @@ for fit in fit_gen:
 
     plotter = aplt.Plotter(
         output=aplt.Output(
-            path=f"{workspace_path}//output/path/of/file/",
+            path=f"{workspace_path}/output/path/of/file/",
             filename="publication",
             format="png",
         )

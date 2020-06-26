@@ -15,6 +15,12 @@ This fit was performed using one _PhaseImaging_ object, and the first four tutor
 aggregator on the results of _Phase_'s (as opposed to _Pipeline_'s). However, the aggregator API is extremely similar
 across both and learning to use the aggregator with phases can be easily applied to the results of pipelines.
 
+__Samples__
+
+If you are familiar with the *Samples* object returned from a *PyAutoLens* model-fit (e.g. via a *Phase* or *Pipeline*)
+You will be familiar with most of the content in this script. Nevertheless, the script also describes how to use
+the aggregator, so will be useful for you too!
+
 __File Output__
 
 The results of this fit are in the 'autolens_workspace//output/aggregato' folder. First, take a look in this folder.
@@ -99,7 +105,7 @@ instances. These correspond to each fit of each phase to each of our 3 images.
 """
 
 # %%
-print("MultiNest Samples: \n")
+print("NestedSampler Samples: \n")
 print(samples_gen)
 print()
 print("Total Samples Objects = ", len(list(samples_gen)), "\n")
@@ -122,9 +128,9 @@ for samples in agg.values("samples"):
 
 
 print("Samples: \n")
-print(samples_gen)
+print(agg.values("samples"))
 print()
-print("Total Samples Objects = ", len(list(samples_gen)), "\n")
+print("Total Samples Objects = ", len(list(agg.values("samples"))), "\n")
 
 # %%
 """
@@ -169,7 +175,7 @@ As expected, this list retains 3 NestSamples objects as we filtered fo the same 
 """
 
 # %%
-print("Phase Name Filtered MultiNest Samples: \n")
+print("Phase Name Filtered NestedSampler Samples: \n")
 print(list(samples_gen))
 print()
 print("Total Samples Objects = ", len(list(agg_filter.values("samples"))), "\n")
@@ -183,7 +189,7 @@ If we filtered using an incorrect phase name we would get no results:
 phase_name = "phase__incorrect_name"
 agg_filter_incorrect = agg.filter(agg.phase == phase_name)
 samples_gen = agg_filter_incorrect.values("samples")
-print("Phase Name Filtered MultiNest Samples: \n")
+print("Phase Name Filtered NestedSampler Samples: \n")
 print(list(samples_gen))
 print()
 print("Total Samples Objects = ", len(list(agg_filter.values("samples"))), "\n")
@@ -198,14 +204,25 @@ We can use the outputs to create a list of the maximum log likelihood model of e
 ml_vector = [samps.max_log_likelihood_vector for samps in agg_filter.values("samples")]
 
 print("Max Log Likelihood Model Parameter Lists: \n")
-print(ml_vector, "\n")
+print(ml_vector, "\n\n")
 
 # %%
 """
 This provides us with lists of all model parameters. However, this isn't that much use - which values correspond to 
 which parameters?
 
-Its more useful to create the model instance of every fit.
+The list of parameter names are available as a property of the *Samples*, as are parameter labels which can be used 
+for labeling figures.
+"""
+
+# %%
+for samples in agg_filter.values("samples"):
+    print(samples.parameter_names)
+    print(samples.parameter_labels)
+
+# %%
+"""
+These lists will be used later for visualization, how it is often more useful to create the model instance of every fit.
 """
 
 # %%
@@ -260,7 +277,6 @@ print(mp_vector, "\n")
 print("Most probable Model Instances: \n")
 print(mp_instances, "\n")
 print(mp_instances[0].galaxies.lens.mass)
-print(mp_instances[0].galaxies.lens.shear)
 print()
 
 # %%
@@ -303,34 +319,36 @@ print(lv3_instances, "\n")
 We can compute the upper and lower errors on each parameter at a given sigma limit.
 
 Here, "ue3" signifies the upper error at 3 sigma. 
+
+( Need to fix bug, sigh).
 """
 
 # %%
-ue3_vectors = [
-    samps.error_vector_at_upper_sigma(sigma=3.0)
-    for samps in agg_filter.values("samples")
-]
-
-ue3_instances = [
-    samps.error_instance_at_upper_sigma(sigma=3.0)
-    for samps in agg_filter.values("samples")
-]
-
-le3_vectors = [
-    samps.error_vector_at_lower_sigma(sigma=3.0)
-    for samps in agg_filter.values("samples")
-]
-le3_instances = [
-    samps.error_instance_at_lower_sigma(sigma=3.0)
-    for samps in agg_filter.values("samples")
-]
-
-print("Errors Lists: \n")
-print(ue3_vectors, "\n")
-print(le3_vectors, "\n")
-print("Errors Instances: \n")
-print(ue3_instances, "\n")
-print(le3_instances, "\n")
+# ue3_vectors = [
+#     samps.error_vector_at_upper_sigma(sigma=3.0)
+#     for samps in agg_filter.values("samples")
+# ]
+#
+# ue3_instances = [
+#     samps.error_instance_at_upper_sigma(sigma=3.0)
+#     for samps in agg_filter.values("samples")
+# ]
+#
+# le3_vectors = [
+#     samps.error_vector_at_lower_sigma(sigma=3.0)
+#     for samps in agg_filter.values("samples")
+# ]
+# le3_instances = [
+#     samps.error_instance_at_lower_sigma(sigma=3.0)
+#     for samps in agg_filter.values("samples")
+# ]
+#
+# print("Errors Lists: \n")
+# print(ue3_vectors, "\n")
+# print(le3_vectors, "\n")
+# print("Errors Instances: \n")
+# print(ue3_instances, "\n")
+# print(le3_instances, "\n")
 
 # %%
 """
@@ -344,7 +362,7 @@ the evidences allows us to perform Bayesian model comparison!
 
 # %%
 print("Likelihoods: \n")
-print([samps.max_log_likelihood for samps in agg_filter.values("samples")])
+print([max(samps.log_likelihoods) for samps in agg_filter.values("samples")])
 print([samps.log_evidence for samps in agg_filter.values("samples")])
 
 # %%
@@ -357,3 +375,56 @@ quick inspection of all results.
 results = agg_filter.model_results
 print("Model Results Summary: \n")
 print(results, "\n")
+
+# %%
+"""
+The Probability Density Functions (PDF's) of the results can be plotted using libraries such as:
+
+    - GetDist: https://getdist.readthedocs.io/en/latest/
+    - corner.py: https://corner.readthedocs.io/en/latest/
+    
+Below, we show an example of how a plot is produced using GetDist.
+
+(In built visualization for PDF's and non-linear searches is a future feature of PyAutoFit / PyAutoLens, but for now
+you'll have to use the libraries yourself!).
+"""
+
+import getdist.plots as gdplot
+import matplotlib.pyplot as plt
+
+plotter = gdplot.get_subplot_plotter()
+
+for samples in agg.values("samples"):
+
+    plt.figure(figsize=(8, 8))
+    plotter.triangle_plot(
+        samples.getdist_samples,
+        filled=True,
+        legend_labels="result",
+        params=samples.parameter_names,
+        labels=samples.parameter_labels,
+        title_limit=1,
+        close_existing=True,
+    )
+    plt.show()
+
+# %%
+"""
+We can even plot the PDF of all 3 of our model-fits on one figure!
+"""
+
+for samples in agg.values("samples"):
+
+    parameter_names = samples.parameter_names
+    parameter_labels = samples.parameter_labels
+
+plotter.triangle_plot(
+    [samples.getdist_samples for samples in agg.values("samples")],
+    filled=True,
+    legend_labels=["run1", "run2", "run3"],
+    params=parameter_names,
+    labels=parameter_labels,
+    title_limit=1,
+    close_existing=True,
+)
+plt.show()
