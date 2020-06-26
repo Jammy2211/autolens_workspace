@@ -52,7 +52,7 @@ Phase 4:
 
 
 def make_pipeline(
-    slam, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
+    slam, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=5.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -101,7 +101,7 @@ def make_pipeline(
         galaxies=dict(lens=lens),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=40, evidence_tolerance=evidence_tolerance
+            n_live_points=75, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -152,7 +152,7 @@ def make_pipeline(
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75, evidence_tolerance=evidence_tolerance
+            n_live_points=100, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -196,7 +196,7 @@ def make_pipeline(
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75, evidence_tolerance=evidence_tolerance
+            n_live_points=100, evidence_tolerance=evidence_tolerance
         ),
     )
 
@@ -230,7 +230,7 @@ def make_pipeline(
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75, evidence_tolerance=evidence_tolerance
+            n_live_points=100, evidence_tolerance=evidence_tolerance
         ),
     )
 

@@ -60,7 +60,7 @@ def make_pipeline(setup, settings, folders=None):
             source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=100.0),
+        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
     )
 
     phase1.search.facc = 0.3

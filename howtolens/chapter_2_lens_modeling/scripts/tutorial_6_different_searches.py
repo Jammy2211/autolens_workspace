@@ -175,7 +175,7 @@ phase_fast = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(n_live_points=30, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=30, evidence_tolerance=5.0),
 )
 
 # %%

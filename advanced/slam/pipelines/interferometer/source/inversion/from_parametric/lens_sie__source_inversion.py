@@ -62,7 +62,7 @@ def make_pipeline(
     real_space_mask,
     redshift_lens=0.5,
     redshift_source=1.0,
-    evidence_tolerance=100.0,
+    evidence_tolerance=5.0,
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""

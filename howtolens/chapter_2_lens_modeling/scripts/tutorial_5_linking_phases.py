@@ -165,7 +165,7 @@ phase_1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 # %%
@@ -292,7 +292,7 @@ phase_2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 print(
@@ -336,7 +336,7 @@ phase_2_pass = al.PhaseImaging(
         lens=phase_1_result.model.galaxies.lens,
         source=phase_1_result.model.galaxies.source,
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 # phase_2_pass.run(dataset=imaging, mask=mask)
@@ -400,7 +400,7 @@ phase_2_pass = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2_pass_individual",
     settings=settings,
     galaxies=dict(lens=lens, source=phase_1_result.model.galaxies.source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 # phase_2_pass.run(dataset=imaging, mask=mask)

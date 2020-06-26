@@ -62,7 +62,7 @@ Notes: Lens mass varies, source inversion parameters fixed.
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=5.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -161,7 +161,7 @@ def make_pipeline(
         ),
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=75, evidence_tolerance=evidence_tolerance
+            n_live_points=100, evidence_tolerance=evidence_tolerance
         ),
     )
 

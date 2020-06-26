@@ -109,7 +109,7 @@ phase = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=80, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=80, evidence_tolerance=5.0),
 )
 
 # %%
@@ -165,7 +165,7 @@ phase_local_maxima = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=5, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=5, evidence_tolerance=5.0),
 )
 
 print(

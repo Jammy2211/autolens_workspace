@@ -45,7 +45,7 @@ def make_pipeline(
     redshift_source=1.0,
     fix_source_in_detect=False,
     fix_lens_in_detect=False,
-    evidence_tolerance=100.0,
+    evidence_tolerance=5.0,
     grid_size=2,
     parallel=False,
 ):

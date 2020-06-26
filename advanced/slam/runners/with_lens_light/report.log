@@ -2628,3 +2628,327 @@
 2020-06-25 09:05:38,178 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-25 09:05:38,179 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
 2020-06-25 09:07:08,943 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 11:10:23,120 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 11:10:31,596 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:10,566 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:10,566 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:11,080 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:11,081 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:11,246 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:54,099 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:54,100 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:32:59,876 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 11:34:28,519 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 11:34:34,625 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:22,744 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:22,774 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:25,160 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 20:07:45,297 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:45,298 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:49,208 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:49,209 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:50,205 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:50,207 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:51,014 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:51,023 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:51,883 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:07:51,884 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:08:02,619 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:08:02,626 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:08:05,247 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 20:08:15,433 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:19:00,055 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 20:32:37,117 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:32:37,118 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:32:37,582 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:32:37,583 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:33:17,847 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:33:17,848 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 20:35:04,393 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 21:00:03,526 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:00:03,527 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:00:04,004 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:00:04,005 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:01:01,170 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:01:01,170 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:05:17,155 - autofit.tools.pipeline - INFO - Running Phase phase_3__lens_bulge_disk_sie__source_fixed (Number 2)
+2020-06-25 21:27:37,745 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:27:37,745 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:27:38,194 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:27:38,194 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:28:37,927 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:28:37,927 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 21:36:48,614 - autofit.tools.pipeline - INFO - Running Phase phase_4__lens_bulge_disk_sie__source_sersic (Number 3)
+2020-06-25 22:19:05,149 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,150 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,309 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,310 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,405 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,406 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:05,716 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:19:11,470 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:11,470 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,067 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,068 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,560 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,561 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,938 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:13,941 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:14,325 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:14,326 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:20,685 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:20,688 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:21,731 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 22:19:27,447 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:27,448 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:29,395 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:29,396 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:29,815 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:29,816 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,436 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,439 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,718 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,721 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,923 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:30,924 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:38,183 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:38,186 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:39,907 - autofit.tools.pipeline - INFO - Running Phase phase_3__lens_bulge_disk_sie__source_fixed (Number 2)
+2020-06-25 22:19:46,437 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:46,437 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:48,704 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:48,705 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,146 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,146 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,710 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,713 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,942 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:49,945 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:50,231 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:50,232 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:57,727 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:19:57,730 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:01,002 - autofit.tools.pipeline - INFO - Running Phase phase_4__lens_bulge_disk_sie__source_sersic (Number 3)
+2020-06-25 22:20:09,732 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:48,943 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:48,943 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:49,088 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:49,089 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:49,247 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:49,248 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:49,785 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:20:56,542 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:56,543 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:58,210 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:58,211 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:58,699 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:58,700 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:59,074 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:59,078 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:59,575 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:20:59,576 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:06,377 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:06,380 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:07,662 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 22:21:14,652 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:14,652 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:17,586 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:17,587 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:24,996 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:24,997 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:25,101 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:25,102 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:25,161 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:25,162 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:25,654 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:21:32,208 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:32,209 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:33,775 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:33,775 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,242 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,243 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,598 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,601 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,990 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:34,991 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:41,296 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:41,299 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:42,336 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 22:21:48,538 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:48,539 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:50,525 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:50,525 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:50,942 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:50,943 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:51,578 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:51,581 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:51,857 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:51,860 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:52,056 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:21:52,056 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,759 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,759 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,868 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,869 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,926 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:31,927 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:32,417 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:22:39,386 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:39,386 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:40,956 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:40,957 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:41,424 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:22:41,425 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,306 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,307 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,352 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,353 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,390 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,391 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:29,708 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:23:35,481 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:35,482 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:37,044 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:37,045 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:37,506 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:37,507 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,748 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,749 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,789 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,789 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,826 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:54,827 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:23:55,141 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:24:01,621 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:01,622 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:03,219 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:03,220 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:03,690 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:03,690 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,901 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,903 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,943 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,943 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,981 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:20,982 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:21,268 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:24:27,028 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:27,029 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:28,571 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:28,572 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,030 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,031 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,367 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,370 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,744 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:29,744 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:35,634 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:35,637 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:36,674 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 22:24:42,196 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:42,197 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:44,141 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:44,142 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:44,549 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:44,549 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,151 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,154 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,425 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,428 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,621 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:24:45,622 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,115 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,116 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,218 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,219 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,252 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,252 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:15,527 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 22:25:21,301 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:21,302 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:22,855 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:22,856 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:23,325 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:23,326 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:23,649 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:23,652 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:24,027 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:24,028 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:30,239 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:30,242 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:31,265 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-25 22:25:37,076 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:37,077 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:39,070 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:39,070 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:39,506 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:39,507 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,130 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,133 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,409 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,413 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,610 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:40,611 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:47,705 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:47,708 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:49,369 - autofit.tools.pipeline - INFO - Running Phase phase_3__lens_bulge_disk_sie__source_fixed (Number 2)
+2020-06-25 22:25:56,136 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:56,137 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:58,395 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:58,396 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:58,835 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:58,836 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,401 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,405 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,629 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,632 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,910 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:25:59,911 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:26:07,278 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:26:07,281 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 22:26:09,767 - autofit.tools.pipeline - INFO - Running Phase phase_4__lens_bulge_disk_sie__source_sersic (Number 3)
+2020-06-25 22:26:16,896 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:03:26,836 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 23:03:33,426 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:18:04,548 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-25 23:18:11,453 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:40:16,686 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:40:16,687 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:40:17,399 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:40:17,400 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:40:17,591 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:41:01,027 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:41:01,028 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:41:07,973 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-25 23:42:22,246 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-26 08:49:37,122 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:37,131 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:37,182 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:37,187 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:37,790 - autofit.tools.pipeline - INFO - Running Phase phase_1__lens_bulge_disk (Number 0)
+2020-06-26 08:49:44,112 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:44,113 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:46,829 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:46,830 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:47,483 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:47,484 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:48,047 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:48,051 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:48,421 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:48,423 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:54,688 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:54,692 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:49:55,464 - autofit.tools.pipeline - INFO - Running Phase phase_2__lens_sie__source_sersic (Number 1)
+2020-06-26 08:50:01,129 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:50:01,131 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 08:50:01,154 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:06:45,933 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:06:45,935 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:06:47,183 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:06:47,185 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:06:47,814 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:07:16,006 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:07:42,831 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:07:42,833 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:07:50,419 - /home/jammy/PycharmProjects/PyAuto/PyAutoFit/autofit/mapper/link.py - INFO - Source already existed
+2020-06-26 09:21:40,976 - autofit.tools.pipeline - INFO - Running Phase phase_3__lens_bulge_disk_sie__source_fixed (Number 2)

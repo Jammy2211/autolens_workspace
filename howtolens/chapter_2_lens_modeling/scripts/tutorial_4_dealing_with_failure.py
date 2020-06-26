@@ -210,7 +210,7 @@ custom_prior_phase = al.PhaseImaging(
     phase_name="phase_t4_tuned_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=50, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
 )
 
 print(
@@ -298,7 +298,7 @@ light_traces_mass_phase = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 print(

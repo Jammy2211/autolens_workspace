@@ -187,7 +187,7 @@ phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     settings=settings,
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=100.0),
+    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
 # %%

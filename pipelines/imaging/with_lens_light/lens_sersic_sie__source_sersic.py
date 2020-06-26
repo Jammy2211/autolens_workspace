@@ -40,7 +40,7 @@ Notes: None
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=5.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -137,7 +137,7 @@ def make_pipeline(
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=75),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3)

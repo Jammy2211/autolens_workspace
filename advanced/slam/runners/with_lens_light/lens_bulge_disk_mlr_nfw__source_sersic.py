@@ -76,7 +76,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 settings = al.PhaseSettingsImaging(
     grid_class=al.Grid,
     grid_inversion_class=al.GridInterpolate,
-    positions_threshold=0.15,
+    positions_threshold=0.7,
     pixel_scales_interp=0.1,
     inversion_pixel_limit=1500,
 )

@@ -245,7 +245,7 @@ def make_pipeline(setup, settings, folders=None):
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=75),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     """The usual phase extension, which operates the same as the extension for phase 2."""
@@ -323,7 +323,7 @@ def make_pipeline(setup, settings, folders=None):
         ),
         hyper_image_sky=phase4.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase4.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=75),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
@@ -393,7 +393,7 @@ def make_pipeline(setup, settings, folders=None):
         ),
         hyper_image_sky=phase6.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase6.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=75),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase7 = phase7.extend_with_multiple_hyper_phases(

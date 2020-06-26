@@ -48,7 +48,7 @@ Phase 4:
 
 
 def make_pipeline(
-    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=100.0
+    setup, settings, redshift_lens=0.5, redshift_source=1.0, evidence_tolerance=5.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -200,7 +200,7 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=75),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)
