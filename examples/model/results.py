@@ -52,8 +52,10 @@ mask = al.Mask.circular(
 phase = al.PhaseImaging(
     phase_name="phase__lens_sie__source_sersic",
     folders=["examples", "beginner", dataset_name],
-    galaxies=dict(lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
-                  source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)),
+    galaxies=dict(
+        lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
+        source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+    ),
     settings=al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2),
     search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
 )
