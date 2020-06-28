@@ -17,7 +17,7 @@ across both and learning to use the aggregator with phases can be easily applied
 
 __Samples__
 
-If you are familiar with the *Samples* object returned from a *PyAutoLens* model-fit (e.g. via a *Phase* or *Pipeline*)
+If you are familiar with the  _Samples_  object returned from a *PyAutoLens* model-fit (e.g. via a *Phase* or *Pipeline*)
 You will be familiar with most of the content in this script. Nevertheless, the script also describes how to use
 the aggregator, so will be useful for you too!
 
@@ -112,7 +112,7 @@ print("Total Samples Objects = ", len(list(samples_gen)), "\n")
 
 # %%/
 """
-The Samples class contains all the parameter samples, which is a list of lists where:
+The _Samples_ class contains all the parameter samples, which is a list of lists where:
  
  - The outer list is the size of the total number of samples.
  - The inner list is the size of the number of free parameters in the fit.
@@ -134,7 +134,7 @@ print("Total Samples Objects = ", len(list(agg.values("samples"))), "\n")
 
 # %%
 """
-The Samples class contains the log likelihood, log prior, log posterior and weights of every sample, where:
+The _Samples_ class contains the log likelihood, log prior, log posterior and weights of every sample, where:
 
    - The log likelihood is the value evaluated from the likelihood function (e.g. -0.5 * chi_squared + the noise 
      normalization).
@@ -173,7 +173,7 @@ print(ml_vector, "\n\n")
 This provides us with lists of all model parameters. However, this isn't that much use - which values correspond to 
 which parameters?
 
-The list of parameter names are available as a property of the *Samples*, as are parameter labels which can be used 
+The list of parameter names are available as a property of the  _Samples_ , as are parameter labels which can be used 
 for labeling figures.
 """
 
@@ -188,9 +188,7 @@ These lists will be used later for visualization, how it is often more useful to
 """
 
 # %%
-ml_instances = [
-    samps.max_log_likelihood_instance for samps in agg.values("samples")
-]
+ml_instances = [samps.max_log_likelihood_instance for samps in agg.values("samples")]
 print("Maximum Log Likelihood Model Instances: \n")
 print(ml_instances, "\n")
 
@@ -323,7 +321,7 @@ the evidences allows us to perform Bayesian model comparison!
 """
 
 # %%
-print("Likelihoods: \n")
+print("Maximum Log Likelihoods and Log Evidences: \n")
 print([max(samps.log_likelihoods) for samps in agg.values("samples")])
 print([samps.log_evidence for samps in agg.values("samples")])
 
@@ -375,6 +373,7 @@ for samples in agg.values("samples"):
 We can even plot the PDF of all 3 of our model-fits on one figure!
 """
 
+# %%
 for samples in agg.values("samples"):
 
     parameter_names = samples.parameter_names

@@ -108,7 +108,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        elliptical_comps=al.convert.elliptical_comps_from(, elliptical_comps=(0.1, 0.1)),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,

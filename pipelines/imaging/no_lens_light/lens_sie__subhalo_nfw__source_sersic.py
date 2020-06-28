@@ -95,9 +95,7 @@ def make_pipeline(
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=50
-        ),
+        search=af.DynestyStatic(n_live_points=50),
     )
 
     """

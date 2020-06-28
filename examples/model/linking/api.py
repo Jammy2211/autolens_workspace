@@ -148,7 +148,7 @@ should run the script and model-fit first.
 search = af.DynestyStatic(
     n_live_points=50,
     evidence_tolerance=100.0,
-    prior_passer=af.PriorPasser(sigma=5.0, use_widths=True, use_errors=False)
+    prior_passer=af.PriorPasser(sigma=5.0, use_widths=True, use_errors=False),
 )
 
 # %%
@@ -329,7 +329,9 @@ We can customize how priors are passed from the results of a phase and non-linea
 a PriorPasser object:
 """
 
-search = af.DynestyStatic(prior_passer=af.PriorPasser(sigma=2.0, use_widths=False, use_errors=True))
+search = af.DynestyStatic(
+    prior_passer=af.PriorPasser(sigma=2.0, use_widths=False, use_errors=True)
+)
 
 # %%
 """

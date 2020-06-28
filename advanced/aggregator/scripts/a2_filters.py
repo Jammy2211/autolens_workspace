@@ -1,4 +1,3 @@
-
 # %%
 """
 __Aggregator 2: Filters__
@@ -62,7 +61,11 @@ If we filtered using an incorrect phase name we would get no results:
 phase_name = "phase__incorrect_name"
 agg_filter_incorrect = agg.filter(agg.phase == phase_name)
 print("Incorrect Phase Name Filtered NestedSampler Samples: \n")
-print("Total Samples Objects = ", len(list(agg_filter_incorrect.values("samples"))), "\n\n")
+print(
+    "Total Samples Objects = ",
+    len(list(agg_filter_incorrect.values("samples"))),
+    "\n\n",
+)
 
 # %%
 """
@@ -76,11 +79,11 @@ results. This is useful if you fit a samples of lenses where:
 The example below shows us using the contains filter to get the results of all 3 lenses. The contains method
 only requires that the string is in the path structure, thus we do not need to specify the full phase name.
 """
-agg_filter_contains = agg.filter(
-    agg.directory.contains("phase__"),
-)
+agg_filter_contains = agg.filter(agg.directory.contains("phase__"))
 print("Directory Contains Filtered NestedSampler Samples: \n")
-print("Total Samples Objects = ", len(list(agg_filter_contains.values("samples"))), "\n\n")
+print(
+    "Total Samples Objects = ", len(list(agg_filter_contains.values("samples"))), "\n\n"
+)
 
 # %%
 """
@@ -91,7 +94,9 @@ The example output in this tutorial did not use a pipeline, so filtering by pipe
 pipeline_name = "pipeline_name"
 agg_filter_pipeline = agg.filter(agg.pipeline == pipeline_name)
 print("Pipeline Name Filtered NestedSampler Samples: \n")
-print("Total Samples Objects = ", len(list(agg_filter_pipeline.values("samples"))), "\n\n")
+print(
+    "Total Samples Objects = ", len(list(agg_filter_pipeline.values("samples"))), "\n\n"
+)
 
 # %%
 """
@@ -107,4 +112,6 @@ agg_filter_multiple = agg.filter(
 )
 print("Multiple Filter NestedSampler Samples: \n")
 print()
-print("Total Samples Objects = ", len(list(agg_filter_multiple.values("samples"))), "\n\n")
+print(
+    "Total Samples Objects = ", len(list(agg_filter_multiple.values("samples"))), "\n\n"
+)

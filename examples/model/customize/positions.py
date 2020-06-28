@@ -206,5 +206,5 @@ aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 # %%
 """
-Checkout '/path/to/autolens_workspace/examples/modeling/results.py' for a full description of the result object.
+Checkout '/path/to/autolens_workspace/examples/model/results.py' for a full description of the result object.
 """

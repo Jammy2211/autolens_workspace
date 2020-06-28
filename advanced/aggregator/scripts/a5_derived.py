@@ -95,7 +95,9 @@ def axis_ratio_error_from_agg_obj(agg_obj):
 
         instance = samples.instance_from_sample_index(sample_index=sample_index)
 
-        axis_ratio = al.convert.axis_ratio_from(elliptical_comps=instance.galaxies.mass.elliptical_comps)
+        axis_ratio = al.convert.axis_ratio_from(
+            elliptical_comps=instance.galaxies.mass.elliptical_comps
+        )
 
         axis_ratios.append(axis_ratio)
 
@@ -111,6 +113,7 @@ print(axis_ratio)
 print("Axis Ratio Error\n")
 print(axis_ratio_error())
 stop
+
 
 def axis_ratio_error(agg_obj):
 
@@ -134,6 +137,7 @@ def axis_ratio_error(agg_obj):
     return weighted_mean_and_standard_deviation(
         values=sample_masses, weights=samples.weights
     )
+
 
 # %%
 """

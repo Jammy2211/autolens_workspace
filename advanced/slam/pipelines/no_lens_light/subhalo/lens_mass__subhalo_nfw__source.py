@@ -95,7 +95,10 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=slam.source.inversion_evidence_tolerance),
+        search=af.DynestyStatic(
+            n_live_points=50,
+            evidence_tolerance=slam.source.inversion_evidence_tolerance,
+        ),
         number_of_steps=grid_size,
     )
 

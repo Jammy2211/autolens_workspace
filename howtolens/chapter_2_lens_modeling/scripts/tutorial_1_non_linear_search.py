@@ -218,7 +218,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# results = phase.run(dataset=imaging, mask=mask)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -243,7 +243,8 @@ you'll see:
     5) The 'output.log' file, where all Python interpreter output is directed.
 
 The best-fit solution (i.e. the maximum log likelihood) is stored in the 'results', which we can plot as per usual 
-(you must wait for the non-linear search to finish before you can get the 'results' variable).
+(you must wait for the non-linear search to finish before you can get the 'results' variable). We'll discuss the 
+'results' returned by a phase in detail at the end of the chapter.
 """
 
 # %%

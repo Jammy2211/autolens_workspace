@@ -57,11 +57,7 @@ Phase 4:
 
 
 def make_pipeline(
-    slam,
-    settings,
-    real_space_mask,
-    redshift_lens=0.5,
-    redshift_source=1.0,
+    slam, settings, real_space_mask, redshift_lens=0.5, redshift_source=1.0
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
@@ -106,7 +102,10 @@ def make_pipeline(
         ),
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20, evidence_tolerance=slam.source.inversion_evidence_tolerance),
+        search=af.DynestyStatic(
+            n_live_points=20,
+            evidence_tolerance=slam.source.inversion_evidence_tolerance,
+        ),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -136,7 +135,10 @@ def make_pipeline(
         ),
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=slam.source.inversion_evidence_tolerance),
+        search=af.DynestyStatic(
+            n_live_points=50,
+            evidence_tolerance=slam.source.inversion_evidence_tolerance,
+        ),
     )
 
     phase2 = phase2.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -165,7 +167,10 @@ def make_pipeline(
         ),
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=40, evidence_tolerance=slam.source.inversion_evidence_tolerance),
+        search=af.DynestyStatic(
+            n_live_points=40,
+            evidence_tolerance=slam.source.inversion_evidence_tolerance,
+        ),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(include_inversion=False)
@@ -195,7 +200,10 @@ def make_pipeline(
         ),
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50, evidence_tolerance=slam.source.inversion_evidence_tolerance),
+        search=af.DynestyStatic(
+            n_live_points=50,
+            evidence_tolerance=slam.source.inversion_evidence_tolerance,
+        ),
     )
 
     phase4 = phase4.extend_with_multiple_hyper_phases(include_inversion=True)

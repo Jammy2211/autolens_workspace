@@ -129,7 +129,10 @@ Light and Mass pipelines, model comparison can be performed in a consistent fash
 
 # %%
 hyper = al.slam.HyperSetup(
-    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False, hyper_fixed_after_source=True
+    hyper_galaxies=True,
+    hyper_image_sky=False,
+    hyper_background_noise=False,
+    hyper_fixed_after_source=True,
 )
 
 # %%
@@ -156,7 +159,9 @@ _Inversion_. If an external shear is omitted from the Source pipeline it can be 
 
 # %%
 source = al.slam.SourceSetup(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness, no_shear=False
+    pixelization=al.pix.VoronoiBrightnessImage,
+    regularization=al.reg.AdaptiveBrightness,
+    no_shear=False,
 )
 
 # %%
@@ -183,7 +188,9 @@ The _LightSetup_ and imported light pipelines determine the lens light model use
 
 # %%
 light = al.slam.LightSetup(
-    align_bulge_disk_centre=True, align_bulge_disk_elliptical_comps=False, disk_as_sersic=False
+    align_bulge_disk_centre=True,
+    align_bulge_disk_elliptical_comps=False,
+    disk_as_sersic=False,
 )
 
 # %%
