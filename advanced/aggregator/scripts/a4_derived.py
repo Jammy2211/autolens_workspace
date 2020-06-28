@@ -5,8 +5,8 @@ __Aggregator 4: Derived__
 This tutorial describes how to estimate derived quantities from a model-fit, where a derived quantity is one which may
 be used for the analysis and interpreation of results but is not explicitly a free parameter in the non-linear search.
 
-An example is the total luminosity of the lens or source galaxy, or total mass of the lens galaxy. These quantities are
-estimated by a PyAutoLens model-fit, but are estimated from a combination of lens model parameters.
+An example is the total luminosity of the lens or source galaxy, or total mass of the lens galaxy. These quantities
+are estimated by a PyAutoLens model-fit, but are estimated from a combination of lens model parameters.
 """
 
 from autoconf import conf
