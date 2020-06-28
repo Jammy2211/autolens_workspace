@@ -108,8 +108,8 @@ grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.1)
 
 for tracer in tracer_gen:
 
-    aplt.Tracer.convergence(tracer=tracer, grid=grid)
-    aplt.Tracer.potential(tracer=tracer, grid=grid)
+   aplt.Tracer.convergence(tracer=tracer, grid=grid)
+   aplt.Tracer.potential(tracer=tracer, grid=grid)
 
 # %%
 """
@@ -180,7 +180,9 @@ mp_instances = [samps.median_pdf_instance for samps in agg_filter.values("sample
 mp_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
 ]
-mp_axis_ratios = [instance.galaxies.lens.mass.axis_ratio for instance in mp_instances]
+mp_elliptical_comps = [instance.galaxies.lens.mass.elliptical_comps for instance in mp_instances]
+
+mp_axis_ratios = [al.convert.axis_ratio_from(elliptical_comps=ell) for ell in mp_elliptical_comps]
 
 print(mp_einstein_radii)
 print(mp_axis_ratios)
@@ -209,8 +211,11 @@ ue3_einstein_radii = [
 le3_einstein_radii = [
     instance.galaxies.lens.mass.einstein_radius for instance in le3_instances
 ]
-ue3_axis_ratios = [instance.galaxies.lens.mass.axis_ratio for instance in ue3_instances]
-le3_axis_ratios = [instance.galaxies.lens.mass.axis_ratio for instance in le3_instances]
+ue3_elliptical_comps = [instance.galaxies.lens.mass.elliptical_comps for instance in ue3_instances]
+le3_elliptical_comps = [instance.galaxies.lens.mass.elliptical_comps for instance in le3_instances]
+
+ue3_axis_ratios = [al.convert.axis_ratio_from(elliptical_comps=ell) for ell in ue3_elliptical_comps]
+le3_axis_ratios = [al.convert.axis_ratio_from(elliptical_comps=ell) for ell in le3_elliptical_comps]
 
 plt.errorbar(
     x=mp_einstein_radii,

@@ -159,49 +159,11 @@ for samples in agg.values("samples"):
 
 # %%
 """
-Lets suppose we had the results of other fits in the folder 'output/aggregator', and we *only* wanted fits which used
-the phase defined in 'phase_runner.py'. To do this, we can use the aggregator's filter tool to filter by the 
-phase_name, which in 'phase_runner.py' was 'phase__aggregator'.
-"""
-
-# %%
-phase_name = "phase__aggregator"
-agg_filter = agg.filter(agg.phase == phase_name)
-samples_gen = agg_filter.values("samples")
-
-# %%
-"""
-As expected, this list retains 3 NestSamples objects as we filtered fo the same results as above when we didn't filter.
-"""
-
-# %%
-print("Phase Name Filtered NestedSampler Samples: \n")
-print(list(samples_gen))
-print()
-print("Total Samples Objects = ", len(list(agg_filter.values("samples"))), "\n")
-
-# %%
-"""
-If we filtered using an incorrect phase name we would get no results:
-"""
-
-# %%
-phase_name = "phase__incorrect_name"
-agg_filter_incorrect = agg.filter(agg.phase == phase_name)
-samples_gen = agg_filter_incorrect.values("samples")
-print("Phase Name Filtered NestedSampler Samples: \n")
-print(list(samples_gen))
-print()
-print("Total Samples Objects = ", len(list(agg_filter.values("samples"))), "\n")
-
-
-# %%
-"""
 We can use the outputs to create a list of the maximum log likelihood model of each fit to our three images.
 """
 
 # %%
-ml_vector = [samps.max_log_likelihood_vector for samps in agg_filter.values("samples")]
+ml_vector = [samps.max_log_likelihood_vector for samps in agg.values("samples")]
 
 print("Max Log Likelihood Model Parameter Lists: \n")
 print(ml_vector, "\n\n")
@@ -216,7 +178,7 @@ for labeling figures.
 """
 
 # %%
-for samples in agg_filter.values("samples"):
+for samples in agg.values("samples"):
     print(samples.parameter_names)
     print(samples.parameter_labels)
 
@@ -227,7 +189,7 @@ These lists will be used later for visualization, how it is often more useful to
 
 # %%
 ml_instances = [
-    samps.max_log_likelihood_instance for samps in agg_filter.values("samples")
+    samps.max_log_likelihood_instance for samps in agg.values("samples")
 ]
 print("Maximum Log Likelihood Model Instances: \n")
 print(ml_instances, "\n")
@@ -269,8 +231,8 @@ parameter in 1D and taking the median of this PDF.
 """
 
 # %%
-mp_vector = [samps.median_pdf_vector for samps in agg_filter.values("samples")]
-mp_instances = [samps.median_pdf_instance for samps in agg_filter.values("samples")]
+mp_vector = [samps.median_pdf_vector for samps in agg.values("samples")]
+mp_instances = [samps.median_pdf_instance for samps in agg.values("samples")]
 
 print("Median PDF Model Parameter Lists: \n")
 print(mp_vector, "\n")
@@ -292,19 +254,19 @@ Here, I use "uv3" to signify this is an upper value at 3 sigma confidence,, and 
 
 # %%
 uv3_vectors = [
-    samps.vector_at_upper_sigma(sigma=3.0) for samps in agg_filter.values("samples")
+    samps.vector_at_upper_sigma(sigma=3.0) for samps in agg.values("samples")
 ]
 
 uv3_instances = [
-    samps.instance_at_upper_sigma(sigma=3.0) for samps in agg_filter.values("samples")
+    samps.instance_at_upper_sigma(sigma=3.0) for samps in agg.values("samples")
 ]
 
 lv3_vectors = [
-    samps.vector_at_lower_sigma(sigma=3.0) for samps in agg_filter.values("samples")
+    samps.vector_at_lower_sigma(sigma=3.0) for samps in agg.values("samples")
 ]
 
 lv3_instances = [
-    samps.instance_at_lower_sigma(sigma=3.0) for samps in agg_filter.values("samples")
+    samps.instance_at_lower_sigma(sigma=3.0) for samps in agg.values("samples")
 ]
 
 print("Errors Lists: \n")
@@ -326,21 +288,21 @@ Here, "ue3" signifies the upper error at 3 sigma.
 # %%
 # ue3_vectors = [
 #     samps.error_vector_at_upper_sigma(sigma=3.0)
-#     for samps in agg_filter.values("samples")
+#     for samps in agg.values("samples")
 # ]
 #
 # ue3_instances = [
 #     samps.error_instance_at_upper_sigma(sigma=3.0)
-#     for samps in agg_filter.values("samples")
+#     for samps in agg.values("samples")
 # ]
 #
 # le3_vectors = [
 #     samps.error_vector_at_lower_sigma(sigma=3.0)
-#     for samps in agg_filter.values("samples")
+#     for samps in agg.values("samples")
 # ]
 # le3_instances = [
 #     samps.error_instance_at_lower_sigma(sigma=3.0)
-#     for samps in agg_filter.values("samples")
+#     for samps in agg.values("samples")
 # ]
 #
 # print("Errors Lists: \n")
@@ -362,8 +324,8 @@ the evidences allows us to perform Bayesian model comparison!
 
 # %%
 print("Likelihoods: \n")
-print([max(samps.log_likelihoods) for samps in agg_filter.values("samples")])
-print([samps.log_evidence for samps in agg_filter.values("samples")])
+print([max(samps.log_likelihoods) for samps in agg.values("samples")])
+print([samps.log_evidence for samps in agg.values("samples")])
 
 # %%
 """
@@ -372,7 +334,7 @@ quick inspection of all results.
 """
 
 # %%
-results = agg_filter.model_results
+results = agg.model_results
 print("Model Results Summary: \n")
 print(results, "\n")
 
