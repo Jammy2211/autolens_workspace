@@ -247,16 +247,25 @@ aplt.Plane.plane_image(
 
 # %%
 """
-For _MassProfile_s, you can also plot their 'critical curve' and 'caustics', which for those unfamiliar with lensing are 
-defined as follows:
+For _MassProfile_s, you can also plot their 'critical curve' and 'caustics', which for those unfamiliar with lensing 
+are defined as follows:
 
     **Critical Curve**:
+    
         Lines of infinite magnification where the _MassProfile_ perfectly 'focuses' light rays. Source light near a 
         critical curve appears much brighter than its true luminosity!
 
     **Caustic**: 
-        Given the deflection angles of the _MassProfile_ at the critical curves, the caustic is where the critical curve 
-        'maps' too.
+    
+        Given the deflection angles of the _MassProfile_ at the critical curves, the caustic is where the 
+        critical curve 'maps' too.
+        
+You may be surprised that the inner critical curve does not appear symmetric, but instead is a non-circular jagged 
+shape. As a result of this, the correspnding caustic in the source plane also appears jaggedy. 
+ 
+This is a numerical issue with the way that PyAutoLens computes the critical curves and caustics - without this issue
+both would appear perfect symmetric and smooth! Implementing a more robust calculation of these quantities is on the
+PyAutoLens featre list, but for now you'll just have to accept this aspect of the visualization is sub-optimal!
 """
 
 # %%

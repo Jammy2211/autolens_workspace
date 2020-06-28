@@ -68,15 +68,15 @@ for dataset_name in [
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.Hyper(
+    hyper = al.slam.HyperSetup(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.Source(
+    source = al.slam.SourceSetup(
         pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
     )
 
-    mass = al.slam.Mass(no_shear=False)
+    mass = al.slam.MassSetup(no_shear=False)
 
     setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
 
@@ -147,15 +147,15 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.Hyper(
+    hyper = al.slam.HyperSetup(
         hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.Source(
+    source = al.slam.SourceSetup(
         pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
     )
 
-    mass = al.slam.Mass(no_shear=False)
+    mass = al.slam.MassSetup(no_shear=False)
 
     setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
 
@@ -226,17 +226,17 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.Hyper(
+    hyper = al.slam.HyperSetup(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.Source(
+    source = al.slam.SourceSetup(
         pixelization=al.pix.VoronoiMagnification,
         regularization=al.reg.Constant,
         no_shear=True,
     )
 
-    mass = al.slam.Mass(no_shear=True)
+    mass = al.slam.MassSetup(no_shear=True)
 
     setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
 
@@ -307,17 +307,17 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.Hyper(
+    hyper = al.slam.HyperSetup(
         hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.Source(
+    source = al.slam.SourceSetup(
         pixelization=al.pix.VoronoiMagnification,
         regularization=al.reg.Constant,
         no_shear=True,
     )
 
-    mass = al.slam.Mass(no_shear=True)
+    mass = al.slam.MassSetup(no_shear=True)
 
     setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
 

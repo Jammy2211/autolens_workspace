@@ -140,9 +140,9 @@ mask = al.Mask.circular(
 
 # I will assume that you are familiar with pipeline setup from the normal runner scripts.
 
-hyper = al.slam.Hyper(with_shear=True)
+hyper = al.slam.HyperSetup(with_shear=True)
 
-source = al.slam.Source(
+source = al.slam.SourceSetup(
     pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
 )
 

@@ -111,13 +111,13 @@ settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
 """
 __Pipeline_Setup_And_Tagging__:
 
-For this pipeline the pipeline setup customizes:
+For this runner the _PipelineSetup_ customizes:
 
     - The Pixelization used by the inversion of this pipeline.
     - The Regularization scheme used by of this pipeline.
     - If there is an external shear in the mass model or not.
 
-The pipeline setup 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
+The _PipelineSetup_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
 
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go

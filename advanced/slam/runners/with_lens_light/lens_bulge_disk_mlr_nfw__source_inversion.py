@@ -9,17 +9,21 @@ pipeline. For a complete description of SLaM, checkout ? and ?.
 
 __THIS RUNNER__
 
-Using two source pipelines and a mass pipeline we will fit a lens model where: 
+Using two source pipelines, a light pipeline and a mass pipeline we will fit a lens model where: 
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - The source galaxy is fitted with an *Inversion*.
+    - The lens galaxy's _LightProfile_'s are fitted with an EllipticalSersic + EllipticalExponential, representing
+      a bulge + disk model.
+    - The lens galaxy's stellar _MassProfile_ is fitted using the EllipticalSersic + EllipticalExponential of the 
+      _LightProfile_, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
+    - The lens galaxy's nfw _MassProfile_ is fitted with a SphericalNFW.
+    - The source galaxy's _LightProfile_ is fitted with an *Inversion*.
 
 We'll use the SLaM pipelines:
 
-    'slam/no_lens_light/source/parametric/lens_sie__source_sersic.py'.
-    'slam/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'.
-    'slam/no_lens_light/mass/power_law/lens_power_law__source.py'.
+    'slam/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
+    'slam/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
+    'slam/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
+    'slam/with_lens_light/mass/light_dark/lens_light_mlr_nfw__source.py'.
 
 Check them out now for a detailed description of the analysis!
 """
@@ -43,17 +47,13 @@ conf.instance = conf.Config(
 
 # %%
 """ AUTOLENS + DATA SETUP """
-
-# %%
 import autolens as al
 import autolens.plot as aplt
 
 # %%
 """Specify the dataset label and name, which we use to determine the path we load the data from."""
-
-# %%
 dataset_label = "imaging"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "lens_bulge_disk_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
 # %%
@@ -76,6 +76,7 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
+    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask.circular(
@@ -86,12 +87,11 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 settings = al.PhaseSettingsImaging(
     grid_class=al.Grid,
-    sub_size=2,
     grid_inversion_class=al.GridInterpolate,
+    positions_threshold=0.7,
     pixel_scales_interp=0.1,
     inversion_pixel_limit=1500,
 )
-
 
 # %%
 """
@@ -129,7 +129,7 @@ Light and Mass pipelines, model comparison can be performed in a consistent fash
 
 # %%
 hyper = al.slam.HyperSetup(
-    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
+    hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False, hyper_fixed_after_source=True
 )
 
 # %%
@@ -154,8 +154,36 @@ The _SourceSetup_ determines the source model used in the _Light_ and _Mass_ pip
 _Inversion_. If an external shear is omitted from the Source pipeline it can be introduced in the Mass pipeline.
 """
 
+# %%
 source = al.slam.SourceSetup(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness, no_shear=False
+)
+
+# %%
+"""
+__LightSetup__
+
+The Light pipeline fits the model for the lens galaxy's light. A full description of all options can be found ? and ?.
+
+The model used to represent the lens galaxy's light is determined by the pipeline that is imported and made later in 
+the script. For this runner a bulge-disk pipeline is used, which models the lens galaxy's light using two components,
+an _EllipticalSersic_ profile for the bulge and a second light profile for the disk.
+ 
+For this runner the _LightSetup_ customizes:
+
+    - The alignment of the centre and elliptical components of the bulge and disk.
+    - If the disk is modeled as an _EllipticalExponential_ or _EllipticalSersic_.
+
+Certain _LightSetup_ inputs corrsepond to certain pipelines, for example the 'aligh_bulge_disk_centre'
+input is only relevent for the 'bulge_disk' pipelines, whereas the 'number_of_gaussians' input is only relevent
+for the 'gaussians' pipelines.
+
+The _LightSetup_ and imported light pipelines determine the lens light model used in _Mass_ pipelines.
+"""
+
+# %%
+light = al.slam.LightSetup(
+    align_bulge_disk_centre=True, align_bulge_disk_elliptical_comps=False, disk_as_sersic=False
 )
 
 # %%
@@ -165,18 +193,21 @@ __MassSetup__
 The Mass pipeline fits the model for the lens galaxy's mass. A full description of all options can be found ? and ?.
 
 The model used to represent the lens galaxy's mass is determined by the pipeline that is imported and made later in 
-the script. For this runner an sie is used, which models the lens galaxy's mass as an _EllipticalPowerLaw_.
+the script. For this runner a light_dark pipeline is used, which models the lens galaxy's mass as a stellar mass 
+distribution and dark matter _SphericalNFWMCRLudlow_. The stellar mass uses the light profile from the Light pipeline.
 
 For this runner the _MassSetup_ customizes:
 
     - If there is an external shear in the mass model or not.
+    - If the centre of the _SphericalNFWMCRLudlow_ profile is aligned with the centre of the _EllipticalSersic_ profile
+      representing the lens galaxy's bulge.  
 
 Certain _MassSetup_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
 input is only relevent for Mass pipelines that follow 'bulge_disk' Light pipelines and which use a 'light_dark'
 pipeline.
 """
 
-mass = al.slam.MassSetup(no_shear=False)
+mass = al.slam.MassSetup(no_shear=False, align_bulge_dark_centre=True)
 
 # %%
 """
@@ -189,45 +220,56 @@ based on the input Setup values. It also handles pipeline tagging and path struc
 """
 
 slam = al.slam.SLaM(
-    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_label]
+    hyper=hyper,
+    source=source,
+    light=light,
+    mass=mass,
+    folders=["slam", dataset_label, dataset_name],
 )
 
 # %%
-"""
-__PIPELINE CREATION__
-
-We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
-# %%
-"""
+"""We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!"""
 
 # %%
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.parametric import (
-    lens_sie__source_sersic,
+from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.parametric import (
+    lens_bulge_disk_sie__source_sersic,
 )
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.inversion.from_parametric import (
-    lens_sie__source_inversion,
+from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.inversion.from_parametric import (
+    lens_light_sie__source_inversion,
 )
 
-source__parametric = lens_sie__source_sersic.make_pipeline(slam=slam, settings=settings)
-
-source__inversion = lens_sie__source_inversion.make_pipeline(
+source__parametric = lens_bulge_disk_sie__source_sersic.make_pipeline(
     slam=slam, settings=settings
 )
 
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.power_law import (
-    lens_power_law__source,
+source__inversion = lens_light_sie__source_inversion.make_pipeline(
+    slam=slam, settings=settings
 )
 
-mass__power_law = lens_power_law__source.make_pipeline(slam=slam, settings=settings)
+from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk import (
+    lens_bulge_disk_sie__source,
+)
+
+light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
+    slam=slam, settings=settings
+)
+
+
+from autolens_workspace.advanced.slam.pipelines.with_lens_light.mass.light_dark import (
+    lens_light_mlr_nfw__source,
+)
+
+mass__mlr_nfw = lens_light_mlr_nfw__source.make_pipeline(slam=slam, settings=settings)
 
 # %%
 """
 __PIPELINE COMPOSITION AND RUN__
 
-We finally add the pipelines above together, meaning they will run back-to-back, passing information from earlier 
+We now add the pipelines together, meaning they will run back-to-back, passing information from earlier 
 phases to later phases.
 """
 
-pipeline = source__parametric + source__inversion + mass__power_law
+# %%
+pipeline = source__parametric + source__inversion + light__bulge_disk + mass__mlr_nfw
 
 pipeline.run(dataset=imaging, mask=mask)
