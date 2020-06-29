@@ -28,7 +28,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -65,7 +65,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -128,7 +128,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -165,7 +165,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -241,7 +241,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -291,7 +291,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -367,7 +367,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -417,7 +417,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -506,7 +506,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -569,7 +569,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -671,7 +671,7 @@
             "upper_limit": 8.0,
             "width_modifier": {
                 "type": "Relative",
-                "value": 0.05
+                "value": 0.15
             },
             "gaussian_limits": {
                 "lower": 0.0,

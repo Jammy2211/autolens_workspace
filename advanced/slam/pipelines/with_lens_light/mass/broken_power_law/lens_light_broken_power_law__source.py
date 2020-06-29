@@ -68,9 +68,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
 
     mass.centre = af.last[-1].model.galaxies.lens.mass.centre
     mass.elliptical_comps = af.last[-1].model.galaxies.lens.mass.elliptical_comps
-    mass.einstein_radius = (
-        af.last[-1].model_absolute(a=0.3).galaxies.lens.mass.einstein_radius
-    )
+    mass.einstein_radius = af.last[-1].model.galaxies.lens.mass.einstein_radius
 
     """SLaM: Use the source and lens light models from the previous *Source* and *Light* pipelines."""
 

@@ -109,7 +109,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     if slam.mass.align_bulge_dark_centre:
         lens.dark.centre = lens.bulge.centre
     else:
-        lens.dark.centre = af.last.model_absolute(a=0.05).galaxies.lens.bulge.centre
+        lens.dark.centre = af.last.model.galaxies.lens.bulge.centre
 
     lens.dark.mass_at_200 = af.LogUniformPrior(lower_limit=1e9, upper_limit=1e14)
 

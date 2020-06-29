@@ -118,7 +118,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     if slam.source.align_light_mass_centre:
         mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
     else:
-        mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
+        mass.centre = phase1.result.model.galaxies.lens.bulge.centre
 
     """SLaM: Align the mass model centre with the input slam lens_mass_centre, if input."""
 

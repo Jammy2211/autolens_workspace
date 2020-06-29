@@ -32880,3 +32880,4 @@
 2020-06-23 13:55:45,290 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
 2020-06-23 13:55:45,503 - root - WARNING - auto bandwidth for galaxies_source_light_intensity_value very small or failed (h=0.000443524853237779,N_eff=36.37513861483823). Using fallback (h=0.00018560709587765628)
 2020-06-23 13:55:45,503 - root - WARNING - fine_bins not large enough to well sample smoothing scale - galaxies_source_light_intensity_value
+2020-06-28 19:28:14,443 - autofit.tools.pipeline - INFO - Running Phase phase_1__source_sersic (Number 0)

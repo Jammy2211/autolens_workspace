@@ -170,9 +170,7 @@ def make_pipeline(setup, settings, redshift_lens=0.5, redshift_source=1.0):
 
     mass.centre = phase3.result.model.galaxies.lens.mass.centre
     mass.elliptical_comps = phase3.result.model.galaxies.lens.mass.elliptical_comps
-    mass.einstein_radius = phase3.result.model_absolute(
-        a=0.3
-    ).galaxies.lens.mass.einstein_radius
+    mass.einstein_radius = phase3.result.model.galaxies.lens.mass.einstein_radius
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__lens_power_law__source_inversion",

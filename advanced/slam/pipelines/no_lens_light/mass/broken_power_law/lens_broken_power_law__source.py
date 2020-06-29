@@ -59,9 +59,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
 
     mass.centre = af.last.model.galaxies.lens.mass.centre
     mass.elliptical_comps = af.last.model.galaxies.lens.mass.elliptical_comps
-    mass.einstein_radius = af.last.model_absolute(
-        a=0.3
-    ).galaxies.lens.mass.einstein_radius
+    mass.einstein_radius = af.last.model.galaxies.lens.mass.einstein_radius
 
     """
     SLaM: Setup the source model, which uses a variable parametric profile or fixed inversion model.

@@ -105,9 +105,7 @@ def make_pipeline(
     subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
 
     subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
-    subhalo.mass.centre = phase1.result.model_absolute(
-        a=0.5
-    ).galaxies.subhalo.mass.centre
+    subhalo.mass.centre = phase1.result.model.galaxies.subhalo.mass.centre
 
     source = slam.source_from_previous_pipeline_model_or_instance(
         source_as_model=True, index=-1
