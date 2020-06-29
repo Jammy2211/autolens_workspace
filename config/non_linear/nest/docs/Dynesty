@@ -67,7 +67,7 @@
         The number of iterations performed between every Dynesty back-up (via dumping the Dynesty instance as a
         pickle).
 [prior_passer]
-sigma=2.0
+sigma=3.0
 use_errors=True
 use_widths=True
 

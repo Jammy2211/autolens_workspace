@@ -39,7 +39,7 @@
         The threshold value by which if the change in auto_correlations is below sampling will be terminated early.
 
 [prior_passer]
-sigma=2.0
+sigma=3.0
 use_errors=True
 use_widths=True
 
