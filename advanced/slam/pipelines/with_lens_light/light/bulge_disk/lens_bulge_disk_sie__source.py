@@ -106,7 +106,9 @@ def make_pipeline(slam, settings, redshift_lens=0.5):
     if slam.light.align_bulge_disk_elliptical_comps:
         lens.bulge.elliptical_comps = lens.disk.elliptical_comps
 
-    source = slam.source_from_previous_pipeline()
+    """SLaM: Use the Source pipeline source as an instance (whether its parametric or an Inversion)."""
+
+    source = slam.source_from_source_pipeline_for_light_pipeline()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_bulge_disk_sie__source",

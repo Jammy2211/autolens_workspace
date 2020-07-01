@@ -89,6 +89,8 @@ settings = al.PhaseSettingsImaging(
     grid_class=al.Grid,
     grid_inversion_class=al.GridInterpolate,
     positions_threshold=0.7,
+    auto_positions_factor=3.0,
+    auto_positions_minimum_threshold=0.2,
     pixel_scales_interp=0.1,
     inversion_pixel_limit=1500,
 )
@@ -131,7 +133,7 @@ Light and Mass pipelines, model comparison can be performed in a consistent fash
 hyper = al.slam.HyperSetup(
     hyper_galaxies=True,
     hyper_image_sky=False,
-    hyper_background_noise=False,
+    hyper_background_noise=True,
     hyper_fixed_after_source=True,
 )
 

@@ -72,10 +72,10 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
 
     """SLaM: Use the source and lens light models from the previous *Source* and *Light* pipelines."""
 
-    lens = slam.lens_from_previous_pipeline(
+    lens = slam.lens_from_light_pipeline_for_mass_pipeline(
         redshift_lens=redshift_lens, mass=mass, shear=shear
     )
-    source = slam.source_from_previous_pipeline()
+    source = slam.source_from_source_pipeline_for_mass_pipeline()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_broken_power_law__source",

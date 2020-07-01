@@ -57,7 +57,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     SLaM: Setup the source model, which uses a variable parametric profile or fixed inversion model.
     """
 
-    source = slam.source_from_previous_pipeline()
+    source = slam.source_from_source_pipeline_for_mass_pipeline()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_sie__source",

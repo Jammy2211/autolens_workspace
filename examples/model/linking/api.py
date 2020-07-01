@@ -225,7 +225,7 @@ Note how the 'lens' and 'source' passed to this phase were set up above using th
 # %%
 phase_2 = al.PhaseImaging(
     phase_name="phase_2",
-    folders=["examples", "linking", dataset_name],
+    folders=["examples", "linking", "api"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,

@@ -15,9 +15,9 @@ both to perform the model-fit.
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_.
+    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_.
+    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.  
 """
 
 # %%
@@ -55,7 +55,7 @@ import autolens as al
 import autolens.plot as aplt
 
 dataset_label = "imaging"
-dataset_name = "lens_sersic_sie__source_sersic"
+dataset_name = "lens_bulge_disk_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -97,16 +97,20 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters).
+    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_ (13 parameters).
+    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
+    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
 
-The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.
+The number of free parameters and therefore the dimensionality of non-linear parameter space is N=27.    
 """
 
 # %%
 lens = al.GalaxyModel(
-    redshift=0.5, light=al.lp.EllipticalSersic, mass=al.mp.EllipticalIsothermal
+    redshift=0.5,
+    bulge=al.lp.EllipticalSersic,
+    disk=al.lp.EllipticalExponential,
+    mass=al.mp.EllipticalIsothermal,
+    shear=al.mp.ExternalShear,
 )
 source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 
@@ -137,7 +141,6 @@ The lens model is fitted to the data using a *NonLinearSearch*, which we specify
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
     - 100 live points.
-    - A sampling efficiency of 30%.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
@@ -145,7 +148,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0)
+search = af.DynestyStatic(n_live_points=100)
 
 # %%
 """

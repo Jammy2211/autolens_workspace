@@ -201,13 +201,13 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     """
 
     phase4 = al.PhaseImaging(
-        phase_name="phase_4__lens_bulge_disk_sie__source_sersic",
+        phase_name="phase_4__lens_fixed_sie__source_sersic",
         folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=redshift_lens,
-                bulge=phase3.result.model.galaxies.lens.bulge,
-                disk=phase3.result.model.galaxies.lens.disk,
+                bulge=phase3.result.instance.galaxies.lens.bulge,
+                disk=phase3.result.instance.galaxies.lens.disk,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,

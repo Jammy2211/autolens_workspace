@@ -86,7 +86,7 @@ def make_pipeline(
     SLaM: Setup the source model, which uses a variable parametric profile or fixed inversion model.
     """
 
-    source = slam.source_from_previous_pipeline()
+    source = slam.source_from_source_pipeline_for_mass_pipeline()
 
     subhalo.mass.redshift_source = source.redshift
 

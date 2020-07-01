@@ -14,14 +14,11 @@ both to perform the model-fit.
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
+    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
     - The lens galaxy's stellar _MassProfile_ is fitted with the EllipticalSersic of the 
-      _LightProfile_, where it is converted to a stellar mass distribution via a constant mass-to-light ratio 
-      (1 parameter, as it uses the 7 parameters of the _LightProfile_).
-    - The lens galaxy's nfw _MassProfile_ is fitted with a _SphericalNFW_ (4 parameters).
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
-
-The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.    
+      _LightProfile_, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
+    - The lens galaxy's nfw _MassProfile_ is fitted with a _SphericalNFW_.
+    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.   
 """
 
 # %%
@@ -153,7 +150,6 @@ The lens model is fitted to the data using a *NonLinearSearch*, which we specify
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
     - 50 live points.
-    - A sampling efficiency of 60%.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
