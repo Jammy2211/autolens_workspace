@@ -1,7 +1,0 @@
-phase=phase__lens_sie__source_sersic
-phase_tag=settings__grid_sub_2
-pipeline=
-pipeline_tag=
-dataset_name=datasetname=phase__lens_sie__source_sersic
-tag=settings__grid_sub_2
-non_linear_search=dynestystatic
