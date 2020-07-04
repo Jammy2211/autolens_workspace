@@ -20,4 +20,7 @@ rm __init__.ipynb
 
 export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
 
+cp -r $CHAPTER_PATH/dataset $PYAUTO_PATH/PyAutoLens/docs/tutorials/chapter_1_introduction/
+cp $CHAPTER_PATH/*ipynb $PYAUTO_PATH/PyAutoLens/docs/tutorials/chapter_1_introduction/
+
 cd $HOWTOLENS_PATH/generate

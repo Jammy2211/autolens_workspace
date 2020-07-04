@@ -1,6 +1,7 @@
 # %%
 """
-__Pipeline__
+Tutorial 8: Pipeline
+====================
 
 To illustrate lens modeling using an _Inversion_ and _Pipeline_, we'll go back to the complex source model-fit that we
 performed in tutorial 3 of chapter 3. This time, as you've probably guessed, we'll fit the complex source using an

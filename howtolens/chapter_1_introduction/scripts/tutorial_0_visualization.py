@@ -1,6 +1,7 @@
 # %%
 """
-__Visualization__
+Tutorial 0: Visualization
+=========================
 
 In this tutorial, we'll cover visualization in PyAutoLens and make sure images display properly on your computer.
 

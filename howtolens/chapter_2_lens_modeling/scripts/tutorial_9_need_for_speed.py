@@ -1,6 +1,7 @@
 # %%
 """
-__Need For Speed__
+Tutorial 9: Need For Speed
+==========================
 
 We can now model strong lenses. We can balance complexity and realism to ensure that we infer a good lens model. And
 we can do this to make the analysis run faster. However, we always need to be wary of run-time. If we don't craft our

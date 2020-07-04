@@ -1,6 +1,7 @@
 # %%
 """
-__Pipeline__
+Tutorial 6: Hyper Pipeline
+==========================
 
 To end, lets illustrate the use of hyper-mode in a pipeline.
 

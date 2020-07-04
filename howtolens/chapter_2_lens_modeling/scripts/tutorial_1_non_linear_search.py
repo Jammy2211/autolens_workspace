@@ -1,6 +1,7 @@
 # %%
 """
-__Non-linear Search__
+Tutorial 1: Non-linear Search
+=============================
 
 In this example, we're going to find a lens model that provides a good fit to an image, without assuming any knowledge
 of what the 'correct' lens model is.
@@ -218,7 +219,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+# results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

@@ -21,4 +21,6 @@ rm __init__.ipynb
 
 export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
 
+cp $CHAPTER_PATH/*ipynb $PYAUTO_PATH/PyAutoLens/docs/tutorials/chapter_2_lens_modeling/
+
 cd $HOWTOLENS_PATH/generate

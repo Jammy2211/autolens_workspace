@@ -21,4 +21,6 @@ rm __init__.ipynb
 
 export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
 
+cp $CHAPTER_PATH/*ipynb $PYAUTO_PATH/PyAutoLens/docs/tutorials/chapter_5_hyper_mode/
+
 cd $HOWTOLENS_PATH/generate

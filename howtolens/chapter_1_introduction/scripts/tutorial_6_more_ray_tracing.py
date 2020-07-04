@@ -1,6 +1,7 @@
 # %%
 """
-__More Ray Tracing__
+Tutorial 6: More Ray Tracing
+============================
 
 In this example, we'll reinforce what we learnt about ray-tracing in the last tutorial and introduce the following
 new concepts:

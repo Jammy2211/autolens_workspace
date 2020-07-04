@@ -1,6 +1,7 @@
 # %%
 """
-__Noise Map Scaling 2__
+Tutorial 5: Noise Map Scaling 2
+===============================
 
 Noise-map scaling is important when our mass model lead to an inaccurate source reconstruction . However, it serves an
 even more important use, when another component of our lens model doesn't fit the data well. Can you think what it is?

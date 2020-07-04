@@ -1,6 +1,7 @@
 # %%
 """
-___Inversions__
+Tutorial 3: Inversions
+======================
 
 We've covered _Mapper_'s, which, if I haven't emphasised it enough yet, map things. Now, we're going to look at how we
 can use these _Mapper_'s (which map things) to reconstruct the source galaxy - I hope you're excited!

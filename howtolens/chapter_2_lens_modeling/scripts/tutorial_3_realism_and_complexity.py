@@ -1,6 +1,7 @@
 # %%
 """
-__Realism and Complexity__
+Tutorial 3: Realism and Complexity
+==================================
 
 Up to now, we've fitted some fairly crude and unrealistic lens models. For example, we've modeled the lens galaxy's
 mass as a sphere. Given most lens galaxies are 'elliptical's we should probably model their mass as elliptical! We've

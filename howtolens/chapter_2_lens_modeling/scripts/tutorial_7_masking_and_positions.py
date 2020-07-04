@@ -1,6 +1,7 @@
 # %%
 """
-__Masking and Positions__
+Tutorial 7: Masking and Positions
+=================================
 
 We've learnt nearly all the tools we need to model strong lenses, so I'm now going to quickly cover how you should
 choose your mask. I'll also show you another neat trick to improve the speed and accuracy of your non-linear search.
@@ -139,7 +140,7 @@ source galaxy.
 
 # %%
 """
-We can also manually specify a set of image-pixels which correspond to the multiple images of the source-galaxy(s). 
+We can also manually specify a set of image-pixels correspondin to the multiple images of the source-galaxy(s). 
 During the analysis, PyAutoLens will first check that these pixels trace within a specified arc-second threshold of 
 one another (which is controlled by the 'position_threshold' parameter input into a phase). This provides two benefits:
 

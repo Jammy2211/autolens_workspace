@@ -2,7 +2,8 @@
 
 # %%
 """
-__Pipeline 1__
+Tutorial 1: Lens and Source
+===========================
 
 As discussed in chapter 2, an effective strategy for modeling strong lenses is to break the model-fitting procedure
 down into a series of phases, linking the results of the phases to guide the non-linear search as to where to

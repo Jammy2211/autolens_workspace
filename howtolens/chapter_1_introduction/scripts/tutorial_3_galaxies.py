@@ -1,6 +1,7 @@
 # %%
 """
-___Galaxy_'s__
+Tutorial 3: Galaxies
+====================
 
 In this example, we'll use 'mass_profiles' and 'light_profiles' modules introduced previously, along with the
 'galaxy' module to create _Galaxy_ objects in PyAutoLens. We'll see that:

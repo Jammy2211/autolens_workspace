@@ -1,6 +1,7 @@
 # %%
 """
-__Results__
+Tutorial 8: Results
+===================
 
 Once a phase has completed running, it results a 'Result' object, which in the previous tutorials we used to plot
 the maximum log likelihood fit of the modoel-fits. Lets take a more detailed look at what else the results contains.
@@ -66,7 +67,7 @@ phase = al.PhaseImaging(
     search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
 )
 
-result = phase.run(dataset=imaging, mask=mask)
+# result = phase.run(dataset=imaging, mask=mask)
 
 # %%
 """

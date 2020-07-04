@@ -1,6 +1,7 @@
 # %%
 """
-__Lens Modeling__
+Tutorial 6: Lens Modeling
+=========================
 
 When modeling complex source's with parametric profiles, we quickly entered a regime where our non-linear search was
 faced with a parameter space of dimensionality N=30+ parameters. This made the model-fitting inefficient, and very

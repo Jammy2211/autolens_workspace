@@ -1,6 +1,7 @@
 # %%
 """
-__Ray Tracing__
+Tutorial 5: Ray Tracing
+=======================
 
 In the last tutorial, our use of _Plane_'s was a bit clunky. We manually had to input _Grid_'s to trace them, and keep
 track of which _Grid_'s were the image-plane's and which were the source planes. It was easy to make mistakes!

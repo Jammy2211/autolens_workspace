@@ -1,6 +1,7 @@
 # %%
 """
-__Borders__
+Tutorial 5: Borders
+===================
 
 In the previous tutorial, we told our _Inversion_ to use a border. Here, we'll discuss what this border does.
 """

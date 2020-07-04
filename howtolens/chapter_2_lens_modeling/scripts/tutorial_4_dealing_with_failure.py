@@ -1,5 +1,8 @@
 # %%
 """
+Tutorial 4: Dealing With Failure
+================================
+
 In the last tutorial we showed how our non-linear search can potentially fail, and infer a local maxima solution.
 In this tutorial, we're going to learn how to stop this and infer the globally maximal lens model.
 
@@ -307,7 +310,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
+# light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

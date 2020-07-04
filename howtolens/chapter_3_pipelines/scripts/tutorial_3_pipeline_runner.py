@@ -1,6 +1,7 @@
 # %%
 """
-__Pipeline 3__
+Tutorial 3: Complex Source
+==========================
 
 Up to now, we've not paid much attention to the source-galaxy's morphology. We've assumed its a single-component
 exponential profile, which is a fairly crude assumption. A quick look at any image of a real galaxy reveals a

@@ -1,6 +1,7 @@
 # %%
 """
-__Noise-Map Scaling 1__
+Tutorial 4: Noise-Map Scaling 1
+===============================
 
 In tutorial 1, we discussed how when our _Inversion_ didn't fit a compact source well we had skewed and undesirable
 chi-squared distribution. A small subset of the lensed source's brightest pixels were fitted poorly, contributing

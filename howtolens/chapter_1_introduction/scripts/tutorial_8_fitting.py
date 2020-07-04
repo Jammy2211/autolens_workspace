@@ -1,6 +1,7 @@
 # %%
 """
-__Fitting__
+Tutorial 8: Fitting
+===================
 
 In this example, we'll fit the _Imaging_ data we simulated in the previous exercise. We'll do this using model images
 generated via a _Tracer_, and by comparing to the simulated image we'll get diagnostics about the quality of the fit.

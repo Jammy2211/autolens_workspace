@@ -1,6 +1,7 @@
 # %%
 """
-__Pixelizations__
+Tutorial 1: Pixelizations
+=========================
 
 To begin chapter 4, we'll begin by learning about _Pixelization_'s, which we apply to a source-plane to reconstruct a
 source-galaxy's light.

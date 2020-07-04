@@ -1,6 +1,7 @@
 # %%
 """
-__Bayesian Regularization__
+Tutorial 4: Bayesian Regularization
+===================================
 
 So, we can use an _Inversion_ to reconstruct an image. Furthermore, this reconstruction provides the maximum log
 likelihood solution. And, when we inspect the fit, we see residuals indicative of a good fit.

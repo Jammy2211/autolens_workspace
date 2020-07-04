@@ -59,7 +59,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
 
     """For pipeline tagging we set the source and lens light types."""
     slam.set_source_type(source_type="sersic")
-    slam.set_light_type(light_type="")
+    slam.set_light_type(light_type="bulge_disk")
 
     """
     This pipeline is tagged according to whether:

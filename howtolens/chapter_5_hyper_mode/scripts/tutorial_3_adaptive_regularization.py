@@ -1,6 +1,7 @@
 # %%
 """
-__Adaptive Regularization__
+Tutorial 3: Adaptive Regularization
+===================================
 
 In tutorial 1, we considered why our _Constant_ _Regularization_scheme was sub-optimal. Diffferent regions of the
 source demand different levels of regularization, motivating a _Regularization_scheme which adapts to the reconstructed

@@ -1,6 +1,7 @@
 # %%
 """
-__Profiles__
+Tutorial 2: Profiles
+====================
 
 In this example, we'll create a _Grid_ of Cartesian (y,x) coordinates and pass it to the 'light_profiles'  module to
 create images on this _Grid_ and the 'mass_profiles' module to create deflection-angle maps on this grid.

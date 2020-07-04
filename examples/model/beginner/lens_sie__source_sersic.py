@@ -137,7 +137,6 @@ The lens model is fitted to the data using a *NonLinearSearch*, which we specify
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
     - 50 live points.
-    - A sampling efficiency of 60%.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
@@ -145,7 +144,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0)
+search = af.DynestyStatic(n_live_points=50, sample="rwalk", facc=0.25)
 
 # %%
 """

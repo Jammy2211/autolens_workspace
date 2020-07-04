@@ -1,6 +1,7 @@
 # %%
 """
-__Linking Phases__
+Tutorial 5: Linking Phases
+==========================
 
 So, we've learnt that if our parameter space is too complex, our non-linear search might fail to find the global
 maximum solution. However, we also learnt how to ensure this doesn't happen, by:

@@ -1,6 +1,7 @@
 # %%
 """
-__Adaptive Pixelization__
+Tutorial 7: Adaptive Pixelization
+=================================
 
 In this tutorial we'll use a new _Pixelization_, called the VoronoiMagnification _Pixelization_. This pixelization
 doesn't use a uniform _Grid_ of rectangular pixels, but instead uses an irregular 'Voronoi' pixels. So, why do we

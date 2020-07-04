@@ -1,6 +1,7 @@
 # %%
 """
-___Grid_'s__
+Tutorial 1: Grids
+=================
 
 In this example, we'll create _Grid_'s of Cartesian (y,x) coordinates, representing the arc-second coordinate _Grid_ 
 of an observed data-set (e.g. imaging).

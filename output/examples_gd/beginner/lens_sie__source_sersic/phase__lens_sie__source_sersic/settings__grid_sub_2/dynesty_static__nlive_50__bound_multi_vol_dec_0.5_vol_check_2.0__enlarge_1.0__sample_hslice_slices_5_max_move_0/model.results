@@ -1,0 +1,63 @@
+Bayesian Evidence                                                                         -87228.75440557
+Maximum Likelihood                                                                        -87209.57450170
+
+Maximum Log Likelihood Model:
+
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  -0.111
+                centre_1                                                                  -0.036
+            elliptical_comps
+                elliptical_comps_0                                                        0.087
+                elliptical_comps_1                                                        -0.044
+            einstein_radius                                                               1.544
+    source
+        light
+            centre
+                centre_0                                                                  0.024
+                centre_1                                                                  0.173
+            elliptical_comps
+                elliptical_comps_0                                                        -0.430
+                elliptical_comps_1                                                        0.220
+            intensity                                                                     0.055
+            effective_radius                                                              3.029
+            sersic_index                                                                  3.967
+
+ WARNING: The samples have not converged enough to compute a PDF and model errors. 
+ The model below over estimates errors. 
+
+
+
+Median PDF model (1.0 sigma limits):
+
+galaxies
+    lens
+        mass
+            centre
+                centre_0                                                                  -0.111 (-0.425, -0.039)
+                centre_1                                                                  -0.036 (-0.444, 0.015)
+            elliptical_comps
+                elliptical_comps_0                                                        0.087 (-0.052, 0.524)
+                elliptical_comps_1                                                        -0.044 (-0.239, 0.210)
+            einstein_radius                                                               1.544 (1.435, 1.932)
+    source
+        light
+            centre
+                centre_0                                                                  0.024 (-0.098, 0.206)
+                centre_1                                                                  0.173 (-0.019, 0.406)
+            elliptical_comps
+                elliptical_comps_0                                                        -0.430 (-0.562, 0.430)
+                elliptical_comps_1                                                        0.220 (0.003, 0.560)
+            intensity                                                                     0.055 (0.009, 0.068)
+            effective_radius                                                              3.029 (3.029, 11.750)
+            sersic_index                                                                  3.967 (2.744, 5.074)
+
+instances
+
+galaxies
+    lens
+        redshift                                                                          0.5
+    source
+        redshift                                                                          1.0

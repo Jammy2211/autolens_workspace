@@ -1,6 +1,7 @@
 # %%
 """
-__Imaging DATA__
+Tutorial 7: Data
+================
 
 In this example, we'll use the 'imaging' module to simulate _Imaging_ of a strong lens made using a _Tracer_. By
 simulate, we mean that it will appear as if we had observed it using a real telescope, with this example making an

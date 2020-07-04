@@ -1,6 +1,7 @@
 # %%
 """
-__Fit Problems__
+Tutorial 1: Fit Problems
+========================
 
 To begin, make sure you have read the 'introduction' file carefully, as a clear understanding of how the Bayesian
 log_evidence works is key to understanding this chapter!

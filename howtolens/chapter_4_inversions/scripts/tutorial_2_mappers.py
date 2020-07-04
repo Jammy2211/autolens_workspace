@@ -1,6 +1,7 @@
 # %%
 """
-__Mappers__
+Tutorial 2: Mappers
+===================
 
 In the previous example, we made a _Mapper_ from a rectangular _Pixelization_. However, it wasn't clear what a _Mapper_
 was actually mapping. Infact, it didn't do much mapping at all! Therefore, in this tutorial, we'll cover mapping.

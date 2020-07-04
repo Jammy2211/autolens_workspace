@@ -1,6 +1,7 @@
 # %%
 """
-__Brightness Adaption__
+Tutorial 2: Brightness Adaption
+===============================
 
 In the previous tutorial we motivated a need to adapt our _Pixelization_to the source's morphology, such that source
 pixels congregates in the source's brightest regions regardless of where it is located in the source-plane. This

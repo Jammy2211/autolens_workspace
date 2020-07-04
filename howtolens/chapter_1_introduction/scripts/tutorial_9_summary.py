@@ -1,6 +1,7 @@
 # %%
 """
-__Summary__
+Tutorial 9: Summary
+===================
 
 In this chapter, you've learnt how create and fit strong lenses with PyAutoLens. In particular, you've learnt:
 

@@ -2,7 +2,8 @@
 
 # %%
 """
-__Pipeline 1__
+Tutorial 2: Two Lens Galaxies
+=============================
 
 Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can
 consist of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to

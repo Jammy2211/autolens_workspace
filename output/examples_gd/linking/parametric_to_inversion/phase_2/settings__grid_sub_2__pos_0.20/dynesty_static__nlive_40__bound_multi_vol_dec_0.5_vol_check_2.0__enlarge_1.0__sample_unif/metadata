@@ -1,0 +1,7 @@
+phase=phase_2
+phase_tag=settings__grid_sub_2__pos_0.20
+pipeline=
+pipeline_tag=
+dataset_name=datasetname=phase_2
+tag=settings__grid_sub_2__pos_0.20
+non_linear_search=dynestystatic

@@ -116,25 +116,16 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     lens.dark.redshift_object = redshift_lens
     lens.dark.redshift_source = redshift_source
 
+    source = slam.source_from_source_pipeline_for_mass_pipeline()
+
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_light_mlr_nfw__source__fixed_lens_light",
         folders=folders,
-        galaxies=dict(
-            lens=lens,
-            source=al.GalaxyModel(
-                redshift=redshift_source,
-                pixelization=af.last.hyper_combined.instance.galaxies.source.pixelization,
-                regularization=af.last.hyper_combined.instance.galaxies.source.regularization,
-                hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
-            ),
-        ),
+        galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=30,
-            evidence_tolerance=slam.source.inversion_evidence_tolerance,
-        ),
+        search=af.DynestyStatic(n_live_points=30),
     )
 
     """
@@ -143,7 +134,7 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
     """
 
     phase2 = al.PhaseImaging(
-        phase_name="phase_2__lens_light_mlr_nfw__source_inversion",
+        phase_name="phase_2__lens_light_mlr_nfw__source",
         folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
@@ -154,20 +145,12 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
                 shear=phase1.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
             ),
-            source=al.GalaxyModel(
-                redshift=redshift_source,
-                pixelization=phase1.result.instance.galaxies.source.pixelization,
-                regularization=phase1.result.instance.galaxies.source.regularization,
-                hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
-            ),
+            source=phase1.result.model.galaxies.source,
         ),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=100,
-            evidence_tolerance=slam.source.inversion_evidence_tolerance,
-        ),
+        search=af.DynestyStatic(n_live_points=100),
     )
 
     if not slam.hyper.hyper_fixed_after_source:

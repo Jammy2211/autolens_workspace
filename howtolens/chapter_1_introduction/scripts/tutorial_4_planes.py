@@ -1,6 +1,7 @@
 # %%
 """
-__Planes__
+Tutorial 4: Planes
+==================
 
 We've learnt how to make galaxy objects out of _LightProfile_'s and _MassProfile_s. Now, we'll use these galaxies to
 make a strong-gravitational lens.
