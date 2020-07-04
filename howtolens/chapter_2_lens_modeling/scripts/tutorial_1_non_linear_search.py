@@ -219,7 +219,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# results = phase.run(dataset=imaging, mask=mask)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

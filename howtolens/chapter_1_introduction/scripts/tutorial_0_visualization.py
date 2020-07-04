@@ -21,7 +21,8 @@ First you need to change the path below to the chapter 1 directory so we can loa
 """
 
 # %%
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction/"
+import os
+chapter_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 # %%
 """
