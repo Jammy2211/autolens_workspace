@@ -58,7 +58,7 @@ import autolens.plot as aplt
 
 # %%
 dataset_label = "imaging"
-dataset_name = "lens_sie__subhalo_nfw__source_sersic__low_res"
+dataset_name = "lens_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.1
 
 # %%
@@ -73,7 +73,7 @@ dataset_path = af.util.create_path(
 )
 
 # %%
-"""Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
 
 # %%
 imaging = al.Imaging.from_fits(

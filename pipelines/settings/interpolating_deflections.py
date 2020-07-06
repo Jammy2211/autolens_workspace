@@ -3,7 +3,7 @@ import autolens as al
 
 """
 In this pipeline, we'll demonstrate deflection angle interpolation - which computes the deflection angles of a mass
-profile on a coarse 'interpolation grid' and interpolates these values to the sub-grid. For _MassProfile_s that require
+profile on a coarse 'interpolation grid' and interpolates these values to the sub-grid. For _MassProfile_'s that require
 computationally expensive numerical integration, this reduces the number of integrations necessary from millions to
 thousands, giving speed-ups in the run times of over x100!
 

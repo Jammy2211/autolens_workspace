@@ -28,28 +28,23 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to the chapter 1 directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use new strong lensing data, where:
 
-    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
@@ -110,7 +105,7 @@ phase = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=80, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=80),
 )
 
 # %%
@@ -125,7 +120,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# results = phase.run(dataset=imaging, mask=mask)
+results = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -166,7 +161,7 @@ phase_local_maxima = al.PhaseImaging(
         ),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=5, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=5),
 )
 
 print(
@@ -175,7 +170,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# results_local_maxima = phase_local_maxima.run(dataset=imaging, mask=mask)
+results_local_maxima = phase_local_maxima.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

@@ -71,7 +71,7 @@ As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this 
 
 # %%
 dataset_label = "imaging"
-dataset_name = "lens_power_law__source_sersic"
+dataset_name = "lens_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -145,7 +145,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 """
 
 # %%
-phase_1 = al.PhaseImaging(
+phase1 = al.PhaseImaging(
     phase_name="phase_1",
     folders=["examples", "linking", "sie_to_power_law"],
     settings=settings,
@@ -153,7 +153,7 @@ phase_1 = al.PhaseImaging(
     search=search,
 )
 
-phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+phase1_result = phase1.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -179,13 +179,13 @@ to retain its default _UniformPrior_ which has a lower_limit=1.5 and upper_limit
 
 mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
-mass.centre = phase_1.result.model.galaxies.lens.mass.centre
-mass.elliptical_comps = phase_1.result.model.galaxies.lens.mass.elliptical_comps
-mass.einstein_radius = phase_1.result.model.galaxies.lens.mass.einstein_radius
+mass.centre = phase1_result.model.galaxies.lens.mass.centre
+mass.elliptical_comps = phase1_result.model.galaxies.lens.mass.elliptical_comps
+mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 lens = al.GalaxyModel(redshift=0.5, mass=mass)
 
-source = al.GalaxyModel(redshift=1.0, light=phase_1.result.model.galaxies.source.light)
+source = al.GalaxyModel(redshift=1.0, light=phase1_result.model.galaxies.source.light)
 
 # %%
 """
@@ -195,7 +195,7 @@ In phase 2, we use the nested sampling algorithm _Dynesty_ again.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=40)
+search = af.DynestyDynamic(n_live_points=50, sample="slice")
 
 # %%
 """
@@ -212,7 +212,7 @@ Note how the 'lens' passed to this phase was set up above using the results of p
 """
 
 # %%
-phase_2 = al.PhaseImaging(
+phase2 = al.PhaseImaging(
     phase_name="phase_2",
     folders=["examples", "linking", "sie_to_power_law"],
     settings=settings,
@@ -220,7 +220,7 @@ phase_2 = al.PhaseImaging(
     search=search,
 )
 
-phase_2.run(dataset=imaging, mask=mask)
+phase2.run(dataset=imaging, mask=mask)
 
 # %%
 """

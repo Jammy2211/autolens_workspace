@@ -18,23 +18,18 @@ fit the lens galaxy's light. Lets take a look.
 
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -208,7 +203,7 @@ aplt.Array(
 # %%
 """
 The contribution maps decomposes the image into its different components. Next, we  use each contribution map to 
-scale different regions of the noise map. From the fit above it was clear that both the lens and source required the 
+scale different regions of the noise-map. From the fit above it was clear that both the lens and source required the 
 noise to be scaled, but their different chi-squared values ( > 150 and ~ 30) means they require different levels of 
 noise-scaling. Lets see how much our fit improves and Bayesian log evidence increases.
 """
@@ -233,8 +228,8 @@ print("Evidence using hyper-galaxy hyper variances = ", fit.log_evidence)
 """
 Great, and with that, we've covered hyper galaxies. You might be wondering, what happens if there are multiple lens 
 galaxies? or multiple source galaxies? Well, as you'd expect, PyAutoLens will make each a hyper-galaxy and 
-therefore scale the noise map of that individual galaxy in the image. This is what we want, as different parts of 
-the image require different levels of noise map scaling.
+therefore scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of 
+the image require different levels of noise-map scaling.
 
 Finally, I want to quickly mention two more ways that we change our data during th fitting process. One scales the 
 background noise and one scales the image's background sky. To do this, we use the 'hyper_data' module in PyAutoLens.
@@ -256,7 +251,7 @@ therefore increasing or decreasing the background sky level in the image .This m
 inaccurate background sky subtraction in our data reduction during PyAutoLens model fitting.
 
 We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the 
-'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise map.
+'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise-map.
 """
 
 # %%

@@ -16,23 +16,18 @@ cover now.
 
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -190,12 +185,12 @@ print(high_regularization_fit.log_likelihood_with_regularization)
 If we used the log likelihood we will always choose a coefficient of 0! We need a different goodness-of-fit measure. 
 For this, we invoke the 'Bayesian Evidence', which quantifies the goodness of the fit as follows:
 
-    - First, it requires that the residuals of the fit are consistent with Gaussian noise (which is the noise expected 
+ - First, it requires that the residuals of the fit are consistent with Gaussian noise (which is the noise expected 
       in the _Imaging_). If this Gaussian pattern is not visible in the residuals, the noise must have been over-fitted. 
       Thus, the Bayesian log evidence decreases. Obviously, if the image is poorly fitted, the residuals don't appear 
       Gaussian either, but the poor fit will lead to a decrease in Bayesian log evidence decreases all the same!
 
-    - This leaves us with a large number of solutions which all fit the data equally well (e.g., to the noise level). 
+ - This leaves us with a large number of solutions which all fit the data equally well (e.g., to the noise level). 
       To determine the best-fit from these solutions the Bayesian log evidence quantifies the complexity of each 
       solution's source reconstruction. If the _Inversion_ requires lots of pixels and a low level of _Regularization_
       to achieve a good fit, the Bayesian log evidence decreases. It penalizes solutions which are complex, which, in 
@@ -230,7 +225,7 @@ that best-fit the image *including* the penalty term due to comparing neighborin
 However, determining the regularization_coefficient that maximizes the Bayesian log evidence remains a non-linear 
 problem and this becomes part of our non-linear search. The Bayesian log evidence also depends on the source resolution 
 which means the pixel-grid resolution may also be part of our non-linear search. Nevertheless, this is only 3 
-parameters - there were 30+ when using _LightProfile_s to represent the source!
+parameters - there were 30+ when using _LightProfile_'s to represent the source!
 
 Here are a few questions for you to think about.
 

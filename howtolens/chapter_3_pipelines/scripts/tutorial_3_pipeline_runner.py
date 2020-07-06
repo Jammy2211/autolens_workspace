@@ -17,26 +17,16 @@ regime of 30-40+ parameters in our non-linear search. Even with a pipeline, that
 # %%
 """ AUTOFIT + CONFIG SETUP """
 
+# %%
 from autoconf import conf
-import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-Setup the path to the workspace, using by filling in your path below.
-"""
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
-# %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
-
-# %%
-"""
-Use this path to explicitly set the config path and output path.
-"""
-
-# %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
@@ -49,9 +39,9 @@ import autolens.plot as aplt
 """
 We'll use new strong lensing data, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
 """
 
 # %%
@@ -74,6 +64,7 @@ We need to choose our mask for the analysis. Given the lens light is present in 
 of its light in the central regions of the image, so lets use a circular mask.
 """
 
+# %%
 mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
@@ -108,7 +99,7 @@ __Pipeline_Setup_And_Tagging__:
 
 For this pipeline the pipeline setup customizes:
 
-    - If there is an external shear in the mass model or not.
+ - If there is an external shear in the mass model or not.
 
 The pipeline setup 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.

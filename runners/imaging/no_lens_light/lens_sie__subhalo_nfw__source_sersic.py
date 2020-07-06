@@ -71,7 +71,7 @@ dataset_path = af.util.create_path(
 )
 
 # %%
-"""Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
 
 # %%
 imaging = al.Imaging.from_fits(

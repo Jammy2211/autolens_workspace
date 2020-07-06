@@ -3,7 +3,7 @@ import autolens as al
 
 """
 So, how does hyper-mode work in pipelines? There are a lot more things we have to do now; pass hyper-galaxy-images
-between phases, use different _Pixelization_'s and _Regularization_schemes, and decide what parts of the noise map we do
+between phases, use different _Pixelization_'s and _Regularization_schemes, and decide what parts of the noise-map we do
 and don't want to scale.
 
 ##HYPER IMAGE PASSING ###
@@ -95,7 +95,7 @@ Phase 1) Fit and subtract the lens galaxy's _LightProfile_.
 Phase 1 Extension) Fit the lens galaxy's hyper-galaxy and background noise.
 
 Phase 2) Fit the lens galaxy mass model and source _LightProfile_, using the lens subtracted image, using the lens
-         hyper-galaxy noise map and background noise from phase 1.
+         hyper-galaxy noise-map and background noise from phase 1.
 Phase 2 Extension) Fit the lens / source hyper-galaxy and background noise.
 
 Phase 3) Fit the lens light, mass and source using priors from phases 1 & 2, using the lens hyper-galaxy
@@ -223,7 +223,7 @@ def make_pipeline(setup, settings, folders=None):
     pipeline we make a choice not to pass the hyper-galaxy of the source. Why? Because there is a good chance
     our simplistic single Sersic _Profile_ won't yet provide a good fit to the source.
     #
-    If this is the case, the hyper noise map won't be very good. It isn't until we are fitting the
+    If this is the case, the hyper noise-map won't be very good. It isn't until we are fitting the
     source using an _Inversion_ that we begin to pass its hyper-galaxy, e.g. when we can be confident our fit
     to the dataset is reliable!
     """
@@ -266,7 +266,7 @@ def make_pipeline(setup, settings, folders=None):
     So, its beneficial for us to introduce an intermediate _Inversion_ using a magnification based grid, that fits
     all components of the source accurately giving us a good quality hyper-galaxy image for the brightness based
     _Pixelization_and adaptive regularization. Its for this reason we've also omitted the hyper-galaxy source galaxy
-    from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise map!
+    from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise-map!
     """
 
     phase4 = al.PhaseImaging(
@@ -360,7 +360,7 @@ def make_pipeline(setup, settings, folders=None):
 
     """
     For this phase, we'll also extend it with an _Inversion_ phase. This ensures our _Pixelization_and regularization
-    are fully optimized in conjunction with the hyper-galaxies and background noise map.
+    are fully optimized in conjunction with the hyper-galaxies and background noise-map.
     """
 
     phase6 = phase6.extend_with_multiple_hyper_phases(

@@ -15,28 +15,23 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use new strong lensing data, where:
 
-    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -115,12 +110,12 @@ evidence_tolerance : float
 
 Lets perform two fits, where:
 
-    - One has many live points, a low sampling efficiency and evidence tolerance, causing the non-linear search to
+ - One has many live points, a low sampling efficiency and evidence tolerance, causing the non-linear search to
       take a long time to run (in fact, on my laptop, this run takes > 500000 iterations which translates to > 6 
       hours. So, I've commented the run function out to not waste your time, but feel free to uncomment it and run
       the phase to see this for yourself!).
       
-    - One has few live points, a high sampling efficiency and evidence tolerance, causing the non-linear search to
+ - One has few live points, a high sampling efficiency and evidence tolerance, causing the non-linear search to
       converge and end quicker.
 """
 
@@ -144,7 +139,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# result_slow = phase_slow.run(dataset=imaging, mask=mask)
+result_slow = phase_slow.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -159,7 +154,7 @@ Lets check that we get a good model and fit to the data.
 We can use the result to tell us how many iterations Dynesty took to convergence on the solution.
 """
 print("Total Dynesty Iterations (If you skip running the phase, this is ~ 500000):")
-# print(result_slow.samples.total_samples)
+print(result_slow.samples.total_samples)
 
 # %%
 """
@@ -176,7 +171,7 @@ phase_fast = al.PhaseImaging(
         ),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    search=af.DynestyStatic(n_live_points=30, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=30),
 )
 
 # %%
@@ -186,7 +181,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# result_fast = phase_fast.run(dataset=imaging, mask=mask)
+result_fast = phase_fast.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -257,7 +252,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# result_pso = phase_pso.run(dataset=imaging, mask=mask)
+result_pso = phase_pso.run(dataset=imaging, mask=mask)
 
 print("PySwarms has finished run - you may now continue the notebook.")
 
@@ -269,10 +264,10 @@ It worked, and was much faster than Dynesty!
 
 So, when should we use Dynesty and when should we use PySwarms? Its simple:
 
-    - If we don't care about errors and want to get the global maxima solution as quickly as possible, we should use
+ - If we don't care about errors and want to get the global maxima solution as quickly as possible, we should use
       PySwarms.
       
-    - If we want a model with robust and precise errors, we should use Dynesty.
+ - If we want a model with robust and precise errors, we should use Dynesty.
     
 There is one exception however, for complex models whose priors have not be well tuned or initialized by a previous 
 phase, PySwarms has a tendancy to locate a local maxima. Dynesty's slower but more complete sampling of parameter space 
@@ -312,7 +307,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
+result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
 
 print("Emcee has finished run - you may now continue the notebook.")
 

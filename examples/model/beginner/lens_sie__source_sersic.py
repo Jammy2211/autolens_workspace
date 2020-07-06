@@ -144,7 +144,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50, sample="rwalk", facc=0.25)
+search = af.DynestyDynamic(n_live_points=50, sample="unif")#, walks=25, facc=0.5)
 
 # %%
 """

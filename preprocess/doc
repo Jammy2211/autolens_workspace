@@ -19,14 +19,14 @@ Positions
 
 Noise Map
 
-    Create a scaled noise map of a dataset which is output as a .fits file in the data's dataset folder.
+    Create a scaled noise-map of a dataset which is output as a .fits file in the data's dataset folder.
 
-    Scaled noise maps are used to increase the noise in regions of an image where foreground objects / interlopers
+    Scaled noise-maps are used to increase the noise in regions of an image where foreground objects / interlopers
     obstruct the strong lens galaxy being fitted. By increaisng their noise to very high values they are ignored by the
     fit.
 
     - manual/noise_map_maker.py - Manually specify the regions where the noise is scaled.
-    - gui/noise_map_maker.py - A GUI tools to 'paint' where the noise map is scaled.
+    - gui/noise_map_maker.py - A GUI tools to 'paint' where the noise-map is scaled.
 
 Lens Light Centres
 

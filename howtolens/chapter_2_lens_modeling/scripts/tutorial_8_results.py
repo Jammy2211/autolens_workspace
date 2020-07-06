@@ -12,15 +12,10 @@ from autoconf import conf
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-Setup the path to the autolens_workspace, using by filling in your path below.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -30,8 +25,8 @@ the results of the phase 1 tutorial were output too.
 
 # %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 
@@ -64,7 +59,7 @@ phase = al.PhaseImaging(
         lens_galaxy=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source_galaxy=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 # result = phase.run(dataset=imaging, mask=mask)
@@ -149,10 +144,10 @@ Again, we won't go into any more detail on the aggregator in this tutorial. For 
 lenses for who the tool will prove useful, checkout the full set of aggregator tutorials which can be found at the 
 location 'autolens_workspace/advanced'aggregator'. Here, you'll learn how to:
 
-    - Use the aggregator to filter out results given a phase name or input string.
-    - Use the Samples to produce many different results from the fit, including error estimates on parameters and 
+ - Use the aggregator to filter out results given a phase name or input string.
+ - Use the Samples to produce many different results from the fit, including error estimates on parameters and 
       plots of the probability density function of parameters in 1D and 2D.
-    - Reproduce visualizations of results, such as a tracer's images or the fit to a lens dataset.
+ - Reproduce visualizations of results, such as a tracer's images or the fit to a lens dataset.
 
 Even if you are only modeling a small sample of lenses, if you anticipate using PyAutoLens for the long-term I 
 strongly recommend you begin using the aggregator to inspect and analyse your result. This is because it makes it 

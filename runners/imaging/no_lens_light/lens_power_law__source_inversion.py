@@ -9,7 +9,7 @@ Welcome to the pipeline runner, which loads a strong lens dataset and analyses i
 Using a pipeline composed of three phases this runner fits imaging of a strong lens system, where: 
 .
     - The lens galaxy's light is omitted from the data and model.
-    - The lens galaxy's _MassProfile_ is fitted with an *EllipticalPowerLaw*
+    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalPowerLaw_.
     - The source galaxy is fitted with an *Inversion*.
 
 This uses the pipeline (Check it out full description of the pipeline):
@@ -70,7 +70,7 @@ dataset_path = af.util.create_path(
 )
 
 # %%
-"""Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
 
 # %%
 imaging = al.Imaging.from_fits(

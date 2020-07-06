@@ -20,28 +20,23 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to the chapter 1 directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
@@ -213,7 +208,7 @@ custom_prior_phase = al.PhaseImaging(
     phase_name="phase_t4_tuned_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=50),
 )
 
 print(
@@ -222,7 +217,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
+custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -242,13 +237,13 @@ Before moving onto the next approach, lets think about the advantages and disadv
 
 Advantages: 
 
-    - We find the maximum log likelihood solution in parameter space.
-    - The phase took less time to run because the non-linear search explored less of parameter space.
+ - We find the maximum log likelihood solution in parameter space.
+ - The phase took less time to run because the non-linear search explored less of parameter space.
 
 Disadvantages: 
 
-    - If we specified a prior incorrectly the non-linear search would begin and therefore end at an incorrect solution.
-    - Our phase was tailored to this specific strong lens. If we want to fit a large sample of lenses we'd 
+ - If we specified a prior incorrectly the non-linear search would begin and therefore end at an incorrect solution.
+ - Our phase was tailored to this specific strong lens. If we want to fit a large sample of lenses we'd 
       have to write a custom phase for every single one - this would take up a lot of our time!
 """
 
@@ -262,7 +257,7 @@ lens model parameters and therefore dimensionality of non-linear parameter space
 
 Well, we can *always* make assumptions. Below, I'm going to create a phase that assumes that light-traces-mass. That 
 is, that our _LightProfile_'s centre, and elliptical components are perfectly aligned with its mass. This may, or may 
-not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the _MassProfile_s y, x, and 
+not, be a reasonable assumption, but it'll remove 4 parameters from the lens model (the _MassProfile_'s y, x, and 
 elliptical components), so its worth trying!
 """
 
@@ -301,7 +296,7 @@ light_traces_mass_phase = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 print(
@@ -310,7 +305,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
+light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -325,7 +320,7 @@ looks similar to the one above. However, inspection of the residuals shows that 
 custom-phase above.
 
 It turns out that when I simulated this image light didn't perfectly trace mass. The _LightProfile_'s elliptical 
-components were (0.333333, 0.0) whereas the _MassProfile_s were (0.25, 0.0). The quality of the fit has suffered as a 
+components were (0.333333, 0.0) whereas the _MassProfile_'s were (0.25, 0.0). The quality of the fit has suffered as a 
 result and the log likelihood we inferred is lower.
 
 Herein lies the pitfalls of making assumptions - they may make your model less realistic and your fits worse! 
@@ -334,12 +329,12 @@ Again, lets consider the advantages and disadvantages of this approach:
 
 Advantages:
 
-    - By reducing parameter space's complexity we inferred a global maximum log likelihood.
-    - The phase is not specific to one lens - we could run it on many strong lens images.
+ - By reducing parameter space's complexity we inferred a global maximum log likelihood.
+ - The phase is not specific to one lens - we could run it on many strong lens images.
     
 Disadvantages:
 
-    - Our model was less realistic and our fit suffered as a result.
+ - Our model was less realistic and our fit suffered as a result.
 """
 
 # %%

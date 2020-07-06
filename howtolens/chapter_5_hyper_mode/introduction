@@ -6,11 +6,11 @@ particular, we will:
 
 2) Adapt the source _Regularization_scheme to the reconstructed source's surface brightness.
 
-3) Scale the noise map of the _Imaging_ data in regions we fit the lens and source galaxies poorly.
+3) Scale the noise-map of the _Imaging_ data in regions we fit the lens and source galaxies poorly.
 
 
 To adapt these aspects of the analysis, we will introduce 'hyper-parameters' which change the _Pixelization_,
-regularization scheme and noise map. To set these hyper-parameters, we'll perform a standard non-linear search (e.g.
+regularization scheme and noise-map. To set these hyper-parameters, we'll perform a standard non-linear search (e.g.
 with Dynesty), like we are now used to doing to fit a lens model. However, this fit needs a well defined log_likelihood
 function that if we maximize means we have located what is objectively the 'best-fit' solution in parameter space
 to the strong lens _Imaging_ data.
@@ -64,7 +64,7 @@ hyper-mode aims to achieve, by changing the source _Pixelization_, _Regularizati
 the lens model throughout the analysis in a fully self-consistent way.
 
 I just want to emphasis this one final time. The goal of hyper-mode is to obtain a *completely objective* ranking of
-every lens model, including the mass-model, source-reconstruction and data noise map. To truly determine the 'best-fit'
+every lens model, including the mass-model, source-reconstruction and data noise-map. To truly determine the 'best-fit'
 lens models and therefore extract the maximzal amount of information from strong lens imaging, we *must* use hyper-mode!
 
 You might be thinking, didn't we do that before anyway? Our pipelines typically fitted for the source-plane resolution,
@@ -75,6 +75,6 @@ At the end of this chapter, you'll be able to:
 
 1) Adapt an inversions's _Pixelization_to the morphology of the reconstructed source galaxy.
 2) Adapt the _Regularization_scheme applied to this source to its surface brightness profile.
-3) Use hyper-galaxies to scale the image's noise map during fitting, to prevent over-fitting regions of the image.
+3) Use hyper-galaxies to scale the image's noise-map during fitting, to prevent over-fitting regions of the image.
 4) Include aspects of the data reduction in the model fitting, for example the background sky subtraction.
 5) Use these features in PyAutoLens's pipeline frame.

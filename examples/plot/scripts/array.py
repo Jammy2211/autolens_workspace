@@ -9,7 +9,7 @@ will use the the image of the strong lens slacs1430+4105 from a .fits file and p
 function autolens.dataset_label.plotters.plotters.plot_array.
 
 The customization functions demonstrated in this example are generic to any 2D arrays of dataset_label, and can therefore be
-applied to the plotting of noise maps, PSF's, residual maps, chi-squared maps, etc.
+applied to the plotting of noise-maps, PSF's, residual-maps, chi-squared-maps, etc.
 
 Setup the path to the autolens_workspace, using a relative directory name.
 """

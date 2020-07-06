@@ -14,27 +14,22 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use the same strong lensing data as tutorials 1 & 2, where:
 
-    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
-    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
+ - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+ - The source galaxy's _LightProfile_ is a *SphericalExponential*.
 """
 
 # %%
@@ -106,10 +101,10 @@ phase_with_custom_mask = al.PhaseImaging(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
-# phase_with_custom_mask.run(dataset=imaging, mask=mask)
+phase_with_custom_mask.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -119,14 +114,14 @@ bigger mask? a smaller mask?
 When it comes to masking, we are essentially balancing run-speed and accuracy. If speed wasn't a consideration, 
 bigger masks would *always* be better, for two reasons:
 
-    1) The lensed source galaxy may have very faint emission that when you look at the plot above you don't notice. 
-       Overly aggressive masking risks you masking out some of that light, data which would better constrain your 
-       lens model!
+1) The lensed source galaxy may have very faint emission that when you look at the plot above you don't notice. 
+ Overly aggressive masking risks you masking out some of that light, data which would better constrain your 
+ lens model!
     
-    2) When you fit an image with a model image the fit is performed only within the masked region. Outside of the 
-       masked region it is possible that the model image produces some source-galaxy light in a region of the image 
-       where it isn't actually observed. If this region is masked, the poor fit in this region won't reduce the model's 
-       log likelihood.
+ 2) When you fit an image with a model image the fit is performed only within the masked region. Outside of the 
+ masked region it is possible that the model image produces some source-galaxy light in a region of the image 
+ where it isn't actually observed. If this region is masked, the poor fit in this region won't reduce the model's 
+ log likelihood.
 
 As you use PyAutoLens more you will get a feel for how fast an analysis will run given a certain image resolution, 
 lens model complexity, non-linear search priors / setup, etc. As you develop this intuition, I would recommend you 
@@ -144,11 +139,11 @@ We can also manually specify a set of image-pixels correspondin to the multiple 
 During the analysis, PyAutoLens will first check that these pixels trace within a specified arc-second threshold of 
 one another (which is controlled by the 'position_threshold' parameter input into a phase). This provides two benefits:
 
-    1) The analysis runs faster as the non-linear search avoids searching regions of parameter space where the 
-       mass-model is clearly not accurate.
+ 1) The analysis runs faster as the non-linear search avoids searching regions of parameter space where the 
+ mass-model is clearly not accurate.
     
-    2) By removing these solutions, a global-maximum solution may be reached instead of a local-maxima. This is 
-       because removing the incorrect mass models makes the non-linear parameter space less complex.
+ 2) By removing these solutions, a global-maximum solution may be reached instead of a local-maxima. This is 
+ because removing the incorrect mass models makes the non-linear parameter space less complex.
 
 We can easily check the image-positions are accurate by plotting them using our _Imaging_ _Plotter_ (they are the magenta 
 dots on the image).
@@ -196,7 +191,7 @@ phase_with_positions = al.PhaseImaging(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.SphericalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 # %%
@@ -206,7 +201,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# phase_with_positions.run(dataset=imaging, mask=mask)
+phase_with_positions.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -274,7 +269,7 @@ phase_with_x2_positions = al.PhaseImaging(
         source_0=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
         source_1=al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponential),
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 print(
@@ -284,7 +279,7 @@ print(
 )
 
 
-# phase_with_x2_positions.run(dataset=imaging, mask=mask)
+phase_with_x2_positions.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 

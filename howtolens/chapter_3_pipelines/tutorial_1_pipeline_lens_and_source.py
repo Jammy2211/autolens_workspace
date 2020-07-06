@@ -11,37 +11,37 @@ The pipeline is three phases:
 
 Phase 1:
 
-Fit and subtract the lens light model.
-
-Lens Light: EllipticalSersic
-Lens Mass: None
-Source Light: None
-Prior Passing: None
-Notes: None
+    Fit and subtract the lens light model.
+    
+    Lens Light: EllipticalSersic
+    Lens Mass: None
+    Source Light: None
+    Prior Passing: None
+    Notes: None
 
 Phase 2:
 
-Fit the lens mass model and source _LightProfile_.
-
-Lens Light: EllipticalSersic
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Prior Passing: Lens Light (instance -> phase 1).
-Notes: Uses the lens subtracted image from phase 1.
+    Fit the lens mass model and source _LightProfile_.
+    
+    Lens Light: EllipticalSersic
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Prior Passing: Lens Light (instance -> phase 1).
+    Notes: Uses the lens subtracted image from phase 1.
 
 Phase 3:
 
-Refine the lens light and mass models and source light model using priors initialized from phases 1 and 2.
-
-Lens Light: EllipticalSersic
-Lens Mass: EllipticalIsothermal + ExternalShear
-Source Light: EllipticalSersic
-Prior Passing: Lens light (model -> phase 1), lens mass and source light (model -> phase 2).
-Notes: None
+    Refine the lens light and mass models and source light model using priors initialized from phases 1 and 2.
+    
+    Lens Light: EllipticalSersic
+    Lens Mass: EllipticalIsothermal + ExternalShear
+    Source Light: EllipticalSersic
+    Prior Passing: Lens light (model -> phase 1), lens mass and source light (model -> phase 2).
+    Notes: None
 """
 
 
-def make_pipeline(setup, settings, folders=None):
+def make_pipeline(setup, settings):
 
     pipeline_name = "pipeline__light_and_source"
 

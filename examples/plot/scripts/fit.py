@@ -4,7 +4,7 @@
 #
 # # %%
 # """
-# In this example, we will load the residual map of a fit from a .fits file and plotters it using the function
+# In this example, we will load the residual-map of a fit from a .fits file and plotters it using the function
 # autolens.dataset_label.plotters.plotters.plot_array.
 #
 # We will use the residuals of a fit to slacs1430+4105, which comes from running the example pipeline
@@ -16,7 +16,7 @@
 # However, the complete set of search results for the pipeline are not included, as the large file sizes prohibit
 # distribution. Therefore, you may wish to run this pipeline now on slacs1430+4105 to generate your own results.
 #
-# We will customize the appearance of this figure to highlight the features of the residual map.
+# We will customize the appearance of this figure to highlight the features of the residual-map.
 #
 # Setup the path to the autolens_workspace.
 # """
@@ -26,7 +26,7 @@
 #
 # # %%
 # """
-# First, lets setup the path to the .fits file of the residual map.
+# First, lets setup the path to the .fits file of the residual-map.
 # """
 #
 # # %%
@@ -74,7 +74,7 @@
 #
 # # %%
 # """
-# We can now use an arrays plotter to plotters the residual map.
+# We can now use an arrays plotter to plotters the residual-map.
 # """
 #
 # # %%
@@ -110,7 +110,7 @@
 #
 # # %%
 # """
-# These tools are equally powerful ways to inspect the chi-squared map of a fit.
+# These tools are equally powerful ways to inspect the chi-squared-map of a fit.
 # """
 #
 # # %%

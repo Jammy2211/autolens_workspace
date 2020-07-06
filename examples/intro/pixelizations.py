@@ -118,7 +118,7 @@ aplt.FitImaging.subplot_of_plane(fit=fit, plane_index=1)
 
 # %%
 """
-By inspecting the residual-map, normalized residual-map and chi-squared map of the *FitImaging* object, we can see how
+By inspecting the residual-map, normalized residual-map and chi-squared-map of the *FitImaging* object, we can see how
 the source reconstruction accurately fits the image of the strong lens:
 """
 

@@ -26,7 +26,7 @@ The 'dataset_label' describes the type of data being simulated (in this case, im
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
     - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
 dataset_label = "imaging"
@@ -76,7 +76,7 @@ simulator = al.SimulatorImaging(
 
 """Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
 
-The lens galaxy includes some intervening objects, which must be masked / have their noise map increased in
+The lens galaxy includes some intervening objects, which must be masked / have their noise-map increased in
 preprocessing to ensure they do not impact the fit.
 
 For lens modeling, defining ellipticity in terms of the  'elliptical_comps' improves the model-fitting procedure.

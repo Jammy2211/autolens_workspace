@@ -51,7 +51,7 @@ for dataset_name in [
         path=workspace_path, folders=["aggregator", "dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -130,7 +130,7 @@ Create the path where the dataset will be loaded from, which in this case is
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -209,7 +209,7 @@ Create the path where the dataset will be loaded from, which in this case is
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -290,7 +290,7 @@ Create the path where the dataset will be loaded from, which in this case is
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",

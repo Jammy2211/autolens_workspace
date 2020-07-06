@@ -11,15 +11,10 @@ You can find many more example pipelines in the folder 'autolens_workspace/advan
 # %%
 from autoconf import conf
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-Setup the path to the autolens_workspace, using a relative directory name.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -28,7 +23,8 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
@@ -41,9 +37,9 @@ import autolens.plot as aplt
 """
 We'll use strong lensing data, where:
 
-    - The lens galaxy's light is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
+ - The lens galaxy's light is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
 """
 
 # %%
@@ -89,9 +85,9 @@ __Pipeline_Setup_And_Tagging__:
 
 The setup module customizes the behaviour of a pipeline. Hyper-fitting brings with it the following setup:
 
-    - If hyper-galaxies are used to scale the noise in each component of the image (default True)
-    - If the level of background noise is modeled throughout the pipeline (default True)
-    - If the background sky is modeled throughout the pipeline (default False)
+ - If hyper-galaxies are used to scale the noise in each component of the image (default True)
+ - If the level of background noise is modeled throughout the pipeline (default True)
+ - If the background sky is modeled throughout the pipeline (default False)
     
 Each of these features uses their own non-linear search in extended 'hyper phases', which are also specified in the
 _PipelineSetup-.

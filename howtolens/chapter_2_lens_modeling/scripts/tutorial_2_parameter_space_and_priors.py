@@ -93,27 +93,22 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-Lets again setup the config and output paths.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
-    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
+ - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+ - The source galaxy's _LightProfile_ is a *SphericalExponential*.
 """
 
 # %%
@@ -204,7 +199,7 @@ custom_phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 print(
@@ -213,7 +208,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# results_custom = custom_phase.run(dataset=imaging, mask=mask)
+results_custom = custom_phase.run(dataset=imaging, mask=mask)
 
 aplt.FitImaging.subplot_fit_imaging(fit=results_custom.max_log_likelihood_fit)
 

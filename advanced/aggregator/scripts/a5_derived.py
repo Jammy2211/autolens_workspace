@@ -35,7 +35,7 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 phase_name = "phase__aggregator"
-agg_phase_3 = agg.filter(agg.phase == phase_name)
+agg_phase3 = agg.filter(agg.phase == phase_name)
 
 # %%
 """
@@ -106,7 +106,7 @@ def axis_ratio_error_from_agg_obj(agg_obj):
     )
 
 
-axis_ratio, axis_ratio_error = agg_phase_3.map(func=axis_ratio_error_from_agg_obj)
+axis_ratio, axis_ratio_error = agg_phase3.map(func=axis_ratio_error_from_agg_obj)
 
 print("Axis Ratio:\n")
 print(axis_ratio)

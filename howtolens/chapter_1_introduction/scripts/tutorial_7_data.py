@@ -115,15 +115,18 @@ Finally, lets output these files to.fits files, we'll begin to analyze them in t
 
 # %%
 """
-The data path specifies where the data is output, this time in the directory 'chapter_path/data'
+The data path specifies where the data is output, this time in the directory 'chapter_path/data'.
+
+Recall that we use the library pyprojroot to get a relative path to the autolens_workspace, double check this path
+is correct on your computer!
 """
 
 # %%
-howtolens_path = "/path/to/AutoLens/workspace/howtolens"
-howtolens_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens"
+from pyprojroot import here
 
-# %%
-dataset_path = f"{howtolens_path}/dataset/chapter_1"
+workspace_path = here()
+dataset_path = f"{workspace_path}/howtolens/dataset/chapter_1"
+print("Dataset Path: ", dataset_path)
 
 # %%
 """
@@ -137,5 +140,3 @@ imaging.output_to_fits(
     psf_path=f"{dataset_path}/psf.fits",
     overwrite=True,
 )
-
-# %%

@@ -2,9 +2,9 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we'll demonstrate signal-to-noise limiting - which fits data where the noise map is increased to
+In this pipeline, we'll demonstrate signal-to-noise limiting - which fits data where the noise-map is increased to
 cap the highest signal-to-noise value. In this example, we will perform an initial analysis on an image with a
-signal-to-noise limit of 10.0, and then fit the image using the unscaled signal-to-noise map.
+signal-to-noise limit of 10.0, and then fit the image using the unscaled signal-to-noise-map.
 
 Why would you want to limit the signal to noise?:
 
@@ -40,7 +40,7 @@ Notes: Uses a signal to noise limit of 10
 
 Phase 2:
 
-Fit the lens and source model using the true signal to noise map
+Fit the lens and source model using the true signal to noise-map
 
 Lens Mass: EllipticalIsothermal + ExternalShear
 Source Light: EllipticalSersic

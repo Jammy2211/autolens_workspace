@@ -15,19 +15,23 @@ import autolens.plot as aplt
 
 # %%
 """
-First you need to change the path below to the chapter 1 directory so we can load the data we output previously.
+We'll need the path to the chapter in this tutorial to load the dataset from your hard-disk.
 """
 
 # %%
-chapter_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/chapter_1_introduction"
+from pyprojroot import here
+
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
-The data path specifies where the data was output in the last tutorial, this time in the directory 'chapter_path/data'
+The data path specifies where the data was output in the last tutorial, this time in the directory 
+'chapter_path/dataset'.
 """
 
 # %%
-dataset_path = f"{chapter_path}/dataset"
+dataset_path = f"{workspace_path}/howtolens/dataset/chapter_1/"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -42,7 +46,7 @@ The 'imaging' is an _Imaging_ object, which is a 'package' of all components of 
 
     1) The image.
     2) The Point Spread Function (PSF).
-    3) Its noise map.
+    3) Its noise-map.
     
 Which are all stored as _Array_ objects.
 """
@@ -100,7 +104,7 @@ To fit the data we create a _MaskedImaging_ object, which is a 'package' of all 
 to fit it with a lens model:
 
     1) The imaging-data, including the image, PSF (so that when we compare a tracer's image to the image instrument we 
-       can include blurring due to the telescope optics) and noise map (so our goodness-of-fit measure accounts for 
+       can include blurring due to the telescope optics) and noise-map (so our goodness-of-fit measure accounts for 
        noise in the observations).
 
     2) The mask, so that only the regions of the image with a signal are fitted.
@@ -116,7 +120,7 @@ aplt.Imaging.image(imaging=masked_imaging.imaging)
 
 # %%
 """
-By printing its attributes, we can see that it does indeed contain the mask, masked image, masked noise map, psf and so 
+By printing its attributes, we can see that it does indeed contain the mask, masked image, masked noise-map, psf and so 
 on.
 """
 
@@ -136,7 +140,7 @@ print()
 
 # %%
 """
-The masked image and noise map are again stored in 2D and 1D. 
+The masked image and noise-map are again stored in 2D and 1D. 
 
 However, the 1D array now corresponds only to the pixels that were not masked, whereas for the 2D array, all edge 
 values are masked and are therefore zeros.
@@ -179,7 +183,9 @@ image-plane image is the same resolution and alignment as our lens data's masked
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
+        centre=(0.0, 0.0),
+        einstein_radius=1.6,
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=45.0),
     ),
 )
 
@@ -187,7 +193,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        elliptical_comps=(0.0, 0.111111),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -207,7 +213,7 @@ To fit the image, we pass the _MaskedImaging_ and _Tracer_ to a _FitImaging_ obj
 
     2) Computes the difference between this model_image and the observed image-data, creating the fit's 'residual_map'.
 
-    3) Divides the residual-map by the noise map, creating the fit's 'normalized_residual_map'.
+    3) Divides the residual-map by the noise-map, creating the fit's 'normalized_residual_map'.
 
     4) Squares every value in the normalized residual-map, creating the fit's 'chi_squared_map'.
 
@@ -282,7 +288,9 @@ galaxy, by 0.005"
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.005, 0.005), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
+        centre=(0.005, 0.005),
+        einstein_radius=1.6,
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=45.0),
     ),
 )
 
@@ -290,7 +298,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        elliptical_comps=(0.0, 0.111111),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -328,7 +336,9 @@ Lets change the _Tracer_, one more time, to a solution nowhere near the correct 
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.005, 0.005), einstein_radius=1.5, elliptical_comps=(0.0, 0.111111)
+        centre=(0.005, 0.005),
+        einstein_radius=1.5,
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=45.0),
     ),
 )
 
@@ -336,7 +346,7 @@ source_galaxy = al.Galaxy(
     redshift=1.0,
     light=al.lp.EllipticalSersic(
         centre=(0.2, 0.0),
-        elliptical_comps=(0.0, 0.111111),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.5,
         effective_radius=0.8,
         sersic_index=2.5,
@@ -368,8 +378,8 @@ print(fit.log_likelihood)
 """
 Congratulations, you've fitted your first strong lens with PyAutoLens! Perform the following exercises:
 
-    1) In this example, we 'knew' the correct solution, because we simulated the lens ourselves. In the real Universe, 
-       we have no idea what the correct solution is. How would you go about finding the correct solution? Could you find a 
-       solution that fits the data reasonable through trial and error?
+ 1) In this example, we 'knew' the correct solution, because we simulated the lens ourselves. In the real Universe, 
+ we have no idea what the correct solution is. How would you go about finding the correct solution? Could you find a 
+ solution that fits the data reasonable through trial and error?
 
 """

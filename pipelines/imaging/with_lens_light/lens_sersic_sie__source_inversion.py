@@ -41,7 +41,7 @@ Notes: None
 
 Phase 4:
 
-Fit the source inversion using the lens light and _MassProfile_s inferred in phase 3.
+Fit the source inversion using the lens light and _MassProfile_'s inferred in phase 3.
 
 Lens Light: EllipticalSersic
 Lens Mass: EllipticalIsothermal + ExternalShear

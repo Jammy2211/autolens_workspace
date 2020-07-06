@@ -17,12 +17,26 @@ import autolens.plot as aplt
 
 # %%
 """
-First you need to change the path below to the chapter 1 directory so we can load the dataset.
+The tutorials need to know the path to your autolens_workspace folder, in order to:
+ 
+ - Load configuration settings from the config files.
+ - Load example data.
+ - Output the results of models fits to your hard-disk. 
+    
+Unfortunately, Jupyter notebooks cannot use relative paths, therefore we use the library 'pyprojroot' to do instead. Its
+'here' function provides the path to the GitHub project directory, which is the autolens_workspace. For example on my 
+computer the here() function returns:
+ 
+    '/home/jammy/PycharmProjects/PyAuto/autolens_workspace'
+
+Throughout these tutorials, we will use this workspace_path. 
 """
 
 # %%
-import os
-chapter_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
+from pyprojroot import here
+
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -30,7 +44,7 @@ The dataset path specifies where the dataset is located, this time in the direct
 """
 
 # %%
-dataset_path = f"{chapter_path}/dataset"
+dataset_path = f"{workspace_path}/howtolens/dataset/chapter_1"
 
 # %%
 """

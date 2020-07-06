@@ -215,7 +215,7 @@ print(ml_instances[1].galaxies.source)
 
 # %%
 """
-Their _LightProfile_'s and _MassProfile_s are also named according to the phase.
+Their _LightProfile_'s and _MassProfile_'s are also named according to the phase.
 """
 
 # %%

@@ -64,7 +64,7 @@ for dataset_name in [
     }
 
     """
-    Using the dataset path, load the data (image, noise map, PSF) as an imaging object from .fits files.
+    Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
     
     This _Imaging_ object will be available via the aggregator. Note also that we give the dataset a 'name' via the
     command 'name=dataset_name'. We'll use this name in the aggregator tutorials.

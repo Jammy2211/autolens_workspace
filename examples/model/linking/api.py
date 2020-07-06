@@ -164,7 +164,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 """
 
 # %%
-phase_1 = al.PhaseImaging(
+phase1 = al.PhaseImaging(
     phase_name="phase_1",
     folders=["examples", "linking", "api"],
     settings=settings,
@@ -172,7 +172,7 @@ phase_1 = al.PhaseImaging(
     search=search,
 )
 
-phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+phase1_result = phase1.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -191,8 +191,8 @@ for by the non-linear search. In other linking examples, we'll see other ways to
 """
 
 # %%
-lens = phase_1_result.model.galaxies.lens
-source = phase_1_result.model.galaxies.source
+lens = phase1_result.model.galaxies.lens
+source = phase1_result.model.galaxies.source
 
 # %%
 """
@@ -223,7 +223,7 @@ Note how the 'lens' and 'source' passed to this phase were set up above using th
 """
 
 # %%
-phase_2 = al.PhaseImaging(
+phase2 = al.PhaseImaging(
     phase_name="phase_2",
     folders=["examples", "linking", "api"],
     settings=settings,
@@ -231,7 +231,7 @@ phase_2 = al.PhaseImaging(
     search=search,
 )
 
-phase_2.run(dataset=imaging, mask=mask)
+phase2.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -270,7 +270,7 @@ __HowToLens Prior Passing__
 
 Lets say I link two parameters as follows:
 
-    mass.einstein_radius = phase_1_result.model.galaxies.lens.mass.einstein_radius
+    mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 By invoking the 'model' attribute, the prioris passed following 3 rules:
 

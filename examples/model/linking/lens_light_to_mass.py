@@ -151,7 +151,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 """
 
 # %%
-phase_1 = al.PhaseImaging(
+phase1 = al.PhaseImaging(
     phase_name="phase_1",
     folders=["examples", "linking", "lens_light_to_mass"],
     settings=settings,
@@ -159,7 +159,7 @@ phase_1 = al.PhaseImaging(
     search=search,
 )
 
-phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+phase1_result = phase1.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -185,12 +185,12 @@ in phase 2. This uses the term 'model' to pass priors, as we saw in other exampl
 
 mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
-mass.centre = phase_1.result.model.galaxies.lens.bulge.centre
+mass.centre = phase1_result.model.galaxies.lens.bulge.centre
 
 lens = al.GalaxyModel(
     redshift=0.5,
-    bulge=phase_1.result.instance.galaxies.lens.bulge,
-    disk=phase_1.result.instance.galaxies.lens.disk,
+    bulge=phase1_result.instance.galaxies.lens.bulge,
+    disk=phase1_result.instance.galaxies.lens.disk,
     mass=mass,
 )
 source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
@@ -220,7 +220,7 @@ Note how the 'lens' passed to this phase was set up above using the results of p
 """
 
 # %%
-phase_2 = al.PhaseImaging(
+phase2 = al.PhaseImaging(
     phase_name="phase_2",
     folders=["examples", "linking", "lens_light_to_mass"],
     settings=settings,
@@ -228,7 +228,7 @@ phase_2 = al.PhaseImaging(
     search=search,
 )
 
-phase_2.run(dataset=imaging, mask=mask)
+phase2.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -243,8 +243,8 @@ the lens's _GalaxyModel_, as follows:
 
     lens = al.GalaxyModel(
         redshift=0.5,
-        bulge=phase_1.result.model.galaxies.lens.bulge,
-        disk=phase_1.result.model.galaxies.lens.disk,
+        bulge=phase1.result.model.galaxies.lens.bulge,
+        disk=phase1.result.model.galaxies.lens.disk,
         mass=mass,
     )
 

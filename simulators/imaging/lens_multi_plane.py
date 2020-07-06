@@ -10,7 +10,7 @@ galaxies down the line-of-sight are included in the ray-tracing calculation base
 The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
 
 The image will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-The noise map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+The noise-map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
 The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
 
@@ -22,7 +22,7 @@ The 'dataset_label' describes the type of data being simulated (in this case, im
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
     - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
     - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
 """
 dataset_label = "imaging"

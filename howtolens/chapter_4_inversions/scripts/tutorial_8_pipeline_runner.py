@@ -14,19 +14,13 @@ solutions discussed in tutorial 6. We'll then switch to an _Inversion_.
 """ AUTOFIT + CONFIG SETUP """
 
 # %%
-from autoconf import conf
-import autofit as af
-
 #%matplotlib inline
 
-# %%
-"""
-Setup the path to the workspace, using by filling in your path below.
-"""
+from autoconf import conf
+from pyprojroot import here
 
-# %%
-workspace_path = "/path/to/user/autolens_workspace"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -35,7 +29,8 @@ Use this path to explicitly set the config path and output path.
 
 # %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
@@ -48,9 +43,9 @@ import autolens.plot as aplt
 """
 We'll use strong lensing data, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
 """
 
 # %%
@@ -95,9 +90,9 @@ __Pipeline_Setup_And_Tagging__:
 
 For this pipeline the pipeline setup customizes and tags:
 
-    - The Pixelization used by the inversion of this pipeline.
-    - The Regularization scheme used by of this pipeline.
-    - If there is an external shear in the mass model or not.
+ - The Pixelization used by the inversion of this pipeline.
+ - The Regularization scheme used by of this pipeline.
+ - If there is an external shear in the mass model or not.
 """
 
 # %%
@@ -117,7 +112,7 @@ To create a pipeline we import it from the pipelines folder and run its 'make_pi
 """
 
 # %%
-from howtolens.chapter_4_inversions import tutorial_8_pipeline
+from autolens_workspace.howtolens.chapter_4_inversions import tutorial_8_pipeline
 
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(setup=setup, settings=settings)
 

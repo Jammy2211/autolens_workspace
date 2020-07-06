@@ -8,7 +8,7 @@ Tutorial 2: Two Lens Galaxies
 Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can
 consist of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
 model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the degeneracies
-between the _MassProfile_s of the two galaxies can be severe.
+between the _MassProfile_'s of the two galaxies can be severe.
 
 However, we can still break their analysis down using a pipeline and give ourselves a shot at getting a good lens
 model. Here, we're going to fit a double lens system, fitting as much about each individual lens galaxy before fitting
@@ -22,26 +22,16 @@ pipeline that we can generalize to many lenses isn't currently possible with PyA
 # %%
 """ AUTOFIT + CONFIG SETUP """
 
+# %%
 from autoconf import conf
-import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-Setup the path to the workspace, using by filling in your path below.
-"""
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
-# %%
-workspace_path = "/path/to/user/autolens_workspace"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
-
-# %%
-"""
-Use this path to explicitly set the config path and output path.
-"""
-
-# %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
@@ -57,15 +47,13 @@ import autolens.plot as aplt
 """
 We'll use new strong lensing data, where:
 
-    - There are two lens galaxy's whose _LightProfile_'s are both _EllipticalSersic_'s.
-    - There are two lens galaxy's whose _MassProfile_'s are both _EllipticalIsothermal_'s.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - There are two lens galaxy's whose _LightProfile_'s are both _EllipticalSersic_'s.
+ - There are two lens galaxy's whose _MassProfile_'s are both _EllipticalIsothermal_'s.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_3 import (
-    lens_x2_sersic_sie__source_exp,
-)
+from autolens_workspace.howtolens.simulators.chapter_3 import lens_x2_sersic_sie__source_exp
 
 dataset_label = "chapter_3"
 dataset_name = "lens_x2_sersic_sie__source_exp"
@@ -84,6 +72,7 @@ We need to choose our mask for the analysis. Given the lens light is present in 
 of its light in the central regions of the image, so lets use a circular mask.
 """
 
+# %%
 mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
@@ -122,7 +111,7 @@ So, with this in mind, we've written a pipeline composed of 4 phases:
 
     1) Fit the _LightProfile_ of the lens galaxy on the left of the image, at coordinates (0.0", -1.0").
     2) Fit the _LightProfile_ of the lens galaxy on the right of the image, at coordinates (0.0", 1.0").
-    3) Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens 
+    3) Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_'s of the two lens 
        galaxies are fixed to (0.0", -1.0") and (0.0", 1.0").
     4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 """
@@ -133,7 +122,7 @@ __Pipeline_Setup_And_Tagging__:
 
 For this pipeline the pipeline setup customizes:
 
-    - If there is an external shear in the mass model or not.
+ - If there is an external shear in the mass model or not.
 
 The pipeline setup 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
@@ -197,5 +186,3 @@ It does get confusing, I won't lie. This is why we made galaxies named objects -
 'left_lens' and 'right_lens'. It still requires caution when writing the pipeline, but goes to show that if you name 
 your galaxies sensibly you should be able to avoid errors, or spot them quickly when you make them.
 """
-
-# %%

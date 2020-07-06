@@ -50,7 +50,7 @@ Phase 4:
 """
 
 
-def make_pipeline(setup, settings, folders=None):
+def make_pipeline(setup, settings):
 
     """SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS"""
 
@@ -73,6 +73,7 @@ def make_pipeline(setup, settings, folders=None):
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, light_0=al.lp.EllipticalSersic),
         ),
+        settings=settings,
         search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
     )
 
@@ -93,6 +94,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_1=al.lp.EllipticalSersic,
             ),
         ),
+        settings=settings,
         search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
     )
 
@@ -110,6 +112,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_2=al.lp.EllipticalSersic,
             ),
         ),
+        settings=settings,
         search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
     )
 
@@ -128,6 +131,7 @@ def make_pipeline(setup, settings, folders=None):
                 light_3=al.lp.EllipticalSersic,
             ),
         ),
+        settings=settings,
         search=af.DynestyStatic(n_live_points=50, evidence_tolerance=0.3),
     )
 

@@ -32,7 +32,7 @@ Phase 2:
 
 Phase 3:
 
-    Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_s of the two lens galaxies
+    Use this lens-subtracted image to fit the source-galaxy's light. The _MassProfile_'s of the two lens galaxies
     can use the results of phases 1 and 2 to initialize their priors.
 
     Lens Light: EllipticalSersic + EllipticalSersic
@@ -54,7 +54,7 @@ Phase 4:
 """
 
 
-def make_pipeline(setup, settings, folders=None):
+def make_pipeline(setup, settings):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 

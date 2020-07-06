@@ -9,7 +9,7 @@ to the majority of our chi-squared signal. In terms of lens modeling, this meant
 of the image. We would prefer that our lens model provides a global fit to the entire lensed source galaxy.
 
 With our adaptive _Pixelization_and _Regularization_ we are now able to fit the data to the noise-limit and remove this
-skewed chi-squared distribution. So, why do we need to introduce noise map scaling? Well, we achieve a good fit when
+skewed chi-squared distribution. So, why do we need to introduce noise-map scaling? Well, we achieve a good fit when
 our lens's mass model is accurate (in the previous tutorials we used the *correct* lens mass model). But, what if our
 lens mass model isn't accurate? Well, we'll have residuals which will cause the same problem as before; a skewed
 chi-squared distribution and an inability to fit the data to the noise level.
@@ -22,23 +22,18 @@ So, lets simulate an image and fit it with a slightly incorrect mass model.
 
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -183,7 +178,7 @@ assume to model their mass. For real strong lenses our mass model will pretty mu
 residuals, producing these skewed chi-squared distributions. PyAutoLens can't remove them by simply improving the 
 mass model.
 
-This is where noise map scaling comes in. If we have no alternative, the best way to get Gaussian-distribution 
+This is where noise-map scaling comes in. If we have no alternative, the best way to get Gaussian-distribution 
 (e.g. more uniform) chi-squared fit is to increase the variances of image pixels with high chi-squared values. So, 
 that's what we're going to do, by making our source galaxy a 'hyper-galaxy', a galaxy which use's its hyper-galaxy 
 image to increase the noise in pixels where it has a large signal. Let take a look.
@@ -309,20 +304,20 @@ aplt.Array(
 """
 By increasing the contribution factor we allocate more pixels with higher contributions (e.g. values closer to 1.0) 
 than pixels with lower values. This is all the contribution_factor does; it scales how we allocate contributions to 
-the source galaxy. Now, we're going to use this contribution map to scale the noise map, as follows:
+the source galaxy. Now, we're going to use this contribution map to scale the noise-map, as follows:
 
-    1) Multiply the baseline (e.g. unscaled) noise map of the image-data by the contribution map made in step 3) above. 
-      This means that only noise map values where the contribution map has large values (e.g. near 1.0) are going to 
+    1) Multiply the baseline (e.g. unscaled) noise-map of the image-data by the contribution map made in step 3) above. 
+      This means that only noise-map values where the contribution map has large values (e.g. near 1.0) are going to 
       remain in this image, with the majority of values multiplied by contribution map values near 0.0.
     
-    2) Raise the noise map generated in step 1) above to the power of the hyper-galaxy-parameter noise_power. Thus, for 
-       large values of noise_power, the largest noise map values will be increased even more, raising their noise the 
+    2) Raise the noise-map generated in step 1) above to the power of the hyper-galaxy-parameter noise_power. Thus, for 
+       large values of noise_power, the largest noise-map values will be increased even more, raising their noise the 
        most.
     
-    3) Multiply the noise map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
-       means by which PyAutoLens is able to scale the noise map values.
+    3) Multiply the noise-map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
+       means by which PyAutoLens is able to scale the noise-map values.
 
-Lets compare two fits, one where a hyper-galaxy scales the noise map, and one where it doesn't.
+Lets compare two fits, one where a hyper-galaxy scales the noise-map, and one where it doesn't.
 """
 
 # %%
@@ -380,7 +375,7 @@ print("Evidence using variances scaling by hyper-galaxy = ", fit.log_evidence)
 Feel free to play around with the noise_factor and noise_power hyper-galaxy-parameters above. It should be fairly 
 clear what they do; they simply change the amount by which the noise is increased.
 
-And with that, we've completed the first of two tutorials on noise map scaling. To end, I want you to have a quick 
+And with that, we've completed the first of two tutorials on noise-map scaling. To end, I want you to have a quick 
 think, is there anything else that you can think of that would mean we need to scale the noise? In this tutorial, 
 it was the inadequacy of our mass-model that lead to significant residuals and a skewed chi-squared distribution. 
 What else might cause residuals? I'll give you a couple below;

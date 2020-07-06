@@ -6,7 +6,7 @@ Tutorial 1: Non-linear Search
 In this example, we're going to find a lens model that provides a good fit to an image, without assuming any knowledge
 of what the 'correct' lens model is.
 
-So, whats a 'lens model'? It is the combination of _LightProfile_s and _MassProfile_s we use to represent a lens galaxy,
+So, whats a 'lens model'? It is the combination of _LightProfile_'s and _MassProfile_'s we use to represent a lens galaxy,
 source galaxy and therefore the strong lens ray-tracing configuration (i.e. the _Tracer_).
 
 To begin, we have to choose the parametrization of our lens model. We don't need to specify the values of its light
@@ -39,7 +39,7 @@ We're going to use a non-linear search algorithm called 'Dynesty'. I highly reco
 lens modeling. However, for now, lets not worry about the details of how Dynesty actually works. Instead, just
 picture that a non-linear search in PyAutoLens operates as follows:
 
-1) Randomly guess a lens model and use its _LightProfile_s and _MassProfile_s to set up a lens galaxy, source galaxy
+1) Randomly guess a lens model and use its _LightProfile_'s and _MassProfile_'s to set up a lens galaxy, source galaxy
 and a _Tracer_.
 
 2) Use this _Tracer_ and a _MaskedImaging_ to generate a model image and compare this model image to the
@@ -62,25 +62,27 @@ import autolens.plot as aplt
 You're going to see a line like the one below (with 'conf.instance =') in every tutorial this chapter. This sets the
 following two properties:
 
-    - The path to the configuration files used by PyAutoLens, some of which configure the non-linear search. You need 
-      to give the path to your autolens_workspace, so the configuration files in the workspace are used (e.g. 
-      '/path/to/autolens_workspace/config'). 
+ - The path to the configuration files used by PyAutoLens, some of which configure the non-linear search. You need 
+   to give the path to your autolens_workspace, so the configuration files in the workspace are used (e.g. 
+   '/path/to/autolens_workspace/config'). 
 
-    - The path to the PyAutoLens output folder, which is where the results of the non-linear search are written to 
-      on your hard-disk, alongside visualization and other properties of the fit 
-      (e.g. '/path/to/autolens_workspace/output/howtolens')
+ - The path to the PyAutoLens output folder, which is where the results of the non-linear search are written to 
+   on your hard-disk, alongside visualization and other properties of the fit 
+   (e.g. '/path/to/autolens_workspace/output/howtolens')
 
 (These will work autommatically if the WORKSPACE environment variable was set up correctly during installation. 
 Nevertheless, setting the paths explicitly within the code is good practise.
 """
 
 # %%
-workspace_path = "/path/to/user/autolens_workspace"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+from pyprojroot import here
+
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
@@ -90,8 +92,8 @@ we simulate strong lens data, checkout the scripts in the folder 'autolens_works
 
 The strong lens in this image was generated using:
 
-    - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
-    - The source galaxy's _LightProfile_ is a *SphericalExponential*.
+ - The lens galaxy's _MassProfile_ is a *SphericalIsothermal*.
+ - The source galaxy's _LightProfile_ is a *SphericalExponential*.
 
 Below, you'll notice the command:
 
@@ -136,8 +138,8 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 # %%
 """
 To compute a lens model, we use a _GalaxyModel_, which behaves analogously to the _Galaxy_ objects we're now used to. 
-However, whereas for a _Galaxy_ we manually specified the value of every parameter of its _LightProfile_s and 
-_MassProfile_s, for a _GalaxyModel_ these are fitted for and inferred by the non-linear search.
+However, whereas for a _Galaxy_ we manually specified the value of every parameter of its _LightProfile_'s and 
+_MassProfile_'s, for a _GalaxyModel_ these are fitted for and inferred by the non-linear search.
 
 Lets model the lens galaxy with an _SphericalIsothermal_ _MassProfile_ (which is what it was simulated with).
 """
@@ -158,9 +160,9 @@ source_galaxy_model = al.GalaxyModel(redshift=1.0, light=al.lp.SphericalExponent
 We can use a _PhaseSettingsImaging_ object to customize how a _Tracer_ and _FitImaging_ are used to fit the _Imaging_ 
 dataset. Below, we specify:
 
-    - That a regular *Grid* is used to fit create the model-image when fitting the data 
+ - That a regular *Grid* is used to fit create the model-image when fitting the data 
       (see 'autolens_workspace/examples/grids.py' for a description of grids).
-    - The sub-grid size of this grid.
+ - The sub-grid size of this grid.
 
 You'll note that the output folder of non-linear seach results has been 'tagged' with these phase settings. We'll 
 discuss this and phase settings in more detail in a later tutorial.
@@ -179,8 +181,8 @@ thing with the phase's galaxies. This is good practise - as once we start using 
 potentially have a lot of galaxies - and this is the best way to keep track of them!).
 
 You'll note that we also pass the non-linear 'search' _DynestyStatic_ to this phase, specifying some input parameters
-(n_live_points, evidence_tolerance). We'll cover what these do in a later tutorial. You'll also note that the
-output path of the results are 'tagged' with some of these settings.
+(n_live_points). We'll cover what these do in a later tutorial. You'll also note that the output path of the results 
+are 'tagged' with some of these settings.
 """
 
 # %%
@@ -188,7 +190,7 @@ phase = al.PhaseImaging(
     phase_name="phase_t1_non_linear_search",
     settings=settings,
     galaxies=dict(lens_galaxy=lens_galaxy_model, source_galaxy=source_galaxy_model),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 # %%

@@ -41,7 +41,7 @@ bright central regions of the source or its faint exterior regions.
 
 In this tutorial, we'll learn that our magnification-based _Pixelization_and constant _Regularization_schemes are far
 from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same _MassProfile_ but
-with different sources whose _LightProfile_s become gradually more compact. For all 3 fits, we'll use the same
+with different sources whose _LightProfile_'s become gradually more compact. For all 3 fits, we'll use the same
 source-plane resolution and a regularization_coefficient that maximize the Bayesian log evidence. Thus, these are the
 'best' source reconstructions we can hope to achieve when adapting to the magnification.
 """
@@ -230,7 +230,7 @@ print(fit_compact.log_evidence)
 # %%
 """
 Oh no! The fit doesn't look so good! Sure, we reconstruct *most* of the lensed source's structure, but there are two 
-clear 'blobs' in the residual map where we are failing to reconstruct the central regions of the source galaxy.
+clear 'blobs' in the residual-map where we are failing to reconstruct the central regions of the source galaxy.
 
 Take a second to think about why this might be. Is it the _Pixelization_? The _Regularization_?
 
@@ -320,7 +320,7 @@ evidence become accessible.
 
 __Noise Map__
 
-Before we wrap up this tutorial, I want us to also consider the role of our noise map and get you thinking about 
+Before we wrap up this tutorial, I want us to also consider the role of our noise-map and get you thinking about 
 why we might want to scale its variances. Lets look at the super-compact fit again;
 """
 
@@ -346,7 +346,7 @@ to achieve a reduced chi-squared 1 is to reduce the chi-squareds of other pixels
 noise. Thus, we quickly end up in a regime where the choice of regularization_coefficient is ill defined.
 
 With that, we have motivated hyper_galaxy-mode. To put it simply, if we don't adapt our pixelization, regularization
-and noise map, we will get solutions which reconstruct the source poorly, regularize the source sub-optimally and 
+and noise-map, we will get solutions which reconstruct the source poorly, regularize the source sub-optimally and 
 over-fit a small sub-set of image pixels. Clearly, we want adaptive _Pixelization_, _Regularization_ and 
-noise maps, which what we'll cover tutorials 2, 3 and 4!
+noise-maps, which what we'll cover tutorials 2, 3 and 4!
 """

@@ -22,23 +22,18 @@ That's what we are going to cover in this tutorial.
 from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -114,7 +109,7 @@ aplt.FitImaging.subplot_of_plane(
 
 # %%
 """
-What happened!? This incorrect mass-model provides a really good_fit to the image! The residuals and chi-squared map 
+What happened!? This incorrect mass-model provides a really good_fit to the image! The residuals and chi-squared-map 
 are as good as the ones we saw in the last tutorial.
 
 How can an incorrect lens model provide such a fit? Well, as I'm sure you noticed, the source has been reconstructed 
@@ -293,12 +288,12 @@ aplt.FitImaging.subplot_of_plane(
 And with that, we're done. Finally, I'll point out a few things about what we've covered to get you thinking about 
 the next tutorial on adaption.
 
-    - The unphysical solutions above are clearly problematic. Whilst they have lower Bayesian evidences their existance 
+ - The unphysical solutions above are clearly problematic. Whilst they have lower Bayesian evidences their existance 
       will still impact our inferred lens model. However, the _Pixelization_'s that we used in this chapter do not 
       adapt to the images they are fitting, meaning the correct solutions achieve much lower Bayesian log evidence 
       values than is actually possible. Thus, once we've covered adaption, these issues will be resolved!
     
-    - When the lens galaxy's light is subtracted perfectly it leaves no residuals. However, if it isn't subtracted 
+ - When the lens galaxy's light is subtracted perfectly it leaves no residuals. However, if it isn't subtracted 
       perfectly it does leave residuals, which will be fitted by the inversion. If the residual are significant this is 
       going to mess with our source reconstruction and can lead to some pretty nasty systematics. In the next chapter, 
       we'll learn how our adaptive analysis can prevent this residual fitting.

@@ -38,32 +38,23 @@ import os
 """ AUTOFIT + CONFIG SETUP """
 
 # %%
-from autoconf import conf
-import autofit as af
-
 #%matplotlib inline
+from autoconf import conf
+from pyprojroot import here
 
-# %%
-"""
-Setup the path to the workspace, using by filling in your path below.
-"""
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
-# %%
-workspace_path = "/path/to/user/autolens_workspace"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
-
-# %%
-"""
-Use this path to explicitly set the config path and output path.
-"""
-
-# %%
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """ AUTOLENS + DATA SETUP """
+
+# %%
+#%matplotlib inline
 
 import autolens as al
 import autolens.plot as aplt
@@ -72,15 +63,13 @@ import autolens.plot as aplt
 """
 We'll use strong lensing data, where:
 
-    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_3 import (
-    lens_sersic_sie__source_exp,
-)
+from autolens_workspace.howtolens.simulators.chapter_3 import lens_sersic_sie__source_exp
 
 dataset_label = "chapter_3"
 dataset_name = "lens_sersic_sie__source_exp"
@@ -127,7 +116,7 @@ __Pipeline_Setup_And_Tagging__:
 
 For this pipeline the pipeline setup customizes:
 
-    - If there is an external shear in the mass model or not.
+ - If there is an external shear in the mass model or not.
 
 The pipeline setup 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.

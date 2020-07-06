@@ -11,23 +11,18 @@ In the previous tutorial, we told our _Inversion_ to use a border. Here, we'll d
 
 import autolens as al
 import autolens.plot as aplt
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to your autolens workspace directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is omitted.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is omitted.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -279,9 +274,9 @@ centre of mask, but anywhere in the mask, trace beyond the source-plane border.
 """
 We'll use new strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's light is omitted.
-    - There are two lens galaxies whose _MassProfile_'s are _EllipticalIsothermal_'s.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's light is omitted.
+ - There are two lens galaxies whose _MassProfile_'s are _EllipticalIsothermal_'s.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%

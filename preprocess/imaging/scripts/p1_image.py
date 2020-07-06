@@ -157,7 +157,7 @@ aplt.Array(array=image_converted_to_eps)
 
 # %%
 """
-In 'autolens_workspace/preprocess/prepare/noise_map.py' we show that a noise map must also be in units of electrons 
+In 'autolens_workspace/preprocess/prepare/noise_map.py' we show that a noise-map must also be in units of electrons 
 per second, and that the same functions as above can be used to do this.
 """
 
@@ -279,8 +279,8 @@ convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
 ########## RECENTERING CURRENTLY DOES NOT WORK :( ###########
 
 # Lens Galaxy Centering - The lens galaxy should be in the centre of the image as opposed to a corner. This ensures
-# the origin of the lens galaxy's light and _MassProfile_s are near the origin (0.0", 0.0") of the grid used to perform
-# ray-tracing. The defaults priors on light and _MassProfile_s assume a origin of (0.0", 0.0").
+# the origin of the lens galaxy's light and _MassProfile_'s are near the origin (0.0", 0.0") of the grid used to perform
+# ray-tracing. The defaults priors on light and _MassProfile_'s assume a origin of (0.0", 0.0").
 
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.

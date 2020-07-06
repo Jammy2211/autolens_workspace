@@ -163,7 +163,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 """
 
 # %%
-phase_1 = al.PhaseImaging(
+phase1 = al.PhaseImaging(
     phase_name="phase_1",
     folders=["examples", "linking", "parametric_to_inversion"],
     settings=settings,
@@ -171,7 +171,7 @@ phase_1 = al.PhaseImaging(
     search=search,
 )
 
-phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+phase1_result = phase1.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -190,7 +190,7 @@ for by the non-linear search. In other linking examples, we'll see other ways to
 """
 
 # %%
-lens = phase_1_result.model.galaxies.lens
+lens = phase1_result.model.galaxies.lens
 source = al.GalaxyModel(
     redshift=1.0,
     pixelization=al.pix.VoronoiMagnification,
@@ -222,7 +222,7 @@ Note how the 'lens' passed to this phase was set up above using the results of p
 """
 
 # %%
-phase_2 = al.PhaseImaging(
+phase2 = al.PhaseImaging(
     phase_name="phase_2",
     folders=["examples", "linking", "parametric_to_inversion"],
     settings=settings,
@@ -230,7 +230,7 @@ phase_2 = al.PhaseImaging(
     search=search,
 )
 
-phase_2.run(dataset=imaging, mask=mask)
+phase2.run(dataset=imaging, mask=mask)
 
 # %%
 """

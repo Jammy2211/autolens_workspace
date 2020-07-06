@@ -42,28 +42,23 @@ from autoconf import conf
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
+from pyprojroot import here
 
-# %%
-"""
-You need to change the path below to the chapter 1 directory.
-"""
-
-# %%
-workspace_path = "/path/to/user/autolens_workspace/howtolens"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+workspace_path = here()
+print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config",
-    output_path=f"{workspace_path}/output/howtolens",
+    config_path=f"{workspace_path}/howtolens/config",
+    output_path=f"{workspace_path}/howtolens/output",
 )
 
 # %%
 """
 We'll use the same strong lensing data as the previous tutorial, where:
 
-    - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 """
 
 # %%
@@ -162,11 +157,11 @@ Now lets create the phase.
 """
 
 # %%
-phase_1 = al.PhaseImaging(
+phase1 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_1",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 # %%
@@ -182,7 +177,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# phase_1_result = phase_1.run(dataset=imaging, mask=mask)
+phase1_result = phase1.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -192,7 +187,7 @@ And indeed, we get a reasonably good model and fit to the data - in a much short
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_1_result.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase1_result.max_log_likelihood_fit)
 
 # %%
 """
@@ -289,11 +284,11 @@ than we're used to - I didn't have to edit the config files to get this phase to
 """
 
 # %%
-phase_2 = al.PhaseImaging(
+phase2 = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
 print(
@@ -302,7 +297,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-# phase_2_results = phase_2.run(dataset=imaging, mask=mask)
+phase2_results = phase2.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -312,7 +307,7 @@ Look at that, the right lens model, again!
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase_2_results.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase2_results.max_log_likelihood_fit)
 
 # %%
 """
@@ -323,10 +318,10 @@ priors.
 
 You're probably thinking though that there is one huge, giant, glaring flaw in all of this that I've not mentioned. 
 Phase 2 can't be generalized to another lens - it's priors are tuned to the image we fitted. If we had a lot of lenses, 
-we'd have to write a new phase_2 for every single one. This isn't ideal, is it?
+we'd have to write a new phase2 for every single one. This isn't ideal, is it?
 
 Fortunately, we can pass priors in PyAutoLens without specifying the specific values, using what we call promises. The
-code below sets up phase_2 with priors fully linked, but without specifying each individual prior!
+code below sets up phase2 with priors fully linked, but without specifying each individual prior!
 """
 
 # %%
@@ -334,27 +329,27 @@ phase_2_pass = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2_pass",
     settings=settings,
     galaxies=dict(
-        lens=phase_1_result.model.galaxies.lens,
-        source=phase_1_result.model.galaxies.source,
+        lens=phase1_result.model.galaxies.lens,
+        source=phase1_result.model.galaxies.source,
     ),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
-# phase_2_pass.run(dataset=imaging, mask=mask)
+phase_2_pass.run(dataset=imaging, mask=mask)
 
 # %%
 """
 By using the following API to link the result to the next model:
  
-    lens = phase_1_result.model.galaxies.lens
-    source = phase_1_result.model.galaxies.source
+    lens = phase1_result.model.galaxies.lens
+    source = phase1_result.model.galaxies.source
  
 Once the above phase is running, you should checkout its 'model.info' file. The parameters do not use the default 
 priors we saw in phase 1 (which are typically broad UniformPriors). Instead, it uses GaussianPrior's where:
 
-    - The mean values are the median PDF results of every parameter in phase 1.
-    - Many sigma values are the errors computed at 3.0 sigma confidence of every parameter in phase 1.
-    - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
+ - The mean values are the median PDF results of every parameter in phase 1.
+ - Many sigma values are the errors computed at 3.0 sigma confidence of every parameter in phase 1.
+ - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
       specified in the 'width_modifier' field of the _Profile_'s entry in the 'json_config' files (we will discuss
       why this is used in a moment).
 
@@ -387,19 +382,19 @@ component and then passing the priors of each individual parameter.
 light = af.PriorModel(al.lp.EllipticalSersic)
 
 light.elliptical_comps.elliptical_comps = (
-    phase_1_result.model.galaxies.lens.light.elliptical_comps
+    phase1_result.model.galaxies.lens.light.elliptical_comps
 )
-light.intensity = phase_1_result.model.galaxies.lens.light.intensity
-light.effective_radius = phase_1_result.model.galaxies.lens.light.effective_radius
+light.intensity = phase1_result.model.galaxies.lens.light.intensity
+light.effective_radius = phase1_result.model.galaxies.lens.light.effective_radius
 
 """LENS MASS PRIORS"""
 
 mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
 lens.mass.elliptical_comps.elliptical_comps = (
-    phase_1_result.model.galaxies.lens.mass.elliptical_comps
+    phase1_result.model.galaxies.lens.mass.elliptical_comps
 )
-lens.mass.einstein_radius = phase_1_result.model.galaxies.lens.mass.einstein_radius
+lens.mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 lens = al.GalaxyModel(redshift=0.5, light=light, mass=mass)
 
@@ -412,11 +407,11 @@ We now create and run the phase, using the lens __GalaxyModel__ we created above
 phase_2_pass = al.PhaseImaging(
     phase_name="phase_t5_linking_phases_2_pass_individual",
     settings=settings,
-    galaxies=dict(lens=lens, source=phase_1_result.model.galaxies.source),
-    search=af.DynestyStatic(n_live_points=40, evidence_tolerance=5.0),
+    galaxies=dict(lens=lens, source=phase1_result.model.galaxies.source),
+    search=af.DynestyStatic(n_live_points=40),
 )
 
-# phase_2_pass.run(dataset=imaging, mask=mask)
+phase_2_pass.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -430,7 +425,7 @@ these priors?
 
 Lets say I link two parameters as follows:
  
-    mass.einstein_radius = phase_1_result.model.galaxies.lens.mass.einstein_radius
+    mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 By invoking the 'model' attribute, the prioris passed following 3 rules:
 

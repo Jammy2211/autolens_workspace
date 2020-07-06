@@ -139,6 +139,6 @@ PyAutoLens before covering chapter 5!
 
 1) Adapt an inversions's pixelization to the morphology of the reconstructed source galaxy.
 2) Adapt the regularization scheme applied to this source to its surface brightness profile.
-3) Use hyper-galaxies to scale the image's noise map during fitting, to prevent over-fitting regions of the image.
+3) Use hyper-galaxies to scale the image's noise-map during fitting, to prevent over-fitting regions of the image.
 4) Include aspects of the data reduction in the model fitting, for example the background sky subtraction.
 5) Use these features in PyAutoLens's pipeline frame.
