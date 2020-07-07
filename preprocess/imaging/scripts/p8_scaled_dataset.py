@@ -13,14 +13,17 @@ source pixelization which can negatively impact the regularization scheme.
 However, by retaining them in the mask but simply scaling their values these discontinuities are omitted.
 """
 
-import numpy as np
+# %%
+"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
 
 # %%
-from autoconf import conf
+#%matplotlib inline
+
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-import os
+
+import numpy as np
 
 # %%
 """
@@ -28,27 +31,31 @@ Setup the path to the autolens_workspace, using a relative directory name.
 """
 
 # %%
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the mask is stored in, e.g,
-the mask will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/mask.fits'.
+the mask will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/mask.fits'.
 """
 
 # %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic__intervening_objects"
 
 # %%
 """
 Create the path where the noise-map will be output, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic_intervening_objects/'
+'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic_intervening_objects/'
 """
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%

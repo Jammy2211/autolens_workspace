@@ -5,12 +5,12 @@
 # # %%
 # """
 # In this example, we will load the residual-map of a fit from a .fits file and plotters it using the function
-# autolens.dataset_label.plotters.plotters.plot_array.
+# autolens.dataset_type.plotters.plotters.plot_array.
 #
 # We will use the residuals of a fit to slacs1430+4105, which comes from running the example pipeline
 # 'workspacde/pipelines/examples/lens_sie__source_sersic_parametric.py.
 #
-# We have included the .fits dataset_label required for this example in the directory
+# We have included the .fits dataset_type required for this example in the directory
 # 'autolens_workspace/output/imaging/slacs1430+4105/pipeline_light_and_x1_source_parametric/phase_3_both/image/fits'.
 #
 # However, the complete set of search results for the pipeline are not included, as the large file sizes prohibit
@@ -30,7 +30,7 @@
 # """
 #
 # # %%
-# dataset_label = "slacs"
+# dataset_type = "slacs"
 # dataset_name = "slacs1430+4105"
 #
 # # %%
@@ -41,7 +41,7 @@
 #
 # # %%
 # dataset_path = af.util.create_path(
-#     path=workspace_path, folder_names=["dataset", dataset_label, dataset_name]
+#     path=workspace_path, folder_names=["dataset", dataset_type, dataset_label, dataset_name]
 # )
 # image_path = f"{dataset_path}/image.fits"
 #
@@ -49,7 +49,7 @@
 # phase_name = "phase_3_both"
 # result_path = af.util.create_path(
 #     path=workspace_path,
-#     folder_names=["dataset", dataset_label, dataset_name, pipeline_name, phase_name],
+#     folder_names=["dataset", dataset_type, dataset_label, dataset_name, pipeline_name, phase_name],
 # )
 # residual_map_path = result_path + "/image/fits/fit_residual_map.fits"
 # chi_squared_map_path = result_path + "/image/fits/fit_chi_squared_map.fits"

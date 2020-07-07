@@ -6,9 +6,9 @@ import autolens.plot as aplt
 """
 In this example, we will demonstrate how the appearance of figures in PyAutoLens can be customized. To do this, we
 will use the the image of the strong lens slacs1430+4105 from a .fits file and plotters it using the
-function autolens.dataset_label.plotters.plotters.plot_array.
+function autolens.dataset_type.plotters.plotters.plot_array.
 
-The customization functions demonstrated in this example are generic to any 2D arrays of dataset_label, and can therefore be
+The customization functions demonstrated in this example are generic to any 2D arrays of dataset_type, and can therefore be
 applied to the plotting of noise-maps, PSF's, residual-maps, chi-squared-maps, etc.
 
 Setup the path to the autolens_workspace, using a relative directory name.
@@ -19,14 +19,14 @@ workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
-We have included the .fits dataset_label required for this example in the directory
+We have included the .fits dataset_type required for this example in the directory
 'autolens_workspace/output/dataset/imaging/slacs1430+4105/'.
 
 First, lets setup the path to the .fits file of the image.
 """
 
 # %%
-dataset_label = "slacs"
+dataset_type = "slacs"
 dataset_name = "slacs1430+4105"
 
 # %%
@@ -37,7 +37,7 @@ Create the path where the dataset will be loaded from, which in this case is
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 image_path = f"{dataset_path}/image.fits"
 

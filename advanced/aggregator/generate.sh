@@ -1,12 +1,26 @@
-export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/
-rm -rf *.ipynb
-rm -rf .ipynb_checkpoints
-cd scripts
+echo "Setting up Enviroment variables."
+export PYAUTO_PATH=/home/jammy/PycharmProjects/PyAuto
+export PYAUTOLENS_PATH=$PYAUTO_PATH/PyAutoLens
+export WORKSPACE_PATH=$PYAUTO_PATH/autolens_workspace
+export AGGREGATOR_PATH=$WORKSPACE_PATH/advanced/aggregator
+export SCRIPTS_PATH=$AGGREGATOR_PATH/scripts
+
+echo "Removing old notebooks."
+
+echo "Converting scripts to notebooks."
+cd $SCRIPTS_PATH
+
+find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=default/backend=Agg/g' {} +
+
 for f in *.py; do python "$f"; done
 py_to_notebook
 cp -r *.ipynb ../
 rm *.ipynb
 cd ..
-rm __init__.ipynb
 git add *.ipynb
-export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
+rm __init__.ipynb
+
+find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
+
+echo "returning to generate folder."
+cd $AGGREGATOR_PATH

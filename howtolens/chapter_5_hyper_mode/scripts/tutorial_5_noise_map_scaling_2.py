@@ -20,7 +20,7 @@ import autolens as al
 import autolens.plot as aplt
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 # %%
@@ -37,9 +37,9 @@ from autolens_workspace.howtolens.simulators.chapter_5 import (
     lens_sersic_sie__source_sersic,
 )
 
-dataset_label = "chapter_5"
+dataset_type = "chapter_5"
 dataset_name = "lens_sersic_sie__source_sersic"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

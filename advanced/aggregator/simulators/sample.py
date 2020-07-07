@@ -1,7 +1,6 @@
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-import os
 
 """
 This script simulates a sample of three strong lenses, which are used to illustrate the aggregator.
@@ -10,8 +9,14 @@ It follows the scripts described in the '/autolens_workspace/simulators/', so if
 those scripts out for details!
 """
 
-"""Setup the path to the autolens_workspace, using a relative directory name."""
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 """The pixel scale of the datasets that are simulated."""
 pixel_scales = 0.1
@@ -19,19 +24,19 @@ pixel_scales = 0.1
 """EXAMPLE LENS SYSTEM 1"""
 
 """
-The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
+    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
-dataset_label = "aggregator"
+dataset_type = "aggregator"
 dataset_name = "lens_sie__source_sersic__0"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
 )
 
 """The grid use to create the image."""
@@ -94,19 +99,19 @@ imaging.output_to_fits(
 """EXAMPLE LENS SYSTEM 2"""
 
 """
-The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
+    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
-dataset_label = "aggregator"
+dataset_type = "aggregator"
 dataset_name = "lens_sie__source_sersic__1"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
 )
 
 """
@@ -161,20 +166,20 @@ imaging.output_to_fits(
 """EXAMPLE LENS SYSTEM 3"""
 
 """
-The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
+    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 
-dataset_label = "aggregator"
+dataset_type = "aggregator"
 dataset_name = "lens_sie__source_sersic__2"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
 )
 
 """

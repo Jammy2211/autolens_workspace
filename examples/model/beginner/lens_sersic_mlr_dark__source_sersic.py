@@ -22,11 +22,13 @@ In this example script, we will fit imaging of a strong lens system where:
 """
 
 # %%
-from autoconf import conf
-import autofit as af
-import os
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
 
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -41,25 +43,29 @@ We use this path to set:
 """
 
 # %%
+from autoconf import conf
+
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%
 """
-To begin lets load the strong lens dataset 'lens_sersic_mlr_nfw__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens dataset 'lens_sersic_mlr_nfw__source_sersic' 'from .fits files, which is the dataset 
 we will use to perform lens modeling.
 
 This is the same dataset we fitted in the 'fitting.py' example.
 """
 
 # %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "stellar_and_dark"
 dataset_name = "lens_sersic_mlr_nfw__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -75,7 +81,7 @@ The model-fit also requires a mask, which defines the regions of the image we us
 
 # %%
 mask = al.Mask.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scale, radius=3.0
+    shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)

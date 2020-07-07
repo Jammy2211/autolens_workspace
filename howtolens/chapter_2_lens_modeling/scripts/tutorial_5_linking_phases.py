@@ -44,7 +44,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -66,9 +66,9 @@ from autolens_workspace.howtolens.simulators.chapter_2 import (
     lens_sersic_sie__source_exp,
 )
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -177,7 +177,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-phase1_result = phase1.run(dataset=imaging, mask=mask)
+phase1_results = phase1.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -187,7 +187,7 @@ And indeed, we get a reasonably good model and fit to the data - in a much short
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=phase1_result.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=phase1_results.max_log_likelihood_fit)
 
 # %%
 """

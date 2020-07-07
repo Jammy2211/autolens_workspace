@@ -33,6 +33,7 @@ cp -r $HOWTOLENS_PATH/dataset $PYAUTOLENS_PATH/howtolens
 rm $PYAUTOLENS_PATH/howtolens/dataset/chapter_*/*.fits
 cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
 cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
+cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 
 echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from autolens_workspace./from /g' {} +

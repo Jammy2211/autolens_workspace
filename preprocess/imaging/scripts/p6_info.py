@@ -18,16 +18,15 @@ other measurements of a lens not made by PyAutoLens. Examples of such data might
 - The results of previous strong lens models to the lens performed in previous papers.
 """
 
-import shutil
-import os
-import json
-
 # %%
-from autoconf import conf
-import autofit as af
+"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
 
 # %%
 #%matplotlib inline
+
+import autofit as af
+import autolens as al
+import autolens.plot as aplt
 
 # %%
 """
@@ -35,30 +34,33 @@ Setup the path to the autolens_workspace, using the correct path name below.
 """
 
 # %%
-workspace_path = "path/to/AutoLens/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+from pyprojroot import here
 
-preprocess_path = f"{workspace_path}//preprocess/imaging/"
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+preprocess_path = f"{workspace_path}/preprocess/imaging"
 
 # %%
 """
 The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the info file is stored in e.g,
-the info will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/info.json'.
+the info will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/info.json'.
 """
 
 # %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
 
 # %%
 """
 Create the path where the info will be output, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic/'
 """
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%
@@ -83,6 +85,10 @@ script and move it to the appropriate dataset folder. We first delete existing i
 """
 
 # %%
+import os
+import shutil
+import json
+
 info_file = "info.json"
 
 with open(info_file, "w+") as f:

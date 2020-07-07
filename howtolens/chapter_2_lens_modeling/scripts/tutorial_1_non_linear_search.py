@@ -75,9 +75,12 @@ Nevertheless, setting the paths explicitly within the code is good practise.
 """
 
 # %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -112,9 +115,9 @@ To see how the _Imaging_ dataset is simulated, feel free to checkout the simulat
 # %%
 from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sis__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

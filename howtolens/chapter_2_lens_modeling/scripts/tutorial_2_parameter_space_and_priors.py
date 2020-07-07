@@ -95,7 +95,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -114,9 +114,9 @@ We'll use the same strong lensing data as the previous tutorial, where:
 # %%
 from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sis__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -195,7 +195,7 @@ output of the non-linear search, you'll see that the priors have indeed been cha
 """
 
 # %%
-custom_phase = al.PhaseImaging(
+phase = al.PhaseImaging(
     phase_name="phase_t2_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
@@ -208,9 +208,9 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results_custom = custom_phase.run(dataset=imaging, mask=mask)
+results = phase.run(dataset=imaging, mask=mask)
 
-aplt.FitImaging.subplot_fit_imaging(fit=results_custom.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -227,5 +227,3 @@ non-linear parameter space. Is it possible that we won't find the highest log li
 
 Try and list 3 reasons why this might happen. In the next tutorial, we'll learn about just that - failure!
 """
-
-# %%

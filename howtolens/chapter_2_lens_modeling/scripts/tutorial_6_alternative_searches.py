@@ -17,7 +17,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -39,9 +39,9 @@ from autolens_workspace.howtolens.simulators.chapter_2 import (
     lens_sersic_sie__source_sersic,
 )
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sersic_sie__source_sersic"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -139,7 +139,7 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_slow = phase_slow.run(dataset=imaging, mask=mask)
+# result_slow = phase_slow.run(dataset=imaging, mask=mask)
 
 # %%
 """
@@ -154,7 +154,7 @@ Lets check that we get a good model and fit to the data.
 We can use the result to tell us how many iterations Dynesty took to convergence on the solution.
 """
 print("Total Dynesty Iterations (If you skip running the phase, this is ~ 500000):")
-print(result_slow.samples.total_samples)
+# print(result_slow.samples.total_samples)
 
 # %%
 """
@@ -201,8 +201,7 @@ And now lets confirm it uses significantly fewer iterations.
 print("Total Dynesty Iterations:")
 print("Slow settings: ~500000")
 # print(result_slow.samples.total_samples)
-print("Fast settings: ", result_fast.samples.total_samples)
-stop
+# print("Fast settings: ", result_fast.samples.total_samples)
 
 # %%
 """
@@ -252,11 +251,11 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_pso = phase_pso.run(dataset=imaging, mask=mask)
+# result_pso = phase_pso.run(dataset=imaging, mask=mask)
 
 print("PySwarms has finished run - you may now continue the notebook.")
 
-aplt.FitImaging.subplot_fit_imaging(fit=result_pso.max_log_likelihood_fit)
+# aplt.FitImaging.subplot_fit_imaging(fit=result_pso.max_log_likelihood_fit)
 
 # %%
 """
@@ -307,8 +306,8 @@ print(
     " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
+# result_mcmc = phase_mcmc.run(dataset=imaging, mask=mask)
 
 print("Emcee has finished run - you may now continue the notebook.")
 
-aplt.FitImaging.subplot_fit_imaging(fit=result_mcmc.max_log_likelihood_fit)
+# aplt.FitImaging.subplot_fit_imaging(fit=result_mcmc.max_log_likelihood_fit)

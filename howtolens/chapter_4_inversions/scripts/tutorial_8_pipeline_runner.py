@@ -19,7 +19,7 @@ solutions discussed in tutorial 6. We'll then switch to an _Inversion_.
 from autoconf import conf
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 # %%
@@ -36,6 +36,8 @@ conf.instance = conf.Config(
 # %%
 """ AUTOLENS + DATA SETUP """
 
+# %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -51,9 +53,9 @@ We'll use strong lensing data, where:
 # %%
 from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic_x4
 
-dataset_label = "chapter_4"
+dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic_x4"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -100,7 +102,7 @@ setup = al.PipelineSetup(
     pixelization=al.pix.VoronoiMagnification,
     regularization=al.reg.Constant,
     no_shear=False,
-    folders=["howtolens", "c4_t8_inversion"],
+    folders=["c4_t8_inversion"],
 )
 
 # %%

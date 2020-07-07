@@ -5,7 +5,7 @@ import autolens.plot as aplt
 # %%
 """
 In this example, we will load the image of a strong lens from a .fits file and plotters it using the
-function autolens.dataset_label.plotters.plotters.plot_array. We will customize the appearance of this figure to
+function autolens.dataset_type.plotters.plotters.plot_array. We will customize the appearance of this figure to
 highlight the features of the image. For more generical plotting tools (e.g. changing the figure size, axis unit_label,
 outputting the image to the hard-disk, etc.) checkout the example in 'autolens_workspace/plotting/examples/structures/masked_structures.py'.
 
@@ -19,14 +19,14 @@ workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
 
 # %%
 """
-We have included the .fits dataset_label required for this example in the directory
+We have included the .fits dataset_type required for this example in the directory
 'autolens_workspace/output/dataset/imaging/slacs1430+4105/'.
 
 First, lets setup the path to the .fits file of the image.
 """
 
 # %%
-dataset_label = "slacs"
+dataset_type = "slacs"
 dataset_name = "slacs1430+4105"
 
 # %%
@@ -37,7 +37,7 @@ Create the path where the dataset will be loaded from, which in this case is
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 image_path = f"{dataset_path}/image.fits"
 

@@ -122,9 +122,12 @@ is correct on your computer!
 """
 
 # %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 dataset_path = f"{workspace_path}/howtolens/dataset/chapter_1"
 print("Dataset Path: ", dataset_path)
 

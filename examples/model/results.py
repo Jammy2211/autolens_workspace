@@ -21,22 +21,50 @@ script again.
 """
 
 # %%
-from autoconf import conf
-import autofit as af
-import os
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
 
-workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+# %%
+"""
+We use this path to set:
+    config_path:
+        Where PyAutoLens configuration files are located. The default location is '/path/to/autolens_workspace/config'. 
+        They control many aspects of PyAutoLens (visualization, model priors, etc.). Feel free to check them out!.
+
+    output-path: 
+        Where the output of the non-linear search and model-fit are stored on your hard-disk. The default location 
+        is '/path/to/autolens_workspace/output.
+"""
+
+# %%
+from autoconf import conf
 
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
+# %%
+"""
+Load the strong lens dataset 'lens_sie__source_sersic' 'from .fits files, which is the dataset we will use to perform 
+lens modeling.
+
+This is the same dataset we fitted in the 'autolens/intro/fitting.py' example.
+"""
+
+# %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

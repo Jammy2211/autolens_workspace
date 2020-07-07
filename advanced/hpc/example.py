@@ -22,7 +22,7 @@ import autofit as af
 # If you are ready, then let me take you through the Cosma runner. It is remarkably similar to the ordinary pipeline
 # runners you're used to, however it makes a few changes for running jobs on cosma:
 
-# 1) The dataset path is over-written to the path '/cosma7/data/dp004/cosma_username/dataset_label' as opposed to the
+# 1) The dataset path is over-written to the path '/cosma7/data/dp004/cosma_username/dataset_type' as opposed to the
 #    autolens_workspace. As we discussed, on cosma we don't store our data in our autolens_workspace.
 
 # 2) The output path is over-written to the path '/cosma7/data/dp004/cosma_username/output' as opposed to
@@ -39,26 +39,35 @@ cosma_path = af.util.create_path(path="/cosma7/data/dp004/", folders=[cosma_user
 
 # The dataset folder is the name of the folder our dataset is stored in, which in this case is 'imaging'. This should
 # be named after your sample of lenses (e.g. 'slacs', 'bells').
-dataset_label = "imaging"
+dataset_type = "imaging"
 
 # Next, lets use this path to setup the dataset path, which for this example is named 'imaging' and found at
 # '/cosma7/data/dp004/cosma_username/dataset/imaging/'
 cosma_dataset_path = af.util.create_path(
-    path=cosma_path, folders=["dataset", dataset_label]
+    path=cosma_path, folders=["dataset", dataset_type]
 )
 
 # We'll do the same for our output path, which is
 # '/cosma7/data/dp004/cosma_username/output/imaging/'
 cosma_output_path = af.util.create_path(
-    path=cosma_path, folders=["output", dataset_label]
+    path=cosma_path, folders=["output", dataset_type]
 )
 
-# Next, we need the path to our Cosma autolens_workspace, which can be generated using a relative path assuming our
-# runner is located in our Cosma autolens_workspace.
-workspace_path = "{}/..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+from pyprojroot import here
 
-# Lets now use the above paths to set the config path and output path for our Cosma run.
-conf.instance = conf.Config(config_path=config_path, output_path=cosma_output_path)
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+# %%
+"""Set up the config and output paths for a cosma run."""
+
+# %%
+from autoconf import conf
+
+conf.instance = conf.Config(
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+)
 
 # On Cosma, there are two systems we can submit to, called 'cordelia' and 'cosma'. The similarities and differences
 # between these systems are as follows:
@@ -119,7 +128,7 @@ dataset_name = dataset_name[cosma_array_id]
 pixel_scales = 0.2  # Make sure your pixel scale is correct!
 
 # We now use the dataset_name to load a the dataset on each job. The statement below combines
-# the cosma_dataset_path and and dataset_name to read dataset_label from the following directory:
+# the cosma_dataset_path and and dataset_name to read dataset_type from the following directory:
 # '/cosma7/data/dp004/cosma_username/dataset/imaging/dataset_name'
 dataset_path = af.util.create_path(path=cosma_dataset_path, folders=[dataset_name])
 
@@ -151,7 +160,7 @@ setup = al.slam.SLaM(hyper=hyper, source=source)
 from pipelines.beginner.no_lens_light import lens_sie__source_inversion
 
 pipeline = lens_sie__source_inversion.make_pipeline(
-    setup=setup, folders=["beginner", dataset_label, dataset_name]
+    setup=setup, folders=["beginner", dataset_type, dataset_label, dataset_name]
 )
 
 pipeline.run(dataset=imaging, mask=mask)
@@ -168,7 +177,7 @@ pipeline.run(dataset=imaging, mask=mask)
 
 # - Copy and paste this example.py script and rename it to your new runner (e.g. 'slacs.py').
 # - Either keep the data_folder_name as 'share', or change to your cosma username.
-# - Change the 'dataset_label' from example to your dataset folder (e.g. 'slacs', 'bells').
+# - Change the 'dataset_type' from example to your dataset folder (e.g. 'slacs', 'bells').
 # - Change the list of data_names to your dataset names (e.g. 'slacs0123+4567, 'bells3141+5926')
 # - Change the imported pipeline from the example above to the one you want to use.
 # - Create new batch scripts, by copying the example scripts and changing the job name, task number, arrays ids and

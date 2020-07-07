@@ -14,22 +14,30 @@ reconstructs its light on a pixel-grid.
 """
 
 # %%
-import autolens as al
-import autolens.plot as aplt
-import os
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
-To begin, lets load the imaging data that we'll reconstructed the lensed source galaxy's light of using a pixelization.
+Load the imaging data that we'll reconstruct the lensed source galaxy's light of using a pixelization.
 
 Note how complex the lensed source galaxy looks, with multiple clumps of light - this would be very difficult to 
 represent using _LightProfile_'s!
 """
 
-workspace_path = "{}/../..".format(os.path.dirname(os.path.realpath(__file__)))
-dataset_label = "imaging"
+# %%
+import autolens as al
+import autolens.plot as aplt
+
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic_x4"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

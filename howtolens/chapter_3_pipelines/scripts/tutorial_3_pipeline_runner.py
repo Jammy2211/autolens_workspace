@@ -21,7 +21,7 @@ regime of 30-40+ parameters in our non-linear search. Even with a pipeline, that
 from autoconf import conf
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -47,9 +47,9 @@ We'll use new strong lensing data, where:
 # %%
 from autolens_workspace.howtolens.simulators.chapter_3 import lens_sie__source_sersic_x4
 
-dataset_label = "chapter_3"
+dataset_type = "chapter_3"
 dataset_name = "lens_sie__source_sersic_x4"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

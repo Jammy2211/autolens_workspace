@@ -12,14 +12,28 @@ We we begin by loading the strong lens dataset 'lens_sie__source_sersic' 'from .
 """
 
 # %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+# %%
+"""
+Load the strong lens dataset 'lens_sersic_sie__source_sersic' 'from .fits files, which is the dataset 
+we will use to perform lens modeling.
+"""
+
+# %%
 import autolens as al
 import autolens.plot as aplt
-import os
 
-workspace_path = "{}/..".format(os.path.dirname(os.path.realpath(__file__)))
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

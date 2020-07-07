@@ -16,7 +16,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -35,9 +35,9 @@ We'll use the same strong lensing data as tutorials 1 & 2, where:
 # %%
 from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sis__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -217,9 +217,9 @@ Lets load example data containing two distinct source galaxies.
 # %%
 from autolens_workspace.howtolens.simulators.chapter_2 import lens_sis__source_exp_x2
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sis__source_exp_x2"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

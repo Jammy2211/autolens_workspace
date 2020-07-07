@@ -19,20 +19,20 @@ In this example script, we will fit imaging of a strong lens system where:
 """
 
 # %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+# %%
+"""Set up the config and output paths."""
+
+# %%
 from autoconf import conf
-import autofit as af
-import autolens as al
-import autolens.plot as aplt
-import os
 
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
-
-# %%
-"""
-Set up the workspace, config and output paths.
-"""
-
-# %%
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
@@ -48,9 +48,14 @@ As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this 
 """
 
 # %%
-dataset_label = "imaging"
+import autofit as af
+import autolens as al
+import autolens.plot as aplt
+
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

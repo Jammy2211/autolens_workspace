@@ -1,9 +1,9 @@
 import autofit as af
 from astropy.io import fits
-import os
-
 import autolens as al
 import autolens.plot as aplt
+
+import os
 
 
 def simulate_all_imaging(dataset_path):

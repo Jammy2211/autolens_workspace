@@ -1,7 +1,6 @@
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-import os
 
 """
 This tool allows one to make simulated datasets of strong lenses using a multi-plane ray-tracer, such that all
@@ -9,23 +8,30 @@ galaxies down the line-of-sight are included in the ray-tracing calculation base
 
 The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
 
-The image will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-The noise-map will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
-The psf will be output as '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
+The image will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+The noise-map will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+The psf will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 
-"""Setup the path to the autolens_workspace, using a relative directory name."""
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_label' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_label/dataset_name/psf.fits'.
+    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_multi_plane"
 
 """
@@ -33,7 +39,7 @@ Create the path where the dataset will be output, which in this case is
 '/autolens_workspace/dataset/imaging/multi_plane/'
 """
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 """

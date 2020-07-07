@@ -1,5 +1,3 @@
-import os
-
 # %%
 """
 __WELCOME__ 
@@ -41,12 +39,20 @@ import autofit as af
 """Setup the path to the autolens_workspace, using a relative directory name."""
 
 # %%
-workspace_path = "{}/../../../../..".format(os.path.dirname(os.path.realpath(__file__)))
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """Use this path to explicitly set the config path and output path."""
 
 # %%
+from autoconf import conf
+
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
@@ -55,14 +61,12 @@ conf.instance = conf.Config(
 """ AUTOLENS + DATA SETUP """
 
 # %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-# %%
-"""Specify the dataset label and name, which we use to determine the path we load the data from."""
-
-# %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
 pixel_scales = 0.1
 
@@ -74,7 +78,7 @@ Create the path where the dataset will be loaded from, which in this case is
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%
@@ -128,7 +132,7 @@ setup = al.PipelineSetup(
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     pixelization=al.pix.VoronoiBrightnessImage,
     regularization=al.reg.AdaptiveBrightness,
-    folders=["hyper", dataset_label, dataset_name],
+    folders=["hyper", dataset_type, dataset_label, dataset_name],
 )
 
 # %%

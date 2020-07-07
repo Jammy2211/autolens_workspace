@@ -1,5 +1,3 @@
-import os
-
 """
 __Aggregator: Phase Runner__
 
@@ -22,8 +20,14 @@ The phase fits each lens with:
 from autoconf import conf
 import autofit as af
 
-"""Setup the path to the autolens_workspace, using a relative directory name."""
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 """Use this path to explicitly set the config path and output path."""
 conf.instance = conf.Config(
@@ -34,7 +38,7 @@ conf.instance = conf.Config(
 
 import autolens as al
 
-"""Specify the dataset label and name, which we use to determine the path we load the data from."""
+"""Specify the dataset type, label and name, which we use to determine the path we load the data from."""
 
 pixel_scales = 0.1
 

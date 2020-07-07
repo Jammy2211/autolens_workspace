@@ -33,9 +33,29 @@ cp -r $HOWTOLENS_PATH/dataset $PYAUTOLENS_PATH/howtolens
 rm $PYAUTOLENS_PATH/howtolens/dataset/chapter_*/*.fits
 cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
 cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
+cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 
 echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from autolens_workspace./from /g' {} +
+
+echo "Renaming all code which runs phases"
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/results =/# results = /g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/aplt.FitImaging/# aplt.FitImaging/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/results_local_maxima =/# results_local_maxima =/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/results_custom_priors = phase/# results_custom_priors = phase/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/results_light_traces_mass =/# results_light_traces_mass =/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase1_results = phase1.run/# phase1_results = phase1.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase2_results = phase2.run/# phase2_results = phase2.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase_2_pass.run/# phase_2_pass.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_slow = phase_slow/# result_slow = phase_slow/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_fast = phase_fast/# result_fast = phase_fast/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase_with_custom_mask.run/# phase_with_custom_mask.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase_with_positions.run/# phase_with_positions.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase_with_x2_positions.run/# phase_with_x2_positions.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/print(results/# print(results/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/agg =/# agg =/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/samples = lis/# samples = lis/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/print(samples[0]/# print(samples[0]/g' {} +
 
 echo "Adding new PyAutoLens/howtolens files to github."
 cd $PYAUTOLENS_PATH

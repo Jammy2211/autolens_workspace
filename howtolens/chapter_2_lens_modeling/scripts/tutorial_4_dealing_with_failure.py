@@ -22,7 +22,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -44,9 +44,9 @@ from autolens_workspace.howtolens.simulators.chapter_2 import (
     lens_sersic_sie__source_exp,
 )
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -204,8 +204,8 @@ regions of parameter space, given our improved and more informed priors.
 """
 
 # %%
-custom_prior_phase = al.PhaseImaging(
-    phase_name="phase_t4_tuned_priors",
+phase = al.PhaseImaging(
+    phase_name="phase_t4_custom_priors",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=af.DynestyStatic(n_live_points=50),
@@ -217,7 +217,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-custom_prior_result = custom_prior_phase.run(dataset=imaging, mask=mask)
+results_custom_priors = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -228,7 +228,7 @@ and informing it of where to sample parameter space, we can increase the odds th
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=custom_prior_result.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=results_custom_priors.max_log_likelihood_fit)
 
 # %%
 """
@@ -292,7 +292,7 @@ Again, we create this phase and run it. The non-linear search now has a less com
 """
 
 # %%
-light_traces_mass_phase = al.PhaseImaging(
+phase_light_traces_mass = al.PhaseImaging(
     phase_name="phase_t4_light_traces_mass",
     settings=settings,
     galaxies=dict(lens=lens, source=source),
@@ -305,13 +305,11 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-light_traces_mass_phase_result = light_traces_mass_phase.run(dataset=imaging, mask=mask)
+results_light_trace_mass = phase_light_traces_mass.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
-aplt.FitImaging.subplot_fit_imaging(
-    fit=light_traces_mass_phase_result.max_log_likelihood_fit
-)
+aplt.FitImaging.subplot_fit_imaging(fit=results_light_trace_mass.max_log_likelihood_fit)
 
 # %%
 """

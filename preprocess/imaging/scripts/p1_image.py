@@ -13,20 +13,18 @@ This tutorial describes preprocessing your dataset's image to adhere too the uni
 """
 
 # %%
-from autoconf import conf
-import autofit as af
+"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
 
 # %%
 #%matplotlib inline
 
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-from preprocess.imaging.data_raw import simulators
-
 # %%
 """
-First, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory 
+Next, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory 
 and place your dataset in the 'autolens_workspace/preprocess/imaging/data_raw' directory.
 
 For this tutorial, we'll use the 'autolens_workspace/preprocess/imaging/data_raw' directory. The folder 'data_raw' 
@@ -34,12 +32,14 @@ contains example data we'll use in this tutorial.
 """
 
 # %%
-path = (
-    "path/to/AutoLens/autolens_workspace/preprocess/imaging/"
-)  # <----- You must include this slash on the end
-path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace/preprocess/imaging/"
+from pyprojroot import here
 
-dataset_path = af.util.create_path(path=path, folders=["data_raw"])
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+dataset_path = af.util.create_path(
+    path=f"{workspace_path}/preprocess/imaging/", folders=["data_raw"]
+)
 
 # %%
 """
@@ -47,6 +47,8 @@ This populates the 'data_raw' path with example simulated imaging data-sets.
 """
 
 # %%
+from preprocess.imaging.data_raw import simulators
+
 simulators.simulate_all_imaging(dataset_path=dataset_path)
 
 # %%

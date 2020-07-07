@@ -17,12 +17,12 @@ have not tried using the lens light centres as a fixed centre for your mass mode
 """
 
 # %%
-from autoconf import conf
-import autofit as af
+"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
 
 # %%
 #%matplotlib inline
 
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -32,29 +32,32 @@ Setup the path to the autolens_workspace, using the correct path name below.
 """
 
 # %%
-workspace_path = "path/to/AutoLens/autolens_workspace/"
-workspace_path = "/home/jammy/PycharmProjects/PyAuto/autolens_workspace"
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
 The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the lens light centre is stored 
 in e.g, the lens light centre will be output as 
-'/autolens_workspace/dataset/dataset_label/dataset_name/lens_light_centre.dat'.
+'/autolens_workspace/dataset/dataset_type/dataset_name/lens_light_centre.dat'.
 """
 
 # %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "with_lens_light"
 dataset_name = "lens_sersic_sie__source_sersic"
 
 # %%
 """
 Create the path where the lens light centres will be output, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/with_lens_light/lens_sersic_sie__source_sersic/'
 """
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%

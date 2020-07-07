@@ -1,5 +1,3 @@
-import os
-
 # %%
 """
 __WELCOME__ 
@@ -18,22 +16,30 @@ This uses the pipeline (Check it out full description of the pipeline):
 """
 
 # %%
-""" AUTOFIT + CONFIG SETUP """
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
+
+# %%
+"""Set up the config and output paths."""
 
 # %%
 from autoconf import conf
-import autofit as af
 
-# %%
-"""Setup the path to the autolens_workspace, using a relative directory name."""
-
-# %%
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+conf.instance = conf.Config(
+    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
+)
 
 # %%
 """Use this path to explicitly set the config path and output path."""
 
 # %%
+from autoconf import conf
+
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
@@ -42,20 +48,13 @@ conf.instance = conf.Config(
 """ AUTOLENS + DATA SETUP """
 
 # %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-# %%
-"""Specify the dataset label and name, which we use to determine the path we load the data from."""
-
-# %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
-
-# %%
-"""This is the pixel-to-arcsecond conversion factor of the data, you must get this right!"""
-
-# %%
 pixel_scales = 0.1
 
 # %%
@@ -66,7 +65,7 @@ Create the path where the dataset will be loaded from, which in this case is
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%
@@ -127,7 +126,7 @@ to different output folders and thus not clash with one another!
 
 The 'folders' below specify the path the pipeline results are written to, which is:
 
-    'autolens_workspace/output/dataset_label/dataset_name/' 
+    'autolens_workspace/output/dataset_type/dataset_name/' 
     'autolens_workspace/output/imaging/lens_sie__source_sersic/'
 """
 
@@ -136,7 +135,7 @@ setup = al.PipelineSetup(
     pixelization=al.pix.VoronoiMagnification,
     regularization=al.reg.Constant,
     no_shear=False,
-    folders=["pipelines", dataset_label, dataset_name],
+    folders=["pipelines", dataset_type, dataset_label, dataset_name],
 )
 
 # %%

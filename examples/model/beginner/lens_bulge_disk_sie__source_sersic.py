@@ -21,11 +21,13 @@ In this example script, we will fit imaging of a strong lens system where:
 """
 
 # %%
-from autoconf import conf
-import autofit as af
-import os
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
 
-workspace_path = "{}/../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -40,23 +42,27 @@ We use this path to set:
 """
 
 # %%
+from autoconf import conf
+
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )
 
 # %%
 """
-To begin lets load the strong lens dataset 'lens_sersic_sie__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens dataset 'lens_sersic_sie__source_sersic' 'from .fits files, which is the dataset 
 we will use to perform lens modeling.
 """
 
 # %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "with_lens_light"
 dataset_name = "lens_bulge_disk_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -148,7 +154,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=100, sample="rwalk")
+search = af.DynestyStatic(n_live_points=100)
 
 # %%
 """

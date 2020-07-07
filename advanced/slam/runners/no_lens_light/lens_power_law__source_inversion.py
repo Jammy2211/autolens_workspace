@@ -1,5 +1,3 @@
-import os
-
 # %%
 """
 __SLaM (Source, Light and Mass)__
@@ -32,8 +30,14 @@ from autoconf import conf
 import autofit as af
 
 # %%
-"""Setup the path to the autolens_workspace, using a relative directory name."""
-workspace_path = "{}/../../../..".format(os.path.dirname(os.path.realpath(__file__)))
+# %%
+"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+
+# %%
+from pyprojroot import here
+
+workspace_path = str(here())
+print("Workspace Path: ", workspace_path)
 
 # %%
 """Use this path to explicitly set the config path and output path."""
@@ -45,14 +49,12 @@ conf.instance = conf.Config(
 """ AUTOLENS + DATA SETUP """
 
 # %%
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-# %%
-"""Specify the dataset label and name, which we use to determine the path we load the data from."""
-
-# %%
-dataset_label = "imaging"
+dataset_type = "imaging"
+dataset_label = "no_lens_light"
 dataset_name = "lens_sie__source_sersic"
 pixel_scales = 0.1
 
@@ -64,7 +66,7 @@ Create the path where the dataset will be loaded from, which in this case is
 
 # %%
 dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_label, dataset_name]
+    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
 )
 
 # %%
@@ -189,7 +191,7 @@ based on the input Setup values. It also handles pipeline tagging and path struc
 """
 
 slam = al.slam.SLaM(
-    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_label]
+    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_type]
 )
 
 # %%

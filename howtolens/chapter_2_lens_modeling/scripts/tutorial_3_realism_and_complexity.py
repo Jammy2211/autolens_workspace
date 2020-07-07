@@ -30,7 +30,7 @@ import autolens.plot as aplt
 import autofit as af
 from pyprojroot import here
 
-workspace_path = here()
+workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 conf.instance = conf.Config(
@@ -52,9 +52,9 @@ from autolens_workspace.howtolens.simulators.chapter_2 import (
     lens_sersic_sie__source_exp,
 )
 
-dataset_label = "chapter_2"
+dataset_type = "chapter_2"
 dataset_name = "lens_sersic_sie__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -152,7 +152,7 @@ maxima instead.
 """
 
 # %%
-phase_local_maxima = al.PhaseImaging(
+phase = al.PhaseImaging(
     phase_name="phase_t3_realism_and_complexity__local_maxima",
     settings=settings,
     galaxies=dict(
@@ -170,7 +170,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results_local_maxima = phase_local_maxima.run(dataset=imaging, mask=mask)
+results_local_maxima = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
