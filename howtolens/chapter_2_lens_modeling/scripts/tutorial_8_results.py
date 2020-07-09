@@ -62,19 +62,19 @@ phase = al.PhaseImaging(
     search=af.DynestyStatic(n_live_points=40),
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+result = phase.run(dataset=imaging, mask=mask)
 
 # %%
 """
 In the previous tutorials, we saw that this result contains the maximum log likelihood tracer and fit, which provide
-a fast way to visualize the results.
+a fast way to visualize the result.
 
 (Uncomment the line below to pllot the tracer).
 """
 # aplt.Tracer.subplot_tracer(
-#    tracer=results.max_log_likelihood_tracer, grid=mask.geometry.unmasked_grid
+#    tracer=result.max_log_likelihood_tracer, grid=mask.geometry.unmasked_grid
 # )
-aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 # %%
 """
@@ -82,17 +82,17 @@ The result contains a lot more information about the model-fit. For example, its
 set of non-linear search samples, for example every set of parameters evaluated, their log likelihoods and so on,
 which are used for computing information about the model-fit such as the error on every parameter.
 """
-print(results.samples)
-print(results.samples.parameters)
-print(results.samples.log_likelihoods)
+print(result.samples)
+print(result.samples.parameters)
+print(result.samples.log_likelihoods)
 
 # %%
 """
-However, we are not going into any more detail on the result variable in this tutorial, or in the HowToLens lectures.
+However, we are not going into any more detail on the result variable in this tutorial, or in the __HowToLens__ lectures.
 
 A comprehensive description of the results can be found at the following script:
 
-    'autolens_workspace/examples/model/results.py'
+    'autolens_workspace/examples/model/result.py'
 
 """
 
@@ -151,7 +151,7 @@ location 'autolens_workspace/advanced'aggregator'. Here, you'll learn how to:
       plots of the probability density function of parameters in 1D and 2D.
  - Reproduce visualizations of results, such as a tracer's images or the fit to a lens dataset.
 
-Even if you are only modeling a small sample of lenses, if you anticipate using PyAutoLens for the long-term I 
+Even if you are only modeling a small sample of lenses, if you anticipate using __PyAutoLens__ for the long-term I 
 strongly recommend you begin using the aggregator to inspect and analyse your result. This is because it makes it 
 simple to perform all analyse in a Jupyter notebook, which as you already know is a flexible and versatile way to check 
 results and make figures.

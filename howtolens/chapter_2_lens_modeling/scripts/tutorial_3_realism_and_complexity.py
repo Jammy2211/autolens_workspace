@@ -12,10 +12,10 @@ In this example, we'll start using a more realistic lens model.
 In my experience, the simplest lens model (e.g. that has the fewest parameters) that provides a good fit to real
 strong lenses is as follows:
 
-    1) An _EllipticalSersic _LightProfile_ for the lens galaxy's light.
-    2) A _EllipticalIsothermal_ (SIE) _MassProfile_ for the lens galaxy's mass.
-    3) An _EllipticalExponential_ _LightProfile_ for the source-galaxy's light (to be honest, this is too simple,
-        but lets worry about that later).
+ 1) An _EllipticalSersic _LightProfile_ for the lens galaxy's light.
+ 2) A _EllipticalIsothermal_ (SIE) _MassProfile_ for the lens galaxy's mass.
+ 3) An _EllipticalExponential_ _LightProfile_ for the source-galaxy's light (to be honest, this is too simple,
+ but lets worry about that later).
 
 This has a total of 18 non-linear parameters, which is over double the number of parameters we've fitted up to now.
 In future exercises, we'll fit even more complex models, with some 20-30+ non-linear parameters.
@@ -120,7 +120,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results = phase.run(dataset=imaging, mask=mask)
+result = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -130,7 +130,7 @@ And lets look at the fit to the Imaging data, which as we are used to fits the d
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=results.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 # %%
 """
@@ -170,7 +170,7 @@ print(
     "This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
 )
 
-results_local_maxima = phase.run(dataset=imaging, mask=mask)
+result_local_maxima = phase.run(dataset=imaging, mask=mask)
 
 print("Dynesty has finished run - you may now continue the notebook.")
 
@@ -180,7 +180,7 @@ And lets look at the fit to the Imaging data, which is clearly worse than our or
 """
 
 # %%
-aplt.FitImaging.subplot_fit_imaging(fit=results_local_maxima.max_log_likelihood_fit)
+aplt.FitImaging.subplot_fit_imaging(fit=result_local_maxima.max_log_likelihood_fit)
 
 # %%
 """
@@ -192,9 +192,9 @@ models which fit the data better when it searched parameter space.
 
 # %%
 print("Likelihood of Global Model:")
-print(results.max_log_likelihood_fit.log_likelihood)
+print(result.max_log_likelihood_fit.log_likelihood)
 print("Likelihood of Local Model:")
-print(results_local_maxima.max_log_likelihood_fit.log_likelihood)
+print(result_local_maxima.max_log_likelihood_fit.log_likelihood)
 
 # %%
 """
@@ -214,13 +214,13 @@ And with that, we're done. In the next exercise, we'll learn how to deal with fa
 can ensure our non-linear search finds the global-maximum log likelihood solution. Before that, think about 
 the following:
 
-    1) When you look at an image of a strong lens, do you get a sense of roughly what values certain lens model 
-       parameters are?
+ 1) When you look at an image of a strong lens, do you get a sense of roughly what values certain lens model 
+ parameters are?
     
-    2) The non-linear search failed because parameter space was too complex. Could we make it less complex, whilst 
-       still keeping our lens model fairly realistic?
+ 2) The non-linear search failed because parameter space was too complex. Could we make it less complex, whilst 
+ still keeping our lens model fairly realistic?
     
-    3) The source galaxy in this example had only 7 non-linear parameters. Real source galaxies may have multiple 
-       components (e.g. a bar, disk, bulge, star-forming knot) and there may even be more than 1 source galaxy! Do you 
-       think there is any hope of us navigating a parameter space if the source contributes 20+ parameters by itself?
+ 3) The source galaxy in this example had only 7 non-linear parameters. Real source galaxies may have multiple 
+ components (e.g. a bar, disk, bulge, star-forming knot) and there may even be more than 1 source galaxy! Do you 
+ think there is any hope of us navigating a parameter space if the source contributes 20+ parameters by itself?
 """

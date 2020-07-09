@@ -38,7 +38,7 @@ cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from autolens_workspace./from /g' {} +
 
-echo "Adding new PyAutoLens/howtolens files to github."
+echo "Adding new __PyAutoLens__/howtolens files to github."
 cd $PYAUTOLENS_PATH
 git add $PYAUTOLENS_PATH/howtolens/dataset/chapter_4
 git add -f $PYAUTOLENS_PATH/howtolens/chapter_4_inversions

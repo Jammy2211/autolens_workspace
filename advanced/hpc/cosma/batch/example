@@ -1,0 +1,19 @@
+#!/bin/bash -l
+
+#SBATCH -N 1
+#SBATCH --ntasks=16
+#SBATCH --cpus-per-task=1
+#SBATCH -J example
+#SBATCH -o output/output.%A.out
+#SBATCH -e error/error.%A.err
+#SBATCH -p cosma7
+#SBATCH -A dp004
+#SBATCH -t 48:00:00   # longest job
+#SBATCH --mail-type=END                      # notifications for job done & fail
+#SBATCH --mail-user=fill@me.co.uk
+
+source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+srun -n 16 --multi-prog conf/example.conf

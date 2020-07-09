@@ -185,7 +185,7 @@ are formed.
 However, this _VoronoiMagnification_ _Pixelization_ is still far from optimal. There are lots of source-pixels 
 effectively fitting just noise. We may achieve even better solutions if the central regions of the source were 
 reconstructed using even more pixels. So, how do we improve on this? Well, you'll have to wait until chapter 5, 
-when we introduce PyAutoLens's adaptive functionality, or 'hyper-mode'.
+when we introduce __PyAutoLens__'s adaptive functionality, or 'hyper-mode'.
 
 In the mean time, you may wish to experiment with using both Rectangular and VoronoiMagnification _Grid_'s to fit 
 lenses which can be easily achieve by changing the input pixeliation given to a pipeline.

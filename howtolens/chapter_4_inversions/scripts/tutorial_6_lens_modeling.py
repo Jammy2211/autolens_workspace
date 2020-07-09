@@ -289,12 +289,12 @@ And with that, we're done. Finally, I'll point out a few things about what we've
 the next tutorial on adaption.
 
  - The unphysical solutions above are clearly problematic. Whilst they have lower Bayesian evidences their existance 
-      will still impact our inferred lens model. However, the _Pixelization_'s that we used in this chapter do not 
-      adapt to the images they are fitting, meaning the correct solutions achieve much lower Bayesian log evidence 
-      values than is actually possible. Thus, once we've covered adaption, these issues will be resolved!
+ will still impact our inferred lens model. However, the _Pixelization_'s that we used in this chapter do not 
+ adapt to the images they are fitting, meaning the correct solutions achieve much lower Bayesian log evidence 
+ values than is actually possible. Thus, once we've covered adaption, these issues will be resolved!
     
  - When the lens galaxy's light is subtracted perfectly it leaves no residuals. However, if it isn't subtracted 
-      perfectly it does leave residuals, which will be fitted by the inversion. If the residual are significant this is 
-      going to mess with our source reconstruction and can lead to some pretty nasty systematics. In the next chapter, 
-      we'll learn how our adaptive analysis can prevent this residual fitting.
+ perfectly it does leave residuals, which will be fitted by the inversion. If the residual are significant this is 
+ going to mess with our source reconstruction and can lead to some pretty nasty systematics. In the next chapter, 
+ we'll learn how our adaptive analysis can prevent this residual fitting.
 """
