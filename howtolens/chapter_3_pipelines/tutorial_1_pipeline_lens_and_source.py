@@ -84,7 +84,7 @@ def make_pipeline(setup, settings):
            
     In phase 2, we fit the source-galaxy's light. Thus, we want to fix the lens light model to the model inferred
     in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
-    'instance' object, a trick we use in nearly all pipelines!
+ 'instance' object, a trick we use in nearly all pipelines!
 
     By passing an 'instance', we are telling __PyAutoLens__ that we want it to pass the maximum log likelihood result of
     that phase and use those parameters as fixed values in the model. The model parameters passed as an 'instance' are

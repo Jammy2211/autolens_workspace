@@ -21,9 +21,9 @@ This provides two benefits:
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
 """
 
@@ -61,7 +61,7 @@ The positions are associated with the _Imaging_ dataset and they are loaded from
 same folder as the dataset itself. To create this file, we used a GUI to 'draw on' the positions with our mouse. This
 GUI can be found in the script:
 
-    'autolens_workspace/preprocess/imaging/gui/positions.py'
+ 'autolens_workspace/preprocess/imaging/gui/positions.py'
 
 If you wish to use positions for modeling your own lens data, you should use this script to draw on the positions of
 every lens in you dataset.
@@ -127,8 +127,8 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters).
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
@@ -144,7 +144,7 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
-    - A positions_threshold of 0.5, meaning that the four (y,x) coordinates specified by our positions must trace
+ - A positions_threshold of 0.5, meaning that the four (y,x) coordinates specified by our positions must trace
       within 0.5" of one another in the source-plane for a mass model to be accepted. If not, it is discarded and
       a new model is sampled.
 
@@ -168,7 +168,7 @@ __Search__
 The lens model is fitted to the data using a *NonLinearSearch*, which we specify below. In this example, we use the
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
-    - 50 live points.
+ - 50 live points.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
@@ -187,7 +187,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/beginner/lens_sie__source_sersic/phase__positions'.
+ '/autolens_workspace/output/examples/beginner/lens_sie__source_sersic/phase__positions'.
 """
 
 # %%
@@ -220,7 +220,7 @@ model-fit and make it more robust.
 
 PyAutoLens supports the following more advanced use of positional information:
 
-    - If the unlensed source contains multiple components or clumps of light, one may wish to mark positions that 
+ - If the unlensed source contains multiple components or clumps of light, one may wish to mark positions that 
       signify they correspond to these different regions of the source-plane. To do this, a list of list of tuples
       can be input into the GridCoordinates object, e.g:
       
@@ -234,7 +234,7 @@ PyAutoLens supports the following more advanced use of positional information:
       this feature is used if one has spectroscopic information on the lensed source that makes it feasible to robustly
       identify which images correspond to the same regions of the source.
       
-    - When using a single phase to fit a lens, we must manually specify or draw the positions on the lensed source and
+ - When using a single phase to fit a lens, we must manually specify or draw the positions on the lensed source and
       pass them to the phase. However, the 'autolens_workspace/examples/linking' scripts and PyAutoLens's _Pipelines_
       feature break the model-fit into multiple _Phase's_ which each perform a unique non-linear search.  
       
@@ -243,6 +243,6 @@ PyAutoLens supports the following more advanced use of positional information:
       positions and threshold used in the later phase's, not requiring us to manually specifc the positions at all!
       
       To do this, we pass the _PhaseSettingsImaging_ the input parameters 'auto_positions_factor' and 
-      'auto_positions_minumum_threshold'. An example of this can be found in the example script
-      'autolens_workspace/examples/model/linking/parametric_to_inversion.py'.
+   'auto_positions_minumum_threshold'. An example of this can be found in the example script
+   'autolens_workspace/examples/model/linking/parametric_to_inversion.py'.
 """

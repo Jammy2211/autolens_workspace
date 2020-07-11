@@ -5,7 +5,7 @@ sub-grid that oversamples the _LightProfile_ intensities and _MassProfile_ defle
 
 The benefits of this are:
 
-    - A higher level of sub-gridding provides numerically more precise results.
+ - A higher level of sub-gridding provides numerically more precise results.
 
 The drawbacks of this are:
 
@@ -92,7 +92,7 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
-    - A sub_size of 4, meaning we use a high resolution 4x4 sub-grid instead of the default 2x2 sub-grid.
+ - A sub_size of 4, meaning we use a high resolution 4x4 sub-grid instead of the default 2x2 sub-grid.
 """
 
 # %%
@@ -107,12 +107,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__sub'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__sub'.
 
 However, because the _PhaseSettings_ include a bin_up_factor, the output path is tagged to reflelct this, meaning the
 full output path is:
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__sub/settings__grid_sub_4'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__sub/settings__grid_sub_4'.
 
 """
 

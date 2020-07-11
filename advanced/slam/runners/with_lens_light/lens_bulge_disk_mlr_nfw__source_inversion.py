@@ -9,19 +9,19 @@ __THIS RUNNER__
 
 Using two source pipelines, a light pipeline and a mass pipeline we will fit a lens model where: 
 
-    - The lens galaxy's _LightProfile_'s are fitted with an EllipticalSersic + EllipticalExponential, representing
+ - The lens galaxy's _LightProfile_'s are fitted with an EllipticalSersic + EllipticalExponential, representing
       a bulge + disk model.
-    - The lens galaxy's stellar _MassProfile_ is fitted using the EllipticalSersic + EllipticalExponential of the 
+ - The lens galaxy's stellar _MassProfile_ is fitted using the EllipticalSersic + EllipticalExponential of the
       _LightProfile_, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
-    - The lens galaxy's nfw _MassProfile_ is fitted with a SphericalNFW.
-    - The source galaxy's _LightProfile_ is fitted with an *Inversion*.
+ - The lens galaxy's nfw _MassProfile_ is fitted with a SphericalNFW.
+ - The source galaxy's _LightProfile_ is fitted with an *Inversion*.
 
 We'll use the SLaM pipelines:
 
-    'slam/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
-    'slam/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
-    'slam/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
-    'slam/with_lens_light/mass/light_dark/lens_light_mlr_nfw__source.py'.
+ 'slam/with_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
+ 'slam/with_lens_light/source/inversion/from_parametric/lens_light_sie__source_inversion.py'.
+ 'slam/with_lens_light/light/bulge_disk/lens_bulge_disk_sie__source.py'.
+ 'slam/with_lens_light/mass/light_dark/lens_light_mlr_nfw__source.py'.
 
 Check them out now for a detailed description of the analysis!
 """
@@ -57,7 +57,7 @@ import autolens.plot as aplt
 # %%
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
 dataset_type = "imaging"
-dataset_label = "with_lens_light"
+dataset_label = "stellar_and_dark"
 dataset_name = "lens_bulge_disk_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
@@ -140,6 +140,7 @@ hyper = al.slam.HyperSetup(
     hyper_image_sky=False,
     hyper_background_noise=True,
     hyper_fixed_after_source=True,
+    evidence_tolerance=50.0,
 )
 
 # %%
@@ -156,9 +157,9 @@ good fit to the majority of strong lenses.
 
 For this runner the _SourceSetup_ customizes:
 
-    - The Pixelization used by the inversion of this pipeline.
-    - The Regularization scheme used by of this pipeline.
-    - If there is an external shear in the mass model or not.
+ - The Pixelization used by the inversion of this pipeline.
+ - The Regularization scheme used by of this pipeline.
+ - If there is an external shear in the mass model or not.
 
 The _SourceSetup_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus both use an
 _Inversion_. If an external shear is omitted from the Source pipeline it can be introduced in the Mass pipeline.
@@ -183,8 +184,8 @@ an _EllipticalSersic_ profile for the bulge and a second light profile for the d
  
 For this runner the _LightSetup_ customizes:
 
-    - The alignment of the centre and elliptical components of the bulge and disk.
-    - If the disk is modeled as an _EllipticalExponential_ or _EllipticalSersic_.
+ - The alignment of the centre and elliptical components of the bulge and disk.
+ - If the disk is modeled as an _EllipticalExponential_ or _EllipticalSersic_.
 
 Certain _LightSetup_ inputs corrsepond to certain pipelines, for example the 'aligh_bulge_disk_centre'
 input is only relevent for the 'bulge_disk' pipelines, whereas the 'number_of_gaussians' input is only relevent
@@ -212,8 +213,8 @@ distribution and dark matter _SphericalNFWMCRLudlow_. The stellar mass uses the 
 
 For this runner the _MassSetup_ customizes:
 
-    - If there is an external shear in the mass model or not.
-    - If the centre of the _SphericalNFWMCRLudlow_ profile is aligned with the centre of the _EllipticalSersic_ profile
+ - If there is an external shear in the mass model or not.
+ - If the centre of the _SphericalNFWMCRLudlow_ profile is aligned with the centre of the _EllipticalSersic_ profile
       representing the lens galaxy's bulge.  
 
 Certain _MassSetup_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'

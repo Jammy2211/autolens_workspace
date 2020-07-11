@@ -10,27 +10,27 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
-    - Both phases model the lens galaxy's mass as an _EllipticalIsothermal_, with the lens's light omitted.
+ - Both phases model the lens galaxy's mass as an _EllipticalIsothermal_, with the lens's light omitted.
     
-    - The first phase models the source galaxy using a parametric _EllipticalSersic_ profile.
+ - The first phase models the source galaxy using a parametric _EllipticalSersic_ profile.
     
-    - The second phase models the source galaxy using an _Inversion_, where its _EllipticalIsothermal_ mass model
+ - The second phase models the source galaxy using an _Inversion_, where its _EllipticalIsothermal_ mass model
       priors are initialized using the results of phase 1.
 
 There are a number of benefits to linking a parametric source model to an _Inversion, as opposed to fitting the
 _Inversion_ in one phase:
 
-    - Parametric sources are computationally faster to evaluate and fit to the data than an _Inversion_. Thus, although
+ - Parametric sources are computationally faster to evaluate and fit to the data than an _Inversion_. Thus, although
       the _EllipticalSersic_ carries with it more parameters that the non-linear search will have to fit for, the
       model-fit will be faster overall given the increased speed of each log likelihood evaluation.
 
-    - _Inversion_'s often go to unphysical solutions where the mass model goes to extremely high / low normalizations
+ - _Inversion_'s often go to unphysical solutions where the mass model goes to extremely high / low normalizations
       and the source is reconstructed as a demagnified version of the lensed source (see Chapter 4, tutorial 6 for a
       complete description of this effect). A powerful way to prevent this from happening is to initialize the mass
       model with a fit using a parametric source (which does not suffer these unphysical solutions) and use this result
       to ensure the non-linear search samples only the maximal likelihood regions of parameter space.
       
-    - To further remove these solutions, we use the 'auto_positions' feature of the _PhaseSettingsImaging_, which use
+ - To further remove these solutions, we use the 'auto_positions' feature of the _PhaseSettingsImaging_, which use
       the maximum log likelihood mass model of the first phase to determine the positions in the image-plane the
       brightest regions of the lensed source trace too. In phase 2, mass models must trace these positions into a 
       threshold arc-secoond value of one another in the source-plane, ensuring the incorrect solutions corresponding to  
@@ -60,9 +60,9 @@ conf.instance = conf.Config(
 """
 As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
 
-    - The lens galaxy's _LightProfile_ is omitted_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is omitted_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 
 """
 
@@ -96,9 +96,9 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters) in phase 1.
-    - An _Inversion_ in phase 2 (3 parameters).
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters) in phase 1.
+ - An _Inversion_ in phase 2 (3 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -119,14 +119,14 @@ source's multiple images When a phase uses positions, during model-fitting they 
 one another for every mass model sampled by the non-linear search. If they do not, the model is discard and resampled. 
 The setting below lead to the following behaviour for each phase:
 
-    - In phase 1, because no positions are input into the _Imaging_ dataset, positions are not used and the 
+ - In phase 1, because no positions are input into the _Imaging_ dataset, positions are not used and the 
       auto_positions settings do nothing.
 
-    - In phase 2, because there are auto_positions settings, the maximum log likelihood model of phase 1 is used too 
+ - In phase 2, because there are auto_positions settings, the maximum log likelihood model of phase 1 is used too 
       compute the positions of the lensed source galaxy and the threshold within which they trace to one another. This
       threshold is multiplied by the 'auto_positions_factor' to ensure it is not too small (and thus does not remove
       many plausible mass models). If, after this multiplication, the threshold is below the 
-     'auto_positions_minimum_threshold', it is rounded up to this minimum value.
+  'auto_positions_minimum_threshold', it is rounded up to this minimum value.
 """
 
 # %%
@@ -160,7 +160,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
 """
 
 # %%
@@ -217,7 +217,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
 
 Note how the 'lens' passed to this phase was set up above using the results of phase 1!
 """
@@ -246,7 +246,7 @@ __Pipelines__
 The next level of PyAutoLens uses _Pipelines_, which link together multiple phases to perform very complex lens 
 modeling in robust and efficient ways. Pipelines which fit the source as an _Inversion_, for example:
 
-    'autolens_wokspace/pipelines/no_lens_light/lens_sie__source_inversion.py'
+ 'autolens_wokspace/pipelines/no_lens_light/lens_sie__source_inversion.py'
 
 Exploit our ability to first model the source using a parametric profile and then switch to an _Inversion_, to ensure 
 more efficient and robust model-fits!

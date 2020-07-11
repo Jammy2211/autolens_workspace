@@ -5,13 +5,13 @@ binned up version of the dataset.
 
 The benefits of this are:
 
-    - It can give significant gains in computational run-times.
+ - It can give significant gains in computational run-times.
 
 The drawbacks of this are:
 
-    - The lower resolutioon data will constrain the lens model worse, giving larger errors or a biased model.
+ - The lower resolutioon data will constrain the lens model worse, giving larger errors or a biased model.
 
-    - Binning up the Point Spread Function of the dataset will less accurately represent the optics of the observation,
+ - Binning up the Point Spread Function of the dataset will less accurately represent the optics of the observation,
       again leading to inaccurate lens models with larger errors.
 
 I'll assume that you are familiar with the beginner example scripts, so if any code doesn't make sense familiarize
@@ -95,7 +95,7 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
  
-    - A bin_up_factor of 2, meaning the dataset is binned up from a resolution of 0.1" per pixel to a resolution 
+ - A bin_up_factor of 2, meaning the dataset is binned up from a resolution of 0.1" per pixel to a resolution 
       of 0.2" per pixel before we perform the model-fit.
 """
 
@@ -111,12 +111,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up'.
     
 However, because the _PhaseSettings_ include a bin_up_factor, the output path is tagged to reflelct this, meaning the
 full output path is:
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__bin_up_2'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__bin_up_2'.
 
 """
 

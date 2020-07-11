@@ -4,19 +4,19 @@ This example demonstrates how to load and use a custom mask from your hard-disk 
 
 The benefits of doing this are:
 
-    - It can give significant gains in computational run-times, if large regions of the image which do not contain a
+ - It can give significant gains in computational run-times, if large regions of the image which do not contain a
       signal are removed and processing time is not dedicated to fitting them.
 
-    - For lens datasets with complex lens galaxies morphologies which are difficult to subtract cleanly, their
+ - For lens datasets with complex lens galaxies morphologies which are difficult to subtract cleanly, their
       residuals can negatively impact the mass model and source reconstruction. Custom masks can remove these features.
 
 The drawbacks of doing this are:
 
-    - The pixels that are removed which contain no source flux can still constrain the lens model. For example, a mass
+ - The pixels that are removed which contain no source flux can still constrain the lens model. For example, a mass
       model may incorrectly predict flux in the source reconstruction where there is non observed, however the model-fit
       does not penalize this incorrect solution because this region of the image was masked and removed.
 
-    - You cannot model the lens galaxy's light using a mask which remove most of its like, so this only works for
+ - You cannot model the lens galaxy's light using a mask which remove most of its like, so this only works for
       images where the lens galaxy is already subtracted!
 
 I'll assume that you are familiar with the beginner example scripts work, so if any code doesn't make sense familiarize
@@ -70,7 +70,7 @@ imaging = al.Imaging.from_fits(
 Okay, we need to load the mask from a .fits file, in the same fashion as the imaging above. To draw a mask for an 
 image, checkout the tutorial:
 
-    'autolens_workspace/preprocess/imaging/p4_mask.ipynb'
+ 'autolens_workspace/preprocess/imaging/p4_mask.ipynb'
 
 The example autolens_workspace dataset comes with a mask already, if you look in
 'autolens_workspace/dataset/imaging/lens_sie__source_sersic/' you'll see a mask.fits file!
@@ -128,7 +128,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__custom_mask'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__custom_mask'.
     
 Note that we pass the phase run function our custom mask, which means it is used to perform the model-fit!
 """

@@ -141,9 +141,9 @@ In the 'autolens_workspace/examples/model/inversion' folder you will find exampl
 strong lens using an *Inversion*. In chapters 4 and 5 of the **HowToLens** lectures we fully cover all details of  
 *Inversions*, specifically:
 
-    - How the source reconstruction determines the flux-values of the source it reconstructs.
-    - The Bayesian framework employed to choose the approrpriate level of *Regularization* and avoid overfitting noise.
-    - Unphysical lens model solutions that often arise when using an *Inversion*.
-    - Advanced *Pixelization* and *Regularization* schemes that adapt to the source galaxy being reconstructed.
+ - How the source reconstruction determines the flux-values of the source it reconstructs.
+ - The Bayesian framework employed to choose the approrpriate level of *Regularization* and avoid overfitting noise.
+ - Unphysical lens model solutions that often arise when using an *Inversion*.
+ - Advanced *Pixelization* and *Regularization* schemes that adapt to the source galaxy being reconstructed.
     
 """

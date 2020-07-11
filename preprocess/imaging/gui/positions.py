@@ -23,7 +23,7 @@ print("Workspace Path: ", workspace_path)
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
 # the positions will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat'.
 dataset_type = "imaging"
-dataset_label = "with_lens_light"
+dataset_label = "stellar_and_dark"
 dataset_name = "lens_bulge_disk_mlr_nfw__source_sersic"
 
 # Create the path where the mask will be output, which in this case is

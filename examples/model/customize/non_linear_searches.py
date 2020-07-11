@@ -12,9 +12,9 @@ problem. In this example we will fit strong lens data using a variety of non-lin
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
 """
 
@@ -41,9 +41,9 @@ conf.instance = conf.Config(
 """
 As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
 
-    - The lens galaxy's _LightProfile_ is omitted_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is omitted_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 
 """
 
@@ -77,8 +77,8 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters).
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -97,7 +97,7 @@ searches in PyAutoLens if you haven't already.]
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Given we want a fast-run time to test each non-linear search quickly, we choose the following setting:
 
-    - We use a regular *Grid* to fit the data, which evaluates the lens deflection angles and source light quickly
+ - We use a regular *Grid* to fit the data, which evaluates the lens deflection angles and source light quickly
       at the expense of accuracy. 
 """
 
@@ -135,7 +135,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/customize/lens_sie__source_sersic/phase__nested_sampling/
+ '/autolens_workspace/output/examples/customize/lens_sie__source_sersic/phase__nested_sampling/
     settings__grid_sub_2/dynesty__'.
 """
 
@@ -162,8 +162,8 @@ the errors).
 We'll use the 'particle swarm optimizer algorithm *PySwarms* (https://pyswarms.readthedocs.io/en/latest/index.html) 
 using:
 
-    - 30 particles to sample parameter space.
-    - 100 iterations per particle, giving a total of 3000 iterations.
+ - 30 particles to sample parameter space.
+ - 100 iterations per particle, giving a total of 3000 iterations.
     
 Performing the model-fit in 3000 iterations is significantly faster than the _Dynesty_ fits perforomed in other 
 example scripts, that often require > 20000 - 50000 iterations.
@@ -181,7 +181,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/customize/'.
+ '/autolens_workspace/output/examples/customize/'.
 """
 
 # %%
@@ -212,7 +212,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/customize/'.
+ '/autolens_workspace/output/examples/customize/'.
 """
 
 # %%

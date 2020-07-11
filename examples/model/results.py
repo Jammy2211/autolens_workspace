@@ -12,8 +12,8 @@ again to create the results.
 
 This model-fit fits the strong lens imaging data with:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light.
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light.
 
 The code below, which we have omitted comments from, reperforms all the tasks that create the phase and perform the
 model-fit in this script. If anything in this code is not clear to you, you should go over the beginner model-fit
@@ -306,8 +306,8 @@ print(samples.log_evidence)
 """
 The Probability Density Functions (PDF's) of the results can be plotted using libraries such as:
 
-    - GetDist: https://getdist.readthedocs.io/en/latest/
-    - corner.py: https://corner.readthedocs.io/en/latest/
+ - GetDist: https://getdist.readthedocs.io/en/latest/
+ - corner.py: https://corner.readthedocs.io/en/latest/
 
 Below, we show an example of how a plot is produced using GetDist.
 
@@ -352,5 +352,5 @@ manipulate the results of extremely large lens samples!
 
 If the _Aggregator__ sounds useful to you, then checkout the tutorials in the path:
 
-    'autolens_workspace/advanced/aggregator'
+ 'autolens_workspace/advanced/aggregator'
 """

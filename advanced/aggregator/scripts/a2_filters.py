@@ -72,9 +72,9 @@ print(
 Alternatively, we can filter using strings, requiring that the string appears in the full path of the output
 results. This is useful if you fit a samples of lenses where:
 
-    - Multiple results, corresponding to different pipelines, phases and model-fits are stored in the same path.
-    - Different runs using different _PhaseSettings_ and _PipelineSetup_ are in the same path.
-    - Fits using different non-linear searches, with different settings, are contained in the same path.
+ - Multiple results, corresponding to different pipelines, phases and model-fits are stored in the same path.
+ - Different runs using different _PhaseSettings_ and _PipelineSetup_ are in the same path.
+ - Fits using different non-linear searches, with different settings, are contained in the same path.
 
 The example below shows us using the contains filter to get the results of all 3 lenses. The contains method
 only requires that the string is in the path structure, thus we do not need to specify the full phase name.

@@ -5,9 +5,9 @@ import autolens.plot as aplt
 """
 This script simulates imaging of a strong lens using decomposed light and dark matter profiles where:
 
-    - The lens galaxy's stellar _MassProfile_ is an _EllipticalSersic_.
-    - The lens galaxy's dark _MassProfile_ is a _SphericalNFW_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's stellar _MassProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's dark _MassProfile_ is a _SphericalNFW_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 """
 
 # %%
@@ -23,9 +23,9 @@ print("Workspace Path: ", workspace_path)
 The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
+ - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+ - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+ - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 dataset_type = "imaging"
 dataset_label = "stellar_and_dark"

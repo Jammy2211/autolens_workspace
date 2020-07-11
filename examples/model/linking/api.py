@@ -10,11 +10,11 @@ highest log-likelihood models.
 
 When linking phases:
 
-    - The earlier phases fit simpler model parameterizations than the later phases, providing them with a less complex
+ - The earlier phases fit simpler model parameterizations than the later phases, providing them with a less complex
       non-linear parameter space that can be sampled more efficiently and with a reduced chance of inferring an
       incorrect local maxima solution.
 
-    - The earlier phases may use non-linear search techniques that only seek to maximize the log likelihood and do not
+ - The earlier phases may use non-linear search techniques that only seek to maximize the log likelihood and do not
       precisely quantify the errors on every parameter, whereas the latter phases do. Alternative, they may use a
       non-linear search which does compute errors, but with settings that make sampling faster or omit accurately
       quantifying the errors.
@@ -22,7 +22,7 @@ When linking phases:
       This means we can 'initialize' a model-fit very quickly and only spend more computational time estimating errors
       in the final phase when we actually require them.
 
-    - The earlier phases can use the _PhaseSettingsImaging_ object to augment the data or alter the fitting-procedure
+ - The earlier phases can use the _PhaseSettingsImaging_ object to augment the data or alter the fitting-procedure
       in ways that speed up the computational run time. These may impact the quality of the model-fit overall, but they
       can be reverted to the more accurate but more computationally expense setting in the final phases.
 
@@ -41,9 +41,9 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 """
 This example scripts show a simple example of prior linking, where we fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
 As discussed below, the first phase is set up to provide as fast a model-fit as possible without accurately quantifying
 the errors on every parameter, whereas the second phase sacrifices this run-speed for accuracy. 
@@ -72,9 +72,9 @@ conf.instance = conf.Config(
 """
 As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
 
-    - The lens galaxy's _LightProfile_ is omitted_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
-    - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy's _LightProfile_ is omitted_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
 
 """
 
@@ -108,8 +108,8 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters).
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -161,7 +161,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
 """
 
 # %%
@@ -218,7 +218,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
 
 Note how the 'lens' and 'source' passed to this phase were set up above using the results of phase 1!
 """
@@ -241,9 +241,9 @@ __Prior Passing__
 Once phase 2 is running, you should checkout its 'model.info' file. The parameters do not use the default priors we saw
 in the beginner turorials or phase 1 (which are typically broad UniformPriors). Instead, it uses GaussianPrior's where:
 
-    - The mean values are the median PDF results of every parameter in phase 1.
-    - Many sigma values are the errors computed at 3.0 sigma confidence of every parameter in phase 1.
-    - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
+ - The mean values are the median PDF results of every parameter in phase 1.
+ - Many sigma values are the errors computed at 3.0 sigma confidence of every parameter in phase 1.
+ - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
       specified in the 'width_modifier' field of the _Profile_'s entry in the 'json_config' files.
 
 The 'width_modifier' is used instead of the errors computed from phase 1 when the errors values estimated are smaller 
@@ -255,10 +255,10 @@ Thus, phase 2 used the results of phase 1 to inform it where to search non-linea
 
 The PriorPasser customizes how priors are passed from phase 1 as follows:
 
-    - sigma: The sigma value that the errors passed to use as the sigma values in phase 1 are estimated at.
-    - use_widths: If False, the "width_modifier" values in the json_prior configs are not used to override a passed
+ - sigma: The sigma value that the errors passed to use as the sigma values in phase 1 are estimated at.
+ - use_widths: If False, the "width_modifier" values in the json_prior configs are not used to override a passed
                   error value.
-    - use_errors: If False, errors are not passed from phase 1 to set up the priors and only the "width" modifier
+ - use_errors: If False, errors are not passed from phase 1 to set up the priors and only the "width" modifier
                   entries in the configs are used.  
 
 For the interested read a complete description of prior passing is given in chapter 2, tutorial 5 of HowToLens. Below

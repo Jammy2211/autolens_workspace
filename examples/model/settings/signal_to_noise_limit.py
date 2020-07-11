@@ -5,7 +5,7 @@ noise-map is increased to cap the highest signal-to-noise value.
 
 The benefits of this are:
 
-    - Model fitting may be subject to over-fitting the highest signal-to-noise regions of the image instead of
+ - Model fitting may be subject to over-fitting the highest signal-to-noise regions of the image instead of
       providing a global fit to the entire image. For example, if a lensed source has 4 really bright, compact, high
       S/N images which are not fitted perfectly by the model, their high chi-squared contribution will drive the model
       fit to place more light in those regions, ignoring the lensed source's lower S/N more extended arcs. Limiting the
@@ -14,15 +14,15 @@ The benefits of this are:
 
       To learn more about this over-fitting problem, checkout chapter 5 of the 'HowToLens' lecture series.
 
-    - If the model-fit has extremely large chi-squared values due to the high S/N of the dataset. The non-linear
+ - If the model-fit has extremely large chi-squared values due to the high S/N of the dataset. The non-linear
       search will take a long time exploring this 'extreme' parameter space. In the early phases of a pipeline this
       often isn't necessary, therefore a signal-to-noise limit can reduce the time an analysis takes to converge.
 
 The downsides of this are:
 
-    - Reducing the S/N of you data may significantly increase the errors of the lens model that you infer.
+ - Reducing the S/N of you data may significantly increase the errors of the lens model that you infer.
 
-    - The noise-map of your data will no longer reflect the true noisy properties of the data, which could bias the
+ - The noise-map of your data will no longer reflect the true noisy properties of the data, which could bias the
       lens model inferred.
 
 I'll assume that you are familiar with the beginner example scripts work, so if any code doesn't make sense familiarize
@@ -106,7 +106,7 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
-    - A signal_to_noise_limit of 10.0, which increases the noise values in the noise-map such that no pixel has a S/N
+ - A signal_to_noise_limit of 10.0, which increases the noise values in the noise-map such that no pixel has a S/N
       above 10.0.
 """
 
@@ -122,12 +122,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__signal_to_noise_limit'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__signal_to_noise_limit'.
 
 However, because the _PhaseSettings_ include a signal_to_noise_limit, the output path is tagged to reflelct this, 
 meaning the full output path is:
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__snr_10'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__snr_10'.
 
 """
 

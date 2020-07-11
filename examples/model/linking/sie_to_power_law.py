@@ -10,17 +10,17 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
-    - The first phase models the lens galaxy's mass as an _EllipticalIsothermal_ and the source galaxy's light as an
+ - The first phase models the lens galaxy's mass as an _EllipticalIsothermal_ and the source galaxy's light as an
       _EllipticalSersic_.
       
-    - The second phase models the lens galaxy's mass an an _EllipticalPoerLaw_ and the source galaxy's light as an
+ - The second phase models the lens galaxy's mass an an _EllipticalPoerLaw_ and the source galaxy's light as an
       _EllipticalSersic_.
 
 The _EllipticalPower_ is a general form of the _EllipticalIsothermal_ and it has one addition parameter relative to the
 _EllipticalIsothermal_, the 'slope'. This controls the internal mass distriibution of the mass profile, whereby:
 
-    - A higher slope concentrates more mass in the central regions of the mass profile relative to the outskirts. 
-    - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts. 
+ - A higher slope concentrates more mass in the central regions of the mass profile relative to the outskirts. 
+ - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts. 
 
 By allowing a mass profile to vary its inner distribution, the non-linear parameter space of the lens model becomes 
 significantly more complex, creating a notable degeneracy between the mass model's mass normalization, ellipticity
@@ -59,9 +59,9 @@ conf.instance = conf.Config(
 """
 As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
 
-    - The lens galaxy's _LightProfile_ is omitted_.
-    - The lens galaxy's _MassProfile_ is an _EllipticalPowerLaw_.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy's _LightProfile_ is omitted_.
+ - The lens galaxy's _MassProfile_ is an _EllipticalPowerLaw_.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
 
 """
 
@@ -95,10 +95,10 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters) in phase 1.
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters) in phase 1.
-    - An _EllipticalPowerLaw_ _MassProfile_ for the lens galaxy's mass (6 parameters) in phase 2.
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters) in phase 2.
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters) in phase 1.
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters) in phase 1.
+ - An _EllipticalPowerLaw_ _MassProfile_ for the lens galaxy's mass (6 parameters) in phase 2.
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (7 parameters) in phase 2.
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12 and N=13
 for phases 1 and 2 respectively..
@@ -142,7 +142,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_1'.
 """
 
 # %%
@@ -207,7 +207,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_2'.
 
 Note how the 'lens' passed to this phase was set up above using the results of phase 1!
 """
@@ -236,7 +236,7 @@ __Pipelines__
 The next level of PyAutoLens uses _Pipelines_, which link together multiple phases to perform very complex lens 
 modeling in robust and efficient ways. Pipelines which fit a power-law, for example:
 
-    'autolens_wokspace/pipelines/no_lens_light/lens_power_law__source_inversion.py'
+ 'autolens_wokspace/pipelines/no_lens_light/lens_power_law__source_inversion.py'
 
 Exploit our ability to first model the lens's mass using an _EllipticalIsothermal_ and then switch to an 
 _EllipticalPowerLaw_, to ensure more efficient and robust model-fits!

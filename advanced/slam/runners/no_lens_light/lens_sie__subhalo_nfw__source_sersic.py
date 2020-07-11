@@ -9,16 +9,16 @@ __THIS RUNNER__
 
 Using 1 source pipeline, a mass pipeline and a subhalo pipeline we will fit a lens model where: 
 
-    - The lens galaxy's light is omitted from the data and model.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - A dark matter subhalo's within the lens galaxy is fitted with a *SphericalNFWMCRLudLow*.
-    - The source galaxy is fitted with an _EllipticalSersic_.
+ - The lens galaxy's light is omitted from the data and model.
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
+ - A dark matter subhalo's within the lens galaxy is fitted with a *SphericalNFWMCRLudLow*.
+ - The source galaxy is fitted with an _EllipticalSersic_.
 
 We'll use the SLaM pipelines:
 
-    'slam/no_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
-    'slam/no_lens_light/mass/sie/lens_power_law__source.py'.
-    'slam/no_lens_light/subhalo/lens_mass__subhalo_nfw__source.py'.
+ 'slam/no_lens_light/source/parametric/lens_bulge_disk_sie__source_sersic.py'.
+ 'slam/no_lens_light/mass/sie/lens_power_law__source.py'.
+ 'slam/no_lens_light/subhalo/lens_mass__subhalo_nfw__source.py'.
 
 Check them out now for a detailed description of the analysis!
 """
@@ -151,9 +151,9 @@ good fit to the majority of strong lenses.
 
 For this runner the _SourceSetup_ customizes:
 
-    - The Pixelization used by the inversion of this pipeline.
-    - The Regularization scheme used by of this pipeline.
-    - If there is an external shear in the mass model or not.
+ - The Pixelization used by the inversion of this pipeline.
+ - The Regularization scheme used by of this pipeline.
+ - If there is an external shear in the mass model or not.
 
 The _SourceSetup_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus use an
 _EllipticalSersic_. If an external shear is omitted from the Source pipeline it can be introduced in the Mass pipeline.
@@ -172,7 +172,7 @@ the script. For this runner an sie is used, which models the lens galaxy's mass 
 
 For this runner the _MassSetup_ customizes:
 
-    - If there is an external shear in the mass model or not.
+ - If there is an external shear in the mass model or not.
 
 Certain _MassSetup_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
 input is only relevent for Mass pipelines that follow 'bulge_disk' Light pipelines and which use a 'light_dark'

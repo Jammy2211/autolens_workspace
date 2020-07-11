@@ -132,9 +132,9 @@ aplt.FitImaging.model_image(fit=fit)
 """
 The fit creates the following:
 
-    - The residual-map: The model-image subtracted from the observed dataset's image.
-    - The normalized residual-map: The residual-map divided by the noise-map.
-    - The chi-squared-map: The normalized residual-map squared.
+ - The residual-map: The model-image subtracted from the observed dataset's image.
+ - The normalized residual-map: The residual-map divided by the noise-map.
+ - The chi-squared-map: The normalized residual-map squared.
 
 We'll plot all 3 of these, alongside a subplot containing them all.
 

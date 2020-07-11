@@ -6,7 +6,7 @@ Welcome to the cosma pipeline runner, which illustrates how to load a strong len
 
 This uses the pipeline (Check it out full description of the pipeline):
 
-    'autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__source_inversion.py'.
+ 'autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__source_inversion.py'.
 
 We will omit details of what the pipeline and analysis does, focusing on cosma usage.
 """
@@ -17,7 +17,7 @@ Setup the path to the cosma output directory.
 
 This exmaple assumes you are using cosma7 and outputting results to the cosma7 output directory:
 
-    '/cosma7/data/dp004/cosma_username/'.
+ '/cosma7/data/dp004/cosma_username/'.
 """
 
 cosma_path = "/cosma7/data/dp004/cosma_username"
@@ -59,25 +59,25 @@ conf.instance = conf.Config(
 Cosma submissions require a'batch script', which tells Cosma the PyAutoLens runners you want it to execute and 
 distributes them to nodes and CPUs. Lets look at the batch script 
 
-    'autolens_workspace/cosma/batch/example
+ 'autolens_workspace/cosma/batch/example
     
 The following options are worth noting:
 
-    '#SBATCH -N 1' - The number of nodes we require, where 1 node contains 28 CPUs.
-    '#SBATCH --ntasks=16' - The total number of task we are submitting.
-    '#SBATCH --cpus-per-task=1' - The number of tasks per CPU, this should always be 1 for PyAutoLens use.
-    '#SBATCH -J example' - The name of the job, which is how it'll appear on cosma when you inspect it.
-    '#SBATCH -o output/output.%A.out' - Python interpreter output is placed in a file in the 'output' folder.
-    '#SBATCH -o error/error.%A.out' - Python interpreter errors are placed in a file in the 'error' folder.
-    '#SBATCH -p cosma7' - Signifies we are running the job on COSMA7.
-    '#SBATCH -A dp004' - The project code of the submission.
-    '#SBATCH -t 48:00:00' - The job will terminate after this length of time (if it does not end naturally).
-    '#SBATCH --mail-type=END' - If you input your email, when you'll get an email about the job (END means once finished).
-    '#SBATCH --mail-user=fill@me.co.uk' - The email address COSMA sends the email too.
+ '#SBATCH -N 1' - The number of nodes we require, where 1 node contains 28 CPUs.
+ '#SBATCH --ntasks=16' - The total number of task we are submitting.
+ '#SBATCH --cpus-per-task=1' - The number of tasks per CPU, this should always be 1 for PyAutoLens use.
+ '#SBATCH -J example' - The name of the job, which is how it'll appear on cosma when you inspect it.
+ '#SBATCH -o output/output.%A.out' - Python interpreter output is placed in a file in the 'output' folder.
+ '#SBATCH -o error/error.%A.out' - Python interpreter errors are placed in a file in the 'error' folder.
+ '#SBATCH -p cosma7' - Signifies we are running the job on COSMA7.
+ '#SBATCH -A dp004' - The project code of the submission.
+ '#SBATCH -t 48:00:00' - The job will terminate after this length of time (if it does not end naturally).
+ '#SBATCH --mail-type=END' - If you input your email, when you'll get an email about the job (END means once finished).
+ '#SBATCH --mail-user=fill@me.co.uk' - The email address COSMA sends the email too.
 
 The following line activates the PyAutoLens virtual enviroment we set up on cosma for this run:
 
-    'source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh'
+ 'source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh'
 
 These two lines prevent the NumPy linear algebra libries from using too many resources.
     
@@ -158,7 +158,7 @@ dataset_name = dataset_name[cosma_id]
 """
 Create the path where the dataset will be loaded from, which in this case is:
 
-    '/cosma7/data/dp004/cosma_username/dataset/imaging/example_image_1'
+ '/cosma7/data/dp004/cosma_username/dataset/imaging/example_image_1'
 """
 
 # %%
@@ -219,9 +219,9 @@ __Pipeline_Setup_And_Tagging__:
 
 For this runner the _PipelineSetup_ customizes:
 
-    - The Pixelization used by the inversion of this pipeline.
-    - The Regularization scheme used by of this pipeline.
-    - If there is an external shear in the mass model or not.
+ - The Pixelization used by the inversion of this pipeline.
+ - The Regularization scheme used by of this pipeline.
+ - If there is an external shear in the mass model or not.
 
 The _PipelineSetup_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
@@ -231,8 +231,8 @@ to different output folders and thus not clash with one another!
 
 The 'folders' below specify the path the pipeline results are written to, which is:
 
-    'autolens_workspace/output/dataset_type/dataset_name/' 
-    'autolens_workspace/output/imaging/lens_sie__source_sersic/'
+ 'autolens_workspace/output/dataset_type/dataset_name/' 
+ 'autolens_workspace/output/imaging/lens_sie__source_sersic/'
 """
 
 # %%

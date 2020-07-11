@@ -6,12 +6,12 @@ these values to the image's native sub-grid resolution.
 
 The benefits of this are:
 
-    - For _MassProfile_'s that require computationally expensive numerical integration, this reduces the number of
+ - For _MassProfile_'s that require computationally expensive numerical integration, this reduces the number of
       integratals performed 100000's to 1000's, giving a potential speed up in run time of x100 or more!
 
 The downsides of this are:
 
-    - The interpolated deflection angles will be inaccurate to some level of precision, depending on the resolution
+ - The interpolated deflection angles will be inaccurate to some level of precision, depending on the resolution
       of the interpolation grid. This could lead to inaccurate and biased mass models.
 
 The interpolation grid is defined in terms of a pixel scale and it is automatically matched to the mask used in that
@@ -26,7 +26,7 @@ compute the deflection angles of the _SphericalNFW_ efficiently.
 
 Whether the interpolatioon grid is used for a given mass profile is set in the following config file:
 
-    'autolens_workspace/config/grids/interpolate.ini'
+ 'autolens_workspace/config/grids/interpolate.ini'
 
 The True and False values reflect whether interpolation is used for each function of each mass profile. The default
 values supplied with the autolens_workspace reflect whether the profile requires numerical integration or not.
@@ -112,10 +112,10 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
-    - The grid_class as a _GridInterpolate_, telling PyAutoLens to use interpolation when calculation deflection 
+ - The grid_class as a _GridInterpolate_, telling PyAutoLens to use interpolation when calculation deflection 
       angles.
       
-    - A pixel_scales_interp of 0.05, which is the resolution of the interpolation on which the deflection angles are
+ - A pixel_scales_interp of 0.05, which is the resolution of the interpolation on which the deflection angles are
       computed and used to interpolate to the data's native resolution.   
       
 """
@@ -134,12 +134,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__interpolation'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__interpolation'.
 
 However, because the _PhaseSettings_ include a grid_class and pixel_scales_interp, the output path is tagged to 
 reflelct this, meaning the full output path is:
 
-    '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.
+ '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.
 
 """
 

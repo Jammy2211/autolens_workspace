@@ -92,7 +92,7 @@ However, we are not going into any more detail on the result variable in this tu
 
 A comprehensive description of the results can be found at the following script:
 
-    'autolens_workspace/examples/model/result.py'
+ 'autolens_workspace/examples/model/result.py'
 
 """
 

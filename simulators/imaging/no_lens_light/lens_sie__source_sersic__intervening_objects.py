@@ -5,13 +5,13 @@ import autolens.plot as aplt
 """
 This script simulates imaging of a strong lens where:
 
-    - The lens galaxy's _MassProfile_ is an EllipticalBrokenPowerLaw.
-    - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
-    - There are a number of intervening objects whose light nearly obscures that of the strong lens.
+ - The lens galaxy's _MassProfile_ is an EllipticalBrokenPowerLaw.
+ - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - There are a number of intervening objects whose light nearly obscures that of the strong lens.
 
 This dataset is used in the preprocess script:
 
-    'autolens_workspace/preprocess/imaging/p8_scaled_dataset.ipynb'
+ 'autolens_workspace/preprocess/imaging/p8_scaled_dataset.ipynb'
     
 To illustrate how to subtract and remove the light of intervening objects in real strong lensing data, so that it does
 not impact the lens model.
@@ -30,9 +30,9 @@ print("Workspace Path: ", workspace_path)
 The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
-    - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
-    - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
-    - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
+ - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
+ - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
+ - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 dataset_type = "imaging"
 dataset_label = "no_lens_light"

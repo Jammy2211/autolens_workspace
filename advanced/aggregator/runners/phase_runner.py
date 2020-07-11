@@ -4,15 +4,15 @@ __Aggregator: Phase Runner__
 This script fits a sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 using a single _PhaseImaging_ object, to illustrate aggregator functionality in the tutorials:
 
-    - a1_samples
-    - a2_lens_models
-    - a3_data_fitting
-    - a4_derived
+ - a1_samples
+ - a2_lens_models
+ - a3_data_fitting
+ - a4_derived
 
 The phase fits each lens with:
  
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
-    - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light.
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
+ - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light.
 """
 
 """ AUTOFIT + CONFIG SETUP """

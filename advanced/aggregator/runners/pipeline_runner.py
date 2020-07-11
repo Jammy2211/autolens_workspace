@@ -4,16 +4,16 @@ __Aggregator: Pipeline Runner__
 This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 using a pipeline to illustrate aggregator functionality in the tutorial:
 
-    - a5_pipelines
-    - a6_advanced
+ - a5_pipelines
+ - a6_advanced
  
 If you are not yet familiar with PyAutoLens's pipeline functionality, you should checkout 
 'autolens_workspace/pipelines' and 'howtolens/chapter_3_pipelines' before doing these tutorials.
 
 Using a pipeline composed of three phases this runner fits imaging of a strong lens system, where: 
  
-    - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
-    - An _Inversion_ for the source galaxy's light.
+ - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
+ - An _Inversion_ for the source galaxy's light.
 """
 
 """ AUTOFIT + CONFIG SETUP """
@@ -81,9 +81,9 @@ for dataset_name in [
 
     For this pipeline the pipeline setup customizes:
 
-        - The Pixelization used by the inversion of this pipeline.
-        - The Regularization scheme used by of this pipeline.
-        - If there is an external shear in the mass model or not.
+  - The Pixelization used by the inversion of this pipeline.
+  - The Regularization scheme used by of this pipeline.
+  - If there is an external shear in the mass model or not.
     """
 
     setup = al.PipelineSetup(

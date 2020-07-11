@@ -15,9 +15,9 @@ both to perform the model-fit.
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.  
+ - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_.
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.  
 """
 
 # %%
@@ -103,9 +103,9 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_ (13 parameters).
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
+ - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_ (13 parameters).
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=27.    
 """
@@ -127,9 +127,9 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
  
-    - That a regular *Grid* is used to fit create the model-image when fitting the data 
+ - That a regular *Grid* is used to fit create the model-image when fitting the data 
       (see 'autolens_workspace/examples/grids.py' for a description of grids).
-    - The sub-grid size of this grid.
+ - The sub-grid size of this grid.
 
 Different *PhaseSettings* are used in different example model scripts and a full description of all *PhaseSettings* 
 can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
@@ -146,7 +146,7 @@ __Search__
 The lens model is fitted to the data using a *NonLinearSearch*, which we specify below. In this example, we use the
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
-    - 100 live points.
+ - 100 live points.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
@@ -165,7 +165,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/beginner/lens_sersic_sie__source_sersic/phase__lens_sersic_sie__source_sersic'.
+ '/autolens_workspace/output/examples/beginner/lens_sersic_sie__source_sersic/phase__lens_sersic_sie__source_sersic'.
 """
 
 # %%

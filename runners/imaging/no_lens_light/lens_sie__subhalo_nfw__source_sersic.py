@@ -6,14 +6,14 @@ Welcome to the pipeline runner, which loads a strong lens dataset and analyses i
 
 Using a pipeline composed of three phases this runner fits imaging of a strong lens system, where: 
 
-    - The lens galaxy's light is omitted from the data and model.
-    - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
-    - A dark matter subhalo's within the lens galaxy is fitted with a *SphericalNFWMCRLudLow*.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's light is omitted from the data and model.
+ - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
+ - A dark matter subhalo's within the lens galaxy is fitted with a *SphericalNFWMCRLudLow*.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
 This uses the pipeline (Check it out full description of the pipeline):
 
-    'autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__subhalo_nfw__source_sersic.py'.
+ 'autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__subhalo_nfw__source_sersic.py'.
 """
 
 # %%
@@ -123,9 +123,9 @@ __Pipeline_Setup_And_Tagging__:
 
 For this runner the _PipelineSetup_ customizes:
 
-    - The Pixelization used by the inversion of this pipeline.
-    - The Regularization scheme used by of this pipeline.
-    - If there is an external shear in the mass model or not.
+ - The Pixelization used by the inversion of this pipeline.
+ - The Regularization scheme used by of this pipeline.
+ - If there is an external shear in the mass model or not.
 
 The _PipelineSetup_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
@@ -135,8 +135,8 @@ to different output folders and thus not clash with one another!
 
 The 'folders' below specify the path the pipeline results are written to, which is:
 
-    'autolens_workspace/output/dataset_type/dataset_name/' 
-    'autolens_workspace/output/imaging/lens_sie__source_sersic/'
+ 'autolens_workspace/output/dataset_type/dataset_name/' 
+ 'autolens_workspace/output/imaging/lens_sie__source_sersic/'
 """
 
 # %%

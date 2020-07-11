@@ -14,11 +14,11 @@ both to perform the model-fit.
 """
 In this example script, we will fit imaging of a strong lens system where:
 
-    - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
-    - The lens galaxy's stellar _MassProfile_ is fitted with the EllipticalSersic of the 
+ - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's stellar _MassProfile_ is fitted with the EllipticalSersic of the 
       _LightProfile_, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
-    - The lens galaxy's nfw _MassProfile_ is fitted with a _SphericalNFW_.
-    - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.   
+ - The lens galaxy's nfw _MassProfile_ is fitted with a _SphericalNFW_.
+ - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.   
 """
 
 # %%
@@ -106,10 +106,10 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
-    - An EllipticalSersic *LightAndMassProfile* for the lens galaxy's light and mass (8 parameters) [note that we use 
+ - An EllipticalSersic *LightAndMassProfile* for the lens galaxy's light and mass (8 parameters) [note that we use 
       the 'al.lmp' module to create this, signifying it represents both the light and mass].
-    - A SphericalNFW _MassProfile_ for the lens galaxy's nfw matter (4 parameters).
-    - An Elliptical_EllipticalSersic_ _LightProfile_ for the source galaxy's mass (7 parameters).
+ - A SphericalNFW _MassProfile_ for the lens galaxy's nfw matter (4 parameters).
+ - An Elliptical_EllipticalSersic_ _LightProfile_ for the source galaxy's mass (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.
 """
@@ -127,9 +127,9 @@ __Settings__
 Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
-    - That a *GridInterpolate* is used to fit create the model-image when fitting the data 
+ - That a *GridInterpolate* is used to fit create the model-image when fitting the data 
       (see 'autolens_workspace/examples/grids.py' for a description of grids).
-    - The pixel-scale of this interpolation grid.
+ - The pixel-scale of this interpolation grid.
 
 The deflection angle calculation of the _EllipticalSersic_ _MassProfile_ requires numerical integration and is
 computationally more expensive than most mass profiles. For this reason, we use a *GridInterpolate* grid instead of
@@ -155,7 +155,7 @@ __Search__
 The lens model is fitted to the data using a *NonLinearSearch*, which we specify below. In this example, we use the
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
-    - 50 live points.
+ - 50 live points.
 
 The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
@@ -174,7 +174,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
-    '/autolens_workspace/output/examples/beginner/lens_sersic_mlr_nfw__source_sersic/
+ '/autolens_workspace/output/examples/beginner/lens_sersic_mlr_nfw__source_sersic/
      phase__lens_sersic_mlr_nfw__source_sersic'.
 """
 
