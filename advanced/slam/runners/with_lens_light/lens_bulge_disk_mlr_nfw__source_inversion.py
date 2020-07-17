@@ -140,7 +140,6 @@ hyper = al.slam.HyperSetup(
     hyper_image_sky=False,
     hyper_background_noise=True,
     hyper_fixed_after_source=True,
-    evidence_tolerance=50.0,
 )
 
 # %%
@@ -169,6 +168,7 @@ _Inversion_. If an external shear is omitted from the Source pipeline it can be 
 source = al.slam.SourceSetup(
     pixelization=al.pix.VoronoiBrightnessImage,
     regularization=al.reg.AdaptiveBrightness,
+    inversion_pixels_fixed=1200,
     no_shear=False,
 )
 

@@ -25,10 +25,8 @@ Cartesian grids of (y,x) coordinates. Below, we make and plot a uniform Cartesia
 # %%
 grid = al.Grid.uniform(
     shape_2d=(50, 50),
-    pixel_scales=0.05,  # <- The pixel-scale describes the conversion from pixel units to arc-seconds.
+    pixel_scales=0.1,  # <- The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
-
-aplt.Grid(grid=grid)
 
 # %%
 """
@@ -41,7 +39,7 @@ light. We therefore need analytic functions representing light and mass distribu
 sersic_light_profile = al.lp.EllipticalSersic(
     centre=(0.0, 0.0),
     elliptical_comps=(0.2, 0.1),
-    intensity=0.05,
+    intensity=0.005,
     effective_radius=2.0,
     sersic_index=4.0,
 )

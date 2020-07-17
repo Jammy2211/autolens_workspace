@@ -189,7 +189,9 @@ def make_pipeline(slam, settings, redshift_lens=0.5, redshift_source=1.0):
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         search=af.DynestyStatic(
-            n_live_points=40, evidence_tolerance=slam.hyper.evidence_tolerance
+            n_live_points=30,
+            evidence_tolerance=slam.hyper.evidence_tolerance,
+            sample="rstagger",
         ),
     )
 
