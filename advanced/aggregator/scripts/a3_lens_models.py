@@ -1,6 +1,6 @@
 # %%
 """
-__Aggregator 2: Lens Models__
+__Aggregator 3: Lens Models__
 
 This tutorial builds on the tutorial 'a1_samples', where we use the aggregator to load models from a non-linear
 search and visualize and interpret results.
@@ -238,3 +238,20 @@ plt.errorbar(
     yerr=[le3_axis_ratios, ue3_axis_ratios],
 )
 plt.show()
+
+# %%
+"""
+In the phase_runner, we used the pickle_files input to phase.run() to pass a .pickle file from the dataset folder to 
+the _Aggregator_ pickles folder. 
+
+Our strong lens dataset was created via a simulator script, so we passed the _Tracer_ used to simulate the strong
+lens, which was written as a .pickle file called 'true_tracer.pickle' to the phase to make it accessible in the 
+_Aggregator_. This will allow us to directly compare the inferred lens model to the 'truth'. 
+
+You should checkout 'autolens_workspace/advanced/aggregator/phase_runner.py' to see how this was performed.
+"""
+
+true_tracers = [true_tracer for true_tracer in agg_filter.values("true_tracer")]
+
+print("Parameters used to simulate first Aggregator dataset:")
+print(true_tracers[0])

@@ -22,12 +22,6 @@ We'll use the SLaM pipelines:
 Check them out now for a detailed description of the analysis!
 """
 
-# %%
-""" AUTOFIT + CONFIG SETUP """
-
-# %%
-from autoconf import conf
-import autofit as af
 
 # %%
 # %%
@@ -41,6 +35,8 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """Use this path to explicitly set the config path and output path."""
+from autoconf import conf
+
 conf.instance = conf.Config(
     config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
 )

@@ -24,15 +24,8 @@ Check them out now for a detailed description of the analysis!
 """
 
 # %%
-""" AUTOFIT + CONFIG SETUP """
-
-# %%
-from autoconf import conf
-import autofit as af
-
-# %%
 """ AUTOLENS + DATA SETUP """
-a  # %%
+
 """Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
 
 # %%
@@ -60,8 +53,8 @@ import autolens as al
 import autolens.plot as aplt
 
 dataset_type = "imaging"
-dataset_label = "no_lens_light"
-dataset_name = "lens_sie__subhalo_nfw__source_sersic"
+dataset_label = "subhalo"
+dataset_name = "lens_sie__subhalo_nfw__source_sersic__lowres"
 pixel_scales = 0.1
 
 # %%
@@ -84,7 +77,6 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
-    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask.circular(
@@ -93,9 +85,7 @@ mask = al.Mask.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-settings = al.PhaseSettingsImaging(
-    grid_class=al.Grid, sub_size=2, auto_positions_factor=5.0
-)
+settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
 
 
 # %%
@@ -192,7 +182,7 @@ based on the input Setup values. It also handles pipeline tagging and path struc
 """
 
 slam = al.slam.SLaM(
-    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_type]
+    hyper=hyper, source=source, mass=mass, folders=["slam", dataset_type, dataset_label]
 )
 
 # %%
@@ -220,7 +210,10 @@ from autolens_workspace.advanced.slam.pipelines.no_lens_light.subhalo import (
 )
 
 subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
-    slam=slam, settings=settings, grid_size=2
+    slam=slam,
+    settings=settings,
+    subhalo_search=af.DynestyStatic(n_live_points=50, evidence_tolerance=30.0),
+    grid_size=2,
 )
 
 # %%

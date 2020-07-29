@@ -1,0 +1,20 @@
+galaxies
+    lens
+        redshift                                                                          0.5
+        hyper_galaxy                                                                      result.instance.galaxies.lens.hyper_galaxy
+        mass                                                                              result.model.galaxies.lens.mass
+        shear                                                                             result.model.galaxies.lens.shear
+    subhalo
+        redshift                                                                          0.5
+        mass
+            centre
+                centre_0                                                                  UniformPrior, lower_limit = -2.5, upper_limit = 2.5
+                centre_1                                                                  UniformPrior, lower_limit = -2.5, upper_limit = 2.5
+            mass_at_200                                                                   LogUniformPrior, lower_limit = 1000000.0, upper_limit = 100000000000.0
+            redshift_object                                                               0.5
+            redshift_source                                                               1.0
+    source
+        redshift                                                                          result.model.galaxies.source.redshift
+        sersic                                                                            result.model.galaxies.source.sersic
+hyper_image_sky                                                                           result.instance.hyper_image_sky
+hyper_background_noise                                                                    result.instance.hyper_background_noise

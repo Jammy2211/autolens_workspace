@@ -12,7 +12,7 @@ The pipeline is as follows:
 Phase 1:
 
     Perform the subhalo detection analysis using a *GridSearch* of non-linear searches.
-    
+
     Lens Mass: Previous mass pipeline model.
     Subhalo: SphericalNFWLudlow
     Source Light: Previous source pipeilne model.
@@ -22,8 +22,8 @@ Phase 1:
 
 Phase 2:
 
-    Refine the best-fit detected subhalo from the previous phase.
-    
+Refine the best-fit detected subhalo from the previous phase.
+
     Lens Mass: Previous mass pipeline model.
     Source Light: Previous source pipeilne model.
     Subhalo: SphericalNFWLudlow
@@ -34,12 +34,25 @@ Phase 2:
 
 
 def make_pipeline(
-    slam, settings, redshift_lens=0.5, redshift_source=1.0, grid_size=5, parallel=False
+    slam,
+    settings,
+    subhalo_search,
+    redshift_lens=0.5,
+    redshift_source=1.0,
+    source_as_model=True,
+    mass_as_model=True,
+    grid_size=5,
+    parallel=False,
 ):
-
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline_subhalo__nfw"
+
+    if not source_as_model:
+        pipeline_name += "__src_fixed"
+
+    if not mass_as_model:
+        pipeline_name += "__mass_fixed"
 
     """
     This pipeline is tagged according to whether:
@@ -76,26 +89,45 @@ def make_pipeline(
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
     subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
     subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+
     subhalo.mass.redshift_object = subhalo.redshift
 
     """
     SLaM: Setup the source model, which uses a variable parametric profile or fixed inversion model.
     """
 
-    source = slam.source_from_source_pipeline_for_mass_pipeline()
+    if mass_as_model:
 
-    subhalo.mass.redshift_source = source.redshift
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            mass=af.last.model.galaxies.lens.mass,
+            shear=af.last.model.galaxies.lens.shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
+    else:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            mass=af.last.instance.galaxies.lens.mass,
+            shear=af.last.instance.galaxies.lens.shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
+    source = slam.source_from_previous_pipeline_model_or_instance(
+        source_as_model=source_as_model, index=0
+    )
+
+    subhalo.mass.redshift_source = redshift_source
 
     phase1 = GridPhase(
         phase_name="phase_1__subhalo_search__source",
         folders=folders,
-        galaxies=dict(
-            lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
-        ),
+        galaxies=dict(lens=lens, subhalo=subhalo, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50),
+        search=subhalo_search,
         number_of_steps=grid_size,
     )
 
@@ -103,10 +135,13 @@ def make_pipeline(
 
     subhalo.mass.mass_at_200 = phase1.result.model.galaxies.subhalo.mass.mass_at_200
     subhalo.mass.centre = phase1.result.model.galaxies.subhalo.mass.centre
+    subhalo.mass.redshift_object = redshift_lens
 
     source = slam.source_from_previous_pipeline_model_or_instance(
         source_as_model=True, index=-1
     )
+
+    subhalo.mass.redshift_source = redshift_source
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__subhalo_refine",
@@ -117,7 +152,11 @@ def make_pipeline(
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=80),
+        search=af.DynestyStatic(n_live_points=100),
+    )
+
+    phase2 = phase2.extend_with_multiple_hyper_phases(
+        setup=slam.hyper, include_inversion=False
     )
 
     return al.PipelineDataset(pipeline_name, phase1, phase2)

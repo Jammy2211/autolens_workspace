@@ -36,15 +36,24 @@ Phase 2:
 def make_pipeline(
     slam,
     settings,
+    subhalo_search,
     redshift_lens=0.5,
     redshift_source=1.0,
-    number_of_steps=5,
+    source_as_model=True,
+    mass_as_model=True,
+    grid_size=5,
     parallel=False,
 ):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline_subhalo__nfw"
+
+    if not source_as_model:
+        pipeline_name += "__src_fixed"
+
+    if not mass_as_model:
+        pipeline_name += "__mass_fixed"
 
     """
     This pipeline is tagged according to whether:
@@ -76,55 +85,81 @@ def make_pipeline(
                 self.model.galaxies.subhalo.mass.centre_1,
             ]
 
-    subhalo = al.GalaxyModel(redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow)
+    """The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift."""
 
-    subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
-    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
-    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_below = al.GalaxyModel(
+        redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow
+    )
+
+    subhalo_z_below.mass.mass_at_200 = af.LogUniformPrior(
+        lower_limit=1.0e6, upper_limit=1.0e11
+    )
+    subhalo_z_below.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_below.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_below.mass.redshift_source = redshift_source
+    subhalo_z_below.mass.redshift_object = af.UniformPrior(
+        lower_limit=0.0, upper_limit=subhalo_z_below.redshift
+    )
 
     """
     SLaM: Setup the source model, which uses a variable parametric profile or fixed inversion model.
     """
 
+    if mass_as_model:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            mass=af.last.model.galaxies.lens.mass,
+            shear=af.last.model.galaxies.lens.shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
+    else:
+
+        lens = al.GalaxyModel(
+            redshift=redshift_lens,
+            mass=af.last.instance.galaxies.lens.mass,
+            shear=af.last.instance.galaxies.lens.shear,
+            hyper_galaxy=af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
+        )
+
     source = slam.source_from_source_pipeline_for_mass_pipeline()
 
-    subhalo.mass.redshift_source = source.redshift
-
-    """The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift."""
-
-    subhalo.mass.redshift_object = af.UniformPrior(
-        lower_limit=0.0, upper_limit=subhalo.redshift
-    )
-
     phase1a = GridPhase(
-        phase_name="phase_1a__subhalo_search__z_below_lens__source",
+        phase_name="phase_1__subhalo_search__source__z_below_lens",
         folders=folders,
-        galaxies=dict(
-            lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
-        ),
+        galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50),
-        number_of_steps=number_of_steps,
+        search=subhalo_search,
+        number_of_steps=grid_size,
     )
 
-    """The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift."""
+    """The subhalo redshift is free to vary between and the lens and source galaxy redshifts."""
 
-    subhalo.mass.redshift_object = af.UniformPrior(
-        lower_limit=subhalo.redshift, upper_limit=source.redshift
+    subhalo_z_above = al.GalaxyModel(
+        redshift=redshift_lens, mass=al.mp.SphericalNFWMCRLudlow
+    )
+
+    subhalo_z_above.mass.mass_at_200 = af.LogUniformPrior(
+        lower_limit=1.0e6, upper_limit=1.0e11
+    )
+    subhalo_z_above.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_above.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_above.mass.redshift_source = redshift_source
+    subhalo_z_above.mass.redshift_object = af.UniformPrior(
+        lower_limit=subhalo_z_above.redshift, upper_limit=redshift_source
     )
 
     phase1b = GridPhase(
-        phase_name="phase_1b__subhalo_search__z_above_lens__source",
+        phase_name="phase_1__subhalo_search__source__z_above_lens",
         folders=folders,
-        galaxies=dict(
-            lens=af.last.instance.galaxies.lens, subhalo=subhalo, source=source
-        ),
+        galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50),
+        search=subhalo_search,
         number_of_steps=5,
     )
 

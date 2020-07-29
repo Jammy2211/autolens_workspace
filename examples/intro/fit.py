@@ -122,7 +122,6 @@ The fit performs the necessary tasks to create the model image we fit the data w
 image with the imaging PSF. We can see this by comparing the tracer's image (which isn't PSF convolved) and the 
 fit's model image (which is).
 """
-
 aplt.Tracer.image(tracer=tracer, grid=masked_imaging.grid)
 
 fit = al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)

@@ -112,7 +112,7 @@ interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 """Lets plot the simulated interferometer dataset before we output it to fits."""
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-"""Finally, lets output our simulated dataset to the dataset path as .fits files"""
+"""Output our simulated dataset to the dataset path as .fits files"""
 interferometer.output_to_fits(
     visibilities_path=f"{dataset_path}/visibilities.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",

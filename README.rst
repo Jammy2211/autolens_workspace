@@ -7,11 +7,11 @@ instructions at `the PyAutoLens readthedocs <https://pyautolens.readthedocs.io/e
 Workspace Version
 =================
 
-This version of the workspace are built and tested for using **PyAutoLens v1.2.2**.
+This version of the workspace are built and tested for using **PyAutoLens v1.3.0**.
 
 .. code-block:: python
 
-    pip install autolens==1.2.2
+    pip install autolens==1.3.0
 
 Getting Started
 ===============

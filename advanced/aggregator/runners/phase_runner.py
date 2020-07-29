@@ -86,6 +86,16 @@ for dataset_name in [
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
+    """
+    Pickle Files:
+
+    We can pass strings specifying the path and filename of .pickle files stored on our hard-drive to the 'phase.run()'
+    method, which will make them accessible to the aggregator  to aid interpretation of results. Our simulated strong
+    lens datasets have a 'true_tracer.pickle' file which we pass in below, which we use in the _Aggregator_ tutorials to
+    easily illustrate how we can check if a model-fit recovers its true input parameters.
+    """
+    pickle_files = [f"{dataset_path}/true_tracer.pickle"]
+
     # %%
     """
     The _PhaseSettings_ (which customize the fit of the phase's fit), will also be available to the aggregator!
@@ -105,4 +115,4 @@ for dataset_name in [
         search=af.DynestyStatic(n_live_points=50),
     )
 
-    phase.run(dataset=imaging, mask=mask, info=info)
+    phase.run(dataset=imaging, mask=mask, info=info, pickle_files=pickle_files)

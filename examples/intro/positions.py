@@ -42,7 +42,7 @@ grid = al.Grid.uniform(
 )
 
 isothermal_mass_profile = al.mp.EllipticalIsothermal(
-    centre=(0.0, 0.0), elliptical_comps=(0.5, 0.0), einstein_radius=1.6
+    centre=(0.001, 0.001), einstein_radius=1.0, elliptical_comps=(0.0, 0.111111)
 )
 
 exponential_light_profile = al.lp.EllipticalExponential(
@@ -86,14 +86,10 @@ or less. We could increase our grid resolutin to 0.01" or below, but this will q
 expensive, thus a bespoke _PositionSolver_ is required!
 """
 
-solver = al.PositionsSolver()
+solver = al.PositionsSolver(grid=grid, pixel_scale_precision=0.001, upscale_factor=2)
 
 positions = solver.solve(
-    lensing_obj=lens_galaxy,
-    grid=grid,
-    source_plane_coordinate=source_galaxy.light.centre,
+    lensing_obj=lens_galaxy, source_plane_coordinate=source_galaxy.light.centre
 )
-
-# print(positions)
 
 aplt.Tracer.image(tracer=tracer, grid=grid, positions=positions)

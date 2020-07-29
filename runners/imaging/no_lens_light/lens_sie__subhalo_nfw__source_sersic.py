@@ -49,20 +49,13 @@ conf.instance = conf.Config(
 """ AUTOLENS + DATA SETUP """
 
 # %%
-import autofit as af
-import autolens as al
-import autolens.plot as aplt
 
-# %%
-"""Specify the dataset type, label and name, wmockhich we use to determine the path we load the data from."""
-
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 dataset_type = "imaging"
-dataset_label = "no_lens_light"
+dataset_label = "subhalo"
 dataset_name = "lens_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.2
 

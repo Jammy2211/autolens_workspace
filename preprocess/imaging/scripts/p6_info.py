@@ -1,8 +1,8 @@
 """
-__Preprocess 6: - Info (Optional)__
+__Preprocess 6: - Info and Pickles (Optional)__
 
-Here, we include auxiliary information about our dataset or the strong lens system that one may want to use during
-an analysis or when interpreting the results after the analysis.
+Here, we include auxiliary information about our strong lens dataset that we may use during an analysis or when
+interpreting the lens modeling results.
 
 The most obvious example of such information is the redshifts of the source and lens galaxy. By storing these as an
 'info' file in the lens's dataset folder, it is straight forward to load the redshifts in a runner and pass them to a
@@ -65,7 +65,7 @@ dataset_path = af.util.create_path(
 
 # %%
 """
-The info is written as a Python dictionary and can have as many entires as desired added to it. Any information you
+The info is written as a Python dictionary and can have as many entries as desired added to it. Any information you
 want to include int he interpretation of your lens models should be included here.
 """
 
@@ -103,5 +103,12 @@ shutil.move("info.json", f"{dataset_path}/info.json")
 # %%
 """
 For the info to be available to the results of a model-fit, the runner must load the info file from the .json and 
-pass it to the pipeline.run() function.
+pass it to the phase.run() or pipeline.run() function:
+
+info_file = f"{dataset_path}/info.json"
+
+with open(info_file, "r") as f:
+    info = json.load(f)
+
+phase.run(dataset=dataset, mask=mask, info=info)
 """

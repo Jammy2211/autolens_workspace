@@ -338,54 +338,15 @@ print(results, "\n")
 
 # %%
 """
-The Probability Density Functions (PDF's) of the results can be plotted using libraries such as:
+The Probability Density Functions (PDF's) of the results can be plotted using the library:
 
- - GetDist: https://getdist.readthedocs.io/en/latest/
- - corner.py: https://corner.readthedocs.io/en/latest/
-    
-Below, we show an example of how a plot is produced using GetDist.
+ corner.py: https://corner.readthedocs.io/en/latest/
 
-(In built visualization for PDF's and non-linear searches is a future feature of PyAutoFit / PyAutoLens, but for now
-you'll have to use the libraries yourself!).
+(In built visualization for PDF's and non-linear searches is a future feature of PyAutoFit, but for now you'll have to 
+use the libraries yourself!).
 """
 
-import getdist.plots as gdplot
-import matplotlib.pyplot as plt
-
-plotter = gdplot.get_subplot_plotter()
+import corner
 
 for samples in agg.values("samples"):
-
-    plt.figure(figsize=(8, 8))
-    plotter.triangle_plot(
-        samples.getdist_samples,
-        filled=True,
-        legend_labels="result",
-        params=samples.parameter_names,
-        labels=samples.parameter_labels,
-        title_limit=1,
-        close_existing=True,
-    )
-    plt.show()
-
-# %%
-"""
-We can even plot the PDF of all 3 of our model-fits on one figure!
-"""
-
-# %%
-for samples in agg.values("samples"):
-
-    parameter_names = samples.parameter_names
-    parameter_labels = samples.parameter_labels
-
-plotter.triangle_plot(
-    [samples.getdist_samples for samples in agg.values("samples")],
-    filled=True,
-    legend_labels=["run1", "run2", "run3"],
-    params=parameter_names,
-    labels=parameter_labels,
-    title_limit=1,
-    close_existing=True,
-)
-plt.show()
+    corner.corner(xs=samples.parameters, weights=samples.weights)
