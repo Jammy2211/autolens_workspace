@@ -104,7 +104,7 @@ for dataset_name in [
     # %%
     settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 
-settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
+    settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
     phase = al.PhaseImaging(
         phase_name="phase__aggregator",

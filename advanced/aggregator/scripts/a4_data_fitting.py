@@ -143,20 +143,13 @@ def make_fit_generator(agg_obj):
     output = agg_obj.samples
     dataset = agg_obj.dataset
     mask = agg_obj.mask
-    settings = (
-        agg_obj.settings
-    )  # The SettingsPhaseImaging used in the 'phase_runner.py script.
+
+    """This corresponds to _SettingsPhaseImaging_ used un the runner script."""
+
+    settings = agg_obj.settings
 
     masked_imaging = al.MaskedImaging(
-        imaging=dataset,
-        mask=mask,
-        grid_class=settings.grid_class,
-        grid_inversion_class=settings.grid_inversion_class,
-        fractional_accuracy=settings.fractional_accuracy,
-        sub_steps=settings.sub_steps,
-        pixel_scales_interp=settings.pixel_scales_interp,
-        psf_shape_2d=settings.psf_shape_2d,
-        positions_threshold=settings.positions_threshold,
+        imaging=dataset, mask=mask, settings=settings.settings_masked_imaging
     )
 
     tracer = al.Tracer.from_galaxies(

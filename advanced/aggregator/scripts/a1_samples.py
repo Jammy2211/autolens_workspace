@@ -123,8 +123,8 @@ for samples in agg.values("samples"):
 
     print("All parameters of the very first sample")
     print(samples.parameters[0])
-    print("The fourth parameter of the tenth sample")
-    print(samples.parameters[9][3])
+    print("The third parameter of the tenth sample")
+    print(samples.parameters[9][2])
 
 
 print("Samples: \n")
