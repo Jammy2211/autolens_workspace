@@ -28,7 +28,7 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic"
@@ -61,7 +61,9 @@ lens_galaxy = al.Galaxy(
     ),
 )
 
-masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+masked_imaging = al.MaskedImaging(
+    imaging=imaging, mask=mask, settings=al.SettingsMaskedImaging(sub_size=2)
+)
 
 source_galaxy = al.Galaxy(
     redshift=1.0,

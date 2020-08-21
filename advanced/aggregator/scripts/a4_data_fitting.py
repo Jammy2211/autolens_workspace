@@ -145,7 +145,7 @@ def make_fit_generator(agg_obj):
     mask = agg_obj.mask
     settings = (
         agg_obj.settings
-    )  # The PhaseSettingsImaging used in the 'phase_runner.py script.
+    )  # The SettingsPhaseImaging used in the 'phase_runner.py script.
 
     masked_imaging = al.MaskedImaging(
         imaging=dataset,
@@ -156,9 +156,6 @@ def make_fit_generator(agg_obj):
         sub_steps=settings.sub_steps,
         pixel_scales_interp=settings.pixel_scales_interp,
         psf_shape_2d=settings.psf_shape_2d,
-        inversion_pixel_limit=settings.inversion_pixel_limit,
-        inversion_uses_border=settings.inversion_uses_border,
-        inversion_stochastic=settings.inversion_stochastic,
         positions_threshold=settings.positions_threshold,
     )
 
@@ -166,7 +163,12 @@ def make_fit_generator(agg_obj):
         galaxies=output.max_log_likelihood_instance.galaxies
     )
 
-    return al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
+    return al.FitImaging(
+        masked_imaging=masked_imaging,
+        tracer=tracer,
+        settings_pixelization=settings.settings_pixelization,
+        settings_inversion=settings.settings_inversion,
+    )
 
 
 fit_gen = agg_filter.map(func=make_fit_generator)
@@ -181,7 +183,7 @@ MaskedImaging is set up. The bad news is this requires a lot of lines of code, w
 
 If you are writing customized generator functions, the PyAutoLens aggregator module also provides convenience methods
 for setting up objects *within* a generator. Below, we make the MaskedImaging and Tracer using these methods, which
-perform the same functions as the generator above, including the PhaseImagingSettings.
+perform the same functions as the generator above, including the SettingsPhaseImaging.
 """
 
 # %%
@@ -211,6 +213,35 @@ for masked_imaging in masked_imaging_gen:
     print(masked_imaging.name)
 
 fit_gen = al.agg.FitImaging(aggregator=agg_filter)
+
+for fit in fit_gen:
+    aplt.FitImaging.subplot_fit_imaging(fit=fit)
+
+# %%
+"""
+This convenience method goes one step further. By default, it uses the _SettingsMaskedImaging_, _SettingsPixelization_
+and _SettingsInversion_ used by the analysis. 
+
+However, we may want to change this. For example, what if I was curious and wanted to see the fit but where I used
+a _Grid_ with a *sub_size* of 4? Or where the _Pixelization_ didn't use a border? You can do this by passing the
+method a new _Settings_ object which overwrites the one used by the analysis.
+"""
+
+# %%
+
+settings_masked_imaging = al.SettingsMaskedImaging(sub_size=4)
+
+masked_imaging_gen = al.agg.MaskedImaging(
+    aggregator=agg_filter, settings_masked_imaging=settings_masked_imaging
+)
+
+settings_pixelization = al.SettingsPixelization(use_border=False)
+
+fit_gen = al.agg.FitImaging(
+    aggregator=agg_filter,
+    settings_masked_imaging=settings_masked_imaging,
+    settings_pixelization=settings_pixelization,
+)
 
 for fit in fit_gen:
     aplt.FitImaging.subplot_fit_imaging(fit=fit)

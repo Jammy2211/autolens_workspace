@@ -12,7 +12,7 @@ problem. In this example we will fit strong lens data using a variety of non-lin
 """
 In this example script, we will fit imaging of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
  - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
  - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
@@ -91,18 +91,14 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-[checkout 'autolens_workspace/examples/model/customize/settings.py' for a description of all phase settings
-searches in PyAutoLens if you haven't already.]
-
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
-function. Given we want a fast-run time to test each non-linear search quickly, we choose the following setting:
-
- - We use a regular *Grid* to fit the data, which evaluates the lens deflection angles and source light quickly
-      at the expense of accuracy. 
+Next, we specify the *SettingsPhaseImaging*, which in this example simmply use the default values used in the beginner
+examples.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging()
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """

@@ -104,17 +104,19 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-*PhaseSettings* behave as they did in normal pipelines.
+*SettingsPhase* behave as they did in normal pipelines.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """
 __PIPELINE SETUP__
 
-We again use the PipelineSetup to customize the pipeline's behaviour, which include input that control the behaviour of 
+We again use the SetupPipeline to customize the pipeline's behaviour, which include input that control the behaviour of 
 hyper-mode, specifically:
 
 - If hyper-galaxies are used to scale the noise in each component of the image (default True)
@@ -126,7 +128,7 @@ in hyper-mode to adapt the pixelization and regularizatioon to the morphology of
 """
 
 # %%
-setup = al.PipelineSetup(
+setup = al.SetupPipeline(
     hyper_galaxies=True,
     hyper_background_noise=False,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.

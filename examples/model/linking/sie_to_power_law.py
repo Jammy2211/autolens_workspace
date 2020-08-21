@@ -112,12 +112,12 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-You should be familiar with the _PhaseSettingsImaging_ object from other example scripts, if not checkout the beginner
+You should be familiar with the _SettingsPhaseImaging_ object from other example scripts, if not checkout the beginner
 examples and 'autolens_workspace/examples/model/customize/settings.py'
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings = al.SettingsPhaseImaging()
 
 # %%
 """

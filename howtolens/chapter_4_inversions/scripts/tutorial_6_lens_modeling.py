@@ -19,7 +19,7 @@ That's what we are going to cover in this tutorial.
 # %%
 #%matplotlib inline
 
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic
 import autolens as al
 import autolens.plot as aplt
 from pyprojroot import here
@@ -70,7 +70,9 @@ def perform_fit_with_lens__source_galaxy(imaging, lens_galaxy, source_galaxy):
         outer_radius=2.2,
     )
 
-    masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+    masked_imaging = al.MaskedImaging(
+        imaging=imaging, mask=mask, settings=al.SettingsMaskedImaging(sub_size=2)
+    )
 
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
@@ -176,9 +178,7 @@ source using an inversion. To do this, all we have to do is give the lens galaxy
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import (
-    lens_sersic_sie__source_sersic,
-)
+from howtolens.simulators.chapter_4 import lens_sersic_sie__source_sersic
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sersic_sie__source_sersic"
@@ -239,7 +239,9 @@ source_galaxy = al.Galaxy(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+masked_imaging = al.MaskedImaging(
+    imaging=imaging, mask=mask, settings=al.SettingsMaskedImaging(sub_size=2)
+)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 

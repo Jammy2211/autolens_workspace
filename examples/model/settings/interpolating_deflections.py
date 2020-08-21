@@ -109,7 +109,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
  - The grid_class as a _GridInterpolate_, telling PyAutoLens to use interpolation when calculation deflection 
@@ -121,7 +121,7 @@ function. In this example, we specify:
 """
 
 # %%
-settings = al.PhaseSettingsImaging(
+settings = al.SettingsPhaseImaging(
     grid_class=al.GridInterpolate, pixel_scales_interp=0.05
 )
 
@@ -136,7 +136,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 
  '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__interpolation'.
 
-However, because the _PhaseSettings_ include a grid_class and pixel_scales_interp, the output path is tagged to 
+However, because the _SettingsPhase_ include a grid_class and pixel_scales_interp, the output path is tagged to 
 reflelct this, meaning the full output path is:
 
  '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.

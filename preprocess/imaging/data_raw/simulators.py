@@ -112,11 +112,11 @@ def simulate_imaging_in_counts(dataset_path):
         file_path=imaging_path + "exposure_time_map.fits", overwrite=True
     )
 
-    imaging.data = al.preprocess.array_from_electrons_per_second_to_counts(
-        array=imaging.image, exposure_time_map=exposure_time_map
+    imaging.data = al.preprocess.array_eps_to_counts(
+        array_eps=imaging.image, exposure_time_map=exposure_time_map
     )
-    imaging.noise_map = al.preprocess.array_from_electrons_per_second_to_counts(
-        array=imaging.noise_map, exposure_time_map=exposure_time_map
+    imaging.noise_map = al.preprocess.array_eps_to_counts(
+        array_eps=imaging.noise_map, exposure_time_map=exposure_time_map
     )
 
     imaging.output_to_fits(
@@ -166,11 +166,11 @@ def simulate_imaging_in_adus(dataset_path):
         file_path=imaging_path + "exposure_time_map.fits", overwrite=True
     )
 
-    imaging.data = al.preprocess.array_from_electrons_per_second_to_adus(
-        array=imaging.image, exposure_time_map=exposure_time_map, gain=4.0
+    imaging.data = al.preprocess.array_eps_to_adus(
+        array_eps=imaging.image, exposure_time_map=exposure_time_map, gain=4.0
     )
-    imaging.noise_map = al.preprocess.array_from_electrons_per_second_to_adus(
-        array=imaging.noise_map, exposure_time_map=exposure_time_map, gain=4.0
+    imaging.noise_map = al.preprocess.array_eps_to_adus(
+        array_eps=imaging.noise_map, exposure_time_map=exposure_time_map, gain=4.0
     )
 
     imaging.output_to_fits(

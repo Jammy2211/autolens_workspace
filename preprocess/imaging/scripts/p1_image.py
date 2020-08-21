@@ -111,8 +111,8 @@ exposure_time_map = al.Array.full(
     fill_value=exposure_time, shape_2d=image_in_counts.shape_2d
 )
 
-image_converted_to_eps = al.preprocess.array_from_counts_to_electrons_per_second(
-    array=image_in_counts, exposure_time_map=exposure_time_map
+image_converted_to_eps = al.preprocess.array_counts_to_eps(
+    array_counts=image_in_counts, exposure_time_map=exposure_time_map
 )
 
 aplt.Array(array=image_converted_to_eps)
@@ -127,8 +127,8 @@ exposure_time_map = al.Array.from_fits(
 )
 
 # %%
-image_converted_to_eps = al.preprocess.array_from_counts_to_electrons_per_second(
-    array=image_in_counts, exposure_time_map=exposure_time_map
+image_converted_to_eps = al.preprocess.array_counts_to_eps(
+    array_counts=image_in_counts, exposure_time_map=exposure_time_map
 )
 
 aplt.Array(array=image_converted_to_eps)
@@ -151,8 +151,8 @@ aplt.Array(array=image_in_adus)
 
 exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=image_in_counts.shape_2d)
 
-image_converted_to_eps = al.preprocess.array_from_adus_to_electrons_per_second(
-    array=image_in_adus, exposure_time_map=exposure_time_map, gain=4.0
+image_converted_to_eps = al.preprocess.array_adus_to_eps(
+    array_adus=image_in_adus, exposure_time_map=exposure_time_map, gain=4.0
 )
 
 aplt.Array(array=image_converted_to_eps)

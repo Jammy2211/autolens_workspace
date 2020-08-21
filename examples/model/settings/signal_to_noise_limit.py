@@ -103,7 +103,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
  - A signal_to_noise_limit of 10.0, which increases the noise values in the noise-map such that no pixel has a S/N
@@ -111,7 +111,7 @@ function. In this example, we specify:
 """
 
 # %%
-settings = al.PhaseSettingsImaging(signal_to_noise_limit=10.0)
+settings = al.SettingsPhaseImaging(signal_to_noise_limit=10.0)
 
 # %%
 """
@@ -124,7 +124,7 @@ The phase_name and folders inputs below specify the path of the results in the o
 
  '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__signal_to_noise_limit'.
 
-However, because the _PhaseSettings_ include a signal_to_noise_limit, the output path is tagged to reflelct this, 
+However, because the _SettingsPhase_ include a signal_to_noise_limit, the output path is tagged to reflelct this, 
 meaning the full output path is:
 
  '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__snr_10'.

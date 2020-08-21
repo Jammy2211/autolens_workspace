@@ -36,7 +36,7 @@ cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
 cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 
 echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
-find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from autolens_workspace./from /g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from /from /g' {} +
 
 echo "Adding new __PyAutoLens__/howtolens files to github."
 cd $PYAUTOLENS_PATH

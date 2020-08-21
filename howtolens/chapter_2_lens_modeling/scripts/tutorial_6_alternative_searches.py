@@ -35,9 +35,7 @@ We'll use new strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_2 import (
-    lens_sersic_sie__source_sersic,
-)
+from howtolens.simulators.chapter_2 import lens_sersic_sie__source_sersic
 
 dataset_type = "chapter_2"
 dataset_name = "lens_sersic_sie__source_sersic"
@@ -70,12 +68,14 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # %%
 """
-Like in the previous tutorial, we use a_PhaseSettingsImaging_ object to specify our model-fitting procedure uses a 
+Like in the previous tutorial, we use a_SettingsPhaseImaging_ object to specify our model-fitting procedure uses a 
 regular _Grid_.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """

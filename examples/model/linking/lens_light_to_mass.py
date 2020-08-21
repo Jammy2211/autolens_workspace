@@ -113,17 +113,16 @@ lens = al.GalaxyModel(redshift=0.5, bulge=bulge, disk=disk)
 """
 __Settings__
 
-You should be familiar with the _PhaseSettingsImaging_ object from other example scripts, if not checkout the beginner
+You should be familiar with the _SettingsPhaseImaging_ object from other example scripts, if not checkout the beginner
 examples and 'autolens_workspace/examples/model/customize/settings.py'
 """
 
 # %%
-settings = al.PhaseSettingsImaging(
-    grid_class=al.Grid,
-    sub_size=2,
-    auto_positions_factor=3.0,
-    auto_positions_minimum_threshold=0.2,
+settings_lens = al.SettingsLens(
+    auto_positions_factor=3.0, auto_positions_minimum_threshold=0.2
 )
+
+settings = al.SettingsPhaseImaging(settings_lens=settings_lens)
 
 # %%
 """

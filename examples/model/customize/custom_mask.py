@@ -112,12 +112,12 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which in this example simmply use the default values used in the beginner
+Next, we specify the *SettingsPhaseImaging*, which in this example simmply use the default values used in the beginner
 examples.
 """
 
 # %%
-settings = al.PhaseSettingsImaging()
+settings = al.SettingsPhaseImaging()
 
 # %%
 """

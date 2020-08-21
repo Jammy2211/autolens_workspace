@@ -48,7 +48,7 @@ total flux emitted within a pixel.
 """
 grid = al.GridIterate.uniform(
     shape_2d=(100, 100),
-    pixel_scales=0.05,
+    pixel_scales=0.1,
     fractional_accuracy=0.9999,
     sub_steps=[2, 4, 8, 16, 24],
 )

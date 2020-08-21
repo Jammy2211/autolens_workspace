@@ -84,7 +84,9 @@ phase = al.PhaseImaging(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
         source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
     ),
-    settings=al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2),
+    settings=al.SettingsPhaseImaging(
+        settings_masked_imaging=al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+    ),
     search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
 )
 
@@ -97,7 +99,7 @@ Great, so we have the _Result_ object we'll cover in this script. As a reminder,
 """
 # %%
 aplt.Tracer.subplot_tracer(
-    tracer=result.max_log_likelihood_tracer, grid=mask.geometry.masked_grid
+    tracer=result.max_log_likelihood_tracer, grid=mask.geometry.masked_grid_sub_1
 )
 aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
@@ -226,7 +228,7 @@ is the property of the result we've used up to now!
 (If we had the _MaskedImaging_ available we could easily use this to create the maximum log likelihood _FitImaging_)
 """
 ml_tracer = al.Tracer.from_galaxies(galaxies=ml_instance.galaxies)
-aplt.Tracer.subplot_tracer(tracer=ml_tracer, grid=mask.geometry.unmasked_grid)
+aplt.Tracer.subplot_tracer(tracer=ml_tracer, grid=mask.geometry.unmasked_grid_sub_1)
 
 # %%
 """

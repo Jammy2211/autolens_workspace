@@ -97,7 +97,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The *PhaseSettingsImaging* describe how the model is fitted to the data in the log likelihood function.
+The *SettingsPhaseImaging* describe how the model is fitted to the data in the log likelihood function.
 
 These settings are used and described throughout the 'autolens_workspace/examples/model' example scripts, with a 
 complete description of all settings given in 'autolens_workspace/examples/model/customize/settings.py'.
@@ -106,19 +106,21 @@ The settings chosen here are applied to all phases in the pipeline.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """
 __Pipeline_Setup_And_Tagging__:
 
-For this runner the _PipelineSetup_ customizes:
+For this runner the _SetupPipeline_ customizes:
 
  - The Pixelization used by the inversion of this pipeline.
  - The Regularization scheme used by of this pipeline.
  - If there is an external shear in the mass model or not.
 
-The _PipelineSetup_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
+The _SetupPipeline_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
 
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
@@ -131,7 +133,7 @@ The 'folders' below specify the path the pipeline results are written to, which 
 """
 
 # %%
-setup = al.PipelineSetup(
+setup = al.SetupPipeline(
     pixelization=al.pix.VoronoiMagnification,
     regularization=al.reg.Constant,
     no_shear=False,
@@ -143,7 +145,7 @@ setup = al.PipelineSetup(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its 'make_pipeline' function, inputting the 
-*Setup* and *PhaseSettings* above.
+*Setup* and *SettingsPhase* above.
 """
 
 # %%

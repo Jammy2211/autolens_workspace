@@ -69,11 +69,13 @@ for dataset_name in [
 
     # %%
     """
-    The _PhaseSettings_ (which customize the fit of the phase's fit), will also be available to the aggregator!
+    The _SettingsPhase_ (which customize the fit of the phase's fit), will also be available to the aggregator!
     """
 
     # %%
-    settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+    settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+
+    settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
     # %%
     """
@@ -86,7 +88,7 @@ for dataset_name in [
   - If there is an external shear in the mass model or not.
     """
 
-    setup = al.PipelineSetup(
+    setup = al.SetupPipeline(
         pixelization=al.pix.VoronoiMagnification,
         regularization=al.reg.Constant,
         no_shear=True,

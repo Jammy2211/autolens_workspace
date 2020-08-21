@@ -56,14 +56,14 @@ grid = al.GridIterate.uniform(
     shape_2d=(151, 151), pixel_scales=0.1, fractional_accuracy=0.9999
 )
 
-"""
-To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below.
-"""
-uv_wavelengths_path = f"{workspace_path}/simulators/interferometer/instruments/sma"
+"""To perform the Fourier transform we need the wavelengths of the baselines. 
 
-uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
-    file_path=f"{uv_wavelengths_path}/uv_wavelengths.fits", hdu=0
-)
+The uvtools package on this workspace has the scripts necessary for simulating the baselines of a 12000s ALMA exposure 
+without any channel averaging. This will produce an _Interferometer_ datasset with ~1m visibilities. 
+"""
+from simulators.interferometer.uvtools import load_utils
+
+uv_wavelengths = load_utils.uv_wavelengths_single_channel()
 
 """
 To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale 
@@ -74,6 +74,7 @@ simulator = al.SimulatorInterferometer(
     exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
     background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
     noise_sigma=0.1,
+    transformer_class=al.TransformerNUFFT,
 )
 
 """

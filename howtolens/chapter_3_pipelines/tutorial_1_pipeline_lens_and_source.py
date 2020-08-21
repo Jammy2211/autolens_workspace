@@ -50,8 +50,8 @@ def make_pipeline(setup, settings):
     of the output. In the pipeline runner we pass the folders ["howtolens", c3_t1_lens_and_source], making the
     output of this pipeline 'autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline__light_and_source'.
 
-    The output path is also tagged according to the _PipelineSetup_, in an analagous fashion to how the 
-    _PhaseSettingsImaging_ tagged the output paths of phases. In this example, we do not use an _ExternalShear_
+    The output path is also tagged according to the _SetupPipeline_, in an analagous fashion to how the 
+    _SettingsPhaseImaging_ tagged the output paths of phases. In this example, we do not use an _ExternalShear_
     in the mass model, and the pipeline is tagged accordingly.
     """
 

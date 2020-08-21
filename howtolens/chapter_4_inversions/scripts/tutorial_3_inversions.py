@@ -27,7 +27,7 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic"
@@ -63,7 +63,9 @@ galaxy model (we don't need to provide the source's _LightProfile_, as we're usi
 """
 
 # %%
-masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+masked_imaging = al.MaskedImaging(
+    imaging=imaging, mask=mask, settings=al.SettingsMaskedImaging(sub_size=2)
+)
 
 lens_galaxy = al.Galaxy(
     redshift=0.5,
@@ -127,7 +129,7 @@ invert a really complex source!
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic_x5
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic_x5
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic_x5"
@@ -199,7 +201,7 @@ Nevertheless, I know a lot of you hate 'black-boxes', or have an interest in lin
 inclined, then checkout the documentation of the autolens source code for more information. In particular, you should 
 look at the following functions in the project PyAutoArray:
 
-autoarray.operators.inversions.mappers.mapping_matrix
+autoarray.inversions.mappers.mapping_matrix
 autoarray.opterators.convolution.convolve_mapping_matrix
 autoarray.opterators.inversions.regularization.Regularization
 autoarray.opterators.inversions.inversions.Inversion

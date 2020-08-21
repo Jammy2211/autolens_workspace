@@ -8,6 +8,8 @@ examples in the following order:
     -> lensing.py: Perform simple ray-tracing calculations with light-profiles, mass-profiles and galaxies.
     -> fit.py: Fitting data of a strong lens.
     -> pixelizations.py: Reconstructing a lensed source galaxy's light on pixel-grid.
+    -> point_sources.py: Modeling lensed quasars and supernovae as point-sources.
+    -> interferometer.py: Performing lens modeling in the uv-plane of interferometer datasets.
 
 -> model: How to fit a lens model to data with **PyAutoLens**.
 
@@ -15,5 +17,7 @@ examples in the following order:
     -> inversion: Lens models which fit the source-galaxy light using a pixel-grid and inversion.
     -> customize: API to customize the lens model parameterization and non-linear search.
     -> link: API to link results of one lens model to another.
+    -> point_sources: How to model lensed quasars / supernovae / galaxies as point-sources.
+    -> interferometer: How to fit different lens models to interferometer datasets.
 
 -> plot: API for customizing visualization with **PyAutoLens**.

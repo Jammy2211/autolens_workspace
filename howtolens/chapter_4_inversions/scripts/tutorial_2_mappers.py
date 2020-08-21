@@ -27,7 +27,7 @@ We'll use new strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic"
@@ -184,7 +184,9 @@ grid.
 """
 
 # %%
-masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+masked_imaging = al.MaskedImaging(
+    imaging=imaging, mask=mask, settings=al.SettingsMaskedImaging(sub_size=2)
+)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 

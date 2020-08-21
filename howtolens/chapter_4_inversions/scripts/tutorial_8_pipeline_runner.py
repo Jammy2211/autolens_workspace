@@ -51,7 +51,7 @@ We'll use strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_4 import lens_sie__source_sersic_x4
+from howtolens.simulators.chapter_4 import lens_sie__source_sersic_x4
 
 dataset_type = "chapter_4"
 dataset_name = "lens_sie__source_sersic_x4"
@@ -75,16 +75,23 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The *PhaseSettingsImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
+The *SettingsPhaseImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
 these in chapter 2, and a full description of all settings can be found in the example script:
 
  'autolens_workspace/examples/model/customize/settings.py'.
 
-The settings chosen here are applied to all phases in the pipeline.
+The settings chosen here are applied to all phases in the pipeline. Note how we can use the _SettingsPixelization_
+object to determine whether the border is used during the model-fit.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(sub_size=2)
+settings_pixelization = al.SettingsPixelization(use_border=True)
+
+settings = al.SettingsPhaseImaging(
+    settings_masked_imaging=settings_masked_imaging,
+    settings_pixelization=settings_pixelization,
+)
 
 # %%
 """
@@ -98,7 +105,7 @@ For this pipeline the pipeline setup customizes and tags:
 """
 
 # %%
-setup = al.PipelineSetup(
+setup = al.SetupPipeline(
     pixelization=al.pix.VoronoiMagnification,
     regularization=al.reg.Constant,
     no_shear=False,
@@ -110,11 +117,11 @@ setup = al.PipelineSetup(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its 'make_pipeline' function, inputting the 
-*Setup* and *PhaseSettings* above.
+*Setup* and *SettingsPhase* above.
 """
 
 # %%
-from autolens_workspace.howtolens.chapter_4_inversions import tutorial_8_pipeline
+from howtolens.chapter_4_inversions import tutorial_8_pipeline
 
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(setup=setup, settings=settings)
 

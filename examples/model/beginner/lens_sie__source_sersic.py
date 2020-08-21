@@ -15,7 +15,7 @@ both to perform the model-fit.
 """
 In this example script, we will fit imaging of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
  - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
  - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
@@ -93,7 +93,7 @@ __Phase__
 To perform lens modeling, we create a *PhaseImaging* object, which comprises:
 
    - The _GalaxyModel_'s used to fit the data.
-   - The *PhaseSettings* which customize how the model is fitted to the data.
+   - The *SettingsPhase* which customize how the model is fitted to the data.
    - The *NonLinearSearch* used to sample parameter space.
    
 Once we have create the phase, we 'run' it by passing it the data and mask.
@@ -120,20 +120,22 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
  
  - That a regular *Grid* is used to fit create the model-image when fitting the data 
       (see 'autolens_workspace/examples/grids.py' for a description of grids).
  - The sub-grid size of this grid.
 
-Different *PhaseSettings* are used in different example model scripts and a full description of all *PhaseSettings* 
+Different *SettingsPhase* are used in different example model scripts and a full description of all *SettingsPhase* 
 can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
 link -> <link>
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """
@@ -202,7 +204,7 @@ the fit.
 
 # %%
 aplt.Tracer.subplot_tracer(
-    tracer=result.max_log_likelihood_tracer, grid=mask.geometry.masked_grid
+    tracer=result.max_log_likelihood_tracer, grid=mask.geometry.masked_grid_sub_1
 )
 aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 

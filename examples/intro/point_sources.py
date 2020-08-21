@@ -1,6 +1,6 @@
 # %%
 """
-__Example: Positions__
+__Example: Point Sources__
 
 PyAutoLens is primarily designed for strongly lensed galaxies, whose extended surface brightness is lensed into the
 aweinspiring giant arcs and Einstein rings we see in high quality lens imaging. However, there are a lot of science
@@ -46,7 +46,10 @@ isothermal_mass_profile = al.mp.EllipticalIsothermal(
 )
 
 exponential_light_profile = al.lp.EllipticalExponential(
-    centre=(0.0, 0.0), elliptical_comps=(0.2, 0.0), intensity=0.05, effective_radius=0.2
+    centre=(0.07, 0.07),
+    elliptical_comps=(0.2, 0.0),
+    intensity=0.05,
+    effective_radius=0.2,
 )
 
 lens_galaxy = al.Galaxy(redshift=0.5, mass=isothermal_mass_profile)
@@ -86,7 +89,12 @@ or less. We could increase our grid resolutin to 0.01" or below, but this will q
 expensive, thus a bespoke _PositionSolver_ is required!
 """
 
-solver = al.PositionsSolver(grid=grid, pixel_scale_precision=0.001, upscale_factor=2)
+solver = al.PositionsFinder(
+    grid=grid,
+    pixel_scale_precision=0.001,
+    upscale_factor=2,
+    distance_from_source_centre=0.01,
+)
 
 positions = solver.solve(
     lensing_obj=lens_galaxy, source_plane_coordinate=source_galaxy.light.centre

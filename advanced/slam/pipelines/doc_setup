@@ -5,7 +5,7 @@ slam objects.
 
     Below, we given an example of a General slam using all options available to an intermediate pipeline:
 
-    hyper = al.slam.HyperSetup(
+    hyper = al.slam.SLaMHyper(
         hyper_galaxies=False,
         hyper_background_noise=False,
         hyper_image_sky=False,
@@ -27,7 +27,7 @@ slam objects.
 
     Below, we give an example of a Source slam using all options available to an intermediate pipeline:
 
-    source = al.slam.SourceSetup(
+    source = al.slam.SLaMSource(
         pixelization=al.pix.VoronoiBrightnessImage,
         regularization=al.reg.AdaptiveBrightness,
     )
@@ -54,7 +54,7 @@ slam objects.
 
     Below, we give an example of a Light slam using all options available to an intermediate pipeline:
 
-    light = al.slam.LightSetup(
+    light = al.slam.SLaMLight(
         align_bulge_disk_centre=True,
         align_bulge_disk_elliptical_comps=False,
         disk_as_Sersic=True,
@@ -93,7 +93,7 @@ slam objects.
 
     Below, we give an example of a Mass slam using all options available to an intermediate pipeline:
 
-    mass = al.slam.MassSetup(
+    mass = al.slam.SLaMMass(
         no_shear=False,
         align_light_dark_centre=False,
         align_bulge_dark_centre=False,

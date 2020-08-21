@@ -82,25 +82,26 @@ mask = al.Mask.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-settings = al.PhaseSettingsImaging(
+settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.Grid,
     sub_size=2,
     grid_inversion_class=al.GridInterpolate,
     pixel_scales_interp=0.1,
-    inversion_pixel_limit=1500,
 )
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 
 # %%
 """
 __PIPELINE SETUP__
 
-Pipelines and hyper pipelines used the _PipelineSetup_ object to customize the analysis performed by the pipeline,
+Pipelines and hyper pipelines used the _SetupPipeline_ object to customize the analysis performed by the pipeline,
 for example if a shear was included in the mass model and the model used for the source galaxy.
 
 SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specifc aspect of the strong 
 lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own setup object 
-which is equivalent to the _PipelineSetup_ object, customizing the analysis in that pipeline.
+which is equivalent to the _SetupPipeline_ object, customizing the analysis in that pipeline.
 
 The setup used in earlier pipelines determine the model used in later pipelines. For example, if the _Source_ pipeline 
 is given a _Pixelization_ and _Regularization_, than this _Inversion_ will be used in the subsquent Light and Mass 
@@ -109,7 +110,7 @@ pipeline.
 
 The setup also tags the path structure of every pipeline in a unique way, such than combinations of different
 SLaM pipelines can be used to fit lenses with different models. If the earlier pipelines are identical (e.g. they use
-the same _SourceSetup_ they will reuse those results before branching off to fit different models in the Light and / or
+the same _SLaMSource_ they will reuse those results before branching off to fit different models in the Light and / or
 Mass pipelines. 
 """
 
@@ -117,24 +118,24 @@ Mass pipelines.
 """
 __HYPER SETUP__
 
-The _HyperSetup_ determines which hyper-mode features are used during the model-fit and behaves analgous to the 
-hyper inputs of the _PipelineSetup_ object.
+The _SLaMHyper_ determines which hyper-mode features are used during the model-fit and behaves analgous to the 
+hyper inputs of the _SetupPipeline_ object.
 
-The _HyperSetup_ object has a new input available, 'hyper_fixed_after_source', which fixes the hyper-parameters to
+The _SLaMHyper_ object has a new input available, 'hyper_fixed_after_source', which fixes the hyper-parameters to
 the values computed by the hyper-phase at the end of the Source pipeline. By fixing the hyper-parameter values in the
 Light and Mass pipelines, model comparison can be performed in a consistent fashion.
 """
 
 # %%
-hyper = al.slam.HyperSetup(
+hyper = al.slam.SLaMHyper(
     hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
 )
 
 # %%
 """
-__SourceSetup__
+__SLaMSource__
 
-The _SourceSetup_ determines the model-fit used by the Source pipelines. A full description of all options can be 
+The _SLaMSource_ determines the model-fit used by the Source pipelines. A full description of all options can be 
 found ? and ?.
 
 The Source pipeline aims to initialize a robust model for the source galaxy. To do this, it assumes an 
@@ -142,39 +143,39 @@ _EllipticalIsothermal_ profile for the lens galaxy's mass and an _EllipticalSers
 for the lens galaxy's light. Our experience with lens modeling has shown they are the simpliest models that provide a 
 good fit to the majority of strong lenses.
 
-For this runner the _SourceSetup_ customizes:
+For this runner the _SLaMSource_ customizes:
 
  - The Pixelization used by the inversion of this pipeline.
  - The Regularization scheme used by of this pipeline.
  - If there is an external shear in the mass model or not.
 
-The _SourceSetup_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus both use an
+The _SLaMSource_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus both use an
 _Inversion_. If an external shear is omitted from the Source pipeline it can be introduced in the Mass pipeline.
 """
 
-source = al.slam.SourceSetup(
+source = al.slam.SLaMSource(
     pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
 # %%
 """
-__MassSetup__
+__SLaMMass__
 
 The Mass pipeline fits the model for the lens galaxy's mass. A full description of all options can be found ? and ?.
 
 The model used to represent the lens galaxy's mass is determined by the pipeline that is imported and made later in 
 the script. For this runner an sie is used, which models the lens galaxy's mass as an _EllipticalPowerLaw_.
 
-For this runner the _MassSetup_ customizes:
+For this runner the _SLaMMass_ customizes:
 
  - If there is an external shear in the mass model or not.
 
-Certain _MassSetup_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
+Certain _SLaMMass_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
 input is only relevent for Mass pipelines that follow 'bulge_disk' Light pipelines and which use a 'light_dark'
 pipeline.
 """
 
-mass = al.slam.MassSetup(no_shear=False)
+mass = al.slam.SLaMMass(no_shear=False)
 
 # %%
 """
@@ -199,10 +200,10 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 """
 
 # %%
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.parametric import (
+from advanced.slam.pipelines.no_lens_light.source.parametric import (
     lens_sie__source_sersic,
 )
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.source.inversion.from_parametric import (
+from advanced.slam.pipelines.no_lens_light.source.inversion.from_parametric import (
     lens_sie__source_inversion,
 )
 
@@ -212,9 +213,7 @@ source__inversion = lens_sie__source_inversion.make_pipeline(
     slam=slam, settings=settings
 )
 
-from autolens_workspace.advanced.slam.pipelines.no_lens_light.mass.power_law import (
-    lens_power_law__source,
-)
+from advanced.slam.pipelines.no_lens_light.mass.power_law import lens_power_law__source
 
 mass__power_law = lens_power_law__source.make_pipeline(slam=slam, settings=settings)
 

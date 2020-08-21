@@ -30,7 +30,7 @@ _Inversion_ in one phase:
       model with a fit using a parametric source (which does not suffer these unphysical solutions) and use this result
       to ensure the non-linear search samples only the maximal likelihood regions of parameter space.
       
- - To further remove these solutions, we use the 'auto_positions' feature of the _PhaseSettingsImaging_, which use
+ - To further remove these solutions, we use the 'auto_positions' feature of the _SettingsPhaseImaging_, which use
       the maximum log likelihood mass model of the first phase to determine the positions in the image-plane the
       brightest regions of the lensed source trace too. In phase 2, mass models must trace these positions into a 
       threshold arc-secoond value of one another in the source-plane, ensuring the incorrect solutions corresponding to  
@@ -111,7 +111,7 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-You should be familiar with the _PhaseSettingsImaging_ object from other example scripts, if not checkout the beginner
+You should be familiar with the _SettingsPhaseImaging_ object from other example scripts, if not checkout the beginner
 examples and 'autolens_workspace/examples/model/customize/settings.py'
 
 In this example we use the 'auto_positions' inputs. These positions correspond to the brightest pixels of the lensed 
@@ -130,12 +130,11 @@ The setting below lead to the following behaviour for each phase:
 """
 
 # %%
-settings = al.PhaseSettingsImaging(
-    grid_class=al.Grid,
-    sub_size=2,
-    auto_positions_factor=3.0,
-    auto_positions_minimum_threshold=0.2,
+settings_lens = al.SettingsLens(
+    auto_positions_factor=3.0, auto_positions_minimum_threshold=0.2
 )
+
+settings = al.SettingsPhaseImaging(settings_lens=settings_lens)
 
 # %%
 """

@@ -90,26 +90,33 @@ mask = al.Mask.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-settings = al.PhaseSettingsImaging(
+settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.Grid,
+    sub_size=2,
     grid_inversion_class=al.GridInterpolate,
+    pixel_scales_interp=0.1,
+)
+
+settings_lens = al.SettingsLens(
     positions_threshold=0.7,
     auto_positions_factor=3.0,
     auto_positions_minimum_threshold=0.2,
-    pixel_scales_interp=0.1,
-    inversion_pixel_limit=1500,
+)
+
+settings = al.SettingsPhaseImaging(
+    settings_masked_imaging=settings_masked_imaging, settings_lens=settings_lens
 )
 
 # %%
 """
 __PIPELINE SETUP__
 
-Pipelines and hyper pipelines used the _PipelineSetup_ object to customize the analysis performed by the pipeline,
+Pipelines and hyper pipelines used the _SetupPipeline_ object to customize the analysis performed by the pipeline,
 for example if a shear was included in the mass model and the model used for the source galaxy.
 
 SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specifc aspect of the strong 
 lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own setup object 
-which is equivalent to the _PipelineSetup_ object, customizing the analysis in that pipeline.
+which is equivalent to the _SetupPipeline_ object, customizing the analysis in that pipeline.
 
 The setup used in earlier pipelines determine the model used in later pipelines. For example, if the _Source_ pipeline 
 is given a _Pixelization_ and _Regularization_, than this _Inversion_ will be used in the subsquent Light and Mass 
@@ -118,7 +125,7 @@ pipeline.
 
 The setup also tags the path structure of every pipeline in a unique way, such than combinations of different
 SLaM pipelines can be used to fit lenses with different models. If the earlier pipelines are identical (e.g. they use
-the same _SourceSetup_ they will reuse those results before branching off to fit different models in the Light and / or
+the same _SLaMSource_ they will reuse those results before branching off to fit different models in the Light and / or
 Mass pipelines. 
 """
 
@@ -126,16 +133,16 @@ Mass pipelines.
 """
 __HYPER SETUP__
 
-The _HyperSetup_ determines which hyper-mode features are used during the model-fit and behaves analgous to the 
-hyper inputs of the _PipelineSetup_ object.
+The _SLaMHyper_ determines which hyper-mode features are used during the model-fit and behaves analgous to the 
+hyper inputs of the _SetupPipeline_ object.
 
-The _HyperSetup_ object has a new input available, 'hyper_fixed_after_source', which fixes the hyper-parameters to
+The _SLaMHyper_ object has a new input available, 'hyper_fixed_after_source', which fixes the hyper-parameters to
 the values computed by the hyper-phase at the end of the Source pipeline. By fixing the hyper-parameter values in the
 Light and Mass pipelines, model comparison can be performed in a consistent fashion.
 """
 
 # %%
-hyper = al.slam.HyperSetup(
+hyper = al.slam.SLaMHyper(
     hyper_galaxies=True,
     hyper_image_sky=False,
     hyper_background_noise=True,
@@ -144,9 +151,9 @@ hyper = al.slam.HyperSetup(
 
 # %%
 """
-__SourceSetup__
+__SLaMSource__
 
-The _SourceSetup_ determines the model-fit used by the Source pipelines. A full description of all options can be 
+The _SLaMSource_ determines the model-fit used by the Source pipelines. A full description of all options can be 
 found ? and ?.
 
 The Source pipeline aims to initialize a robust model for the source galaxy. To do this, it assumes an 
@@ -154,18 +161,18 @@ _EllipticalIsothermal_ profile for the lens galaxy's mass and an _EllipticalSers
 for the lens galaxy's light. Our experience with lens modeling has shown they are the simpliest models that provide a 
 good fit to the majority of strong lenses.
 
-For this runner the _SourceSetup_ customizes:
+For this runner the _SLaMSource_ customizes:
 
  - The Pixelization used by the inversion of this pipeline.
  - The Regularization scheme used by of this pipeline.
  - If there is an external shear in the mass model or not.
 
-The _SourceSetup_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus both use an
+The _SLaMSource_ determines the source model used in the _Light_ and _Mass_ pipelines, which will thus both use an
 _Inversion_. If an external shear is omitted from the Source pipeline it can be introduced in the Mass pipeline.
 """
 
 # %%
-source = al.slam.SourceSetup(
+source = al.slam.SLaMSource(
     pixelization=al.pix.VoronoiBrightnessImage,
     regularization=al.reg.AdaptiveBrightness,
     inversion_pixels_fixed=1200,
@@ -174,7 +181,7 @@ source = al.slam.SourceSetup(
 
 # %%
 """
-__LightSetup__
+__SLaMLight__
 
 The Light pipeline fits the model for the lens galaxy's light. A full description of all options can be found ? and ?.
 
@@ -182,20 +189,20 @@ The model used to represent the lens galaxy's light is determined by the pipelin
 the script. For this runner a bulge-disk pipeline is used, which models the lens galaxy's light using two components,
 an _EllipticalSersic_ profile for the bulge and a second light profile for the disk.
  
-For this runner the _LightSetup_ customizes:
+For this runner the _SLaMLight_ customizes:
 
  - The alignment of the centre and elliptical components of the bulge and disk.
  - If the disk is modeled as an _EllipticalExponential_ or _EllipticalSersic_.
 
-Certain _LightSetup_ inputs corrsepond to certain pipelines, for example the 'aligh_bulge_disk_centre'
+Certain _SLaMLight_ inputs corrsepond to certain pipelines, for example the 'aligh_bulge_disk_centre'
 input is only relevent for the 'bulge_disk' pipelines, whereas the 'number_of_gaussians' input is only relevent
 for the 'gaussians' pipelines.
 
-The _LightSetup_ and imported light pipelines determine the lens light model used in _Mass_ pipelines.
+The _SLaMLight_ and imported light pipelines determine the lens light model used in _Mass_ pipelines.
 """
 
 # %%
-light = al.slam.LightSetup(
+light = al.slam.SLaMLight(
     align_bulge_disk_centre=True,
     align_bulge_disk_elliptical_comps=False,
     disk_as_sersic=False,
@@ -203,7 +210,7 @@ light = al.slam.LightSetup(
 
 # %%
 """
-__MassSetup__
+__SLaMMass__
 
 The Mass pipeline fits the model for the lens galaxy's mass. A full description of all options can be found ? and ?.
 
@@ -211,18 +218,18 @@ The model used to represent the lens galaxy's mass is determined by the pipeline
 the script. For this runner a light_dark pipeline is used, which models the lens galaxy's mass as a stellar mass 
 distribution and dark matter _SphericalNFWMCRLudlow_. The stellar mass uses the light profile from the Light pipeline.
 
-For this runner the _MassSetup_ customizes:
+For this runner the _SLaMMass_ customizes:
 
  - If there is an external shear in the mass model or not.
  - If the centre of the _SphericalNFWMCRLudlow_ profile is aligned with the centre of the _EllipticalSersic_ profile
       representing the lens galaxy's bulge.  
 
-Certain _MassSetup_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
+Certain _SLaMMass_ inputs correspond to certain pipelines, for example the 'aligh_bulge_dark_centre'
 input is only relevent for Mass pipelines that follow 'bulge_disk' Light pipelines and which use a 'light_dark'
 pipeline.
 """
 
-mass = al.slam.MassSetup(no_shear=False, align_bulge_dark_centre=True)
+mass = al.slam.SLaMMass(no_shear=False, align_bulge_dark_centre=True)
 
 # %%
 """
@@ -246,10 +253,10 @@ slam = al.slam.SLaM(
 """We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!"""
 
 # %%
-from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.parametric import (
+from advanced.slam.pipelines.with_lens_light.source.parametric import (
     lens_bulge_disk_sie__source_sersic,
 )
-from autolens_workspace.advanced.slam.pipelines.with_lens_light.source.inversion.from_parametric import (
+from advanced.slam.pipelines.with_lens_light.source.inversion.from_parametric import (
     lens_light_sie__source_inversion,
 )
 
@@ -261,7 +268,7 @@ source__inversion = lens_light_sie__source_inversion.make_pipeline(
     slam=slam, settings=settings
 )
 
-from autolens_workspace.advanced.slam.pipelines.with_lens_light.light.bulge_disk import (
+from advanced.slam.pipelines.with_lens_light.light.bulge_disk import (
     lens_bulge_disk_sie__source,
 )
 
@@ -270,7 +277,7 @@ light__bulge_disk = lens_bulge_disk_sie__source.make_pipeline(
 )
 
 
-from autolens_workspace.advanced.slam.pipelines.with_lens_light.mass.light_dark import (
+from advanced.slam.pipelines.with_lens_light.mass.light_dark import (
     lens_light_mlr_nfw__source,
 )
 

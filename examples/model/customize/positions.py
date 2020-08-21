@@ -21,7 +21,7 @@ This provides two benefits:
 """
 In this example script, we will fit imaging of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data.
+ - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
  - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
  - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
 
@@ -141,7 +141,7 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
  - A positions_threshold of 0.5, meaning that the four (y,x) coordinates specified by our positions must trace
@@ -157,8 +157,11 @@ solutions!
 """
 
 # %%
-settings = al.PhaseSettingsImaging(
-    grid_class=al.Grid, sub_size=2, positions_threshold=0.5
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+settings_lens = al.SettingsLens(positions_threshold=0.5)
+
+settings = al.SettingsPhaseImaging(
+    settings_masked_imaging=settings_masked_imaging, settings_lens=settings_lens
 )
 
 # %%
@@ -242,7 +245,7 @@ PyAutoLens supports the following more advanced use of positional information:
       and position threshold of the lensed source galaxy automatically. These can be then automatically set up as the
       positions and threshold used in the later phase's, not requiring us to manually specifc the positions at all!
       
-      To do this, we pass the _PhaseSettingsImaging_ the input parameters 'auto_positions_factor' and 
+      To do this, we pass the _SettingsPhaseImaging_ the input parameters 'auto_positions_factor' and 
    'auto_positions_minumum_threshold'. An example of this can be found in the example script
    'autolens_workspace/examples/model/linking/parametric_to_inversion.py'.
 """

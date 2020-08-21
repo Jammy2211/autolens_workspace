@@ -93,13 +93,13 @@ for dataset_name in [
     # - The pixelization and regularization scheme used in the source (inversion) pipeline will be used in the light and
     #   mass pipelines.
 
-    hyper = al.slam.HyperSetup(
+    hyper = al.slam.SLaMHyper(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SourceSetup(no_shear=True)
+    source = al.slam.SLaMSource(no_shear=True)
 
-    mass = al.slam.MassSetup(no_shear=True)
+    mass = al.slam.SLaMMass(no_shear=True)
 
     setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
 

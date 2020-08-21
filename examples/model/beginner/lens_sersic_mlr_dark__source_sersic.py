@@ -93,7 +93,7 @@ __Phase__
 To perform lens modeling, we create a *PhaseImaging* object, which comprises:
 
    - The _GalaxyModel_'s used to fit the data.
-   - The *PhaseSettings* which customize how the model is fitted to the data.
+   - The *SettingsPhase* which customize how the model is fitted to the data.
    - The *NonLinearSearch* used to sample parameter space.
 
 Once we have create the phase, we 'run' it by passing it the data and mask.
@@ -124,7 +124,7 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-Next, we specify the *PhaseSettingsImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
  - That a *GridInterpolate* is used to fit create the model-image when fitting the data 
@@ -138,15 +138,17 @@ and interpolates the results to the native-resolution grid.
 
 A description of the *GridIterpolate* object can be found in the script 'autolens_workspace/examples/grids.py'.
 
-Different *PhaseSettings* are used in different example model scripts and a full description of all *PhaseSettings* 
+Different *SettingsPhase* are used in different example model scripts and a full description of all *SettingsPhase* 
 can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
 link -> <link>
 """
 
 # %%
-settings = al.PhaseSettingsImaging(
+settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.GridInterpolate, pixel_scales_interp=0.1
 )
+
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """

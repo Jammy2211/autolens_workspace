@@ -22,7 +22,7 @@ When linking phases:
       This means we can 'initialize' a model-fit very quickly and only spend more computational time estimating errors
       in the final phase when we actually require them.
 
- - The earlier phases can use the _PhaseSettingsImaging_ object to augment the data or alter the fitting-procedure
+ - The earlier phases can use the _SettingsPhaseImaging_ object to augment the data or alter the fitting-procedure
       in ways that speed up the computational run time. These may impact the quality of the model-fit overall, but they
       can be reverted to the more accurate but more computationally expense setting in the final phases.
 
@@ -122,12 +122,12 @@ source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
 """
 __Settings__
 
-You should be familiar with the _PhaseSettingsImaging_ object from other example scripts, if not checkout the beginner
+You should be familiar with the _SettingsPhaseImaging_ object from other example scripts, if not checkout the beginner
 examples and 'autolens_workspace/examples/model/customize/settings.py'
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings = al.SettingsPhaseImaging()
 
 # %%
 """

@@ -45,9 +45,7 @@ We'll use strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_5 import (
-    lens_sersic_sie__source_sersic_x4,
-)
+from howtolens.simulators.chapter_5 import lens_sersic_sie__source_sersic_x4
 
 dataset_type = "chapter_5"
 dataset_name = "lens_sersic_sie__source_sersic_x4"
@@ -70,7 +68,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The *PhaseSettingsImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
+The *SettingsPhaseImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
 these in chapter 2, and a full description of all settings can be found in the example script:
 
  'autolens_workspace/examples/model/customize/settings.py'.
@@ -79,7 +77,8 @@ The settings chosen here are applied to all phases in the pipeline.
 """
 
 # %%
-settings = al.PhaseSettingsImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
 # %%
 """
@@ -92,7 +91,7 @@ The setup module customizes the behaviour of a pipeline. Hyper-fitting brings wi
  - If the background sky is modeled throughout the pipeline (default False)
     
 Each of these features uses their own non-linear search in extended 'hyper phases', which are also specified in the
-_PipelineSetup-.
+_SetupPipeline-.
 """
 
 # %%
@@ -100,7 +99,7 @@ hyper_galaxies_search = af.DynestyStatic(n_live_points=100, evidence_tolerance=0
 inversion_search = af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8)
 hyper_combined_search = af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8)
 
-setup = al.PipelineSetup(
+setup = al.SetupPipeline(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
@@ -117,7 +116,7 @@ Lets import the pipeline and run it.
 """
 
 # %%
-from autolens_workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
+from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
 

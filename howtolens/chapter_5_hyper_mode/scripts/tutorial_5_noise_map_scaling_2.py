@@ -33,9 +33,7 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_5 import (
-    lens_sersic_sie__source_sersic,
-)
+from howtolens.simulators.chapter_5 import lens_sersic_sie__source_sersic
 
 dataset_type = "chapter_5"
 dataset_name = "lens_sersic_sie__source_sersic"
@@ -52,7 +50,11 @@ mask = al.Mask.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
 )
 
-masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
+masked_imaging = al.MaskedImaging(
+    imaging=imaging,
+    mask=mask,
+    settings=al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2),
+)
 
 # %%
 """
