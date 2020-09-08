@@ -21,21 +21,21 @@ To get started checkout the `workspace tour on our readthedocs <https://pyautole
 Workspace Contents
 ==================
 
-The workspace includes the following:
+New users should begin by exploring the following parts of the workspace:
 
 - **Examples**: Illustrative scripts of the **PyAutoLens** interface, for examples on how to perform lensing calculations, model lenses, etc.
 - **Config**: Configuration files which customize **PyAutoLens**'s behaviour.
 - **Dataset**: Where data is stored, including example datasets distributed with **PyAutoLens**.
 - **HowToLens**: The **HowToLens** lecture series.
 - **Output**: Where the **PyAutoLens** analysis and visualization are output.
-- **Pipelines**: Example pipelines for modeling strong lenses.
-- **Preprocess**: Tools to preprocess data before an analysis (e.g. convert units, create masks).
-- **Runners**: Scripts for running a **PyAutoLens** pipeline.
 - **Simulators**: Scripts for simulating strong lens datasets with **PyAutoLens**.
 
-The **advanced** folder of the workspace includes:
+For advanced **PyAutoLens** use the workspace also contains:
 
 - **Aggregator**: Manipulate large suites of modeling results via Jupyter notebooks, using **PyAutoFit**'s in-built results database.
+- **Preprocess**: Tools to preprocess data before an analysis (e.g. convert units, create masks).
+- **Transdimensional**: Example transdimensional pipelines for modeling strong lenses.
+- **SLaM**: Example pipelines for using the Source, Light and Mass (SLaM) lens modeling approach.
 
 HowToLens
 ---------
