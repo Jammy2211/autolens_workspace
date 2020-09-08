@@ -10,7 +10,7 @@ using a pipeline to illustrate aggregator functionality in the tutorial:
 If you are not yet familiar with PyAutoLens's pipeline functionality, you should checkout 
 'autolens_workspace/pipelines' and 'howtolens/chapter_3_pipelines' before doing these tutorials.
 
-Using a pipeline composed of three phases this runner fits imaging of a strong lens system, where: 
+Using a pipeline composed of three phases this runner fits _Imaging_ of a strong lens system, where:
  
  - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
  - An _Inversion_ for the source galaxy's light.
@@ -22,7 +22,7 @@ from autoconf import conf
 import autofit as af
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -44,9 +44,9 @@ import autolens as al
 pixel_scales = 0.1
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     """Set up the config and output paths."""
@@ -54,8 +54,8 @@ for dataset_name in [
         path=workspace_path, folders=["dataset", "aggregator", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -83,9 +83,9 @@ for dataset_name in [
 
     For this pipeline the pipeline setup customizes:
 
-  - The Pixelization used by the inversion of this pipeline.
-  - The Regularization scheme used by of this pipeline.
-  - If there is an external shear in the mass model or not.
+  - The _Pixelization_ used by the _Inversion_ of this pipeline.
+  - The _Regularization_ scheme used by of this pipeline.
+  - If there is an _ExternalShear_ in the mass model or not.
     """
 
     setup = al.SetupPipeline(
@@ -95,7 +95,9 @@ for dataset_name in [
         folders=["aggregator", dataset_name],
     )
 
-    from pipelines.imaging.no_lens_light import lens_sie__source_inversion
+    from autolens_workspace.pipelines.imaging.no_lens_light import (
+        lens_sie__source_inversion,
+    )
 
     pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 

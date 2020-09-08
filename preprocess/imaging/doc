@@ -35,7 +35,7 @@ Lens Light Centres
 
     The lens light centres can be input into a pipeline to fix the lens light / mass model centres during a fit.
 
- - manual/lens_light_centre_maker.py - Manually specify the lens light centre coordinates.
+ - manual/light_centre_maker.py - Manually specify the lens light centre coordinates.
  - gui/positions_maker.py - A GUI tool for marking the lens light centres on an image via mouse clicks.
 
 Preparing Data

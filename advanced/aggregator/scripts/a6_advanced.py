@@ -9,9 +9,9 @@ pipeline tags. This tutorial explains how to use the aggregator for such complex
 
 In '/autolens_workspace/aggregator/setup/advanced_runner.py' we fit our 3 images with the following 3 pipelines:
 
-'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'
+'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py'
 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'
-'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/lens_power_law__source_inversion.py'
+'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/mass_power_law__source_inversion.py'
 
 Each set of 3 images is fitted 4 separate times, with the following variants:
 
@@ -48,7 +48,7 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-We are famaliar with filtering by pipeline name and phase name, so lets get the results of the power-law advanced 
+We are famaliar with filtering by pipeline name and phase name, so lets get the results of the _EllipticalPowerLaw_ advanced 
 pipeline.
 """
 
@@ -154,7 +154,7 @@ We can apply directory filtering using image names to achieve this.
 
 # %%
 agg_dataset_0 = agg_power_law.filter(
-    agg_power_law.directory.contains("lens_sie__source_sersic__0")
+    agg_power_law.directory.contains("mass_sie__source_sersic__0")
 )
 
 fit_gen = al.agg.FitImaging(aggregator=agg_dataset_0)

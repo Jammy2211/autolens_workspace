@@ -24,7 +24,7 @@ yourself with those first!
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -52,12 +52,10 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -67,13 +65,13 @@ imaging = al.Imaging.from_fits(
 )
 
 """
-Okay, we need to load the mask from a .fits file, in the same fashion as the imaging above. To draw a mask for an 
+Okay, we need to load the mask from a .fits file, in the same fashion as the _Imaging_ above. To draw a mask for an 
 image, checkout the tutorial:
 
  'autolens_workspace/preprocess/imaging/p4_mask.ipynb'
 
 The example autolens_workspace dataset comes with a mask already, if you look in
-'autolens_workspace/dataset/imaging/lens_sie__source_sersic/' you'll see a mask.fits file!
+'autolens_workspace/dataset/imaging/mass_sie__source_sersic' you'll see a mask.fits file!
 """
 
 mask_custom = al.Mask.from_fits(
@@ -81,7 +79,7 @@ mask_custom = al.Mask.from_fits(
 )
 
 """
-When we plot the imaging dataset with the mask it extracts only the regions of the image in the mask remove c
+When we plot the _Imaging_ dataset with the mask it extracts only the regions of the image in the mask remove c
 ontaminating bright sources away from the lens and zoom in around the mask to emphasize the lens.
 """
 
@@ -96,7 +94,7 @@ We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitt
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -112,7 +110,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseImaging*, which in this example simmply use the default values used in the beginner
+Next, we specify the _SettingsPhaseImaging_, which in this example simmply use the default values used in the beginner
 examples.
 """
 
@@ -128,7 +126,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__custom_mask'.
+ '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__custom_mask'.
     
 Note that we pass the phase run function our custom mask, which means it is used to perform the model-fit!
 """

@@ -39,18 +39,18 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 
 # %%
 """
-This example scripts show a simple example of prior linking, where we fit imaging of a strong lens system where:
+This example scripts show a simple example of prior linking, where we fit _Imaging_ of a strong lens system where:
 
  - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
 
 As discussed below, the first phase is set up to provide as fast a model-fit as possible without accurately quantifying
 the errors on every parameter, whereas the second phase sacrifices this run-speed for accuracy. 
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -85,7 +85,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -116,7 +116,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -161,7 +161,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_1'.
 """
 
 # %%
@@ -218,7 +218,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_2'.
 
 Note how the 'lens' and 'source' passed to this phase were set up above using the results of phase 1!
 """
@@ -350,7 +350,7 @@ Lets go through an example using a real parameter. Lets say in phase 1 we fit th
 elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0 where the error value of 2.0 
 was computed at 3.0 sigma confidence. To pass this as a prior to phase 2, we would write:
 
-    lens.light.sersic_index = phase1.result.model.lens.light.sersic_index
+    lens.sersic.sersic_index = phase1.result.model.lens.sersic.sersic_index
 
 The prior on the lens galaxy's sersic _LightProfile_ in phase 2 would thus be a GaussianPrior, with mean=4.0 and 
 sigma=2.0. If we had used a sigma value of 1.0 to compute the error, which reduced the estimate from 4.0 +- 2.0 to 

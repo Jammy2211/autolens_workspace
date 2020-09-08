@@ -12,7 +12,7 @@ import numpy as np
 # one another, speeding up the analysis and removing unwanted solutions with too much / too little mass.
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -23,14 +23,12 @@ print("Workspace Path: ", workspace_path)
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
 # the positions will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat'.
 dataset_type = "imaging"
-dataset_label = "stellar_and_dark"
-dataset_name = "lens_bulge_disk_mlr_nfw__source_sersic"
+dataset_label = "light_dark"
+dataset_name = "light_bulge_disk__mass_mlr_nfw__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
-# '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+# '/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
 pixel_scales = 0.1

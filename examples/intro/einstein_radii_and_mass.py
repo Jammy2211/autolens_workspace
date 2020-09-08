@@ -29,8 +29,8 @@ print(sie.einstein_radius_in_units(unit_length="kpc", redshift_object=0.5))
 
 """The Einstein Mass requires the redshifts of the profile (the lens) and the source to be converted to solMass."""
 
-einstein_mass = sie.einstein_mass_in_units(
-    unit_mass="solMass", redshift_object=0.5, redshift_source=1.0
+einstein_mass = _EllipticalIsothermal_.einstein_mass_in_units(
+    unit_mass="solMass", redshift_object=0.5, setup.redshift_source=1.0
 )
 print(einstein_mass)
 print("{:.4e}".format(einstein_mass))
@@ -51,7 +51,7 @@ print(
     "{:.4e}".format(
         (
             galaxy.einstein_mass_in_units(
-                unit_mass="solMass", redshift_object=0.5, redshift_source=1.0
+                unit_mass="solMass", redshift_object=0.5, setup.redshift_source=1.0
             )
         )
     )
@@ -70,4 +70,4 @@ Infact, these seem pretty buggy in general... lets ignore them for now.
 # print()
 # print(tracer.einstein_radius_in_units(unit_length="arcsec", redshift_object=0.5))
 # print(tracer.einstein_radius_in_units(unit_length="kpc", redshift_object=0.5))
-# print("{:.4e}".format(tracer.einstein_mass_in_units(unit_mass="SolMass", redshift_object=0.5, redshift_source=1.0)))
+# print("{:.4e}".format(tracer.einstein_mass_in_units(unit_mass="SolMass", redshift_object=0.5, setup.redshift_source=1.0)))

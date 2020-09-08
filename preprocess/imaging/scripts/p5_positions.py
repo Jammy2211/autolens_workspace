@@ -45,18 +45,16 @@ the positions will be output as '/autolens_workspace/dataset/dataset_type/datase
 # %%
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 
 # %%
 """
 Create the path where the positions will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """
@@ -68,7 +66,7 @@ pixel_scales = 0.1
 
 # %%
 """
-First, load the imaging dataset, so that the positions can be plotted over the strong lens image.
+First, load the _Imaging_ dataset, so that the positions can be plotted over the strong lens image.
 """
 
 # %%

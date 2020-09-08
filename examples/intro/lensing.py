@@ -172,56 +172,56 @@ galaxy has separate components for its stellar mass and dark matter. This forms 
 rings!
 """
 
-lens_galaxy_0 = al.Galaxy(
-    redshift=0.5,
-    bulge=al.lmp.EllipticalSersic(
-        centre=(0.0, 0.0),
-        elliptical_comps=(0.0, 0.05),
-        intensity=0.5,
-        effective_radius=0.3,
-        sersic_index=2.5,
-        mass_to_light_ratio=0.3,
-    ),
-    disk=al.lmp.EllipticalExponential(
-        centre=(0.0, 0.0),
-        elliptical_comps=(0.0, 0.1),
-        intensity=1.0,
-        effective_radius=2.0,
-        mass_to_light_ratio=0.2,
-    ),
-    dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.08, scale_radius=30.0),
-)
-
-lens_galaxy_1 = al.Galaxy(
-    redshift=1.0,
-    light=al.lp.EllipticalExponential(
-        centre=(0.1, 0.1),
-        elliptical_comps=(0.05, 0.1),
-        intensity=3.0,
-        effective_radius=0.1,
-    ),
-    mass=al.mp.EllipticalIsothermal(
-        centre=(0.1, 0.1), elliptical_comps=(0.05, 0.1), einstein_radius=0.4
-    ),
-)
-
-source_galaxy = al.Galaxy(
-    redshift=2.0,
-    light=al.lp.EllipticalSersic(
-        centre=(0.2, 0.2),
-        elliptical_comps=(0.0, 0.111111),
-        intensity=2.0,
-        effective_radius=0.1,
-        sersic_index=1.5,
-    ),
-)
-
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
-
-# %%
-"""
-This is what the lens looks like:
-"""
-
-# %%
-aplt.Tracer.image(tracer=tracer, grid=grid)
+# lens_galaxy_0 = al.Galaxy(
+#     redshift=0.5,
+#     bulge=al.lmp.EllipticalSersic(
+#         centre=(0.0, 0.0),
+#         elliptical_comps=(0.0, 0.05),
+#         intensity=0.5,
+#         effective_radius=0.3,
+#         sersic_index=2.5,
+#         mass_to_light_ratio=0.3,
+#     ),
+#     disk=al.lmp.EllipticalExponential(
+#         centre=(0.0, 0.0),
+#         elliptical_comps=(0.0, 0.1),
+#         intensity=1.0,
+#         effective_radius=2.0,
+#         mass_to_light_ratio=0.2,
+#     ),
+#     dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.08, scale_radius=30.0),
+# )
+#
+# lens_galaxy_1 = al.Galaxy(
+#     redshift=1.0,
+#     sersic=al.lp.EllipticalExponential(
+#         centre=(0.1, 0.1),
+#         elliptical_comps=(0.05, 0.1),
+#         intensity=3.0,
+#         effective_radius=0.1,
+#     ),
+#     mass=al.mp.EllipticalIsothermal(
+#         centre=(0.1, 0.1), elliptical_comps=(0.05, 0.1), einstein_radius=0.4
+#     ),
+# )
+#
+# source_galaxy = al.Galaxy(
+#     redshift=2.0,
+#     sersic=al.lp.EllipticalSersic(
+#         centre=(0.2, 0.2),
+#         elliptical_comps=(0.0, 0.111111),
+#         intensity=2.0,
+#         effective_radius=0.1,
+#         sersic_index=1.5,
+#     ),
+# )
+#
+# tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
+#
+# # %%
+# """
+# This is what the lens looks like:
+# """
+#
+# # %%
+# aplt.Tracer.image(tracer=tracer, grid=grid)

@@ -32,7 +32,7 @@ phase_name = "phase_1__subhalo_search__source"
 agg_grid_search = agg.filter(
     agg.phase == phase_name,
     agg.pipeline == pipeline_name,
-    agg.directory.contains("lens_sie__source_sersic__0"),
+    agg.directory.contains("mass_sie__source_sersic__0"),
 )
 
 array = al.agg.grid_search_result_as_array(
@@ -41,7 +41,7 @@ array = al.agg.grid_search_result_as_array(
 
 # %%
 """
-We are famaliar with filtering by pipeline name and phase name, so lets get the results of the power-law advanced 
+We are famaliar with filtering by pipeline name and phase name, so lets get the results of the _EllipticalPowerLaw_ advanced 
 pipeline.
 """
 

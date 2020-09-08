@@ -1,7 +1,7 @@
 # This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
 # using a beginner pipeline to illustrate aggregator functionality.
 
-# We will fit each lens with an SIE _MassProfile_ and each source using a pixelized inversion. The fit will use a
+# we fit each lens with an  _EllipticalIsothermal_ _MassProfile_ and each source using a pixelized _Inversion_. The fit will use a
 # beginner pipelines which performs a 3 phase analysis, which will allow us to illustrate how the results of different
 # phases can be loaded using the aggregator.
 
@@ -16,7 +16,7 @@
 import autofit as af
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -38,13 +38,13 @@ import autolens as al
 pixel_scales = 0.1
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     # Create the path where the dataset will be loaded from, which in this case is
-    # '/autolens_workspace/aggregator/dataset/imaging/lens_sie__source_sersic/'
+    # '/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic'
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["aggregator", "dataset", dataset_name]
     )
@@ -57,16 +57,16 @@ for dataset_name in [
     name = dataset_name
 
     info = {
-        "redshift_lens": 0.5,
-        "redshift_source": 1.0,
+        "setup.redshift_lens": 0.5,
+        "setup.redshift_source": 1.0,
         "velocity_dispersion": 250000,
         "stellar mass": 1e11,
     }
 
     ### DATASET ###
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -90,28 +90,28 @@ for dataset_name in [
 
     # The setup of earlier pipelines inform the model fitted in later pipelines. For example:
 
-    # - The pixelization and regularization scheme used in the source (inversion) pipeline will be used in the light and
+    # - The _Pixelization_ and _Regularization_ scheme used in the source (inversion) pipeline will be used in the light and
     #   mass pipelines.
 
-    hyper = al.slam.SLaMHyper(
+    hyper = al.SetupHyper(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SLaMSource(no_shear=True)
+    source = al.SLaMPipelineSource(no_shear=True)
 
-    mass = al.slam.SLaMMass(no_shear=True)
+    mass = al.SLaMPipelineMass(no_shear=True)
 
-    setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+    setup = al.SLaM(setup_hyper=hyper, source=source, pipeline_mass=mass)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
     ### SOURCE ###
 
-    from pipelines.advanced.no_lens_light.source.parametric import (
-        lens_sie__source_sersic,
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.parametric import (
+        mass_sie__source_sersic,
     )
 
-    pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
+    pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup,
         folders=["aggregator", "grid_search", dataset_name],
         positions_threshold=1.0,
@@ -119,7 +119,9 @@ for dataset_name in [
 
     ### MASS ###
 
-    from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.mass.sie import (
+        lens_sie__source,
+    )
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
         setup=setup,
@@ -129,7 +131,9 @@ for dataset_name in [
 
     ### SUBHALO ###
 
-    from pipelines.advanced.no_lens_light.subhalo import lens_mass__subhalo_nfw__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.subhalo import (
+        lens_mass__subhalo_nfw__source,
+    )
 
     pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
         setup=setup,

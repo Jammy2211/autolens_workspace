@@ -142,7 +142,7 @@ print("Maximum Log Likelihood Lens Einstein Masses:")
 for instance in ml_instances:
     einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=instance.galaxies.lens.redshift,
-        redshift_source=instance.galaxies.source.redshift,
+        setup.redshift_source=instance.galaxies.source.redshift,
     )
     print(einstein_mass)
 print()
@@ -159,7 +159,7 @@ def print_max_log_likelihood_mass(agg_obj):
 
     einstein_mass = output.instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=output.instance.galaxies.lens.redshift,
-        redshift_source=output.instance.galaxies.source.redshift,
+        setup.redshift_source=output.instance.galaxies.source.redshift,
     )
     print(einstein_mass)
 

@@ -4,7 +4,7 @@
 __Example: Interferometer Source Inversion__
 
 To fit a lens model to an interferometer dataset, we again perform lens modeling using a non-linear search algorithm.
-However, unlike CCD imaging data, we fit the lens model in Fourier space, or the 'uv-plane', which circumvents issues
+However, unlike CCD _Imaging_ data, we fit the lens model in Fourier space, or the 'uv-plane', which circumvents issues
 that arise when trying to fit CLEANED images of interferometer data.
 
 A big challenge when fitting interferometer datasets is the huge quantity of data. Very long baseline ALMA or JVLA
@@ -28,17 +28,17 @@ modeling is efficient!
 
 # %%
 """
-In this example script, we will fit interferometer data of a strong lens system where:
+In this example script, we fit interferometer data of a strong lens system where:
 
  - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is fitted with an _VoronoiMagnification_ pixelization and _Constant_ 
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is modeled as an _VoronoiMagnification_ _Pixelization_ and _Constant_ 
    regularization.
 
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -67,7 +67,7 @@ conf.instance = conf.Config(
 
 # %%
 """
-Load the strong lens dataset 'lens_sie__source_sersic' 'from .fits files.
+Load the strong lens dataset 'mass_sie__source_sersic' 'from .fits files.
 
 Unlike the other example scripts, we use the _Interferometer_ class to load this dataset, passing it paths to the .fits
 files containing its visibilities, noise-map and uv_wavelengths.
@@ -80,7 +80,7 @@ import autolens.plot as aplt
 import numpy as np
 
 dataset_type = "interferometer"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 interferometer = al.Interferometer.from_fits(
@@ -198,7 +198,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/beginner/lens_sie__source_sersic/phase__lens_sie__source_sersic'.
+ '/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__mass_sie__source_sersic'.
 """
 
 # %%
@@ -217,7 +217,7 @@ We can now begin the fit by passing the dataset and visibilties mask to the phas
 to fit the model to the data. 
 
 The fit outputs visualization on-the-fly, so checkout the path 
-'/path/to/autolens_workspace/output/examples/phase__lens_sie__source_sersic' to see how your fit is doing!
+'/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic' to see how your fit is doing!
 """
 
 # %%

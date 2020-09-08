@@ -33,10 +33,12 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from howtolens.simulators.chapter_5 import lens_sersic_sie__source_sersic
+from autolens_workspace.howtolens.simulators.chapter_5 import (
+    light_sersic__mass_sie__source_sersic,
+)
 
 dataset_type = "chapter_5"
-dataset_name = "lens_sersic_sie__source_sersic"
+dataset_name = "light_sersic__mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -80,7 +82,7 @@ lens _LightProfile_. The source will use a magnification based grid.
 # %%
 lens_galaxy = al.Galaxy(
     redshift=0.5,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.05),
         intensity=0.4,
@@ -122,7 +124,7 @@ This skewed chi-squared distribution will cause all the same problems we discuss
 over-fitting. However, for the source-reconstruction and Bayesian log evidence the residuals are even more problematic 
 than before. Why? Because when we compute the Bayesian log evidence for the source-inversion these pixels are included 
 like all the other image pixels. But, __they do not contain the source__. The Bayesian log evidence is going to try 
-improve the fit to these pixels by reducing the level of regularization,  but its __going to fail miserably__, as they 
+improve the fit to these pixels by reducing the level of _Regularization_,  but its __going to fail miserably__, as they 
 map nowhere near the source!
 
 This is a fundamental problem when simultaneously modeling the lens galaxy's light and source galaxy. The source 
@@ -148,7 +150,7 @@ hyper_image_source = fit.model_images_of_planes[
 
 lens_galaxy_hyper = al.Galaxy(
     redshift=0.5,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.05),
         intensity=0.4,

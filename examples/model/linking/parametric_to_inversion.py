@@ -38,7 +38,7 @@ _Inversion_ in one phase:
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -73,7 +73,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -105,7 +105,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -159,7 +159,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_1'.
 """
 
 # %%
@@ -216,7 +216,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_sie__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_2'.
 
 Note how the 'lens' passed to this phase was set up above using the results of phase 1!
 """

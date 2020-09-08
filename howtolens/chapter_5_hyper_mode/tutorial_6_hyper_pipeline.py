@@ -22,12 +22,12 @@ phase1 = al.PhaseImaging(
     galaxies=dict(
 NAME --> lens=al.GalaxyModel(
             redshift=0.5,
-            light=al.lp.EllipticalSersic,
+            sersic=al.lp.EllipticalSersic,
             mass=al.mp.EllipticalIsothermal,
         )
     ),
       galaxies=dict(
-NAME --> source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+NAME --> source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
     ),
 )
 
@@ -111,10 +111,10 @@ Phase 5 Extension) Fit the lens / source hyper-galaxy and background noise.
 
 Phase 6) Initialize an _Inversion_ of the source-galaxy, using a brightness based _Pixelization_and adaptive
          _Regularization_scheme.
-Phase 6 Extension) Fit the lens / source hyper-galaxy, background noise and reoptimize the inversion.
+Phase 6 Extension) Fit the lens / source hyper-galaxy, background noise and reoptimize the _Inversion_.
 
 Phase 7) Refine the lens light and mass models using the _Inversion_ from phase 6 and lens / source hyper galaxy.
-Phase 7 Extension) Fit the lens / source hyper-galaxy, background noise and reoptimize the inversion.
+Phase 7 Extension) Fit the lens / source hyper-galaxy, background noise and reoptimize the _Inversion_.
 
 Phew! Thats a lot of phases, so lets take a look.
 
@@ -147,23 +147,23 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_sersic",
+        phase_name="phase_1__light_sersic",
         folders=setup.folders,
-        galaxies=dict(lens=al.GalaxyModel(redshift=0.5, light=al.lp.EllipticalSersic)),
+        galaxies=dict(lens=al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)),
         search=af.DynestyStatic(n_live_points=30),
     )
 
     """
     This extends phase 1 with hyper-phases that fit for the hyper-galaxies, as described above. The extension below
     adds two phases, a 'hyper-galaxy' phase which fits for the lens hyper-galaxy + the background noise, and a
- 'hyper_combined' phase which fits them again.
+    'hyper_combined' phase which fits them again.
     
     Although this might sound like unnecessary repetition, the second phase uses Gaussian priors inferred from the
     first phase, meaning that it can search regions of parameter space that may of been unaccessible due to the
     first phase's uniform piors.
     """
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(setup=setup)
+    phase1 = phase1.extend_with_multiple_hyper_phases(setup_hyper=setup.setup_hyper)
 
     """
     Phase 2:
@@ -177,7 +177,7 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
-    mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.light.centre
+    mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.sersic.centre
 
     """
     You will note three new inputs to the phase below, 'hyper_galaxy', 'hyper_image_sky' and 'hyper_background_noise'.
@@ -188,17 +188,17 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase2 = al.PhaseImaging(
-        phase_name="phase_2__lens_sie__source_sersic",
+        phase_name="phase_2__mass_sie__source_sersic",
         folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase1.result.instance.galaxies.lens.light,
+                sersic=phase1.result.instance.galaxies.lens.sersic,
                 mass=mass,
                 shear=al.mp.ExternalShear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
-            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
         ),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
@@ -212,7 +212,7 @@ def make_pipeline(setup, settings, folders=None):
     background noise.
     """
 
-    phase2 = phase2.extend_with_multiple_hyper_phases(setup=setup)
+    phase2 = phase2.extend_with_multiple_hyper_phases(setup_hyper=setup.setup_hyper)
 
     """
     Phase 3:
@@ -229,18 +229,18 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__lens_sersic_sie__source_exp",
+        phase_name="phase_3__light_sersic__mass_sie__source_exp",
         folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase1.result.model.galaxies.lens.light,
+                sersic=phase1.result.model.galaxies.lens.sersic,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase2.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, light=phase2.result.model.galaxies.source.light
+                redshift=1.0, sersic=phase2.result.model.galaxies.source.sersic
             ),
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
@@ -250,7 +250,7 @@ def make_pipeline(setup, settings, folders=None):
 
     """The usual phase extension, which operates the same as the extension for phase 2."""
 
-    phase3 = phase3.extend_with_multiple_hyper_phases(setup=setup)
+    phase3 = phase3.extend_with_multiple_hyper_phases(setup_hyper=setup.setup_hyper)
 
     """
     Phase 4:
@@ -260,7 +260,7 @@ def make_pipeline(setup, settings, folders=None):
     adaptive regularization?
 
     Well, its to do with the hyper-galaxy-images of our source. At the end of phase 3, we've only fitted the source galaxy
-    using a single EllipticalSersic profile. What if the source galaxy is more complex than a Sersic? Or has
+    using a single _EllipticalSersic_ profile. What if the source galaxy is more complex than a Sersic? Or has
     multiple components? Our fit, put simply, won't be very good! This makes for a bad hyper-galaxy-image.
 
     So, its beneficial for us to introduce an intermediate _Inversion_ using a magnification based grid, that fits
@@ -275,7 +275,7 @@ def make_pipeline(setup, settings, folders=None):
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase3.result.instance.galaxies.lens.light,
+                sersic=phase3.result.instance.galaxies.lens.sersic,
                 mass=phase3.result.instance.galaxies.lens.mass,
                 shear=phase3.result.instance.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -296,7 +296,7 @@ def make_pipeline(setup, settings, folders=None):
     won't bother reoptimizing its hyper-galaxy-parameters
     """
 
-    phase4 = phase4.extend_with_multiple_hyper_phases(setup=setup)
+    phase4 = phase4.extend_with_multiple_hyper_phases(setup_hyper=setup.setup_hyper)
 
     """
     Phase 5: Refine the lens light and mass models using this magnification based _Pixelization_and constant
@@ -305,12 +305,12 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase5 = al.PhaseImaging(
-        phase_name="phase_5__lens_sersic_sie__source_inversion_magnification",
+        phase_name="phase_5__light_sersic__mass_sie__source_inversion_magnification",
         folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase3.result.model.galaxies.lens.light,
+                sersic=phase3.result.model.galaxies.lens.sersic,
                 mass=phase3.result.model.galaxies.lens.mass,
                 shear=phase3.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase4.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -327,7 +327,7 @@ def make_pipeline(setup, settings, folders=None):
     )
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
-        setup=setup, include_inversion=False
+        setup_hyper=setup.setup_hyper, include_inversion=False
     )
 
     """
@@ -342,7 +342,7 @@ def make_pipeline(setup, settings, folders=None):
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase5.result.instance.galaxies.lens.light,
+                sersic=phase5.result.instance.galaxies.lens.sersic,
                 mass=phase5.result.instance.galaxies.lens.mass,
                 shear=phase5.result.instance.galaxies.lens.shear,
                 hyper_galaxy=phase5.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -364,7 +364,7 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase6 = phase6.extend_with_multiple_hyper_phases(
-        setup=setup, include_inversion=True
+        setup_hyper=setup.setup_hyper, include_inversion=True
     )
 
     """
@@ -374,12 +374,12 @@ def make_pipeline(setup, settings, folders=None):
     """
 
     phase7 = al.PhaseImaging(
-        phase_name="phase_7__lens_sersic_sie__source_inversion",
+        phase_name="phase_7__light_sersic__mass_sie__source_inversion",
         folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                light=phase5.model.galaxies.lens.light,
+                sersic=phase5.model.galaxies.lens.sersic,
                 mass=phase5.model.galaxies.lens.mass,
                 shear=phase5.model.galaxies.lens.shear,
                 hyper_galaxy=phase6.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -397,7 +397,7 @@ def make_pipeline(setup, settings, folders=None):
     )
 
     phase7 = phase7.extend_with_multiple_hyper_phases(
-        setup=setup, include_inversion=True
+        setup_hyper=setup.setup_hyper, include_inversion=True
     )
 
     return al.PipelineDataset(

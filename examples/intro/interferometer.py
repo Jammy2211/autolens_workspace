@@ -2,7 +2,7 @@
 """
 __Example: Interferometer__
 
-Alongside CCD imaging data, **PyAutoLens** supports the modeling of interferometer data from submillimeter and radio
+Alongside CCD _Imaging_ data, **PyAutoLens** supports the modeling of interferometer data from submillimeter and radio
 observatories. The dataset is fitted directly in the uv-plane, circumventing issues that arise when fitting a 'dirty
 image' such as correlated noise.
 
@@ -10,7 +10,7 @@ To begin, we load an interferometer dataset from fits files:
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -20,7 +20,7 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens interferometer dataset 'lens_sie__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens interferometer dataset 'mass_sie__source_sersic' 'from .fits files, which is the dataset 
 we'll use in this example.
 """
 
@@ -30,7 +30,7 @@ import autolens.plot as aplt
 import numpy as np
 
 dataset_type = "interferometer"
-dataset_name = "lens_sie__source_sersic__2"
+dataset_name = "mass_sie__source_sersic__2"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 interferometer = al.Interferometer.from_fits(
@@ -81,7 +81,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,

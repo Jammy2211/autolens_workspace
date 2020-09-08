@@ -2,7 +2,7 @@ from astropy import units
 from astropy.io import fits
 import os
 
-from simulators.interferometer.uvtools import casa_utils
+from autolens_workspace.simulators.interferometer.uvtools import casa_utils
 
 directory = os.path.dirname(os.path.realpath(__file__))
 

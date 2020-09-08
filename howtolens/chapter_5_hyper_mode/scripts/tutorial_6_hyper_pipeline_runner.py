@@ -45,10 +45,12 @@ We'll use strong lensing data, where:
 """
 
 # %%
-from howtolens.simulators.chapter_5 import lens_sersic_sie__source_sersic_x4
+from autolens_workspace.howtolens.simulators.chapter_5 import (
+    light_sersic__mass_sie__source_sersic_x4,
+)
 
 dataset_type = "chapter_5"
-dataset_name = "lens_sersic_sie__source_sersic_x4"
+dataset_name = "light_sersic__mass_sie__source_sersic_x4"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -68,7 +70,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The *SettingsPhaseImaging* describe how the model is fitted to the data in the log likelihood function. We discussed
+The _SettingsPhaseImaging_ describe how the model is fitted to the data in the log likelihood function. We discussed
 these in chapter 2, and a full description of all settings can be found in the example script:
 
  'autolens_workspace/examples/model/customize/settings.py'.
@@ -99,16 +101,26 @@ hyper_galaxies_search = af.DynestyStatic(n_live_points=100, evidence_tolerance=0
 inversion_search = af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8)
 hyper_combined_search = af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8)
 
-setup = al.SetupPipeline(
+setup_hyper = al.SetupHyper(
     hyper_galaxies=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     hyper_galaxies_search=hyper_galaxies_search,
     inversion_search=inversion_search,
     hyper_combined_search=hyper_combined_search,
-    pixelization=al.pix.VoronoiBrightnessImage,
-    regularization=al.reg.AdaptiveBrightness,
+)
+setup_light = al.SetupLightSersic(light_centre=None)
+setup_mass = al.SetupMassTotal(no_shear=False)
+setup_source = al.SetupSourceInversion(
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+)
+
+setup = al.SetupPipeline(
     folders=["c5_t6_hyper"],
+    setup_hyper=setup_hyper,
+    setup_light=setup_light,
+    setup_mass=setup_mass,
+    setup_source=setup_source,
 )
 # %%
 """
@@ -116,9 +128,9 @@ Lets import the pipeline and run it.
 """
 
 # %%
-from howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
+from autolens_workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
 
 # Uncomment to run.
-# pipeline_hyper.run(dataset=imaging, mask=mask)
+pipeline_hyper.run(dataset=imaging, mask=mask)

@@ -23,7 +23,7 @@ This tool allows one to mask a bespoke mask for a given image of a strong lens, 
 pipeline is run and passed to that pipeline.
 
 Whereas in the previous 3 tutorials we used the data_raw folder of 'autolens/propocess', the mask is generated from
-the reduced dataset, so we'll example imaging in the 'autolens_workspace/dataset' folder where your dataset reduced
+the reduced dataset, so we'll example _Imaging_ in the 'autolens_workspace/dataset' folder where your dataset reduced
 following preprocess tutorials 1-3 should be located.
 
 Setup the path to the autolens_workspace, using the correct path name below.
@@ -38,25 +38,23 @@ print("Workspace Path: ", workspace_path)
 # %%
 """
 The 'dataset label' is the name of the folder in the 'autolens_workspace/dataset' folder and 'dataset_name' the 
-folder the dataset is stored in, e.g, '/autolens_workspace/dataset/dataset_type/dataset_name/'. The mask will be 
+folder the dataset is stored in, e.g, '/autolens_workspace/dataset/dataset_type/dataset_name'. The mask will be 
 output here as 'mask.fits'.
 """
 
 # %%
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 
 # %%
 """
 Create the path where the mask will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""

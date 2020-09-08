@@ -1,7 +1,7 @@
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-from preprocess.imaging.gui import scribbler
+from autolens_workspace.preprocess.imaging.gui import scribbler
 import numpy as np
 
 # This tool allows one to mask a bespoke noise-map for a given image of a strong lens, using a GUI.
@@ -11,7 +11,7 @@ import numpy as np
 # analysis of the lens and source galaxies.
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -23,18 +23,16 @@ print("Workspace Path: ", workspace_path)
 # the mask will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/mask.fits'.
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic__intervening_objects"
+dataset_name = "mass_sie__source_sersic__intervening_objects"
 
 # Create the path where the noise-map will be output, which in this case is
-# '/autolens_workspace/dataset/imaging/lens_sie__source_sersic_intervening_objects/'
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+# '/autolens_workspace/dataset/imaging/mass_sie__source_sersic_intervening_objects/'
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
 pixel_scales = 0.1
 
-# First, load the imaging dataset, so that the location of galaxies is clear when scaling the noise-map.
+# First, load the _Imaging_ dataset, so that the location of galaxies is clear when scaling the noise-map.
 image = al.Array.from_fits(
     file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
 )
@@ -77,7 +75,7 @@ aplt.Array(array=image)
 # file in our pipelines!
 image.output_to_fits(file_path=f"{dataset_path}/image_scaled.fits", overwrite=True)
 
-# Next, load the imaging noise-map, which we will use the scale the noise-map.
+# Next, load the _Imaging_ noise-map, which we will use the scale the noise-map.
 noise_map = al.Array.from_fits(
     file_path=f"{dataset_path}/noise_map.fits", pixel_scales=pixel_scales
 )

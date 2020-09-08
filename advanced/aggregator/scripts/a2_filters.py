@@ -31,6 +31,14 @@ conf.instance = conf.Config(
 
 agg = af.Aggregator(directory=str(agg_results_path))
 
+# %%
+"""
+We can first filter results to only include completed results. By including the *completed_only* input below, any 
+results which are in the middle of a non-linear will be omitted and not loaded in the _Aggregator_.
+"""
+
+# %%
+agg = af.Aggregator(directory=str(agg_results_path), completed_only=True)
 
 # %%
 """
@@ -108,7 +116,7 @@ agg_filter_multiple = agg.filter(
     agg.phase == phase_name,
     agg.directory.contains("phase__"),
     agg.directory.contains("dynesty"),
-    agg.directory.contains("lens_sie__source_sersic__0"),
+    agg.directory.contains("mass_sie__source_sersic__0"),
 )
 print("Multiple Filter NestedSampler Samples: \n")
 print()

@@ -19,10 +19,10 @@ In this example, we link two phases, where:
 The _EllipticalPower_ is a general form of the _EllipticalIsothermal_ and it has one addition parameter relative to the
 _EllipticalIsothermal_, the 'slope'. This controls the internal mass distriibution of the mass profile, whereby:
 
- - A higher slope concentrates more mass in the central regions of the mass profile relative to the outskirts. 
+ - A higher slope concentrates more mass in the central regions of the _MassProfile_ relative to the outskirts. 
  - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts. 
 
-By allowing a mass profile to vary its inner distribution, the non-linear parameter space of the lens model becomes 
+By allowing a _MassProfile_ to vary its inner distribution, the non-linear parameter space of the lens model becomes 
 significantly more complex, creating a notable degeneracy between the mass model's mass normalization, ellipticity
 and slope. This proves challenging to sample in an efficient and robust manner, especially if our initial samples are
 not initalized so as to start sampling in the high likelhood regions of parameter space.
@@ -37,7 +37,7 @@ galaxy's mass *and* the source galaxy's light.
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -72,7 +72,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_power_law__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -106,7 +106,7 @@ for phases 1 and 2 respectively..
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -171,7 +171,7 @@ We use the results of phase 1 to create the _GalaxyModel_ components that we fit
 The term 'model' below tells PyAutoLens to pass the lens and source models as model-components that are to be fitted
 for by the non-linear search. In other linking examples, we'll see other ways to pass prior results.
 
-Because we change the mass profile from an _EllipticalIsothermal_ to an _EllipticalPowerLaw_, we cannot simply pass the
+Because we change the _MassProfile_ from an _EllipticalIsothermal_ to an _EllipticalPowerLaw_, we cannot simply pass the
 mass model above. Instead, we pass each individual parameter of the _EllipticalIsothermal_ model, leaving the slope
 to retain its default _UniformPrior_ which has a lower_limit=1.5 and upper_limit=3.0.
 """
@@ -186,7 +186,7 @@ mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 lens = al.GalaxyModel(redshift=0.5, mass=mass)
 
-source = al.GalaxyModel(redshift=1.0, light=phase1_result.model.galaxies.source.light)
+source = al.GalaxyModel(redshift=1.0, sersic=phase1_result.model.galaxies.source.sersic)
 
 # %%
 """
@@ -236,7 +236,7 @@ __Pipelines__
 The next level of PyAutoLens uses _Pipelines_, which link together multiple phases to perform very complex lens 
 modeling in robust and efficient ways. Pipelines which fit a power-law, for example:
 
- 'autolens_wokspace/pipelines/no_lens_light/lens_power_law__source_inversion.py'
+ 'autolens_wokspace/pipelines/no_lens_light/mass_power_law__source_inversion.py'
 
 Exploit our ability to first model the lens's mass using an _EllipticalIsothermal_ and then switch to an 
 _EllipticalPowerLaw_, to ensure more efficient and robust model-fits!

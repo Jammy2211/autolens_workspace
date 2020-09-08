@@ -129,7 +129,7 @@ def axis_ratio_error(agg_obj):
 
             einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
                 redshift_object=instance.galaxies.lens.redshift,
-                redshift_source=instance.galaxies.source.redshift,
+                setup.redshift_source=instance.galaxies.source.redshift,
             )
 
             sample_masses.append(einstein_mass)

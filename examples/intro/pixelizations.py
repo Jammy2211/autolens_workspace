@@ -8,13 +8,13 @@ reconstruct the light of non-symmetric, irregular and clumpy sources.
 To reconstruct the source using a *Pixelization*, we have to impose a prior on the smoothness of the reconstructed
 source, called the *Regularization*. The more we regularize the source, the smoother the source reconstruction.
 
-The process of reconstructing a galaxy's light using a *Pixelization* and *Regularization* is called an *Inversion*,
+The process of reconstructing a galaxy's light using a *Pixelization* and *Regularization* is called an _Inversion_,
 and the term 'inversion' is used throughout the **PyAutoLens** example scripts to signify that their source analysis
 reconstructs its light on a pixel-grid.
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -24,7 +24,7 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the imaging data that we'll reconstruct the lensed source galaxy's light of using a pixelization.
+Load the _Imaging_ data that we'll reconstruct the lensed source galaxy's light of using a pixelization.
 
 Note how complex the lensed source galaxy looks, with multiple clumps of light - this would be very difficult to 
 represent using _LightProfile_'s!
@@ -36,7 +36,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic_x4"
+dataset_name = "mass_sie__source_sersic_x4"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -64,7 +64,7 @@ masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 To model the source as a *Pixelization*, we simply pass it the *Pixelization* class we want to reconstruct its light
 on as well as the *Regularization* scheme describing how we smooth the source. 
 
-First, lets use a *Rectangular* pixelization with resolution 40 x 40 and *Constant* regularizaton scheme with a 
+First, lets use a *Rectangular* _Pixelization_ with resolution 40 x 40 and *Constant* regularizaton scheme with a 
 relatitvely high regularization-coefficient. The higher this coefficient, the more our source reconstruction will be
 smoothed.
 
@@ -98,7 +98,7 @@ fit = al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 
 # %%
 """
-The fit has been performed using an *Inversion* for the source galaxy. We can see this by plotting the source-plane
+The fit has been performed using an _Inversion_ for the source galaxy. We can see this by plotting the source-plane
 of the *FitImaging* using the *subplot_of_plane* plotter. Note how the bottom-right panel shows a pixelized grid.
 """
 aplt.FitImaging.subplot_of_plane(fit=fit, plane_index=1)
@@ -138,12 +138,12 @@ This script has given a brief overview of *Inversions* with **PyAutoLens**. Howe
 *Inversions* then presented here. 
 
 In the 'autolens_workspace/examples/model/inversion' folder you will find example scripts of how to fit a model to a 
-strong lens using an *Inversion*. In chapters 4 and 5 of the **HowToLens** lectures we fully cover all details of  
+strong lens using an _Inversion_. In chapters 4 and 5 of the **HowToLens** lectures we fully cover all details of  
 *Inversions*, specifically:
 
  - How the source reconstruction determines the flux-values of the source it reconstructs.
  - The Bayesian framework employed to choose the approrpriate level of *Regularization* and avoid overfitting noise.
- - Unphysical lens model solutions that often arise when using an *Inversion*.
+ - Unphysical lens model solutions that often arise when using an _Inversion_.
  - Advanced *Pixelization* and *Regularization* schemes that adapt to the source galaxy being reconstructed.
     
 """

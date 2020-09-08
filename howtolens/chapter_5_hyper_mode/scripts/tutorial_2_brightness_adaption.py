@@ -37,10 +37,10 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from howtolens.simulators.chapter_5 import lens_sie__source_sersic
+from autolens_workspace.howtolens.simulators.chapter_5 import mass_sie__source_sersic
 
 dataset_type = "chapter_5"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(

@@ -275,11 +275,12 @@ fit_gen = al.agg.FitImaging(aggregator=agg_filter)
 for fit in fit_gen:
 
     plotter = aplt.Plotter(
+        labels=aplt.Labels(title="Hey"),
         output=aplt.Output(
             path=f"{workspace_path}/output/path/of/file/",
             filename="publication",
             format="png",
-        )
+        ),
     )
 
     aplt.FitImaging.normalized_residual_map(fit=fit, plotter=plotter)

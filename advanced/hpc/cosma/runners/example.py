@@ -17,7 +17,7 @@ Setup the path to the cosma output directory.
 
 This exmaple assumes you are using cosma7 and outputting results to the cosma7 output directory:
 
- '/cosma7/data/dp004/cosma_username/'.
+ '/cosma7/data/dp004/cosma_username'.
 """
 
 cosma_path = "/cosma7/data/dp004/cosma_username"
@@ -28,7 +28,7 @@ are stored in.
 """
 
 dataset_folder = "example"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 
 cosma_dataset_path = f"{cosma_path}/dataset/{dataset_folder}/{dataset_name}"
 
@@ -174,7 +174,7 @@ your own COSMA run going!
 """
 
 # %%
-"""Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
 
 # %%
 imaging = al.Imaging.from_fits(
@@ -202,7 +202,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The *SettingsPhaseImaging* describe how the model is fitted to the data in the log likelihood function.
+The _SettingsPhaseImaging_ describe how the model is fitted to the data in the log likelihood function.
 
 These settings are used and described throughout the 'autolens_workspace/examples/model' example scripts, with a 
 complete description of all settings given in 'autolens_workspace/examples/model/customize/settings.py'.
@@ -221,9 +221,9 @@ __Pipeline_Setup_And_Tagging__:
 
 For this runner the _SetupPipeline_ customizes:
 
- - The Pixelization used by the inversion of this pipeline.
- - The Regularization scheme used by of this pipeline.
- - If there is an external shear in the mass model or not.
+ - The _Pixelization_ used by the _Inversion_ of this pipeline.
+ - The _Regularization_ scheme used by of this pipeline.
+ - If there is an _ExternalShear_ in the mass model or not.
 
 The _SetupPipeline_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
 paths are 'tagged' with the string 'no_shear'.
@@ -233,8 +233,8 @@ to different output folders and thus not clash with one another!
 
 The 'folders' below specify the path the pipeline results are written to, which is:
 
- 'autolens_workspace/output/dataset_type/dataset_name/' 
- 'autolens_workspace/output/imaging/lens_sie__source_sersic/'
+ 'autolens_workspace/output/dataset_type/dataset_name' 
+ 'autolens_workspace/output/imaging/mass_sie__source_sersic'
 """
 
 # %%
@@ -254,7 +254,9 @@ To create a pipeline we import it from the pipelines folder and run its 'make_pi
 """
 
 # %%
-from pipelines.imaging.no_lens_light import lens_sie__source_inversion
+from autolens_workspace.pipelines.imaging.no_lens_light import (
+    lens_sie__source_inversion,
+)
 
 pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 

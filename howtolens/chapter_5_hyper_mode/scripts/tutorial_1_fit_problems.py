@@ -13,7 +13,7 @@ which improved computational efficiency and the Bayesian log evidence.
 
 So far, we've used just one _Regularization_scheme; Constant. As the name suggests, this _Regularization_scheme applies
 just one regularization_coefficient when regularizing source-pixels with one another. In case you've forgot, here is
-a refresher of regularization, from chapter 4:
+a refresher of _Regularization_, from chapter 4:
 
 -------------------------------------------- 
 
@@ -35,7 +35,7 @@ best way to do this is to fit *everything* accurately, including the noise.
 
 So, when using a Constant _Regularization_scheme, we regularize the source by adding up the difference in fluxes
 between all source-pixels multiplied by one single value of a regularization_coefficient. This means that every
-single source pixel receives the same 'level' of regularization, regardless of whether it is reconstructing the
+single source pixel receives the same 'level' of _Regularization_, regardless of whether it is reconstructing the
 bright central regions of the source or its faint exterior regions.
 
 
@@ -60,7 +60,7 @@ We'll use 3 sources whose effective radius and Sersic index are changed such tha
 # %%
 source_galaxy_flat = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -71,7 +71,7 @@ source_galaxy_flat = al.Galaxy(
 
 source_galaxy_compact = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -82,7 +82,7 @@ source_galaxy_compact = al.Galaxy(
 
 source_galaxy_super_compact = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -288,7 +288,7 @@ __Regularization__
 
 Regularization also causes problems. When using a _Constant_ _Regularization_scheme, we regularize the source by 
 adding up the difference in fluxes between all source-pixels multiplied by one single value of a _Regularization_
-coefficient. This means that, every single source pixel receives the same 'level' of regularization, regardless of 
+coefficient. This means that, every single source pixel receives the same 'level' of _Regularization_, regardless of 
 whether it is reconstructing the bright central regions of the source or its faint exterior regions. Lets look:
 """
 

@@ -5,21 +5,21 @@ __Example: Non-linear Searches__
 
 In the 'beginner' examples all model-fits were performed using the nested sampling algorithm _Dynesty_, which is a
 very effective non-linear search algorithm for lens modeling, but may not always be the optimal choice for your
-problem. In this example we will fit strong lens data using a variety of non-linear searches.
+problem. In this example we fit strong lens data using a variety of non-linear searches.
 """
 
 # %%
 """
-In this example script, we will fit imaging of a strong lens system where:
+In this example script, we fit _Imaging_ of a strong lens system where:
 
  - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
 
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -54,7 +54,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -85,13 +85,13 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseImaging*, which in this example simmply use the default values used in the beginner
+Next, we specify the _SettingsPhaseImaging_, which in this example simmply use the default values used in the beginner
 examples.
 """
 
@@ -131,7 +131,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize/lens_sie__source_sersic/phase__nested_sampling/
+ '/autolens_workspace/output/examples/customize/mass_sie__source_sersic/phase__nested_sampling/
     settings__grid_sub_2/dynesty__'.
 """
 
@@ -177,7 +177,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize/'.
+ '/autolens_workspace/output/examples/customize'.
 """
 
 # %%
@@ -208,7 +208,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize/'.
+ '/autolens_workspace/output/examples/customize'.
 """
 
 # %%

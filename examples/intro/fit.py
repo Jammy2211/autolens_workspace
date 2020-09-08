@@ -3,16 +3,16 @@
 __Example: Fitting__
 
 **PyAutoLens** uses *Tracer* objects to represent a strong lensing system. Now, we're going use these objects to
-fit imaging data of a strong lens.
+fit _Imaging_ data of a strong lens.
 
 The autolens_workspace comes distributed with simulated images of strong lenses (an example of how these simulations
 are made can be found in the 'simulate.py' exampe, with all simulator scripts located in 'autolens_workspac/simulators'.
 
-We we begin by loading the strong lens dataset 'lens_sie__source_sersic' 'from .fits files:
+We we begin by loading the strong lens dataset 'mass_sie__source_sersic' 'from .fits files:
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -22,7 +22,7 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens dataset 'lens_sersic_sie__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens dataset 'light_sersic__mass_sie__source_sersic' 'from .fits files, which is the dataset 
 we will use to perform lens modeling.
 """
 
@@ -32,7 +32,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -44,7 +44,7 @@ imaging = al.Imaging.from_fits(
 
 # %%
 """
-We can use the Imaging plotters to plot the image, noise-map and psf of the dataset.
+We can use the _Imaging_ plotters to plot the image, noise-map and psf of the dataset.
 """
 
 aplt.Imaging.image(imaging=imaging)
@@ -53,7 +53,7 @@ aplt.Imaging.psf(imaging=imaging)
 
 # %%
 """
-The Imaging plotter also contains a subplot which plots all these properties simultaneously.
+The _Imaging_ plotter also contains a subplot which plots all these properties simultaneously.
 """
 aplt.Imaging.subplot_imaging(imaging=imaging)
 
@@ -102,7 +102,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=(0.0, 0.111111),
         intensity=0.3,
@@ -119,7 +119,7 @@ Following the lensing.py example, we can make a tracer from a collection of _Lig
 objects. We can then use the *FitImaging* object to fit this tracer to the dataset. 
 
 The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer's 
-image with the imaging PSF. We can see this by comparing the tracer's image (which isn't PSF convolved) and the 
+image with the _Imaging_ PSF. We can see this by comparing the tracer's image (which isn't PSF convolved) and the 
 fit's model image (which is).
 """
 aplt.Tracer.image(tracer=tracer, grid=masked_imaging.grid)
@@ -164,7 +164,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.12, 0.12),
         elliptical_comps=(0.0, 0.111111),
         intensity=0.3,

@@ -19,7 +19,7 @@ yourself with those first!
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -47,12 +47,10 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -76,7 +74,7 @@ We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitt
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -92,7 +90,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
  
  - A bin_up_factor of 2, meaning the dataset is binned up from a resolution of 0.1" per pixel to a resolution 
@@ -113,12 +111,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up'.
+ '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up'.
     
 However, because the _SettingsPhase_ include a bin_up_factor, the output path is tagged to reflelct this, meaning the
 full output path is:
 
- '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__bin_up_2'.
+ '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up/settings__bin_up_2'.
 
 """
 

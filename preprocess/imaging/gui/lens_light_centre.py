@@ -9,7 +9,7 @@ import numpy as np
 # pipelines.
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -21,13 +21,11 @@ print("Workspace Path: ", workspace_path)
 # the positions will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat'.
 dataset_type = "imaging"
 dataset_label = "with_lens_light"
-dataset_name = "lens_sersic_sie__source_sersic"
+dataset_name = "light_sersic__mass_sie__source_sersic"
 
 # Create the path where the mask will be output, which in this case is
-# '/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+# '/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
 pixel_scales = 0.1
@@ -47,7 +45,7 @@ image_2d = imaging.image.in_2d
 # For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
 # below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
 
-lens_light_centres = []
+light_centres = []
 
 # This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
 # positions on an image.
@@ -87,7 +85,7 @@ def onclick(event):
         print("Max flux pixel:", y_pixels_max, x_pixels_max)
         print("Arc-sec Coordinate", y_arcsec, x_arcsec)
 
-        lens_light_centres.append((y_arcsec, x_arcsec))
+        light_centres.append((y_arcsec, x_arcsec))
 
 
 n_y, n_x = imaging.image.shape_2d
@@ -101,13 +99,13 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-lens_light_centres = al.GridCoordinates(coordinates=lens_light_centres)
+light_centres = al.GridCoordinates(coordinates=light_centres)
 
 # Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
-aplt.Array(array=imaging.image, light_profile_centres=lens_light_centres)
+aplt.Array(array=imaging.image, light_profile_centres=light_centres)
 
 # Now we're happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 # .dat file in our pipelines!
-lens_light_centres.output_to_file(
-    file_path=f"{dataset_path}/lens_light_centres.dat", overwrite=True
+light_centres.output_to_file(
+    file_path=f"{dataset_path}/light_centres.dat", overwrite=True
 )

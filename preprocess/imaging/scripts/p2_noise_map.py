@@ -41,11 +41,11 @@ dataset_path = af.util.create_path(
 
 # %%
 """
-This populates the 'data_raw' path with example simulated imaging data-sets.
+This populates the 'data_raw' path with example simulated _Imaging_ data-sets.
 """
 
 # %%
-from preprocess.imaging.data_raw import simulators
+from autolens_workspace.preprocess.imaging.data_raw import simulators
 
 simulators.simulate_all_imaging(dataset_path=dataset_path)
 

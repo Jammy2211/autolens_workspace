@@ -6,7 +6,7 @@ The image is the image of your strong lens - most likely a co-add of multiple di
 
 Throughout all these tutorials, we'll refer to a "pixel_scale" when loading data. The pixel-scale describes the
 pixel-units to arcsecond-units conversion factor of your telescope, which you should look up now if you are unsure
-of the value. HST imaging typically has a pixel_scale of 0.05", however this varies depending on the detector and
+of the value. HST _Imaging_ typically has a pixel_scale of 0.05", however this varies depending on the detector and
 data reduction procedure so DOUBLE CHECK THIS!
 
 This tutorial describes preprocessing your dataset's image to adhere too the units and formats required by PyAutoLens.
@@ -43,11 +43,11 @@ dataset_path = af.util.create_path(
 
 # %%
 """
-This populates the 'data_raw' path with example simulated imaging data-sets.
+This populates the 'data_raw' path with example simulated _Imaging_ data-sets.
 """
 
 # %%
-from preprocess.imaging.data_raw import simulators
+from autolens_workspace.preprocess.imaging.data_raw import simulators
 
 simulators.simulate_all_imaging(dataset_path=dataset_path)
 
@@ -82,7 +82,7 @@ __1) Converting Data To Electrons Per Second__
 
 1) Brightness units - the image's flux values should be in units of electrons per second (as opposed to electrons, 
 counts, ADU's etc.). Although PyAutoLens can technically perform an analysis using other units, the default setup 
-assumes electrons per second (e.g. the priors on _LightProfile_ intensity and regularization parameters). Thus, images 
+assumes electrons per second (e.g. the priors on _LightProfile_ intensity and _Regularization_ parameters). Thus, images 
 not in electrons per second should be converted!
 
 Lets look at an image that is in units of counts - its easy to tell because the peak values are in the 1000's or 10000's.

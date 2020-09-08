@@ -1,7 +1,7 @@
 # %%
 """
 This example demonstrates how to use interpolated deflection-angles interpolation in the phase settings, which
-computes the deflection angles of a mass profile on a coarse lower resolution 'interpolation grid' and interpolates
+computes the deflection angles of a _MassProfile_ on a coarse lower resolution 'interpolation grid' and interpolates
 these values to the image's native sub-grid resolution.
 
 The benefits of this are:
@@ -19,12 +19,12 @@ phase. A higher resolution grid (i.e. lower pixel scale) will give more precise 
 of longer calculation times. In this example we will use an interpolation pixel scale of 0.05", which balances run-time
 and precision.
 
-In this example, we will fit the lens galaxy's mass using an _EllipticalSersic_ + _SphericalNFW_ mass model (which
+In this example, we fit the lens's _MassProfile_'s using an _EllipticalSersic_ + _SphericalNFW_ mass model (which
 represents the stellar and dark matter of a galaxy). The _EllipticalSersic_ requires expensive numerical intergration,
 whereas the _SphericalNFW_ does not. PyAutoLens will only used interpolation for the _EllipticalSersic_, given we can
 compute the deflection angles of the _SphericalNFW_ efficiently.
 
-Whether the interpolatioon grid is used for a given mass profile is set in the following config file:
+Whether the interpolatioon grid is used for a given _MassProfile_ is set in the following config file:
 
  'autolens_workspace/config/grids/interpolate.ini'
 
@@ -36,7 +36,7 @@ yourself with those first!
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -64,12 +64,10 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -93,7 +91,7 @@ We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitt
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -109,7 +107,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
  - The grid_class as a _GridInterpolate_, telling PyAutoLens to use interpolation when calculation deflection 
@@ -134,12 +132,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__interpolation'.
+ '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__interpolation'.
 
 However, because the _SettingsPhase_ include a grid_class and pixel_scales_interp, the output path is tagged to 
 reflelct this, meaning the full output path is:
 
- '/autolens_workspace/output/examples/settings/lens_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.
+ '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.
 
 """
 

@@ -8,7 +8,7 @@
 # autolens.dataset_type.plotters.plotters.plot_array.
 #
 # We will use the residuals of a fit to slacs1430+4105, which comes from running the example pipeline
-# 'workspacde/pipelines/examples/lens_sie__source_sersic_parametric.py.
+# 'workspacde/pipelines/examples/mass_sie__source_sersic_parametric.py.
 #
 # We have included the .fits dataset_type required for this example in the directory
 # 'autolens_workspace/output/imaging/slacs1430+4105/pipeline_light_and_x1_source_parametric/phase_3_both/image/fits'.
@@ -45,7 +45,7 @@
 # )
 # image_path = f"{dataset_path}/image.fits"
 #
-# pipeline_name = "pipeline_lens_sie__source_sersic_parametric"
+# pipeline_name = "pipeline_mass_sie__source_sersic_parametric"
 # phase_name = "phase_3_both"
 # result_path = af.util.create_path(
 #     path=workspace_path,

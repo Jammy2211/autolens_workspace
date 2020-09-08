@@ -8,7 +8,7 @@ such that our model-fit ignores these regions.
 Why not just mask these regions instead? The reason is because of inversions which reconstruct the lensed source's
 light on a pixelized grid. Masking regions of the image removes them entirely from the fitting proceure. This means
 their deflection angles are omitted and they are not traced to the source-plane, creating discontinuities in the
-source pixelization which can negatively impact the regularization scheme.
+source _Pixelization_ which can negatively impact the _Regularization_ scheme.
 
 However, by retaining them in the mask but simply scaling their values these discontinuities are omitted.
 """
@@ -45,18 +45,16 @@ the mask will be output as '/autolens_workspace/dataset/dataset_type/dataset_nam
 # %%
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic__intervening_objects"
+dataset_name = "mass_sie__source_sersic__intervening_objects"
 
 # %%
 """
 Create the path where the noise-map will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic_intervening_objects/'
+'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic_intervening_objects/'
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """

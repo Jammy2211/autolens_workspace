@@ -1,4 +1,3 @@
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -14,7 +13,7 @@ The psf will be output as '/autolens_workspace/dataset/dataset_type/dataset_name
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -23,7 +22,7 @@ workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -36,11 +35,9 @@ dataset_name = "lens_multi_plane"
 
 """
 Create the path where the dataset will be output, which in this case is
-'/autolens_workspace/dataset/imaging/multi_plane/'
+'/autolens_workspace/dataset/imaging/multi_plane'
 """
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 """
 The grid used to simulate the image. 
@@ -63,7 +60,7 @@ psf = al.Kernel.from_gaussian(
 )
 
 """
-To simulate the imaging dataset we first create a simulator, which defines the expoosure time, background sky,
+To simulate the _Imaging_ dataset we first create a simulator, which defines the expoosure time, background sky,
 noise levels and psf of the dataset that is simulated.
 """
 simulator = al.SimulatorImaging(
@@ -97,7 +94,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=1.0,
@@ -112,7 +109,7 @@ Isothermal Sphere (SIS) profiles. We'll use 3 galaxies, but you can add more if 
 """
 los_0 = al.Galaxy(
     redshift=0.25,
-    light=al.lp.SphericalSersic(
+    sersic=al.lp.SphericalSersic(
         centre=(4.0, 4.0), intensity=0.30, effective_radius=0.3, sersic_index=2.0
     ),
     mass=al.mp.SphericalIsothermal(centre=(4.0, 4.0), einstein_radius=0.02),
@@ -120,7 +117,7 @@ los_0 = al.Galaxy(
 
 los_1 = al.Galaxy(
     redshift=0.75,
-    light=al.lp.SphericalSersic(
+    sersic=al.lp.SphericalSersic(
         centre=(3.6, -5.3), intensity=0.20, effective_radius=0.6, sersic_index=1.5
     ),
     mass=al.mp.SphericalIsothermal(centre=(3.6, -5.3), einstein_radius=0.04),
@@ -128,7 +125,7 @@ los_1 = al.Galaxy(
 
 los_2 = al.Galaxy(
     redshift=1.25,
-    light=al.lp.SphericalSersic(
+    sersic=al.lp.SphericalSersic(
         centre=(-3.1, -2.4), intensity=0.35, effective_radius=0.4, sersic_index=2.5
     ),
     mass=al.mp.SphericalIsothermal(centre=(-3.1, -2.4), einstein_radius=0.03),
@@ -149,7 +146,7 @@ imaging dataset following the setup of the dataset.
 """
 imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
-"""Lets plot the simulated Imaging dataset before we output it to fits."""
+"""Lets plot the simulated _Imaging_ dataset before we output it to fits."""
 aplt.Imaging.subplot_imaging(imaging=imaging)
 
 """Output our simulated dataset to the dataset path as .fits files"""

@@ -14,7 +14,7 @@ The psf will be output as '/autolens_workspace/dataset/dataset_type/dataset_name
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -23,7 +23,7 @@ workspace_path = str(here())
 print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -35,7 +35,7 @@ dataset_instrument = "sma"
 
 """
 Create the path where the dataset will be output, which in this case is
-'/autolens_workspace/dataset/interferometer/instruments/sma/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/interferometer/instruments/sma/mass_sie__source_sersic'
 """
 dataset_path = af.util.create_path(
     path=workspace_path, folders=["dataset", dataset_type, dataset_instrument]
@@ -87,7 +87,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
@@ -96,7 +96,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Imaging_ dataset."""
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """Lets look at the tracer's image - this is the image we'll be simulating."""

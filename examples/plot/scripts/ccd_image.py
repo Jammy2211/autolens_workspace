@@ -36,9 +36,7 @@ Create the path where the dataset will be loaded from, which in this case is
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 image_path = f"{dataset_path}/image.fits"
 
 # %%
@@ -111,7 +109,7 @@ aplt.Imaging.noise_map(imaging=imaging, plotter=plotter)
 
 # %%
 """
-Of course, as we've seen in many other examples, a sub-plotters of the imaging dataset can be plotted. This can also take the
+Of course, as we've seen in many other examples, a sub-plotters of the _Imaging_ dataset can be plotted. This can also take the
 customization inputs above, but it should be noted that the options are applied to all images, and thus will most
 likely degrade a number of the sub-plotters images.
 """

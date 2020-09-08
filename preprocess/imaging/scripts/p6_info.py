@@ -50,18 +50,16 @@ the info will be output as '/autolens_workspace/dataset/dataset_type/dataset_nam
 # %%
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 
 # %%
 """
 Create the path where the info will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """
@@ -71,7 +69,7 @@ want to include int he interpretation of your lens models should be included her
 
 info = {
     "redshihft_lens": 0.5,
-    "redshift_source": 1.0,
+    "setup.redshift_source": 1.0,
     "velocity_dispersion": 250000,
     "stellar mass": 1e11,
 }

@@ -10,7 +10,7 @@ those scripts out for details!
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -24,7 +24,7 @@ pixel_scales = 0.1
 """EXAMPLE LENS SYSTEM 1"""
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -32,7 +32,7 @@ gives it a descriptive name. They define the folder the dataset is output to on 
  - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 dataset_type = "aggregator"
-dataset_name = "lens_sie__source_sersic__0"
+dataset_name = "mass_sie__source_sersic__0"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
@@ -48,7 +48,7 @@ grid = al.GridIterate.uniform(
 psf = al.Kernel.from_gaussian(shape_2d=(11, 11), sigma=0.1, pixel_scales=pixel_scales)
 
 """
-To simulate the imaging dataset we first create a simulator, which defines the expoosure time, background sky,
+To simulate the _Imaging_ dataset we first create a simulator, which defines the expoosure time, background sky,
 noise levels and psf of the dataset that is simulated.
 """
 simulator = al.SimulatorImaging(
@@ -67,7 +67,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=(0.0, 0.25),
         intensity=0.3,
@@ -76,7 +76,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Imaging_ dataset."""
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 aplt.Tracer.image(tracer=tracer, grid=grid)
@@ -107,7 +107,7 @@ tracer.save(file_path=dataset_path, filename="true_tracer")
 """EXAMPLE LENS SYSTEM 2"""
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -115,7 +115,7 @@ gives it a descriptive name. They define the folder the dataset is output to on 
  - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 dataset_type = "aggregator"
-dataset_name = "lens_sie__source_sersic__1"
+dataset_name = "mass_sie__source_sersic__1"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
@@ -142,7 +142,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.2, 0.2),
         elliptical_comps=(0.0, 0.15),
         intensity=0.3,
@@ -151,7 +151,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Imaging_ dataset."""
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 aplt.Tracer.image(tracer=tracer, grid=grid)
@@ -182,7 +182,7 @@ tracer.save(file_path=dataset_path, filename="true_tracer")
 """EXAMPLE LENS SYSTEM 3"""
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, imaging data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -191,7 +191,7 @@ gives it a descriptive name. They define the folder the dataset is output to on 
 """
 
 dataset_type = "aggregator"
-dataset_name = "lens_sie__source_sersic__2"
+dataset_name = "mass_sie__source_sersic__2"
 
 """Create the path where the dataset is output."""
 dataset_path = af.util.create_path(
@@ -218,7 +218,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    light=al.lp.EllipticalSersic(
+    sersic=al.lp.EllipticalSersic(
         centre=(0.3, 0.3),
         elliptical_comps=(0.0, 0.222222),
         intensity=0.3,
@@ -227,7 +227,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated imaging dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Imaging_ dataset."""
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 aplt.Tracer.image(tracer=tracer, grid=grid)

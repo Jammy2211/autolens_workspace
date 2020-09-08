@@ -8,13 +8,13 @@ __Aggregator: Pipeline Runner__
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
 
-# We will fit each lens with an power-law _MassProfile_ and each source using a pixelized inversion. The fit will use 3
+# we fit each lens with an _EllipticalPowerLaw_ _MassProfile_ and each source using a pixelized _Inversion_. The fit will use 3
 # advanced pipelines which are added together to perform a 6 phase analysis, which will allow us to illustrate how the
 # results of different pipelines and phases can be loaded using the aggregator.
 
 # This script follows the scripts described in 'autolens_workspace/runners/advanced/' and the pipelines:
 
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/lens_sie__source_sersic.py'
+# 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py'
 # 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'
 # 'autolens_workspace/pipelines/advanced/no_lens_light/mass/sie/lens_sie__source_inversion.py'
 
@@ -24,7 +24,7 @@ __Aggregator: Pipeline Runner__
 """ AUTOFIT + CONFIG SETUP """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -46,19 +46,19 @@ import autolens as al
 pixel_scales = 0.1
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     # Create the path where the dataset will be loaded from, which in this case is
-    # '/autolens_workspace/aggregator/dataset/imaging/lens_sie__source_sersic/'
+    # '/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic'
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["aggregator", "dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -74,32 +74,34 @@ for dataset_name in [
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.SLaMHyper(
+    hyper = al.SetupHyper(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SLaMSource(
+    source = al.SLaMPipelineSource(
         pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
     )
 
-    mass = al.slam.SLaMMass(no_shear=False)
+    mass = al.SLaMPipelineMass(no_shear=False)
 
-    setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+    setup = al.SLaM(setup_hyper=hyper, source=source, pipeline_mass=mass)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
     ### SOURCE ###
 
-    from pipelines.advanced.no_lens_light.source.parametric import (
-        lens_sie__source_sersic,
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.parametric import (
+        mass_sie__source_sersic,
     )
-    from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
         lens_sie__source_inversion,
     )
 
-    from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.mass.sie import (
+        lens_sie__source,
+    )
 
-    pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
+    pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
@@ -123,21 +125,21 @@ for dataset_name in [
     pipeline.run(dataset=imaging, mask=mask)
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -153,32 +155,34 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.SLaMHyper(
+    hyper = al.SetupHyper(
         hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SLaMSource(
+    source = al.SLaMPipelineSource(
         pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
     )
 
-    mass = al.slam.SLaMMass(no_shear=False)
+    mass = al.SLaMPipelineMass(no_shear=False)
 
-    setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+    setup = al.SLaM(setup_hyper=hyper, source=source, pipeline_mass=mass)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
     ### SOURCE ###
 
-    from pipelines.advanced.no_lens_light.source.parametric import (
-        lens_sie__source_sersic,
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.parametric import (
+        mass_sie__source_sersic,
     )
-    from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
         lens_sie__source_inversion,
     )
 
-    from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.mass.sie import (
+        lens_sie__source,
+    )
 
-    pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
+    pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
@@ -202,21 +206,21 @@ Create the path where the dataset will be loaded from, which in this case is
     pipeline.run(dataset=imaging, mask=mask)
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -232,34 +236,36 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.SLaMHyper(
+    hyper = al.SetupHyper(
         hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SLaMSource(
+    source = al.SLaMPipelineSource(
         pixelization=al.pix.VoronoiMagnification,
         regularization=al.reg.Constant,
         no_shear=True,
     )
 
-    mass = al.slam.SLaMMass(no_shear=True)
+    mass = al.SLaMPipelineMass(no_shear=True)
 
-    setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+    setup = al.SLaM(setup_hyper=hyper, source=source, pipeline_mass=mass)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
     ### SOURCE ###
 
-    from pipelines.advanced.no_lens_light.source.parametric import (
-        lens_sie__source_sersic,
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.parametric import (
+        mass_sie__source_sersic,
     )
-    from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
         lens_sie__source_inversion,
     )
 
-    from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.mass.sie import (
+        lens_sie__source,
+    )
 
-    pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
+    pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 
@@ -283,21 +289,21 @@ Create the path where the dataset will be loaded from, which in this case is
     pipeline.run(dataset=imaging, mask=mask)
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
-    imaging = al.Imaging.from_fits(
+    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -313,34 +319,36 @@ Create the path where the dataset will be loaded from, which in this case is
 
     # Advanced pipelines still use general setup, which customize the hyper-mode features and inclusion of a shear.
 
-    hyper = al.slam.SLaMHyper(
+    hyper = al.SetupHyper(
         hyper_galaxies=True, hyper_image_sky=False, hyper_background_noise=False
     )
 
-    source = al.slam.SLaMSource(
+    source = al.SLaMPipelineSource(
         pixelization=al.pix.VoronoiMagnification,
         regularization=al.reg.Constant,
         no_shear=True,
     )
 
-    mass = al.slam.SLaMMass(no_shear=True)
+    mass = al.SLaMPipelineMass(no_shear=True)
 
-    setup = al.slam.SLaM(hyper=hyper, source=source, mass=mass)
+    setup = al.SLaM(setup_hyper=hyper, source=source, pipeline_mass=mass)
 
     # We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
     ### SOURCE ###
 
-    from pipelines.advanced.no_lens_light.source.parametric import (
-        lens_sie__source_sersic,
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.parametric import (
+        mass_sie__source_sersic,
     )
-    from pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
+    from autolens_workspace.pipelines.advanced.no_lens_light.source.inversion.from_parametric import (
         lens_sie__source_inversion,
     )
 
-    from pipelines.advanced.no_lens_light.mass.sie import lens_sie__source
+    from autolens_workspace.pipelines.advanced.no_lens_light.mass.sie import (
+        lens_sie__source,
+    )
 
-    pipeline_source__parametric = lens_sie__source_sersic.make_pipeline(
+    pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup, folders=["aggregator", "advanced", dataset_name]
     )
 

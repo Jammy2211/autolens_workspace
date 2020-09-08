@@ -27,21 +27,21 @@ rm __init__.ipynb
 find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
 
 echo "Moving new notebooks to PyAutolens/howtolens folder."
-rm -rf $PYAUTOLENS_PATH/howtolens/chapter_5_hyper_mode
-cp -r $HOWTOLENS_PATH/config $PYAUTOLENS_PATH/howtolens
-cp -r $HOWTOLENS_PATH/dataset $PYAUTOLENS_PATH/howtolens
-rm $PYAUTOLENS_PATH/howtolens/dataset/chapter_*/*.fits
-cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
-cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
-cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
+# rm -rf $PYAUTOLENS_PATH/howtolens/chapter_5_hyper_mode
+#cp -r $HOWTOLENS_PATH/config $PYAUTOLENS_PATH/howtolens
+# c p -r $HOWTOLENS_PATH/dataset $PYAUTOLENS_PATH/howtolens
+# rm $PYAUTOLENS_PATH/howtolens/dataset/chapter_*/*.fits
+# cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
+# cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
+# cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 
 echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
-find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from /from /g' {} +
+# find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from /from /g' {} +
 
 echo "Adding new __PyAutoLens__/howtolens files to github."
-cd $PYAUTOLENS_PATH
-git add $PYAUTOLENS_PATH/howtolens/dataset/chapter_5
-git add -f $PYAUTOLENS_PATH/howtolens/chapter_5_hyper_mode
+# cd $PYAUTOLENS_PATH
+# git add $PYAUTOLENS_PATH/howtolens/dataset/chapter_5
+# git add -f $PYAUTOLENS_PATH/howtolens/chapter_5_hyper_mode
 
 echo "returning to generate folder."
 cd $HOWTOLENS_PATH/generate

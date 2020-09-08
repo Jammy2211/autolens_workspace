@@ -21,7 +21,7 @@ from autoconf import conf
 import autofit as af
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -43,9 +43,9 @@ import autolens as al
 pixel_scales = 0.1
 
 for dataset_name in [
-    "lens_sie__source_sersic__0",
-    "lens_sie__source_sersic__1",
-    "lens_sie__source_sersic__2",
+    "mass_sie__source_sersic__0",
+    "mass_sie__source_sersic__1",
+    "mass_sie__source_sersic__2",
 ]:
 
     """Set up the config and output paths."""
@@ -61,19 +61,19 @@ for dataset_name in [
     and source good examples of information you may wish to pass.
     """
     info = {
-        "redshift_lens": 0.5,
-        "redshift_source": 1.0,
+        "setup.redshift_lens": 0.5,
+        "setup.redshift_source": 1.0,
         "velocity_dispersion": 250000,
         "stellar mass": 1e11,
     }
 
     """
-    Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files.
+    Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files.
     
     This _Imaging_ object will be available via the aggregator. Note also that we give the dataset a 'name' via the
     command 'name=dataset_name'. We'll use this name in the aggregator tutorials.
     """
-    imaging = al.Imaging.from_fits(
+    _Imaging_ = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -111,7 +111,7 @@ for dataset_name in [
         folders=["aggregator", dataset_name],
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
-            source=al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
         ),
         settings=settings,
         search=af.DynestyStatic(n_live_points=50),

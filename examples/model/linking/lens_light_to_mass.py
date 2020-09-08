@@ -34,7 +34,7 @@ There are a number of benefits to using phase linking to model the lens's light 
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -69,7 +69,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "with_lens_light"
-dataset_name = "lens_bulge_disk_sie__source_sersic"
+dataset_name = "light_bulge_disk__mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -92,10 +92,10 @@ __Model__
 We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - The lens galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ and _EllipticalExponential_ whose centres
+ - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_ and _EllipticalExponential_ whose centres
       are aligned (11 parameters).
- - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
- - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_ (7 parameters).
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
+ - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_ (7 parameters).
 
 We are fitting on the lens's light in phase 1 and only its mass and the source in phase 2, giving us non-linear
 parameter spaces of N=13 and N=12 respectively.
@@ -147,7 +147,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_bulge_disk_sie__source_sersic/phase_1'.
+ '/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_1'.
 """
 
 # %%
@@ -193,7 +193,7 @@ lens = al.GalaxyModel(
     disk=phase1_result.instance.galaxies.lens.disk,
     mass=mass,
 )
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -214,7 +214,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/lens_bulge_disk_sie__source_sersic/phase_2'.
+ '/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_2'.
 
 Note how the 'lens' passed to this phase was set up above using the results of phase 1!
 """
@@ -264,7 +264,7 @@ __Pipelines__
 The next level of PyAutoLens uses _Pipelines_, which link together multiple phases to perform very complex lens 
 modeling in robust and efficient ways. Pipelines which fit the lens's light, for example:
 
- 'autolens_wokspace/pipelines/with_lens_light/lens_sersic_sie__source_sersic.py'
+ 'autolens_wokspace/pipelines/with_lens_light/light_sersic__mass_sie__source_sersic.py'
 
 Exploit our ability to model separately the lens's light and its mass / the source to perform model-fits in non-linear
 parameter spaces of reduced complex, to ensure more efficient and robust model-fits!

@@ -4,7 +4,7 @@ Tutorial 3: Adaptive Regularization
 ===================================
 
 In tutorial 1, we considered why our _Constant_ _Regularization_scheme was sub-optimal. Diffferent regions of the
-source demand different levels of regularization, motivating a _Regularization_scheme which adapts to the reconstructed
+source demand different levels of _Regularization_, motivating a _Regularization_scheme which adapts to the reconstructed
 source's surface brightness.
 
 This raises the same question as before, how do we adapt our _Regularization_scheme to the source before we've
@@ -32,10 +32,10 @@ We'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-from howtolens.simulators.chapter_5 import lens_sie__source_sersic
+from autolens_workspace.howtolens.simulators.chapter_5 import mass_sie__source_sersic
 
 dataset_type = "chapter_5"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -168,7 +168,7 @@ aplt.FitImaging.subplot_fit_imaging(
 
 # %%
 """
-__How does adaptive regularization work?__
+__How does adaptive _Regularization_ work?__
 
 For every source-pixel, we have a mapping between that pixel and a set of pixels in the hyper-galaxy-image. Therefore, 
 for every source-pixel, if we sum the values of all hyper-galaxy-image pixels that map to it we get an estimate of 

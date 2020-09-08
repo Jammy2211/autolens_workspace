@@ -11,7 +11,7 @@ Intermediate runners and pipelines introduce PyAutoLens's 'hyper-mode'. Hyper-mo
 of previous phases in a pipeline to later phases, and then uses this model image (called the 'hyper image') to:
 
 - Adapt a pixelization's grid to the surface-brightness of the source galaxy.
-- Adapt the regularization scheme to the surface-brightness of the source galaxy.
+- Adapt the _Regularization_ scheme to the surface-brightness of the source galaxy.
 - Scale the noise in regions of the image where the model give a poor fit (in both the lens and source galaxies).
 - Include uncertanties in the data-reduction into the model, such as the background sky level.
 
@@ -20,7 +20,7 @@ __THIS RUNNER __
 describes how to set up and run a pipeline which uses hyper-mode. A full description of hyper-model is
 given in chapter 5 of the HowToLens lecture series.
 
-Using a pipeline composed of three phases we will fit an SIE mass model and source using a pixelized inversion.
+Using a pipeline composed of three phases we fit an  _EllipticalIsothermal_ mass model and source using a pixelized _Inversion_.
 
 We'll use the example pipeline:
 'autolens_workspace/pipelines/intermediate/no_lens_light/lens_sie__source_inversion.py'.
@@ -39,7 +39,7 @@ import autofit as af
 """Setup the path to the autolens_workspace, using a relative directory name."""
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -67,22 +67,20 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
 # %%
 """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/lens_sie__source_sersic/'
+'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_label, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
-"""Using the dataset path, load the data (image, noise-map, PSF) as an imaging object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
     psf_path=f"{dataset_path}/psf.fits",
@@ -123,8 +121,8 @@ hyper-mode, specifically:
 - If the level of background noise is modeled throughout the pipeline (default True)
 - If the background sky is modeled throughout the pipeline (default False)
 
-We are now able to use the *VoronoiBrightnessImage* pixelization and *AdaptiveBrightness* regularization scheme, which 
-in hyper-mode to adapt the pixelization and regularizatioon to the morphology of the lensed source galaxy. 
+We are now able to use the *VoronoiBrightnessImage* _Pixelization_ and *AdaptiveBrightness* _Regularization_ scheme, which 
+in hyper-mode to adapt the _Pixelization_ and regularizatioon to the morphology of the lensed source galaxy. 
 """
 
 # %%
@@ -145,7 +143,9 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 """
 
 # %%
-from advanced.hyper.pipelines.no_lens_light import lens_sie__source_inversion
+from autolens_workspace.advanced.hyper.pipelines.no_lens_light import (
+    lens_sie__source_inversion,
+)
 
 pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 

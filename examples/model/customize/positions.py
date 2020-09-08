@@ -19,16 +19,16 @@ This provides two benefits:
 
 # %%
 """
-In this example script, we will fit imaging of a strong lens system where:
+In this example script, we fit _Imaging_ of a strong lens system where:
 
  - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is fitted with an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is fitted with an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
+ - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
 
 """
 
 # %%
-"""Setup the path to the autolens workspace, using the project pyprojroot which determines it automatically."""
+"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
 from pyprojroot import here
@@ -74,7 +74,7 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
-dataset_name = "lens_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
@@ -135,13 +135,13 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, light=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 # %%
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseImaging*, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
  - A positions_threshold of 0.5, meaning that the four (y,x) coordinates specified by our positions must trace
@@ -190,7 +190,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/beginner/lens_sie__source_sersic/phase__positions'.
+ '/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__positions'.
 """
 
 # %%
@@ -208,7 +208,7 @@ We can now begin the fit by passing the dataset and mask to the phase, which wil
 the model to the data. The dataset contains the positions, which is how they are input in the model-fit.
 
 The fit outputs visualization on-the-fly, so checkout the path 
-'/path/to/autolens_workspace/output/examples/phase__lens_sie__source_sersic' to see how your fit is doing!
+'/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic' to see how your fit is doing!
 """
 
 # %%
