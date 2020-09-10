@@ -18,7 +18,7 @@ where in the final phase of the pipeline:
  - The lens galaxy's dark matter _MassProfile_ is modeled as a SphericalNFW.
  - The source galaxy's _LightProfile_ is modeled using an _Inversion_.
 
-We'll use the SLaM pipelines:
+This runner uses the SLaM pipelines:
 
  'slam/with_lens_light/source__light_bulge_disk__mass_sie__source_parametric.py'.
  'slam/with_lens_light/source___light__mass_sie__source_inversion.py'.

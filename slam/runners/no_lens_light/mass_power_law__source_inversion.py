@@ -55,7 +55,7 @@ pixel_scales = 0.1
 # %%
 """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/light_bulge_disk__mass_mlr_nfw__source_sersic'
+'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
 """
 
 # %%

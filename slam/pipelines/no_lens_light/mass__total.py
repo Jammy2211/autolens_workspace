@@ -68,7 +68,7 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric(index=0)
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_power_law__source",
+        phase_name="phase_1__mass_total__source",
         folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=slam.redshift_lens, mass=mass, shear=shear),

@@ -18,6 +18,7 @@ where in the final phase of the pipeline:
 This runner uses the SLaM pipelines:
 
  'slam/no_lens_light/source__mass_sie__source_parametric.py'.
+ 'slam/no_lens_light/source__mass_sie__source_inversion.py'.
  'slam/no_lens_light/mass__mass_power_law__source.py'.
  'slam/no_lens_light/subhalo__mass__subhalo_nfw__source.py'.
 
@@ -52,8 +53,8 @@ import autolens.plot as aplt
 
 dataset_type = "imaging"
 dataset_label = "subhalo"
-dataset_name = "mass_sie__subhalo_nfw__source_sersic"
-pixel_scales = 0.05
+dataset_name = "mass_sie__subhalo_nfw__source_sersic__low_res"
+pixel_scales = 0.2
 
 # %%
 """
@@ -166,6 +167,34 @@ pipeline_source_parametric = al.SLaMPipelineSourceParametric(
 
 # %%
 """
+__SLaMPipelineSourceInversion__
+
+The Source inversion pipeline aims to initialize a robust model for the source galaxy using an _Inversion_.
+
+_SLaMPipelineSourceInversion_ determines the _Inversion_ used by the inversion source pipeline. A full description of all 
+options can be found ? and ?.
+
+By default, this again assumes _EllipticalIsothermal_ profile for the lens galaxy's mass model.
+
+For this runner the _SLaMPipelineSourceInversion_ customizes:
+
+ - The _Pixelization_ used by the _Inversion_ of this pipeline.
+ - The _Regularization_ scheme used by of this pipeline.
+
+The _SLaMPipelineSourceInversion_ use's the _SetupMass_ of the _SLaMPipelineSourceParametric_.
+
+The _SLaMPipelineSourceInversion_ determines the source model used in the _SLaMPipelineLight_ and _SLaMPipelineMass_ pipelines, which in this
+example therefore both use an _Inversion_.
+"""
+
+setup_source = al.SetupSourceInversion(
+    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+)
+
+pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_source)
+
+# %%
+"""
 __SLaMPipelineMassTotal__
 
 The _SLaMPipelineMassTotal_ pipeline fits the model for the lens galaxy's total mass distribution. 
@@ -220,6 +249,7 @@ slam = al.SLaM(
     folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
+    pipeline_source_inversion=pipeline_source_inversion,
     pipeline_mass=pipeline_mass,
     setup_subhalo=setup_subhalo,
 )
@@ -235,13 +265,15 @@ We then add the pipelines together and run this summed pipeline, which runs each
 
 # %%
 from autolens_workspace.slam.pipelines.no_lens_light import source__sersic
+from autolens_workspace.slam.pipelines.no_lens_light import source__inversion
 from autolens_workspace.slam.pipelines.no_lens_light import mass__total
 from autolens_workspace.slam.pipelines.no_lens_light import subhalo
 
 source__sersic = source__sersic.make_pipeline(slam=slam, settings=settings)
+source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
 mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 subhalo = subhalo.make_pipeline(slam=slam, settings=settings)
 
-pipeline = source__sersic + mass__total + subhalo
+pipeline = source__sersic + source__inversion + mass__total + subhalo
 
 pipeline.run(dataset=imaging, mask=mask)
