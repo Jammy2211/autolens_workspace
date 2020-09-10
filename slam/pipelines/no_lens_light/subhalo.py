@@ -160,7 +160,7 @@ def make_pipeline(slam, settings):
 
     source = slam.source_for_subhalo_pipeline()
 
-    phase_lens_plane = GridPhase(
+    phase2_lens_plane = GridPhase(
         phase_name="phase_2__subhalo_search__lens_plane",
         folders=folders,
         galaxies=dict(lens=lens, subhalo=subhalo, source=source),
@@ -209,7 +209,7 @@ def make_pipeline(slam, settings):
           _LightProfile_ they are varied (this is customized using source_is_model).
     """
 
-    phase_foreground_plane = GridPhase(
+    phase2_foreground_plane = GridPhase(
         phase_name="phase_2__subhalo_search__foreground_plane",
         folders=folders,
         galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
@@ -236,7 +236,7 @@ def make_pipeline(slam, settings):
         lower_limit=subhalo_z_above.redshift, upper_limit=slam.redshift_source
     )
 
-    phase_background_plane = GridPhase(
+    phase2_background_plane = GridPhase(
         phase_name="phase_2__subhalo_search__background_plane",
         folders=folders,
         galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
@@ -278,7 +278,7 @@ def make_pipeline(slam, settings):
     return al.PipelineDataset(
         pipeline_name,
         phase1,
-        phase_lens_plane,
-        phase_background_plane,
-        phase_foreground_plane,
+        phase2_lens_plane,
+        phase2_foreground_plane,
+        phase2_background_plane,
     )
