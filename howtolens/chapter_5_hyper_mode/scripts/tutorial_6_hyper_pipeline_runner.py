@@ -11,9 +11,8 @@ You can find many more example pipelines in the folder 'autolens_workspace/advan
 # %%
 from autoconf import conf
 import autofit as af
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # %%

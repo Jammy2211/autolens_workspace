@@ -12,12 +12,11 @@ import numpy as np
 # one another, speeding up the analysis and removing unwanted solutions with too much / too little mass.
 
 # %%
-"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
+"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,

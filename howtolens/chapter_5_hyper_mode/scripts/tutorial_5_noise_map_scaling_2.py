@@ -18,9 +18,8 @@ fit the lens galaxy's light. Lets take a look.
 
 import autolens as al
 import autolens.plot as aplt
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # %%

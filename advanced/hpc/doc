@@ -5,7 +5,7 @@ the COSMA super computer we use at Durham, which uses the SLURM batch proceessin
 this guide may there not provide a perfect tutorial for setting up PyAutoLens, however the majority of tasks required
 for setting up PyAutoLens on HPC are general, so it should help out either way!
 
-"""PYAUTOLENS VIRTUAL ENVIROMENT"""
+"""PYAUTOLENS VIRTUAL Environment"""
 
 Before using the Cosma pipeline runner, we need to setup a workspace on Cosma on your home directory
 ('/cosma/home/durham/cosma_username'). Your home directory has a limited amount of hard-disk space, so it
@@ -21,7 +21,7 @@ To setup your cosma PyAutoLens workspace, the following commands should work fro
 
 2) python3 -m venv PyAutoLens
 
-   This makes the a 'PyAutoLens' virtual enviroment and directory on your cosma home, where we'll install PyAutoLens and
+   This makes the a 'PyAutoLens' virtual environment and directory on your cosma home, where we'll install PyAutoLens and
    place your workspace. You MUST name your workspace PyAutoLens to use this setup file without changing any commands.
 
 3) mkdir autolens_workspace
@@ -31,7 +31,7 @@ To setup your cosma PyAutoLens workspace, the following commands should work fro
 
 4) emacs -nw activate.sh
 
-   This opens an 'activate.sh' script, which we'll use every time we log into cosma to activate the virtual enviroment.
+   This opens an 'activate.sh' script, which we'll use every time we log into cosma to activate the virtual environment.
 
 5) Copy and paste the following commands into the activate.sh script, which should be open in EMACS. Make sure to
    change the "cosma_username" entries to your cosma username!
@@ -57,7 +57,7 @@ To setup your cosma PyAutoLens workspace, the following commands should work fro
 
    pip install autolens
 
-Whenever you log into Cosma, you will need to 'activate' your PyAutoLens enviroment by running command 6) above. If you
+Whenever you log into Cosma, you will need to 'activate' your PyAutoLens environment by running command 6) above. If you
 want, you can make it so Cosma does this automatically whenever you log in. To make this your default setup (e.g. if
 you're only going to be using PyAutoLens on Cosma) you can add the activate line to your .bashrc file:
 
@@ -73,7 +73,7 @@ And save and exit ("CTRL + SHIFT + X" -> "CTRL + SHIFT + C" and push 'y' for yes
 
 """PYAUTOLENS WORKSPACE"""
 
-Now we've set up our PyAutoLens virtual enviroment, we want to setup our workspace on Cosma, which will behave similar
+Now we've set up our PyAutoLens virtual environment, we want to setup our workspace on Cosma, which will behave similar
 to the workspace you're used to using on your laptop. First, make sure you are in the autolens_workspace directory.
 
     cd $HOME/autolens_workspacee

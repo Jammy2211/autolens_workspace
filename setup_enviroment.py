@@ -36,7 +36,7 @@ else:
     workspace_path = os.environ["WORKSPACE"]
 
     print(
-        "PyAutoLens has detected an existing WORKSPACE enviroment variable at the following location on you computer:\n"
+        "PyAutoLens has detected an existing WORKSPACE environment variable at the following location on you computer:\n"
     )
     print(f"WORKSPACE PATH: {workspace_path}\n")
     input(
@@ -99,9 +99,9 @@ print(
     "export PYTHONPATH=$PYTHONPATH:/path/to\n\n"
     ""
     "Where '/path/to' should include the path up to the workspace location\n\n"
-    "Alternatively, you can run the 'setup_enviroment.py' script in your autolens_workspace.\n\n"
+    "Alternatively, you can run the 'setup_environment.py' script in your autolens_workspace.\n\n"
     "All example scripts will print the WORKSPACE environment variable when they are run. If this raises an error it "
-    "means you need to reset your enviroment variables.\n\n"
+    "means you need to reset your environment variables.\n\n"
     "You can set environment variables permanently by adding the following commands to your .bashrc file:\n\n"
     ""
     "export WORKSPACE=/path/to/autolens_workspace/\n"

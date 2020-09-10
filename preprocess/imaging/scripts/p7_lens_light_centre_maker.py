@@ -32,9 +32,8 @@ Setup the path to the autolens_workspace, using the correct path name below.
 """
 
 # %%
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # %%

@@ -39,12 +39,11 @@ import autofit as af
 """Setup the path to the autolens_workspace, using a relative directory name."""
 
 # %%
-"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
+"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # %%

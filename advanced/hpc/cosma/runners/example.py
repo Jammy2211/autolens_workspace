@@ -75,7 +75,7 @@ The following options are worth noting:
  '#SBATCH --mail-type=END' - If you input your email, when you'll get an email about the job (END means once finished).
  '#SBATCH --mail-user=fill@me.co.uk' - The email address COSMA sends the email too.
 
-The following line activates the PyAutoLens virtual enviroment we set up on cosma for this run:
+The following line activates the PyAutoLens virtual environment we set up on cosma for this run:
 
  'source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh'
 

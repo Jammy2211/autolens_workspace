@@ -21,14 +21,13 @@ script again.
 """
 
 # %%
-"""Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
+"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-"""Use the WORKSPACE enviroment variable to determine the workspace path."""
+"""Use the WORKSPACE environment variable to determine the workspace path."""
 
 # %%
 import os
-
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

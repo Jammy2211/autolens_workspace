@@ -1,4 +1,4 @@
-PyAuto # Loads Virtual Enviroment
+PyAuto # Loads Virtual Environment
 
 PYAUTO_PATH="/home/jammy/PycharmProjects/PyAuto"
 WORKSPACE_PATH=$PYAUTO_PATH"/autolens_workspace"

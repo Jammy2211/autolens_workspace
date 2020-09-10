@@ -1,1 +1,1 @@
-import setup_enviroment
+import setup_environment

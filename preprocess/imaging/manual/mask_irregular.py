@@ -41,9 +41,8 @@ contains example data we'll use in this tutorial.
 """
 
 # %%
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 dataset_path = f"{workspace_path}/preprocess/imaging/data_raw/imaging"

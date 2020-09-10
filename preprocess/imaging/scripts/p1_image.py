@@ -32,9 +32,8 @@ contains example data we'll use in this tutorial.
 """
 
 # %%
-from pyprojroot import here
-
-workspace_path = str(here())
+import os
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 dataset_path = af.util.create_path(

@@ -20,11 +20,10 @@ In this example script, we fit _Imaging_ of a strong lens system where:
 """
 
 # %%
-"""Use the WORKSPACE enviroment variable to determine the workspace path."""
+"""Use the WORKSPACE environment variable to determine the workspace path."""
 
 # %%
 import os
-
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
