@@ -111,7 +111,7 @@ def make_pipeline(slam, settings):
     lens.dark.redshift_object = slam.redshift_lens
     lens.dark.slam.redshift_source = slam.redshift_source
 
-    source = slam.source_from_source_pipeline_for_mass_pipeline()
+    source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_light_mlr_nfw__source__fixed_lens_light",

@@ -11,7 +11,7 @@ Phase 1:
 
     Fit the lens mass model and source _LightProfile_.
     
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: EllipticalSersic
     Previous Pipelines: None
     Prior Passing: None
@@ -42,7 +42,7 @@ def make_pipeline(slam, settings):
     Phase 1: Fit the lens's _MassProfile_'s and source galaxy.
     """
 
-    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    mass = slam.pipeline_source_parametric.setup_mass.mass_profile
 
     """SLaM: Align the mass model centre with the input slam value, if input."""
 
@@ -66,7 +66,7 @@ def make_pipeline(slam, settings):
             ),
         ),
         settings=settings,
-        search=af.DynestyStatic(n_live_points=100),
+        search=af.DynestyStatic(n_live_points=200, walks=10),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)

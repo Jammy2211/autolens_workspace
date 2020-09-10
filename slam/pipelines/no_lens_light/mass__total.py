@@ -47,8 +47,10 @@ def make_pipeline(slam, settings):
     """
     Phase 1: Fit the lens's _MassProfile_'s and source, where we:
 
-        1) Use the source galaxy of the 'source' pipeline.
-        2) Set priors on the lens galaxy _MassProfile_'s using the EllipticalIsothermal and ExternalShear of previous pipelines.
+        1) Set priors on the lens galaxy _MassProfile_'s using the _EllipticalIsothermal_ and _ExternalShear_ 
+           of previous pipelines.
+        2) Use the source galaxy model of the 'source' pipeline.
+        3) Fit this source as a model if it is parametric and as an instance if it is an _Inversion_.
     """
 
     """Setup the _EllipticalPowerLaw_ _MassProfile_ and initialize its priors from the _EllipticalIsothermal_."""
@@ -63,7 +65,7 @@ def make_pipeline(slam, settings):
     SLaM: Setup the source model, which uses a variable parametric profile or fixed _Inversion_ model.
     """
 
-    source = slam.source_from_source_pipeline_for_mass_pipeline(index=0)
+    source = slam.source_from_previous_pipeline_model_if_parametric(index=0)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",

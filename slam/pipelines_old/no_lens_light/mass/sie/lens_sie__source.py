@@ -57,7 +57,7 @@ def make_pipeline(slam, settings):
     SLaM: Setup the source model, which uses a variable parametric profile or fixed _Inversion_ model.
     """
 
-    source = slam.source_from_source_pipeline_for_mass_pipeline()
+    source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__mass_sie__source",

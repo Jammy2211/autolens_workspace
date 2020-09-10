@@ -127,7 +127,7 @@ from autolens_workspace.howtolens.chapter_4_inversions import tutorial_8_pipelin
 pipeline_inversion = tutorial_8_pipeline.make_pipeline(setup=setup, settings=settings)
 
 # Uncomment to run.
-pipeline_inversion.run(dataset=imaging, mask=mask)
+# pipeline_inversion.run(dataset=imaging, mask=mask)
 
 # %%
 """

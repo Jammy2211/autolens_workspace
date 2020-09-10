@@ -66,7 +66,7 @@ def make_pipeline(slam, settings):
     lens = slam.lens_from_light_pipeline_for_mass_pipeline(
         redshift_lens=slam.redshift_lens, mass=mass, shear=shear
     )
-    source = slam.source_from_source_pipeline_for_mass_pipeline()
+    source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__lens_power_law__source",

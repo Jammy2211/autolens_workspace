@@ -192,10 +192,11 @@ simplest models that provide a good fit to the majority of strong lenses.
 
 For this runner the _SLaMPipelineSourceParametric_ customizes:
 
+ - The _MassProfile_ fitted by the pipeline (and the following _SLaMPipelineSourceInversion_).
  - If there is an _ExternalShear_ in the mass model or not.
 """
 
-setup_mass = al.SetupMassTotal(no_shear=False)
+setup_mass = al.SetupMassTotal(mass_profile=al.mp.EllipticalIsothermal, no_shear=False)
 setup_source = al.SetupSourceSersic()
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
@@ -251,6 +252,8 @@ For this runner the _SLaMPipelineLight_ customizes:
  - The alignment of the centre and elliptical components of the bulge and disk.
  - If the disk is modeled as an _EllipticalExponential_ or _EllipticalSersic_.
 
+The _SLaMPipelineLight_ uses the mass model fitted in the previous _SLaMPipelineSource_'s.
+
 The _SLaMPipelineLight_ and imported light pipelines determine the lens light model used in _Mass_ pipelines.
 """
 
@@ -260,9 +263,8 @@ setup_light = al.SetupLightBulgeDisk(
     align_bulge_disk_elliptical_comps=False,
     disk_as_sersic=False,
 )
-setup_mass = al.SetupMassTotal(no_shear=False)
 
-pipeline_light = al.SLaMPipelineLight(setup_mass=setup_mass, setup_light=setup_light)
+pipeline_light = al.SLaMPipelineLight(setup_light=setup_light)
 
 # %%
 """
@@ -297,7 +299,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    folders=["slam", dataset_type],
+    folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,
@@ -310,48 +312,20 @@ slam = al.SLaM(
 __PIPELINE CREATION__
 
 We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
+
+We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
 """
 
 # %%
-from autolens_workspace.slam.pipelines.with_lens_light.source.parametric import (
-    light_bulge_disk__mass_sie__source_parametric,
-)
-from autolens_workspace.slam.pipelines.with_lens_light.source.inversion.from_parametric import (
-    lens_light_sie__source_inversion,
-)
+from autolens_workspace.slam.pipelines.no_lens_light import source__sersic
+from autolens_workspace.slam.pipelines.no_lens_light import source__inversion
+from autolens_workspace.slam.pipelines.with_lens_light import help
+from autolens_workspace.slam.pipelines.no_lens_light import mass__total
 
-source__parametric = light_bulge_disk__mass_sie__source_parametric.make_pipeline(
-    slam=slam, settings=settings
-)
+source__sersic = source__sersic.make_pipeline(slam=slam, settings=settings)
+source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
+mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 
-source__inversion = lens_light_sie__source_inversion.make_pipeline(
-    slam=slam, settings=settings
-)
-
-from autolens_workspace.slam.pipelines.with_lens_light.light.bulge_disk import (
-    light_bulge_disk_sie__source,
-)
-
-light__bulge_disk = light_bulge_disk_sie__source.make_pipeline(
-    slam=slam, settings=settings
-)
-
-
-from autolens_workspace.slam.pipelines.with_lens_light.mass.light_dark import (
-    lens_light_mlr_nfw__source,
-)
-
-mass__mlr_nfw = lens_light_mlr_nfw__source.make_pipeline(slam=slam, settings=settings)
-
-# %%
-"""
-__PIPELINE COMPOSITION AND RUN__
-
-We now add the pipelines together, meaning they will run back-to-back, passing information from earlier 
-phases to later phases.
-"""
-
-# %%
-pipeline = source__parametric + source__inversion + light__bulge_disk + mass__mlr_nfw
+pipeline = source__sersic + source__inversion + mass__total
 
 pipeline.run(dataset=imaging, mask=mask)

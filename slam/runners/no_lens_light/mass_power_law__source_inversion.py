@@ -170,10 +170,13 @@ modeling has shown they are the simpliest models that provide a good fit to the 
 
 For this runner the _SLaMPipelineSourceParametric_ customizes:
 
+ - The _MassProfile_ fitted by the pipeline (and the following _SLaMPipelineSourceInversion_.
  - If there is an _ExternalShear_ in the mass model or not.
 """
 
-setup_mass = al.SetupMassTotal(no_shear=False, mass_centre=(0.0, 0.0))
+setup_mass = al.SetupMassTotal(
+    mass_profile=al.mp.EllipticalIsothermal, no_shear=False, mass_centre=(0.0, 0.0)
+)
 setup_source = al.SetupSourceSersic()
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
@@ -240,7 +243,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    folders=["slam", dataset_type],
+    folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,
@@ -252,27 +255,18 @@ slam = al.SLaM(
 __PIPELINE CREATION__
 
 We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
+
+We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
 """
 
 # %%
 from autolens_workspace.slam.pipelines.no_lens_light import source__sersic
 from autolens_workspace.slam.pipelines.no_lens_light import source__inversion
-
-source__sersic = source__sersic.make_pipeline(slam=slam, settings=settings)
-
-source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-
 from autolens_workspace.slam.pipelines.no_lens_light import mass__total
 
+source__sersic = source__sersic.make_pipeline(slam=slam, settings=settings)
+source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
 mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
-
-# %%
-"""
-__PIPELINE COMPOSITION AND RUN__
-
-We finally add the pipelines above together, meaning they will run back-to-back, passing information from earlier 
-phases to later phases.
-"""
 
 pipeline = source__sersic + source__inversion + mass__total
 

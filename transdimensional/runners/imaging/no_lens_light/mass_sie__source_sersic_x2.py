@@ -150,7 +150,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 
 # %%
 setup = al.SetupPipeline(
-    folders=["pipelines", dataset_type, dataset_label, dataset_name],
+    folders=["transdimensional", f"{dataset_type}_{dataset_label}", dataset_name],
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,

@@ -65,7 +65,7 @@ def make_pipeline(slam, settings, real_space_mask):
     SLaM: Setup the source model, which uses a variable parametric profile or fixed _Inversion_ model.
     """
 
-    source = slam.source_from_source_pipeline_for_mass_pipeline()
+    source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseInterferometer(
         phase_name="phase_1__lens_power_law__source",

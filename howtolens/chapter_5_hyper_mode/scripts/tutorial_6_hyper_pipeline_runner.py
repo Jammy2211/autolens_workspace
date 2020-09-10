@@ -133,4 +133,4 @@ from autolens_workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_p
 pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
 
 # Uncomment to run.
-pipeline_hyper.run(dataset=imaging, mask=mask)
+# pipeline_hyper.run(dataset=imaging, mask=mask)

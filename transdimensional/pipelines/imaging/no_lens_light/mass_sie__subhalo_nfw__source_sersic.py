@@ -105,8 +105,8 @@ def make_pipeline(setup, settings, grid_size=2, parallel=False):
         @property
         def grid_priors(self):
             return [
-                self.model.galaxies.subhalo.pipeline_mass.centre_0,
-                self.model.galaxies.subhalo.pipeline_mass.centre_1,
+                self.model.galaxies.subhalo.mass.centre_0,
+                self.model.galaxies.subhalo.mass.centre_1,
             ]
 
     subhalo = al.GalaxyModel(
@@ -140,12 +140,10 @@ def make_pipeline(setup, settings, grid_size=2, parallel=False):
     subhalo = al.GalaxyModel(
         redshift=setup.redshift_lens, mass=al.mp.SphericalNFWMCRLudlow
     )
-    subhalo.mass.mass_at_200 = (
-        phase2.result.model.galaxies.subhalo.pipeline_mass.mass_at_200
-    )
+    subhalo.mass.mass_at_200 = phase2.result.model.galaxies.subhalo.mass.mass_at_200
     subhalo.mass.centre = phase2.result.model_absolute(
         a=0.5
-    ).galaxies.subhalo.pipeline_mass.centre
+    ).galaxies.subhalo.mass.centre
     subhalo.mass.redshift_object = setup.redshift_lens
     subhalo.mass.setup.redshift_source = setup.redshift_source
 

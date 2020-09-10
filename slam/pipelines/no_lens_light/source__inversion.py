@@ -16,7 +16,7 @@ Phase 1:
     Fit the inversion's _Pixelization_ and _Regularization_, using a magnification
     based pixel-grid and the previous lens mass model.
 
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Previous Pipelines: source/parametric/mass_sie__source_parametric.py
     Prior Passing: Lens Mass (instance -> previous pipeline).
@@ -26,7 +26,7 @@ Phase 2:
 
     Refine the lens mass model using the source _Inversion_.
     
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Previous Pipelines: source/parametric/mass_sie__source_parametric.py
     Prior Passing: Lens Mass (model -> previous pipeline), source _Inversion_ (instance -> phase 1).
@@ -37,7 +37,7 @@ Phase 3:
     Fit the inversion's _Pixelization_ and _Regularization_, using the input pixelization,
     _Regularization_ and the previous lens mass model.
     
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: slam.source.pixelization + slam.source.regularization
     Previous Pipelines: None
     Prior Passing: Lens Mass (instance -> phase 2).
@@ -47,7 +47,7 @@ Phase 4:
 
     Refine the lens mass model using the _Inversion_.
     
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: slam.source.pixelization + slam.source.regularization
     Previous Pipelines: source/parametric/mass_sie__source_parametric.py
     Prior Passing: Lens Mass (model -> phase 2), source _Inversion_ (instance -> phase 3).
