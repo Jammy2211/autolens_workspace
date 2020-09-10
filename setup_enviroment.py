@@ -9,24 +9,41 @@ print(
     "look for certain files.\n\n"
     ""
     "PyAutoLens uses an environment variable called WORKSPACE to know where the 'autolens_workspace' folder is located. "
-    "This is used to locate config files and output results.\n\n"
+    "This is used to locate config files and output results.\n"
     ""
 )
 
 import os
 
 workspace_path = "{}".format(os.path.dirname(os.path.realpath(__file__)))
-os.environ["WORKSPACE"] = workspace_path
 
-print(
-    "PyAutoLens has detected that your workspace is at the following location on you computer:\n"
-)
-print(f"WORKSPACE PATH: {workspace_path}\n")
-input(
-    "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
-    "WORKSPACE path manually following the instructions at the readthedocs page:\n\n"
-    "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
-)
+if "WORKSPACE" not in os.environ:
+
+    print(
+        "PyAutoLens has detected that your workspace is at the following location on you computer:\n"
+    )
+    print(f"WORKSPACE PATH: {workspace_path}\n")
+    input(
+        "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
+        "WORKSPACE path manually following the instructions at the readthedocs page:\n\n"
+        "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
+    )
+
+    os.environ["WORKSPACE"] = workspace_path
+
+else:
+
+    workspace_path = os.environ["WORKSPACE"]
+
+    print(
+        "PyAutoLens has detected an existing WORKSPACE enviroment variable at the following location on you computer:\n"
+    )
+    print(f"WORKSPACE PATH: {workspace_path}\n")
+    input(
+        "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
+        "WORKSPACE path manually following the instructions at the readthedocs page:\n\n"
+        "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
+    )
 
 print(
     ""
@@ -43,7 +60,7 @@ print(
     ""
     "We therefore need to add the path to the autolens_workspace to your PYTHONPATH.\n\n"
     "NOTE: The PYTHONPATH must include all folders UP TO the 'autolens_workspace' folder, but not the "
-    "'autolens_workspace' folder itself!\n\n"
+    "'autolens_workspace' folder itself!\n"
 )
 
 pythonpath_path = workspace_path.rsplit("/", 1)[0]
@@ -87,7 +104,7 @@ print(
     "means you need to reset your enviroment variables.\n\n"
     "You can set environment variables permanently by adding the following commands to your .bashrc file:\n\n"
     ""
-    "export WORKSPACE=/path/to/autolens_workspace/"
+    "export WORKSPACE=/path/to/autolens_workspace/\n"
     "export PYTHONPATH=$PYTHONPATH:/path/to\n\n"
     ""
     "Where '/path/to' should include the path up to the workspace location"

@@ -9,10 +9,6 @@ Workspace Version
 
 This version of the workspace are built and tested for using **PyAutoLens v1.5.2**.
 
-.. code-block:: python
-
-    pip install autolens==1.5.2
-
 Installing PyAutoLens
 ---------------------
 

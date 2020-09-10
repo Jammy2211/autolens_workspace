@@ -41,29 +41,13 @@ In this example script, we fit interferometer data of a strong lens system where
 """Setup the path to the autolens workspace, using pyprojroot to determine it automatically."""
 
 # %%
-from pyprojroot import here
+"""Use the WORKSPACE enviroment variable to determine the workspace path."""
 
-workspace_path = str(here())
+# %%
+import os
+
+workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
-
-# %%
-"""
-We use this path to set:
-    config_path:
-        Where PyAutoLens configuration files are located. The default location is '/path/to/autolens_workspace/config'. 
-        They control many aspects of PyAutoLens (visualization, model priors, etc.). Feel free to check them out!.
-    
-    output-path: 
-        Where the output of the non-linear search and model-fit are stored on your hard-disk. The default location 
-        is '/path/to/autolens_workspace/output.
-"""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
 
 # %%
 """
