@@ -14,6 +14,7 @@ This script simulates _Imaging_ of a strong lens using decomposed light and dark
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

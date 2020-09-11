@@ -16,6 +16,7 @@ import numpy as np
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

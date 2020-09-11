@@ -42,6 +42,7 @@ contains example data we'll use in this tutorial.
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

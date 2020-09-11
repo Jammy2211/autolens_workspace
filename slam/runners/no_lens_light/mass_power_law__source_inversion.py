@@ -28,6 +28,7 @@ Check them out for a detailed description of the analysis!
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

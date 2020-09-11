@@ -41,6 +41,7 @@ galaxy's mass *and* the source galaxy's light.
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

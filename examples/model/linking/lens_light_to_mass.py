@@ -38,6 +38,7 @@ There are a number of benefits to using phase linking to model the lens's light 
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

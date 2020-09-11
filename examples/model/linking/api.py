@@ -54,6 +54,7 @@ the errors on every parameter, whereas the second phase sacrifices this run-spee
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

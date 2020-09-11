@@ -23,6 +23,7 @@ We'll need the path to the chapter in this tutorial to load the dataset from you
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
@@ -303,6 +304,7 @@ masked_imaging_custom = al.MaskedImaging(
 If we use this data to perform a fit, we can immediately note how the resolution of the data has been binned up.
 """
 
+# %%
 fit_custom = al.FitImaging(masked_imaging=masked_imaging_custom, tracer=tracer)
 
 aplt.FitImaging.subplot_fit_imaging(fit=fit_custom, include=aplt.Include(mask=True))

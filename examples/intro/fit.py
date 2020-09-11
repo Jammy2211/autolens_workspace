@@ -16,6 +16,7 @@ We we begin by loading the strong lens dataset 'mass_sie__source_sersic' 'from .
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

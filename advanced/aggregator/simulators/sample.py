@@ -14,6 +14,7 @@ those scripts out for details!
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

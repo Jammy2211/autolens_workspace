@@ -32,6 +32,7 @@ Setup the path to the autolens_workspace, using a relative directory name.
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

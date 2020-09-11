@@ -34,6 +34,7 @@ Inversions are covered in detail in chapter 4 of the **HowToLens** lectures.
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

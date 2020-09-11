@@ -14,6 +14,7 @@ To begin, we load an interferometer dataset from fits files:
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

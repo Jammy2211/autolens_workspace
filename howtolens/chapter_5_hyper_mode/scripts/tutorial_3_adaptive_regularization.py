@@ -18,6 +18,7 @@ phase of the pipeline that we've begun calling the 'hyper-galaxy-image'.
 import autolens as al
 import autolens.plot as aplt
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

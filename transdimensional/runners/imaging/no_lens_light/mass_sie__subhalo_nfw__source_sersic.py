@@ -23,6 +23,7 @@ This uses the pipeline (Check it out full description of the pipeline):
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

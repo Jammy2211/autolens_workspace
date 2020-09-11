@@ -23,6 +23,7 @@ So, lets simulate an image and fit it with a slightly incorrect mass model.
 import autolens as al
 import autolens.plot as aplt
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

@@ -18,6 +18,7 @@ reconstructs its light on a pixel-grid.
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

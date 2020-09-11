@@ -17,6 +17,7 @@ The psf will be output as '/autolens_workspace/dataset/dataset_type/dataset_name
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 

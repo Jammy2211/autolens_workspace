@@ -12,9 +12,10 @@ This version of the workspace are built and tested for using **PyAutoLens v1.5.2
 Installing PyAutoLens
 ---------------------
 
-You can install via pip or conda (see `this link <https://pyautolens.readthedocs.io/en/latest/general/installation.html#installation-with-conda>`_
-for conda instructioons). To install via pip run the following command (we recommend you set up a
-`Python virtual environment first <https://www.geeksforgeeks.org/python-virtual-environment/>`_).
+You can install via pip or conda (see
+`this link <https://pyautolens.readthedocs.io/en/latest/general/installation.html#installation-with-conda>`_
+for conda instructions). To install via pip (we recommend you set up a
+`Python virtual environment first <https://www.geeksforgeeks.org/python-virtual-environment/>`_):
 
 .. code-block:: bash
 

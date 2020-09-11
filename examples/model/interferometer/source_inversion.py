@@ -45,6 +45,7 @@ In this example script, we fit interferometer data of a strong lens system where
 
 # %%
 import os
+
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
