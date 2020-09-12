@@ -7,38 +7,7 @@ instructions at `the PyAutoLens readthedocs <https://pyautolens.readthedocs.io/e
 Workspace Version
 =================
 
-This version of the workspace are built and tested for using **PyAutoLens v1.5.2**.
-
-Installing PyAutoLens
----------------------
-
-You can install via pip or conda (see
-`this link <https://pyautolens.readthedocs.io/en/latest/general/installation.html#installation-with-conda>`_
-for conda instructions). To install via pip (we recommend you set up a
-`Python virtual environment first <https://www.geeksforgeeks.org/python-virtual-environment/>`_):
-
-.. code-block:: bash
-
-    pip install autolens
-
-Next, clone the `autolens_workspace <https://github.com/Jammy2211/autolens_workspace>`_, which includes **PyAutoLens**
-configuration files, example scripts and more!
-
-.. code-block:: bash
-
-   cd /path/on/your/computer/you/want/to/put/the/autolens_workspace
-   git clone https://github.com/Jammy2211/autolens_workspace --depth 1
-   cd autolens_workspace
-
-Finally, run the `welcome.py` script to get started!
-
-.. code-block:: bash
-
-   python3 welcome.py
-
-If your installation had an error, please checking the
-`troubleshooting section <https://pyautolens.readthedocs.io/en/latest/general/installation.html#trouble-shooting>`_ on
-our readthedocs.
+This version of the workspace are built and tested for using **PyAutoLens v1.5.6**.
 
 Getting Started
 ===============

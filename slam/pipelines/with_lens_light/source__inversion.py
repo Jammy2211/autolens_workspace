@@ -174,8 +174,8 @@ def make_pipeline(slam, settings):
             ),
             source=al.GalaxyModel(
                 redshift=slam.redshift_source,
-                pixelization=slam.setup_source.pixelization,
-                regularization=slam.setup_source.regularization,
+                pixelization=slam.pipeline_source_inversion.setup_source.pixelization,
+                regularization=slam.pipeline_source_inversion.setup_source.regularization,
                 hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
@@ -214,7 +214,7 @@ def make_pipeline(slam, settings):
 
     """SLaM: Unalign the lens mass and light centre, if *align_light_mass_centre* was True."""
 
-    mass = slam.pipeline_source_inversion.setup_source.unalign_mass_centre_from_light_centre(
+    mass = slam.pipeline_source_inversion.setup_mass.unalign_mass_centre_from_light_centre(
         mass_prior_model=mass
     )
 

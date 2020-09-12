@@ -85,8 +85,10 @@ def make_pipeline(slam, settings):
 
     """SLaM: Align the _LightProfile_ model centres (bulge and disk) with the input slam light_centre, if input."""
 
-    bulge = slam.setup_source.align_centre_to_light_centre(light_prior_model=bulge)
-    disk = slam.setup_source.align_centre_to__LightProfile__centre(
+    bulge = slam.pipeline_source_parametric.setup_light.align_centre_to_light_centre(
+        light_prior_model=bulge
+    )
+    disk = slam.pipeline_source_parametric.setup_light.align_centre_to_light_centre(
         light_prior_model=disk
     )
 
@@ -114,14 +116,16 @@ def make_pipeline(slam, settings):
 
     """SLaM: Align the bulge and mass model centres if align_light_mass_centre is True."""
 
-    if slam.pipeline_source_parametric.setup_source.align_light_mass_centre:
+    if slam.pipeline_source_parametric.setup_mass.align_light_mass_centre:
         mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
     else:
         mass.centre = phase1.result.model.galaxies.lens.bulge.centre
 
     """SLaM: Align the mass model centre with the input slam mass_centre, if input."""
 
-    mass = slam.setup_source.align_centre_to_mass_centre(mass_prior_model=mass)
+    mass = slam.pipeline_source_parametric.setup_mass.align_centre_to_mass_centre(
+        mass_prior_model=mass
+    )
 
     """SLaM: The shear model is chosen below based on the input of _SetupSource_."""
 
@@ -134,7 +138,7 @@ def make_pipeline(slam, settings):
                 bulge=phase1.result.instance.galaxies.lens.bulge,
                 disk=phase1.result.instance.galaxies.lens.disk,
                 mass=mass,
-                shear=slam.setup_source.shear,
+                shear=slam.pipeline_source_parametric.setup_mass.shear_prior_model,
                 hyper_galaxy=phase1.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(

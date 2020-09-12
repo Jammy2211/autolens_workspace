@@ -77,55 +77,54 @@ def make_pipeline(slam, settings):
 
     """SLaM: Set if the Sersic bulge is modeled with or without a mass-to-light gradient."""
 
-    bulge = slam.pipeline_mass.bulge_light_and_mass_prior_model
+    bulge = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
 
     """SLaM: Set if the disk is modeled as an _EllipticalSersic_ or _EllipticalExponential_ with or without a mass-to-light gradient."""
 
-    disk = slam.pipeline_mass.disk_light_and_mass_prior_model
+    disk = slam.pipeline_mass.setup_mass.disk_light_and_mass_prior_model
+
+    """SLaM: Set if the Sersic bulge is modeled with or without a mass-to-light gradient."""
+
+    envelope = slam.pipeline_mass.setup_mass.envelope_light_and_mass_prior_model
 
     """SLaM: Set all the mass-to-light ratios of all light and mass profiles to the same value, if set as constant."""
 
-    slam.pipeline_mass.set_mass_to_light_ratios_of_light_and_mass_prior_models(
-        light_and_mass_prior_models=[bulge, disk]
+    slam.pipeline_mass.setup_mass.set_mass_to_light_ratios_of_light_and_mass_prior_models(
+        light_and_mass_prior_models=[bulge, disk, envelope]
     )
 
-    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+    """SLaM: Fix the _LightProfile_ parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    smbh = slam.pipeline_mass.smbh_from_centre(
-        centre=af.last.instance.galaxies.lens.bulge.centre
+    slam.link_bulge_light_and_mass_prior_model_from_light_pipeline(
+        bulge_prior_model=bulge, bulge_is_model=False, index=0
     )
-
-    bulge.centre = af.last.instance.galaxies.lens.bulge.centre
-    bulge.elliptical_comps = af.last.instance.galaxies.lens.bulge.elliptical_comps
-    bulge.intensity = af.last.instance.galaxies.lens.bulge.intensity
-    bulge.effective_radius = af.last.instance.galaxies.lens.bulge.effective_radius
-    bulge.sersic_index = af.last.instance.galaxies.lens.bulge.sersic_index
-
-    disk.centre = af.last.instance.galaxies.lens.disk.centre
-    disk.elliptical_comps = af.last.instance.galaxies.lens.disk.elliptical_comps
-    disk.phi = af.last.instance.galaxies.lens.disk.phi
-    disk.intensity = af.last.instance.galaxies.lens.disk.intensity
-    disk.effective_radius = af.last.instance.galaxies.lens.disk.effective_radius
-
-    if slam.pipeline_light.disk_as_sersic:
-        disk.sersic_index = af.last.instance.galaxies.lens.disk.sersic_index
+    slam.link_disk_light_and_mass_prior_model_from_light_pipeline(
+        disk_prior_model=disk, disk_is_model=False, index=0
+    )
+    slam.link_envelope_light_and_mass_prior_model_from_light_pipeline(
+        envelope_prior_model=envelope, envelope_is_model=False, index=0
+    )
 
     dark = af.PriorModel(al.mp.SphericalNFWMCRLudlow)
 
-    if slam.pipeline_mass.align_bulge_dark_centre:
-        dark.centre = bulge.centre
-    else:
-        dark.centre = af.last.model.galaxies.lens.bulge.centre
+    slam.pipeline_mass.setup_mass.align_bulge_and_dark_centre(
+        bulge_prior_model=bulge, dark_prior_model=dark
+    )
 
     dark.mass_at_200 = af.LogUniformPrior(lower_limit=5e8, upper_limit=5e14)
 
     dark.redshift_object = slam.redshift_lens
     dark.redshift_source = slam.redshift_source
 
+    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+
+    smbh = slam.pipeline_mass.smbh_prior_model
+
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,
         bulge=bulge,
         disk=disk,
+        envelope=envelope,
         dark=dark,
         shear=shear,
         smbh=smbh,
@@ -149,28 +148,16 @@ def make_pipeline(slam, settings):
     initialization
     """
 
-    bulge = slam.pipeline_mass.bulge_light_and_mass_prior_model
-    disk = slam.pipeline_mass.disk_light_and_mass_prior_model
+    """SLaM: Fix the _LightProfile_ parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    bulge.centre = af.last[-1].model.galaxies.lens.bulge.centre
-    bulge.elliptical_comps = af.last[-1].model.galaxies.lens.bulge.elliptical_comps
-    bulge.intensity = af.last[-1].model.galaxies.lens.bulge.intensity
-    bulge.effective_radius = af.last[-1].model.galaxies.lens.bulge.effective_radius
-    bulge.sersic_index = af.last[-1].model.galaxies.lens.bulge.sersic_index
-
-    bulge.mass_to_light_ratio = (
-        phase1.result.model.galaxies.lens.bulge.mass_to_light_ratio
+    slam.link_bulge_light_and_mass_prior_model_from_light_pipeline(
+        bulge_prior_model=bulge, bulge_is_model=True, index=-1
     )
-
-    disk.centre = af.last[-1].model.galaxies.lens.disk.centre
-    disk.elliptical_comps = af.last[-1].model.galaxies.lens.disk.elliptical_comps
-    disk.intensity = af.last[-1].model.galaxies.lens.disk.intensity
-    disk.effective_radius = af.last[-1].model.galaxies.lens.disk.effective_radius
-    if slam.pipeline_light.disk_as_sersic:
-        disk.sersic_index = af.last[-1].model.galaxies.lens.disk.sersic_index
-
-    disk.mass_to_light_ratio = (
-        phase1.result.model.galaxies.lens.disk.mass_to_light_ratio
+    slam.link_disk_light_and_mass_prior_model_from_light_pipeline(
+        disk_prior_model=disk, disk_is_model=True, index=-1
+    )
+    slam.link_envelope_light_and_mass_prior_model_from_light_pipeline(
+        envelope_prior_model=envelope, envelope_is_model=True, index=-1
     )
 
     lens = al.GalaxyModel(

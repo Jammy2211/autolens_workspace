@@ -54,53 +54,30 @@ def make_pipeline(slam, settings):
 
         1) Fix the lens galaxy's mass and source galaxy to the results of the previous pipeline.
         2) Vary the lens galaxy hyper noise factor if hyper-galaxies noise scaling is on.
-
-    If hyper-galaxy noise scaling is on, it may over-scale the noise making this new _LightProfile_ fit the data less
-    well. This can be circumvented by including the noise scaling as a free parameter.
     """
 
-    if slam.setup_hyper.hyper_galaxies:
+    """SlaM:  If hyper-galaxy noise scaling is on, it may over-scale the noise making this new _LightProfile_ 
+    fit the data less well. This can be circumvented by including the noise scaling as a free parameter."""
 
-        hyper_galaxy = af.PriorModel(al.HyperGalaxy)
-
-        hyper_galaxy.noise_factor = (
-            af.last.hyper_combined.model.galaxies.lens.hyper_galaxy.noise_factor
-        )
-        hyper_galaxy.contribution_factor = (
-            af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy.contribution_factor
-        )
-        hyper_galaxy.noise_power = (
-            af.last.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy.noise_power
-        )
-
-    else:
-
-        hyper_galaxy = None
+    hyper_galaxy = slam.setup_hyper.hyper_galaxy_lens_from_previous_pipeline(
+        noise_factor_is_model=True
+    )
 
     """SLaM: Set whether the disk is modeled as an _EllipticalSersic_ or _EllipticalExponential_."""
 
-    if slam.pipeline_light.disk_as_sersic:
-        disk = af.PriorModel(al.lp.EllipticalSersic)
-    else:
-        disk = af.PriorModel(al.lp.EllipticalExponential)
+    disk = slam.pipeline_light.setup_light.disk_prior_model
 
     bulge = af.PriorModel(al.lp.EllipticalSersic)
 
     """SLaM: Set the alignment of the bulge and disk's centres and elliptical components."""
 
-    if slam.pipeline_light.align_bulge_disk_centre:
-        bulge.centre = disk.centre
+    slam.pipeline_light.setup_light.align_bulge_and_disk_centre_and_elliptical_comps(
+        bulge_prior_model=bulge, disk_prior_model=disk
+    )
 
-    if slam.pipeline_light.align_bulge_disk_elliptical_comps:
-        bulge.elliptical_comps = disk.elliptical_comps
+    """SLaM: include a thid component, the envelope, in the model if included in the _LightSetup_."""
 
-    if slam.pipeline_light.include_envelope:
-        if slam.pipeline_light.envelope_as_sersic:
-            envelope = af.PriorModel(al.lp.EllipticalSersic)
-        else:
-            envelope = af.PriorModel(al.lp.EllipticalExponential)
-    else:
-        envelope = None
+    envelope = slam.pipeline_light.setup_light.envelope_prior_model
 
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,
@@ -114,7 +91,7 @@ def make_pipeline(slam, settings):
 
     """SLaM: Use the Source pipeline source as an instance (whether its parametric or an Inversion)."""
 
-    source = slam.source_from_previous_pipeline()
+    source = slam.source_from_previous_pipeline(source_is_model=False)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__light_bulge_disk__mass__source",

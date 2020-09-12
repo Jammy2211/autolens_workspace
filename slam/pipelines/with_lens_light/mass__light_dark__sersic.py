@@ -73,33 +73,30 @@ def make_pipeline(slam, settings):
 
     """SLaM: Set if the _EllipticalSersic_ is modeled with or without a mass-to-light gradient."""
 
-    sersic = slam.pipeline_mass.bulge_light_and_mass_prior_model
+    sersic = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
 
-    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+    """SLaM: Fix the _LightProfie_ parameters of the _EllipticalSersic_ to the results of the Light pipeline."""
 
-    smbh = slam.pipeline_mass.smbh_from_centre(
-        centre=af.last.instance.galaxies.lens.sersic.centre
+    slam.link_sersic_light_and_mass_prior_model_from_light_pipeline(
+        sersic_prior_model=sersic, sersic_is_model=False, index=0
     )
-
-    sersic.centre = af.last.instance.galaxies.lens.sersic.centre
-    sersic.elliptical_comps = af.last.instance.galaxies.lens.sersic.elliptical_comps
-    sersic.intensity = af.last.instance.galaxies.lens.sersic.intensity
-    sersic.effective_radius = af.last.instance.galaxies.lens.sersic.effective_radius
-    sersic.sersic_index = af.last.instance.galaxies.lens.sersic.sersic_index
 
     """SLaM: Align the centre of the _LightProfile_ and dark matter _MassPrfile_ if input in _SetupMassLightDark_."""
 
     dark = af.PriorModel(al.mp.SphericalNFWMCRLudlow)
 
-    if slam.pipeline_mass.align_bulge_dark_centre:
-        dark.centre = sersic.centre
-    else:
-        dark.centre = af.last.model.galaxies.lens.sersic.centre
+    slam.pipeline_mass.setup_mass.align_sersic_and_dark_centre(
+        sersic_prior_model=sersic, dark_prior_model=dark
+    )
 
     dark.mass_at_200 = af.LogUniformPrior(lower_limit=5e8, upper_limit=5e14)
 
     dark.redshift_object = slam.redshift_lens
     dark.redshift_source = slam.redshift_source
+
+    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+
+    smbh = slam.pipeline_mass.smbh_prior_model
 
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,
@@ -127,13 +124,15 @@ def make_pipeline(slam, settings):
     initialization
     """
 
-    sersic = slam.pipeline_mass.sersic_light_and_mass_prior_model
+    """SLaM: Set if the _EllipticalSersic_ is modeled with or without a mass-to-light gradient."""
 
-    sersic.centre = af.last[-1].model.galaxies.lens.sersic.centre
-    sersic.elliptical_comps = af.last[-1].model.galaxies.lens.sersic.elliptical_comps
-    sersic.intensity = af.last[-1].model.galaxies.lens.sersic.intensity
-    sersic.effective_radius = af.last[-1].model.galaxies.lens.sersic.effective_radius
-    lens.sersic.sersic_index = af.last[-1].model.galaxies.lens.sersic.sersic_index
+    sersic = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
+
+    """SLaM: Fix the _LightProfie_ parameterss o the _EllipticalSersic_ to the results of the Light pipeline."""
+
+    slam.link_sersic_light_and_mass_prior_model_from_light_pipeline(
+        sersic_prior_model=sersic, sersic_is_model=True, index=0
+    )
 
     sersic.mass_to_light_ratio = (
         phase1.result.model.galaxies.lens.sersic.mass_to_light_ratio

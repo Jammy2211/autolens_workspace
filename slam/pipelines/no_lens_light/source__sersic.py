@@ -59,7 +59,7 @@ def make_pipeline(slam, settings):
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
                 mass=mass,
-                shear=slam.pipeline_source_parametric.shear,
+                shear=slam.pipeline_source_parametric.setup_mass.shear_prior_model,
             ),
             source=al.GalaxyModel(
                 redshift=slam.redshift_source, sersic=al.lp.EllipticalSersic

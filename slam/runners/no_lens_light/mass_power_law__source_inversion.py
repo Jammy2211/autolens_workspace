@@ -212,14 +212,14 @@ pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_so
 
 # %%
 """
-__SLaMPipelineMassTotal__
+__SLaMPipelineMass__
 
-The _SLaMPipelineMassTotal_ pipeline fits the model for the lens galaxy's total mass distribution. 
+The _SLaMPipelineMass_ pipeline fits the model for the lens galaxy's total mass distribution. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens galaxy's mass is input into _SLaMPipelineMassTotal_ and this runner uses the default of an 
-_EllipticalPowerLaw_ in this example.
+The model used to represent the lens galaxy's mass is input into _SLaMPipelineMassTotal_ and this runner uses the 
+default of an _EllipticalPowerLaw_ in this example.
 
 For this runner the _SLaMPipelineMass_ customizes:
 
