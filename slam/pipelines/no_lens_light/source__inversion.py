@@ -9,7 +9,7 @@ Phases 1 & 2 use a magnification based _Pixelization_ and constant _Regularizati
 that if the input _Pixelization_ or _Regularization_ scheme use hyper-images, they are initialized using
 a pixelized source-plane, which is key for lens's with multiple or irregular sources.
 
-The pipeline is as follows:
+The pipeline uses 4 phases:
 
 Phase 1:
 
@@ -78,7 +78,7 @@ def make_pipeline(slam, settings):
     """
     Phase 1: Fit the _Pixelization_ and _Regularization_, where we:
 
-        1) Fix the lens mass model to the mass-model inferred by the previous pipeline.
+        1) Fix the lens mass model to the _MassProfile_'s inferred by the previous pipeline.
     """
 
     phase1 = al.PhaseImaging(
@@ -144,7 +144,7 @@ def make_pipeline(slam, settings):
     """
     Phase 3: fit the input pipeline _Pixelization_ & _Regularization_, where we:
 
-        1) Fix the lens mass model to the mass-model inferred in phase 2.
+        1) Fix the lens _MassProfile_ to the result of phase 2.
     """
 
     phase3 = al.PhaseImaging(
@@ -184,7 +184,7 @@ def make_pipeline(slam, settings):
         2) Set priors on the lens galaxy _MassProfile_'s using the results of phase 2.
     """
 
-    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
 
     """
     SLaM: If the centre of the lens galaxy's mass was fixed in the parametric pipeline and phases 1-3 above, remove
@@ -192,7 +192,7 @@ def make_pipeline(slam, settings):
     """
 
     mass = slam.pipeline_source_inversion.setup_mass.unfix_mass_centre(
-        mass=mass, index=-1
+        mass_prior_model=mass, index=-1
     )
 
     mass.elliptical_comps = phase2.result.model.galaxies.lens.mass.elliptical_comps

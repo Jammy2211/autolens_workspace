@@ -5,7 +5,7 @@ import autolens as al
 This pipeline performs a parametric source analysis which fits an image with a lens mass model and
 source galaxy.
 
-The pipeline is as follows:
+This pipeline uses 1 phase:
 
 Phase 1:
 
@@ -42,12 +42,12 @@ def make_pipeline(slam, settings):
     Phase 1: Fit the lens's _MassProfile_'s and source galaxy.
     """
 
-    mass = slam.pipeline_source_parametric.setup_mass.mass_profile
+    mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
 
     """SLaM: Align the mass model centre with the input slam value, if input."""
 
     mass = slam.pipeline_source_parametric.setup_mass.align_centre_to_mass_centre(
-        mass=mass
+        mass_prior_model=mass
     )
 
     """SLaM: The shear model is chosen below based on the settings of the slam source."""

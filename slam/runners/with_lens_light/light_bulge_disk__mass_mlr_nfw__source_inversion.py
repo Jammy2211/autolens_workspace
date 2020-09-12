@@ -2,28 +2,26 @@
 """
 __SLaM (Source, Light and Mass)__
 
-This SLaM pipeline runner loads a strong lens dataset and analyses it using a SLaM lens 'slam/no_lens_light/source/parametric/light_bulge_disk__mass_sie__source_parametric.py'.
- 'slam/no_lens_light/mass/sie/lens_power_law__source.py'. modeling
-pipeline.
+This SLaM pipeline runner loads a strong lens dataset and analyses it using a SLaM lens modeling pipeline.
 
 __THIS RUNNER__
 
-Using two source pipelines, a light pipeline and a mass pipeline this runner fits _Imaging_ of a strong lens system,
+Using two source pipelines, a light pipeline and a mass pipeline this runner fits _Imaging_ of a strong lens system
 where in the final phase of the pipeline:
 
- - The lens galaxy's _LightProfile_'s are modeled as an _EllipticalSersic_ + EllipticalExponential, representing
+ - The lens galaxy's _LightProfile_'s are modeled as an _EllipticalSersic_ + _EllipticalExponential_, representing
    a bulge + disk model.
  - The lens galaxy's stellar _MassProfile_ is fitted using the _EllipticalSersic_ + EllipticalExponential of the
     _LightProfile_, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
- - The lens galaxy's dark matter _MassProfile_ is modeled as a SphericalNFW.
+ - The lens galaxy's dark matter _MassProfile_ is modeled as a _SphericalNFW_.
  - The source galaxy's _LightProfile_ is modeled using an _Inversion_.
 
 This runner uses the SLaM pipelines:
 
- 'slam/with_lens_light/source__light_bulge_disk__mass_sie__source_parametric.py'.
- 'slam/with_lens_light/source___light__mass_sie__source_inversion.py'.
- 'slam/with_lens_light/light__light_bulge_disk__mass_sie__source.py'.
- 'slam/with_lens_light/mass__light___mass_mlr_nfw__source.py'.
+ 'slam/with_lens_light/source__sersic.py'.
+ 'slam/with_lens_light/source___inversion.py'.
+ 'slam/with_lens_light/light__bulge_disk.py'.
+ 'slam/with_lens_light/mass__light_dark__bulge_disk.py'.
 
 Check them out for a detailed description of the analysis!
 """
@@ -147,14 +145,14 @@ which is equivalent to the _SetupPipeline_ object, customizing the analysis in t
 has its own _SetupMass_, _SetupLight_ and _SetupSource_ object.
 
 The _Setup_ used in earlier pipelines determine the model used in later pipelines. For example, if the _Source_ 
-pipeline is given a _Pixelization_ and _Regularization_, than this _Inversion_ will be used in the subsequent _SLaMPipelineLight_ and 
-Mass pipelines. The assumptions regarding the lens light chosen by the _Light_ object are carried forward to the 
-_Mass_  pipeline.
+pipeline is given a _Pixelization_ and _Regularization_, than this _Inversion_ will be used in the subsequent 
+_SLaMPipelineLight_ and Mass pipelines. The assumptions regarding the lens light chosen by the _Light_ object are 
+carried forward to the _Mass_  pipeline.
 
 The _Setup_ again tags the path structure of every pipeline in a unique way, such than combinations of different
 SLaM pipelines can be used to fit lenses with different models. If the earlier pipelines are identical (e.g. they use
-the same _SLaMPipelineSource_) they will reuse those results before branching off to fit different models in the _SLaMPipelineLight_ 
-and / or _SLaMPipelineMass_ pipelines. 
+the same _SLaMPipelineSource_) they will reuse those results before branching off to fit different models in the 
+_SLaMPipelineLight_ and / or _SLaMPipelineMass_ pipelines. 
 """
 
 # %%
@@ -171,7 +169,7 @@ _SLaMPipelineLight_ and _SLaMPipelineMass_ pipelines, model comparison can be pe
 
 # %%
 hyper = al.SetupHyper(
-    hyper_galaxies=True,
+    hyper_galaxies=False,
     hyper_image_sky=False,
     hyper_background_noise=True,
     hyper_fixed_after_source=True,

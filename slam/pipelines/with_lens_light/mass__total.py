@@ -2,19 +2,25 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the mass of a strong lens using a _EllipticalPowerLaw_ + shear model.
+This pipeline fits the mass of a strong lens using a _MassProfile (default=_EllipticalPowerLaw_) representing total 
+mass distribution (e.g. stellar and dark) of the lens _Galaxy_.
 
-The lens light, mass model and source are initialized using already run 'source' and 'light' pipelines.
+The lens light and source models use those chosen in the already run 'source' and 'light' pipelines, and the mass model
+is initialized using results from these pipelines.
 
-The pipeline is one phases:
+The pipeline is one phase:
 
 Phase 1:
 
-    Fit the lens mass model as a power-law, using the source model from a previous pipeline.
+    Fit the lens mass model _MassProfile (default=_EllipticalPowerLaw_), using the lens light and source model from a 
+    previous pipeline.
+    
+    Lens Light: Previous Light Pipeline Light.
     Lens Mass: Light + EllipticalPowerLaw + ExternalShear
     Source Light: Previous Pipeline Source.
-    Previous Pipelines: no_lens_light/source/*/mass_sie__source_*py
-    Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
+    Previous Pipelines: source__sersic.py and / or source__inversion.py and light__sersic.py or light__bulge_disk.py
+    Prior Passing: Lens Light (instance -> previous piepline) Lens Mass (model -> previous pipeline), 
+                   Source (model / instance -> previous pipeline)
     Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
 """
 
@@ -23,10 +29,7 @@ def make_pipeline(slam, settings):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
-    pipeline_name = "pipeline_mass__power_law"
-
-    """TAG: Setup the lens mass tag for pipeline tagging"""
-    slam.set_mass_type(mass_type="power_law")
+    pipeline_name = "pipeline_mass__total"
 
     """
     This pipeline is tagged according to whether:
@@ -39,24 +42,25 @@ def make_pipeline(slam, settings):
     folders = slam.folders + [
         pipeline_name,
         slam.setup_hyper.tag,
-        slam.setup_source.tag,
-        slam.setup_light.tag,
-        slam.pipeline_mass.tag,
+        slam.source_tag,
+        slam.light_tag,
+        slam.mass_tag,
     ]
 
-    """SLaM: Set whether shear is Included in the mass model."""
+    """SLaM: Set whether shear is included in the mass model using the _ExternalShear_ model of the Source pipeline."""
 
-    shear = slam.pipeline_mass.shear_from_previous_pipeline
+    shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
     Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
 
         1) Use the source galaxy of the 'source' pipeline.
         2) Use the lens galaxy light of the 'light' pipeline.
-        3) Set priors on the lens galaxy _MassProfile_'s using the EllipticalIsothermal and ExternalShear of previous pipelines.
+        3) Set priors on the lens galaxy _MassProfile_'s using the _EllipticalIsothermal_ and _ExternalShear_ of 
+           previous pipelines.
     """
 
-    mass = af.PriorModel(al.mp.EllipticalPowerLaw)
+    mass = af.PriorModel(slam.pipeline_mass.setup_mass.mass_profile)
     mass.centre = af.last[-1].model.galaxies.lens.mass.centre
     mass.elliptical_comps = af.last[-1].model.galaxies.lens.mass.elliptical_comps
     mass.einstein_radius = af.last[-1].model.galaxies.lens.mass.einstein_radius
@@ -69,7 +73,7 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__lens_power_law__source",
+        phase_name="phase_1__light__mass_total__source",
         folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,

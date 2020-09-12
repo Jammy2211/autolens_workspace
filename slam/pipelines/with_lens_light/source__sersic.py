@@ -2,12 +2,14 @@ import autofit as af
 import autolens as al
 
 """
-This pipeline performs a parametric source analysis which fits a lens model (the lens's light, mass and
-source's light). This pipeline uses four phases:
+This pipeline performs a parametric source analysis which fits a lens model (the lens's _LightProfile_ and mass) and the
+source galaxy. 
+
+This pipeline uses four phases:
 
 Phase 1:
 
-    Fit and subtract the lens light model.
+    Fit and subtract the lens light.
     
     Lens Light: EllipticalSersic + EllipticalExponential
     Lens Mass: None
@@ -21,7 +23,7 @@ Phase 2:
     Fit the lens mass model and source _LightProfile_, using the lens subtracted image from phase 1.
     
     Lens Light: None
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: EllipticalSersic
     Previous Pipelines: None
     Prior Passing: None
@@ -29,10 +31,10 @@ Phase 2:
 
 Phase 3:
 
-    Refit the lens light models using the mass model and source _LightProfile_ fixed from phase 2.
+    Refit the lens _LightProfile_ using the mass model and source _LightProfile_ fixed from phase 2.
     
     Lens Light: EllipticalSersic + EllipticalExponential
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: EllipticalSersic
     Previous Pipelines: None
     Prior Passing: lens mass and source (instance -> phase 2)
@@ -40,10 +42,10 @@ Phase 3:
 
 Phase 4:
 
-    Refine the lens light and mass models and source _LightProfile_, using priors from the previous 2 phases.
+    Refine the lens _LightProfile_ and _MassProfile_ and source _LightProfile_, using priors from the previous 2 phases.
     
     Lens Light: EllipticalSersic + EllipticalExponential
-    Lens Mass: EllipticalIsothermal + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: EllipticalSersic
     Previous Pipelines: None
     Prior Passing: Lens light (model -> phase 3), lens mass and source (model -> phase 2)
@@ -55,11 +57,7 @@ def make_pipeline(slam, settings):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
-    pipeline_name = "pipeline_source__parametric"
-
-    """For pipeline tagging we set the source and lens light types."""
-    slam.set_source_type(source_type="sersic")
-    slam.set_light_type(light_type="bulge_disk")
+    pipeline_name = "pipeline_source__sersic"
 
     """
     This pipeline is tagged according to whether:
@@ -70,8 +68,8 @@ def make_pipeline(slam, settings):
 
     folders = slam.folders + [
         pipeline_name,
-        slam.source_pipeline_tag,
-        slam.setup_source.tag,
+        slam.setup_hyper.tag,
+        slam.source_parametric_tag,
     ]
 
     """
@@ -80,22 +78,19 @@ def make_pipeline(slam, settings):
         1) Align the bulge and disk (y,x) centre.
     """
 
-    lens = al.GalaxyModel(
-        redshift=slam.redshift_lens,
-        bulge=al.lp.EllipticalSersic,
-        disk=al.lp.EllipticalExponential,
+    bulge = af.PriorModel(al.lp.EllipticalSersic)
+    disk = af.PriorModel(al.lp.EllipticalExponential)
+
+    bulge.centre = disk.centre
+
+    """SLaM: Align the _LightProfile_ model centres (bulge and disk) with the input slam light_centre, if input."""
+
+    bulge = slam.setup_source.align_centre_to_light_centre(light_prior_model=bulge)
+    disk = slam.setup_source.align_centre_to__LightProfile__centre(
+        light_prior_model=disk
     )
 
-    lens.bulge.centre = lens.disk.centre
-
-    """SLaM: Align the light model centres (bulge and disk) with the input slam light_centre, if input."""
-
-    lens.bulge = slam.setup_source.align_centre_to_light_centre(light=lens.bulge)
-    lens.disk = slam.setup_source.align_centre_to_light_centre(light=lens.disk)
-
-    """SLaM: Remove the disk from the lens light model if lens_light_bulge_only is True."""
-
-    lens = slam.setup_source.remove_disk_from_lens_galaxy(lens=lens)
+    lens = al.GalaxyModel(redshift=slam.redshift_lens, bulge=bulge, disk=disk)
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__light_bulge_disk",
@@ -108,30 +103,30 @@ def make_pipeline(slam, settings):
     phase1 = phase1.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)
 
     """
-    Phase 2: Fit the lens's _MassProfile_'s and source galaxy's light, where we:
+    Phase 2: Fit the lens's _MassProfile_'s and source galaxy's _LightProfile_, where we:
 
-        1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-        2) Set priors on the centre of the lens galaxy's mass-profile by linking them to those inferred for
+        1) Fix the foreground lens _LightProfile_ to the result of phase 1.
+        2) Set priors on the centre of the lens galaxy's _MassProfile_ by linking them to those inferred for
            the bulge of the _LightProfile_ in phase 1.
     """
 
-    mass = af.PriorModel(al.mp.EllipticalIsothermal)
+    mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
 
-    """SLaM: Align the light and mass model centres if align_light_mass_centre is True."""
+    """SLaM: Align the bulge and mass model centres if align_light_mass_centre is True."""
 
-    if slam.setup_source.align_light_mass_centre:
+    if slam.pipeline_source_parametric.setup_source.align_light_mass_centre:
         mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
     else:
         mass.centre = phase1.result.model.galaxies.lens.bulge.centre
 
     """SLaM: Align the mass model centre with the input slam mass_centre, if input."""
 
-    mass = slam.setup_source.align_centre_to_mass_centre(mass=mass)
+    mass = slam.setup_source.align_centre_to_mass_centre(mass_prior_model=mass)
 
-    """SLaM: The shear model is chosen below based on the settings of the slam source."""
+    """SLaM: The shear model is chosen below based on the input of _SetupSource_."""
 
     phase2 = al.PhaseImaging(
-        phase_name="phase_2__mass_sie__source_parametric",
+        phase_name="phase_2__mass_sie__source_seric",
         folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
@@ -157,30 +152,24 @@ def make_pipeline(slam, settings):
     phase2 = phase2.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)
 
     """
-    Phase 3: Refit the lens galaxy's light using fixed mass and source instances from phase 2, where we:
+    Phase 3: Refit the lens galaxy's bulge and disk _LightProfile_'s using fixed mass and source instances from phase 2, 
+    where we:
 
-        1) Do not use priors from phase 1 to Fit the lens's light, assuming the source light may of impacted them.
+        1) Do not use priors from phase 1 for the lens's _LightProfile_, assuming the source light could bias them.
+        2) Use the same bulge and disk _PriorModel_'s created or phase 1, which use the same _Setup_.
     """
 
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,
-        bulge=al.lp.EllipticalSersic,
-        disk=al.lp.EllipticalExponential,
+        bulge=bulge,
+        disk=disk,
         mass=phase2.result.instance.galaxies.lens.mass,
         shear=phase2.result.instance.galaxies.lens.shear,
         hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,
     )
 
-    lens.bulge.centre = lens.disk.centre
-
-    slam.setup_source.align_centre_to_light_centre(light=lens.bulge)
-    slam.setup_source.align_centre_to_light_centre(light=lens.bulge)
-
-    if slam.setup_source.lens_light_bulge_only:
-        lens.disk = None
-
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__light_bulge_disk_sie__source_fixed",
+        phase_name="phase_3__light_bulge_disk__mass_source_fixed",
         folders=folders,
         galaxies=dict(
             lens=lens,
@@ -205,7 +194,7 @@ def make_pipeline(slam, settings):
     """
 
     phase4 = al.PhaseImaging(
-        phase_name="phase_4__lens_fixed_sie__source_parametric",
+        phase_name="phase_4__light_bulge_disk__mass_sie__source_sersic",
         folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(

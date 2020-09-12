@@ -77,17 +77,17 @@ def make_pipeline(slam, settings):
 
     """SLaM: Set if the Sersic bulge is modeled with or without a mass-to-light gradient."""
 
-    bulge = slam.pipeline_mass.bulge_light_and_mass_profile
+    bulge = slam.pipeline_mass.bulge_light_and_mass_prior_model
 
     """SLaM: Set if the disk is modeled as an _EllipticalSersic_ or _EllipticalExponential_ with or without a mass-to-light gradient."""
 
-    disk = slam.pipeline_mass.disk_light_and_mass_profile
-    disk_1 = slam.pipeline_mass.disk_light_and_mass_profile
+    disk = slam.pipeline_mass.disk_light_and_mass_prior_model
+    disk_1 = slam.pipeline_mass.disk_light_and_mass_prior_model
 
     """SLaM: Set all the mass-to-light ratios of all light and mass profiles to the same value, if set as constant."""
 
-    slam.pipeline_mass.set_mass_to_light_ratios_of_light_and_mass_profiles(
-        light_and_mass_profiles=[bulge, disk, disk_1]
+    slam.pipeline_mass.set_mass_to_light_ratios_of_light_and_mass_prior_models(
+        light_and_mass_prior_models=[bulge, disk, disk_1]
     )
 
     """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
@@ -160,9 +160,9 @@ def make_pipeline(slam, settings):
     initialization
     """
 
-    bulge = slam.pipeline_mass.bulge_light_and_mass_profile
-    disk = slam.pipeline_mass.disk_light_and_mass_profile
-    disk_1 = slam.pipeline_mass.disk_light_and_mass_profile
+    bulge = slam.pipeline_mass.bulge_light_and_mass_prior_model
+    disk = slam.pipeline_mass.disk_light_and_mass_prior_model
+    disk_1 = slam.pipeline_mass.disk_light_and_mass_prior_model
 
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,

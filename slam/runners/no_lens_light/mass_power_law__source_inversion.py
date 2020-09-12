@@ -2,13 +2,12 @@
 """
 __SLaM (Source, Light and Mass)__
 
-This SLaM pipeline runner loads a strong lens dataset and analyses it using a SLaM lens modeling
-pipeline.
+This SLaM pipeline runner loads a strong lens dataset and analyses it using a SLaM lens modeling pipeline.
 
 __THIS RUNNER__
 
-Using two source pipelines and a mass pipeline this runner fits _Imaging_ of a strong lens system, where in the final phase
-of the pipeline:
+Using two source pipelines and a mass pipeline this runner fits _Imaging_ of a strong lens system, where in the final
+phase of the pipeline:
 
  - The final lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
  - The final lens galaxy's _MassProfile_ is modeled as an _EllipticalPowerLaw_.

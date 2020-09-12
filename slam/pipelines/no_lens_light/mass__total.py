@@ -7,12 +7,12 @@ shear model.
 
 The source model is chosen and mass model is initialized using the previously run Source pipeline.
 
-The pipeline is one phases:
+The pipeline uses one phase:
 
 Phase 1:
 
     Fit the lens mass model as a power-law, using the source model from a previous pipeline.
-    Lens Mass: MassProfile + ExternalShear
+    Lens Mass: MassProfile (default=EllipticalPowerLaw) + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipeline: no_lens_light/source/*/mass_sie__source_*py
     Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
@@ -55,7 +55,7 @@ def make_pipeline(slam, settings):
 
     """Setup the _EllipticalPowerLaw_ _MassProfile_ and initialize its priors from the _EllipticalIsothermal_."""
 
-    mass = af.PriorModel(al.mp.EllipticalPowerLaw)
+    mass = af.PriorModel(slam.pipeline_mass.setup_mass.mass_profile)
 
     mass.centre = af.last.model.galaxies.lens.mass.centre
     mass.elliptical_comps = af.last.model.galaxies.lens.mass.elliptical_comps
