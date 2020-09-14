@@ -81,8 +81,14 @@ The following line activates the PyAutoLens virtual environment we set up on cos
 
 These two lines prevent the NumPy linear algebra libries from using too many resources.
     
-    export OPENBLAS_NUM_THREADS=1
-    export MKL_NUM_THREADS=1
+    
+export CPUS_PER_TASK=1
+
+export OPENBLAS_NUM_THREADS=$CPUS_PER_TASK
+export MKL_NUM_THREADS=$CPUS_PER_TASK
+export OMP_NUM_THREADS=$CPUS_PER_TASK
+export VECLIB_MAXIMUM_THREADS=$CPUS_PER_TASK
+export NUMEXPR_NUM_THREADS=$CPUS_PER_TASK
 
 This line sets off the job:
 

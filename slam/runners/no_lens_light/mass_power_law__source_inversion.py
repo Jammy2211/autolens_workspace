@@ -9,8 +9,8 @@ __THIS RUNNER__
 Using two source pipelines and a mass pipeline this runner fits _Imaging_ of a strong lens system, where in the final
 phase of the pipeline:
 
- - The final lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
- - The final lens galaxy's _MassProfile_ is modeled as an _EllipticalPowerLaw_.
+ - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
+ - The lens galaxy's _MassProfile_ is modeled as an _EllipticalPowerLaw_.
  - The source galaxy is modeled using an _Inversion_.
 
 This uses the SLaM pipelines:

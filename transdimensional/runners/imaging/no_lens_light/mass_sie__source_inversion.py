@@ -27,16 +27,6 @@ workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 # %%
-"""Use this path to explicitly set the config path and output path."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
 """ AUTOLENS + DATA SETUP """
 
 # %%

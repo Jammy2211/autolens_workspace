@@ -13,7 +13,13 @@
 #SBATCH --mail-user=fill@me.co.uk
 
 source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh
-export OPENBLAS_NUM_THREADS=1
-export MKL_NUM_THREADS=1
+
+export CPUS_PER_TASK=1
+
+export OPENBLAS_NUM_THREADS=$CPUS_PER_TASK
+export MKL_NUM_THREADS=$CPUS_PER_TASK
+export OMP_NUM_THREADS=$CPUS_PER_TASK
+export VECLIB_MAXIMUM_THREADS=$CPUS_PER_TASK
+export NUMEXPR_NUM_THREADS=$CPUS_PER_TASK
 
 srun -n 16 --multi-prog conf/example.conf

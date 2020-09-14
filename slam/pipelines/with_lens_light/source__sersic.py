@@ -150,7 +150,7 @@ def make_pipeline(slam, settings):
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=100),
+        search=af.DynestyStatic(n_live_points=200, walks=10),
     )
 
     phase2 = phase2.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)

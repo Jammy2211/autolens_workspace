@@ -5,9 +5,9 @@ def setup_workspace_environment_variable():
 
     print(
         ""
-        "###############################\n"
-        "WORKSPACE ENVIRONMENT VARIABLE:\n"
-        "###############################\n\n"
+        "######################################\n"
+        "### WORKSPACE ENVIRONMENT VARIABLE ###\n"
+        "######################################\n\n"
         ""
         "An environment variable is a variable stored in your command line interface (e.g. where you just ran the command "
         "'python3 welcome.py'). Environment variables are used by Python and installed packages to inform them where to "
@@ -30,6 +30,8 @@ def setup_workspace_environment_variable():
             "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
             "WORKSPACE path manually following the instructions at the readthedocs page:\n\n"
             "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
+            ""
+            "[Press Enter to continue]"
         )
 
         os.environ["WORKSPACE"] = workspace_path
@@ -46,6 +48,8 @@ def setup_workspace_environment_variable():
             "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
             "WORKSPACE path manually following the instructions at the readthedocs page:\n\n"
             "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
+            ""
+            "[Press Enter to continue]"
         )
 
 
@@ -54,10 +58,10 @@ def setup_pythonpath_environment_variable():
     workspace_path = os.environ["WORKSPACE"]
 
     print(
-        ""
-        "###############################\n"
-        "PYTHONPATH ENVIRONMENT VARIABLE\n"
-        "###############################\n\n"
+        "\n"
+        "#######################################\n"
+        "### PYTHONPATH ENVIRONMENT VARIABLE ###\n"
+        "#######################################\n\n"
         ""
         "A second environment variable, PYTHONPATH, is used by Python to tell it where to import modules "
         "and installed software packages.\n\n"
@@ -82,22 +86,26 @@ def setup_pythonpath_environment_variable():
             "Please press Enter to confirm this is the correct path. If it is not, please exit this script and set the "
             "PYTHONPATH path manually following the instructions at the readthedocs page:\n\n"
             "https://pyautolens.readthedocs.io/en/latest/general/installation.html\n\n"
+            ""
+            "[Press Enter to continue]"
         )
 
     else:
 
         input(
-            "PyAutoLens has detected your PYTHONPATH is already set up correctly, press Enter to continue.\n\n"
+            "PyAutoLens has detected your PYTHONPATH is already set up correctly.\n\n"
+            ""
+            "[Press Enter to continue]"
         )
 
     pythonpath = f"{pythonpath}:{pythonpath_path}"
     os.environ["PYTHONPATH"] = pythonpath
 
     print(
-        ""
-        "##########################\n"
-        "SETTING UP THE ENVIRONMENT\n"
-        "##########################\n\n"
+        "\n"
+        "##################################\n"
+        "### SETTING UP THE ENVIRONMENT ###\n"
+        "##################################\n\n"
         ""
         "Environment variables are removed every time you close your command line window, meaning they may need to be set"
         "up again manually every time you wish to your PyAutoLens. You can set up both variables using the following "
@@ -115,7 +123,7 @@ def setup_pythonpath_environment_variable():
         "export WORKSPACE=/path/to/autolens_workspace/\n"
         "export PYTHONPATH=$PYTHONPATH:/path/to\n\n"
         ""
-        "Where '/path/to' should include the path up to the workspace location"
+        "Where '/path/to' should include the path up to the workspace location.\n"
     )
 
 
