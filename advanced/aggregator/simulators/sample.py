@@ -35,9 +35,7 @@ dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__0"
 
 """Create the path where the dataset is output."""
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """The grid use to create the image."""
 grid = al.GridIterate.uniform(
@@ -118,9 +116,7 @@ dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__1"
 
 """Create the path where the dataset is output."""
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """
 Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
@@ -194,9 +190,7 @@ dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__2"
 
 """Create the path where the dataset is output."""
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """
 Create a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as

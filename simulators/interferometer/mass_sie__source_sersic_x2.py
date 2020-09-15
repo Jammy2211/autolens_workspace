@@ -23,7 +23,7 @@ workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Interferometer_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -31,19 +31,15 @@ gives it a descriptive name. They define the folder the dataset is output to on 
  - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
 """
 dataset_type = "interferometer"
-dataset_name = "mass_sie__source_sersic__2"
+dataset_name = "mass_sie__source_sersic_x2"
 
 """
 Create the path where the dataset will be output, which in this case is
-'/autolens_workspace/dataset/interferometer/mass_sie__source_sersic'
+'/autolens_workspace/dataset/interferometer/mass_sie__source_sersic_x2'
 """
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """
-The grid used to simulate the image. 
-
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
 coordinates like an ordinary Grid, but when the light-profile's image is evaluated below (using the Tracer) the 
 sub-size of the grid is iteratively increased (in steps of 2, 4, 8, 16, 24) until the input fractional accuracy of 
@@ -56,12 +52,14 @@ grid = al.GridIterate.uniform(
     shape_2d=(151, 151), pixel_scales=0.1, fractional_accuracy=0.9999
 )
 
-"""To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
-uv_wavelengths_path = f"{workspace_path}/simulators/interferometer/uvtools"
+"""To perform the Fourier transform we need the wavelengths of the baselines. 
 
-uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
-    file_path=f"{uv_wavelengths_path}/sma_uv_wavelengths.fits", hdu=0
-)
+The uvtools package on this workspace has the scripts necessary for simulating the baselines of a 12000s ALMA exposure 
+without any channel averaging. This will produce an _Interferometer_ datasset with ~1m visibilities. 
+"""
+from autolens_workspace.simulators.interferometer.uvtools import load_utils
+
+uv_wavelengths = load_utils.uv_wavelengths_single_channel()
 
 """
 To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale 
@@ -76,7 +74,7 @@ simulator = al.SimulatorInterferometer(
 )
 
 """
-Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
+Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (x2 elliptical Sersics) for this simulated lens.
 
 For lens modeling, defining ellipticity in terms of the  'elliptical_comps' improves the model-fitting procedure.
 
@@ -92,25 +90,37 @@ lens_galaxy = al.Galaxy(
     mass=al.mp.EllipticalIsothermal(
         centre=(0.0, 0.0),
         einstein_radius=1.6,
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=45.0),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=90.0),
     ),
     shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
 )
 
-source_galaxy = al.Galaxy(
+source_galaxy_0 = al.Galaxy(
     redshift=1.0,
     sersic=al.lp.EllipticalSersic(
-        centre=(0.1, 0.1),
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
-        intensity=0.3,
-        effective_radius=1.0,
-        sersic_index=2.5,
+        centre=(0.25, 0.15),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=120.0),
+        intensity=0.7,
+        effective_radius=0.7,
+        sersic_index=1.0,
     ),
 )
 
+source_galaxy_1 = al.Galaxy(
+    redshift=1.0,
+    sersic=al.lp.EllipticalSersic(
+        centre=(0.7, -0.5),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=60.0),
+        intensity=0.2,
+        effective_radius=1.6,
+        sersic_index=3.0,
+    ),
+)
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated interferometer dataset."""
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Interferometer_ dataset."""
+tracer = al.Tracer.from_galaxies(
+    galaxies=[lens_galaxy, source_galaxy_0, source_galaxy_1]
+)
 
 """Lets look at the tracer's image - this is the image we'll be simulating."""
 aplt.Tracer.image(tracer=tracer, grid=grid)

@@ -37,8 +37,6 @@ Create the path where the dataset will be output, which in this case is:
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 """
-The grid used to simulate the image. 
-
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
 coordinates like an ordinary Grid, but when the light-profile's image is evaluated below (using the Tracer) the 
 sub-size of the grid is iteratively increased (in steps of 2, 4, 8, 16, 24) until the input fractional accuracy of 

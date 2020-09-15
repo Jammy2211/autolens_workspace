@@ -36,7 +36,7 @@ Create the path where the dataset will be loaded from, which in this case is
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 image_path = f"{dataset_path}/image.fits"
 
 # %%

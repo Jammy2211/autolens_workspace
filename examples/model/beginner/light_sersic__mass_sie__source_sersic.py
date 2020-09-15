@@ -24,9 +24,6 @@ In this example script, we fit _Imaging_ of a strong lens system where:
 """Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-"""Use the WORKSPACE environment variable to determine the workspace path."""
-
-# %%
 import os
 
 workspace_path = os.environ["WORKSPACE"]

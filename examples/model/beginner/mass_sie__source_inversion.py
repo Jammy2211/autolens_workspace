@@ -30,9 +30,6 @@ Inversions are covered in detail in chapter 4 of the **HowToLens** lectures.
 """Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-"""Use the WORKSPACE environment variable to determine the workspace path."""
-
-# %%
 import os
 
 workspace_path = os.environ["WORKSPACE"]

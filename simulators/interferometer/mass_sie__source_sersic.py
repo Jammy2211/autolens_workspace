@@ -23,7 +23,7 @@ workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, _Imaging_ data) and 'dataset_name' 
+The 'dataset_type' describes the type of data being simulated (in this case, _Interferometer_ data) and 'dataset_name' 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
  - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
@@ -37,13 +37,9 @@ dataset_name = "mass_sie__source_sersic"
 Create the path where the dataset will be output, which in this case is
 '/autolens_workspace/dataset/interferometer/mass_sie__source_sersic'
 """
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """
-The grid used to simulate the image. 
-
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
 coordinates like an ordinary Grid, but when the light-profile's image is evaluated below (using the Tracer) the 
 sub-size of the grid is iteratively increased (in steps of 2, 4, 8, 16, 24) until the input fractional accuracy of 

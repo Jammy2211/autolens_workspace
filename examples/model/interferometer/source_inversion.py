@@ -41,9 +41,6 @@ In this example script, we fit interferometer data of a strong lens system where
 """Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
 
 # %%
-"""Use the WORKSPACE environment variable to determine the workspace path."""
-
-# %%
 import os
 
 workspace_path = os.environ["WORKSPACE"]
@@ -66,6 +63,9 @@ import numpy as np
 dataset_type = "interferometer"
 dataset_name = "mass_sie__source_sersic"
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
+
+# %%
+"""Using the dataset path, load the data (image, noise-map, PSF) as an _Interferometer_ object from .fits files."""
 
 interferometer = al.Interferometer.from_fits(
     visibilities_path=f"{dataset_path}/visibilities.fits",
