@@ -211,29 +211,7 @@ plotter = aplt.Plotter(
 
 aplt.Array(array=image, plotter=plotter)
 
-"""
-**Labels**
-
-The _Labels_ object customizes the figure labels. Below we:
-
-1) Manually set the figure title, y and x labels.
-2) Manually set the title, y and x label font sizes.
-"""
-
 # %%
-plotter = aplt.Plotter(
-    labels=aplt.Labels(
-        title="SLACS1430+4105 Image",
-        yunits="Hi",
-        xunits="Hello",
-        titlesize=15,
-        ysize=10,
-        xsize=20,
-    )
-)
-
-aplt.Array(array=image, plotter=plotter)
-
 """
 **Output**
 
