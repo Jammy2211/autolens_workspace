@@ -6,7 +6,7 @@ slam objects.
     Below, we given an example of a General slam using all options available to an intermediate pipeline:
 
     hyper = al.SetupHyper(
-        hyper_galaxies=False,
+        hyper_galaxies_lens=False, hyper_galaxies_source=False,
         hyper_background_noise=False,
         hyper_image_sky=False,
     )

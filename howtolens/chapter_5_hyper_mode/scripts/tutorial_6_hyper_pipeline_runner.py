@@ -102,7 +102,8 @@ inversion_search = af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8)
 hyper_combined_search = af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8)
 
 setup_hyper = al.SetupHyper(
-    hyper_galaxies=True,
+    hyper_galaxies_lens=True,
+    hyper_galaxies_source=True,
     hyper_background_noise=True,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     hyper_galaxies_search=hyper_galaxies_search,

@@ -55,7 +55,7 @@ for dataset_name in [
     )
 
     """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
-    _Imaging_ = al.Imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",

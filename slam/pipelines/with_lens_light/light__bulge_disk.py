@@ -42,12 +42,7 @@ def make_pipeline(slam, settings):
         4) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.setup_hyper.tag,
-        slam.source_tag,
-        slam.light_tag,
-    ]
+    folders = slam.folders + [pipeline_name, slam.source_tag, slam.light_tag]
 
     """
     Phase 1: Fit the lens galaxy's light, where we:

@@ -149,10 +149,12 @@ _SLaMPipelineLight_ and _SLaMPipelineMass_ pipelines, model comparison can be pe
 
 # %%
 hyper = al.SetupHyper(
-    hyper_galaxies=False,
+    hyper_galaxies_lens=True,
+    hyper_galaxies_source=False,
     hyper_image_sky=False,
-    hyper_background_noise=False,
+    hyper_background_noise=True,
     hyper_fixed_after_source=True,
+    evidence_tolerance=50.0,
 )
 
 # %%

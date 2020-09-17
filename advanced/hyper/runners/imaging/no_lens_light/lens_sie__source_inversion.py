@@ -117,7 +117,8 @@ in hyper-mode to adapt the _Pixelization_ and regularizatioon to the morphology 
 
 # %%
 setup = al.SetupPipeline(
-    hyper_galaxies=True,
+    hyper_galaxies_lens=True,
+    hyper_galaxies_source=True,
     hyper_background_noise=False,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     pixelization=al.pix.VoronoiBrightnessImage,

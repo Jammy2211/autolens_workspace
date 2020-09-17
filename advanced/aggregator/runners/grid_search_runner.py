@@ -66,7 +66,7 @@ for dataset_name in [
     ### DATASET ###
 
     """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
-    _Imaging_ = al.Imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
@@ -94,7 +94,10 @@ for dataset_name in [
     #   mass pipelines.
 
     hyper = al.SetupHyper(
-        hyper_galaxies=False, hyper_image_sky=False, hyper_background_noise=False
+        hyper_galaxies_lens=False,
+        hyper_galaxies_source=False,
+        hyper_image_sky=False,
+        hyper_background_noise=False,
     )
 
     source = al.SLaMPipelineSource(no_shear=True)

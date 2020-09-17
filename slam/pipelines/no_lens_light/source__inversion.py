@@ -69,11 +69,7 @@ def make_pipeline(slam, settings):
         3) The _Pixelization_ and _Regularization_ scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.setup_hyper.tag,
-        slam.source_inversion_tag,
-    ]
+    folders = slam.folders + [pipeline_name, slam.source_inversion_tag]
 
     """
     Phase 1: Fit the _Pixelization_ and _Regularization_, where we:

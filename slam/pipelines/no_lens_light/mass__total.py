@@ -33,12 +33,7 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.setup_hyper.tag,
-        slam.source_tag,
-        slam.mass_tag,
-    ]
+    folders = slam.folders + [pipeline_name, slam.source_tag, slam.mass_tag]
 
     """SLaM: Set whether shear is included in the mass model."""
 
@@ -57,7 +52,20 @@ def make_pipeline(slam, settings):
 
     mass = af.PriorModel(slam.pipeline_mass.setup_mass.mass_profile)
 
-    mass.centre = af.last.model.galaxies.lens.mass.centre
+    """
+    SLaM: If only a parametric Source pipeline was used and it had an input fixed mass_centre, this will carry
+    through to this pipeline. Below, we unfix it so it is a free parameter.
+    
+    If a Source _Inversion_ pipeline was run, it will already be unfixed.
+    """
+
+    if slam.pipeline_source_inversion is None:
+        mass = slam.pipeline_source_parametric.setup_mass.unfix_mass_centre(
+            mass_prior_model=mass, index=0
+        )
+    else:
+        mass.centre = af.last.model.galaxies.lens.mass.centre
+
     mass.elliptical_comps = af.last.model.galaxies.lens.mass.elliptical_comps
     mass.einstein_radius = af.last.model.galaxies.lens.mass.einstein_radius
 

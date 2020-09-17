@@ -86,14 +86,14 @@ lens_galaxy = al.Galaxy(
     bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=45.0),
-        intensity=0.3,
+        intensity=4.0,
         effective_radius=0.6,
         sersic_index=3.0,
     ),
     disk=al.lp.EllipticalExponential(
         centre=(0.0, 0.0),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=30.0),
-        intensity=0.2,
+        intensity=2.0,
         effective_radius=1.6,
     ),
     mass=al.mp.EllipticalIsothermal(

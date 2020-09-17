@@ -161,7 +161,7 @@ for labeling figures.
 """
 
 # %%
-print(samples.parameter_names)
+print(samples.model_component_and_parameter_names)
 print(samples.parameter_labels)
 
 # %%
@@ -309,7 +309,7 @@ plotter.triangle_plot(
     samples.getdist_samples,
     filled=True,
     legend_labels="result",
-    params=samples.parameter_names,
+    params=samples.model_component_and_parameter_names,
     labels=samples.parameter_labels,
     title_limit=1,
     close_existing=True,

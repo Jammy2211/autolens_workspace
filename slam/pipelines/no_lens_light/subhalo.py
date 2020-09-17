@@ -79,7 +79,6 @@ def make_pipeline(slam, settings):
 
     folders = slam.folders + [
         pipeline_name,
-        slam.setup_hyper.tag,
         slam.source_tag,
         slam.mass_tag,
         slam.setup_subhalo.tag,

@@ -179,7 +179,7 @@ for labeling figures.
 
 # %%
 for samples in agg.values("samples"):
-    print(samples.parameter_names)
+    print(samples.model_component_and_parameter_names)
     print(samples.parameter_labels)
 
 # %%

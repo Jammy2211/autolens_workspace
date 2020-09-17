@@ -75,11 +75,7 @@ def make_pipeline(slam, settings):
         4) The lens light model used in the previous pipeline.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.setup_hyper.tag,
-        slam.source_inversion_tag,
-    ]
+    folders = slam.folders + [pipeline_name, slam.source_inversion_tag]
 
     """
     Phase 1: fit the _Pixelization_ and _Regularization_, where we:

@@ -73,7 +73,7 @@ for dataset_name in [
     This _Imaging_ object will be available via the aggregator. Note also that we give the dataset a 'name' via the
     command 'name=dataset_name'. We'll use this name in the aggregator tutorials.
     """
-    _Imaging_ = al.Imaging.from_fits(
+    imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
         noise_map_path=f"{dataset_path}/noise_map.fits",
