@@ -53,7 +53,7 @@ def simulate_imaging(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -105,7 +105,7 @@ def simulate_imaging_in_counts(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=grid.shape_2d)
     exposure_time_map.output_to_fits(
@@ -159,7 +159,7 @@ def simulate_imaging_in_adus(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=grid.shape_2d)
     exposure_time_map.output_to_fits(
@@ -215,7 +215,7 @@ def simulate_imaging_with_large_stamp(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -259,7 +259,7 @@ def simulate_imaging_with_small_stamp(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -303,7 +303,7 @@ def simulate_imaging_with_offset_centre(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -347,7 +347,7 @@ def simulate_imaging_noise_map_wht(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.noise_map = 1.0 / imaging.noise_map ** 2.0
 
@@ -393,7 +393,7 @@ def simulate_imaging_with_large_psf(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -437,7 +437,7 @@ def simulate_imaging_with_even_psf(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.psf = al.Kernel.from_gaussian(
         shape_2d=(22, 22), sigma=0.05, pixel_scales=0.1
@@ -487,7 +487,7 @@ def simulate_imaging_with_unnormalized_psf(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",
@@ -533,7 +533,7 @@ def simulate_imaging_with_psf_with_offset_centre(dataset_path):
         add_noise=True,
     )
 
-    _Imaging_ = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
+    `Imaging` = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
     imaging.output_to_fits(
         image_path=imaging_path + "image.fits",

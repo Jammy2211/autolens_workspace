@@ -2,12 +2,12 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit _Interferometer_ data of a strong lens system where:
+In this pipeline, we fit `Interferometer` data of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
- - A subhalo is included in the lens galaxy whose _MassProfile_ is modeled as a _SphericalNFW_.
- - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_. 
+ - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - A subhalo is included in the lens galaxy whose `MassProfile` is modeled as a _SphericalNFW_.
+ - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_. 
 
 The pipeline is three phases:
 
@@ -52,13 +52,13 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
     This pipeline is tagged according to whether:
     
         1) The lens galaxy mass model includes an  _ExternalShear_.
-        2) The _Pixelization_ and _Regularization_ scheme of the pipeline (fitted in phases 3 & 4).
+        2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
     setup.folders.append(pipeline_name)
     setup.folders.append(setup.tag)
 
-    """Setup: Include an _ExternalShear_ in the mass model if turned on in _SetupMass_. """
+    """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
     if not setup.setup_mass.no_shear:
         shear = al.mp.ExternalShear
@@ -66,7 +66,7 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
         shear = None
 
     """
-    Phase 1: Fit the lens's _MassProfile_'s and source _LightProfile_, where we:
+    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """

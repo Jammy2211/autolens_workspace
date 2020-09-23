@@ -2,11 +2,11 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit _Imaging_ of a strong lens system where:
+In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_ and _EllipticalExponential_.
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_ and _ExternalShear_.
- - The source galaxy's surface-brightness is modeled using an _Inversion_.
+ - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic` and _EllipticalExponential_.
+ - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal` and _ExternalShear_.
+ - The source galaxy`s surface-brightness is modeled using an _Inversion_.
 
 The pipeline is five phases:
 
@@ -42,23 +42,23 @@ Phase 3:
 
 Phase 4:
 
-    Fit the source _Inversion_ using the lens light and _MassProfile_'s inferred in phase 3.
+    Fit the source `Inversion` using the lens light and `MassProfile``s inferred in phase 3.
     
     Lens Light: EllipticalSersic + EllipticalExpoonential
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Prior Passing: Lens Light & Mass (instance -> phase3).
-    Notes: Lens mass fixed, source _Inversion_ parameters vary.
+    Notes: Lens mass fixed, source `Inversion` parameters vary.
 
 Phase 5:
 
-    Refines the lens light and mass models using the source _Inversion_ of phase 4.
+    Refines the lens light and mass models using the source `Inversion` of phase 4.
     
     Lens Light: EllipticalSersic + EllipticalExpoonential
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: VoronoiMagnification + Constant
-    Prior Passing: Lens Light & Mass (model -> phase 3), Source _Inversion_ (instance -> phase 4)
-    Notes: Lens mass varies, source _Inversion_ parameters fixed.
+    Prior Passing: Lens Light & Mass (model -> phase 3), Source `Inversion` (instance -> phase 4)
+    Notes: Lens mass varies, source `Inversion` parameters fixed.
 """
 
 
@@ -72,7 +72,7 @@ def make_pipeline(setup, settings):
     This pipeline is tagged according to whether:
 
         1) The bulge + disk centres or elliptical_comps are aligned.
-        2) The disk component of the lens light model is an _EllipticalExponential_ or _EllipticalSersic_ profile.
+        2) The disk component of the lens light model is an `EllipticalExponential` or `EllipticalSersic` profile.
         3) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
@@ -80,23 +80,23 @@ def make_pipeline(setup, settings):
     setup.folders.append(setup.tag)
 
     """
-    Phase 1; Fit only the lens galaxy's light, where we:
+    Phase 1; Fit only the lens galaxy`s light, where we:
 
-        1) Set priors on the bulge and disk's (y,x) centres such that we assume the image is centred around 
+        1) Set priors on the bulge and disk`s (y,x) centres such that we assume the image is centred around 
            the lens galaxy OR,
         2) Fix the lens light centre to the input value in _SetupLightBulgeDisk_.
     """
 
     bulge = af.PriorModel(al.lp.EllipticalSersic)
 
-    """Setup: Set whether the disk is modeled as an _EllipticalSersic_ or _EllipticalExponential_."""
+    """Setup: Set whether the disk is modeled as an `EllipticalSersic` or _EllipticalExponential_."""
 
     if setup.setup_light.disk_as_sersic:
         disk = af.PriorModel(al.lp.EllipticalSersic)
     else:
         disk = af.PriorModel(al.lp.EllipticalExponential)
 
-    """Setup: Set the alignment of the bulge and disk's centres and elliptical components."""
+    """Setup: Set the alignment of the bulge and disk`s centres and elliptical components."""
 
     if setup.setup_light.align_bulge_disk_centre:
         bulge.centre = disk.centre
@@ -104,7 +104,7 @@ def make_pipeline(setup, settings):
     if setup.setup_light.align_bulge_disk_elliptical_comps:
         bulge.elliptical_comps = disk.elliptical_comps
 
-    """Setup: Fix the bulge and disk centres to the input value in _SetupLight_ if input."""
+    """Setup: Fix the bulge and disk centres to the input value in `SetupLight` if input."""
 
     if setup.setup_light.light_centre is not None:
         bulge.centre_0 = setup.setup_light.light_centre[0]
@@ -123,14 +123,14 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 2: Fit the lens's _MassProfile_'s and source galaxy's light, where we:
+    Phase 2: Fit the lens`s `MassProfile``s and source galaxy`s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy bulge+disk model from phase 1.
-        2) Set priors on the _EllipticalIsothermal_ (y,x) centre such that we assume the image is centred around the 
-           lens galaxy's bulge.
+        2) Set priors on the `EllipticalIsothermal` (y,x) centre such that we assume the image is centred around the 
+           lens galaxy`s bulge.
     """
 
-    """Setup: Include an _ExternalShear_ in the mass model if turned on in _SetupMass_. """
+    """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
     if not setup.setup_mass.no_shear:
         shear = al.mp.ExternalShear
@@ -163,7 +163,7 @@ def make_pipeline(setup, settings):
     """
     Phase 3: Fit simultaneously the lens and source galaxies, where we:
 
-        1) Set the lens's bulge, disk, mass, and source model and priors using the results of phases 1 and 2.
+        1) Set the lens`s bulge, disk, mass, and source model and priors using the results of phases 1 and 2.
     """
 
     phase3 = al.PhaseImaging(
@@ -187,9 +187,9 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 4: Fit the input pipeline _Pixelization_ & _Regularization_, where we:
+    Phase 4: Fit the input pipeline `Pixelization` & `Regularization`, where we:
 
-        1) Fix the lens's bulge, disk and mass model to the results of phase 3.
+        1) Fix the lens`s bulge, disk and mass model to the results of phase 3.
     """
 
     phase4 = al.PhaseImaging(
@@ -214,9 +214,9 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 5: Fit the lens's bulge, disk and mass using the input pipeline _Pixelization_ & _Regularization_, where we:
+    Phase 5: Fit the lens`s bulge, disk and mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
-        1) Fix the source _Inversion_ parameters to the results of phase 4.
+        1) Fix the source `Inversion` parameters to the results of phase 4.
         2) Set priors on the lens galaxy bulge, disk and mass using the results of phase 3.
     """
 

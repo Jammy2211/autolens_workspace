@@ -65,7 +65,7 @@
                 "value": 100.0
             },
             "gaussian_limits": {
-                "lower": 0.0,
+                "lower": 50.0,
                 "upper": "inf"
             }
         },

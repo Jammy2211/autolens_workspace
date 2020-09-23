@@ -5,7 +5,7 @@ Here, we include auxiliary information about our strong lens dataset that we may
 interpreting the lens modeling results.
 
 The most obvious example of such information is the redshifts of the source and lens galaxy. By storing these as an
-'info' file in the lens's dataset folder, it is straight forward to load the redshifts in a runner and pass them to a
+`info` file in the lens`s dataset folder, it is straight forward to load the redshifts in a runner and pass them to a
 pipeline, such that PyAutoLens can then output results in physical units (e.g. kpc instead of arc-seconds, solMass
 instead of angular units).
 
@@ -43,8 +43,8 @@ preprocess_path = f"{workspace_path}/preprocess/imaging"
 
 # %%
 """
-The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the info file is stored in e.g,
-the info will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/info.json'.
+The `dataset label` is the name of the dataset folder and `dataset_name` the folder the info file is stored in e.g,
+the info will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/info.json`.
 """
 
 # %%
@@ -55,7 +55,7 @@ dataset_name = "mass_sie__source_sersic"
 # %%
 """
 Create the path where the info will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
 """
 
 # %%
@@ -78,7 +78,7 @@ info = {
 """
 The info is stored in the dataset folder as a .json file. 
 
-We cannot 'dump' a .json file using a string which contains a directory, so we dump it to the location of this
+We cannot `dump` a .json file using a string which contains a directory, so we dump it to the location of this
 script and move it to the appropriate dataset folder. We first delete existing info file in the dataset folder.
 """
 

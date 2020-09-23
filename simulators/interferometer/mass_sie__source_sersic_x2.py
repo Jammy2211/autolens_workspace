@@ -4,17 +4,17 @@ import autolens.plot as aplt
 
 """
 This tool allows one to make simulated datasets of strong lenses, which can be used to test example pipelines and
-investigate strong lens modeling on simulated datasets where the 'true' answer is known.
+investigate strong lens modeling on simulated datasets where the `true` answer is known.
 
-The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the dataset is stored in, e.g:
+The `dataset label` is the name of the dataset folder and `dataset_name` the folder the dataset is stored in, e.g:
 
-The image will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
-The noise-map will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
-The psf will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
+The image will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/image.fits`.
+The noise-map will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits`.
+The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -23,25 +23,25 @@ workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
 """
-The 'dataset_type' describes the type of data being simulated (in this case, _Interferometer_ data) and 'dataset_name' 
+The `dataset_type` describes the type of data being simulated (in this case, `Interferometer` data) and `dataset_name` 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
 
- - The image will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/image.fits'.
- - The noise-map will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits'.
- - The psf will be output to '/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits'.
+ - The image will be output to `/autolens_workspace/dataset/dataset_type/dataset_name/image.fits`.
+ - The noise-map will be output to `/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits`.
+ - The psf will be output to `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
 dataset_type = "interferometer"
 dataset_name = "mass_sie__source_sersic_x2"
 
 """
 Create the path where the dataset will be output, which in this case is
-'/autolens_workspace/dataset/interferometer/mass_sie__source_sersic_x2'
+`/autolens_workspace/dataset/interferometer/mass_sie__source_sersic_x2`
 """
 dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
-coordinates like an ordinary Grid, but when the light-profile's image is evaluated below (using the Tracer) the 
+coordinates like an ordinary Grid, but when the light-profile`s image is evaluated below (using the Tracer) the 
 sub-size of the grid is iteratively increased (in steps of 2, 4, 8, 16, 24) until the input fractional accuracy of 
 99.99% is met.
 
@@ -55,7 +55,7 @@ grid = al.GridIterate.uniform(
 """To perform the Fourier transform we need the wavelengths of the baselines. 
 
 The uvtools package on this workspace has the scripts necessary for simulating the baselines of a 12000s ALMA exposure 
-without any channel averaging. This will produce an _Interferometer_ datasset with ~1m visibilities. 
+without any channel averaging. This will produce an `Interferometer` datasset with ~1m visibilities. 
 """
 from autolens_workspace.simulators.interferometer.uvtools import load_utils
 
@@ -74,9 +74,9 @@ simulator = al.SimulatorInterferometer(
 )
 
 """
-Setup the lens galaxy's mass (SIE+Shear) and source galaxy light (x2 elliptical Sersics) for this simulated lens.
+Setup the lens galaxy`s mass (SIE+Shear) and source galaxy light (x2 elliptical Sersics) for this simulated lens.
 
-For lens modeling, defining ellipticity in terms of the  'elliptical_comps' improves the model-fitting procedure.
+For lens modeling, defining ellipticity in terms of the  `elliptical_comps` improves the model-fitting procedure.
 
 However, for simulating a strong lens you may find it more intuitive to define the elliptical geometry using the 
 axis-ratio of the profile (axis_ratio = semi-major axis / semi-minor axis = b/a) and position angle phi, where phi is
@@ -117,12 +117,12 @@ source_galaxy_1 = al.Galaxy(
     ),
 )
 
-"""Use these galaxies to setup a tracer, which will generate the image for the simulated _Interferometer_ dataset."""
+"""Use these galaxies to setup a tracer, which will generate the image for the simulated `Interferometer` dataset."""
 tracer = al.Tracer.from_galaxies(
     galaxies=[lens_galaxy, source_galaxy_0, source_galaxy_1]
 )
 
-"""Lets look at the tracer's image - this is the image we'll be simulating."""
+"""Lets look at the tracer`s image - this is the image we'll be simulating."""
 aplt.Tracer.image(tracer=tracer, grid=grid)
 
 """

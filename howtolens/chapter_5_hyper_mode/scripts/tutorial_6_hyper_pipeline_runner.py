@@ -5,7 +5,7 @@ Tutorial 6: Hyper Pipeline
 
 To end, lets illustrate the use of hyper-mode in a pipeline.
 
-You can find many more example pipelines in the folder 'autolens_workspace/advanced/hyper'.
+You can find many more example pipelines in the folder `autolens_workspace/advanced/hyper`.
 """
 
 # %%
@@ -37,11 +37,11 @@ import autolens.plot as aplt
 
 # %%
 """
-We'll use strong lensing data, where:
+we'll use strong lensing data, where:
 
- - The lens galaxy's light is an _EllipticalSersic_.
- - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is four _EllipticalSersic_'s.
+ - The lens galaxy`s light is an `EllipticalSersic`.
+ - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
+ - The source galaxy`s `LightProfile` is four `EllipticalSersic``..
 """
 
 # %%
@@ -60,7 +60,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -70,10 +70,10 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The _SettingsPhaseImaging_ describe how the model is fitted to the data in the log likelihood function. We discussed
+The `SettingsPhaseImaging` describe how the model is fitted to the data in the log likelihood function. We discussed
 these in chapter 2, and a full description of all settings can be found in the example script:
 
- 'autolens_workspace/examples/model/customize/settings.py'.
+ `autolens_workspace/examples/model/customize/settings.py`.
 
 The settings chosen here are applied to all phases in the pipeline.
 """
@@ -92,7 +92,7 @@ The setup module customizes the behaviour of a pipeline. Hyper-fitting brings wi
  - If the level of background noise is modeled throughout the pipeline (default True)
  - If the background sky is modeled throughout the pipeline (default False)
     
-Each of these features uses their own non-linear search in extended 'hyper phases', which are also specified in the
+Each of these features uses their own non-linear search in extended `hyper phases`, which are also specified in the
 _SetupPipeline-.
 """
 

@@ -3,23 +3,23 @@
 """
 __Example: Non-linear Searches__
 
-In the 'beginner' examples all model-fits were performed using the nested sampling algorithm _Dynesty_, which is a
+In the `beginner` examples all model-fits were performed using the nested sampling algorithm `Dynesty`, which is a
 very effective non-linear search algorithm for lens modeling, but may not always be the optimal choice for your
 problem. In this example we fit strong lens data using a variety of non-linear searches.
 """
 
 # %%
 """
-In this example script, we fit _Imaging_ of a strong lens system where:
+In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
+ - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
 
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -39,11 +39,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
 
- - The lens galaxy's _LightProfile_ is omitted_.
- - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy`s `LightProfile` is omitted_.
+ - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
+ - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -64,7 +64,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -74,11 +74,11 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Model__
 
-We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
+We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
- - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light (6 parameters).
+ - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (6 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -91,7 +91,7 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which in this example simmply use the default values used in the beginner
+Next, we specify the `SettingsPhaseImaging`, which in this example simmply use the default values used in the beginner
 examples.
 """
 
@@ -115,7 +115,7 @@ Below we use the following non-linear searches:
 """
 __Nested Sampling__
 
-To begin, lets again use the nested sampling method _Dynesty_ that we have used in all examples up to now. We've seen 
+To begin, lets again use the nested sampling method `Dynesty` that we have used in all examples up to now. We`ve seen 
 that the method is very effective, always locating a solution that fits the lens data well.
 """
 
@@ -131,8 +131,8 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize/mass_sie__source_sersic/phase__nested_sampling/
-    settings__grid_sub_2/dynesty__'.
+ `/autolens_workspace/output/examples/customize/mass_sie__source_sersic/phase__nested_sampling/
+    settings__grid_sub_2/dynesty__`.
 """
 
 # %%
@@ -150,18 +150,18 @@ result = phase.run(dataset=imaging, mask=mask)
 """
 __Optimizer__
 
-Now, lets use a fast _NonLinearSearch_ technique called an 'optimizer', which only seeks to maximize the log 
+Now, lets use a fast `NonLinearSearch` technique called an `optimizer`, which only seeks to maximize the log 
 likelihood of the fit and does not attempt to infer the errors on the model parameters. Optimizers are useful when we
 want to find a lens model that fits the data well, but do not care about the full posterior of parameter space (e.g.
 the errors). 
 
-We'll use the 'particle swarm optimizer algorithm *PySwarms* (https://pyswarms.readthedocs.io/en/latest/index.html) 
+we'll use the `particle swarm optimizer algorithm *PySwarms* (https://pyswarms.readthedocs.io/en/latest/index.html) 
 using:
 
  - 30 particles to sample parameter space.
  - 100 iterations per particle, giving a total of 3000 iterations.
     
-Performing the model-fit in 3000 iterations is significantly faster than the _Dynesty_ fits perforomed in other 
+Performing the model-fit in 3000 iterations is significantly faster than the `Dynesty` fits perforomed in other 
 example scripts, that often require > 20000 - 50000 iterations.
 """
 
@@ -177,7 +177,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize'.
+ `/autolens_workspace/output/examples/customize`.
 """
 
 # %%
@@ -208,7 +208,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/customize'.
+ `/autolens_workspace/output/examples/customize`.
 """
 
 # %%

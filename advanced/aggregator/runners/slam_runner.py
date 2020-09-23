@@ -4,27 +4,27 @@ import autofit as af
 """
 __Aggregator: Pipeline Runner__
 
-# This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
+# This script fits the sample of three strong lenses simulated by the script `autolens_workspace/aggregator/sample.py`
 # using an advanced pipeline to illustrate aggregator functionality. If you are only used to using beginner or
 # intermediate pipelines, you should still be able to understand the aggregator tutorials.
 
-# we fit each lens with an _EllipticalPowerLaw_ _MassProfile_ and each source using a pixelized _Inversion_. The fit will use 3
+# we fit each lens with an `EllipticalPowerLaw` `MassProfile`.and each source using a pixelized `Inversion`. The fit will use 3
 # advanced pipelines which are added together to perform a 6 phase analysis, which will allow us to illustrate how the
 # results of different pipelines and phases can be loaded using the aggregator.
 
-# This script follows the scripts described in 'autolens_workspace/runners/advanced/' and the pipelines:
+# This script follows the scripts described in `autolens_workspace/runners/advanced/` and the pipelines:
 
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py'
-# 'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'
-# 'autolens_workspace/pipelines/advanced/no_lens_light/mass/sie/lens_sie__source_inversion.py'
+# `autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py`
+# `autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py`
+# `autolens_workspace/pipelines/advanced/no_lens_light/mass/sie/lens_sie__source_inversion.py`
 
-# If anything doesn't make sense check those scripts out for details!
+# If anything doesn`t make sense check those scripts out for details!
 """
 
 """ AUTOFIT + CONFIG SETUP """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -52,12 +52,12 @@ for dataset_name in [
 ]:
 
     # Create the path where the dataset will be loaded from, which in this case is
-    # '/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic'
+    # `/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic`
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["aggregator", "dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -66,7 +66,7 @@ for dataset_name in [
     )
 
     """Next, we create the mask we'll fit this data-set with."""
-    mask = al.Mask.circular(
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -135,13 +135,13 @@ for dataset_name in [
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -150,7 +150,7 @@ Create the path where the dataset will be loaded from, which in this case is
     )
 
     """Next, we create the mask we'll fit this data-set with."""
-    mask = al.Mask.circular(
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -219,13 +219,13 @@ for dataset_name in [
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -234,7 +234,7 @@ Create the path where the dataset will be loaded from, which in this case is
     )
 
     """Next, we create the mask we'll fit this data-set with."""
-    mask = al.Mask.circular(
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
@@ -305,13 +305,13 @@ for dataset_name in [
 
     """
 Create the path where the dataset will be loaded from, which in this case is
-'/autolens_workspace/dataset/imaging/mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
 """
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["dataset", dataset_name]
     )
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -320,7 +320,7 @@ Create the path where the dataset will be loaded from, which in this case is
     )
 
     """Next, we create the mask we'll fit this data-set with."""
-    mask = al.Mask.circular(
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 

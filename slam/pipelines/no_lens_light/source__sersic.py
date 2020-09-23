@@ -9,7 +9,7 @@ This pipeline uses 1 phase:
 
 Phase 1:
 
-    Fit the lens mass model and source _LightProfile_.
+    Fit the lens mass model and source `LightProfile`.
     
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: EllipticalSersic
@@ -29,13 +29,13 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an _ExternalShear_.
+        2) The lens galaxy mass model includes an `ExternalShear`.
     """
 
     folders = slam.folders + [pipeline_name, slam.source_parametric_tag]
 
     """
-    Phase 1: Fit the lens's _MassProfile_'s and source galaxy.
+    Phase 1: Fit the lens`s `MassProfile``s and source galaxy.
     """
 
     mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)

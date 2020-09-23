@@ -6,7 +6,7 @@ Welcome to the cosma pipeline runner, which illustrates how to load a strong len
 
 This uses the pipeline (Check it out full description of the pipeline):
 
- 'autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__source_inversion.py'.
+ `autolens_workspace/pipelines/imaging/no_lens_light/lens_sie__source_inversion.py`.
 
 We will omit details of what the pipeline and analysis does, focusing on cosma usage.
 """
@@ -17,7 +17,7 @@ Setup the path to the cosma output directory.
 
 This exmaple assumes you are using cosma7 and outputting results to the cosma7 output directory:
 
- '/cosma7/data/dp004/cosma_username'.
+ `/cosma7/data/dp004/cosma_username`.
 """
 
 cosma_path = "/cosma7/data/dp004/cosma_username"
@@ -56,28 +56,28 @@ conf.instance = conf.Config(
 )
 
 """
-Cosma submissions require a'batch script', which tells Cosma the PyAutoLens runners you want it to execute and 
+Cosma submissions require a`batch script`, which tells Cosma the PyAutoLens runners you want it to execute and 
 distributes them to nodes and CPUs. Lets look at the batch script 
 
- 'autolens_workspace/cosma/batch/example
+ `autolens_workspace/cosma/batch/example
     
 The following options are worth noting:
 
- '#SBATCH -N 1' - The number of nodes we require, where 1 node contains 28 CPUs.
- '#SBATCH --ntasks=16' - The total number of task we are submitting.
- '#SBATCH --cpus-per-task=1' - The number of tasks per CPU, this should always be 1 for PyAutoLens use.
- '#SBATCH -J example' - The name of the job, which is how it'll appear on cosma when you inspect it.
- '#SBATCH -o output/output.%A.out' - Python interpreter output is placed in a file in the 'output' folder.
- '#SBATCH -o error/error.%A.out' - Python interpreter errors are placed in a file in the 'error' folder.
- '#SBATCH -p cosma7' - Signifies we are running the job on COSMA7.
- '#SBATCH -A dp004' - The project code of the submission.
- '#SBATCH -t 48:00:00' - The job will terminate after this length of time (if it does not end naturally).
- '#SBATCH --mail-type=END' - If you input your email, when you'll get an email about the job (END means once finished).
- '#SBATCH --mail-user=fill@me.co.uk' - The email address COSMA sends the email too.
+ `#SBATCH -N 1` - The number of nodes we require, where 1 node contains 28 CPUs.
+ `#SBATCH --ntasks=16` - The total number of task we are submitting.
+ `#SBATCH --cpus-per-task=1` - The number of tasks per CPU, this should always be 1 for PyAutoLens use.
+ `#SBATCH -J example` - The name of the job, which is how it`ll appear on cosma when you inspect it.
+ `#SBATCH -o output/output.%A.out` - Python interpreter output is placed in a file in the `output` folder.
+ `#SBATCH -o error/error.%A.out` - Python interpreter errors are placed in a file in the `error` folder.
+ `#SBATCH -p cosma7` - Signifies we are running the job on COSMA7.
+ `#SBATCH -A dp004` - The project code of the submission.
+ `#SBATCH -t 48:00:00` - The job will terminate after this length of time (if it does not end naturally).
+ `#SBATCH --mail-type=END` - If you input your email, when you`ll get an email about the job (END means once finished).
+ `#SBATCH --mail-user=fill@me.co.uk` - The email address COSMA sends the email too.
 
 The following line activates the PyAutoLens virtual environment we set up on cosma for this run:
 
- 'source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh'
+ `source /cosma/home/dp004/cosma_username/autolens_workspace/activate.sh`
 
 These two lines prevent the NumPy linear algebra libries from using too many resources.
     
@@ -94,7 +94,7 @@ This line sets off the job:
 
     srun -n 16 --multi-prog conf/example.conf
 
-Lets checkout the file 'example.conf':
+Lets checkout the file `example.conf`:
 
     0 python3 /cosma/home/dp004/cosma_username/autolens_workspace/cosma/runners/example.py 1
     1 python3 /cosma/home/dp004/cosma_username/autolens_workspace/cosma/runners/example.py 2
@@ -115,7 +115,7 @@ Lets checkout the file 'example.conf':
     
 It is literally just lines of python3 commands, setting off our runner scripts! Thus, it should now be clear how
 to set off many cosma jobs - just add each runner you want to run to this script. The numbers on the left running from 
-0-15 specify the CPU number and should always run from 0, I'll explain the numbers on the right in a moment.
+0-15 specify the CPU number and should always run from 0, I`ll explain the numbers on the right in a moment.
 
 A lot of the code below is what you are used to in runner scripts not on COSMA. Line 
 """
@@ -129,9 +129,9 @@ import autolens as al
 import autolens.plot as aplt
 
 """
-Okay, so what were those numbers on the right hand side of our 'example.conf' file doing? They were inputting an integer,
-which we load below using the 'sys.argv[1]' command. Thi means, when we set off our 16 cosma jobs, each one will have a
-unique integer value in the 'cosma_id' variable.
+Okay, so what were those numbers on the right hand side of our `example.conf` file doing? They were inputting an integer,
+which we load below using the `sys.argv[1]` command. Thi means, when we set off our 16 cosma jobs, each one will have a
+unique integer value in the `cosma_id` variable.
 """
 import sys
 
@@ -164,7 +164,7 @@ dataset_name = dataset_name[cosma_id]
 """
 Create the path where the dataset will be loaded from, which in this case is:
 
- '/cosma7/data/dp004/cosma_username/dataset/imaging/example_image_1'
+ `/cosma7/data/dp004/cosma_username/dataset/imaging/example_image_1`
 """
 
 # %%
@@ -180,7 +180,7 @@ your own COSMA run going!
 """
 
 # %%
-"""Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
 
 # %%
 imaging = al.Imaging.from_fits(
@@ -194,7 +194,7 @@ imaging = al.Imaging.from_fits(
 """Next, we create the mask we'll fit this data-set with."""
 
 # %%
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -208,10 +208,10 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-The _SettingsPhaseImaging_ describe how the model is fitted to the data in the log likelihood function.
+The `SettingsPhaseImaging` describe how the model is fitted to the data in the log likelihood function.
 
-These settings are used and described throughout the 'autolens_workspace/examples/model' example scripts, with a 
-complete description of all settings given in 'autolens_workspace/examples/model/customize/settings.py'.
+These settings are used and described throughout the `autolens_workspace/examples/model` example scripts, with a 
+complete description of all settings given in `autolens_workspace/examples/model/customize/settings.py`.
 
 The settings chosen here are applied to all phases in the pipeline.
 """
@@ -225,22 +225,22 @@ settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imagi
 """
 __Pipeline_Setup_And_Tagging__:
 
-For this runner the _SetupPipeline_ customizes:
+For this runner the `SetupPipeline` customizes:
 
- - The _Pixelization_ used by the _Inversion_ of this pipeline.
- - The _Regularization_ scheme used by of this pipeline.
- - If there is an _ExternalShear_ in the mass model or not.
+ - The `Pixelization` used by the `Inversion` of this pipeline.
+ - The `Regularization` scheme used by of this pipeline.
+ - If there is an `ExternalShear` in the mass model or not.
 
-The _SetupPipeline_ 'tags' the output path of a pipeline. For example, if 'no_shear' is True, the pipeline's output 
-paths are 'tagged' with the string 'no_shear'.
+The `SetupPipeline` `tags` the output path of a pipeline. For example, if `no_shear` is True, the pipeline`s output 
+paths are `tagged` with the string `no_shear`.
 
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The 'folders' below specify the path the pipeline results are written to, which is:
+The `folders` below specify the path the pipeline results are written to, which is:
 
- 'autolens_workspace/output/dataset_type/dataset_name' 
- 'autolens_workspace/output/imaging/mass_sie__source_sersic'
+ `autolens_workspace/output/dataset_type/dataset_name` 
+ `autolens_workspace/output/imaging/mass_sie__source_sersic`
 """
 
 # %%
@@ -255,7 +255,7 @@ setup = al.SetupPipeline(
 """
 __Pipeline Creation__
 
-To create a pipeline we import it from the pipelines folder and run its 'make_pipeline' function, inputting the 
+To create a pipeline we import it from the pipelines folder and run its `make_pipeline` function, inputting the 
 *Setup* and *SettingsPhase* above.
 """
 

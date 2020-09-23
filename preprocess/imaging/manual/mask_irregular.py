@@ -33,10 +33,10 @@ signal_to_noise_threshold = 10.0
 
 # %%
 """
-Next, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory 
-and place your dataset in the 'autolens_workspace/preprocess/imaging/data_raw' directory.
+Next, lets setup the path to our current working directory. I recommend you use the `autolens_workspace` directory 
+and place your dataset in the `autolens_workspace/preprocess/imaging/data_raw` directory.
 
-For this tutorial, we'll use the 'autolens_workspace/preprocess/data_raw/imaging' directory. The folder 'data_raw' 
+For this tutorial, we'll use the `autolens_workspace/preprocess/data_raw/imaging` directory. The folder `data_raw` 
 contains example data we'll use in this tutorial.
 """
 
@@ -87,12 +87,12 @@ aplt.Array(array=blurred_signal_to_noise_map)
 mask = np.where(
     blurred_signal_to_noise_map.in_2d > signal_to_noise_threshold, False, True
 )
-mask = al.Mask.manual(mask=mask, pixel_scales=image.pixel_scales, sub_size=1)
+mask = al.Mask2D.manual(mask=mask, pixel_scales=image.pixel_scales, sub_size=1)
 aplt.Array(array=image, mask=mask)
 
 # %%
 """
-Now we're happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
+Now we`re happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 file in our pipelines!
 """
 

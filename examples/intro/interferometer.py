@@ -2,15 +2,15 @@
 """
 __Example: Interferometer__
 
-Alongside CCD _Imaging_ data, **PyAutoLens** supports the modeling of interferometer data from submillimeter and radio
-observatories. The dataset is fitted directly in the uv-plane, circumventing issues that arise when fitting a 'dirty
-image' such as correlated noise.
+Alongside CCD `Imaging` data, **PyAutoLens** supports the modeling of interferometer data from submillimeter and radio
+observatories. The dataset is fitted directly in the uv-plane, circumventing issues that arise when fitting a `dirty
+image` such as correlated noise.
 
 To begin, we load an interferometer dataset from fits files:
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -20,7 +20,7 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens interferometer dataset 'mass_sie__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens interferometer dataset `mass_sie__source_sersic` `from .fits files, which is the dataset 
 we'll use in this example.
 """
 
@@ -42,7 +42,7 @@ interferometer = al.Interferometer.from_fits(
 # %%
 """
 The PyAutoLens plot module has tools for plotting interferometer datasets, including the visibilities, noise-map
-and uv wavelength which represent the interferometer's baselines. 
+and uv wavelength which represent the interferometer`s baselines. 
 
 The data used in this tutorial contains 1 million visibilities and is representative of an ALMA dataset:
 """
@@ -54,18 +54,18 @@ aplt.Interferometer.uv_wavelengths(interferometer=interferometer)
 # %%
 """
 Although interferometer lens modeling is performed in the uv-plane and therefore Fourier space, we still need to define
-a 'real-space mask'. This mask defines the grid on which the image of the lensed source galaxy is computed via a
+a `real-space mask`. This mask defines the grid on which the image of the lensed source galaxy is computed via a
 _Tracer_, which when we fit it to data data in the uv-plane is mapped to Fourier space.
 """
 
 # %%
-real_space_mask = al.Mask.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
+real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
 
 # %%
 """
 To perform uv-plane modeling, **PyAutoLens** generates an image of the strong lens system in real-space via a *Tracer*. 
 
-Lets quickly set up the _Tracer_ we'll use in this example.
+Lets quickly set up the `Tracer` we'll use in this example.
 """
 
 # %%
@@ -146,7 +146,7 @@ aplt.FitInterferometer.subplot_fit_interferometer(fit=fit)
 
 # %%
 """
-Interferometer data can also be modeled using pixelized source's, which again perform the source reconstruction by
+Interferometer data can also be modeled using pixelized source`s, which again perform the source reconstruction by
 directly fitting the visibilities in the uv-plane. The source reconstruction is visualized in real space:
 
 Computing this source recontruction would be extremely inefficient if **PyAutoLens** used a traditional approach to

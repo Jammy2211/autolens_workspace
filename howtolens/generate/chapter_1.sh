@@ -22,7 +22,7 @@ cp -r *.ipynb ../
 rm *.ipynb
 cd ..
 git add *.ipynb
-rm __init__.ipynb
+rm ``.nit__.ipynb
 
 find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
 

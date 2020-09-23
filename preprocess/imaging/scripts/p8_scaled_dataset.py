@@ -5,10 +5,10 @@ In this tool we mark regions of the image that has signal in the proximity of th
 model fitting. By marking these regions we will scale the image to values near zero and the noise-map to large values
 such that our model-fit ignores these regions.
 
-Why not just mask these regions instead? The reason is because of inversions which reconstruct the lensed source's
+Why not just mask these regions instead? The reason is because of inversions which reconstruct the lensed source`s
 light on a pixelized grid. Masking regions of the image removes them entirely from the fitting proceure. This means
 their deflection angles are omitted and they are not traced to the source-plane, creating discontinuities in the
-source _Pixelization_ which can negatively impact the _Regularization_ scheme.
+source `Pixelization` which can negatively impact the `Regularization` scheme.
 
 However, by retaining them in the mask but simply scaling their values these discontinuities are omitted.
 """
@@ -38,8 +38,8 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the mask is stored in, e.g,
-the mask will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/mask.fits'.
+The `dataset label` is the name of the dataset folder and `dataset_name` the folder the mask is stored in, e.g,
+the mask will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/mask.fits`.
 """
 
 # %%
@@ -50,7 +50,7 @@ dataset_name = "mass_sie__source_sersic__intervening_objects"
 # %%
 """
 Create the path where the noise-map will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic_intervening_objects/'
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic_intervening_objects/`
 """
 
 # %%
@@ -102,7 +102,7 @@ First, we manually define a mask corresponding to the regions of the image we wi
 """
 
 # %%
-mask = al.Mask.unmasked(shape_2d=image.shape_2d, pixel_scales=image.pixel_scales)
+mask = al.Mask2D.unmasked(shape_2d=image.shape_2d, pixel_scales=image.pixel_scales)
 mask[25:55, 77:96] = True
 mask[55:85, 3:27] = True
 
@@ -130,7 +130,7 @@ image = al.Array.manual_2d(array=image, pixel_scales=pixel_scales)
 """
 To make our scaled image look as realistic as possible, we can optionally included some noise drawn from a Gaussian
 distributon to replicate the noise-pattern in the image. This requires us to choose a gaussian_sigma value 
-representative of the data, which you should choose via 'trial and error' until you get a noise pattern that is
+representative of the data, which you should choose via `trial and error` until you get a noise pattern that is
 visually hard to discern from the rest of the image.
 """
 
@@ -155,7 +155,7 @@ aplt.Array(array=image)
 
 # %%
 """
-Now we're happy with the image, lets output it to the dataset folder of the lens, so that we can load it from a .fits
+Now we`re happy with the image, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 file in our pipelines!
 """
 
@@ -183,7 +183,7 @@ aplt.Array(array=image / noise_map.in_1d)
 
 # %%
 """
-Now we're happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
+Now we`re happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 file in our pipelines!
 """
 
@@ -203,6 +203,6 @@ mask.output_to_fits(file_path=f"{dataset_path}/mask_scaled.fits", overwrite=True
 # %%
 """
 The workspace also includes a GUI for image and noise-map scaling, which can be found at 
-'autolens_workspace/preprocess/imaging/gui/scaled_dataset.py'. This tools allows you 'spray paint' on the image where 
+`autolens_workspace/preprocess/imaging/gui/scaled_dataset.py`. This tools allows you `spray paint` on the image where 
 an you want to scale, allow irregular patterns (i.e. not rectangles) to be scaled.
 """

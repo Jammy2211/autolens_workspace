@@ -1,13 +1,13 @@
 # %%
 """
 This example demonstrates how to use interpolated deflection-angles interpolation in the phase settings, which
-computes the deflection angles of a _MassProfile_ on a coarse lower resolution 'interpolation grid' and interpolates
-these values to the image's native sub-grid resolution.
+computes the deflection angles of a `MassProfile` on a coarse lower resolution `interpolation grid` and interpolates
+these values to the image`s native sub-grid resolution.
 
 The benefits of this are:
 
- - For _MassProfile_'s that require computationally expensive numerical integration, this reduces the number of
-      integratals performed 100000's to 1000's, giving a potential speed up in run time of x100 or more!
+ - For `MassProfile``s that require computationally expensive numerical integration, this reduces the number of
+      integratals performed 100000`s to 1000`s, giving a potential speed up in run time of x100 or more!
 
 The downsides of this are:
 
@@ -19,24 +19,24 @@ phase. A higher resolution grid (i.e. lower pixel scale) will give more precise 
 of longer calculation times. In this example we will use an interpolation pixel scale of 0.05", which balances run-time
 and precision.
 
-In this example, we fit the lens's _MassProfile_'s using an _EllipticalSersic_ + _SphericalNFW_ mass model (which
-represents the stellar and dark matter of a galaxy). The _EllipticalSersic_ requires expensive numerical intergration,
-whereas the _SphericalNFW_ does not. PyAutoLens will only used interpolation for the _EllipticalSersic_, given we can
-compute the deflection angles of the _SphericalNFW_ efficiently.
+In this example, we fit the lens`s `MassProfile``s using an `EllipticalSersic` + `SphericalNFW` mass model (which
+represents the stellar and dark matter of a galaxy). The `EllipticalSersic` requires expensive numerical intergration,
+whereas the `SphericalNFW` does not. PyAutoLens will only used interpolation for the `EllipticalSersic`, given we can
+compute the deflection angles of the `SphericalNFW` efficiently.
 
-Whether the interpolatioon grid is used for a given _MassProfile_ is set in the following config file:
+Whether the interpolatioon grid is used for a given `MassProfile` is set in the following config file:
 
- 'autolens_workspace/config/grids/interpolate.ini'
+ `autolens_workspace/config/grids/interpolate.ini`
 
 The True and False values reflect whether interpolation is used for each function of each mass profile. The default
 values supplied with the autolens_workspace reflect whether the profile requires numerical integration or not.
 
-I'll assume that you are familiar with the beginner example scripts work, so if any code doesn't make sense familiarize
+I`ll assume that you are familiar with the beginner example scripts work, so if any code doesn`t make sense familiarize
 yourself with those first!
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -76,7 +76,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -86,7 +86,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Model__
 
-We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitted in the beginner example scripts.
+we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitted in the beginner example scripts.
 """
 
 # %%
@@ -97,7 +97,7 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Search__
 
-We'll use the default DynestyStatic sampler we used in the beginner examples.
+we'll use the default DynestyStatic sampler we used in the beginner examples.
 """
 
 # %%
@@ -107,14 +107,14 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the `SettingsPhaseImaging`, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
- - The grid_class as a _GridInterpolate_, telling PyAutoLens to use interpolation when calculation deflection 
+ - The grid_class as a `GridInterpolate`, telling PyAutoLens to use interpolation when calculation deflection 
       angles.
       
  - A pixel_scales_interp of 0.05, which is the resolution of the interpolation on which the deflection angles are
-      computed and used to interpolate to the data's native resolution.   
+      computed and used to interpolate to the data`s native resolution.   
       
 """
 
@@ -132,12 +132,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__interpolation'.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__interpolation`.
 
-However, because the _SettingsPhase_ include a grid_class and pixel_scales_interp, the output path is tagged to 
+However, because the `SettingsPhase` include a grid_class and pixel_scales_interp, the output path is tagged to 
 reflelct this, meaning the full output path is:
 
- '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05'.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05`.
 
 """
 

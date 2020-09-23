@@ -16,15 +16,15 @@ The drawbacks of doing this are:
       model may incorrectly predict flux in the source reconstruction where there is non observed, however the model-fit
       does not penalize this incorrect solution because this region of the image was masked and removed.
 
- - You cannot model the lens galaxy's light using a mask which remove most of its like, so this only works for
+ - You cannot model the lens galaxy`s light using a mask which remove most of its like, so this only works for
       images where the lens galaxy is already subtracted!
 
-I'll assume that you are familiar with the beginner example scripts work, so if any code doesn't make sense familiarize
+I`ll assume that you are familiar with the beginner example scripts work, so if any code doesn`t make sense familiarize
 yourself with those first!
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -65,21 +65,21 @@ imaging = al.Imaging.from_fits(
 )
 
 """
-Okay, we need to load the mask from a .fits file, in the same fashion as the _Imaging_ above. To draw a mask for an 
+Okay, we need to load the mask from a .fits file, in the same fashion as the `Imaging` above. To draw a mask for an 
 image, checkout the tutorial:
 
- 'autolens_workspace/preprocess/imaging/p4_mask.ipynb'
+ `autolens_workspace/preprocess/imaging/p4_mask.ipynb`
 
 The example autolens_workspace dataset comes with a mask already, if you look in
-'autolens_workspace/dataset/imaging/mass_sie__source_sersic' you'll see a mask.fits file!
+`autolens_workspace/dataset/imaging/mass_sie__source_sersic` you`ll see a mask.fits file!
 """
 
-mask_custom = al.Mask.from_fits(
+mask_custom = al.Mask2D.from_fits(
     file_path=f"{dataset_path}/mask.fits", hdu=0, pixel_scales=pixel_scales
 )
 
 """
-When we plot the _Imaging_ dataset with the mask it extracts only the regions of the image in the mask remove c
+When we plot the `Imaging` dataset with the mask it extracts only the regions of the image in the mask remove c
 ontaminating bright sources away from the lens and zoom in around the mask to emphasize the lens.
 """
 
@@ -89,7 +89,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask_custom)
 """
 __Model__
 
-We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitted in the beginner example scripts.
+we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitted in the beginner example scripts.
 """
 
 # %%
@@ -100,7 +100,7 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Search__
 
-We'll use the default DynestyStatic sampler we used in the beginner examples.
+we'll use the default DynestyStatic sampler we used in the beginner examples.
 """
 
 # %%
@@ -110,7 +110,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which in this example simmply use the default values used in the beginner
+Next, we specify the `SettingsPhaseImaging`, which in this example simmply use the default values used in the beginner
 examples.
 """
 
@@ -126,7 +126,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__custom_mask'.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__custom_mask`.
     
 Note that we pass the phase run function our custom mask, which means it is used to perform the model-fit!
 """

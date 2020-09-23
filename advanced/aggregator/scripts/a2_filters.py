@@ -2,8 +2,8 @@
 """
 __Aggregator 2: Filters__
 
-Lets suppose we had the results of other fits in the folder 'output/aggregator', and we *only* wanted fits which used
-the phase defined in 'phase_runner.py'. To avoid loading all the other results, we can use the aggregator's filter
+Lets suppose we had the results of other fits in the folder `output/aggregator`, and we *only* wanted fits which used
+the phase defined in `phase_runner.py`. To avoid loading all the other results, we can use the aggregator`s filter
 tool, which filters the results and provides us with only the results we want.
 
 The filter provides us with the aggregator object we used in the previous tutorial, so can be used in an identical
@@ -34,7 +34,7 @@ agg = af.Aggregator(directory=str(agg_results_path))
 # %%
 """
 We can first filter results to only include completed results. By including the *completed_only* input below, any 
-results which are in the middle of a non-linear will be omitted and not loaded in the _Aggregator_.
+results which are in the middle of a non-linear will be omitted and not loaded in the `Aggregator`.
 """
 
 # %%
@@ -81,7 +81,7 @@ Alternatively, we can filter using strings, requiring that the string appears in
 results. This is useful if you fit a samples of lenses where:
 
  - Multiple results, corresponding to different pipelines, phases and model-fits are stored in the same path.
- - Different runs using different _SettingsPhase_ and _SetupPipeline_ are in the same path.
+ - Different runs using different `SettingsPhase` and `SetupPipeline` are in the same path.
  - Fits using different non-linear searches, with different settings, are contained in the same path.
 
 The example below shows us using the contains filter to get the results of all 3 lenses. The contains method
@@ -95,7 +95,7 @@ print(
 
 # %%
 """
-If the model-fit was performed using a _Pipeline_, you can filter by the pipeline name to get results. 
+If the model-fit was performed using a `Pipeline`, you can filter by the pipeline name to get results. 
 
 The example output in this tutorial did not use a pipeline, so filtering by pipeline name removes all result.
 """

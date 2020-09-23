@@ -3,7 +3,7 @@ import autolens as al
 
 """
 This pipeline fits the mass of a strong lens using an image with the lens light included, using a decomposed 
-_LightMassProfile__, dark _MassProfile_ profile. 
+_LightMassProfile__, dark `MassProfile` profile. 
 
 The lens light is the bulge-disk model chosen by the previous Light pipeline and source model chosen by the Source 
 pipeline. The mass model is initialized using results from these pipelines.
@@ -13,27 +13,27 @@ The pipeline is two phases:
 Phase 1:
 
     Fit the lens light and mass model as a decomposed profile, using the lens light and source model from 
-    a previous pipeline. The lens _LightProfile_'s are fixed to the results of the previous pipeline to provide a fast
-    initialization of the new _MassProfile_ parameters.
+    a previous pipeline. The lens `LightProfile``s are fixed to the results of the previous pipeline to provide a fast
+    initialization of the new `MassProfile` parameters.
     
     Lens Light & Mass: Depends on previous Light pipeline.
-    Lens Mass: _LightMassProfile_'s + SphericalNFW + ExternalShear
+    Lens Mass: `LightMassProfile``s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipelines: source__sersic.py and / or source__inversion.py and light__bulge_disk.py
     Prior Passing: Lens Light (instance -> previous pipeline), Source (instance -> previous pipeline)
-    Notes: Fixes the lens _LightProfile_ and Source to the results of the previous pipeline.
+    Notes: Fixes the lens `LightProfile` and Source to the results of the previous pipeline.
 
 Phase 2:
     
-    Include all previously fixed lens _LightProfile_ parameters in the model, initializing the _MassProflie_ parameters
+    Include all previously fixed lens `LightProfile` parameters in the model, initializing the `MassProflie` parameters
     from the results of phase 1.
     
     Lens Light & Mass: Depends on previous Light pipeline.
-    Lens Mass: _LightMassProfile_'s + SphericalNFW + ExternalShear
+    Lens Mass: `LightMassProfile``s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipelines: None
     Prior Passing: Lens Light & Mass (model -> phase 1), source (model / instance -> previous pipeline)
-    Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
+    Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
 """
 
 
@@ -48,8 +48,8 @@ def make_pipeline(slam, settings):
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
         2) The bulge + disk centres or elliptical_comps are aligned.
-        3) The disk component of the lens light model is an _EllipticalExponential_ or _EllipticalSersic_ profile.
-        4) The lens galaxy mass model includes an  _ExternalShear_.
+        3) The disk component of the lens light model is an `EllipticalExponential` or `EllipticalSersic` profile.
+        4) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
     folders = slam.folders + [
@@ -64,21 +64,21 @@ def make_pipeline(slam, settings):
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
-    Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
 
-        1) Fix the lens galaxy's light using the the _LightProfile_'s inferred in the previous 'light' pipeline, 
+        1) Fix the lens galaxy`s light using the the `LightProfile``s inferred in the previous `light` pipeline, 
            including assumptions related to the geometric alignment of different components.
-        2) Pass priors on the lens galaxy's _SphericalNFW_ _MassProfile_'s centre using the EllipticalIsothermal fit 
+        2) Pass priors on the lens galaxy`s `SphericalNFW` `MassProfile``s centre using the EllipticalIsothermal fit 
            of the previous pipeline, if the NFW centre is a free parameter.
-        3) Pass priors on the lens galaxy's shear using the _ExternalShear_ fit of the previous pipeline.
-        4) Pass priors on the source galaxy's light using the fit of the previous pipeline.
+        3) Pass priors on the lens galaxy`s shear using the `ExternalShear` fit of the previous pipeline.
+        4) Pass priors on the source galaxy`s light using the fit of the previous pipeline.
     """
 
     """SLaM: Set if the Sersic bulge is modeled with or without a mass-to-light gradient."""
 
     bulge = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
 
-    """SLaM: Set if the disk is modeled as an _EllipticalSersic_ or _EllipticalExponential_ with or without a mass-to-light gradient."""
+    """SLaM: Set if the disk is modeled as an `EllipticalSersic` or `EllipticalExponential` with or without a mass-to-light gradient."""
 
     disk = slam.pipeline_mass.setup_mass.disk_light_and_mass_prior_model
 
@@ -92,7 +92,7 @@ def make_pipeline(slam, settings):
         light_and_mass_prior_models=[bulge, disk, envelope]
     )
 
-    """SLaM: Fix the _LightProfile_ parameters of the bulge, disk and envelope to the results of the Light pipeline."""
+    """SLaM: Fix the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
     slam.link_bulge_light_and_mass_prior_model_from_light_pipeline(
         bulge_prior_model=bulge, bulge_is_model=False, index=0
@@ -115,7 +115,7 @@ def make_pipeline(slam, settings):
     dark.redshift_object = slam.redshift_lens
     dark.redshift_source = slam.redshift_source
 
-    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in `SLaMPipelineMass`."""
 
     smbh = slam.pipeline_mass.smbh_prior_model
 
@@ -143,11 +143,11 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 2: Fit the lens galaxy's light and mass and source galaxy using the results of phase 1 as
+    Phase 2: Fit the lens galaxy`s light and mass and source galaxy using the results of phase 1 as
     initialization
     """
 
-    """SLaM: Fix the _LightProfile_ parameters of the bulge, disk and envelope to the results of the Light pipeline."""
+    """SLaM: Fix the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
     slam.link_bulge_light_and_mass_prior_model_from_light_pipeline(
         bulge_prior_model=bulge, bulge_is_model=True, index=-1

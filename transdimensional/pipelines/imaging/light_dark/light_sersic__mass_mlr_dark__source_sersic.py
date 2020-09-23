@@ -2,13 +2,13 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit _Imaging_ of a strong lens system where:
+In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
- - The lens galaxy's stellar _MassProfile_ is fitted with the _EllipticalSersic_ of the 
-      _LightProfile_, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
- - The lens galaxy's dark matter _MassProfile_ is modeled as a _SphericalNFW_.
- - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.  
+ - The lens galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens galaxy`s stellar `MassProfile` is fitted with the `EllipticalSersic` of the 
+      `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
+ - The lens galaxy`s dark matter `MassProfile` is modeled as a _SphericalNFW_.
+ - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.  
 
 The pipeline is three phases:
 
@@ -24,8 +24,8 @@ Phase 1:
 
 Phase 2:
 
-    Fit the lens mass model and source _LightProfile_, where the _LightProfile_ parameters of the lens's 
-    _LightMassProfile_ are fixed to the results of phase 1.
+    Fit the lens mass model and source `LightProfile`, where the `LightProfile` parameters of the lens`s 
+    `LightMassProfile` are fixed to the results of phase 1.
     
     Lens Light: EllipticalSersic
     Lens Mass: EllipticalSersic + SphericalNFWMCRLudlow + ExternalShear
@@ -38,7 +38,7 @@ Phase 3:
     Refine the lens light and mass models and source light model using priors initialized from phases 1 and 2.
     
     Lens Light: EllipticalSersic
-    Lens Mass: _EllipticalSersic_ + SphericalNFWMCRLudlow + ExternalShear
+    Lens Mass: `EllipticalSersic` + SphericalNFWMCRLudlow + ExternalShear
     Source Light: EllipticalSersic
     Prior Passing: Lens light (model -> phase 1), lens mass and source light (model -> phase 2).
     Notes: None
@@ -62,7 +62,7 @@ def make_pipeline(setup, settings):
     setup.folders.append(setup.tag)
 
     """
-    Phase 1: Fit only the lens galaxy's light, where we:
+    Phase 1: Fit only the lens galaxy`s light, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -80,12 +80,12 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 2: Fit the lens's _LightMassProfile_ and _MassProfile_ and source galaxy's light, where we:
+    Phase 2: Fit the lens`s `LightMassProfile` and `MassProfile` and source galaxy`s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-        2) Set priors on the centre of the lens galaxy's dark matter _MassProfile_ by linking them to those inferred 
-           for the _LightProfile_ in phase 1.
-        3) Use a _SphericalNFWMCRLudlow_ model for the dark matter which sets its scale radius via a mass-concentration
+        2) Set priors on the centre of the lens galaxy`s dark matter `MassProfile` by linking them to those inferred 
+           for the `LightProfile` in phase 1.
+        3) Use a `SphericalNFWMCRLudlow` model for the dark matter which sets its scale radius via a mass-concentration
            relation and the lens and source redshifts.
     """
 
@@ -103,7 +103,7 @@ def make_pipeline(setup, settings):
 
     dark = af.PriorModel(al.mp.SphericalNFWMCRLudlow)
 
-    """Setup: Align the centre of the _LightProfile_ and dark matter _MassProfile_ if input in _SetupMassLightDark_."""
+    """Setup: Align the centre of the `LightProfile` and dark matter `MassProfile` if input in _SetupMassLightDark_."""
 
     if setup.setup_mass.align_light_dark_centre:
         dark.centre = sersic.centre
@@ -114,7 +114,7 @@ def make_pipeline(setup, settings):
     dark.redshift_object = setup.redshift_lens
     dark.setup.redshift_source = setup.redshift_source
 
-    """Setup: Include an _ExternalShear_ in the mass model if turned on in _SetupMass_. """
+    """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
     if not setup.setup_mass.no_shear:
         shear = al.mp.ExternalShear
@@ -139,7 +139,7 @@ def make_pipeline(setup, settings):
     """
     Phase 3: Fit simultaneously the lens and source galaxies, where we:
 
-        1) Set the lens's light, mass, and source's light using the results of phases 1 and 2.
+        1) Set the lens`s light, mass, and source`s light using the results of phases 1 and 2.
     """
 
     sersic = af.PriorModel(al.lmp.EllipticalSersic)

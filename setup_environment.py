@@ -10,10 +10,10 @@ def setup_workspace_environment_variable():
         "######################################\n\n"
         ""
         "An environment variable is a variable stored in your command line interface (e.g. where you just ran the command "
-        "'python3 welcome.py'). Environment variables are used by Python and installed packages to inform them where to "
+        "`python3 welcome.py`). Environment variables are used by Python and installed packages to inform them where to "
         "look for certain files.\n\n"
         ""
-        "PyAutoLens uses an environment variable called WORKSPACE to know where the 'autolens_workspace' folder is located. "
+        "PyAutoLens uses an environment variable called WORKSPACE to know where the `autolens_workspace` folder is located. "
         "This is used to locate config files and output results.\n"
         ""
     )
@@ -68,11 +68,11 @@ def setup_pythonpath_environment_variable():
         ""
         "Throughout the autolens_workspace we will import modules from it, by using the command:\n\n"
         ""
-        "'from autolens_workspace import *'\n\n"
+        "`from autolens_workspace import *`\n\n"
         ""
         "We therefore need to add the path to the autolens_workspace to your PYTHONPATH.\n\n"
-        "NOTE: The PYTHONPATH must include all folders UP TO the 'autolens_workspace' folder, but not the "
-        "'autolens_workspace' folder itself!\n"
+        "NOTE: The PYTHONPATH must include all folders UP TO the `autolens_workspace` folder, but not the "
+        "`autolens_workspace` folder itself!\n"
     )
 
     pythonpath_path = workspace_path.rsplit("/", 1)[0]
@@ -114,8 +114,8 @@ def setup_pythonpath_environment_variable():
         "export WORKSPACE=/path/to/autolens_workspace/"
         "export PYTHONPATH=$PYTHONPATH:/path/to\n\n"
         ""
-        "Where '/path/to' should include the path up to the workspace location\n\n"
-        "Alternatively, you can run the 'setup_environment.py' script in your autolens_workspace.\n\n"
+        "Where `/path/to` should include the path up to the workspace location\n\n"
+        "Alternatively, you can run the `setup_environment.py` script in your autolens_workspace.\n\n"
         "All example scripts will print the WORKSPACE environment variable when they are run. If this raises an error it "
         "means you need to reset your environment variables.\n\n"
         "You can set environment variables permanently by adding the following commands to your .bashrc file:\n\n"
@@ -123,7 +123,7 @@ def setup_pythonpath_environment_variable():
         "export WORKSPACE=/path/to/autolens_workspace/\n"
         "export PYTHONPATH=$PYTHONPATH:/path/to\n\n"
         ""
-        "Where '/path/to' should include the path up to the workspace location.\n"
+        "Where `/path/to` should include the path up to the workspace location.\n"
     )
 
 

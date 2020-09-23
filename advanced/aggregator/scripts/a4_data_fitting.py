@@ -42,8 +42,8 @@ agg_filter = agg.filter(agg.phase == phase_name)
 
 # %%
 """
-We can also use the aggregator to load the dataset of every lens our _Phase_ fitted. This generator returns the 
-dataset as the _Imaging_ objects we passed to the phase when we ran them.
+We can also use the aggregator to load the dataset of every lens our `Phase` fitted. This generator returns the 
+dataset as the `Imaging` objects we passed to the phase when we ran them.
 """
 
 # %%
@@ -80,7 +80,7 @@ print([info for info in info_gen])
 
 # %%
 """
-We'll also need the masks we used to fit the lenses, which the aggregator also provides.
+we'll also need the masks we used to fit the lenses, which the aggregator also provides.
 """
 
 # %%
@@ -130,8 +130,8 @@ for fit in fit_gen:
 
 # %%
 """
-There's a problem though, the MaskedImaging object is made with a custom phase input. For example, it receive a 
-'grid_class' defining which grid it uses to fit the data. This isn't included in the generator above. Thats bad!
+There`s a problem though, the MaskedImaging object is made with a custom phase input. For example, it receive a 
+`grid_class` defining which grid it uses to fit the data. This isn`t included in the generator above. Thats bad!
 
 The output has a meta_dataset attribute containing all the information on how the MaskedImaging was created for the
 actualy phase.
@@ -144,7 +144,7 @@ def make_fit_generator(agg_obj):
     dataset = agg_obj.dataset
     mask = agg_obj.mask
 
-    """This corresponds to _SettingsPhaseImaging_ used un the runner script."""
+    """This corresponds to `SettingsPhaseImaging` used un the runner script."""
 
     settings = agg_obj.settings
 
@@ -212,12 +212,12 @@ for fit in fit_gen:
 
 # %%
 """
-This convenience method goes one step further. By default, it uses the _SettingsMaskedImaging_, _SettingsPixelization_
-and _SettingsInversion_ used by the analysis. 
+This convenience method goes one step further. By default, it uses the `SettingsMaskedImaging`, _SettingsPixelization_
+and `SettingsInversion` used by the analysis. 
 
 However, we may want to change this. For example, what if I was curious and wanted to see the fit but where I used
-a _Grid_ with a *sub_size* of 4? Or where the _Pixelization_ didn't use a border? You can do this by passing the
-method a new _Settings_ object which overwrites the one used by the analysis.
+a `Grid` with a *sub_size* of 4? Or where the `Pixelization` didn`t use a border? You can do this by passing the
+method a new `Settings` object which overwrites the one used by the analysis.
 """
 
 # %%

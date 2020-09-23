@@ -3,9 +3,9 @@ import autolens as al
 
 """
 This pipeline fits the mass of a strong lens using a _MassProfile (default=_EllipticalPowerLaw_) representing total 
-mass distribution (e.g. stellar and dark) of the lens _Galaxy_.
+mass distribution (e.g. stellar and dark) of the lens `Galaxy`.
 
-The lens light and source models use those chosen in the already run 'source' and 'light' pipelines, and the mass model
+The lens light and source models use those chosen in the already run `source` and `light` pipelines, and the mass model
 is initialized using results from these pipelines.
 
 The pipeline is one phase:
@@ -21,7 +21,7 @@ Phase 1:
     Previous Pipelines: source__sersic.py and / or source__inversion.py and light__sersic.py or light__bulge_disk.py
     Prior Passing: Lens Light (instance -> previous piepline) Lens Mass (model -> previous pipeline), 
                    Source (model / instance -> previous pipeline)
-    Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
+    Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
 """
 
 
@@ -35,8 +35,8 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an  _ExternalShear_.
-        3) The lens's light model is fixed or variable.
+        2) The lens galaxy mass model includes an  `ExternalShear`.
+        3) The lens`s light model is fixed or variable.
     """
 
     folders = slam.folders + [
@@ -46,16 +46,16 @@ def make_pipeline(slam, settings):
         slam.mass_tag,
     ]
 
-    """SLaM: Set whether shear is included in the mass model using the _ExternalShear_ model of the Source pipeline."""
+    """SLaM: Set whether shear is included in the mass model using the `ExternalShear` model of the Source pipeline."""
 
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
-    Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
 
-        1) Use the source galaxy of the 'source' pipeline.
-        2) Use the lens galaxy light of the 'light' pipeline.
-        3) Set priors on the lens galaxy _MassProfile_'s using the _EllipticalIsothermal_ and _ExternalShear_ of 
+        1) Use the source galaxy of the `source` pipeline.
+        2) Use the lens galaxy light of the `light` pipeline.
+        3) Set priors on the lens galaxy `MassProfile``s using the `EllipticalIsothermal` and `ExternalShear` of 
            previous pipelines.
     """
 

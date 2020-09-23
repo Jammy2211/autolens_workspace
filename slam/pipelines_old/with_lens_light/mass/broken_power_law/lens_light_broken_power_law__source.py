@@ -2,9 +2,9 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the mass of a strong lens using a _EllipticalPowerLaw_ + shear model.
+In this pipeline, we fit the mass of a strong lens using a `EllipticalPowerLaw` + shear model.
 
-The lens light, mass model and source are initialized using already run 'source' and 'light' pipelines.
+The lens light, mass model and source are initialized using already run `source` and `light` pipelines.
 
 The pipeline is one phases:
 
@@ -15,7 +15,7 @@ Phase 1:
     Source Light: Previous Pipeline Source.
     Previous Pipelines: no_lens_light/source/*/mass_sie__source_*py
     Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
-    Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
+    Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
 """
 
 
@@ -32,8 +32,8 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an  _ExternalShear_.
-        3) The lens's light model is fixed or variable.
+        2) The lens galaxy mass model includes an  `ExternalShear`.
+        3) The lens`s light model is fixed or variable.
     """
 
     folders = slam.folders + [
@@ -57,11 +57,11 @@ def make_pipeline(slam, settings):
     shear = slam.pipeline_mass.shear_from_previous_pipeline
 
     """
-    Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
 
-        1) Use the source galaxy of the 'source' pipeline.
-        2) Use the lens galaxy light of the 'light' pipeline.
-        3) Set priors on the lens galaxy _MassProfile_'s using the EllipticalIsothermal and ExternalShear of previous pipelines.
+        1) Use the source galaxy of the `source` pipeline.
+        2) Use the lens galaxy light of the `light` pipeline.
+        3) Set priors on the lens galaxy `MassProfile``s using the EllipticalIsothermal and ExternalShear of previous pipelines.
     """
 
     mass = af.PriorModel(al.mp.EllipticalBrokenPowerLaw)

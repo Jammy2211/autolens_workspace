@@ -14,7 +14,7 @@ examples in the following order:
 -> model: How to fit a lens model to data with **PyAutoLens**.
 
     -> intro: Simple lens models fitting the lens galaxy's light, mass and source, using a parametric source model.
-    -> inversion: Lens models which fit the source-galaxy light using a pixel-grid and _Inversion_.
+    -> inversion: Lens models which fit the source-galaxy light using a pixel-grid and `Inversion`.
     -> customize: API to customize the lens model parameterization and non-linear search.
     -> link: API to link results of one lens model to another.
     -> point_sources: How to model lensed quasars / supernovae / galaxies as point-sources.

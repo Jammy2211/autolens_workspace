@@ -2,11 +2,11 @@
 """
 __Preprocess 3: - PSF__
 
-The Point Spread Function (PSF) describes blurring due the optics of your dataset's telescope. It is used by PyAutoLens
+The Point Spread Function (PSF) describes blurring due the optics of your dataset`s telescope. It is used by PyAutoLens
 when fitting a dataset to include these effects, such that does not bias the lens model. It should be estimated from a
 stack of stars in the image during data reduction or using PSF simulator technology suited to your telescope.
 
-This tutorial describes preprocessing your dataset's psf to adhere too the units and formats required by PyAutoLens.
+This tutorial describes preprocessing your dataset`s psf to adhere too the units and formats required by PyAutoLens.
 """
 
 # %%
@@ -21,10 +21,10 @@ import autolens.plot as aplt
 
 # %%
 """
-First, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory 
-and place your dataset in the 'autolens_workspace/preprocess/imaging/data_raw' directory.
+First, lets setup the path to our current working directory. I recommend you use the `autolens_workspace` directory 
+and place your dataset in the `autolens_workspace/preprocess/imaging/data_raw` directory.
 
-For this tutorial, we'll use the 'autolens_workspace/preprocess/imaging/data_raw' directory. The folder 'data_raw' 
+For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw` directory. The folder `data_raw` 
 contains example data we'll use in this tutorial.
 """
 
@@ -39,7 +39,7 @@ dataset_path = af.util.create_path(
 )
 
 # %%
-"""This populates the 'data' path with example simulated _Imaging_ data-sets."""
+"""This populates the `data` path with example simulated `Imaging` data-sets."""
 
 # %%
 from autolens_workspace.preprocess.imaging.data_raw import simulators
@@ -137,7 +137,7 @@ to 1. This ensures that the PSF convolution does not change the overall normaliz
 PyAutoLens automatically renormalized PSF when they are passed into a MaskedImaging or SimulatedImaging object, so you 
 do not actually need to renormalize your PSF. However, it is better to do it now, just in case.
 
-Lets look at a PSF which is not normalized to unity, which is the default case corresponding to the 'renormalize' flag 
+Lets look at a PSF which is not normalized to unity, which is the default case corresponding to the `renormalize` flag 
 being False.
 """
 

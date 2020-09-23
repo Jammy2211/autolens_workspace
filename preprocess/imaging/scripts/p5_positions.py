@@ -8,8 +8,8 @@ A non-linear sampler uses these positions to discard the mass-models where they 
 one another, speeding up the analysis and removing unwanted solutions with too much / too little mass.
 
 If you create positions for your dataset, you must also update your runner to use them by loading them, passing them
-to the pipeline run function and setting a 'positions_threshold' in the pipelines. See
-'autolens_workspace/runners/beginner/features/position_threshold.py' for an example.
+to the pipeline run function and setting a `positions_threshold` in the pipelines. See
+`autolens_workspace/runners/beginner/features/position_threshold.py` for an example.
 
 Positions are optional, if you struggling to get PyAutoLens to infer a good model for your dataset and you haev
 not tried positons yet I recommend that you do.
@@ -38,8 +38,8 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the positions are stored in e.g,
-the positions will be output as '/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat'.
+The `dataset label` is the name of the dataset folder and `dataset_name` the folder the positions are stored in e.g,
+the positions will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat`.
 """
 
 # %%
@@ -50,7 +50,7 @@ dataset_name = "mass_sie__source_sersic"
 # %%
 """
 Create the path where the positions will be output, which in this case is
-'/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
 """
 
 # %%
@@ -66,7 +66,7 @@ pixel_scales = 0.1
 
 # %%
 """
-First, load the _Imaging_ dataset, so that the positions can be plotted over the strong lens image.
+First, load the `Imaging` dataset, so that the positions can be plotted over the strong lens image.
 """
 
 # %%
@@ -94,7 +94,7 @@ aplt.Array(array=image, positions=positions)
 
 # %%
 """
-Now we're happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
+Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 .dat file in our pipelines!
 """
 
@@ -104,7 +104,7 @@ positions.output_to_file(file_path=f"{dataset_path}/positions.dat", overwrite=Tr
 # %%
 """
 The workspace also includes a GUI for drawing positions, which can be found at 
-'autolens_workspace/preprocess/imaging/gui/positions.py'. This tools allows you 'click' on the image where an image of the
+`autolens_workspace/preprocess/imaging/gui/positions.py`. This tools allows you `click` on the image where an image of the
  lensed source is, and it will use the brightest pixel within a 5x5 box of pixels to select the coordinate.
 """
 

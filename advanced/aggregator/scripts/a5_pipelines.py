@@ -7,11 +7,11 @@ are output in a more complex path structure with multiple pipelines. Furthemore,
 many different lens model parameterizations with the results output in strucuted paths depending on the phase and
 pipeline tags. This tutorial explains how to use the aggregator for such complex outputs.
 
-In '/autolens_workspace/aggregator/setup/advanced_runner.py' we fit our 3 images with the following 3 pipelines:
+In `/autolens_workspace/aggregator/setup/advanced_runner.py` we fit our 3 images with the following 3 pipelines:
 
-'autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py'
-'autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py'
-'autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/mass_power_law__source_inversion.py'
+`autolens_workspace/pipelines/advanced/no_lens_light/source/parametric/mass_sie__source_sersic.py`
+`autolens_workspace/pipelines/advanced/no_lens_light/source/inversion/from_parametric/lens_sie__source_inversion.py`
+`autolens_workspace/pipelines/advanced/no_lens_light/mass/power_law/mass_power_law__source_inversion.py`
 
 Each set of 3 images is fitted 4 separate times, with the following variants:
 
@@ -20,7 +20,7 @@ Each set of 3 images is fitted 4 separate times, with the following variants:
 - With the General setup hyper_galaxies=False and with no_shear=True.
 - With the General setup hyper_galaxies=True and with no_shear=True.
 
-The results of these fits are in the '/output/aggregator_sample_advanced' folder. Pipeline tagging has lead to many
+The results of these fits are in the `/output/aggregator_sample_advanced` folder. Pipeline tagging has lead to many
 different results in a complex path structure that depends on the setup of the pipeline.
 """
 
@@ -123,7 +123,7 @@ filter method above. Below, we create aggregators containing the results of fits
 so we can compare the different fits.
 
 Runs without hyper-galaxies or shear turned on do not tag the results with text. To get these results via path 
-filtering we have to input the whole pipeline or phase tag, including the '/' to mark the end of the tag in the path 
+filtering we have to input the whole pipeline or phase tag, including the `/` to mark the end of the tag in the path 
 string.
 """
 

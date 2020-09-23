@@ -2,7 +2,7 @@
 """
 __Example: Linking Lens Light To Mass__
 
-Before reading this example, make sure you have read the 'autolens_workspace/examples/moodel/linking/api.py'
+Before reading this example, make sure you have read the `autolens_workspace/examples/moodel/linking/api.py`
 example script, which describes phase linking and details the API for this.
 """
 
@@ -10,31 +10,31 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
- - The first phase models the lens galaxy's light using a bulge and disk, using _EllipticalSersic_ and 
-      _EllipticalExponential_ profiles. The source is present in the image, but modeling it is omitted.
+ - The first phase models the lens galaxy`s light using a bulge and disk, using `EllipticalSersic` and 
+      `EllipticalExponential` profiles. The source is present in the image, but modeling it is omitted.
       
- - The second phase models the lens galaxy's mass using an _EllipticalIsothermal_ and source galaxy's light using
-      an _EllipticalSersic_. The lens light model is fixed to the result of phase 1.
+ - The second phase models the lens galaxy`s mass using an `EllipticalIsothermal` and source galaxy`s light using
+      an `EllipticalSersic`. The lens light model is fixed to the result of phase 1.
 
-The idea behind this phase is that for many strong lenses the lens galaxy's light is distinct from the source galaxy's
-light. This makes it a valid approach to subtract the lens's light in a first step and then focus-in on fitting
-the lens mass model and source's light.
+The idea behind this phase is that for many strong lenses the lens galaxy`s light is distinct from the source galaxy`s
+light. This makes it a valid approach to subtract the lens`s light in a first step and then focus-in on fitting
+the lens mass model and source`s light.
 
-There are a number of benefits to using phase linking to model the lens's light and its mass and the source separately:
+There are a number of benefits to using phase linking to model the lens`s light and its mass and the source separately:
 
  - The non-linear parameter space defined by a bulge-disk (N=11), isothermal mass (N=5) and parametric 
       Sersic source (N=7) has N=27 dimensions. By splitting the model-fit into two phases, we fit parameter spaces of
       dimensions N=11 and N=12. These are more efficient to sample and pose less risk of us inferred a local maxima or
       unphysical solution.
 
- - The lens galaxy's light traces the majority of its mass. Thus, we can use the lens light model inferred in phase 
-      1 to place priors initializing the sampling of the mass model's centre. In pricple we could do this for other
-      parameters, for example the 'elliptical_comp's of the two profiles, however light does not perfectly trace mass
+ - The lens galaxy`s light traces the majority of its mass. Thus, we can use the lens light model inferred in phase 
+      1 to place priors initializing the sampling of the mass model`s centre. In pricple we could do this for other
+      parameters, for example the `elliptical_comp`s of the two profiles, however light does not perfectly trace mass
       so in this example we omit such an approach.
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -54,11 +54,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the _Imaging_ data, create the _Mask_ and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
 
- - The lens galaxy's _LightProfile_ is a bulge+disk _EllipticalSersic_ and _EllipticalExponential_.
- - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is an _EllipticalExponential_.
+ - The lens galaxy`s `LightProfile` is a bulge+disk `EllipticalSersic` and `EllipticalExponential`.
+ - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
+ - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -79,7 +79,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -89,15 +89,15 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Model__
 
-We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
+We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_ and _EllipticalExponential_ whose centres
+ - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic` and `EllipticalExponential` whose centres
       are aligned (11 parameters).
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_ and _ExternalShear_ (7 parameters).
- - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_ (7 parameters).
+ - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
+ - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic` (7 parameters).
 
-We are fitting on the lens's light in phase 1 and only its mass and the source in phase 2, giving us non-linear
+We are fitting on the lens`s light in phase 1 and only its mass and the source in phase 2, giving us non-linear
 parameter spaces of N=13 and N=12 respectively.
 """
 
@@ -113,8 +113,8 @@ lens = al.GalaxyModel(redshift=0.5, bulge=bulge, disk=disk)
 """
 __Settings__
 
-You should be familiar with the _SettingsPhaseImaging_ object from other example scripts, if not checkout the beginner
-examples and 'autolens_workspace/examples/model/customize/settings.py'
+You should be familiar with the `SettingsPhaseImaging` object from other example scripts, if not checkout the beginner
+examples and `autolens_workspace/examples/model/customize/settings.py`
 """
 
 # %%
@@ -129,10 +129,10 @@ settings = al.SettingsPhaseImaging(settings_lens=settings_lens)
 __Search__
 
 You should be familiar with non-linear searches from other example scripts if not checkout the beginner examples
-and 'autolens_workspace/examples/model/customize/non_linear_searches.py'.
+and `autolens_workspace/examples/model/customize/non_linear_searches.py`.
 
 In this example, we omit the PriorPasser and will instead use the default values used to pass priors in the config 
-file 'autolens_workspace/config/non_linear/nest/DynestyStatic.ini'
+file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 # %%
@@ -147,7 +147,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_1'.
+ `/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_1`.
 """
 
 # %%
@@ -173,12 +173,12 @@ __Model Linking__
 
 We use the results of phase 1 to create the lens light model in phase 2. 
 
-This is passed as a 'instance' (as opposed to a 'model', which was used in the API tutorial). By passing the lens 
-light as an 'instance' it passes the maximum log likelihood parameters of the fit in phase 1 as fixed values that are 
+This is passed as a `instance` (as opposed to a `model`, which was used in the API tutorial). By passing the lens 
+light as an `instance` it passes the maximum log likelihood parameters of the fit in phase 1 as fixed values that are 
 not free parameters fitted for by the non-linear search in phase1.
 
 We also use the inferred centre of the lens light model in phase 1 to initialize the priors on the lens mass model 
-in phase 2. This uses the term 'model' to pass priors, as we saw in other examples.
+in phase 2. This uses the term `model` to pass priors, as we saw in other examples.
 """
 
 # %%
@@ -199,7 +199,7 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Search__
 
-In phase 2, we use the nested sampling algorithm _Dynesty_ again.
+In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
 # %%
@@ -214,9 +214,9 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_2'.
+ `/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_2`.
 
-Note how the 'lens' passed to this phase was set up above using the results of phase 1!
+Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
@@ -234,12 +234,12 @@ phase2.run(dataset=imaging, mask=mask)
 """
 __Wrap Up__
 
-In this example, we passed the bulge + disk lens light as an 'instance', as opposed to a 'model', meaning its 
+In this example, we passed the bulge + disk lens light as an `instance`, as opposed to a `model`, meaning its 
 parameters were fixed to the maximum log likelihood model in phase 1 and not fitted as free parameters in phase 2.
 
-Of course, one could easily edit this script to fit the bulge + disk lens's light model in phase 2, using the
-results of phase 1 to initialize the priors, by simply swapping out the 'instance' for a 'model' when setting up
-the lens's _GalaxyModel_, as follows:
+Of course, one could easily edit this script to fit the bulge + disk lens`s light model in phase 2, using the
+results of phase 1 to initialize the priors, by simply swapping out the `instance` for a `model` when setting up
+the lens`s `GalaxyModel`, as follows:
 
     lens = al.GalaxyModel(
         redshift=0.5,
@@ -248,24 +248,24 @@ the lens's _GalaxyModel_, as follows:
         mass=mass,
     )
 
-As discussed in the introduction, the benefit of passing the lens's light as an instance is that it reduces the 
+As discussed in the introduction, the benefit of passing the lens`s light as an instance is that it reduces the 
 dimensionality of the non-linear parameter space in phase 2. 
 
 On the other hand, the lens light model inferred in phase 1 may not be perfect. The source light will impact the
-quality of the fit which may lead to a sub-optimal fit. Thus, it may be better to pass the lens's light as a 'model'
+quality of the fit which may lead to a sub-optimal fit. Thus, it may be better to pass the lens`s light as a `model`
 in phase 2. The model-fit will take longer to perform, but we'll still benefit from prior passing initializing the
 samples of the non-linear search in phase 2!
 
 At the end of the day, it really comes down to you science case and the nature of your data whether you should pass the
-lens light as an 'instance' or 'model'!
+lens light as an `instance` or `model`!
 
 __Pipelines__
 
-The next level of PyAutoLens uses _Pipelines_, which link together multiple phases to perform very complex lens 
-modeling in robust and efficient ways. Pipelines which fit the lens's light, for example:
+The next level of PyAutoLens uses `Pipelines`, which link together multiple phases to perform very complex lens 
+modeling in robust and efficient ways. Pipelines which fit the lens`s light, for example:
 
- 'autolens_wokspace/pipelines/with_lens_light/light_sersic__mass_sie__source_sersic.py'
+ `autolens_wokspace/pipelines/with_lens_light/light_sersic__mass_sie__source_sersic.py`
 
-Exploit our ability to model separately the lens's light and its mass / the source to perform model-fits in non-linear
+Exploit our ability to model separately the lens`s light and its mass / the source to perform model-fits in non-linear
 parameter spaces of reduced complex, to ensure more efficient and robust model-fits!
 """

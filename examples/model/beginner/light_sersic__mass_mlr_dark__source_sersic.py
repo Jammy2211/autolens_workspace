@@ -6,23 +6,23 @@ To fit a lens model to a dataset, we must perform lens modeling, which uses a no
 different tracers to the dataset.
 
 Model-fitting is handled by our project **PyAutoFit**, a probablistic programming language for non-linear model
-fitting. The setting up of configuration files is performed by our project **PyAutoConf**. We'll need to import
+fitting. The setting up of configuration files is performed by our project **PyAutoConf**. we'll need to import
 both to perform the model-fit.
 """
 
 # %%
 """
-In this example script, we fit _Imaging_ of a strong lens system where:
+In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.
- - The lens galaxy's stellar _MassProfile_ is fitted with the _EllipticalSersic_ of the 
-      _LightProfile_, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
- - The lens galaxy's dark matter _MassProfile_ is modeled as a _SphericalNFW_.
- - The source galaxy's _LightProfile_ is modeled as an _EllipticalSersic_.   
+ - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens galaxy`s stellar `MassProfile` is fitted with the `EllipticalSersic` of the 
+      `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
+ - The lens galaxy`s dark matter `MassProfile` is modeled as a `SphericalNFW`.
+ - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.   
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -32,10 +32,10 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens dataset 'light_sersic__mass_mlr_nfw__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens dataset `light_sersic__mass_mlr_nfw__source_sersic` `from .fits files, which is the dataset 
 we will use to perform lens modeling.
 
-This is the same dataset we fitted in the 'fitting.py' example.
+This is the same dataset we fitted in the `fitting.py` example.
 """
 
 # %%
@@ -61,7 +61,7 @@ The model-fit also requires a mask, which defines the regions of the image we us
 """
 
 # %%
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -73,24 +73,24 @@ __Phase__
 
 To perform lens modeling, we create a *PhaseImaging* object, which comprises:
 
-   - The _GalaxyModel_'s used to fit the data.
+   - The `GalaxyModel``s used to fit the data.
    - The *SettingsPhase* which customize how the model is fitted to the data.
    - The *NonLinearSearch* used to sample parameter space.
 
-Once we have create the phase, we 'run' it by passing it the data and mask.
+Once we have create the phase, we `run` it by passing it the data and mask.
 """
 
 # %%
 """
 __Model__
 
-We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
+We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
- - An _EllipticalSersic_ *LightAndMassProfile* for the lens galaxy's light and mass (8 parameters) [note that we use 
-      the 'al.lmp' module to create this, signifying it represents both the light and mass].
- - A SphericalNFW _MassProfile_ for the lens galaxy's nfw matter (4 parameters).
- - An Elliptical_EllipticalSersic_ _LightProfile_ for the source galaxy's mass (7 parameters).
+ - An `EllipticalSersic` *LightAndMassProfile* for the lens galaxy`s light and mass (8 parameters) [note that we use 
+      the `al.lmp` module to create this, signifying it represents both the light and mass].
+ - A SphericalNFW `MassProfile` for the lens galaxy`s nfw matter (4 parameters).
+ - An Elliptical_EllipticalSersic_ `LightProfile` for the source galaxy`s mass (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.
 """
@@ -105,22 +105,22 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the `SettingsPhaseImaging`, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
 
  - That a *GridInterpolate* is used to fit create the model-image when fitting the data 
-      (see 'autolens_workspace/examples/grids.py' for a description of grids).
+      (see `autolens_workspace/examples/grids.py` for a description of grids).
  - The pixel-scale of this interpolation grid.
 
-The deflection angle calculation of the _EllipticalSersic_ _MassProfile_ requires numerical integration and is
+The deflection angle calculation of the `EllipticalSersic` `MassProfile`.requires numerical integration and is
 computationally more expensive than most mass profiles. For this reason, we use a *GridInterpolate* grid instead of
 the *Grid* we use in most other examples, which limits the deflection angle calculation to a grid of reduced resolution
 and interpolates the results to the native-resolution grid. 
 
-A description of the *GridIterpolate* object can be found in the script 'autolens_workspace/examples/grids.py'.
+A description of the *GridIterpolate* object can be found in the script `autolens_workspace/examples/grids.py`.
 
 Different *SettingsPhase* are used in different example model scripts and a full description of all *SettingsPhase* 
-can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
+can be found in the example script `autolens/workspace/examples/model/customize/settings.py` and the following 
 link -> <link>
 """
 
@@ -140,7 +140,7 @@ nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), w
 
  - 50 live points.
 
-The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
+The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
 """
@@ -157,8 +157,8 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/beginner/light_sersic__mass_mlr_nfw__source_sersic/
-     phase__light_sersic__mass_mlr_nfw__source_sersic'.
+ `/autolens_workspace/output/examples/beginner/light_sersic__mass_mlr_nfw__source_sersic/
+     phase__light_sersic__mass_mlr_nfw__source_sersic`.
 """
 
 # %%
@@ -176,7 +176,7 @@ We can now begin the fit by passing the dataset and mask to the phase, which wil
 the model to the data. 
 
 The fit outputs visualization on-the-fly, so checkout the path 
-'/path/to/autolens_workspace/output/examples/phase__light_sersic__mass_mlr_nfw__source_sersic' to see how your fit is doing!
+`/path/to/autolens_workspace/output/examples/phase__light_sersic__mass_mlr_nfw__source_sersic` to see how your fit is doing!
 """
 
 # %%
@@ -203,5 +203,5 @@ aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 # %%
 """
-Checkout '/path/to/autolens_workspace/examples/model/results.py' for a full description of the result object.
+Checkout `/path/to/autolens_workspace/examples/model/results.py` for a full description of the result object.
 """

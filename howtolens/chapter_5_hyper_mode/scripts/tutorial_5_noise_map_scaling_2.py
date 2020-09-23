@@ -4,13 +4,13 @@ Tutorial 5: Noise Map Scaling 2
 ===============================
 
 Noise-map scaling is important when our mass model lead to an inaccurate source reconstruction . However, it serves an
-even more important use, when another component of our lens model doesn't fit the data well. Can you think what it is?
+even more important use, when another component of our lens model doesn`t fit the data well. Can you think what it is?
 What could leave significant residuals in our model-fit? What might happen to also be the highest S/N values in our
 image, meaning these residuals contribute *even more* to the chi-squared distribution?
 
-Yep, you guessed it, it's the lens galaxy _LightProfile_ fit and subtraction. Just like our overly simplified mass
-profile's mean we can't perfectly reconstruct the source's light, the same is true of the Sersic profiles we use to
-fit the lens galaxy's light. Lets take a look.
+Yep, you guessed it, it`s the lens galaxy `LightProfile` fit and subtraction. Just like our overly simplified mass
+profile`s mean we can`t perfectly reconstruct the source`s light, the same is true of the Sersic profiles we use to
+fit the lens galaxy`s light. Lets take a look.
 """
 
 # %%
@@ -25,11 +25,11 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-We'll use the same strong lensing data as the previous tutorial, where:
+we'll use the same strong lensing data as the previous tutorial, where:
 
- - The lens galaxy's light is an _EllipticalSersic_.
- - The lens galaxy's _MassProfile_ is an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is an _EllipticalSersic_.
+ - The lens galaxy`s light is an `EllipticalSersic`.
+ - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
+ - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
 """
 
 # %%
@@ -48,7 +48,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=2, radius=3.0
 )
 
@@ -75,8 +75,8 @@ def fit_masked_imaging_with_lens_and_source_galaxy(
 
 # %%
 """
-Now, lets use this function to fit the lens data. We'll use a lens model with the correct mass model but an incorrect 
-lens _LightProfile_. The source will use a magnification based grid.
+Now, lets use this function to fit the lens data. we'll use a lens model with the correct mass model but an incorrect 
+lens `LightProfile`. The source will use a magnification based grid.
 """
 
 # %%
@@ -115,24 +115,24 @@ aplt.FitImaging.subplot_fit_imaging(
 
 # %%
 """
-Okay, so its clear that our poor lens light subtraction leaves residuals in the lens galaxy's centre. These pixels 
+Okay, so its clear that our poor lens light subtraction leaves residuals in the lens galaxy`s centre. These pixels 
 are extremely high S/N, so they contribute large chi-squared values. For a real strong lens, we could not fit these 
-residual features using a more complex _LightProfile_. These types of residuals are extremely common and they are 
+residual features using a more complex `LightProfile`. These types of residuals are extremely common and they are 
 caused by nasty, irregular morphological structures in the lens galaxy; nuclear star emission, nuclear rings, bars, etc.
 
 This skewed chi-squared distribution will cause all the same problems we discussed in the previous tutorial, like 
 over-fitting. However, for the source-reconstruction and Bayesian log evidence the residuals are even more problematic 
 than before. Why? Because when we compute the Bayesian log evidence for the source-inversion these pixels are included 
-like all the other image pixels. But, __they do not contain the source__. The Bayesian log evidence is going to try 
-improve the fit to these pixels by reducing the level of _Regularization_,  but its __going to fail miserably__, as they 
+like all the other image pixels. But, ``.hey do not contain the source__. The Bayesian log evidence is going to try 
+improve the fit to these pixels by reducing the level of `Regularization`,  but its ``.oing to fail miserably__, as they 
 map nowhere near the source!
 
-This is a fundamental problem when simultaneously modeling the lens galaxy's light and source galaxy. The source 
+This is a fundamental problem when simultaneously modeling the lens galaxy`s light and source galaxy. The source 
 inversion has no way to distinguish whether the flux it is reconstructing belongs to the lens or source. This is 
-why contribution maps are so valuable; by creating a contribution map for every galaxy in the image __PyAutoLens__ has a 
+why contribution maps are so valuable; by creating a contribution map for every galaxy in the image ``.yAutoLens__ has a 
 means by which to distinguish which flux belongs to each component in the image! This is further aided by the 
-_Pixelization_'s / regularizations that adapt to the source morphology, as not only are they adapting to where the 
-source __is*__ they adapt to where __it isn't__ (and therefore where the lens galaxy is).
+_Pixelization_`s / regularizations that adapt to the source morphology, as not only are they adapting to where the 
+source ``.s*__ they adapt to where ``.t isn`t__ (and therefore where the lens galaxy is).
 
 Lets now create our hyper-galaxy-images and use them create the contribution maps of our lens and source galaxies. 
 Note below that we now create separate model images for our lens and source galaxies. This allows us to create 
@@ -230,19 +230,19 @@ print("Evidence using hyper-galaxy hyper variances = ", fit.log_evidence)
 
 # %%
 """
-Great, and with that, we've covered hyper galaxies. You might be wondering, what happens if there are multiple lens 
-galaxies? or multiple source galaxies? Well, as you'd expect, __PyAutoLens__ will make each a hyper-galaxy and 
+Great, and with that, we`ve covered hyper galaxies. You might be wondering, what happens if there are multiple lens 
+galaxies? or multiple source galaxies? Well, as you`d expect, ``.yAutoLens__ will make each a hyper-galaxy and 
 therefore scale the noise-map of that individual galaxy in the image. This is what we want, as different parts of 
 the image require different levels of noise-map scaling.
 
 Finally, I want to quickly mention two more ways that we change our data during th fitting process. One scales the 
-background noise and one scales the image's background sky. To do this, we use the 'hyper_data' module in __PyAutoLens__.
+background noise and one scales the image`s background sky. To do this, we use the `hyper_data` module in ``.yAutoLens__.
 """
 
 # %%
 """
 This module includes all components of the model that scale parts of the data. To scale the background sky in the 
-image we use the HyperImageSky class and input a 'sky_scale'.
+image we use the HyperImageSky class and input a `sky_scale`.
 """
 
 # %%
@@ -252,10 +252,10 @@ hyper_image_sky = al.hyper_data.HyperImageSky(sky_scale=1.0)
 """
 The sky_scale is literally just a constant value we add to every pixel of the observed image before fitting it 
 therefore increasing or decreasing the background sky level in the image .This means we can account for an 
-inaccurate background sky subtraction in our data reduction during __PyAutoLens__ model fitting.
+inaccurate background sky subtraction in our data reduction during ``.yAutoLens__ model fitting.
 
 We can also scale the background noise in an analogous fashion, using the HyperBackgroundNoise class and the 
-'noise_scale' hyper-galaxy-parameter. This value is added to every pixel in the noise-map.
+`noise_scale` hyper-galaxy-parameter. This value is added to every pixel in the noise-map.
 """
 
 # %%
@@ -263,7 +263,7 @@ hyper_background_noise = al.hyper_data.HyperBackgroundNoise(noise_scale=1.0)
 
 # %%
 """
-To use these hyper-galaxy-instrument parameters, we pass them to a lens-fit just like we do our _Tracer_.
+To use these hyper-galaxy-instrument parameters, we pass them to a lens-fit just like we do our `Tracer`.
 """
 
 # %%
@@ -286,23 +286,23 @@ aplt.FitImaging.subplot_fit_imaging(
 """
 Is there any reason to scale the background noise other than if the background sky subtraction has a large 
 correction? There is. Lots of pixels in an image do not contain the lensed source but are fitted by the 
-inversion. As we've learnt in this chapter, this isn't problematic when we have our adaptive _Regularization_ scheme 
+inversion. As we`ve learnt in this chapter, this isn`t problematic when we have our adaptive `Regularization` scheme 
 because the regularization_coefficient will be increased to large values.
 
-However, if you ran a full __PyAutoLens__ analysis in hyper-galaxy-mode (which we cover in the next tutorial), you'd 
+However, if you ran a full ``.yAutoLens__ analysis in hyper-galaxy-mode (which we cover in the next tutorial), you`d 
 find the method still dedicates a lot of source-pixels to fit these regions of the image, 
 __even though they have no source__. Why is this? Its because although these pixels have no source, they still 
 have a relatively high S/N values (of order 5-10) due to the lens galaxy (e.g. its flux before it is subtracted). The 
-inversion when reconstructing the data 'sees' pixels with a S/N > 1 and therefore wants to fit them with a high 
+inversion when reconstructing the data `sees` pixels with a S/N > 1 and therefore wants to fit them with a high 
 resolution.
 
-By increasing the background noise these pixels will go to much lower S/N values (<  1). The adaptive _Pixelization_will 
+By increasing the background noise these pixels will go to much lower S/N values (<  1). The adaptive `Pixelization`.ill 
 feel no need to fit them properly and begin to fit these regions of the source-plane with far fewer, much bigger 
 source pixels! This will again give us a net increase in Bayesian log evidence, but more importantly, it will dramatically 
 reduce the number of source pixels we use to fit the data. And what does fewer source-pixels mean? Much, much faster
 run times. Yay!
 
 With that, we have introduced every feature of hyper-galaxy-mode. The only thing left for us to do is to bring it 
-all together and consider how we use all of these features in __PyAutoLens__ pipelines. That is what we'll discuss in the 
-next tutorial, and then you'll be ready to perform your own hyper-galaxy-fits!
+all together and consider how we use all of these features in ``.yAutoLens__ pipelines. That is what we'll discuss in the 
+next tutorial, and then you`ll be ready to perform your own hyper-galaxy-fits!
 """

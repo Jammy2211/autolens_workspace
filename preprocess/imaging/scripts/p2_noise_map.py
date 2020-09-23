@@ -6,7 +6,7 @@ The noise-map defines the uncertainty in every pixel of your strong lens image. 
 deviation in every pixel (not the variances, HST WHT-map values, etc.). You MUST be certain that the noise-map is
 the RMS standard deviations or else your analysis will be incorrect!
 
-This tutorial describes preprocessing your dataset's noise-map to adhere too the units and formats required by PyAutoLens.
+This tutorial describes preprocessing your dataset`s noise-map to adhere too the units and formats required by PyAutoLens.
 
 """
 
@@ -22,10 +22,10 @@ import autolens.plot as aplt
 
 # %%
 """
-Next, lets setup the path to our current working directory. I recommend you use the 'autolens_workspace' directory 
-and place your dataset in the 'autolens_workspace/dataset' directory.
+Next, lets setup the path to our current working directory. I recommend you use the `autolens_workspace` directory 
+and place your dataset in the `autolens_workspace/dataset` directory.
 
-For this tutorial, we'll use the 'autolens_workspace/preprocess/imaging/data_raw' directory. The folder 'data_raw' 
+For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw` directory. The folder `data_raw` 
 contains example data we'll use in this tutorial.
 """
 
@@ -41,7 +41,7 @@ dataset_path = af.util.create_path(
 
 # %%
 """
-This populates the 'data_raw' path with example simulated _Imaging_ data-sets.
+This populates the `data_raw` path with example simulated `Imaging` data-sets.
 """
 
 # %%
@@ -77,7 +77,7 @@ If in the previous preprocessing script you did any of the following to the imag
 3) Recentered the image.
 
 You must perform identical operations on your noise-map (assuming it is in the same units and has the dimensions as the
-image. You can simply cut and paste the appropriate functions in below - I've commented out the appropriate functions
+image. You can simply cut and paste the appropriate functions in below - I`ve commented out the appropriate functions
 you might of used.
 
 """

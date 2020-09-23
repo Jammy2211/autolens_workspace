@@ -1,8 +1,8 @@
 """
 __Aggregator: Phase Runner__
 
-This script fits a sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
-using a single _PhaseImaging_ object, to illustrate aggregator functionality in the tutorials:
+This script fits a sample of three strong lenses simulated by the script `autolens_workspace/aggregator/sample.py`
+using a single `PhaseImaging` object, to illustrate aggregator functionality in the tutorials:
 
  - a1_samples
  - a2_lens_models
@@ -11,8 +11,8 @@ using a single _PhaseImaging_ object, to illustrate aggregator functionality in 
 
 The phase fits each lens with:
  
- - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass.
- - An _EllipticalSersic_ _LightProfile_ for the source galaxy's light.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass.
+ - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light.
 """
 
 """ AUTOFIT + CONFIG SETUP """
@@ -21,7 +21,7 @@ from autoconf import conf
 import autofit as af
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -56,22 +56,22 @@ for dataset_name in [
     """
     Info:
 
-    We can pass information on our dataset to the 'phase.run()' method, which will be accessible to the aggregator 
+    We can pass information on our dataset to the `phase.run()` method, which will be accessible to the aggregator 
     to aid interpretation of results. This information is passed as a dictionary, with th redshifts of the lens
     and source good examples of information you may wish to pass.
     """
     info = {
-        "setup.redshift_lens": 0.5,
-        "setup.redshift_source": 1.0,
+        "redshift_lens": 0.5,
+        "redshift_source": 1.0,
         "velocity_dispersion": 250000,
         "stellar mass": 1e11,
     }
 
     """
-    Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files.
+    Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files.
     
-    This _Imaging_ object will be available via the aggregator. Note also that we give the dataset a 'name' via the
-    command 'name=dataset_name'. We'll use this name in the aggregator tutorials.
+    This `Imaging` object will be available via the aggregator. Note also that we give the dataset a `name` via the
+    command `name=dataset_name`. we'll use this name in the aggregator tutorials.
     """
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
@@ -81,24 +81,24 @@ for dataset_name in [
         name=dataset_name,
     )
 
-    """The _Mask_ we fit this data-set with, which will be available via the aggregator."""
-    mask = al.Mask.circular(
+    """The `Mask` we fit this data-set with, which will be available via the aggregator."""
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
     """
     Pickle Files:
 
-    We can pass strings specifying the path and filename of .pickle files stored on our hard-drive to the 'phase.run()'
+    We can pass strings specifying the path and filename of .pickle files stored on our hard-drive to the `phase.run()`
     method, which will make them accessible to the aggregator  to aid interpretation of results. Our simulated strong
-    lens datasets have a 'true_tracer.pickle' file which we pass in below, which we use in the _Aggregator_ tutorials to
+    lens datasets have a `true_tracer.pickle` file which we pass in below, which we use in the `Aggregator` tutorials to
     easily illustrate how we can check if a model-fit recovers its true input parameters.
     """
     pickle_files = [f"{dataset_path}/true_tracer.pickle"]
 
     # %%
     """
-    The _SettingsPhase_ (which customize the fit of the phase's fit), will also be available to the aggregator!
+    The `SettingsPhase` (which customize the fit of the phase`s fit), will also be available to the aggregator!
     """
 
     # %%

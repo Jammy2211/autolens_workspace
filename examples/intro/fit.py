@@ -2,17 +2,17 @@
 """
 __Example: Fitting__
 
-**PyAutoLens** uses *Tracer* objects to represent a strong lensing system. Now, we're going use these objects to
-fit _Imaging_ data of a strong lens.
+**PyAutoLens** uses *Tracer* objects to represent a strong lensing system. Now, we`re going use these objects to
+fit `Imaging` data of a strong lens.
 
 The autolens_workspace comes distributed with simulated images of strong lenses (an example of how these simulations
-are made can be found in the 'simulate.py' exampe, with all simulator scripts located in 'autolens_workspac/simulators'.
+are made can be found in the `simulate.py` exampe, with all simulator scripts located in `autolens_workspac/simulators`.
 
-We we begin by loading the strong lens dataset 'mass_sie__source_sersic' 'from .fits files:
+We we begin by loading the strong lens dataset `mass_sie__source_sersic` `from .fits files:
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -22,7 +22,7 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens dataset 'light_sersic__mass_sie__source_sersic' 'from .fits files, which is the dataset 
+Load the strong lens dataset `light_sersic__mass_sie__source_sersic` `from .fits files, which is the dataset 
 we will use to perform lens modeling.
 """
 
@@ -44,7 +44,7 @@ imaging = al.Imaging.from_fits(
 
 # %%
 """
-We can use the _Imaging_ plotters to plot the image, noise-map and psf of the dataset.
+We can use the `Imaging` plotters to plot the image, noise-map and psf of the dataset.
 """
 
 aplt.Imaging.image(imaging=imaging)
@@ -53,7 +53,7 @@ aplt.Imaging.psf(imaging=imaging)
 
 # %%
 """
-The _Imaging_ plotter also contains a subplot which plots all these properties simultaneously.
+The `Imaging` plotter also contains a subplot which plots all these properties simultaneously.
 """
 aplt.Imaging.subplot_imaging(imaging=imaging)
 
@@ -62,7 +62,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 We now need to mask the data, so that regions where there is no signal (e.g. the edges) are omitted from the fit.
 """
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=1, radius=3.0
 )
 
@@ -70,7 +70,7 @@ mask = al.Mask.circular(
 """
 The MaskedImaging object combines the dataset with the mask.
  
-Here, the Mask is also used to compute the *Grid* we used in the lensing.py tutorial to compute lensing calculations.
+Here, the Mask2D is also used to compute the *Grid* we used in the lensing.py tutorial to compute lensing calculations.
 Note how the Grid has also had the mask applied to it.
 """
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
@@ -85,12 +85,12 @@ aplt.Imaging.image(imaging=masked_imaging)
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of _LightProfile_, _MassProfile_ and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and *Galaxy*
 objects.
 
 The combination of *LightProfiles* and *MassProfiles* below is the same as those used to generate the lensed data-set,
 thus it produces a tracer whose image looks exactly like the dataset. As discssed in the lensing.py tutorial, this
-tracer can be extended to include additional _LightProfile_'s's, _MassProfile_'s and *Galaxy*'s, for example if you 
+tracer can be extended to include additional `LightProfile``.`s, `MassProfile``s and *Galaxy*`s, for example if you 
 wanted to fit a tracer where the lens light is included.
 """
 lens_galaxy = al.Galaxy(
@@ -115,12 +115,12 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of _LightProfile_, _MassProfile_ and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and *Galaxy*
 objects. We can then use the *FitImaging* object to fit this tracer to the dataset. 
 
-The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer's 
-image with the _Imaging_ PSF. We can see this by comparing the tracer's image (which isn't PSF convolved) and the 
-fit's model image (which is).
+The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer`s 
+image with the `Imaging` PSF. We can see this by comparing the tracer`s image (which isn`t PSF convolved) and the 
+fit`s model image (which is).
 """
 aplt.Tracer.image(tracer=tracer, grid=masked_imaging.grid)
 
@@ -131,11 +131,11 @@ aplt.FitImaging.model_image(fit=fit)
 """
 The fit creates the following:
 
- - The residual-map: The model-image subtracted from the observed dataset's image.
+ - The residual-map: The model-image subtracted from the observed dataset`s image.
  - The normalized residual-map: The residual-map divided by the noise-map.
  - The chi-squared-map: The normalized residual-map squared.
 
-We'll plot all 3 of these, alongside a subplot containing them all.
+we'll plot all 3 of these, alongside a subplot containing them all.
 
 For a good lens model where the model image and tracer are representative of the strong lens system the
 residuals, normalized residuals and chi-squareds are minimized:

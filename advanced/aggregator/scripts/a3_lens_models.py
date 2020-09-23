@@ -2,7 +2,7 @@
 """
 __Aggregator 3: Lens Models__
 
-This tutorial builds on the tutorial 'a1_samples', where we use the aggregator to load models from a non-linear
+This tutorial builds on the tutorial `a1_samples`, where we use the aggregator to load models from a non-linear
 search and visualize and interpret results.
 """
 
@@ -32,8 +32,8 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-Next, lets create a list of instances of the maximum log likelihood models of each fit. Although we don't need to use
-the aggregator's filter tool, we'll use it below (and in all tutorials here after) so you are used to seeing it, as
+Next, lets create a list of instances of the maximum log likelihood models of each fit. Although we don`t need to use
+the aggregator`s filter tool, we'll use it below (and in all tutorials here after) so you are used to seeing it, as
 for general PyAutoLens use it will be important to filter your results!
 """
 
@@ -47,7 +47,7 @@ ml_instances = [
 
 # %%
 """
-A model instance contains a list of _Galaxy_ instances, which is what we are using to passing to functions in 
+A model instance contains a list of `Galaxy` instances, which is what we are using to passing to functions in 
 PyAutoLens. Lets create the maximum log likelihood tracer of every fit.
 """
 
@@ -62,7 +62,7 @@ print("Total Tracers = ", len(ml_tracers))
 
 # %%
 """
-Now lets plot their convergences, using a grid of 100 x 100 pixels (noting that this isn't' necessarily the grid used
+Now lets plot their convergences, using a grid of 100 x 100 pixels (noting that this isn`t` necessarily the grid used
 to fit the data in the phase itself).
 """
 
@@ -75,7 +75,7 @@ for tracer in ml_tracers:
 # %%
 """
 Okay, so we can make a list of tracers and plot their convergences. However, we'll run into the same problem using 
-lists which we discussed in the previous tutorial. If we had fitted hundreds of images we'd have hundreds of tracers, 
+lists which we discussed in the previous tutorial. If we had fitted hundreds of images we`d have hundreds of tracers, 
 overloading the memory on our laptop.
 
 We can again avoid using lists for any objects that could potentially be memory intensive, using generators.
@@ -113,10 +113,10 @@ for tracer in tracer_gen:
 
 # %%
 """
-Its cumbersome to always have to define a 'make_tracer_generator' function to make a tracer generator, given that 
-you'll probably do the exact same thing in every Jupyter Notebook you ever write!
+Its cumbersome to always have to define a `make_tracer_generator` function to make a tracer generator, given that 
+you`ll probably do the exact same thing in every Jupyter Notebook you ever write!
 
-PyAutoLens's aggregator module (imported as 'agg') has convenience methods to save you time and make your notebooks
+PyAutoLens`s aggregator module (imported as `agg`) has convenience methods to save you time and make your notebooks
 cleaner.
 """
 
@@ -129,10 +129,10 @@ for tracer in tracer_gen:
 
 # %%
 """
-Because instances are just lists of galaxies we can directly extract attributes of the _Galaxy_ class. Lets print 
+Because instances are just lists of galaxies we can directly extract attributes of the `Galaxy` class. Lets print 
 the Einstein mass of each of our most-likely lens galaxies.
 
-The model instance uses the model defined by a pipeline. In this pipeline, we called the lens galaxy 'lens'.
+The model instance uses the model defined by a pipeline. In this pipeline, we called the lens galaxy `lens`.
 
 For illustration, lets do this with a list first:
 """
@@ -170,9 +170,9 @@ agg_filter.map(func=print_max_log_likelihood_mass)
 # %%
 """
 Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each 
-_EllipticalIsothermal_ _MassProfile_.
+_EllipticalIsothermal_ `MassProfile`.
 
-These plots don't use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
+These plots don`t use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
 """
 
 # %%
@@ -242,13 +242,13 @@ plt.show()
 # %%
 """
 In the phase_runner, we used the pickle_files input to phase.run() to pass a .pickle file from the dataset folder to 
-the _Aggregator_ pickles folder. 
+the `Aggregator` pickles folder. 
 
-Our strong lens dataset was created via a simulator script, so we passed the _Tracer_ used to simulate the strong
-lens, which was written as a .pickle file called 'true_tracer.pickle' to the phase to make it accessible in the 
-_Aggregator_. This will allow us to directly compare the inferred lens model to the 'truth'. 
+Our strong lens dataset was created via a simulator script, so we passed the `Tracer` used to simulate the strong
+lens, which was written as a .pickle file called `true_tracer.pickle` to the phase to make it accessible in the 
+_Aggregator_. This will allow us to directly compare the inferred lens model to the `truth`. 
 
-You should checkout 'autolens_workspace/advanced/aggregator/phase_runner.py' to see how this was performed.
+You should checkout `autolens_workspace/advanced/aggregator/phase_runner.py` to see how this was performed.
 """
 
 true_tracers = [true_tracer for true_tracer in agg_filter.values("true_tracer")]

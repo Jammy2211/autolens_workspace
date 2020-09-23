@@ -1,22 +1,22 @@
-# This script fits the sample of three strong lenses simulated by the script 'autolens_workspace/aggregator/sample.py'
+# This script fits the sample of three strong lenses simulated by the script `autolens_workspace/aggregator/sample.py`
 # using a beginner pipeline to illustrate aggregator functionality.
 
-# we fit each lens with an  _EllipticalIsothermal_ _MassProfile_ and each source using a pixelized _Inversion_. The fit will use a
+# we fit each lens with an  `EllipticalIsothermal` `MassProfile`.and each source using a pixelized `Inversion`. The fit will use a
 # beginner pipelines which performs a 3 phase analysis, which will allow us to illustrate how the results of different
 # phases can be loaded using the aggregator.
 
-# This script follows the scripts described in 'autolens_workspace/runners/beginner/' and the pipelines:
+# This script follows the scripts described in `autolens_workspace/runners/beginner/` and the pipelines:
 
-# 'autolens_workspace/pipelines/beginner/no_lens_light/lens_sie__source_inversion.py'
+# `autolens_workspace/pipelines/beginner/no_lens_light/lens_sie__source_inversion.py`
 
-# If anything doesn't make sense check those scripts out for details!
+# If anything doesn`t make sense check those scripts out for details!
 
 """ AUTOFIT + CONFIG SETUP """
 
 import autofit as af
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -44,7 +44,7 @@ for dataset_name in [
 ]:
 
     # Create the path where the dataset will be loaded from, which in this case is
-    # '/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic'
+    # `/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic`
     dataset_path = af.util.create_path(
         path=workspace_path, folders=["aggregator", "dataset", dataset_name]
     )
@@ -65,7 +65,7 @@ for dataset_name in [
 
     ### DATASET ###
 
-    """Using the dataset path, load the data (image, noise-map, PSF) as an _Imaging_ object from .fits files."""
+    """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
         image_path=f"{dataset_path}/image.fits",
         psf_path=f"{dataset_path}/psf.fits",
@@ -76,21 +76,21 @@ for dataset_name in [
     )
 
     """Next, we create the mask we'll fit this data-set with."""
-    mask = al.Mask.circular(
+    mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
 
     ### PIPELINE SETUP ###
 
-    # Advanced pipelines use the same 'Source', 'Light' and 'Mass' setup objects we used in beginner and intermediate
+    # Advanced pipelines use the same `Source`, `Light` and `Mass` setup objects we used in beginner and intermediate
     # pipelines. However, there are many additional options now available with these setup objects, that did not work
     # for beginner and intermediate pipelines. For an explanation, checkout:
 
-    # - 'autolens_workspace/runners/advanced/doc_setup'
+    # - `autolens_workspace/runners/advanced/doc_setup`
 
     # The setup of earlier pipelines inform the model fitted in later pipelines. For example:
 
-    # - The _Pixelization_ and _Regularization_ scheme used in the source (inversion) pipeline will be used in the light and
+    # - The `Pixelization` and `Regularization` scheme used in the source (inversion) pipeline will be used in the light and
     #   mass pipelines.
 
     hyper = al.SetupHyper(

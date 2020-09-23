@@ -7,27 +7,27 @@ To fit a lens model to a dataset, we must perform lens modeling, which uses a no
 different tracers to the dataset.
 
 Model-fitting is handled by our project **PyAutoFit**, a probablistic programming language for non-linear model
-fitting. The setting up of configuration files is performed by our project **PyAutoConf**. We'll need to import
+fitting. The setting up of configuration files is performed by our project **PyAutoConf**. we'll need to import
 both to perform the model-fit.
 """
 
 # %%
 """
-In this example script, we fit _Imaging_ of a strong lens system where:
+In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
- - The source galaxy's surface-brightness is modeled using an _Inversion_.
+ - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source galaxy`s surface-brightness is modeled using an `Inversion`.
 
-An _Inversion_ reconstructs the source's light using a pixel-grid, which is regularized using a prior that enforces
-this reconstructioon to be smooth. This uses _Pixelization_ and _Regularization_ objects and in this example we will
-use their simplest forms, a _Rectangular_ _Pixelization_ and _Constant_ _Regularization_ scheme.
+An `Inversion` reconstructs the source`s light using a pixel-grid, which is regularized using a prior that enforces
+this reconstructioon to be smooth. This uses `Pixelization` and `Regularization` objects and in this example we will
+use their simplest forms, a `Rectangular` `Pixelization`.and `Constant` `Regularization`.scheme.
 
 Inversions are covered in detail in chapter 4 of the **HowToLens** lectures.
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -37,10 +37,10 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the strong lens dataset 'mass_sie__source_sersic' 'from .fits files, which is the dataset we will
+Load the strong lens dataset `mass_sie__source_sersic` `from .fits files, which is the dataset we will
 use to perform lens modeling.
 
-This is the same dataset we fitted in the 'autolens/intro/fitting.py' example.
+This is the same dataset we fitted in the `autolens/intro/fitting.py` example.
 """
 
 # %%
@@ -66,7 +66,7 @@ The model-fit also requires a mask, which defines the regions of the image we us
 """
 
 # %%
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -78,29 +78,29 @@ __Phase__
 
 To perform lens modeling, we create a *PhaseImaging* object, which comprises:
 
-   - The _GalaxyModel_'s used to fit the data.
+   - The `GalaxyModel``s used to fit the data.
    - The *SettingsPhase* which customize how the model is fitted to the data.
    - The *NonLinearSearch* used to sample parameter space.
    
-Once we have create the phase, we 'run' it by passing it the data and mask.
+Once we have create the phase, we `run` it by passing it the data and mask.
 """
 
 # %%
 """
 __Model__
 
-We compose our lens model using _GalaxyModel_ objects, which represent the galaxies we fit to our data. In this 
+We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An _EllipticalIsothermal_ _MassProfile_ for the lens galaxy's mass (5 parameters).
- - A _Rectangular_ _Pixelization_ which reconstructs the source galaxy's light. We will fix its resolution to 
+ - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
+ - A `Rectangular` `Pixelization`.which reconstructs the source galaxy`s light. We will fix its resolution to 
    30 x 30 pixels, which balances fast-run time with sufficient resolution to reconstruct its light. (0 parameters).
- - A _Constant_ _Regularization_ scheme which imposes a smooothness prior on the source reconstruction (1 parameter). 
+ - A `Constant` `Regularization`.scheme which imposes a smooothness prior on the source reconstruction (1 parameter). 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=1. 
  
-It is worth noting the _Pixelization_ and _Regularization_ use significantly fewer parameter (1 parameteer) than 
-fitting the source using _LightProfile_'s (7+ parameters). 
+It is worth noting the `Pixelization` and `Regularization` use significantly fewer parameter (1 parameteer) than 
+fitting the source using `LightProfile``s (7+ parameters). 
 """
 
 # %%
@@ -115,19 +115,19 @@ source = al.GalaxyModel(
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the `SettingsPhaseImaging`, which describe how the model is fitted to the data in the log likelihood
 function. Below, we specify:
  
  - That a regular *Grid* is used to fit create the model-image when fitting the data 
-      (see 'autolens_workspace/examples/grids.py' for a description of grids).
+      (see `autolens_workspace/examples/grids.py` for a description of grids).
  - The sub-grid size of this grid.
 
-We specifically specify the grid that is used to perform the _Inversion_. In **PyAutoLens** it is possible to fit
-data simultaneously with _LightProfile_'s and an _Inversion_. Each fit uses a different grid, which are specified 
+We specifically specify the grid that is used to perform the `Inversion`. In **PyAutoLens** it is possible to fit
+data simultaneously with `LightProfile``s and an `Inversion`. Each fit uses a different grid, which are specified 
 independently.
 
 Different *SettingsPhase* are used in different example model scripts and a full description of all *SettingsPhase* 
-can be found in the example script 'autolens/workspace/examples/model/customize/settings.py' and the following 
+can be found in the example script `autolens/workspace/examples/model/customize/settings.py` and the following 
 link -> <link>
 """
 
@@ -147,7 +147,7 @@ nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), w
 
  - 50 live points.
 
-The script 'autolens_workspace/examples/model/customize/non_linear_searches.py' gives a description of the types of
+The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
 """
@@ -164,7 +164,7 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__mass_sie__source_sersic'.
+ `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__mass_sie__source_sersic`.
 """
 
 # %%
@@ -182,7 +182,7 @@ We can now begin the fit by passing the dataset and mask to the phase, which wil
 the model to the data. 
 
 The fit outputs visualization on-the-fly, so checkout the path 
-'/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic' to see how your fit is doing!
+`/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic` to see how your fit is doing!
 """
 
 # %%
@@ -211,5 +211,5 @@ aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 # %%
 """
-Checkout '/path/to/autolens_workspace/examples/model/results.py' for a full description of the result object.
+Checkout `/path/to/autolens_workspace/examples/model/results.py` for a full description of the result object.
 """

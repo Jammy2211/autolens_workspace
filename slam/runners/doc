@@ -1,7 +1,7 @@
 First, lets consider some aspects of the pipelines we've used up to now that were sub-optimal:
 
 - Different pipelines often repeated phases to initialize the lens model. For example, pipelines which used a source
-  _Inversion_ typically repeated the same phases to initialize the _Inversion_ before going on to fit the final mass model.
+  `Inversion` typically repeated the same phases to initialize the `Inversion` before going on to fit the final mass model.
   This lead to lots of repetition and wasted processing time!
 
 - Tweaking a pipeline to slightly change the model it fitted often required a rerun of the entire pipeline or
@@ -9,7 +9,7 @@ First, lets consider some aspects of the pipelines we've used up to now that wer
 
 Advanced address these problems using pipeline composition, whereby multiple different pipelines each focused on
 fitting a specific aspect of the lens model are added together. The results of the initial pipelines are then reused
-when changing the model fitted in later pipelines. For example, we may initialize a source _Inversion_ using such a
+when changing the model fitted in later pipelines. For example, we may initialize a source `Inversion` using such a
 pipeline and use this to fit a variety of different mass models with different pipelines.
 
 Advanced pipelines are written following the SLAM method, whereby we first initialize the source fit to a lens,

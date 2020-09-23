@@ -2,9 +2,9 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the mass of a strong lens using an  _EllipticalIsothermal_ + shear model.
+In this pipeline, we fit the mass of a strong lens using an  `EllipticalIsothermal` + shear model.
 
-The mass model and source are initialized using an already run 'source' pipeline.
+The mass model and source are initialized using an already run `source` pipeline.
 
 The pipeline is one phases:
 
@@ -15,7 +15,7 @@ Phase 1:
     Source Light: Previous Pipeline Source.
     Previous Pipeline: no_lens_light/source/*/mass_sie__source_*py
     Prior Passing: Lens Mass (model -> previous pipeline), source (model / instance -> previous pipeline)
-    Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
+    Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
 """
 
 
@@ -32,7 +32,7 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an  _ExternalShear_.
+        2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
     folders = slam.folders + [
@@ -47,14 +47,14 @@ def make_pipeline(slam, settings):
     shear = slam.pipeline_mass.shear_from_previous_pipeline
 
     """
-    Phase 1: Fit the lens's _MassProfile_'s and source, where we:
+    Phase 1: Fit the lens`s `MassProfile``s and source, where we:
 
-        1) Use the source galaxy of the 'source' pipeline.
-        2) Set priors on the lens galaxy _MassProfile_'s using the EllipticalIsothermal and ExternalShear of previous pipelines.
+        1) Use the source galaxy of the `source` pipeline.
+        2) Set priors on the lens galaxy `MassProfile``s using the EllipticalIsothermal and ExternalShear of previous pipelines.
     """
 
     """
-    SLaM: Setup the source model, which uses a variable parametric profile or fixed _Inversion_ model.
+    SLaM: Setup the source model, which uses a variable parametric profile or fixed `Inversion` model.
     """
 
     source = slam.source_from_previous_pipeline_model_if_parametric()

@@ -5,15 +5,15 @@ __Einstein Radii and Mass__
 
 This is a simple script for computing the Einstein Radii and Mass of a Lens Galaxy given known input parameters.
 
-For errors, you'll need to use the aggregator (autolens_workspace -> aggregator).
+For errors, you`ll need to use the aggregator (autolens_workspace -> aggregator).
 
-Lets set up an _EllipticalIsotherma_ _MassProfile_.
+Lets set up an `EllipticalIsotherma` `MassProfile`.
 """
 
 sie = al.mp.EllipticalIsothermal(einstein_radius=2.0, elliptical_comps=(0.0, 0.333333))
 
 """
-We can compute its Einstein Radius and Mass using the "einstein_radius_in_units' function.
+We can compute its Einstein Radius and Mass using the "einstein_radius_in_units` function.
 
 The Einstein Radius can then be printed in arc-seconds (for an elliptical Isothermal the model Einstein Radius
 differs from the one output below, due to a difference in definition). The definition below is that used by
@@ -41,7 +41,7 @@ print("{:.4e}".format(einstein_mass))
 galaxy = al.Galaxy(redshift=0.5, mass=sie)
 
 """
-There is currently a bug which means these methods do not use the galaxy's redsshift (doh) and that it needs to be
+There is currently a bug which means these methods do not use the galaxy`s redsshift (doh) and that it needs to be
 input manually again.
 """
 

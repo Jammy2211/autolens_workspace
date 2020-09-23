@@ -1,15 +1,15 @@
 """
-This file uses the simulator dataset 'imaging/no_lens_light/mass_sie__source_sersic' to create deflection angle map and
+This file uses the simulator dataset `imaging/no_lens_light/mass_sie__source_sersic` to create deflection angle map and
 image-plane grid.
 
-This is so the 'source_planes.py' script can be used to analysis the system in a setting where the deflection angle
-map is 'known'.
+This is so the `source_planes.py` script can be used to analysis the system in a setting where the deflection angle
+map is `known`.
 """
 
 import autolens as al
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -31,13 +31,13 @@ imaging = al.Imaging.from_fits(
 
 """The mask and grid of the imaging dataset."""
 
-mask = al.Mask.unmasked(
+mask = al.Mask2D.unmasked(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=1
 )
 grid = al.Grid.from_mask(mask=mask)
 
 """
-The true lens _Galaxy_ of the 'mass_sie__source_sersic.py' simulator script, which is required to compute the
+The true lens `Galaxy` of the `mass_sie__source_sersic.py` simulator script, which is required to compute the
 correct deflection angle map.
 """
 

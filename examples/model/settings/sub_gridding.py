@@ -1,7 +1,7 @@
 # %%
 """
 This example demonstrates how to change the sub-gridding of the phase settings, which changes the resolution of the
-sub-grid that oversamples the _LightProfile_ intensities and _MassProfile_ deflection angle calculations.
+sub-grid that oversamples the `LightProfile` intensities and `MassProfile` deflection angle calculations.
 
 The benefits of this are:
 
@@ -11,12 +11,12 @@ The drawbacks of this are:
 
 -   Longer calculations and higher memory usage.
 
-I'll assume that you are familiar with the beginner example scripts work, so if any code doesn't make sense familiarize
+I`ll assume that you are familiar with the beginner example scripts work, so if any code doesn`t make sense familiarize
 yourself with those first!
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the autolens workspace."""
+"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
 
 # %%
 import os
@@ -56,7 +56,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
-mask = al.Mask.circular(
+mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
@@ -66,7 +66,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Model__
 
-We'll fit a _EllipticalIsothermal + _EllipticalSersic_ model which we often fitted in the beginner example scripts.
+we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitted in the beginner example scripts.
 """
 
 # %%
@@ -77,7 +77,7 @@ source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 """
 __Search__
 
-We'll use the default DynestyStatic sampler we used in the beginner examples.
+we'll use the default DynestyStatic sampler we used in the beginner examples.
 """
 
 # %%
@@ -87,7 +87,7 @@ search = af.DynestyStatic(n_live_points=50)
 """
 __Settings__
 
-Next, we specify the _SettingsPhaseImaging_, which describe how the model is fitted to the data in the log likelihood
+Next, we specify the `SettingsPhaseImaging`, which describe how the model is fitted to the data in the log likelihood
 function. In this example, we specify:
 
  - A sub_size of 4, meaning we use a high resolution 4x4 sub-grid instead of the default 2x2 sub-grid.
@@ -105,12 +105,12 @@ the lens model.
 
 The phase_name and folders inputs below specify the path of the results in the output folder:  
 
- '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub'.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub`.
 
-However, because the _SettingsPhase_ include a bin_up_factor, the output path is tagged to reflelct this, meaning the
+However, because the `SettingsPhase` include a bin_up_factor, the output path is tagged to reflelct this, meaning the
 full output path is:
 
- '/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub/settings__grid_sub_4'.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub/settings__grid_sub_4`.
 
 """
 

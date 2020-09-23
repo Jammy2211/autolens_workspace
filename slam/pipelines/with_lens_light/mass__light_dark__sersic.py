@@ -3,9 +3,9 @@ import autolens as al
 
 """
 This pipeline fits the mass of a strong lens using an image with the lens light included, using a decomposed 
-_LightMassProfile__, dark _MassProfile_ profile. 
+_LightMassProfile__, dark `MassProfile` profile. 
 
-The lens light is the _EllipticalSersic_ model chosen by the previous Light pipeline and source model chosen by the 
+The lens light is the `EllipticalSersic` model chosen by the previous Light pipeline and source model chosen by the 
 Source pipeline. The mass model is initialized using results from these pipelines.
 
 The pipeline is two phases:
@@ -13,27 +13,27 @@ The pipeline is two phases:
 Phase 1:
 
     Fit the lens light and mass model as a decomposed profile, using the lens light and source model from 
-    a previous pipeline. The lens _LightProfile_'s are fixed to the results of the previous pipeline to provide a fast
-    initialization of the new _MassProfile_ parameters.
+    a previous pipeline. The lens `LightProfile``s are fixed to the results of the previous pipeline to provide a fast
+    initialization of the new `MassProfile` parameters.
     
     Lens Light & Mass: EllipticalSersic
-    Lens Mass: LightMassProfile's + SphericalNFW + ExternalShear
+    Lens Mass: LightMassProfile`s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipelines: source__sersic.py and / or source__inversion.py and light__sersic.py
     Prior Passing: Lens Light (instance -> previous pipeline), Source (instance -> previous pipeline)
-    Notes: Fixes the lens _LightProfile_ and Source to the results of the previous pipeline.
+    Notes: Fixes the lens `LightProfile` and Source to the results of the previous pipeline.
 
 Phase 2:
     
-    Include all previously fixed lens _LightProfile_ parameters in the model, initializing the _MassProflie_ parameters
+    Include all previously fixed lens `LightProfile` parameters in the model, initializing the `MassProflie` parameters
     from the results of phase 1.
     
     Lens Light & Mass: EllipticalSersic
-    Lens Mass: _LightMassProfile_'s + SphericalNFW + ExternalShear
+    Lens Mass: `LightMassProfile``s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipelines: None
     Prior Passing: Lens Light & Mass (model -> phase 1), source (model / instance -> previous pipeline)
-    Notes: If the source is parametric, its parameters are varied, if its an _Inversion_, they are fixed.
+    Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
 """
 
 
@@ -46,7 +46,7 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an  _ExternalShear_.
+        2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
     folders = slam.folders + [
@@ -61,26 +61,26 @@ def make_pipeline(slam, settings):
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
-    Phase 1: Fit the lens galaxy's light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
 
-        1) Fix the lens galaxy's light using the the _LightProfile_ inferred in the previous 'light' pipeline.
-        2) Pass priors on the lens galaxy's SphericalNFW _MassProfile_'s centre using the EllipticalIsothermal fit of the
+        1) Fix the lens galaxy`s light using the the `LightProfile` inferred in the previous `light` pipeline.
+        2) Pass priors on the lens galaxy`s SphericalNFW `MassProfile``s centre using the EllipticalIsothermal fit of the
            previous pipeline, if the NFW centre is a free parameter.
-        3) Pass priors on the lens galaxy's shear using the ExternalShear fit of the previous pipeline.
-        4) Pass priors on the source galaxy's light using the _EllipticalSersic_ of the previous pipeline.
+        3) Pass priors on the lens galaxy`s shear using the ExternalShear fit of the previous pipeline.
+        4) Pass priors on the source galaxy`s light using the `EllipticalSersic` of the previous pipeline.
     """
 
-    """SLaM: Set if the _EllipticalSersic_ is modeled with or without a mass-to-light gradient."""
+    """SLaM: Set if the `EllipticalSersic` is modeled with or without a mass-to-light gradient."""
 
     sersic = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
 
-    """SLaM: Fix the _LightProfie_ parameters of the _EllipticalSersic_ to the results of the Light pipeline."""
+    """SLaM: Fix the `LightProfie` parameters of the `EllipticalSersic` to the results of the Light pipeline."""
 
     slam.link_sersic_light_and_mass_prior_model_from_light_pipeline(
         sersic_prior_model=sersic, sersic_is_model=False, index=0
     )
 
-    """SLaM: Align the centre of the _LightProfile_ and dark matter _MassPrfile_ if input in _SetupMassLightDark_."""
+    """SLaM: Align the centre of the `LightProfile` and dark matter `MassPrfile` if input in `SetupMassLightDark`."""
 
     dark = af.PriorModel(al.mp.SphericalNFWMCRLudlow)
 
@@ -93,7 +93,7 @@ def make_pipeline(slam, settings):
     dark.redshift_object = slam.redshift_lens
     dark.redshift_source = slam.redshift_source
 
-    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in _SLaMPipelineMass_."""
+    """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in `SLaMPipelineMass`."""
 
     smbh = slam.pipeline_mass.smbh_prior_model
 
@@ -119,15 +119,15 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 2: Fit the lens galaxy's light and mass and source galaxy using the results of phase 1 as
+    Phase 2: Fit the lens galaxy`s light and mass and source galaxy using the results of phase 1 as
     initialization
     """
 
-    """SLaM: Set if the _EllipticalSersic_ is modeled with or without a mass-to-light gradient."""
+    """SLaM: Set if the `EllipticalSersic` is modeled with or without a mass-to-light gradient."""
 
     sersic = slam.pipeline_mass.setup_mass.bulge_light_and_mass_prior_model
 
-    """SLaM: Fix the _LightProfie_ parameterss o the _EllipticalSersic_ to the results of the Light pipeline."""
+    """SLaM: Fix the `LightProfie` parameterss o the `EllipticalSersic` to the results of the Light pipeline."""
 
     slam.link_sersic_light_and_mass_prior_model_from_light_pipeline(
         sersic_prior_model=sersic, sersic_is_model=True, index=0

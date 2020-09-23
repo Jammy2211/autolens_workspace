@@ -5,14 +5,14 @@ import autolens as al
 This pipeline performs a subhalo analysis which determines the attempts to detect subhalos by putting
 subhalos at fixed intevals on a 2D (y,x) grid.
 
-The mass model and source are initialized using an already run 'source' and 'mass' pipeline.
+The mass model and source are initialized using an already run `source` and `mass` pipeline.
 
 The pipeline is as follows:
 
 Phase 1:
 
     Refine the lens mass model using the hyper-parameters optimized in the mass pipeline. This model should be used
-    as the no substructure comparison model to quantify a substructure detection's evidence increase.
+    as the no substructure comparison model to quantify a substructure detection`s evidence increase.
 
     Lens Mass: Previous mass pipeline model.
     Source Light: Previous source pipeilne model.
@@ -74,7 +74,7 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The lens galaxy mass model includes an  _ExternalShear_.
+        2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
     folders = slam.folders + [
@@ -85,10 +85,10 @@ def make_pipeline(slam, settings):
     ]
 
     """
-    Phase1 : Refit the lens's _MassProfile_'s and source, where we:
+    Phase1 : Refit the lens`s `MassProfile``s and source, where we:
 
-        1) Use the source galaxy model of the 'source' pipeline.
-        2) Fit this source as a model if it is parametric and as an instance if it is an _Inversion_.
+        1) Use the source galaxy model of the `source` pipeline.
+        2) Fit this source as a model if it is parametric and as an instance if it is an `Inversion`.
     """
 
     """SLaM: Setup the lens and source passing them from the previous pipelines in the same way as described above."""
@@ -107,7 +107,7 @@ def make_pipeline(slam, settings):
     )
 
     """
-    This _GridPhase_ is used for all 3 subhalo detection phases, specifying that the subhalo (y,x) coordinates 
+    This `GridPhase` is used for all 3 subhalo detection phases, specifying that the subhalo (y,x) coordinates 
     are fitted for on a grid of non-linear searches.
     """
 
@@ -130,8 +130,8 @@ def make_pipeline(slam, settings):
         2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
         3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
         4) The lens mass model is fitted for simultaneously with the subhalo (it can be fixed if mass_is_model=False). 
-        5) For an _Inversion_, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
-          _LightProfile_ they are varied (this is customized using source_is_model).
+        5) For an `Inversion`, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
+          `LightProfile` they are varied (this is customized using source_is_model).
     """
 
     subhalo = al.GalaxyModel(
@@ -147,14 +147,14 @@ def make_pipeline(slam, settings):
 
     """
     SLaM: Setup the lens model, which uses the phase1 result and is a model or instance depending on the
-          *mass_is_model* parameter of _SetupSubhalo_.
+          *mass_is_model* parameter of `SetupSubhalo`.
     """
 
     lens = slam.lens_for_subhalo_pipeline()
 
     """
     SLaM: Setup the source model, which uses the the phase1 result is a model or instance depending on the 
-    *source_is_model* parameter of _SetupSubhalo_.
+    *source_is_model* parameter of `SetupSubhalo`.
     """
 
     source = slam.source_for_subhalo_pipeline()
@@ -177,8 +177,8 @@ def make_pipeline(slam, settings):
         2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
         3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
         4) The lens mass model is fitted for simultaneously with the subhalo (it can be fixed if mass_is_model=False). 
-        5) For an _Inversion_, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
-          _LightProfile_ they are varied (this is customized using source_is_model).
+        5) For an `Inversion`, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
+          `LightProfile` they are varied (this is customized using source_is_model).
     """
 
     """The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift."""
@@ -204,8 +204,8 @@ def make_pipeline(slam, settings):
         2) Each grid search varies the subhalo (y,x) coordinates and mass as free parameters.
         3) The priors on these (y,x) coordinates are UniformPriors, with limits corresponding to the grid-cells.
         4) The lens mass model is fitted for simultaneously with the subhalo (it can be fixed if mass_is_model=False). 
-        5) For an _Inversion_, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
-          _LightProfile_ they are varied (this is customized using source_is_model).
+        5) For an `Inversion`, the source parameters are fixed to the best-fit values of the previous pipeline, for a 
+          `LightProfile` they are varied (this is customized using source_is_model).
     """
 
     phase2_foreground_plane = GridPhase(

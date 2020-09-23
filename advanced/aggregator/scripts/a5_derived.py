@@ -44,16 +44,16 @@ we saw that the errors on a quantity like the elliptical_comps is simple, becaus
 search. Thus, to get their we can uses the Samples object to simply marginalize over all over parameters via the 1D 
 Probability Density Function (PDF).
 
-But what if we want the errors on the axis-ratio? This wasn't a free parameter in our model so we can't just 
+But what if we want the errors on the axis-ratio? This wasn`t a free parameter in our model so we can`t just 
 marginalize over all other parameters.
 
 Instead, we need to compute the axis-ratio of every lens model sampled by the non-linear search and from this determine 
-the PDF of the axis-ratio. When combining the different axis-ratios we weight each value by its 'weight'. For Dynesty,
+the PDF of the axis-ratio. When combining the different axis-ratios we weight each value by its `weight`. For Dynesty,
 the nested sampler we fitted our aggregator sample with, this downweights the model which gave lower likelihood fits.
 For other non-linear search methods (e.g. MCMC) the weights can take on a different meaning but can still be used for
 combining different model results.
 
-Below, we get an instance of every Dynesty sample using the _Samples_, compute that models axis-ratio, store them in a 
+Below, we get an instance of every Dynesty sample using the `Samples`, compute that models axis-ratio, store them in a 
 list and find the weighted median value with errors.
 
 This function takes the list of axis-ratio values with their sample weights and computes the weighted mean and 
@@ -80,7 +80,7 @@ Now, we iterate over each Samples object, using every model instance to compute 
 axis-ratios with the samples weights to give us the weighted mean axis-ratio and error.
 
 To do this, we again use a generator. Whislt the axis-ratio is a fairly light-weight value, and this could be
-performed using a list without crippling your comptuer's memory, for other quantities this is not the case. Thus, for
+performed using a list without crippling your comptuer`s memory, for other quantities this is not the case. Thus, for
 computing derived quantities it is good practise to always use a generator.
 """
 

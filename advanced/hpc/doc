@@ -93,7 +93,7 @@ and we'll use 3 custom options of rsync:
 
  3) -r, we'll send folders full of data rather than individual files, and this r allows us to send entire folders.
 
-Before running rsync, you should navigate your command line to your laptop's PyAutoLens workspace.
+Before running rsync, you should navigate your command line to your laptop's Py`autolens_workspace`.
 
     cd /path/to/autolens_workspace
 

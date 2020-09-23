@@ -2,7 +2,7 @@
 """
 __Example: Lensing__
 
-When two galaxies are aligned perfectly down the line-of-sight to Earth, the background galaxy's light is bent by the
+When two galaxies are aligned perfectly down the line-of-sight to Earth, the background galaxy`s light is bent by the
 intervening mass of the foreground galaxy. Its light can be fully bent around the foreground galaxy, traversing multiple
 paths to the Earth, meaning that the background galaxy is observed multiple times. This by-chance alignment of two
 galaxies is called a strong gravitational lens and a two-dimensional scheme of such a system is pictured below.
@@ -30,9 +30,9 @@ grid = al.Grid.uniform(
 
 # %%
 """
-Our aim is to ray-trace this grid's coordinates to calculate how the lens galaxy's mass deflects the source galaxy's
+Our aim is to ray-trace this grid`s coordinates to calculate how the lens galaxy`s mass deflects the source galaxy`s
 light. We therefore need analytic functions representing light and mass distributions. For this, **PyAutoLens** uses
-*Profile* objects and below we use the elliptical _EllipticalSersic_ _LightProfile_ object to represent a light distribution:
+*Profile* objects and below we use the elliptical `EllipticalSersic` `LightProfile`.object to represent a light distribution:
 """
 
 # %%
@@ -47,7 +47,7 @@ sersic_light_profile = al.lp.EllipticalSersic(
 # %%
 """
 By passing this profile a grid, we can evaluate the light at every coordinate on that grid and create an image
-of the _LightProfile_:
+of the `LightProfile`.
 """
 
 # %%
@@ -55,7 +55,7 @@ image = sersic_light_profile.image_from_grid(grid=grid)
 
 # %%
 """
-The plot module provides convenience methods for plotting properties of objects, like the image of a _LightProfile_:
+The plot module provides convenience methods for plotting properties of objects, like the image of a `LightProfile`.
 """
 
 # %%
@@ -63,8 +63,8 @@ aplt.LightProfile.image(light_profile=sersic_light_profile, grid=grid)
 
 # %%
 """
-**PyAutoLens** uses _MassProfile_ objects to represent different mass distributions and use them to perform ray-tracing
-calculations. Below we create an elliptical isothermal _MassProfile_ and compute its convergence, gravitational
+**PyAutoLens** uses `MassProfile` objects to represent different mass distributions and use them to perform ray-tracing
+calculations. Below we create an elliptical isothermal `MassProfile` and compute its convergence, gravitational
 potential and deflection angles on our Cartesian grid:
 """
 
@@ -79,7 +79,7 @@ deflections = isothermal_mass_profile.deflections_from_grid(grid=grid)
 
 # %%
 """
-Lets plot the _MassProfile_'s convergence, potential and deflection angle map
+Lets plot the `MassProfile``s convergence, potential and deflection angle map
 """
 
 # %%
@@ -90,11 +90,11 @@ aplt.MassProfile.deflections_x(mass_profile=isothermal_mass_profile, grid=grid)
 
 # %%
 """
-For anyone not familiar with gravitational lensing, don't worry about what the convergence and potential are. The key
+For anyone not familiar with gravitational lensing, don`t worry about what the convergence and potential are. The key
 thing to note is that the deflection angles describe how a given mass distribution deflections light-rays, which allows
 us create strong lens systems like the one shown above!
 
-In **PyAutoLens**, a *Galaxy* object is a collection of _LightProfile_ and _MassProfile_ objects at a given redshift.
+In **PyAutoLens**, a *Galaxy* object is a collection of `LightProfile` and `MassProfile` objects at a given redshift.
 The code below creates two galaxies representing the lens and source galaxies shown in the strong lensing diagram above.
 """
 
@@ -125,8 +125,8 @@ tracer = al.Tracer.from_galaxies(
 # %%
 """
 When computing the image from the tracer above, the tracer performs all ray-tracing for the given strong lens system.
-This includes using the lens galaxy's _MassProfile_ to deflect the light-rays that are traced to the source galaxy.
-This makes the image below, where the source's light appears as a multiply imaged and strongly lensed Einstein ring.
+This includes using the lens galaxy`s `MassProfile` to deflect the light-rays that are traced to the source galaxy.
+This makes the image below, where the source`s light appears as a multiply imaged and strongly lensed Einstein ring.
 """
 
 # %%
@@ -136,7 +136,7 @@ aplt.Tracer.image(tracer=tracer, grid=grid)
 
 # %%
 """
-The Tracer plotter includes the _MassProfile_ quantities we plotted previous. subplot that plots all these quantities simultaneously.
+The Tracer plotter includes the `MassProfile` quantities we plotted previous. subplot that plots all these quantities simultaneously.
 """
 aplt.Tracer.convergence(tracer=tracer, grid=grid)
 aplt.Tracer.potential(tracer=tracer, grid=grid)
@@ -152,10 +152,10 @@ aplt.Tracer.subplot_tracer(tracer=tracer, grid=grid)
 # %%
 """
 The *Tracer* is composed of planes, for the system above just two planes, an image-plane (at redshift=0.5) and a 
-source-plane (at redshift=1.0). When creating the image from a Tracer, the _MassProfile_ is used to 'ray-trace' the 
-image-plane grid to the source-plane grid, via the _MassProfile_'s deflection angles.
+source-plane (at redshift=1.0). When creating the image from a Tracer, the `MassProfile` is used to `ray-trace` the 
+image-plane grid to the source-plane grid, via the `MassProfile``s deflection angles.
 
-We can use the Tracer's traced_grid method to plot the image-plalne and source-plane grids.
+We can use the Tracer`s traced_grid method to plot the image-plalne and source-plane grids.
 """
 traced_grids = tracer.traced_grids_of_planes_from_grid(grid=grid)
 aplt.Grid(grid=traced_grids[0])  # Image-plane grid.

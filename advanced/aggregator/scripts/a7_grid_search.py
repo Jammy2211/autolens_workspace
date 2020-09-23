@@ -36,12 +36,12 @@ agg_grid_search = agg.filter(
 )
 
 array = al.agg.grid_search_result_as_array(
-    aggregator=agg_grid_search, use_max_log_likelihoods=True
+    aggregator=agg_grid_search, use_log_evidences=True
 )
 
 # %%
 """
-We are famaliar with filtering by pipeline name and phase name, so lets get the results of the _EllipticalPowerLaw_ advanced 
+We are famaliar with filtering by pipeline name and phase name, so lets get the results of the `EllipticalPowerLaw` advanced 
 pipeline.
 """
 

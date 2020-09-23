@@ -5,12 +5,12 @@ In this tool we mark the lens light centre(s) of a strong lens(es), which can be
 light and mass models in a pipeline.
 
 The benefit of doing this is a reduction in the number of free parameters fitted for as well as the removal of
-systematic solutions which place the lens mass model unrealistically far from its true centre. The 'advanced' pipelines
+systematic solutions which place the lens mass model unrealistically far from its true centre. The `advanced` pipelines
 are built to use this input centres in early phases, but remove it in later phases one an accurate lens model has
 been inffered.
 
 If you create a light_centre for your dataset, you must also update your runner to use them by loading them and
-passing them to the pipeline's make function. See the 'advanced' pipelines for pipelines with these centre inputs.
+passing them to the pipeline`s make function. See the `advanced` pipelines for pipelines with these centre inputs.
 
 Lens light centres are optional, if you struggling to get PyAutoLens to infer a good model for your dataset and you
 have not tried using the lens light centres as a fixed centre for your mass model I recommend that you do.
@@ -39,9 +39,9 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-The 'dataset label' is the name of the dataset folder and 'dataset_name' the folder the lens light centre is stored 
+The `dataset label` is the name of the dataset folder and `dataset_name` the folder the lens light centre is stored 
 in e.g, the lens light centre will be output as 
-'/autolens_workspace/dataset/dataset_type/dataset_name/light_centre.dat'.
+`/autolens_workspace/dataset/dataset_type/dataset_name/light_centre.dat`.
 """
 
 # %%
@@ -52,7 +52,7 @@ dataset_name = "light_sersic__mass_sie__source_sersic"
 # %%
 """
 Create the path where the lens light centres will be output, which in this case is
-'/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic'
+`/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
 """
 
 # %%
@@ -68,7 +68,7 @@ pixel_scales = 0.1
 
 # %%
 """
-First, load the _Imaging_ dataset, so that the lens light centres can be plotted over the strong lens image.
+First, load the `Imaging` dataset, so that the lens light centres can be plotted over the strong lens image.
 """
 
 # %%
@@ -94,7 +94,7 @@ aplt.Array(array=image, light_profile_centres=light_centre)
 
 # %%
 """
-Now we're happy with the lens light centre(s), lets output them to the dataset folder of the lens, so that we can 
+Now we`re happy with the lens light centre(s), lets output them to the dataset folder of the lens, so that we can 
 load them from a .dat file in our pipelines!
 """
 
@@ -106,6 +106,6 @@ light_centre.output_to_file(
 # %%
 """
 The workspace also includes a GUI for drawing lens light centres, which can be found at 
-'autolens_workspace/preprocess/imaging/gui/light_centres.py'. This tools allows you 'click' on the image where an 
+`autolens_workspace/preprocess/imaging/gui/light_centres.py`. This tools allows you `click` on the image where an 
 image of the lensed source is, and it will use the brightest pixel within a 5x5 box of pixels to select the coordinate.
 """

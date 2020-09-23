@@ -2,17 +2,17 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit _Imaging_ of a strong lens system where:
+In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy's _LightProfile_ is omitted (and is not present in the simulated data).
- - The lens galaxy's _MassProfile_ is modeled as an _EllipticalIsothermal_.
- - The source galaxy's _LightProfile_ is modeled as 2 _EllipticalSersic_'s 
+ - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The source galaxy`s `LightProfile` is modeled as 2 `EllipticalSersic``s 
 
 The pipeline is two phases:
 
 Phase 1:
 
-    Fit the lens mass model and source _LightProfile_ using x1 Sersic.
+    Fit the lens mass model and source `LightProfile` using x1 Sersic.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: EllipticalSersic
@@ -21,7 +21,7 @@ Phase 1:
 
 Phase 2:
 
-    Fit the lens mass model and source _LightProfile_ using x1 source galaxies.
+    Fit the lens mass model and source `LightProfile` using x1 source galaxies.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Galaxy 1 - Light: EllipticalSersic
@@ -46,7 +46,7 @@ def make_pipeline(setup, settings):
     setup.folders.append(pipeline_name)
     setup.folders.append(setup.tag)
 
-    """Setup: Include an _ExternalShear_ in the mass model if turned on in _SetupMass_. """
+    """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
     if not setup.setup_mass.no_shear:
         shear = al.mp.ExternalShear
@@ -54,7 +54,7 @@ def make_pipeline(setup, settings):
         shear = None
 
     """
-    Phase 1: Fit the lens's _MassProfile_'s and source _LightProfile_, where we:
+    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -77,10 +77,10 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 2: Fit the lens's _MassProfile_'s and two source galaxies, where we:
+    Phase 2: Fit the lens`s `MassProfile``s and two source galaxies, where we:
 
-        1) Set the priors on the lens galaxy _MassProfile_'s using the results of phase 1.
-        2) Set the priors on the first source galaxy's light using the results of phase 1.
+        1) Set the priors on the lens galaxy `MassProfile``s using the results of phase 1.
+        2) Set the priors on the first source galaxy`s light using the results of phase 1.
     """
 
     phase2 = al.PhaseImaging(

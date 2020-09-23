@@ -2,19 +2,19 @@ import autofit as af
 import autolens as al
 
 """
-This pipeline performs a source _Inversion_ analysis which fits an image with a lens light and mass model and a source 
+This pipeline performs a source `Inversion` analysis which fits an image with a lens light and mass model and a source 
 galaxy.
 
-Phases 1 & 2 first use a magnification based _Pixelization_ and constant _Regularization_ scheme to reconstruct the
-source (as opposed to immediately using the _Pixelization_ & _Regularization_ input via the pipeline slam). This 
-ensures that if the input _Pixelization_ or _Regularization_ scheme uses hyper-images, they are initialized using
-a pixelized source-plane, which is key for lens's with multiple or irregular sources.
+Phases 1 & 2 first use a magnification based `Pixelization` and constant `Regularization` scheme to reconstruct the
+source (as opposed to immediately using the `Pixelization` & `Regularization` input via the pipeline slam). This 
+ensures that if the input `Pixelization` or `Regularization` scheme uses hyper-images, they are initialized using
+a pixelized source-plane, which is key for lens`s with multiple or irregular sources.
 
 The pipeline uses 4 phases:
 
 Phase 1:
 
-    Fit inversion's _Pixelization_ and _Regularization_, using a magnification
+    Fit inversion`s `Pixelization` and `Regularization`, using a magnification
     based pixel-grid and the previous lens light and mass model.
     
     Lens Light: Previous Pipeline.
@@ -22,41 +22,41 @@ Phase 1:
     Source Light: VoronoiMagnification + Constant
     Previous Pipelines: source__sersic.py
     Prior Passing: Lens Light / Mass (instance -> previous pipeline).
-    Notes: Lens light & mass fixed, source _Inversion_ parameters vary.
+    Notes: Lens light & mass fixed, source `Inversion` parameters vary.
 
 Phase 2:
 
-    Refine the lens mass model using the source _Inversion_.
+    Refine the lens mass model using the source `Inversion`.
     
     Lens Light: Previous Pipeline.
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Previous Pipelines: source__sersic.py
-    Prior Passing: Lens Light & Mass (model -> previous pipeline), source _Inversion_ (instance -> phase 1).
-    Notes: Lens light fixed, mass varies, source _Inversion_ parameters fixed.
+    Prior Passing: Lens Light & Mass (model -> previous pipeline), source `Inversion` (instance -> phase 1).
+    Notes: Lens light fixed, mass varies, source `Inversion` parameters fixed.
 
 Phase 3:
 
-    Fit the inversion's _Pixelization_ and _Regularization_, using the input pixelization,
-    _Regularization_ and the previous lens mass model.
+    Fit the inversion`s `Pixelization` and `Regularization`, using the input pixelization,
+    `Regularization` and the previous lens mass model.
     
     Lens Light: Previous Pipeline.
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: slam.source.pixelization + slam.source.regularization
     Previous Pipelines: None
     Prior Passing: Lens Light & Mass (instance -> phase 2).
-    Notes:  Lens light & mass fixed, source _Inversion_ parameters vary.
+    Notes:  Lens light & mass fixed, source `Inversion` parameters vary.
 
 Phase 4:
     
-    Refine the lens mass model using the _Inversion_.
+    Refine the lens mass model using the `Inversion`.
     
     Lens Light: Previous Pipeline.
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
-    Source Light: _Pixelization_ + regularization
+    Source Light: `Pixelization` + regularization
     Previous Pipelines: None
-    Prior Passing: Lens Light & Mass (model -> phase 3), source _Inversion_ (instance -> phase 3).
-    Notes: Lens light fixed, mass varies, source _Inversion_ parameters fixed.
+    Prior Passing: Lens Light & Mass (model -> phase 3), source `Inversion` (instance -> phase 3).
+    Notes: Lens light fixed, mass varies, source `Inversion` parameters fixed.
 """
 
 
@@ -70,17 +70,17 @@ def make_pipeline(slam, settings):
     This pipeline is tagged according to whether:
     
         1) Hyper-fitting settings (galaxies, sky, background noise) are used.
-        2) The _Pixelization_ and _Regularization_ scheme of the pipeline (fitted in phases 3 & 4).
-        3) The lens galaxy mass model includes an  _ExternalShear_.
+        2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
+        3) The lens galaxy mass model includes an  `ExternalShear`.
         4) The lens light model used in the previous pipeline.
     """
 
     folders = slam.folders + [pipeline_name, slam.source_inversion_tag]
 
     """
-    Phase 1: fit the _Pixelization_ and _Regularization_, where we:
+    Phase 1: fit the `Pixelization` and `Regularization`, where we:
 
-        1) Fix the lens light & mass model to the _LightProile_'s and _MassProfile_'s inferred by the previous pipeline.
+        1) Fix the lens light & mass model to the `LightProile``s and `MassProfile``s inferred by the previous pipeline.
     """
 
     phase1 = al.PhaseImaging(
@@ -113,9 +113,9 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 2: Fit the lens's mass and source galaxy using the magnification _Inversion_, where we:
+    Phase 2: Fit the lens`s mass and source galaxy using the magnification `Inversion`, where we:
 
-        1) Fix the source _Inversion_ parameters to the results of phase 1.
+        1) Fix the source `Inversion` parameters to the results of phase 1.
         2) Fix the lens light model to the results of the previous pipeline.
         3) Set priors on the lens galaxy mass from the previous pipeline.
     """
@@ -150,10 +150,10 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 3: Fit the input pipeline _Pixelization_ & _Regularization_, where we:
+    Phase 3: Fit the input pipeline `Pixelization` & `Regularization`, where we:
     
-        1) Fix the lens _LightPofile_'s to the results of the previous pipeline.
-        2) Fix the lens _MassProfile_ to the result of phase 2.
+        1) Fix the lens `LightPofile``s to the results of the previous pipeline.
+        2) Fix the lens `MassProfile` to the result of phase 2.
     """
 
     phase3 = al.PhaseImaging(
@@ -190,17 +190,17 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 4: Fit the lens's mass using the input pipeline _Pixelization_ & _Regularization_, where we:
+    Phase 4: Fit the lens`s mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
-        1) Fix the source _Inversion_ parameters to the results of phase 3.
-        2) Fix the lens _LightProfile_'s to the results of the previous pipeline.
-        3) Set priors on the lens galaxy _MassProfile_'s using the results of phase 2.
+        1) Fix the source `Inversion` parameters to the results of phase 3.
+        2) Fix the lens `LightProfile``s to the results of the previous pipeline.
+        3) Set priors on the lens galaxy `MassProfile``s using the results of phase 2.
     """
 
     mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
 
     """
-    SLaM: If the centre of the lens galaxy's mass was fixed in the parametric pipeline and phases 1-3 above, remove
+    SLaM: If the centre of the lens galaxy`s mass was fixed in the parametric pipeline and phases 1-3 above, remove
           the alignment and make the centre free parameters that are fitted for.
     """
 
