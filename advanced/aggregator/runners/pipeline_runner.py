@@ -12,8 +12,8 @@ If you are not yet familiar with PyAutoLens`s pipeline functionality, you should
 
 Using a pipeline composed of three phases this runner fits `Imaging` of a strong lens system, where:
  
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass.
- - An `Inversion` for the source galaxy`s light.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass.
+ - An `Inversion` for the source `Galaxy`'s light.
 """
 
 """ AUTOFIT + CONFIG SETUP """
@@ -50,9 +50,7 @@ for dataset_name in [
 ]:
 
     """Set up the config and output paths."""
-    dataset_path = af.util.create_path(
-        path=workspace_path, folders=["dataset", "aggregator", dataset_name]
-    )
+    dataset_path = f"{workspace_path}/dataset/aggregator/{dataset_name}"
 
     """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
@@ -79,7 +77,7 @@ for dataset_name in [
 
     # %%
     """
-    ``.ipeline_Setup_And_Tagging__:
+    __Pipeline_Setup_And_Tagging__:
 
     For this pipeline the pipeline setup customizes:
 
@@ -88,17 +86,22 @@ for dataset_name in [
   - If there is an `ExternalShear` in the mass model or not.
     """
 
+    setup_mass = al.SetupMassTotal(no_shear=True)
+
+    setup_source = al.SetupSourceInversion(
+        pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
+    )
+
     setup = al.SetupPipeline(
-        pixelization=al.pix.VoronoiMagnification,
-        regularization=al.reg.Constant,
-        no_shear=True,
-        folders=["aggregator", dataset_name],
+        path_prefix=f"aggregator/{dataset_name}",
+        setup_mass=setup_mass,
+        setup_source=setup_source,
     )
 
-    from autolens_workspace.pipelines.imaging.no_lens_light import (
-        lens_sie__source_inversion,
+    from autolens_workspace.transdimensional.pipelines.imaging.no_lens_light import (
+        mass_sie__source_inversion,
     )
 
-    pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
+    pipeline = mass_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 
     pipeline.run(dataset=imaging, mask=mask)

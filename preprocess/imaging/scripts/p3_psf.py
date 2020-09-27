@@ -34,9 +34,7 @@ import os
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
-dataset_path = af.util.create_path(
-    path=f"{workspace_path}/preprocess/imaging/", folders=["data_raw"]
-)
+dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
 
 # %%
 """This populates the `data` path with example simulated `Imaging` data-sets."""
@@ -55,9 +53,9 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
+imaging_path = f"{dataset_path}/imaging"
 
-psf = al.Kernel.from_fits(file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1)
+psf = al.Kernel.from_fits(file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1)
 
 aplt.Array(array=psf)
 
@@ -74,12 +72,10 @@ Lets look at an image where a large PSF kernel is loaded.
 """
 
 # %%
-imaging_path = af.util.create_path(
-    path=dataset_path, folders=["imaging_with_large_psf"]
-)
+imaging_path = f"{dataset_path}/imaging_with_large_psf"
 
 large_psf = al.Kernel.from_fits(
-    file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1
+    file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1
 )
 
 aplt.Array(array=large_psf)
@@ -103,10 +99,10 @@ the convolution routine which can lead to systematics in the lens analysis.
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_with_even_psf"])
+imaging_path = f"{dataset_path}/imaging_with_even_psf"
 
 even_psf = al.Kernel.from_fits(
-    file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1
+    file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1
 )
 
 print(even_psf.shape_2d)
@@ -142,12 +138,10 @@ being False.
 """
 
 # %%
-imaging_path = af.util.create_path(
-    path=dataset_path, folders=["imaging_with_unnormalized_psf"]
-)
+imaging_path = f"{dataset_path}/imaging_with_unnormalized_psf"
 
 unnormalized_psf = al.Kernel.from_fits(
-    file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1, renormalize=False
+    file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1, renormalize=False
 )
 
 aplt.Array(array=unnormalized_psf)
@@ -160,7 +154,7 @@ The PSF is renormaized if the renormalize=True.
 
 # %%
 normalized_psf = al.Kernel.from_fits(
-    file_path=imaging_path + "psf.fits", hdu=0, pixel_scales=0.1, renormalize=True
+    file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1, renormalize=True
 )
 
 aplt.Array(array=normalized_psf)

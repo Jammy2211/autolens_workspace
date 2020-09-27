@@ -37,9 +37,7 @@ import os
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
-dataset_path = af.util.create_path(
-    path=f"{workspace_path}/preprocess/imaging/", folders=["data_raw"]
-)
+dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
 
 # %%
 """
@@ -60,9 +58,9 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
+imaging_path = f"{dataset_path}/imaging"
 
-image = al.Array.from_fits(file_path=imaging_path + "image.fits", pixel_scales=0.1)
+image = al.Array.from_fits(file_path=f"{imaging_path}/image.fits", pixel_scales=0.1)
 
 # %%
 """
@@ -70,7 +68,7 @@ There are numerous reasons why the image below is a good data-set for lens model
 you adapt your data reduction pipelines to conform to the formats discussed below - it`ll make your time using 
 PyAutoLens a lot simpler.
 
-However, you may not have access to the data-reduction tools that made the data, so we`ve included in-built functions 
+However, you may not have access to the data-reduction tools that made the data, so we've included in-built functions 
 in PyAutoLens to convert the data to a suitable format.
 """
 
@@ -89,10 +87,10 @@ Lets look at an image that is in units of counts - its easy to tell because the 
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_counts"])
+imaging_path = f"{dataset_path}/imaging_in_counts"
 
 image_in_counts = al.Array.from_fits(
-    file_path=imaging_path + "image.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=image_in_counts)
@@ -123,7 +121,7 @@ electrons per second instead.
 """
 
 exposure_time_map = al.Array.from_fits(
-    file_path=imaging_path + "exposure_time_map.fits"
+    file_path=f"{imaging_path}/exposure_time_map.fits"
 )
 
 # %%
@@ -141,10 +139,10 @@ instrumental gain of the data.
 
 # %%
 
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_in_adus"])
+imaging_path = f"{dataset_path}/imaging_in_adus"
 
 image_in_adus = al.Array.from_fits(
-    file_path=imaging_path + "image.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=image_in_adus)
@@ -175,12 +173,10 @@ Lets look at an example of a very large postage stamp - we can barely even see t
 """
 
 # %%
-imaging_path = af.util.create_path(
-    path=dataset_path, folders=["imaging_with_large_stamp"]
-)
+imaging_path = f"{dataset_path}/imaging_with_large_stamp"
 
 image_large_stamp = al.Array.from_fits(
-    file_path=imaging_path + "image.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=image_large_stamp)
@@ -206,9 +202,7 @@ include this region.
 """
 
 # %%
-imaging_path = af.util.create_path(
-    path=dataset_path, folders=["imaging_with_small_stamp"]
-)
+imaging_path = f"{dataset_path}/imaging_with_small_stamp"
 
 # %%
 """
@@ -218,7 +212,7 @@ sensible masks we get an error, because the masks`s blurring region goes into th
 
 # %%
 image_small_stamp = al.Array.from_fits(
-    file_path=imaging_path + "image.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=image_small_stamp)
@@ -281,8 +275,8 @@ convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
 ########## RECENTERING CURRENTLY DOES NOT WORK :( ###########
 
 # Lens Galaxy Centering - The lens galaxy should be in the centre of the image as opposed to a corner. This ensures
-# the origin of the lens galaxy`s light and `MassProfile``s are near the origin (0.0", 0.0") of the grid used to perform
-# ray-tracing. The defaults priors on light and `MassProfile``s assume a origin of (0.0", 0.0").
+# the origin of the lens `Galaxy`'s light and `MassProfile`'s are near the origin (0.0", 0.0") of the grid used to perform
+# ray-tracing. The defaults priors on light and `MassProfile`'s assume a origin of (0.0", 0.0").
 
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.

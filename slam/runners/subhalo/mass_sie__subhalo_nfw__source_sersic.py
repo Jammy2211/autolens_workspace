@@ -10,8 +10,8 @@ __THIS RUNNER__
 Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits `Imaging` of a strong lens system,
 where in the final phase of the pipeline:
 
- - The lens galaxy`s light is omitted from the data and model.
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s light is omitted from the data and model.
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
  - A dark matter subhalo`s within the lens galaxy is modeled as a `SphericalNFWMCRLudLow`.
  - The source galaxy is modeled as an `EllipticalSersic`.
 
@@ -141,7 +141,7 @@ The parametric source pipeline aims to initialize a robust model for the source 
 _SLaMPipelineSourceParametric_ determines the source model used by the parametric source pipeline. A full description of all 
 options can be found ? and ?.
 
-By default, this assumes an `EllipticalIsothermal` profile for the lens galaxy`s mass. Our experience with lens 
+By default, this assumes an `EllipticalIsothermal` profile for the lens `Galaxy`'s mass. Our experience with lens 
 modeling has shown they are the simpliest models that provide a good fit to the majority of strong lenses.
 
 For this runner the `SLaMPipelineSourceParametric` customizes:
@@ -161,11 +161,11 @@ pipeline_source_parametric = al.SLaMPipelineSourceParametric(
 """
 __SLaMPipelineMassTotal__
 
-The `SLaMPipelineMassTotal` pipeline fits the model for the lens galaxy`s total mass distribution. 
+The `SLaMPipelineMassTotal` pipeline fits the model for the lens `Galaxy`'s total mass distribution. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens galaxy`s mass is input into `SLaMPipelineMass` and this runner uses an 
+The model used to represent the lens `Galaxy`'s mass is input into `SLaMPipelineMass` and this runner uses an 
 _EllipticalIsothermal_ in this example.
 
 For this runner the `SLaMPipelineMass` customizes:
@@ -187,7 +187,7 @@ searchesn.
 
 A full description of all options can be found ? and ?.
 
-The models used to represent the lens galaxy`s mass and the source are those used in the previous pipelines.
+The models used to represent the lens `Galaxy`'s mass and the source are those used in the previous pipelines.
 
 For this runner the `SetupSubhalo` customizes:
 
@@ -210,7 +210,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
+    prefix_path=f"{slam}/{dataset_type}_{dataset_label}/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_mass=pipeline_mass,

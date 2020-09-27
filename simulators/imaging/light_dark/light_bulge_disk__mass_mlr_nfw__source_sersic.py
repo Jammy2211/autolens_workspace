@@ -4,10 +4,10 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens using decomposed light and dark matter profiles where:
 
- - The lens galaxy`s stellar `MassProfile` is an `EllipticalSersic` + EllipticalExponential representing a 
+ - The lens `Galaxy`'s stellar `MassProfile` is an `EllipticalSersic` + EllipticalExponential representing a 
       bulge + disk system.
- - The lens galaxy`s dark `MassProfile` is a `SphericalNFW`.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s dark `MassProfile` is a `SphericalNFW`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
 # %%
@@ -71,7 +71,7 @@ simulator = al.SimulatorImaging(
 )
 
 """
-Setup the lens galaxy`s light (EllipticalSersic + EllipticalExponential), mass (LTM + NFW +Shear) and source galaxy light
+Setup the lens `Galaxy`'s light (EllipticalSersic + EllipticalExponential), mass (LTM + NFW +Shear) and source galaxy light
 (EllipticalSersic) for this simulated lens.
 
 For lens modeling, defining ellipticity in terms of the  `elliptical_comps` improves the model-fitting procedure.
@@ -80,7 +80,7 @@ However, for simulating a strong lens you may find it more intuitive to define t
 axis-ratio of the profile (axis_ratio = semi-major axis / semi-minor axis = b/a) and position angle phi, where phi is
 in degrees and defined counter clockwise from the positive x-axis.
 
-We can use the **PyAutoLens** *convert* module to determine the elliptical components from the axis-ratio and phi.
+We can use the **PyAutoLens** `convert` module to determine the elliptical components from the axis-ratio and phi.
 """
 lens_galaxy = al.Galaxy(
     redshift=0.5,

@@ -39,23 +39,18 @@ def make_pipeline(slam, settings):
         3) The lens`s light model is fixed or variable.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.source_tag,
-        slam.light_tag,
-        slam.mass_tag,
-    ]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.light_tag}/{slam.mass_tag}"
 
     """SLaM: Set whether shear is included in the mass model using the `ExternalShear` model of the Source pipeline."""
 
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
-    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens `Galaxy`'s light and mass and one source galaxy, where we:
 
         1) Use the source galaxy of the `source` pipeline.
         2) Use the lens galaxy light of the `light` pipeline.
-        3) Set priors on the lens galaxy `MassProfile``s using the `EllipticalIsothermal` and `ExternalShear` of 
+        3) Set priors on the lens galaxy `MassProfile`'s using the `EllipticalIsothermal` and `ExternalShear` of 
            previous pipelines.
     """
 
@@ -71,8 +66,8 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light__mass_total__source",
-        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

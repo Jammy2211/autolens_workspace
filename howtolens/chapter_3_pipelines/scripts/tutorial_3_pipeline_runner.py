@@ -3,14 +3,14 @@
 Tutorial 3: Complex Source
 ==========================
 
-Up to now, we`ve not paid much attention to the source-galaxy`s morphology. We`ve assumed its a single-component
+Up to now, we've not paid much attention to the source-`Galaxy`'s morphology. We've assumed its a single-component
 exponential profile, which is a fairly crude assumption. A quick look at any image of a real galaxy reveals a
 wealth of different structures that could be present - bulges, disks, bars, star-forming knots and so on. Furthermore,
 there could be more than one source-galaxy!
 
 In this example, we'll explore how far we can get trying to_fit a complex source using a pipeline. Fitting complex
 source`s is an exercise in diminishing returns. Each component we add to our source model brings with it an
-extra 5-7, parameters. If there are 4 components, or multiple `Galaxy``s we`re quickly entering the somewhat nasty
+extra 5-7, parameters. If there are 4 components, or multiple `Galaxy`'s we`re quickly entering the somewhat nasty
 regime of 30-40+ parameters in our non-linear search. Even with a pipeline, that is a lot of parameters to fit!
 """
 
@@ -39,9 +39,9 @@ import autolens.plot as aplt
 """
 we'll use new strong lensing data, where:
 
- - The lens galaxy`s light is omitted.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is four `EllipticalSersic``..
+ - The lens `Galaxy`'s light is omitted.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
 # %%
@@ -73,9 +73,9 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
 # %%
 """
-Yep, that`s a pretty complex source. There are clearly more than 4 peaks of light - I wouldn`t like to guess how many
-sources of light there truly is! You`ll also notice I omitted the lens galaxy`s light for this system. This is to 
-keep the number of parameters down and the phases running fast, but we wouldn`t get such a luxury for a real galaxy.
+Yep, that`s a pretty complex source. There are clearly more than 4 peaks of light - I wouldn't like to guess how many
+sources of light there truly is! You`ll also notice I omitted the lens `Galaxy`'s light for this system. This is to 
+keep the number of parameters down and the phases running fast, but we wouldn't get such a luxury for a real galaxy.
 """
 
 # %%
@@ -102,6 +102,13 @@ __Pipeline_Setup_And_Tagging__:
 For this pipeline the pipeline setup customizes:
 
  - If there is an `ExternalShear` in the mass model or not.
+ 
+The `path_prefix` belows specify the path the pipeline results are written 
+
+ `autolens_workspace/howtolens/output/c3_t3_complex_source/pipeline__light_and_source`
+
+The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
+description of what inputting redshifts into **PyAutoLens** does.
 """
 
 # %%
@@ -109,7 +116,7 @@ setup_mass = al.SetupMassTotal(no_shear=False)
 setup_source = al.SetupSourceSersic()
 
 setup = al.SetupPipeline(
-    folders=["c3_t3_complex_source"],
+    path_prefix="c3_t3_complex_source",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,
@@ -127,7 +134,7 @@ To create a `Pipeline`, we call a `make_pipeline` function, which is written in 
 Before we check it out, lets get the pipeline running, by importing the script, running the `make_pipeline` function
 to create the `Pipeline` object and calling that objects `run` function.
 
-The `folders` below specify the path the pipeline results are written to, which is:
+The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/howtolens/c3_t3_complex_source/pipeline_name/setup_tag/phase_name/settings_tag`
 """
@@ -237,7 +244,7 @@ The morale of this story is that if the source morphology is complex, there is n
 fit it. For this tutorial, this was true even though our source model could actually fit the data perfectly. For real 
 lenses, the source will be *even more complex* and there is even less hope of getting a good fit :(
 
-But fear not, ``.yAutoLens__ has you covered. In chapter 4, we'll introduce a completely new way to model the source 
+But fear not, **PyAutoLens** has you covered. In chapter 4, we'll introduce a completely new way to model the source 
 galaxy, which addresses the problem faced here. But before that, in the next tutorial we'll discuss how we actually 
 pass priors in a pipeline.
 """

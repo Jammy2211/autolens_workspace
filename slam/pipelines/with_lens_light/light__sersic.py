@@ -36,12 +36,14 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    folders = slam.folders + [pipeline_name, slam.source_tag, slam.light_tag]
+    path_prefix = (
+        f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.light_tag}"
+    )
 
     """
-    Phase 1: Fit the lens galaxy`s light, where we:
+    Phase 1: Fit the lens `Galaxy`'s light, where we:
 
-        1) Fix the lens galaxy`s mass and source galaxy to the results of the previous pipeline.
+        1) Fix the lens `Galaxy`'s mass and source galaxy to the results of the previous pipeline.
         2) Vary the lens galaxy hyper noise factor if hyper-galaxies noise scaling is on.
     """
 
@@ -65,8 +67,8 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline(source_is_model=False)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light_sersic__mass__source",
-        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

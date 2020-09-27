@@ -3,22 +3,22 @@ import autolens as al
 
 """
 So, how does hyper-mode work in pipelines? There are a lot more things we have to do now; pass hyper-galaxy-images
-between phases, use different `Pixelization``s and `Regularization`.chemes, and decide what parts of the noise-map we do
-and don`t want to scale.
+between phases, use different `Pixelization`'s and `Regularization`.chemes, and decide what parts of the noise-map we do
+and don't want to scale.
 
 ##HYPER IMAGE PASSING ###
 
 So, lets start with hyper-image passing. That is, how do we pass the model images of the lens and source galaxies to
-later phases to use them as hyper-galaxy-images? Well, I`ve got some good news, *we no nothing*. ``.yAutoLens__ automatically
+later phases to use them as hyper-galaxy-images? Well, I`ve got some good news, *we no nothing*. **PyAutoLens** automatically
 passes hyper-images between phases!
 
-However, ``.yAutoLens__ does need to know which hyper-images to pass to which galaxies. To do this, ``.yAutoLens__ uses
-galaxy-names. When you create a `GalaxyModel`, you name the `Galaxy``s for example below we`ve called the lens galaxy
+However, **PyAutoLens** does need to know which hyper-images to pass to which galaxies. To do this, **PyAutoLens** uses
+galaxy-names. When you create a `GalaxyModel`, you name the `Galaxy`'s for example below we've called the lens galaxy
 `lens` and the source galaxy `source`:
 
 phase1 = al.PhaseImaging(
     phase_name="phase_1",
-    folders=folders,
+    path_prefix=path_prefix,
     galaxies=dict(
 NAME --> lens=al.GalaxyModel(
             redshift=0.5,
@@ -33,7 +33,7 @@ NAME --> source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
 
 To pass the resulting model images of these galaxies to galaxies in the next phase, galaxies are paired by their names.
 So, in the next phase (phase2), the lens galaxy must be called `lens` (again) and the source galaxy `source` (again).
-Hopefully, you`ve followed this naming convention with ``.yAutoLens__ up to now anyway, so this should come naturually.
+Hopefully, you`ve followed this naming convention with **PyAutoLens** up to now anyway, so this should come naturually.
 
 Why do we pass images based on galaxy names? It is because for more complex lens systems (e.g. with multiple lens and
 source galaixes) we must explicitly define how their images are linked between phases.
@@ -41,7 +41,7 @@ source galaixes) we must explicitly define how their images are linked between p
 ##HYPER PHASES ###
 
 There is one more major change to hyper-pipelines. That is, how do we fit for the hyper-parameters using our
-non-linear search (e.g. Dynesty)? We don`t fit for them simultaneously with the lens and source models, as this
+non-linear search (e.g. Dynesty)? We don't fit for them simultaneously with the lens and source models, as this
 creates an unnecessarily large parameter space which we`d fail to fit accurately and efficiently.
 
 Instead, we `extend` phases with extra phases that specifically fit certain components of hyper-galaxy-model. You`ve
@@ -80,19 +80,19 @@ parameters are fixed during the main phases which fit the lens and source models
 ##HYPER MASKING ###
 
 In hyper-model, the mask *cannot* change between phases. This is because of hyper-galaxy-image passing. If the mask
-changes and adds new pixels that were not modeled in the previous phase, these pixels wouldn`t be in the
+changes and adds new pixels that were not modeled in the previous phase, these pixels wouldn't be in the
 hyper-galaxy-image. This causes some very nasty problems. Thus, the same mask must be used throughout the analysis.
 To ensure this happens, for hyper-galaxy-pipelines we require that the mask is passed to the `pipeline.run` function.
 
 import autofit as af
 import autolens as al
 
-For our example hyper-pipeline,we`re going to run 7 (!) phases. There isn`t much new here compared to normal
+For our example hyper-pipeline,we`re going to run 7 (!) phases. There isn't much new here compared to normal
 pipelines. But, the large number of phases are required to fully model the lens with hyper-mode features. An overview
 of the pipeline is as follows:
 
-Phase 1) Fit and subtract the lens galaxy`s `LightProfile`.
-Phase 1 Extension) Fit the lens galaxy`s hyper-galaxy and background noise.
+Phase 1) Fit and subtract the lens `Galaxy`'s `LightProfile`.
+Phase 1 Extension) Fit the lens `Galaxy`'s hyper-galaxy and background noise.
 
 Phase 2) Fit the lens galaxy mass model and source `LightProfile`, using the lens subtracted image, using the lens
          hyper-galaxy noise-map and background noise from phase 1.
@@ -124,7 +124,7 @@ _Pixelization_/ `Regularization`.chemes that will be used in phase 6 and 7 of th
 """
 
 
-def make_pipeline(setup, settings, folders=None):
+def make_pipeline(setup, settings):
 
     ##SETUP PIPELINE AND PHASE NAMES, TAGS AND PATHS ###
 
@@ -137,8 +137,7 @@ def make_pipeline(setup, settings, folders=None):
         2) The `Pixelization`.nd `Regularization`.cheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """
     Phase 1:
@@ -148,7 +147,7 @@ def make_pipeline(setup, settings, folders=None):
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__light_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)),
         search=af.DynestyStatic(n_live_points=30),
     )
@@ -189,7 +188,7 @@ def make_pipeline(setup, settings, folders=None):
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__mass_sie__source_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -208,7 +207,7 @@ def make_pipeline(setup, settings, folders=None):
     """
     This extends phase 2 with hyper-phases that fit for the hyper-galaxies, as described above. This extension again
     adds two phases, a `hyper-galaxy` phase and `hyper_combined` phase. Unlike the extension to phase 1 which only
-    include a lens hyper-galaxy, this extension includes both the lens and source hyper-galaxy `Galaxy``s as well as the
+    include a lens hyper-galaxy, this extension includes both the lens and source hyper-galaxy `Galaxy`'s as well as the
     background noise.
     """
 
@@ -223,14 +222,14 @@ def make_pipeline(setup, settings, folders=None):
     pipeline we make a choice not to pass the hyper-galaxy of the source. Why? Because there is a good chance
     our simplistic single Sersic `Profile` won`t yet provide a good fit to the source.
     #
-    If this is the case, the hyper noise-map won`t be very good. It isn`t until we are fitting the
+    If this is the case, the hyper noise-map won`t be very good. It isn't until we are fitting the
     source using an `Inversion` that we begin to pass its hyper-galaxy, e.g. when we can be confident our fit
     to the dataset is reliable!
     """
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__light_sersic__mass_sie__source_exp",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -259,19 +258,19 @@ def make_pipeline(setup, settings, folders=None):
     wondering, why do we bother with these at all? Why not jump straight to the brightness based `Pixelization`.nd
     adaptive regularization?
 
-    Well, its to do with the hyper-galaxy-images of our source. At the end of phase 3, we`ve only fitted the source galaxy
+    Well, its to do with the hyper-galaxy-images of our source. At the end of phase 3, we've only fitted the source galaxy
     using a single `EllipticalSersic` profile. What if the source galaxy is more complex than a Sersic? Or has
     multiple components? Our fit, put simply, won`t be very good! This makes for a bad hyper-galaxy-image.
 
     So, its beneficial for us to introduce an intermediate `Inversion` using a magnification based grid, that fits
     all components of the source accurately giving us a good quality hyper-galaxy image for the brightness based
-    `Pixelization`.nd adaptive regularization. Its for this reason we`ve also omitted the hyper-galaxy source galaxy
+    `Pixelization`.nd adaptive regularization. Its for this reason we've also omitted the hyper-galaxy source galaxy
     from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise-map!
     """
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__source_inversion_initialize_magnification",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -306,7 +305,7 @@ def make_pipeline(setup, settings, folders=None):
 
     phase5 = al.PhaseImaging(
         phase_name="phase_5__light_sersic__mass_sie__source_inversion_magnification",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -338,7 +337,7 @@ def make_pipeline(setup, settings, folders=None):
 
     phase6 = al.PhaseImaging(
         phase_name="phase_6__source_inversion_initialize",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -375,7 +374,7 @@ def make_pipeline(setup, settings, folders=None):
 
     phase7 = al.PhaseImaging(
         phase_name="phase_7__light_sersic__mass_sie__source_inversion",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,

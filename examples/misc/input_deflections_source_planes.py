@@ -72,7 +72,7 @@ aplt.Grid(grid=grid)
 
 """
 We now create our `InputDeflections` `MassProfile`, which represents our input deflection angle map as a 
-_MassProfile_ in PyAutoLens so that it can be used with objects like `Galaxy``s and `Tracer``..
+_MassProfile_ in PyAutoLens so that it can be used with objects like `Galaxy`'s and `Tracer``..
 
 This takes as input both the input deflection angles and their corresponding image-plane grid, with the latter used to
 compute new sets of deflection angles from the input deflections via interpolation.
@@ -164,7 +164,7 @@ pixelization = al.pix.Rectangular(shape=(30, 30))
 
 """
 A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below. These mappings are used when 
-reconstructing the source `Galaxy``s light.
+reconstructing the source `Galaxy`'s light.
 """
 mapper = pixelization.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
@@ -176,10 +176,10 @@ aplt.Mapper.subplot_image_and_mapper(
 )
 
 """
-We can now use a `Mapper` to perform the `Inversion` and reconstruct the source `Galaxy``s light. 
+We can now use a `Mapper` to perform the `Inversion` and reconstruct the source `Galaxy`'s light. 
 
 To perform this `Inverison` we must also input a `Regularization`, which is a prior on how much we smooth the 
-source `Galaxy``s light. Try increasing / decreasing the coefficient value to see what effect this has.
+source `Galaxy`'s light. Try increasing / decreasing the coefficient value to see what effect this has.
 """
 
 regularization = al.reg.Constant(coefficient=1.0)
@@ -203,7 +203,7 @@ residual_map = masked_imaging.image - inversion.mapped_reconstructed_image
 aplt.Array(array=residual_map)
 
 """
-In this example, we assumed the source galaxy`s true `LightProfile` or guessed a value for the `Regularization` 
+In this example, we assumed the source `Galaxy`'s true `LightProfile` or guessed a value for the `Regularization` 
 coefficient. In a realistic settings we may not know this, so checkout the script `input_deflections_model.py` in 
 this folder to see how we can use the `InputDeflections` to perform lens modeling whereby we infer the source 
 galaxy `LightProfile` or `Inversion`.

@@ -11,7 +11,7 @@ of the image. We would prefer that our lens model provides a global fit to the e
 With our adaptive `Pixelization`.nd `Regularization` we are now able to fit the data to the noise-limit and remove this
 skewed chi-squared distribution. So, why do we need to introduce noise-map scaling? Well, we achieve a good fit when
 our lens`s mass model is accurate (in the previous tutorials we used the *correct* lens mass model). But, what if our
-lens mass model isn`t accurate? Well, we'll have residuals which will cause the same problem as before; a skewed
+lens mass model isn't accurate? Well, we'll have residuals which will cause the same problem as before; a skewed
 chi-squared distribution and an inability to fit the data to the noise level.
 
 So, lets simulate an image and fit it with a slightly incorrect mass model.
@@ -31,9 +31,9 @@ print("Workspace Path: ", workspace_path)
 """
 we'll use the same strong lensing data as the previous tutorial, where:
 
- - The lens galaxy`s light is omitted.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
 # %%
@@ -65,7 +65,7 @@ masked_imaging = al.MaskedImaging(
 Next, we`re going to fit the image using our magnification based grid. To perform the fit, we'll use a convenience 
 function to fit the lens data we simulated above.
 
-In this fitting function, we have changed the lens galaxy`s einstein radius to 1.55 from the `true` simulated value of 
+In this fitting function, we have changed the lens `Galaxy`'s einstein radius to 1.55 from the `true` simulated value of 
 1.6. Thus, we are going to fit the data with an *incorrect* mass model.
 """
 
@@ -110,11 +110,11 @@ aplt.Inversion.reconstruction(
 
 # %%
 """
-The fit isn`t great. The main structure of the lensed source is reconstructed, but there are residuals. These 
+The fit isn't great. The main structure of the lensed source is reconstructed, but there are residuals. These 
 residuals are worse than we saw in the previous tutorials (when source`s compact central structure was the problem). 
 So, the obvious question is can our adaptive `Pixelization` and `Regularization`.chemes address the problem?
 
-Lets find out, using this solution as our hyper-galaxy-image. In this case, our hyper-galaxy-image isn`t a perfect 
+Lets find out, using this solution as our hyper-galaxy-image. In this case, our hyper-galaxy-image isn't a perfect 
 fit to the data. This shouldn`t be too problematic, as the solution still captures the source`s overall structure. 
 The `Pixelization` / `Regularization`.yper-galaxy-parameters have enough flexibility in how they use this image to 
 adapt themselves, so the hyper-galaxy-image doesn`t *need* to be perfect.
@@ -173,13 +173,13 @@ This is even more problematic when we try and use the Bayesian log evidence to o
 fit, as it means it cannot obtain a solution that provides a reduced chi-squared of 1.
 
 So, you`re probably wondering, why can`t we just change the mass model to fit the data better? Surely if we 
-actually modeled this image with ``.yAutoLens__ it wouldn`t go to this solution anyway but instead infer the correct 
+actually modeled this image with **PyAutoLens** it wouldn't go to this solution anyway but instead infer the correct 
 Einstein radius of 1.6? That`s true.
 
 However, for *real* strong gravitational lenses, there is no such thing as a `correct mass model`. Real galaxies are 
 not _EllipticalIsothermal profiles_, or power-laws, or NFW`s, or any of the symmetric and smooth analytic profiles we 
 assume to model their mass. For real strong lenses our mass model will pretty much always lead to source-reconstruction 
-residuals, producing these skewed chi-squared distributions. ``.yAutoLens__ can`t remove them by simply improving the 
+residuals, producing these skewed chi-squared distributions. **PyAutoLens** can`t remove them by simply improving the 
 mass model.
 
 This is where noise-map scaling comes in. If we have no alternative, the best way to get Gaussian-distribution 
@@ -235,7 +235,7 @@ __How does the HyperGalaxy that we attached to the source-galaxy above actually 
 First, it creates a `contribution_map` from the hyper-galaxy-image of the lensed source galaxy. This uses the 
 `hyper_model_image`, which is the overall model-image of the best-fit lens model. In this tutorial, because our 
 strong lens `Imaging` only has a source galaxy emitting light, the hyper-galaxy-image of the source galaxy is the same 
-as the hyper_model_image. However, In the next tutorial, we'll introduce the lens galaxy`s light, such that each 
+as the hyper_model_image. However, In the next tutorial, we'll introduce the lens `Galaxy`'s light, such that each 
 hyper-galaxy image is different to the hyper-galaxy model image!
 
 We compute the contribution map as follows:
@@ -318,7 +318,7 @@ the source galaxy. Now, we`re going to use this contribution map to scale the no
  large values of noise_power, the largest noise-map values will be increased even more, raising their noise the most.
     
  3) Multiply the noise-map values generated in step 2) by the hyper-galaxy-parameter noise_factor. Again, this is a
- means by which ``.yAutoLens__ is able to scale the noise-map values.
+ means by which **PyAutoLens** is able to scale the noise-map values.
 
 Lets compare two fits, one where a hyper-galaxy scales the noise-map, and one where it doesn`t.
 """
@@ -378,7 +378,7 @@ print("Evidence using variances scaling by hyper-galaxy = ", fit.log_evidence)
 Feel free to play around with the noise_factor and noise_power hyper-galaxy-parameters above. It should be fairly 
 clear what they do; they simply change the amount by which the noise is increased.
 
-And with that, we`ve completed the first of two tutorials on noise-map scaling. To end, I want you to have a quick 
+And with that, we've completed the first of two tutorials on noise-map scaling. To end, I want you to have a quick 
 think, is there anything else that you can think of that would mean we need to scale the noise? In this tutorial, 
 it was the inadequacy of our mass-model that lead to significant residuals and a skewed chi-squared distribution. 
 What else might cause residuals? I`ll give you a couple below;
@@ -392,6 +392,6 @@ What else might cause residuals? I`ll give you a couple below;
  3) A sub-optimal background sky subtraction of the image, which can leave large levels of signal in the outskirts of 
  the image that are not due to the strong lens system itself.
 
-Oh, there`s on more thing that can cause much worse residuals than all the effects above. That`ll be the topic of 
+Oh, there`s on more thing that can cause much worse residuals than all the effects above. That'll be the topic of 
 the next tutorial.
 """

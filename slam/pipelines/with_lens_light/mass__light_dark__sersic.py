@@ -13,7 +13,7 @@ The pipeline is two phases:
 Phase 1:
 
     Fit the lens light and mass model as a decomposed profile, using the lens light and source model from 
-    a previous pipeline. The lens `LightProfile``s are fixed to the results of the previous pipeline to provide a fast
+    a previous pipeline. The lens `LightProfile`'s are fixed to the results of the previous pipeline to provide a fast
     initialization of the new `MassProfile` parameters.
     
     Lens Light & Mass: EllipticalSersic
@@ -29,7 +29,7 @@ Phase 2:
     from the results of phase 1.
     
     Lens Light & Mass: EllipticalSersic
-    Lens Mass: `LightMassProfile``s + SphericalNFW + ExternalShear
+    Lens Mass: `LightMassProfile`'s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
     Previous Pipelines: None
     Prior Passing: Lens Light & Mass (model -> phase 1), source (model / instance -> previous pipeline)
@@ -49,25 +49,20 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.source_tag,
-        slam.light_tag,
-        slam.mass_tag,
-    ]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.light_tag}/{slam.mass_tag}"
 
     """SLaM: Set whether shear is Included in the mass model."""
 
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=-1)
 
     """
-    Phase 1: Fit the lens galaxy`s light and mass and one source galaxy, where we:
+    Phase 1: Fit the lens `Galaxy`'s light and mass and one source galaxy, where we:
 
-        1) Fix the lens galaxy`s light using the the `LightProfile` inferred in the previous `light` pipeline.
-        2) Pass priors on the lens galaxy`s SphericalNFW `MassProfile``s centre using the EllipticalIsothermal fit of the
+        1) Fix the lens `Galaxy`'s light using the the `LightProfile` inferred in the previous `light` pipeline.
+        2) Pass priors on the lens `Galaxy`'s SphericalNFW `MassProfile`'s centre using the EllipticalIsothermal fit of the
            previous pipeline, if the NFW centre is a free parameter.
-        3) Pass priors on the lens galaxy`s shear using the ExternalShear fit of the previous pipeline.
-        4) Pass priors on the source galaxy`s light using the `EllipticalSersic` of the previous pipeline.
+        3) Pass priors on the lens `Galaxy`'s shear using the ExternalShear fit of the previous pipeline.
+        4) Pass priors on the source `Galaxy`'s light using the `EllipticalSersic` of the previous pipeline.
     """
 
     """SLaM: Set if the `EllipticalSersic` is modeled with or without a mass-to-light gradient."""
@@ -109,8 +104,8 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline(index=0, source_is_model=False)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light_sersic__mass_mlr_dark__source__fixed_lens_light",
-        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -119,7 +114,7 @@ def make_pipeline(slam, settings):
     )
 
     """
-    Phase 2: Fit the lens galaxy`s light and mass and source galaxy using the results of phase 1 as
+    Phase 2: Fit the lens `Galaxy`'s light and mass and source galaxy using the results of phase 1 as
     initialization
     """
 
@@ -147,8 +142,8 @@ def make_pipeline(slam, settings):
     )
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__light_bulge_disk__mass_mlr_dark__source",
-        folders=folders,
         galaxies=dict(lens=lens, source=phase1.result.model.galaxies.source),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,

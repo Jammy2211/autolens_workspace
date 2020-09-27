@@ -32,10 +32,10 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an `ExternalShear`.
     """
 
-    folders = slam.folders + [pipeline_name, slam.source_parametric_tag]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_parametric_tag}"
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source galaxy.
+    Phase 1: Fit the lens`s `MassProfile`'s and source galaxy.
     """
 
     mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
@@ -49,8 +49,8 @@ def make_pipeline(slam, settings):
     """SLaM: The shear model is chosen below based on the settings of the slam source."""
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__mass_sie__source_sersic",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,

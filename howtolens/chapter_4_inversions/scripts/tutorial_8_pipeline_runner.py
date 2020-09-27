@@ -44,9 +44,9 @@ import autolens.plot as aplt
 """
 we'll use strong lensing data, where:
 
- - The lens galaxy`s light is omitted.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is four `EllipticalSersic``..
+ - The lens `Galaxy`'s light is omitted.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
 # %%
@@ -110,7 +110,7 @@ setup_source = al.SetupSourceInversion(
 )
 
 setup = al.SetupPipeline(
-    folders=["c4_t8_inversion"], setup_mass=setup_mass, setup_source=setup_source
+    path_prefix="c4_t8_inversion", setup_mass=setup_mass, setup_source=setup_source
 )
 
 # %%
@@ -118,7 +118,7 @@ setup = al.SetupPipeline(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its `make_pipeline` function, inputting the 
-*Setup* and *SettingsPhase* above.
+*Setup* and `SettingsPhase` above.
 """
 
 # %%

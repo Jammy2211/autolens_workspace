@@ -2,13 +2,13 @@
 """
 __Pixelizations__
 
-Pixelizations reconstruct the source galaxy`s light on a pixel-grid. Unlike *LightProfiles*, they are able to
+Pixelizations reconstruct the source `Galaxy`'s light on a pixel-grid. Unlike *LightProfiles*, they are able to
 reconstruct the light of non-symmetric, irregular and clumpy sources.
 
 To reconstruct the source using a *Pixelization*, we have to impose a prior on the smoothness of the reconstructed
 source, called the *Regularization*. The more we regularize the source, the smoother the source reconstruction.
 
-The process of reconstructing a galaxy`s light using a *Pixelization* and *Regularization* is called an `Inversion`,
+The process of reconstructing a `Galaxy`'s light using a *Pixelization* and *Regularization* is called an `Inversion`,
 and the term `inversion` is used throughout the **PyAutoLens** example scripts to signify that their source analysis
 reconstructs its light on a pixel-grid.
 """
@@ -24,10 +24,10 @@ print("Workspace Path: ", workspace_path)
 
 # %%
 """
-Load the `Imaging` data that we'll reconstruct the lensed source galaxy`s light of using a pixelization.
+Load the `Imaging` data that we'll reconstruct the lensed source `Galaxy`'s light of using a pixelization.
 
 Note how complex the lensed source galaxy looks, with multiple clumps of light - this would be very difficult to 
-represent using `LightProfile``.!
+represent using `LightProfile`'s!
 """
 
 # %%
@@ -68,7 +68,7 @@ First, lets use a *Rectangular* `Pixelization` with resolution 40 x 40 and *Cons
 relatitvely high regularization-coefficient. The higher this coefficient, the more our source reconstruction will be
 smoothed.
 
-The lens galaxy`s `EllipticalIsothermal` mass model is the true model used to simulate the data.
+The lens `Galaxy`'s `EllipticalIsothermal` mass model is the true model used to simulate the data.
 """
 
 # %%
@@ -88,7 +88,7 @@ source_galaxy = al.Galaxy(
 # %%
 """
 Now that our source-galaxy has a *Pixelization* and *Regularization*, we are able to fit the data using these in the 
-same way as before, by simply passing the source galaxy to a *Tracer* and using this *Tracer* to create a *FitImaging*
+same way as before, by simply passing the source galaxy to a `Tracer` and using this `Tracer` to create a *FitImaging*
 object.
 """
 

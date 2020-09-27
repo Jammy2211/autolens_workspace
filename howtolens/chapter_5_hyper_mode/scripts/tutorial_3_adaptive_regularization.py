@@ -7,9 +7,9 @@ In tutorial 1, we considered why our `Constant` `Regularization`.cheme was sub-o
 source demand different levels of `Regularization`, motivating a `Regularization`.cheme which adapts to the reconstructed
 source`s surface brightness.
 
-This raises the same question as before, how do we adapt our `Regularization`.cheme to the source before we`ve
+This raises the same question as before, how do we adapt our `Regularization`.cheme to the source before we've
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
-phase of the pipeline that we`ve begun calling the `hyper-galaxy-image`.
+phase of the pipeline that we've begun calling the `hyper-galaxy-image`.
 """
 
 # %%
@@ -26,9 +26,9 @@ print("Workspace Path: ", workspace_path)
 """
 we'll use the same strong lensing data as the previous tutorial, where:
 
- - The lens galaxy`s light is omitted.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
 # %%
@@ -156,7 +156,7 @@ print("Evidence using adaptive `Regularization`. ", fit.log_evidence)
 """
 Yep! Of course, combining the adaptive `Pixelization`.nd `Regularization`.ill only further benefit our lens modeling!
 
-However, as shown below, we don`t fit the source as well as the morphology based `Pixelization` did in the last chapter. 
+However, as shown below, we don't fit the source as well as the morphology based `Pixelization` did in the last chapter. 
 This is because although the adaptive `Regularization` scheme improves the fit, the magnification based 
 _Pixelization_ simply *does not*  have sufficient resolution to resolve the source`s cuspy central `LightProfile`.
 """
@@ -212,7 +212,7 @@ signal scales. I doubt you`ll notice a lot change visually, but the log evidence
 manoveur with different values.
 
 You may find solutions that raise an `InversionException`. These solutions mean that the matrix used during the 
-linear algebra calculation was ill-defined, and could not be inverted. These solutions are removed by ``.yAutoLens__ 
+linear algebra calculation was ill-defined, and could not be inverted. These solutions are removed by **PyAutoLens** 
 during lens modeling.
 """
 
@@ -260,7 +260,7 @@ reconstruction simpler:
  2) Increasing `Regularization` in the outskirts produces a simpler solution by correlating more source-pixels, 
  effectively reducing the number of pixels used by the reconstruction.
 
-Together, brightness based `Pixelization``s and `Regularization` allow us to find the objectively `simplest` source 
+Together, brightness based `Pixelization`'s and `Regularization` allow us to find the objectively `simplest` source 
 solution possible and therefore ensure that our Bayesian log evidence`s have a well defined maximum value they are 
-seeking. This was not the case for magnification based `Pixelization``s and constant `Regularization` schemes.
+seeking. This was not the case for magnification based `Pixelization`'s and constant `Regularization` schemes.
 """

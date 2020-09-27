@@ -4,15 +4,15 @@ import autolens as al
 """
 In this pipeline, we fit `Interferometer` data of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
- - The source galaxy`s surface-brightness is modeled using an _Inversion_.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The source `Galaxy`'s surface-brightness is modeled using an _Inversion_.
 
 The pipeline is three phases:
 
 Phase 1:
 
-    Fit the lens `MassProfile``s and source _LightProfile_.
+    Fit the lens `MassProfile`'s and source _LightProfile_.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: EllipticalSersic
@@ -21,21 +21,21 @@ Phase 1:
 
 Phase 2:
 
-    Fit the source `Inversion` using the lens `MassProfile``s inferred in phase 1.
+    Fit the source `Inversion` using the lens `MassProfile`'s inferred in phase 1.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Prior Passing: Lens & Mass (instance -> phase1).
-    Notes: Lens `MassProfile``s fixed, source `Inversion` parameters vary.
+    Notes: Lens `MassProfile`'s fixed, source `Inversion` parameters vary.
 
 Phase 3:
 
-    Refines the lens `MassProfile``s using the source `Inversion` of phase 2.
+    Refines the lens `MassProfile`'s using the source `Inversion` of phase 2.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Source Light: VoronoiMagnification + Constant
     Prior Passing: Lens Mass (model -> phase 1), Source `Inversion` (instance -> phase 2)
-    Notes: Lens `MassProfile``s varies, source `Inversion` parameters fixed.
+    Notes: Lens `MassProfile`'s varies, source `Inversion` parameters fixed.
 """
 
 
@@ -52,8 +52,7 @@ def make_pipeline(setup, settings, real_space_mask):
         2) The `Pixelization` and `Regularization` scheme of the pipeline (use in phase 3).
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
@@ -63,7 +62,7 @@ def make_pipeline(setup, settings, real_space_mask):
         shear = None
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
+    Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -73,8 +72,8 @@ def make_pipeline(setup, settings, real_space_mask):
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseInterferometer(
+        path_prefix=path_prefix,
         phase_name="phase_1__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=setup.redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
@@ -89,12 +88,12 @@ def make_pipeline(setup, settings, real_space_mask):
     """
     Phase 2: Fit the input pipeline `Pixelization` & `Regularization`, where we:
 
-        1) Fix the lens`s `MassProfile``s to the results of phase 1.
+        1) Fix the lens`s `MassProfile`'s to the results of phase 1.
     """
 
     phase2 = al.PhaseInterferometer(
+        path_prefix=path_prefix,
         phase_name="phase_2__source_inversion_initialization",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -116,12 +115,12 @@ def make_pipeline(setup, settings, real_space_mask):
     Phase 3: Fit the lens`s mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 2.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of phase 1.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of phase 1.
     """
 
     phase3 = al.PhaseInterferometer(
+        path_prefix=path_prefix,
         phase_name="phase_3__mass_sie__source_inversion",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

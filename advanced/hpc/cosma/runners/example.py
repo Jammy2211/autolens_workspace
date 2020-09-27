@@ -168,9 +168,7 @@ Create the path where the dataset will be loaded from, which in this case is:
 """
 
 # %%
-dataset_path = af.util.create_path(
-    path=cosma_dataset_path, folders=[dataset_type, dataset_name]
-)
+dataset_path = f"{cosma_dataset_path}/{dataset_type}/{dataset_name}"
 
 """
 COMPLETE
@@ -237,18 +235,23 @@ paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `folders` below specify the path the pipeline results are written to, which is:
+The `prefix_path` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/dataset_type/dataset_name` 
  `autolens_workspace/output/imaging/mass_sie__source_sersic`
 """
 
+setup_mass = al.SetupMassTotal(no_shear=True)
+
+setup_source = al.SetupSourceInversion(
+    pixelization=al.pix.VoronoiMagnification, regularization=al.reg.Constant
+)
+
 # %%
 setup = al.SetupPipeline(
-    pixelization=al.pix.VoronoiMagnification,
-    regularization=al.reg.Constant,
-    no_shear=False,
-    folders=["pipelines", dataset_type, dataset_label, dataset_name],
+    path_prefix=f"pipelines/{dataset_type}/{dataset_name}",
+    setup_mass=setup_mass,
+    setup_source=setup_source,
 )
 
 # %%
@@ -256,15 +259,15 @@ setup = al.SetupPipeline(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its `make_pipeline` function, inputting the 
-*Setup* and *SettingsPhase* above.
+*Setup* and `SettingsPhase` above.
 """
 
 # %%
-from autolens_workspace.pipelines.imaging.no_lens_light import (
-    lens_sie__source_inversion,
+from autolens_workspace.transdimensional.pipelines.imaging.no_lens_light import (
+    mass_sie__source_inversion,
 )
 
-pipeline = lens_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
+pipeline = mass_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
 
 # %%
 """

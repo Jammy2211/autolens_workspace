@@ -49,14 +49,15 @@ agg = af.Aggregator(directory=str(agg_results_path))
 # %%
 """
 In this example, we only fitted the 3 images using one pipeline. But suppose we used multiple pipelines, like we do in 
-the advanced pipelines. In this case, the aggregator would load the NestSampless of all fits of all phases of all 
+the advanced pipelines. In this case, the aggregator would load the `NestSamples` of all fits of all phases of all 
 pipelines!
 
 In such circumstances, we can filter by phase name and pipeline name.
 """
 
 # %%
-pipeline_name = "pipeline__lens_sie__source_inversion"
+pipeline_name = "pipeline__mass_sie__source_inversion"
+phase_name = "phase_3__mass_sie__source_inversion"
 agg_filter = agg.filter(agg.phase == phase_name, agg.pipeline == pipeline_name)
 samples_gen = agg_filter.values("samples")
 

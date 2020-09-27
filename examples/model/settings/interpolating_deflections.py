@@ -6,7 +6,7 @@ these values to the image`s native sub-grid resolution.
 
 The benefits of this are:
 
- - For `MassProfile``s that require computationally expensive numerical integration, this reduces the number of
+ - For `MassProfile`'s that require computationally expensive numerical integration, this reduces the number of
       integratals performed 100000`s to 1000`s, giving a potential speed up in run time of x100 or more!
 
 The downsides of this are:
@@ -19,7 +19,7 @@ phase. A higher resolution grid (i.e. lower pixel scale) will give more precise 
 of longer calculation times. In this example we will use an interpolation pixel scale of 0.05", which balances run-time
 and precision.
 
-In this example, we fit the lens`s `MassProfile``s using an `EllipticalSersic` + `SphericalNFW` mass model (which
+In this example, we fit the lens`s `MassProfile`'s using an `EllipticalSersic` + `SphericalNFW` mass model (which
 represents the stellar and dark matter of a galaxy). The `EllipticalSersic` requires expensive numerical intergration,
 whereas the `SphericalNFW` does not. PyAutoLens will only used interpolation for the `EllipticalSersic`, given we can
 compute the deflection angles of the `SphericalNFW` efficiently.
@@ -28,7 +28,7 @@ Whether the interpolatioon grid is used for a given `MassProfile` is set in the 
 
  `autolens_workspace/config/grids/interpolate.ini`
 
-The True and False values reflect whether interpolation is used for each function of each mass profile. The default
+The ``True`` and ``False`` values reflect whether interpolation is used for each function of each mass profile. The default
 values supplied with the autolens_workspace reflect whether the profile requires numerical integration or not.
 
 I`ll assume that you are familiar with the beginner example scripts work, so if any code doesn`t make sense familiarize
@@ -130,7 +130,7 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__interpolation`.
 
@@ -143,8 +143,8 @@ reflelct this, meaning the full output path is:
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/settings",
     phase_name="phase__interpolation",
-    folders=["examples", "settings"],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

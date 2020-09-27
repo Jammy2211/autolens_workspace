@@ -8,7 +8,7 @@ strong lens slacs1430+4105.
 
 The customization functions demonstrated in this example are generic to any 2D arrays of dataset_type, and can 
 therefore be applied to the plotting of noise-maps, PSF`s, residual-maps, chi-squared-maps, etc. Many of the options
-can also be applied to the plotting of other data structures, for example `Grid``s and `Mappers``..
+can also be applied to the plotting of other data structures, for example `Grid`'s and `Mappers``..
 """
 
 # %%
@@ -82,7 +82,7 @@ The `Figure` object customizes the size of the figure the `Array` is plotted usi
    `square`, which plots the figure as a square with aspect ratio of 1.0.
 
 Note how carefully we have chosen the **PyAutoLens** default values of all Matplotlib objects to ensure the misaligned
-colorbar and weird figure shape don`t impact most default visualization!
+colorbar and weird figure shape don't impact most default visualization!
 """
 
 # %%
@@ -97,7 +97,7 @@ aplt.Array(array=image, plotter=plotter)
 The `Units` object customizes the units of the y and x axes the `Array` is plotted using. Below, we:
 
 1) Use scaled units to plot the y and x axis labels of the `Array`. Its scaled coordinates are its coordinates in 
-   arc-seconds, converted from pixels using its *pixel_scales* attribute. Switching this to False will plot the axes
+   arc-seconds, converted from pixels using its *pixel_scales* attribute. Switching this to ``False`` will plot the axes
     in pixel units.
 2) Input a conversion factor of 10.0, which multiplies the y and x coordinates (compared to the figure above) by 10.0.
 

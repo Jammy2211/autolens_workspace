@@ -10,7 +10,7 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
- - Both phases model the lens galaxy`s mass as an `EllipticalIsothermal`, with the lens`s light omitted.
+ - Both phases model the lens `Galaxy`'s mass as an `EllipticalIsothermal`, with the lens`s light omitted.
     
  - The first phase models the source galaxy using a parametric `EllipticalSersic` profile.
     
@@ -24,7 +24,7 @@ _Inversion_ in one phase:
       the `EllipticalSersic` carries with it more parameters that the non-linear search will have to fit for, the
       model-fit will be faster overall given the increased speed of each log likelihood evaluation.
 
- - `Inversion``s often go to unphysical solutions where the mass model goes to extremely high / low normalizations
+ - `Inversion`'s often go to unphysical solutions where the mass model goes to extremely high / low normalizations
       and the source is reconstructed as a demagnified version of the lensed source (see Chapter 4, tutorial 6 for a
       complete description of this effect). A powerful way to prevent this from happening is to initialize the mass
       model with a fit using a parametric source (which does not suffer these unphysical solutions) and use this result
@@ -58,11 +58,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens galaxy`s `LightProfile` is omitted_.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
+ - The lens `Galaxy`'s `LightProfile` is omitted_.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -96,8 +96,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (6 parameters) in phase 1.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (6 parameters) in phase 1.
  - An `Inversion` in phase 2 (3 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
@@ -157,15 +157,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_1`.
+ `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
+    path_prefix=f"examples/linking/parametric_to_inversion",
     phase_name="phase_1",
-    folders=["examples", "linking", "parametric_to_inversion"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,
@@ -214,17 +214,17 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase_2`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
+    path_prefix=f"examples/linking/parametric_to_inversion",
     phase_name="phase_2",
-    folders=["examples", "linking", "parametric_to_inversion"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,

@@ -7,14 +7,14 @@ Tutorial 1: Lens and Source
 
 As discussed in chapter 2, an effective strategy for modeling strong lenses is to break the model-fitting procedure
 down into a series of phases, linking the results of the phases to guide the non-linear search as to where to
-sample parameter space. In this chapter, we'll cover `Pipeline``., which provide a powerful means by which to
+sample parameter space. In this chapter, we'll cover `Pipeline`'s, which provide a powerful means by which to
 link together many phases.
 
-In chapter 2, we fitted strong lens `Imaging` which included the lens galaxy`s light. We`re going to fit this dataset
+In chapter 2, we fitted strong lens `Imaging` which included the lens `Galaxy`'s light. We`re going to fit this dataset
 again (I promise, this is the last time!). However, now we`re using pipelines, we can perform a different (and
 significantly faster) model-fit.
 
-The crucial point to note is that for many lenses the lens galaxy`s light can be fitted and subtracted reasonable well
+The crucial point to note is that for many lenses the lens `Galaxy`'s light can be fitted and subtracted reasonable well
 before we attempt to fit the source galaxy. This makes sense, as fitting the lens`s light (which is an elliptical blob
 of light in the centre of the imaging) looks nothing like the source`s light (which is a ring of light)! Formally,
 we would say that these two model components (the lens`s light and source`s light) are not covariant.
@@ -24,8 +24,8 @@ Hopefully, you`re thinking, why should I bother fitting the lens and source gala
 find the right regions of non-linear parameter space by fitting each separately first? This is what we`re going to do
 in this tutorial, using a pipeline composed of a modest 3 phases:
 
- 1) Fit the lens galaxy`s light, ignoring the source.
- 2) Fit the source-galaxy`s light (and therefore lens galaxy`s mass), ignoring the len`s light.
+ 1) Fit the lens `Galaxy`'s light, ignoring the source.
+ 2) Fit the source-`Galaxy`'s light (and therefore lens `Galaxy`'s mass), ignoring the len`s light.
  3) Fit both simultaneously, using these results to initialize our starting location in parameter space.
 
 Of course, given that we do not care for the errors in phases 1 and 2, we will set up our non-linear search to perform
@@ -61,9 +61,9 @@ import autolens.plot as aplt
 """
 we'll use strong lensing data, where:
 
- - The lens galaxy`s `LightProfile` is an `EllipticalSersic`.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
+ - The lens `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 """
 
 # %%
@@ -156,17 +156,17 @@ is True, the pipeline`s output paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `folders` below specify the path the pipeline results are written 
+The `path_prefix` belows specify the path the pipeline results are written 
 
  `autolens_workspace/howtolens/output/c3_t1_lens_and_source/pipeline__light_and_source`
 
-The redshift of the lens and source galaxies are also input (see `examples/model/customimze/redshift.py`) for a 
+The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
 description of what inputting redshifts into **PyAutoLens** does.
 """
 
 # %%
 setup = al.SetupPipeline(
-    folders=["c3_t1_lens_and_source"],
+    path_prefix="c3_t1_lens_and_source",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,
@@ -183,10 +183,6 @@ To create a `Pipeline`, we call a `make_pipeline` function, which is written in 
     
 Before we check it out, lets get the pipeline running, by importing the script, running the `make_pipeline` function
 to create the `Pipeline` object and calling that objects `run` function.
-
-The `folders` below specify the path the pipeline results are written to, which is:
-
- `autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline_name/setup_tag/phase_name/settings_tag`
 """
 
 # %%
@@ -203,7 +199,7 @@ pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
 
 # %%
 """
-Okay, good job, we`re running our first pipeline in ``.yAutoLens__! But what does it *actually* do? Well, to find that out, 
+Okay, good job, we`re running our first pipeline in **PyAutoLens**! But what does it *actually* do? Well, to find that out, 
 go to the script `tutorial_1_pipeline_lens_and_source.py`, which contains a full description of the pipeline, as well 
 as an overview of the tools we use to write the most general pipelines possible. Once you`re done, come back to this 
 pipeline runner script and we'll wrap up tutorial 1.
@@ -213,13 +209,13 @@ pipeline runner script and we'll wrap up tutorial 1.
 """
 And there we have it, a pipeline that breaks the analysis of the lens and source galaxy into 3 simple phases. This 
 approach is much faster than fitting the lens and source simultaneously from the beginning. Instead of asking you 
-questions at the end of this chapter`s tutorials, I`m gonna give a Q&A - this`ll hopefully get you thinking about how 
+questions at the end of this chapter`s tutorials, I'm gonna give a Q&A - this`ll hopefully get you thinking about how 
 to approach pipeline writing.
 
  1) Can this pipeline really be generalized to any lens? Surely the radii of the mask depends on the lens and source 
  galaxies?
 
-Whilst this is true, we`ve chosen a mask radii above that is `excessive` and masks out a lot more of the image than 
+Whilst this is true, we've chosen a mask radii above that is `excessive` and masks out a lot more of the image than 
 just the source (which, in terms of run-time, is desirable). Thus, provided you know the Einstein radius distribution 
 of your lens sample, you can choose mask radii that will masks out every source in your sample adequately (and even if 
 some of the source is still there, who cares? The fit to the lens galaxy will be okay).

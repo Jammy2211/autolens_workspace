@@ -21,7 +21,7 @@ Phase 1:
 
 Phase 2 (part 1) - Lens Plane:
 
-    Perform the subhalo detection analysis using a *GridSearch* of non-linear searches.
+    Perform the subhalo detection analysis using a `GridSearch` of non-linear searches.
 
     Lens Mass: Previous mass pipeline model.
     Subhalo: SphericalNFWLudlow
@@ -77,15 +77,10 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    folders = slam.folders + [
-        pipeline_name,
-        slam.source_tag,
-        slam.mass_tag,
-        slam.setup_subhalo.tag,
-    ]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.mass_tag}/{slam.setup_subhalo.tag}"
 
     """
-    Phase1 : Refit the lens`s `MassProfile``s and source, where we:
+    Phase1 : Refit the lens`s `MassProfile`'s and source, where we:
 
         1) Use the source galaxy model of the `source` pipeline.
         2) Fit this source as a model if it is parametric and as an instance if it is an `Inversion`.
@@ -97,8 +92,8 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__refine_mass",
-        folders=folders,
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -160,8 +155,8 @@ def make_pipeline(slam, settings):
     source = slam.source_for_subhalo_pipeline()
 
     phase2_lens_plane = GridPhase(
+        path_prefix=path_prefix,
         phase_name="phase_2__subhalo_search__lens_plane",
-        folders=folders,
         galaxies=dict(lens=lens, subhalo=subhalo, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -209,8 +204,8 @@ def make_pipeline(slam, settings):
     """
 
     phase2_foreground_plane = GridPhase(
+        path_prefix=path_prefix,
         phase_name="phase_2__subhalo_search__foreground_plane",
-        folders=folders,
         galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -237,7 +232,7 @@ def make_pipeline(slam, settings):
 
     phase2_background_plane = GridPhase(
         phase_name="phase_2__subhalo_search__background_plane",
-        folders=folders,
+        path_prefix=path_prefix,
         galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -260,7 +255,7 @@ def make_pipeline(slam, settings):
 
     # phase2 = al.PhaseImaging(
     #     phase_name="phase_2__subhalo_refine",
-    #     folders=folders,
+    #     path_prefix=path_prefix,
     #     galaxies=dict(
     #         lens=af.last[-1].model.galaxies.lens, source=source, subhalo=subhalo
     #     ),

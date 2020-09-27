@@ -131,7 +131,7 @@ for fit in fit_gen:
 # %%
 """
 There`s a problem though, the MaskedImaging object is made with a custom phase input. For example, it receive a 
-`grid_class` defining which grid it uses to fit the data. This isn`t included in the generator above. Thats bad!
+`grid_class` defining which grid it uses to fit the data. This isn't included in the generator above. Thats bad!
 
 The output has a meta_dataset attribute containing all the information on how the MaskedImaging was created for the
 actualy phase.

@@ -9,8 +9,8 @@ __THIS RUNNER__
 Using two source pipelines and a mass pipeline this runner fits `Imaging` of a strong lens system, where in the final
 phase of the pipeline:
 
- - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalPowerLaw`.
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the SLaM pipelines:
@@ -167,7 +167,7 @@ The parametric source pipeline aims to initialize a robust model for the source 
 _SLaMPipelineSourceParametric_ determines the source model used by the parametric source pipeline. A full description of all 
 options can be found ? and ?.
 
-By default, this assumes an `EllipticalIsothermal` profile for the lens galaxy`s mass. Our experience with lens 
+By default, this assumes an `EllipticalIsothermal` profile for the lens `Galaxy`'s mass. Our experience with lens 
 modeling has shown they are the simpliest models that provide a good fit to the majority of strong lenses.
 
 For this runner the `SLaMPipelineSourceParametric` customizes:
@@ -194,7 +194,7 @@ The Source inversion pipeline aims to initialize a robust model for the source g
 _SLaMPipelineSourceInversion_ determines the `Inversion` used by the inversion source pipeline. A full description of all 
 options can be found ? and ?.
 
-By default, this again assumes `EllipticalIsothermal` profile for the lens galaxy`s mass model.
+By default, this again assumes `EllipticalIsothermal` profile for the lens `Galaxy`'s mass model.
 
 For this runner the `SLaMPipelineSourceInversion` customizes:
 
@@ -217,11 +217,11 @@ pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_so
 """
 __SLaMPipelineMass__
 
-The `SLaMPipelineMass` pipeline fits the model for the lens galaxy`s total mass distribution. 
+The `SLaMPipelineMass` pipeline fits the model for the lens `Galaxy`'s total mass distribution. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens galaxy`s mass is input into `SLaMPipelineMassTotal` and this runner uses the 
+The model used to represent the lens `Galaxy`'s mass is input into `SLaMPipelineMassTotal` and this runner uses the 
 default of an `EllipticalPowerLaw` in this example.
 
 For this runner the `SLaMPipelineMass` customizes:
@@ -245,7 +245,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
+    prefix_path=f"{slam}/{dataset_type}_{dataset_label}/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,

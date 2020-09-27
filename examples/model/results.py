@@ -12,8 +12,8 @@ again to create the results.
 
 This model-fit fits the strong lens `Imaging` data with:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass.
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass.
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light.
 
 The code below, which we have omitted comments from, reperforms all the tasks that create the phase and perform the
 model-fit in this script. If anything in this code is not clear to you, you should go over the beginner model-fit
@@ -60,7 +60,7 @@ mask = al.Mask2D.circular(
 
 phase = al.PhaseImaging(
     phase_name="phase__mass_sie__source_sersic",
-    folders=["examples", "beginner", dataset_name],
+    path_prefix=f"examples/beginner/{dataset_name}",
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
         source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
@@ -153,7 +153,7 @@ print(ml_vector, "\n\n")
 
 # %%
 """
-This provides us with a list of all model parameters. However, this isn`t that much use, which values correspond to 
+This provides us with a list of all model parameters. However, this isn't that much use, which values correspond to 
 which parameters?
 
 The list of parameter names are available as a property of the `Samples`, as are parameter labels which can be used 
@@ -162,7 +162,7 @@ for labeling figures.
 
 # %%
 print(samples.model_component_and_parameter_names)
-print(samples.parameter_labels)
+print(samples.model.parameter_labels)
 
 # %%
 """
@@ -195,7 +195,7 @@ print(ml_instance.galaxies.source)
 
 # %%
 """
-Their `LightProfile``s and `MassProfile``s are also named according to the phase.
+Their `LightProfile`'s and `MassProfile`'s are also named according to the phase.
 """
 
 # %%
@@ -204,7 +204,7 @@ print(ml_instance.galaxies.lens.mass)
 # %%
 """
 We can use this list of galaxies to create the maximum log likelihood `Tracer`, which, funnily enough, 
-is the property of the result we`ve used up to now!
+is the property of the result we've used up to now!
 
 (If we had the `MaskedImaging` available we could easily use this to create the maximum log likelihood `FitImaging`.
 """
@@ -310,7 +310,7 @@ plotter.triangle_plot(
     filled=True,
     legend_labels="result",
     params=samples.model_component_and_parameter_names,
-    labels=samples.parameter_labels,
+    labels=samples.model.parameter_labels,
     title_limit=1,
     close_existing=True,
 )

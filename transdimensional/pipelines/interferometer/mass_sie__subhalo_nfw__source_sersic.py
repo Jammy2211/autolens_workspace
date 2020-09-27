@@ -4,10 +4,10 @@ import autolens as al
 """
 In this pipeline, we fit `Interferometer` data of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalIsothermal_.
  - A subhalo is included in the lens galaxy whose `MassProfile` is modeled as a _SphericalNFW_.
- - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_. 
+ - The source `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_. 
 
 The pipeline is three phases:
 
@@ -22,7 +22,7 @@ Phase 1:
 
 Phase 2:
 
-    Perform the subhalo detection analysis using a *GridSearch* of non-linear searches.
+    Perform the subhalo detection analysis using a `GridSearch` of non-linear searches.
     
     Lens Mass: EllipticalIsothermal + ExternalShear
     Subhalo: SphericalTruncatedNFWMCRLudlow
@@ -55,8 +55,7 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
         2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
@@ -66,7 +65,7 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
         shear = None
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
+    Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -76,8 +75,8 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseInterferometer(
+        path_prefix=path_prefix,
         phase_name="phase_1__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -123,8 +122,8 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
     subhalo.mass.setup.redshift_source = setup.redshift_source
 
     phase2 = GridPhase(
+        path_prefix=path_prefix,
         phase_name="phase_2__subhalo_search",
-        folders=setup.folders,
         galaxies=dict(
             lens=af.last.instance.galaxies.lens,
             subhalo=subhalo,
@@ -137,7 +136,7 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
     )
 
     """
-    Phase 3: Refine the lens + subhalo + source model, using the best subhalo model detected in the *GridSearch* above
+    Phase 3: Refine the lens + subhalo + source model, using the best subhalo model detected in the `GridSearch` above
              to initialize the subhalo priors.
     """
 
@@ -152,8 +151,8 @@ def make_pipeline(setup, settings, real_space_mask, grid_size=2, parallel=False)
     subhalo.mass.setup.redshift_source = setup.redshift_source
 
     phase3 = al.PhaseInterferometer(
+        path_prefix=path_prefix,
         phase_name="phase_3__subhalo_refine",
-        folders=setup.folders,
         galaxies=dict(
             lens=phase1.result.model.galaxies.lens,
             source=phase1.result.model.galaxies.source,

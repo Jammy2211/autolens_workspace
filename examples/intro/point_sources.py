@@ -12,9 +12,9 @@ calculations no longer trace light from the source plane to the image-plane, but
 the point-source multiple image appear in the image-plane.
 
 Finding the multiple images of a mass model given a (y,x) coordinate in the source plane is an iterative problem
-performed in a very different way to ray-tracing a `LightProile`. In this example, we introduce ``.yAutoLens__`s
+performed in a very different way to ray-tracing a `LightProile`. In this example, we introduce **PyAutoLens**`s
 _PositionSolver_, which does exactly this and thus makes the analysis of strong lensed quasars, supernovae and
-point-like source`s possible in ``.yAutoLens__! we'll also show how these tools allow us to compute the flux-ratios
+point-like source`s possible in **PyAutoLens**! we'll also show how these tools allow us to compute the flux-ratios
 and time-delays of the point-source.
 """
 
@@ -26,7 +26,7 @@ import autolens.plot as aplt
 # %%
 """
 To begin, we will create an image of strong lens using a simple `EllipticalIsothermal` mass model and source with an
-_EllipticalExponential_ light profile. Although we are going to show how ``.yAutoLens__`s positional analysis tools model
+_EllipticalExponential_ light profile. Although we are going to show how **PyAutoLens**`s positional analysis tools model
 point-sources, showing the tools using an extended source will make it visibly clearer where the multiple images of
 the point source are!
 
@@ -79,7 +79,7 @@ _Tracer_`s multiple images on the figure (they should appear as black dots on th
 
 # %%
 """
-At this point, you might be wondering why don`t we use the image of the lensed source to compute our multiple images?
+At this point, you might be wondering why don't we use the image of the lensed source to compute our multiple images?
 Can`t we just find the pixels in the image whose flux is brighter than its neighboring pixels? 
 
 Although this would work, the problem is that for positional modeling we want to know the (y,x) coordinates of the 

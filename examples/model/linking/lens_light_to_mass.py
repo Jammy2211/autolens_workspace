@@ -10,13 +10,13 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
- - The first phase models the lens galaxy`s light using a bulge and disk, using `EllipticalSersic` and 
+ - The first phase models the lens `Galaxy`'s light using a bulge and disk, using `EllipticalSersic` and 
       `EllipticalExponential` profiles. The source is present in the image, but modeling it is omitted.
       
- - The second phase models the lens galaxy`s mass using an `EllipticalIsothermal` and source galaxy`s light using
+ - The second phase models the lens `Galaxy`'s mass using an `EllipticalIsothermal` and source `Galaxy`'s light using
       an `EllipticalSersic`. The lens light model is fixed to the result of phase 1.
 
-The idea behind this phase is that for many strong lenses the lens galaxy`s light is distinct from the source galaxy`s
+The idea behind this phase is that for many strong lenses the lens `Galaxy`'s light is distinct from the source `Galaxy`'s
 light. This makes it a valid approach to subtract the lens`s light in a first step and then focus-in on fitting
 the lens mass model and source`s light.
 
@@ -27,7 +27,7 @@ There are a number of benefits to using phase linking to model the lens`s light 
       dimensions N=11 and N=12. These are more efficient to sample and pose less risk of us inferred a local maxima or
       unphysical solution.
 
- - The lens galaxy`s light traces the majority of its mass. Thus, we can use the lens light model inferred in phase 
+ - The lens `Galaxy`'s light traces the majority of its mass. Thus, we can use the lens light model inferred in phase 
       1 to place priors initializing the sampling of the mass model`s centre. In pricple we could do this for other
       parameters, for example the `elliptical_comp`s of the two profiles, however light does not perfectly trace mass
       so in this example we omit such an approach.
@@ -54,11 +54,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens galaxy`s `LightProfile` is a bulge+disk `EllipticalSersic` and `EllipticalExponential`.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
+ - The lens `Galaxy`'s `LightProfile` is a bulge+disk `EllipticalSersic` and `EllipticalExponential`.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -92,10 +92,10 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic` and `EllipticalExponential` whose centres
+ - The lens `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic` and `EllipticalExponential` whose centres
       are aligned (11 parameters).
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
- - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic` (7 parameters).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
+ - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic` (7 parameters).
 
 We are fitting on the lens`s light in phase 1 and only its mass and the source in phase 2, giving us non-linear
 parameter spaces of N=13 and N=12 respectively.
@@ -145,15 +145,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_1`.
+ `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_bulge_disk__mass_sie__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
+    path_prefix=f"examples/linking/lens_light_to_mass",
     phase_name="phase_1",
-    folders=["examples", "linking", "lens_light_to_mass"],
     settings=settings,
     galaxies=dict(lens=lens),
     search=search,
@@ -212,17 +212,17 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/light_bulge_disk__mass_sie__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_bulge_disk__mass_sie__source_sersic/phase_2`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
+    path_prefix=f"examples/linking/lens_light_to_mass",
     phase_name="phase_2",
-    folders=["examples", "linking", "lens_light_to_mass"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,

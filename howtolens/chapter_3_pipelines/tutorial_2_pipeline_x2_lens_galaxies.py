@@ -2,8 +2,8 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the a strong lens with two lens galaxies using  two `EllipticalSersic` `LightProfile``., 
-two `EllipticalIsothermal` `MassProfile``s and a parametric `EllipticalSersic` source.
+In this pipeline, we fit the a strong lens with two lens galaxies using  two `EllipticalSersic` `LightProfile`'s, 
+two `EllipticalIsothermal` `MassProfile`'s and a parametric `EllipticalSersic` source.
 
 The pipeline assumes the lens galaxies are at (0.0", -1.0") and (0.0", 1.0") and is not a general pipeline
 and cannot be applied to any image of a strong lens.
@@ -32,7 +32,7 @@ Phase 2:
 
 Phase 3:
 
-    Use this lens-subtracted image to fit the source-galaxy`s light. The `MassProfile``s of the two lens galaxies
+    Use this lens-subtracted image to fit the source-`Galaxy`'s light. The `MassProfile`'s of the two lens galaxies
     can use the results of phases 1 and 2 to initialize their priors.
 
     Lens Light: EllipticalSersic + EllipticalSersic
@@ -60,13 +60,12 @@ def make_pipeline(setup, settings):
 
     pipeline_name = "pipeline__x2_galaxies"
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """
-    Phase 1: Fit the left lens galaxy`s light, where we:
+    Phase 1: Fit the left lens `Galaxy`'s light, where we:
 
-        1) Fix the centres to (0.0, -1.0), the pixel we know the left `Galaxy``s light centre peaks.
+        1) Fix the centres to (0.0, -1.0), the pixel we know the left `Galaxy`'s light centre peaks.
     """
 
     left_lens = al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)
@@ -75,7 +74,7 @@ def make_pipeline(setup, settings):
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__left_lens_light",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             left_lens=al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)
         ),
@@ -86,7 +85,7 @@ def make_pipeline(setup, settings):
     """
     Phase 2: Fit the lens galaxy on the right, where we:
 
-        1) Fix the centres to (0.0, 1.0), the pixel we know the right `Galaxy``s light centre peaks.
+        1) Fix the centres to (0.0, 1.0), the pixel we know the right `Galaxy`'s light centre peaks.
         2) Pass the left lens`s light model as an instance, to improve the fitting of the right galaxy.
     """
 
@@ -96,7 +95,7 @@ def make_pipeline(setup, settings):
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__right_lens_light",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             left_lens=phase1.result.instance.galaxies.left_lens, right_lens=right_lens
         ),
@@ -132,7 +131,7 @@ def make_pipeline(setup, settings):
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_x2_sie__source_exp",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             left_lens=left_lens,
             right_lens=right_lens,
@@ -142,7 +141,7 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 4: Fit both lens galaxy`s light and mass profiles, as well as the source-galaxy, simultaneously, where we:
+    Phase 4: Fit both lens `Galaxy`'s light and mass profiles, as well as the source-galaxy, simultaneously, where we:
     
         1) Use the results of phases 1 and 2 to initialize the lens light models.
         2) Use the results of phase 3 to initialize the lens mass and source light models.
@@ -203,7 +202,7 @@ def make_pipeline(setup, settings):
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__light_sersic_x2__mass_sie_x2__source_exp",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             left_lens=left_lens,
             right_lens=right_lens,

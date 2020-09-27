@@ -4,9 +4,9 @@ import autolens as al
 """
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is modeled as an `EllipticalSersic` and _EllipticalExponential_.
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal` and _ExternalShear_.
- - The source galaxy`s surface-brightness is modeled using an _Inversion_.
+ - The lens `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic` and _EllipticalExponential_.
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal` and _ExternalShear_.
+ - The source `Galaxy`'s surface-brightness is modeled using an _Inversion_.
 
 The pipeline is five phases:
 
@@ -42,7 +42,7 @@ Phase 3:
 
 Phase 4:
 
-    Fit the source `Inversion` using the lens light and `MassProfile``s inferred in phase 3.
+    Fit the source `Inversion` using the lens light and `MassProfile`'s inferred in phase 3.
     
     Lens Light: EllipticalSersic + EllipticalExpoonential
     Lens Mass: EllipticalIsothermal + ExternalShear
@@ -76,11 +76,10 @@ def make_pipeline(setup, settings):
         3) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """
-    Phase 1; Fit only the lens galaxy`s light, where we:
+    Phase 1; Fit only the lens `Galaxy`'s light, where we:
 
         1) Set priors on the bulge and disk`s (y,x) centres such that we assume the image is centred around 
            the lens galaxy OR,
@@ -113,8 +112,8 @@ def make_pipeline(setup, settings):
         disk.centre_1 = setup.setup_light.light_centre[1]
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light_bulge_disk",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=setup.redshift_lens, bulge=bulge, disk=disk)
         ),
@@ -123,11 +122,11 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 2: Fit the lens`s `MassProfile``s and source galaxy`s light, where we:
+    Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy bulge+disk model from phase 1.
         2) Set priors on the `EllipticalIsothermal` (y,x) centre such that we assume the image is centred around the 
-           lens galaxy`s bulge.
+           lens `Galaxy`'s bulge.
     """
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
@@ -142,8 +141,8 @@ def make_pipeline(setup, settings):
     mass.centre_1 = phase1.result.model.galaxies.lens.bulge.centre_1
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -167,8 +166,8 @@ def make_pipeline(setup, settings):
     """
 
     phase3 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_3__light_bulge_disk__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -193,8 +192,8 @@ def make_pipeline(setup, settings):
     """
 
     phase4 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_4__source_inversion_initialization",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -221,8 +220,8 @@ def make_pipeline(setup, settings):
     """
 
     phase5 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_5__light_bulge_disk__mass_sie__source_inversion",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

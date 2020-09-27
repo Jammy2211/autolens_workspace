@@ -69,17 +69,17 @@ def make_pipeline(slam, settings):
         3) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    folders = slam.folders + [pipeline_name, slam.source_inversion_tag]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_inversion_tag}"
 
     """
     Phase 1: Fit the `Pixelization` and `Regularization`, where we:
 
-        1) Fix the lens mass model to the `MassProfile``s inferred by the previous pipeline.
+        1) Fix the lens mass model to the `MassProfile`'s inferred by the previous pipeline.
     """
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__source_inversion_magnification_initialization",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -108,12 +108,12 @@ def make_pipeline(slam, settings):
     Phase 2: Fit the lens`s mass and source galaxy using the magnification `Inversion`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 1.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of the previous pipeline.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of the previous pipeline.
     """
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__mass_sie__source_inversion_magnification",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -144,8 +144,8 @@ def make_pipeline(slam, settings):
     """
 
     phase3 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_3__source_inversion_initialization",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -177,13 +177,13 @@ def make_pipeline(slam, settings):
     Phase 4: fit the lens`s mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 3.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of phase 2.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of phase 2.
     """
 
     mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
 
     """
-    SLaM: If the centre of the lens galaxy`s mass was fixed in the parametric pipeline and phases 1-3 above, remove
+    SLaM: If the centre of the lens `Galaxy`'s mass was fixed in the parametric pipeline and phases 1-3 above, remove
           the alignment and make the centre free parameters that are fitted for.
     """
 
@@ -195,8 +195,8 @@ def make_pipeline(slam, settings):
     mass.einstein_radius = phase2.result.model.galaxies.lens.mass.einstein_radius
 
     phase4 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_4__mass_sie__source_inversion",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,

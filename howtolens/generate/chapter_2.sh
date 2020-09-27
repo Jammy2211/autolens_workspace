@@ -22,7 +22,7 @@ cp -r *.ipynb ../
 rm *.ipynb
 cd ..
 git add *.ipynb
-rm ``.nit__.ipynb
+rm __init__.ipynb
 
 find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
 
@@ -59,7 +59,7 @@ find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/samples = lis/# samples
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/print(samples[0]/# print(samples[0]/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result =/# result = /g' {} +
 
-echo "Adding new ``.yAutoLens__/howtolens files to github."
+echo "Adding new **PyAutoLens**/howtolens files to github."
 cd $PYAUTOLENS_PATH
 git add $PYAUTOLENS_PATH/howtolens/dataset/chapter_2
 git add -f $PYAUTOLENS_PATH/howtolens/chapter_2_lens_modeling

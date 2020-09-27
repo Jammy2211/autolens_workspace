@@ -41,9 +41,9 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 """
 This example scripts show a simple example of prior linking, where we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
 
 As discussed below, the first phase is set up to provide as fast a model-fit as possible without accurately quantifying
 the errors on every parameter, whereas the second phase sacrifices this run-speed for accuracy. 
@@ -70,11 +70,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens galaxy`s `LightProfile` is omitted_.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
+ - The lens `Galaxy`'s `LightProfile` is omitted_.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -108,8 +108,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (6 parameters).
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (6 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -159,15 +159,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_1`.
+ `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
+    path_prefix=f"examples/linking/api",
     phase_name="phase_1",
-    folders=["examples", "linking", "api"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,
@@ -216,17 +216,17 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/mass_sie__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase_2`.
 
 Note how the `lens` and `source` passed to this phase were set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
+    path_prefix=f"examples/linking/api",
     phase_name="phase_2",
-    folders=["examples", "linking", "api"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,
@@ -244,7 +244,7 @@ in the beginner turorials or phase 1 (which are typically broad UniformPriors). 
  - The mean values are the median PDF results of every parameter in phase 1.
  - Many sigma values are the errors computed at 3.0 sigma confidence of every parameter in phase 1.
  - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
-      specified in the `width_modifier` field of the `Profile``s entry in the `json_config` files.
+      specified in the `width_modifier` field of the `Profile`'s entry in the `json_config` files.
 
 The `width_modifier` is used instead of the errors computed from phase 1 when the errors values estimated are smaller 
 than the width modifier value. This ensure that the sigma values used for priors in phase 2 do not assume extremely 
@@ -292,7 +292,7 @@ By invoking the `model` attribute, the prioris passed following 3 rules:
 
        The idea here is simple. We want a value of sigma that gives a GaussianPrior wide enough to search a broad 
        region of parameter space, so that the lens model can change if a better solution is nearby. However, we want it 
-       to be narrow enough that we don`t search too much of parameter space, as this will be slow or risk leading us 
+       to be narrow enough that we don't search too much of parameter space, as this will be slow or risk leading us 
        into an incorrect solution! A natural choice is the errors of the parameter from the previous phase.
 
        Unfortunately, this doesn`t always work. Lens modeling is prone to an effect called `over-fitting` where we 
@@ -346,13 +346,13 @@ you should not need to change these values to get lens modeling to work proficie
 
 __EXAMPLE__
 
-Lets go through an example using a real parameter. Lets say in phase 1 we fit the lens galaxy`s light with an 
+Lets go through an example using a real parameter. Lets say in phase 1 we fit the lens `Galaxy`'s light with an 
 elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0 where the error value of 2.0 
 was computed at 3.0 sigma confidence. To pass this as a prior to phase 2, we would write:
 
     lens.sersic.sersic_index = phase1.result.model.lens.sersic.sersic_index
 
-The prior on the lens galaxy`s sersic `LightProfile` in phase 2 would thus be a GaussianPrior, with mean=4.0 and 
+The prior on the lens `Galaxy`'s sersic `LightProfile` in phase 2 would thus be a GaussianPrior, with mean=4.0 and 
 sigma=2.0. If we had used a sigma value of 1.0 to compute the error, which reduced the estimate from 4.0 +- 2.0 to 
 4.0 +- 1.0, the sigma of the Gaussian prior would instead be 1.0. 
 

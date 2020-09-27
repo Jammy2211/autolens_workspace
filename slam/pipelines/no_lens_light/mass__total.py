@@ -33,16 +33,18 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    folders = slam.folders + [pipeline_name, slam.source_tag, slam.mass_tag]
+    path_prefix = (
+        f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.mass_tag}"
+    )
 
     """SLaM: Set whether shear is included in the mass model."""
 
     shear = slam.pipeline_mass.shear_from_previous_pipeline(index=0)
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source, where we:
+    Phase 1: Fit the lens`s `MassProfile`'s and source, where we:
 
-        1) Set priors on the lens galaxy `MassProfile``s using the `EllipticalIsothermal` and `ExternalShear` 
+        1) Set priors on the lens galaxy `MassProfile`'s using the `EllipticalIsothermal` and `ExternalShear` 
            of previous pipelines.
         2) Use the source galaxy model of the `source` pipeline.
         3) Fit this source as a model if it is parametric and as an instance if it is an `Inversion`.
@@ -76,8 +78,8 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric(index=0)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__mass_total__source",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=slam.redshift_lens, mass=mass, shear=shear),
             source=source,

@@ -12,7 +12,7 @@
 # If anything doesn`t make sense check those scripts out for details!
 
 """ AUTOFIT + CONFIG SETUP """
-
+from autoconf import conf
 import autofit as af
 
 # %%
@@ -45,9 +45,7 @@ for dataset_name in [
 
     # Create the path where the dataset will be loaded from, which in this case is
     # `/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic`
-    dataset_path = af.util.create_path(
-        path=workspace_path, folders=["aggregator", "dataset", dataset_name]
-    )
+    dataset_path = f"{workspace_path}/aggregator/dataset/{dataset_name}"
 
     ### Info ###
 
@@ -116,7 +114,7 @@ for dataset_name in [
 
     pipeline_source__parametric = mass_sie__source_sersic.make_pipeline(
         setup=setup,
-        folders=["aggregator", "grid_search", dataset_name],
+        path_prefix=f"aggregator/grid_search/{dataset_name}",
         positions_threshold=1.0,
     )
 
@@ -128,7 +126,7 @@ for dataset_name in [
 
     pipeline_mass__sie = lens_sie__source.make_pipeline(
         setup=setup,
-        folders=["aggregator", "grid_search", dataset_name],
+        path_prefix=f"aggregator/grid_search/{dataset_name}",
         positions_threshold=1.0,
     )
 
@@ -140,7 +138,7 @@ for dataset_name in [
 
     pipeline_subhalo__nfw = lens_mass__subhalo_nfw__source.make_pipeline(
         setup=setup,
-        folders=["aggregator", "grid_search", dataset_name],
+        path_prefix=f"aggregator/grid_search/{dataset_name}",
         positions_threshold=1.0,
         grid_size=2,
         parallel=False,

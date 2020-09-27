@@ -10,7 +10,6 @@ You can find many more example pipelines in the folder `autolens_workspace/advan
 
 # %%
 from autoconf import conf
-import autofit as af
 import os
 
 workspace_path = os.environ["WORKSPACE"]
@@ -39,9 +38,9 @@ import autolens.plot as aplt
 """
 we'll use strong lensing data, where:
 
- - The lens galaxy`s light is an `EllipticalSersic`.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is four `EllipticalSersic``..
+ - The lens `Galaxy`'s light is an `EllipticalSersic`.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
 # %%
@@ -117,7 +116,7 @@ setup_source = al.SetupSourceInversion(
 )
 
 setup = al.SetupPipeline(
-    folders=["c5_t6_hyper"],
+    path_prefix="c5_t6_hyper",
     setup_hyper=setup_hyper,
     setup_light=setup_light,
     setup_mass=setup_mass,

@@ -10,10 +10,10 @@ example script, which describes phase linking and details the API for this.
 """
 In this example, we link two phases, where:
 
- - The first phase models the lens galaxy`s mass as an `EllipticalIsothermal` and the source galaxy`s light as an
+ - The first phase models the lens `Galaxy`'s mass as an `EllipticalIsothermal` and the source `Galaxy`'s light as an
       `EllipticalSersic`.
       
- - The second phase models the lens galaxy`s mass an an `EllipticalPoerLaw` and the source galaxy`s light as an
+ - The second phase models the lens `Galaxy`'s mass an an `EllipticalPoerLaw` and the source `Galaxy`'s light as an
       `EllipticalSersic`.
 
 The `EllipticalPower` is a general form of the `EllipticalIsothermal` and it has one addition parameter relative to the
@@ -33,7 +33,7 @@ parameter space that does not have the strong degeneracy between mass, elliptici
 provide an efficient and robust fit. 
 
 Phase 2 can then fit the `EllipticalPowerLaw`, using prior passing to initialize robust models for both the lens 
-galaxy`s mass *and* the source galaxy`s light. 
+`Galaxy`'s mass *and* the source `Galaxy`'s light. 
 """
 
 # %%
@@ -57,11 +57,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens galaxy`s `LightProfile` is omitted_.
- - The lens galaxy`s `MassProfile` is an `EllipticalPowerLaw`.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s `LightProfile` is omitted_.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalPowerLaw`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 
 """
 
@@ -95,10 +95,10 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters) in phase 1.
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (7 parameters) in phase 1.
- - An `EllipticalPowerLaw` `MassProfile`.for the lens galaxy`s mass (6 parameters) in phase 2.
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (7 parameters) in phase 2.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters) in phase 1.
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (7 parameters) in phase 1.
+ - An `EllipticalPowerLaw` `MassProfile`.for the lens `Galaxy`'s mass (6 parameters) in phase 2.
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (7 parameters) in phase 2.
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12 and N=13
 for phases 1 and 2 respectively..
@@ -140,15 +140,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_1`.
+ `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
+    path_prefix=f"examples/linking/sie_to_power_law",
     phase_name="phase_1",
-    folders=["examples", "linking", "sie_to_power_law"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,
@@ -205,17 +205,17 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
- `/autolens_workspace/output/examples/linking/lens_power_law__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_sersic/phase_2`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
+    path_prefix=f"examples/linking/sie_to_power_law",
     phase_name="phase_2",
-    folders=["examples", "linking", "sie_to_power_law"],
     settings=settings,
     galaxies=dict(lens=lens, source=source),
     search=search,

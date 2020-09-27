@@ -5,8 +5,8 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens where:
 
- - The lens galaxy`s `MassProfile` is a *SphericalIsothermal*.
- - The source galaxy`s `LightProfile` is a *SphericalExponential*.
+ - The lens `Galaxy`'s `MassProfile` is a *SphericalIsothermal*.
+ - The source `Galaxy`'s `LightProfile` is a *SphericalExponential*.
 
 This dataset is used in chapter 2, tutorials 1-3.
 """
@@ -35,12 +35,10 @@ dataset_name = "light_sersic__mass_sie__source_exp"
 Create the path where the dataset will be output, which in this case is:
 `/autolens_workspace/howtolens/dataset/chapter_2/mass_sis__source_exp/`
 """
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["howtolens", "dataset", dataset_type, dataset_name]
-)
+dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
 
 """
-For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
+For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of $(y,x)$ 
 coordinates like an ordinary Grid, but when the light-profile`s image is evaluated below (using the Tracer) the 
 sub-size of the grid is iteratively increased (in steps of 2, 4, 8, 16, 24) until the input fractional accuracy of 
 99.99% is met.
@@ -72,7 +70,7 @@ simulator = al.SimulatorImaging(
 )
 
 """
-Setup the lens galaxy`s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
+Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
 
 For lens modeling, defining ellipticity in terms of the  `elliptical_comps` improves the model-fitting procedure.
 
@@ -80,7 +78,7 @@ However, for simulating a strong lens you may find it more intuitive to define t
 axis-ratio of the profile (axis_ratio = semi-major axis / semi-minor axis = b/a) and position angle phi, where phi is
 in degrees and defined counter clockwise from the positive x-axis.
 
-We can use the **__PyAutoLens__** *convert* module to determine the elliptical components from the axis-ratio and phi.
+We can use the **PyAutoLens** `convert` module to determine the elliptical components from the axis-ratio and phi.
 """
 
 lens_galaxy = al.Galaxy(

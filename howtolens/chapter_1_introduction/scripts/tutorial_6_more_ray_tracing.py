@@ -22,7 +22,7 @@ from astropy import cosmology
 
 # %%
 """
-To begin, lets setup the `Grid``s we `ll ray-trace using. Lets do something crazy, and use a higher resolution `Grid` 
+To begin, lets setup the `Grid`'s we `ll ray-trace using. Lets do something crazy, and use a higher resolution `Grid` 
 then before and set the sub `Grid` size to 4x4 per pixel!
 
 Every pixel is sub-gridded by 4x4, so the sub-grid has x16 more coordinates.
@@ -133,7 +133,7 @@ aplt.Galaxy.deflections_x(
 # %%
 """
 Now, lets make two source galaxies at redshift 1.0. Lets not use the terms `light` and `mass` to setup the light and 
-_MassProfile_`s. Instead, lets use more descriptive names of what we think each component represents ( e.g. a `bulge` 
+`MassProfile`'s. Instead, lets use more descriptive names of what we think each component represents ( e.g. a `bulge` 
 and `disk`).
 """
 
@@ -189,7 +189,7 @@ Now lets pass our 4 galaxies to the ray_tracing module, which means the followin
 
  1) Using the galaxy redshift`s, and image-plane and source-plane will be created with the appopriate galaxies.
 
-Note that we`ve also supplied the `Tracer` below with a Planck15 cosmology.
+Note that we've also supplied the `Tracer` below with a Planck15 cosmology.
 """
 
 # %%
@@ -204,7 +204,7 @@ We can next plot the tracer`s `Profile` image, which is compute as follows:
 
  1) First, using the image-plane `Grid`, the images of the lens galaxy and its satellite are computed.
 
- 2) Using the `MassProfile``s of the lens and satellite, their deflection angles are computed.
+ 2) Using the `MassProfile`'s of the lens and satellite, their deflection angles are computed.
 
  3) These deflection angles are summed, such that the deflection of light due to every `MassProfile` and both the lens 
  galaxy and its satellite is computed.
@@ -219,7 +219,7 @@ aplt.Tracer.image(tracer=tracer, grid=grid)
 
 # %%
 """
-As we did previously, we can extract the `Grid``s of each plane and inspect the source-plane grid.
+As we did previously, we can extract the `Grid`'s of each plane and inspect the source-plane grid.
 """
 
 # %%
@@ -257,7 +257,7 @@ aplt.Tracer.subplot_tracer(tracer=tracer, grid=grid, sub_plotter=sub_plotter)
 # %%
 """
 In the previous example, we saw that the `Tracer` had attributes we plotted (e.g. convergence, potential, etc.). Now 
-we`ve input a cosmology and galaxy redshifts, the `Tracer` has attributes associated with its cosmology.
+we've input a cosmology and galaxy redshifts, the `Tracer` has attributes associated with its cosmology.
 """
 
 # %%
@@ -290,7 +290,7 @@ print(
 
 # %%
 """
-And with that, we`ve completed tutorial 6. Try the following:
+And with that, we've completed tutorial 6. Try the following:
 
  1) By changing the lens and source galaxy redshifts, does the image of the `Tracer` change at all?
 

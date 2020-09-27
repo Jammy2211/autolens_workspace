@@ -16,7 +16,7 @@ The benefits of this are:
 
  - If the model-fit has extremely large chi-squared values due to the high S/N of the dataset. The non-linear
       search will take a long time exploring this `extreme` parameter space. In the early phases of a pipeline this
-      often isn`t necessary, therefore a signal-to-noise limit can reduce the time an analysis takes to converge.
+      often isn't necessary, therefore a signal-to-noise limit can reduce the time an analysis takes to converge.
 
 The downsides of this are:
 
@@ -118,7 +118,7 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__signal_to_noise_limit`.
 
@@ -131,8 +131,8 @@ meaning the full output path is:
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/settings",
     phase_name="phase__signal_to_noise_limit",
-    folders=["examples", "settings"],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

@@ -4,9 +4,9 @@ import autolens as al
 """
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
- - The source galaxy`s `LightProfile` is modeled as 2 `EllipticalSersic``s 
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The source `Galaxy`'s `LightProfile` is modeled as 2 `EllipticalSersic`'s 
 
 The pipeline is two phases:
 
@@ -43,8 +43,7 @@ def make_pipeline(setup, settings):
         1) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
@@ -54,7 +53,7 @@ def make_pipeline(setup, settings):
         shear = None
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
+    Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -64,8 +63,8 @@ def make_pipeline(setup, settings):
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=setup.redshift_lens, mass=mass, shear=shear),
             source_0=al.GalaxyModel(
@@ -77,15 +76,15 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 2: Fit the lens`s `MassProfile``s and two source galaxies, where we:
+    Phase 2: Fit the lens`s `MassProfile`'s and two source galaxies, where we:
 
-        1) Set the priors on the lens galaxy `MassProfile``s using the results of phase 1.
-        2) Set the priors on the first source galaxy`s light using the results of phase 1.
+        1) Set the priors on the lens galaxy `MassProfile`'s using the results of phase 1.
+        2) Set the priors on the first source `Galaxy`'s light using the results of phase 1.
     """
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__mass_sie__source_sersic_x2",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

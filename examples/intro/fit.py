@@ -2,7 +2,7 @@
 """
 __Example: Fitting__
 
-**PyAutoLens** uses *Tracer* objects to represent a strong lensing system. Now, we`re going use these objects to
+**PyAutoLens** uses `Tracer` objects to represent a strong lensing system. Now, we`re going use these objects to
 fit `Imaging` data of a strong lens.
 
 The autolens_workspace comes distributed with simulated images of strong lenses (an example of how these simulations
@@ -70,7 +70,7 @@ mask = al.Mask2D.circular(
 """
 The MaskedImaging object combines the dataset with the mask.
  
-Here, the Mask2D is also used to compute the *Grid* we used in the lensing.py tutorial to compute lensing calculations.
+Here, the Mask2D is also used to compute the `Grid` we used in the lensing.py tutorial to compute lensing calculations.
 Note how the Grid has also had the mask applied to it.
 """
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
@@ -85,12 +85,12 @@ aplt.Imaging.image(imaging=masked_imaging)
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and `Galaxy`
 objects.
 
 The combination of *LightProfiles* and *MassProfiles* below is the same as those used to generate the lensed data-set,
 thus it produces a tracer whose image looks exactly like the dataset. As discssed in the lensing.py tutorial, this
-tracer can be extended to include additional `LightProfile``.`s, `MassProfile``s and *Galaxy*`s, for example if you 
+tracer can be extended to include additional `LightProfile`'s`s, `MassProfile`'s and `Galaxy``s, for example if you 
 wanted to fit a tracer where the lens light is included.
 """
 lens_galaxy = al.Galaxy(
@@ -115,11 +115,11 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # %%
 """
-Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and *Galaxy*
+Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and `Galaxy`
 objects. We can then use the *FitImaging* object to fit this tracer to the dataset. 
 
 The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer`s 
-image with the `Imaging` PSF. We can see this by comparing the tracer`s image (which isn`t PSF convolved) and the 
+image with the `Imaging` PSF. We can see this by comparing the tracer`s image (which isn't PSF convolved) and the 
 fit`s model image (which is).
 """
 aplt.Tracer.image(tracer=tracer, grid=masked_imaging.grid)

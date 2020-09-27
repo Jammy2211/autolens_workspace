@@ -12,9 +12,9 @@ problem. In this example we fit strong lens data using a variety of non-linear s
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
 
 """
 
@@ -39,11 +39,11 @@ conf.instance = conf.Config(
 
 # %%
 """
-As per usual, load the `Imaging` data, create the `Mask` and plot them. In this strong lensing dataset:
+As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens galaxy`s `LightProfile` is omitted_.
- - The lens galaxy`s `MassProfile` is an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is an `EllipticalExponential`.
+ - The lens `Galaxy`'s `LightProfile` is omitted_.
+ - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
 
@@ -77,8 +77,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (6 parameters).
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (6 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -115,7 +115,7 @@ Below we use the following non-linear searches:
 """
 __Nested Sampling__
 
-To begin, lets again use the nested sampling method `Dynesty` that we have used in all examples up to now. We`ve seen 
+To begin, lets again use the nested sampling method `Dynesty` that we have used in all examples up to now. We've seen 
 that the method is very effective, always locating a solution that fits the lens data well.
 """
 
@@ -129,7 +129,7 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/customize/mass_sie__source_sersic/phase__nested_sampling/
     settings__grid_sub_2/dynesty__`.
@@ -137,8 +137,8 @@ The phase_name and folders inputs below specify the path of the results in the o
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/customimze/{dataset_name}",
     phase_name="phase__non_linear_searches",
-    folders=["examples", "customize", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,
@@ -175,15 +175,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/customize`.
 """
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/customimze/{dataset_name}",
     phase_name="phase__non_linear_searches",
-    folders=["examples", "customize", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,
@@ -206,15 +206,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/customize`.
 """
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/customimze/{dataset_name}",
     phase_name="phase__non_linear_searches",
-    folders=["examples", "customize", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

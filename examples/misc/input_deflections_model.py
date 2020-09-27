@@ -78,8 +78,8 @@ aplt.Grid(grid=grid)
 ### --------------------------------------------------------------------------------------------------------------- ###
 
 """
-The `Mask` our model-fit using the `InputDeflections` will use. This is set up the same way as the previous script, but
-not this `Mask` now defines the image-plane region we will fit the data (and therefore where our residuals, chi-squared,
+The `Mask2D` our model-fit using the `InputDeflections` will use. This is set up the same way as the previous script, but
+not this `Mask2D` now defines the image-plane region we will fit the data (and therefore where our residuals, chi-squared,
 likelihood, etc is calculated.
 """
 
@@ -128,7 +128,7 @@ Next, we specify the `SettingsPhaseImaging`, which describe how the model is fit
 function. If you are not familiar with this checkout the example model scripts in `autolens_workspace/examples/model`. 
 Below, we specify:
 
-Different *SettingsPhase* are used in different example model scripts and a full description of all *SettingsPhase* 
+Different `SettingsPhase` are used in different example model scripts and a full description of all `SettingsPhase` 
 can be found in the example script `autolens/workspace/examples/model/customize/settings.py` and the following 
 link -> <link>
 
@@ -146,7 +146,7 @@ settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imagi
 """
 __Search__
 
-The source is fitted to the `Imaging` data via the input deflection angles using a *NonLinearSearch*, which we 
+The source is fitted to the `Imaging` data via the input deflection angles using a `NonLinearSearch`, which we 
 specify below as the nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/). Checkout 
 other examples on the workspace if you are unsure what this does!
 
@@ -165,15 +165,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/beginner/light_sersic__mass_sie__source_sersic/phase__light_sersic__mass_sie__source_sersic`.
 """
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"misc/{dataset_name}",
     phase_name="phase__input_deflections",
-    folders=["misc", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

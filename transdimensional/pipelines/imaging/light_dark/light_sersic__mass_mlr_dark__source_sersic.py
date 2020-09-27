@@ -4,11 +4,11 @@ import autolens as al
 """
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
- - The lens galaxy`s stellar `MassProfile` is fitted with the `EllipticalSersic` of the 
+ - The lens `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens `Galaxy`'s stellar `MassProfile` is fitted with the `EllipticalSersic` of the 
       `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
- - The lens galaxy`s dark matter `MassProfile` is modeled as a _SphericalNFW_.
- - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.  
+ - The lens `Galaxy`'s dark matter `MassProfile` is modeled as a _SphericalNFW_.
+ - The source `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.  
 
 The pipeline is three phases:
 
@@ -58,11 +58,10 @@ def make_pipeline(setup, settings):
       2) The centres of the lens galaxy bulge and dark matter are aligned.
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """
-    Phase 1: Fit only the lens galaxy`s light, where we:
+    Phase 1: Fit only the lens `Galaxy`'s light, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -73,17 +72,17 @@ def make_pipeline(setup, settings):
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__light_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(lens=al.GalaxyModel(redshift=setup.redshift_lens, sersic=sersic)),
         settings=settings,
         search=af.DynestyStatic(n_live_points=50),
     )
 
     """
-    Phase 2: Fit the lens`s `LightMassProfile` and `MassProfile` and source galaxy`s light, where we:
+    Phase 2: Fit the lens`s `LightMassProfile` and `MassProfile` and source `Galaxy`'s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-        2) Set priors on the centre of the lens galaxy`s dark matter `MassProfile` by linking them to those inferred 
+        2) Set priors on the centre of the lens `Galaxy`'s dark matter `MassProfile` by linking them to those inferred 
            for the `LightProfile` in phase 1.
         3) Use a `SphericalNFWMCRLudlow` model for the dark matter which sets its scale radius via a mass-concentration
            relation and the lens and source redshifts.
@@ -123,7 +122,7 @@ def make_pipeline(setup, settings):
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__mass_mlr_dark__source_sersic__fixed_lens_light",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens, sersic=sersic, dark=dark, shear=shear
@@ -155,7 +154,7 @@ def make_pipeline(setup, settings):
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__light_sersic__mass_mlr_dark__source_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

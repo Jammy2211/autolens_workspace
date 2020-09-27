@@ -8,11 +8,11 @@ modeling pipeline.
 Using a pipeline composed of five phases this runner fits `Imaging` of a strong lens system, where in the final phase
 of the pipeline:
 
- - The lens galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
- - The lens galaxy`s stellar `MassProfile` is fitted with the `EllipticalSersic` of the
+ - The lens `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens `Galaxy`'s stellar `MassProfile` is fitted with the `EllipticalSersic` of the
       `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
- - The lens galaxy`s dark matter `MassProfile` is modeled as a _SphericalNFW_.
- - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens `Galaxy`'s dark matter `MassProfile` is modeled as a _SphericalNFW_.
+ - The source `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.
 
 This uses the pipeline (Check it out full description of the pipeline):
 
@@ -142,7 +142,7 @@ is True, the pipeline`s output paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `folders` below specify the path the pipeline results are written to, which is:
+The `prefix_path` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/pipelines/dataset_type/dataset_name` 
  `autolens_workspace/output/pipelines/imaging/light_sersic__mass_mlr_dark__source_inversion/`
@@ -153,7 +153,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 
 # %%
 setup = al.SetupPipeline(
-    folders=["transdimensional", f"{dataset_type}_{dataset_label}", dataset_name],
+    path_prefix=f"transdimensional/{dataset_type}_{dataset_label}/{dataset_name}",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_light=setup_light,
@@ -166,7 +166,7 @@ setup = al.SetupPipeline(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its `make_pipeline` function, inputting the 
-*Setup* and *SettingsPhase* above.
+*Setup* and `SettingsPhase` above.
 """
 
 # %%

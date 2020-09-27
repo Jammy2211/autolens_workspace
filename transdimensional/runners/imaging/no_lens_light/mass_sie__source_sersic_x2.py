@@ -8,9 +8,9 @@ modeling pipeline.
 Using a pipeline composed of two phases this runner fits `Imaging` of a strong lens system, where in the final phase
 of the pipeline:
 
- - The lens galaxy`s light is omitted from the data and model.
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
- - The source galaxy`s two `LightProfile``s are modeled as `EllipticalSersic``..
+ - The lens `Galaxy`'s light is omitted from the data and model.
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The source `Galaxy`'s two `LightProfile`'s are modeled as `EllipticalSersic``..
 
 This uses the pipeline (Check it out full description of the pipeline):
 """
@@ -119,7 +119,7 @@ is True, the pipeline`s output paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `folders` below specify the path the pipeline results are written to, which is:
+The `prefix_path` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/pipelines/dataset_type/dataset_name` 
  `autolens_workspace/output/pipelines/imaging/mass_sie__source_sersic_x2/`
@@ -130,7 +130,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 
 # %%
 setup = al.SetupPipeline(
-    folders=["transdimensional", f"{dataset_type}_{dataset_label}", dataset_name],
+    path_prefix=f"transdimensional/{dataset_type}_{dataset_label}/{dataset_name}",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,
@@ -142,7 +142,7 @@ setup = al.SetupPipeline(
 __Pipeline Creation__
 
 To create a pipeline we import it from the pipelines folder and run its `make_pipeline` function, inputting the 
-*Setup* and *SettingsPhase* above.
+*Setup* and `SettingsPhase` above.
 """
 
 # %%

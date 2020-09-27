@@ -66,10 +66,10 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    folders = slam.folders + [pipeline_name, slam.source_parametric_tag]
+    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_parametric_tag}"
 
     """
-    Phase 1: Fit only the lens galaxy`s light, where we:
+    Phase 1: Fit only the lens `Galaxy`'s light, where we:
 
         1) Align the bulge and disk (y,x) centre.
     """
@@ -91,8 +91,8 @@ def make_pipeline(slam, settings):
     lens = al.GalaxyModel(redshift=slam.redshift_lens, bulge=bulge, disk=disk)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light_bulge_disk",
-        folders=folders,
         galaxies=dict(lens=lens),
         settings=settings,
         search=af.DynestyStatic(n_live_points=75),
@@ -101,10 +101,10 @@ def make_pipeline(slam, settings):
     phase1 = phase1.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)
 
     """
-    Phase 2: Fit the lens`s `MassProfile``s and source galaxy`s `LightProfile`, where we:
+    Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s `LightProfile`, where we:
 
         1) Fix the foreground lens `LightProfile` to the result of phase 1.
-        2) Set priors on the centre of the lens galaxy`s `MassProfile` by linking them to those inferred for
+        2) Set priors on the centre of the lens `Galaxy`'s `MassProfile` by linking them to those inferred for
            the bulge of the `LightProfile` in phase 1.
     """
 
@@ -126,8 +126,8 @@ def make_pipeline(slam, settings):
     """SLaM: The shear model is chosen below based on the input of `SetupSource`."""
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__mass_sie__source_seric",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -152,11 +152,11 @@ def make_pipeline(slam, settings):
     phase2 = phase2.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)
 
     """
-    Phase 3: Refit the lens galaxy`s bulge and disk `LightProfile``s using fixed mass and source instances from phase 2, 
+    Phase 3: Refit the lens `Galaxy`'s bulge and disk `LightProfile`'s using fixed mass and source instances from phase 2, 
     where we:
 
         1) Do not use priors from phase 1 for the lens`s `LightProfile`, assuming the source light could bias them.
-        2) Use the same bulge and disk `PriorModel``s created or phase 1, which use the same `Setup`.
+        2) Use the same bulge and disk `PriorModel`'s created or phase 1, which use the same `Setup`.
     """
 
     lens = al.GalaxyModel(
@@ -169,8 +169,8 @@ def make_pipeline(slam, settings):
     )
 
     phase3 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_3__light_bulge_disk__mass_source_fixed",
-        folders=folders,
         galaxies=dict(
             lens=lens,
             source=al.GalaxyModel(
@@ -194,8 +194,8 @@ def make_pipeline(slam, settings):
     """
 
     phase4 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_4__light_bulge_disk__mass_sie__source_sersic",
-        folders=folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,

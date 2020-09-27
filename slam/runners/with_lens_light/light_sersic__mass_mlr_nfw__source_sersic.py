@@ -9,11 +9,11 @@ __THIS RUNNER__
 Using a source pipeline, a light pipeline and a mass pipeline this runner fits `Imaging` of a strong lens system
 where in the final phase of the pipeline:
 
- - The lens galaxy`s `LightProfile``s are modeled as an `EllipticalSersic` + `EllipticalExponential`, representing
+ - The lens `Galaxy`'s `LightProfile`'s are modeled as an `EllipticalSersic` + `EllipticalExponential`, representing
    a bulge + disk model.
- - The lens galaxy`s stellar `MassProfile` is fitted using the `EllipticalSersic` + EllipticalExponential of the
+ - The lens `Galaxy`'s stellar `MassProfile` is fitted using the `EllipticalSersic` + EllipticalExponential of the
     `LightProfile`, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
- - The source galaxy`s `LightProfile` is modeled using an `EllipticalSersic`.
+ - The source `Galaxy`'s `LightProfile` is modeled using an `EllipticalSersic`.
 
 This runner uses the SLaM pipelines:
 
@@ -85,7 +85,7 @@ The settings chosen here are applied to all phases in the pipeline.
 
 # %%
 """
-Due to the slow deflection angle calculation of the `EllipticalSersic` and `EllipticalExponential` `MassProfile``.
+Due to the slow deflection angle calculation of the `EllipticalSersic` and `EllipticalExponential` `MassProfile`'s
 we use `GridInterpolate` objects to speed up the analysis. This is specified separately for the `Grid` used to fit
 the source `LightProfile` and perform the `Inversion`.
 """
@@ -152,8 +152,8 @@ The parametric source pipeline aims to initialize a robust model for the source 
 _SLaMPipelineSourceParametric_ determines the source model used by the parametric source pipeline. A full description of all 
 options can be found ? and ?.
 
-By default, this assumes an `EllipticalIsothermal` profile for the lens galaxy`s mass and an `EllipticalSersic` + 
-_EllipticalExponential_ model for the lens galaxy`s light. Our experience with lens modeling has shown they are the 
+By default, this assumes an `EllipticalIsothermal` profile for the lens `Galaxy`'s mass and an `EllipticalSersic` + 
+_EllipticalExponential_ model for the lens `Galaxy`'s light. Our experience with lens modeling has shown they are the 
 simplest models that provide a good fit to the majority of strong lenses.
 
 For this runner the `SLaMPipelineSourceParametric` customizes:
@@ -176,18 +176,18 @@ pipeline_source_parametric = al.SLaMPipelineSourceParametric(
 """
 __SLaMPipelineLight__
 
-The `SLaMPipelineLight` pipeline fits the model for the lens galaxy`s bulge + disk light model. 
+The `SLaMPipelineLight` pipeline fits the model for the lens `Galaxy`'s bulge + disk light model. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens galaxy`s light is input into `SLaMPipelineLight` below and this runner uses an 
+The model used to represent the lens `Galaxy`'s light is input into `SLaMPipelineLight` below and this runner uses an 
  `EllipticalSersic`.
  
 For this runner the `SLaMPipelineLight` customizes:
 
  - That the `LightProfile` centre is fixed to (0.0, 0.0).
 
-The `SLaMPipelineLight` uses the mass model fitted in the previous `SLaMPipelineSource``..
+The `SLaMPipelineLight` uses the mass model fitted in the previous `SLaMPipelineSource`'s.
 
 The `SLaMPipelineLight` and imported light pipelines determine the lens light model used in `Mass` pipelines.
 """
@@ -201,11 +201,11 @@ pipeline_light = al.SLaMPipelineLight(setup_light=setup_light)
 """
 __SLaMPipelineMass__
 
-The `SLaMPipelineMass` pipeline fits the model for the lens galaxy`s decomposed stellar and dark matter mass distribution. 
+The `SLaMPipelineMass` pipeline fits the model for the lens `Galaxy`'s decomposed stellar and dark matter mass distribution. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens galaxy`s mass is an `EllipticalSersic` and `EllipticalExponential` 
+The model used to represent the lens `Galaxy`'s mass is an `EllipticalSersic` and `EllipticalExponential` 
 _LightMassProfile_ representing the bulge and disk fitted in the previous pipeline, alongside a `SphericalNFW` for the
 dark matter halo.
 
@@ -229,7 +229,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    folders=["slam", f"{dataset_type}_{dataset_label}", dataset_name],
+    prefix_path=f"{slam}/{dataset_type}_{dataset_label}/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_light=pipeline_light,

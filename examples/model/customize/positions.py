@@ -21,9 +21,9 @@ This provides two benefits:
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
 
 """
 
@@ -108,8 +108,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (7 parameters).
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
@@ -149,7 +149,7 @@ settings = al.SettingsPhaseImaging(
 """
 __Search__
 
-The lens model is fitted to the data using a *NonLinearSearch*, which we specify below. In this example, we use the
+The lens model is fitted to the data using a `NonLinearSearch`, which we specify below. In this example, we use the
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
  - 50 live points.
@@ -169,15 +169,15 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__positions`.
 """
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/customimze/{dataset_name}",
     phase_name="phase__positions",
-    folders=["examples", "customize", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,
@@ -199,7 +199,7 @@ result = phase.run(dataset=imaging, mask=mask)
 """
 __Wrap Up__
 
-In this example, we used positional information about the lensed source galaxy`s multiple images to speed up our
+In this example, we used positional information about the lensed source `Galaxy`'s multiple images to speed up our
 model-fit and make it more robust. 
 
 PyAutoLens supports the following more advanced use of positional information:

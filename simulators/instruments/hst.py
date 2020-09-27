@@ -32,9 +32,7 @@ dataset_instrument = "hst"
 Create the path where the dataset will be output, which in this case is:
 `/autolens_workspace/dataset/imaging/instruments/hst/mass_sie__source_sersic`
 """
-dataset_path = af.util.create_path(
-    path=workspace_path, folders=["dataset", dataset_type, dataset_instrument]
-)
+dataset_path = f"dataset/{dataset_type}/{dataset_instrument}"
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -65,7 +63,7 @@ simulator = al.SimulatorImaging(
     add_noise=True,
 )
 
-"""Setup the lens galaxy`s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
+"""Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(

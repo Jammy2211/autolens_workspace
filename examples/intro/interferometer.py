@@ -63,7 +63,7 @@ real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, rad
 
 # %%
 """
-To perform uv-plane modeling, **PyAutoLens** generates an image of the strong lens system in real-space via a *Tracer*. 
+To perform uv-plane modeling, **PyAutoLens** generates an image of the strong lens system in real-space via a `Tracer`. 
 
 Lets quickly set up the `Tracer` we'll use in this example.
 """

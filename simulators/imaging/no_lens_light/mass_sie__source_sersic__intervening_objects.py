@@ -4,8 +4,8 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens where:
 
- - The lens galaxy`s `MassProfile` is an EllipticalBrokenPowerLaw.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s `MassProfile` is an EllipticalBrokenPowerLaw.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
  - There are a number of intervening objects whose light nearly obscures that of the strong lens.
 
 This dataset is used in the preprocess script:
@@ -75,7 +75,7 @@ simulator = al.SimulatorImaging(
     add_noise=True,
 )
 
-"""Setup the lens galaxy`s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
+"""Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
 
 The lens galaxy includes some intervening objects, which must be masked / have their noise-map increased in
 preprocessing to ensure they do not impact the fit.
@@ -86,7 +86,7 @@ However, for simulating a strong lens you may find it more intuitive to define t
 axis-ratio of the profile (axis_ratio = semi-major axis / semi-minor axis = b/a) and position angle phi, where phi is
 in degrees and defined counter clockwise from the positive x-axis.
 
-We can use the **PyAutoLens** *convert* module to determine the elliptical components from the axis-ratio and phi.
+We can use the **PyAutoLens** `convert` module to determine the elliptical components from the axis-ratio and phi.
 """
 
 lens_galaxy = al.Galaxy(

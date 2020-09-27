@@ -5,7 +5,7 @@ __WELCOME__
 Welcome to the pipeline runner, which loads a strong lens dataset and analyses it using a lens modeling pipeline.
 
 This script uses an `intermediate` pipeline. I`ll be assuming that you are familiar with `beginner` pipelines, so if
-anything isn`t clear check back to the beginner runners and pipelines!
+anything isn't clear check back to the beginner runners and pipelines!
 
 Intermediate runners and pipelines introduce PyAutoLens`s `hyper-mode`. Hyper-mode passes the best-fit model-image
 of previous phases in a pipeline to later phases, and then uses this model image (called the `hyper image`) to:
@@ -92,7 +92,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 """
 __Settings__
 
-*SettingsPhase* behave as they did in normal pipelines.
+`SettingsPhase` behave as they did in normal pipelines.
 """
 
 # %%
@@ -117,13 +117,13 @@ in hyper-mode to adapt the `Pixelization` and regularizatioon to the morphology 
 
 # %%
 setup = al.SetupPipeline(
+    path_prefix=f"hyper/{dataset_type}/{dataset_label}/{dataset_name}",
     hyper_galaxies_lens=True,
     hyper_galaxies_source=True,
     hyper_background_noise=False,
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
     pixelization=al.pix.VoronoiBrightnessImage,
     regularization=al.reg.AdaptiveBrightness,
-    folders=["hyper", dataset_type, dataset_label, dataset_name],
 )
 
 # %%

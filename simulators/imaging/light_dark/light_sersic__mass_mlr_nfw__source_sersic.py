@@ -4,9 +4,9 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens using decomposed light and dark matter profiles where:
 
- - The lens galaxy`s stellar `MassProfile` is an `EllipticalSersic`.
- - The lens galaxy`s dark `MassProfile` is a `SphericalNFW`.
- - The source galaxy`s `LightProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s stellar `MassProfile` is an `EllipticalSersic`.
+ - The lens `Galaxy`'s dark `MassProfile` is a `SphericalNFW`.
+ - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
 # %%
@@ -69,7 +69,7 @@ simulator = al.SimulatorImaging(
 )
 
 """
-Setup the lens galaxy`s light (elliptical Sersic), mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
+Setup the lens `Galaxy`'s light (elliptical Sersic), mass (SIE+Shear) and source galaxy light (elliptical Sersic) for
 this simulated lens.
 """
 lens_galaxy = al.Galaxy(

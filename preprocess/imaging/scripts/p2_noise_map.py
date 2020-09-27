@@ -35,9 +35,7 @@ import os
 workspace_path = os.environ["WORKSPACE"]
 print("Workspace Path: ", workspace_path)
 
-dataset_path = af.util.create_path(
-    path=f"{workspace_path}/preprocess/imaging/", folders=["data_raw"]
-)
+dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
 
 # %%
 """
@@ -58,10 +56,10 @@ formatting standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging"])
+imaging_path = f"{dataset_path}/imaging"
 
 noise_map = al.Array.from_fits(
-    file_path=imaging_path + "noise_map.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=noise_map)
@@ -97,7 +95,7 @@ you might of used.
 # noise_map_processed = al.preprocess.array_with_new_shape(array=noise_map_large_stamp, new_shape=(130, 130))
 
 # noise_map_processed = al.Array.from_fits(
-#     file_path=imaging_path + "noise_map.fits", pixel_scales=0.1
+#     file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
 # )
 
 # aplt.Array(array=noise_map_processed)
@@ -111,10 +109,10 @@ the values of the noise-map go to very large values in excess of 10000.
 """
 
 # %%
-imaging_path = af.util.create_path(path=dataset_path, folders=["imaging_noise_map_wht"])
+imaging_path = f"{dataset_path}/imaging_noise_map_wht"
 
 weight_map = al.Array.from_fits(
-    file_path=imaging_path + "noise_map.fits", pixel_scales=0.1
+    file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
 )
 
 aplt.Array(array=weight_map)

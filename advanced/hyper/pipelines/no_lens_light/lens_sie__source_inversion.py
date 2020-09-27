@@ -20,7 +20,7 @@ An example of these objects being used to make a phase is as follows:
 
 phase = al.PhaseImaging(
     phase_name="phase___hyper_example",
-    folders=folders,
+    path_prefix=path_prefix,
     galaxies=dict(
         lens=al.GalaxyModel(
             redshift=setup.redshift_lens,
@@ -38,7 +38,7 @@ phase = al.PhaseImaging(
 Above, we pass inferred hyper model components to the phase (the `hyper_combined` attribute is described next).
 
 What does the `optional` attribute mean? It means that the component is only passed if it is used. For example, if
-hyper_image_sky is turned off (by settting hyper_image_sky to False in the PipelineGeneralSettings), this model
+hyper_image_sky is turned off (by settting hyper_image_sky to ``False`` in the PipelineGeneralSettings), this model
 component will not be passed. That is, it is optional.
 
 __HYPER PHASES __
@@ -46,7 +46,7 @@ __HYPER PHASES __
 The hyper-galaxies, hyper-image_sky and hyper-background-noise all have non-linear parameters we need to fit for
 during our modeling.
 
-How do we fit for the hyper-parameters using our non-linear search (e.g. MultiNest)? Typically, we don`t fit for them
+How do we fit for the hyper-parameters using our non-linear search (e.g. MultiNest)? Typically, we don't fit for them
 simultaneously with the lens and source models, as this creates an unnecessarily large parameter space which we`d
 fail to fit accurately and efficiently.
 
@@ -155,8 +155,7 @@ def make_pipeline(setup, settings):
     3) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 4 & 5).
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in `SetupMass`. """
 
@@ -166,12 +165,12 @@ def make_pipeline(setup, settings):
         shear = None
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source galaxy.
+    Phase 1: Fit the lens`s `MassProfile`'s and source galaxy.
     """
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__mass_sie__source_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -206,7 +205,7 @@ def make_pipeline(setup, settings):
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__source_inversion_magnification_initialization",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -233,12 +232,12 @@ def make_pipeline(setup, settings):
     Phase 3: Fit the lens`s mass and source galaxy using the magnification `Inversion`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 2.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of the previous pipeline.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of the previous pipeline.
     """
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__lens_sie__source_inversion_magnification",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -268,7 +267,7 @@ def make_pipeline(setup, settings):
 
     phase4 = al.PhaseImaging(
         phase_name="phase_4__source_inversion_initialization",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -294,12 +293,12 @@ def make_pipeline(setup, settings):
     Phase 5: Fit the lens`s mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 4.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of phase 3.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of phase 3.
     """
 
     phase5 = al.PhaseImaging(
         phase_name="phase_5__lens_sie__source_inversion",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

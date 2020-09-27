@@ -41,7 +41,7 @@ print("{:.4e}".format(einstein_mass))
 galaxy = al.Galaxy(redshift=0.5, mass=sie)
 
 """
-There is currently a bug which means these methods do not use the galaxy`s redsshift (doh) and that it needs to be
+There is currently a bug which means these methods do not use the `Galaxy`'s redsshift (doh) and that it needs to be
 input manually again.
 """
 
@@ -71,4 +71,4 @@ Infact, these seem pretty buggy in general... lets ignore them for now.
 # print()
 # print(tracer.einstein_radius_in_units(unit_length="arcsec", redshift_object=0.5))
 # print(tracer.einstein_radius_in_units(unit_length="kpc", redshift_object=0.5))
-# print("{:.4e}".format(tracer.einstein_mass_in_units(unit_mass="SolMass", redshift_object=0.5, setup.redshift_source=1.0)))
+# print("{:.4e}".format(tracer.einstein_mass_in_units(unit_mass="SolMass", redshift_object=0.5, redshift_source=1.0)))

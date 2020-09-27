@@ -46,8 +46,8 @@ def make_pipeline(setup, settings):
     pipeline_name = "pipeline__light_and_source"
 
     """
-    A pipelines takes the `folders` as input, which together with the pipeline name specify the path structure 
-    of the output. In the pipeline runner we pass the folders ["howtolens", c3_t1_lens_and_source], making the
+    A pipelines takes the `path_prefix` as input, which together with the `pipeline_name` specifies the path structure 
+    of the output. In the pipeline runner we pass the `path_prefix` f"howtolens/c3_t1_lens_and_source", making the
     output of this pipeline `autolens_workspace/output/howtolens/c3_t1_lens_and_source/pipeline__light_and_source`.
 
     The output path is also tagged according to the `SetupPipeline`, in an analagous fashion to how the 
@@ -55,13 +55,12 @@ def make_pipeline(setup, settings):
     in the mass model, and the pipeline is tagged accordingly.
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """
-    Phase 1: Fit only the lens galaxy`s light, where we:
+    Phase 1: Fit only the lens `Galaxy`'s light, where we:
 
-        1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
+        1) Set priors on the lens galaxy $(y,x)$ centre such that we assume the image is centred around the lens galaxy.
 
     We create the phase using the same notation as in chapter 2. Note how we are using the `fast` `Dynesty` settings
     covered in chapter 2.
@@ -69,24 +68,24 @@ def make_pipeline(setup, settings):
 
     phase1 = al.PhaseImaging(
         phase_name="phase_1__light_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(lens=al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)),
         settings=settings,
         search=af.DynestyStatic(n_live_points=30, evidence_tolerance=5.0),
     )
 
     """
-    Phase 2: Fit the lens`s `MassProfile``s and source galaxy`s light, where we:
+    Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-        2) Set priors on the centre of the lens galaxy`s `MassProfile` by linking them to those inferred for 
+        2) Set priors on the centre of the lens `Galaxy`'s `MassProfile` by linking them to those inferred for 
            the `LightProfile` in phase 1.
            
-    In phase 2, we fit the source-galaxy`s light. Thus, we want to fix the lens light model to the model inferred
+    In phase 2, we fit the source-`Galaxy`'s light. Thus, we want to fix the lens light model to the model inferred
     in phase 1, ensuring the image we fit is lens subtracted. We do this below by passing the lens light as an
  `instance` object, a trick we use in nearly all pipelines!
 
-    By passing an `instance`, we are telling ``.yAutoLens__ that we want it to pass the maximum log likelihood result of
+    By passing an `instance`, we are telling **PyAutoLens** that we want it to pass the maximum log likelihood result of
     that phase and use those parameters as fixed values in the model. The model parameters passed as an `instance` are
     not free parameters fitted for by the non-linear search, thus this reduces the dimensionality of the non-linear 
     search making model-fitting faster and more reliable. 
@@ -100,7 +99,7 @@ def make_pipeline(setup, settings):
 
     phase2 = al.PhaseImaging(
         phase_name="phase_2__mass_sie__source_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
@@ -124,7 +123,7 @@ def make_pipeline(setup, settings):
 
     phase3 = al.PhaseImaging(
         phase_name="phase_3__light_sersic__mass_sie__source_sersic",
-        folders=setup.folders,
+        path_prefix=path_prefix,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,

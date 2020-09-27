@@ -32,7 +32,7 @@ agg = af.Aggregator(directory=str(agg_results_path))
 
 # %%
 """
-Next, lets create a list of instances of the maximum log likelihood models of each fit. Although we don`t need to use
+Next, lets create a list of instances of the maximum log likelihood models of each fit. Although we don't need to use
 the aggregator`s filter tool, we'll use it below (and in all tutorials here after) so you are used to seeing it, as
 for general PyAutoLens use it will be important to filter your results!
 """
@@ -62,7 +62,7 @@ print("Total Tracers = ", len(ml_tracers))
 
 # %%
 """
-Now lets plot their convergences, using a grid of 100 x 100 pixels (noting that this isn`t` necessarily the grid used
+Now lets plot their convergences, using a grid of 100 x 100 pixels (noting that this isn't` necessarily the grid used
 to fit the data in the phase itself).
 """
 
@@ -142,7 +142,7 @@ print("Maximum Log Likelihood Lens Einstein Masses:")
 for instance in ml_instances:
     einstein_mass = instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=instance.galaxies.lens.redshift,
-        setup.redshift_source=instance.galaxies.source.redshift,
+        redshift_source=instance.galaxies.source.redshift,
     )
     print(einstein_mass)
 print()
@@ -159,7 +159,7 @@ def print_max_log_likelihood_mass(agg_obj):
 
     einstein_mass = output.instance.galaxies.lens.einstein_mass_in_units(
         redshift_object=output.instance.galaxies.lens.redshift,
-        setup.redshift_source=output.instance.galaxies.source.redshift,
+        redshift_source=output.instance.galaxies.source.redshift,
     )
     print(einstein_mass)
 
@@ -172,7 +172,7 @@ agg_filter.map(func=print_max_log_likelihood_mass)
 Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each 
 _EllipticalIsothermal_ `MassProfile`.
 
-These plots don`t use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
+These plots don't use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
 """
 
 # %%

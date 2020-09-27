@@ -4,9 +4,9 @@ import autolens as al
 """
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalIsothermal_.
- - The source galaxy`s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalIsothermal_.
+ - The source `Galaxy`'s `LightProfile` is modeled as an _EllipticalSersic_.
 
 The pipeline is three phases:
 
@@ -54,8 +54,7 @@ def make_pipeline(setup, settings):
     1) The lens galaxy mass model includes an  _ExternalShear_.
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
@@ -65,7 +64,7 @@ def make_pipeline(setup, settings):
         shear = None
 
     """
-    Phase 1: Fit only the lens galaxy`s light, where we:
+    Phase 1: Fit only the lens `Galaxy`'s light, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -75,18 +74,18 @@ def make_pipeline(setup, settings):
     light.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__light_sersic",
-        folders=setup.folders,
         galaxies=dict(lens=al.GalaxyModel(redshift=setup.redshift_lens, sersic=light)),
         settings=settings,
         search=af.DynestyStatic(n_live_points=50),
     )
 
     """
-    Phase 2: Fit the lens`s `MassProfile``s and source galaxy`s light, where we:
+    Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s light, where we:
 
         1) Fix the foreground lens light subtraction to the lens galaxy light model from phase 1.
-        2) Set priors on the centre of the lens galaxy`s `MassProfile` by linking them to those inferred for 
+        2) Set priors on the centre of the lens `Galaxy`'s `MassProfile` by linking them to those inferred for 
            the `LightProfile` in phase 1.
     """
 
@@ -95,8 +94,8 @@ def make_pipeline(setup, settings):
     mass.centre_1 = phase1.result.model.galaxies.lens.light.centre_1
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -119,8 +118,8 @@ def make_pipeline(setup, settings):
     """
 
     phase3 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_3__light_sersic__mass_sie__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

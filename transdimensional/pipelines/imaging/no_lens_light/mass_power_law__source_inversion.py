@@ -4,9 +4,9 @@ import autolens as al
 """
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an _EllipticalPowerLaw_.
- - The source galaxy`s surface-brightness is modeled using an _Inversion_.
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an _EllipticalPowerLaw_.
+ - The source `Galaxy`'s surface-brightness is modeled using an _Inversion_.
 
 The first 3 phases are identical to the pipeline `lens_sie__source_inversion.py`.
 
@@ -64,8 +64,7 @@ def make_pipeline(setup, settings):
         2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    setup.folders.append(pipeline_name)
-    setup.folders.append(setup.tag)
+    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
 
     """Setup: Include an `ExternalShear` in the mass model if turned on in _SetupMass_. """
 
@@ -75,7 +74,7 @@ def make_pipeline(setup, settings):
         shear = None
 
     """
-    Phase 1: Fit the lens`s `MassProfile``s and source `LightProfile`, where we:
+    Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
 
         1) Set priors on the lens galaxy (y,x) centre such that we assume the image is centred around the lens galaxy.
     """
@@ -86,8 +85,8 @@ def make_pipeline(setup, settings):
     mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
     phase1 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_1__source_sersic",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(redshift=setup.redshift_lens, mass=mass, shear=shear),
             source=al.GalaxyModel(
@@ -101,12 +100,12 @@ def make_pipeline(setup, settings):
     """
     Phase 2: Fit the input pipeline `Pixelization` & `Regularization`, where we:
 
-        1) Fix the lens`s `MassProfile``s to the results of phase 1.
+        1) Fix the lens`s `MassProfile`'s to the results of phase 1.
     """
 
     phase2 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_2__source_inversion_initialization",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -127,12 +126,12 @@ def make_pipeline(setup, settings):
     Phase 3: Fit the lens`s mass using the input pipeline `Pixelization` & `Regularization`, where we:
 
         1) Fix the source `Inversion` parameters to the results of phase 2.
-        2) Set priors on the lens galaxy `MassProfile``s using the results of phase 1.
+        2) Set priors on the lens galaxy `MassProfile`'s using the results of phase 1.
     """
 
     phase3 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_3__source_inversion",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
@@ -162,10 +161,10 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 4: Fit the lens`s `MassProfile``s with a `EllipticalPowerLaw` and a source `Inversion`, where we:
+    Phase 4: Fit the lens`s `MassProfile`'s with a `EllipticalPowerLaw` and a source `Inversion`, where we:
 
         1) Use the source `Inversion` of phase 3`s extended `Inversion` phase.
-        2) Set priors on the lens galaxy `MassProfile``s using the `EllipticalIsothermal` and `ExternalShear` of phase 3.
+        2) Set priors on the lens galaxy `MassProfile`'s using the `EllipticalIsothermal` and `ExternalShear` of phase 3.
     """
 
     """
@@ -182,8 +181,8 @@ def make_pipeline(setup, settings):
     mass.einstein_radius = phase3.result.model.galaxies.lens.mass.einstein_radius
 
     phase4 = al.PhaseImaging(
+        path_prefix=path_prefix,
         phase_name="phase_4__mass_power_law__source_inversion",
-        folders=setup.folders,
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,

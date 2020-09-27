@@ -109,7 +109,7 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up`.
     
@@ -122,8 +122,8 @@ full output path is:
 
 # %%
 phase = al.PhaseImaging(
+    path_prefix=f"examples/settings",
     phase_name="phase__binned_up",
-    folders=["examples", "settings"],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

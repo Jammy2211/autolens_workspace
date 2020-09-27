@@ -30,9 +30,9 @@ modeling is efficient!
 """
 In this example script, we fit interferometer data of a strong lens system where:
 
- - The lens galaxy`s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens galaxy`s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source galaxy`s `LightProfile` is modeled as an `VoronoiMagnification` `Pixelization`.and `Constant` 
+ - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
+ - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s `LightProfile` is modeled as an `VoronoiMagnification` `Pixelization`.and `Constant` 
    regularization.
 
 """
@@ -98,9 +98,9 @@ __Phase__
 
 To perform lens modeling, we create a *PhaseInterferometer* object, which comprises:
 
-   - The `GalaxyModel``s used to fit the data.
-   - The *SettingsPhase* which customize how the model is fitted to the data.
-   - The *NonLinearSearch* used to sample parameter space.
+   - The `GalaxyModel`'s used to fit the data.
+   - The `SettingsPhase` which customize how the model is fitted to the data.
+   - The `NonLinearSearch` used to sample parameter space.
    
 Once we have create the phase, we `run` it by passing it the data and mask.
 """
@@ -112,8 +112,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass (5 parameters).
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light (7 parameters).
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass (5 parameters).
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
@@ -160,7 +160,7 @@ settings = al.SettingsPhaseInterferometer(
 """
 __Search__
 
-The lens model is fitted to the data using a *NonLinearSearch*, which we specify below. In this example, we use the
+The lens model is fitted to the data using a `NonLinearSearch`, which we specify below. In this example, we use the
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
  - 50 live points.
@@ -180,16 +180,16 @@ __Phase__
 We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
 the lens model.
 
-The phase_name and folders inputs below specify the path of the results in the output folder:  
+The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
 
  `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__mass_sie__source_sersic`.
 """
 
 # %%
 phase = al.PhaseInterferometer(
+    path_prefix=f"examples/interferometer/{dataset_name}",
     phase_name="phase__lens_sie__source_inversion",
     real_space_mask=real_space_mask,
-    folders=["examples", "interferometer", dataset_name],
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,

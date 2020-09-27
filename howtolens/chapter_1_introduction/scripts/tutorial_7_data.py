@@ -59,7 +59,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 # %%
 """
-Lets look at the `Tracer``s image - this is the image we'll be simulating.
+Lets look at the `Tracer`'s image - this is the image we'll be simulating.
 """
 
 # %%
@@ -67,7 +67,7 @@ aplt.Tracer.image(tracer=tracer, grid=grid)
 
 # %%
 """
-To Simulate the `Imaging` data, we don`t use the image plotted above. Instead, we use an image which has been generated
+To Simulate the `Imaging` data, we don't use the image plotted above. Instead, we use an image which has been generated
 specifically for simulating an image, which pads the array it is computed on based on the shape of the PSF we
  convolve the image with. This ensures edge-effects do not degrade our simulation`s PSF convolution.
 """

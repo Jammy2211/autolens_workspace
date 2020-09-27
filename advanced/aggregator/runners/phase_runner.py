@@ -11,8 +11,8 @@ using a single `PhaseImaging` object, to illustrate aggregator functionality in 
 
 The phase fits each lens with:
  
- - An `EllipticalIsothermal` `MassProfile`.for the lens galaxy`s mass.
- - An `EllipticalSersic` `LightProfile`.for the source galaxy`s light.
+ - An `EllipticalIsothermal` `MassProfile`.for the lens `Galaxy`'s mass.
+ - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light.
 """
 
 """ AUTOFIT + CONFIG SETUP """
@@ -49,9 +49,7 @@ for dataset_name in [
 ]:
 
     """Set up the config and output paths."""
-    dataset_path = af.util.create_path(
-        path=workspace_path, folders=["dataset", "aggregator", dataset_name]
-    )
+    dataset_path = f"{workspace_path}/dataset/aggregator/{dataset_name}"
 
     """
     Info:
@@ -81,7 +79,7 @@ for dataset_name in [
         name=dataset_name,
     )
 
-    """The `Mask` we fit this data-set with, which will be available via the aggregator."""
+    """The `Mask2D` we fit this data-set with, which will be available via the aggregator."""
     mask = al.Mask2D.circular(
         shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
     )
@@ -107,8 +105,8 @@ for dataset_name in [
     settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
     phase = al.PhaseImaging(
+        path_prefix=f"aggregator/{dataset_name}",
         phase_name="phase__aggregator",
-        folders=["aggregator", dataset_name],
         galaxies=dict(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
