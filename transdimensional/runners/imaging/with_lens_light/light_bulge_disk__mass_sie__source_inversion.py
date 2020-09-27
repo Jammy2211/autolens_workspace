@@ -166,7 +166,7 @@ This means you can run the same pipeline on the same data twice (with and withou
 to different output folders and thus not clash with one another!
 
 
-The `prefix_path` below specifies the path the pipeline results are written to, which is:
+The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/pipelines/dataset_type/dataset_name` 
  `autolens_workspace/output/pipelines/imaging/light_bulge_disk__mass_sie__source_inversion/`

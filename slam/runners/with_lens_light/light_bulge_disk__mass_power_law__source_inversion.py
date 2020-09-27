@@ -278,7 +278,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    prefix_path=f"{slam}/{dataset_type}_{dataset_label}/{dataset_name}",
+    path_prefix=f"slam/{dataset_type}_{dataset_label}/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,

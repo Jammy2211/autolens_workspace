@@ -82,7 +82,7 @@ dictionaries, or whatever.
 
 Why? Because lists store every entry in memory simultaneously. If you fit many lenses, you`ll have lots of results and 
 therefore use a lot of memory. This will crash your laptop! On the other hand, a generator only stores the object in 
-memory when it runs the function; it is free to overwrite it afterwards. Thus, your laptop won`t crash!
+memory when it runs the function; it is free to overwrite it afterwards. Thus, your laptop won't crash!
 
 There are two things to bare in mind with generators:
 

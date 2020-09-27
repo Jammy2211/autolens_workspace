@@ -220,9 +220,9 @@ def make_pipeline(setup, settings):
 
     Although the above hyper-galaxy phase includes fitting for the source galaxy, at this early stage in the
     pipeline we make a choice not to pass the hyper-galaxy of the source. Why? Because there is a good chance
-    our simplistic single Sersic `Profile` won`t yet provide a good fit to the source.
+    our simplistic single Sersic `Profile` won't yet provide a good fit to the source.
     #
-    If this is the case, the hyper noise-map won`t be very good. It isn't until we are fitting the
+    If this is the case, the hyper noise-map won't be very good. It isn't until we are fitting the
     source using an `Inversion` that we begin to pass its hyper-galaxy, e.g. when we can be confident our fit
     to the dataset is reliable!
     """
@@ -260,7 +260,7 @@ def make_pipeline(setup, settings):
 
     Well, its to do with the hyper-galaxy-images of our source. At the end of phase 3, we've only fitted the source galaxy
     using a single `EllipticalSersic` profile. What if the source galaxy is more complex than a Sersic? Or has
-    multiple components? Our fit, put simply, won`t be very good! This makes for a bad hyper-galaxy-image.
+    multiple components? Our fit, put simply, won't be very good! This makes for a bad hyper-galaxy-image.
 
     So, its beneficial for us to introduce an intermediate `Inversion` using a magnification based grid, that fits
     all components of the source accurately giving us a good quality hyper-galaxy image for the brightness based
@@ -292,7 +292,7 @@ def make_pipeline(setup, settings):
 
     """
     This is the usual phase extensions. Given we`re only using this `Inversion` to refine our hyper-galaxy-images, we
-    won`t bother reoptimizing its hyper-galaxy-parameters
+    won't bother reoptimizing its hyper-galaxy-parameters
     """
 
     phase4 = phase4.extend_with_multiple_hyper_phases(setup_hyper=setup.setup_hyper)

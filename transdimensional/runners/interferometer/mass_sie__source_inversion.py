@@ -157,7 +157,7 @@ is True, the pipeline`s output paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `prefix_path` below specifies the path the pipeline results are written to, which is:
+The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/pipelines/dataset_type/dataset_name` 
  `autolens_workspace/output/pipelines/interferometer/mass_sie__source_inversion/`
@@ -169,7 +169,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 
 # %%
 setup = al.SetupPipeline(
-    prefix_path=f"transdimensional/{dataset_type}/{dataset_name}",
+    path_prefix=f"transdimensional/{dataset_type}/{dataset_name}",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,

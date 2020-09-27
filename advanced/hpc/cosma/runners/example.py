@@ -235,7 +235,7 @@ paths are `tagged` with the string `no_shear`.
 This means you can run the same pipeline on the same data twice (with and without shear) and the results will go
 to different output folders and thus not clash with one another!
 
-The `prefix_path` below specifies the path the pipeline results are written to, which is:
+The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/dataset_type/dataset_name` 
  `autolens_workspace/output/imaging/mass_sie__source_sersic`
