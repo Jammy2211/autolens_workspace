@@ -28,34 +28,12 @@ Whether the interpolatioon grid is used for a given `MassProfile` is set in the 
 
  `autolens_workspace/config/grids/interpolate.ini`
 
-The ``True`` and ``False`` values reflect whether interpolation is used for each function of each mass profile. The default
+The `True` and `False` values reflect whether interpolation is used for each function of each mass profile. The default
 values supplied with the autolens_workspace reflect whether the profile requires numerical integration or not.
 
 I`ll assume that you are familiar with the beginner example scripts work, so if any code doesn`t make sense familiarize
 yourself with those first!
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
-""" AUTOLENS + DATA SETUP """
 
 # %%
 import autofit as af
@@ -67,7 +45,7 @@ dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -91,17 +69,7 @@ we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitt
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
-
-# %%
-"""
-__Search__
-
-we'll use the default DynestyStatic sampler we used in the beginner examples.
-"""
-
-# %%
-search = af.DynestyStatic(n_live_points=50)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -125,29 +93,36 @@ settings = al.SettingsPhaseImaging(
 
 # %%
 """
-__Phase__
+__Search__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
-the lens model.
+we'll use the default `DynestyStatic` sampler we used in the beginner examples.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__interpolation`.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase_interpolation`.
 
 However, because the `SettingsPhase` include a grid_class and pixel_scales_interp, the output path is tagged to 
 reflelct this, meaning the full output path is:
 
- `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__binned_up/settings__grid_interp_0.05`.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase_interpolation/settings__grid_interp_0.05`.
+"""
 
+# %%
+search = af.DynestyStatic(
+    path_prefix=f"examples/settings", name="phase__interpolation", n_live_points=50
+)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
+the lens model.
 """
 
 # %%
 phase = al.PhaseImaging(
-    path_prefix=f"examples/settings",
-    phase_name="phase__interpolation",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 phase.run(dataset=imaging, mask=mask)

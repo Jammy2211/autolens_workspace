@@ -13,15 +13,6 @@ The noise-map will be output as `/autolens_workspace/dataset/dataset_type/datase
 The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
 
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
 """
 The `dataset_type` describes the type of data being simulated (in this case, `Imaging` data) and `dataset_name` 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
@@ -34,7 +25,7 @@ dataset_type = "instruments"
 dataset_instrument = "sma"
 
 """
-Create the path where the dataset will be output, which in this case is
+Returns the path where the dataset will be output, which in this case is
 `/autolens_workspace/dataset/interferometer/instruments/sma/mass_sie__source_sersic`
 """
 dataset_path = f"dataset/{dataset_type}/{dataset_instrument}"
@@ -53,7 +44,7 @@ grid = al.GridIterate.uniform(
 )
 
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
-uv_wavelengths_path = f"{workspace_path}/simulators/interferometer/uvtools"
+uv_wavelengths_path = f"simulators/interferometer/uvtools"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
     file_path=f"{uv_wavelengths_path}/sma_uv_wavelengths.fits", hdu=0
@@ -61,12 +52,12 @@ uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
 
 """
 To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale 
-of the visibilities that are simulated, as well as its expoosure time, noise levels and uv-wavelengths.
+of the visibilities that are simulated, as well as its exposure time, noise levels and uv-wavelengths.
 """
 simulator = al.SimulatorInterferometer(
     uv_wavelengths=uv_wavelengths,
-    exposure_time_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
-    background_sky_map=al.Array.full(fill_value=1.0, shape_2d=grid.shape_2d),
+    exposure_time=100.0,
+    background_sky_level=0.1,
     noise_sigma=0.01,
 )
 
@@ -83,7 +74,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,

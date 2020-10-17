@@ -10,15 +10,6 @@ To begin, we load an interferometer dataset from fits files:
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
 """
 Load the strong lens interferometer dataset `mass_sie__source_sersic` `from .fits files, which is the dataset 
 we'll use in this example.
@@ -30,8 +21,8 @@ import autolens.plot as aplt
 import numpy as np
 
 dataset_type = "interferometer"
-dataset_name = "mass_sie__source_sersic__2"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
+dataset_name = "mass_sie__source_sersic"
+dataset_path = f"dataset/{dataset_type}/{dataset_name}"
 
 interferometer = al.Interferometer.from_fits(
     visibilities_path=f"{dataset_path}/visibilities.fits",
@@ -81,7 +72,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
@@ -131,7 +122,7 @@ masked_interferometer = al.MaskedInterferometer(
     interferometer=interferometer,
     visibilities_mask=visibilities_mask,
     real_space_mask=real_space_mask,
-    transformer_class=transformer_class,
+    settings=al.SettingsMaskedInterferometer(transformer_class=transformer_class),
 )
 
 # %%

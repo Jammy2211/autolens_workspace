@@ -92,13 +92,11 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric()
 
     phase1 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_1__refine_mass",
+        search=af.DynestyStatic(name="phase[1]_mass[total_refine]", n_live_points=100),
         galaxies=dict(lens=lens, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=100),
     )
 
     """
@@ -155,13 +153,11 @@ def make_pipeline(slam, settings):
     source = slam.source_for_subhalo_pipeline()
 
     phase2_lens_plane = GridPhase(
-        path_prefix=path_prefix,
-        phase_name="phase_2__subhalo_search__lens_plane",
+        search=af.DynestyStatic(name="phase[2]_mass[total]_source_subhalo[search_lens_plane]", n_live_points=50, walks=5, facc=0.2),
         galaxies=dict(lens=lens, subhalo=subhalo, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=slam.setup_subhalo.subhalo_search,
         number_of_steps=slam.setup_subhalo.grid_size,
     )
 
@@ -204,13 +200,11 @@ def make_pipeline(slam, settings):
     """
 
     phase2_foreground_plane = GridPhase(
-        path_prefix=path_prefix,
-        phase_name="phase_2__subhalo_search__foreground_plane",
+        search=af.DynestyStatic(name="phase[2]_mass[total]_subhalo[search_foreground_plane]", n_live_points=50, walks=5, facc=0.2),
         galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=slam.setup_subhalo.subhalo_search,
         number_of_steps=slam.setup_subhalo.grid_size,
     )
 
@@ -231,13 +225,11 @@ def make_pipeline(slam, settings):
     )
 
     phase2_background_plane = GridPhase(
-        phase_name="phase_2__subhalo_search__background_plane",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(name="phase[2]_mass[total]_subhalo[search_background_plane]", n_live_points=50, walks=5, facc=0.2),
         galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=slam.setup_subhalo.subhalo_search,
         number_of_steps=slam.setup_subhalo.grid_size,
     )
 
@@ -254,7 +246,7 @@ def make_pipeline(slam, settings):
     # subhalo.mass.redshift_source = slam.redshift_source
 
     # phase2 = al.PhaseImaging(
-    #     phase_name="phase_2__subhalo_refine",
+    #     name="phase[2]__subhalo_refine",
     #     path_prefix=path_prefix,
     #     galaxies=dict(
     #         lens=af.last[-1].model.galaxies.lens, source=source, subhalo=subhalo
@@ -271,6 +263,7 @@ def make_pipeline(slam, settings):
 
     return al.PipelineDataset(
         pipeline_name,
+        path_prefix,
         phase1,
         phase2_lens_plane,
         phase2_foreground_plane,

@@ -59,8 +59,8 @@ import autofit as af
 workspace_path = "/path/to/user/autolens_workspace/"
 
 conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config/",
-    output_path=f"{workspace_path}/output/",
+    config_path=f"config/",
+    output_path=f"output/",
 )
 
 ### HOW TO TACKLE HOWTOLENS ###
@@ -95,13 +95,13 @@ be able to:
 In chapter 2, we'll cover Bayesian inference and non-linear analysis, in particular how we use these tools to
 fit `Imaging` of a strong gravitational lens with a lens model. At the end, you'll understand:
 
-1) The concept of a non-linear search and non-linear parameter space.
+1) The concept of a `NonLinearSearch` and non-linear parameter space.
 2) How to fit a lens model to strong lens `Imaging` via  non-linear search.
 3) The trade-off between realism and complexity when choosing a lens model.
 4) Why an incorrect lens model may be inferred and how to prevent this from happening.
 5) The challenges that are involved in inferred a robust lens model in a computationally reasonable run-time.
 6) How the results of different lens models can be linked together to perform more efficient and reliable lensing modeling.
-7) How different non-linear search algorithms can be used to fit lens models more productively.
+7) How different `NonLinearSearch`s can be used to fit lens models more productively.
 
 ### OVERVIEW OF CHAPTER 3 - Automated Modeling Pipelines ###
 

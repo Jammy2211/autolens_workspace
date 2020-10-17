@@ -14,9 +14,9 @@ When linking phases:
       non-linear parameter space that can be sampled more efficiently and with a reduced chance of inferring an
       incorrect local maxima solution.
 
- - The earlier phases may use non-linear search techniques that only seek to maximize the log likelihood and do not
+ - The earlier phases may use `NonLinearSearch` techniques that only seek to maximize the log likelihood and do not
       precisely quantify the errors on every parameter, whereas the latter phases do. Alternative, they may use a
-      non-linear search which does compute errors, but with settings that make sampling faster or omit accurately
+      `NonLinearSearch` which does compute errors, but with settings that make sampling faster or omit accurately
       quantifying the errors.
 
       This means we can `initialize` a model-fit very quickly and only spend more computational time estimating errors
@@ -41,39 +41,20 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 """
 This example scripts show a simple example of prior linking, where we fit `Imaging` of a strong lens system where:
 
- - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
+ - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 As discussed below, the first phase is set up to provide as fast a model-fit as possible without accurately quantifying
 the errors on every parameter, whereas the second phase sacrifices this run-speed for accuracy. 
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens `Galaxy`'s `LightProfile` is omitted_.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s light is omitted_.
+ - The lens total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
@@ -86,7 +67,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -116,7 +97,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -143,12 +124,18 @@ either of these things happening.
     
 You should also note the `PriorPasser` object input into the search. We will describe this in a moment, but you
 should run the script and model-fit first.
+
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
+
+ `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase[1]`.
 """
 
 # %%
 search = af.DynestyStatic(
+    path_prefix=f"examples/linking/api",
+    name="phase[1]",
     n_live_points=50,
-    evidence_tolerance=100.0,
+    evidence_tolerance=20.0,
     prior_passer=af.PriorPasser(sigma=5.0, use_widths=True, use_errors=False),
 )
 
@@ -156,21 +143,13 @@ search = af.DynestyStatic(
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
-
- `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
-    path_prefix=f"examples/linking/api",
-    phase_name="phase_1",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
@@ -204,32 +183,30 @@ maps out the posterior in parameter space, taking longer to run but providing er
 
 We can use fewer live points than we did in the beginner tutorials, given that prior linking now informs `Dynesty` 
 where to search parameter space.
-"""
 
-# %%
-search = af.DynestyStatic(n_live_points=30)
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
-# %%
-"""
-__Phase__
-
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
-the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
-
- `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase[2]`.
 
 Note how the `lens` and `source` passed to this phase were set up above using the results of phase 1!
 """
 
 # %%
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/api", name="phase[2]", n_live_points=30
+)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
+the lens model.
+"""
+
+# %%
 phase2 = al.PhaseImaging(
-    path_prefix=f"examples/linking/api",
-    phase_name="phase_2",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase2.run(dataset=imaging, mask=mask)
@@ -249,7 +226,7 @@ in the beginner turorials or phase 1 (which are typically broad UniformPriors). 
 The `width_modifier` is used instead of the errors computed from phase 1 when the errors values estimated are smaller 
 than the width modifier value. This ensure that the sigma values used for priors in phase 2 do not assume extremely 
 small values (e.g. a value of < 0.01 for an einstein_radius) if the error estimates in phase 1 are very small, which
-may occur when using a fast non-linear search or fitting an overly simplified model.
+may occur when using a fast `NonLinearSearch` or fitting an overly simplified model.
     
 Thus, phase 2 used the results of phase 1 to inform it where to search non-linear parameter space! 
 
@@ -287,7 +264,7 @@ By invoking the `model` attribute, the prioris passed following 3 rules:
     3) The sigma of the Gaussian will use the maximum of two values: 
 
             (i) the 1D error of the parameter computed at an input sigma value (default sigma=3.0).
-            (ii) The value specified for the profile in the `config/json_priors/*.json` config file`s `width_modifer` 
+            (ii) The value specified for the profile in the `config/priors/*.json` config file`s `width_modifer` 
                  field (check these files out now).
 
        The idea here is simple. We want a value of sigma that gives a GaussianPrior wide enough to search a broad 
@@ -297,7 +274,7 @@ By invoking the `model` attribute, the prioris passed following 3 rules:
 
        Unfortunately, this doesn`t always work. Lens modeling is prone to an effect called `over-fitting` where we 
        underestimate the errors on our lens model parameters. This is especially true when we take the shortcuts in 
-       early phases - fast non-linear search settings, simplified lens models, etc.
+       early phases - fast `NonLinearSearch` settings, simplified lens models, etc.
 
        Therefore, the `width_modifier` in the json config files are our fallback. If the error on a parameter is 
        suspiciously small, we instead use the value specified in the widths file. These values are chosen based on 
@@ -326,7 +303,7 @@ The intensity of an image depends on its unit_label, S/N, galaxy brightness, etc
 that one can use to generically link the intensity of any two proflies. Thus, it makes more sense to link them using 
 the relative value from a previous phase.
 
-We can customize how priors are passed from the results of a phase and non-linear search by inputting to the search 
+We can customize how priors are passed from the results of a phase and `NonLinearSearch` by inputting to the search 
 a PriorPasser object:
 """
 
@@ -350,14 +327,14 @@ Lets go through an example using a real parameter. Lets say in phase 1 we fit th
 elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 +- 2.0 where the error value of 2.0 
 was computed at 3.0 sigma confidence. To pass this as a prior to phase 2, we would write:
 
-    lens.sersic.sersic_index = phase1.result.model.lens.sersic.sersic_index
+    lens.bulge.sersic_index = phase1.result.model.lens.bulge.sersic_index
 
 The prior on the lens `Galaxy`'s sersic `LightProfile` in phase 2 would thus be a GaussianPrior, with mean=4.0 and 
 sigma=2.0. If we had used a sigma value of 1.0 to compute the error, which reduced the estimate from 4.0 +- 2.0 to 
 4.0 +- 1.0, the sigma of the Gaussian prior would instead be 1.0. 
 
 If the error on the Sersic index in phase 1 had been really small, lets say, 0.01, we would instead use the value of the 
-Sersic index width in the json_priors config file to set sigma instead. In this case, the prior config file specifies 
+Sersic index width in the priors config file to set sigma instead. In this case, the prior config file specifies 
 that we use an "Absolute" value of 0.8 to link this prior. Thus, the GaussianPrior in phase 2 would have a mean=4.0 and 
 sigma=0.8.
 

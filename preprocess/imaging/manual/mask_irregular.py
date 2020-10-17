@@ -40,13 +40,7 @@ For this tutorial, we'll use the `autolens_workspace/preprocess/data_raw/imaging
 contains example data we'll use in this tutorial.
 """
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-dataset_path = f"{workspace_path}/preprocess/imaging/data_raw/imaging"
+dataset_path = f"preprocess/imaging/data_raw/imaging"
 
 image = al.Array.from_fits(file_path=f"{dataset_path}/image.fits", pixel_scales=0.1)
 noise_map = al.Array.from_fits(
@@ -55,7 +49,7 @@ noise_map = al.Array.from_fits(
 
 # %%
 """
-Create the 2D Gaussian that the image is blurred with. This blurring smooths over noise in the image, which will 
+Returns the 2D Gaussian that the image is blurred with. This blurring smooths over noise in the image, which will 
 otherwise lead unmasked values with in individual pixels if not smoothed over correctly.
 """
 

@@ -1,37 +1,34 @@
 import autolens as al
 import autolens.plot as aplt
-import autofit as af
-import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-# This tool allows one to input the lens light centre(s) of a strong lens(es), which can be used as a fixed value in
-# pipelines.
+"""
+This tool allows one to input the lens light centre(s) of a strong lens(es), which can be used as a fixed value in
+pipelines. 
 
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# The `dataset label` is the name of the dataset folder and `dataset_name` the folder the positions are stored in e.g,
-# the positions will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat`.
+First, we set up the dataset we want to mark the lens light centre of.
+"""
 dataset_type = "imaging"
 dataset_label = "with_lens_light"
 dataset_name = "light_sersic__mass_sie__source_sersic"
 
-# Create the path where the mask will be output, which in this case is
-# `/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+"""
+The path where the dataset will be loaded from, which in this case is:
 
-# If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
+ `/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
+"""
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+
+"""If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
 pixel_scales = 0.1
 
-# When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
-# the highest flux to mark the position.
+"""
+When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
+the highest flux to mark the position.
+
+The `search_box_size` is the number of pixels around your click this search takes place.
+"""
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(
@@ -42,13 +39,12 @@ imaging = al.Imaging.from_fits(
 )
 image_2d = imaging.image.in_2d
 
-# For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
-# below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
+"""
+This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
+positions on an image.
+"""
 
 light_centres = []
-
-# This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
-# positions on an image.
 
 
 def onclick(event):
@@ -101,11 +97,16 @@ plt.close(fig)
 
 light_centres = al.GridCoordinates(coordinates=light_centres)
 
-# Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
+"""
+Now lets plot the image and lens light centre, so we can check that the centre overlaps the brightest pixel in the
+lens light.
+"""
 aplt.Array(array=imaging.image, light_profile_centres=light_centres)
 
-# Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
-# .dat file in our pipelines!
+"""
+Now we`re happy with the lens light centre(s), lets output them to the dataset folder of the lens, so that we can 
+load them from a.dat file in our pipelines!
+"""
 light_centres.output_to_file(
     file_path=f"{dataset_path}/light_centres.dat", overwrite=True
 )

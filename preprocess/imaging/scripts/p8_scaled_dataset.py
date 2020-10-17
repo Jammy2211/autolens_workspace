@@ -14,12 +14,13 @@ However, by retaining them in the mask but simply scaling their values these dis
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -29,12 +30,6 @@ import numpy as np
 """
 Setup the path to the autolens_workspace, using a relative directory name.
 """
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -49,12 +44,12 @@ dataset_name = "mass_sie__source_sersic__intervening_objects"
 
 # %%
 """
-Create the path where the noise-map will be output, which in this case is
-`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic_intervening_objects/`
+Returns the path where the noise-map will be output, which in this case is
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_total__source_bulge_intervening_objects/`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """

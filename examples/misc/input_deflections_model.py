@@ -12,24 +12,13 @@ To begin, we set up the `InputDeflections` object in an identical fashion to the
 deflection angle map here once you have run this example).
 """
 
-### --------------------------------------------------------------------------------------------------------------- ###
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-import autofit as af
+### --------------------------------------------------------------------------------------------------------------- ###import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 """
 In this example, our `input` deflection angle map is the true deflection angles of the `Imaging` data simulated in the 
-`mass_sie__source_sersic.py` simulator. You should be able to simply edit the `from_fits` methods below to point
+`mass_sie__source_parametric.py` simulator. You should be able to simply edit the `from_fits` methods below to point
 to your own dataset an deflection maps.
 
 Lets load and plot this dataset.
@@ -37,7 +26,7 @@ Lets load and plot this dataset.
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -51,16 +40,16 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 """
 In `autolens_workspace/examples/misc/files` you`ll find the script `make_source_plane.py`, which creates the image-plane 
 _Grid_ and deflection angles we use in this example (which are identical to those used in the 
-`mass_sie__source_sersic.py` simulator). 
+`mass_sie__source_parametric.py` simulator). 
 """
 
 """Lets load the input deflection angle map from a .fits files (which is created in the code mentioned above)."""
 deflections_y = al.Array.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_y.fits",
+    file_path=f"examples/misc/files/deflections_y.fits",
     pixel_scales=imaging.pixel_scales,
 )
 deflections_x = al.Array.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_x.fits",
+    file_path=f"examples/misc/files/deflections_x.fits",
     pixel_scales=imaging.pixel_scales,
 )
 
@@ -70,8 +59,7 @@ aplt.Array(array=deflections_x)
 
 """Lets next load and plot the image-plane grid"""
 grid = al.Grid.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/grid.fits",
-    pixel_scales=imaging.pixel_scales,
+    file_path=f"examples/misc/files/grid.fits", pixel_scales=imaging.pixel_scales
 )
 aplt.Grid(grid=grid)
 
@@ -118,7 +106,7 @@ We now create the lens and source `GalaxyModel``., where the source is an _Ellip
 """
 lens = al.GalaxyModel(redshift=0.5, mass=input_deflections)
 
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -151,7 +139,7 @@ specify below as the nested sampling algorithm Dynesty (https://dynesty.readthed
 other examples on the workspace if you are unsure what this does!
 
 The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
-non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
+non-linear searches that can be used with **PyAutoLens**. If you do not know what a `NonLinearSearch` is or how it 
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
 """
 
@@ -162,18 +150,18 @@ search = af.DynestyStatic(n_live_points=100)
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/beginner/light_sersic__mass_sie__source_sersic/phase__light_sersic__mass_sie__source_sersic`.
+ `/autolens_workspace/output/examples/beginner/light_sersic__mass_sie__source_sersic/phase__light_sersic__mass_sie__source_bulge`.
 """
 
 # %%
 phase = al.PhaseImaging(
     path_prefix=f"misc/{dataset_name}",
-    phase_name="phase__input_deflections",
+    name="phase__input_deflections",
     galaxies=dict(lens=lens, source=source),
     settings=settings,
     search=search,
@@ -181,7 +169,7 @@ phase = al.PhaseImaging(
 
 # %%
 """
-We can now begin the fit by passing the dataset and mask to the phase, which will use the non-linear search to fit
+We can now begin the fit by passing the dataset and mask to the phase, which will use the `NonLinearSearch` to fit
 the model to the data. 
 
 The fit outputs visualization on-the-fly, so checkout the path 

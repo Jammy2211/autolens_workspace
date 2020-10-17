@@ -4,7 +4,7 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens where:
 
- - The lens `Galaxy`'s `MassProfile` is an EllipticalBrokenPowerLaw.
+ - The lens total mass distribution is an EllipticalBrokenPowerLaw.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
  - There are a number of intervening objects whose light nearly obscures that of the strong lens.
 
@@ -15,15 +15,6 @@ This dataset is used in the preprocess script:
 To illustrate how to subtract and remove the light of intervening objects in real strong lensing data, so that it does
 not impact the lens model.
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 """
 The `dataset_type` describes the type of data being simulated (in this case, `Imaging` data) and `dataset_name` 
@@ -38,10 +29,10 @@ dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic__intervening_objects"
 
 """
-Create the path where the dataset will be output, which in this case is:
-`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic__intervening_objects/`
+Returns the path where the dataset will be output, which in this case is:
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_total__source_bulge__intervening_objects/`
 """
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -65,14 +56,11 @@ psf = al.Kernel.from_gaussian(
 )
 
 """
-To simulate the `Imaging` dataset we first create a simulator, which defines the expoosure time, background sky,
+To simulate the `Imaging` dataset we first create a simulator, which defines the exposure time, background sky,
 noise levels and psf of the dataset that is simulated.
 """
 simulator = al.SimulatorImaging(
-    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-    psf=psf,
-    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-    add_noise=True,
+    exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens.
@@ -107,7 +95,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,

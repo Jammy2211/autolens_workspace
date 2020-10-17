@@ -4,7 +4,7 @@
 __Example: Non-linear Searches__
 
 In the `beginner` examples all model-fits were performed using the nested sampling algorithm `Dynesty`, which is a
-very effective non-linear search algorithm for lens modeling, but may not always be the optimal choice for your
+very effective `NonLinearSearch` for lens modeling, but may not always be the optimal choice for your
 problem. In this example we fit strong lens data using a variety of non-linear searches.
 """
 
@@ -12,37 +12,18 @@ problem. In this example we fit strong lens data using a variety of non-linear s
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
+ - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
 
 # %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens `Galaxy`'s `LightProfile` is omitted_.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s light is omitted_.
+ - The lens total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
@@ -55,7 +36,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -85,7 +66,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -117,31 +98,31 @@ __Nested Sampling__
 
 To begin, lets again use the nested sampling method `Dynesty` that we have used in all examples up to now. We've seen 
 that the method is very effective, always locating a solution that fits the lens data well.
-"""
 
-# %%
-search = af.DynestyStatic(n_live_points=50)
-
-# %%
-"""
-__Phase__
-
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
-the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
  `/autolens_workspace/output/examples/customize/mass_sie__source_sersic/phase__nested_sampling/
     settings__grid_sub_2/dynesty__`.
 """
 
 # %%
+search = af.DynestyStatic(
+    path_prefix=f"examples/customize/{dataset_name}",
+    name="phase_non_linear_searches",
+    n_live_points=50,
+)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
+the lens model.
+"""
+
+# %%
 phase = al.PhaseImaging(
-    path_prefix=f"examples/customimze/{dataset_name}",
-    phase_name="phase__non_linear_searches",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 result = phase.run(dataset=imaging, mask=mask)
@@ -166,27 +147,28 @@ example scripts, that often require > 20000 - 50000 iterations.
 """
 
 # %%
-search = af.PySwarmsLocal(n_particles=50, iters=5000)
+search = af.PySwarmsLocal(
+    path_prefix=f"examples/customize/{dataset_name}",
+    name="phase__non_linear_searches",
+    n_particles=50,
+    iters=5000,
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
  `/autolens_workspace/output/examples/customize`.
 """
 
 # %%
 phase = al.PhaseImaging(
-    path_prefix=f"examples/customimze/{dataset_name}",
-    phase_name="phase__non_linear_searches",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 result = phase.run(dataset=imaging, mask=mask)
@@ -197,27 +179,28 @@ __MCMC__
 """
 
 # %%
-search = af.Emcee(nwalkers=50, nsteps=1000)
+search = af.Emcee(
+    path_prefix=f"examples/customize/{dataset_name}",
+    name="phase_non_linear_searches",
+    nwalkers=50,
+    nsteps=1000,
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
  `/autolens_workspace/output/examples/customize`.
 """
 
 # %%
 phase = al.PhaseImaging(
-    path_prefix=f"examples/customimze/{dataset_name}",
-    phase_name="phase__non_linear_searches",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 result = phase.run(dataset=imaging, mask=mask)

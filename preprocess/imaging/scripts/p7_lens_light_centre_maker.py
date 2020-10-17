@@ -17,11 +17,13 @@ have not tried using the lens light centres as a fixed centre for your mass mode
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -30,12 +32,6 @@ import autolens.plot as aplt
 """
 Setup the path to the autolens_workspace, using the correct path name below.
 """
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -51,12 +47,12 @@ dataset_name = "light_sersic__mass_sie__source_sersic"
 
 # %%
 """
-Create the path where the lens light centres will be output, which in this case is
-`/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
+Returns the path where the lens light centres will be output, which in this case is
+`/autolens_workspace/dataset/imaging/with_lens_light/light_parametric__mass_total__source_bulge`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """

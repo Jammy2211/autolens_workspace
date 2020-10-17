@@ -1,5 +1,5 @@
 """
-This file uses the simulator dataset `imaging/no_lens_light/mass_sie__source_sersic` to create deflection angle map and
+This file uses the simulator dataset `imaging/no_lens_light/mass_total__source_bulge` to create deflection angle map and
 image-plane grid.
 
 This is so the `source_planes.py` script can be used to analysis the system in a setting where the deflection angle
@@ -8,19 +8,10 @@ map is `known`.
 
 import autolens as al
 
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -37,7 +28,7 @@ mask = al.Mask2D.unmasked(
 grid = al.Grid.from_mask(mask=mask)
 
 """
-The true lens `Galaxy` of the `mass_sie__source_sersic.py` simulator script, which is required to compute the
+The true lens `Galaxy` of the `mass_sie__source_parametric.py` simulator script, which is required to compute the
 correct deflection angle map.
 """
 
@@ -54,15 +45,11 @@ deflections = lens_galaxy.deflections_from_grid(grid=grid)
 deflections_y = al.Array.manual_mask(array=deflections.in_1d[:, 0], mask=grid.mask)
 deflections_x = al.Array.manual_mask(array=deflections.in_1d[:, 1], mask=grid.mask)
 
-mask.output_to_fits(
-    file_path=f"{workspace_path}/examples/misc/files/mask.fits", overwrite=True
-)
-grid.output_to_fits(
-    file_path=f"{workspace_path}/examples/misc/files/grid.fits", overwrite=True
-)
+mask.output_to_fits(file_path=f"examples/misc/files/mask.fits", overwrite=True)
+grid.output_to_fits(file_path=f"examples/misc/files/grid.fits", overwrite=True)
 deflections_y.output_to_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_y.fits", overwrite=True
+    file_path=f"examples/misc/files/deflections_y.fits", overwrite=True
 )
 deflections_x.output_to_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_x.fits", overwrite=True
+    file_path=f"examples/misc/files/deflections_x.fits", overwrite=True
 )

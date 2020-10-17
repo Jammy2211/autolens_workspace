@@ -8,12 +8,13 @@ This tutorial creates a mask for your dataset.
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -30,12 +31,6 @@ Setup the path to the autolens_workspace, using the correct path name below.
 """
 
 # %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
 """
 The `dataset label` is the name of the folder in the `autolens_workspace/dataset` folder and `dataset_name` the 
 folder the dataset is stored in, e.g, `/autolens_workspace/dataset/dataset_type/dataset_name`. The mask will be 
@@ -49,12 +44,12 @@ dataset_name = "mass_sie__source_sersic"
 
 # %%
 """
-Create the path where the mask will be output, which in this case is
-`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
+Returns the path where the mask will be output, which in this case is
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_total__source_bulge`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""

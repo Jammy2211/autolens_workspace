@@ -14,12 +14,6 @@ can also be applied to the plotting of other data structures, for example `Grid`
 # %%
 """Use the WORKSPACE environment variable to determine the workspace path."""
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
 
 # %%
 """
@@ -35,12 +29,12 @@ dataset_name = "slacs1430+4105"
 
 # %%
 """
-Create the path where the dataset will be loaded from, which in this case is
+Returns the path where the dataset will be loaded from, which in this case is
 `/autolens_workspace/dataset/imaging/slacs1430+4105/`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_name}"
 image_path = f"{dataset_path}/image.fits"
 
 # %%
@@ -97,7 +91,7 @@ aplt.Array(array=image, plotter=plotter)
 The `Units` object customizes the units of the y and x axes the `Array` is plotted using. Below, we:
 
 1) Use scaled units to plot the y and x axis labels of the `Array`. Its scaled coordinates are its coordinates in 
-   arc-seconds, converted from pixels using its *pixel_scales* attribute. Switching this to ``False`` will plot the axes
+   arc-seconds, converted from pixels using its *pixel_scales* attribute. Switching this to `False` will plot the axes
     in pixel units.
 2) Input a conversion factor of 10.0, which multiplies the y and x coordinates (compared to the figure above) by 10.0.
 
@@ -222,9 +216,7 @@ The `Output` object allows us to output a figure to hard-disc.
 
 # %%
 plotter = aplt.Plotter(
-    output=aplt.Output(
-        path=f"{workspace_path}/examples/plot/plots", filename="array", format="png"
-    )
+    output=aplt.Output(path=f"examples/plot/plots", filename="array", format="png")
 )
 
 aplt.Array(array=image, plotter=plotter)

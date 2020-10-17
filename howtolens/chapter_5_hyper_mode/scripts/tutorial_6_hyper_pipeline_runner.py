@@ -9,27 +9,14 @@ You can find many more example pipelines in the folder `autolens_workspace/advan
 """
 
 # %%
-from autoconf import conf
-import os
+#%matplotlib inline
 
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
+from pyprojroot import here
 
-# %%
-"""
-Use this path to explicitly set the config path and output path.
-"""
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
 
-# %%
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/howtolens/config",
-    output_path=f"{workspace_path}/howtolens/output",
-)
-
-# %%
-""" AUTOLENS + DATA SETUP """
-
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -39,18 +26,14 @@ import autolens.plot as aplt
 we'll use strong lensing data, where:
 
  - The lens `Galaxy`'s light is an `EllipticalSersic`.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The lens total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_5 import (
-    light_sersic__mass_sie__source_sersic_x4,
-)
-
 dataset_type = "chapter_5"
 dataset_name = "light_sersic__mass_sie__source_sersic_x4"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/howtolens/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -90,9 +73,10 @@ The setup module customizes the behaviour of a pipeline. Hyper-fitting brings wi
  - If hyper-galaxies are used to scale the noise in each component of the image (default True)
  - If the level of background noise is modeled throughout the pipeline (default True)
  - If the background sky is modeled throughout the pipeline (default False)
+
+Each of these features uses their own `NonLinearSearch` in extended `hyper phases`.
     
-Each of these features uses their own non-linear search in extended `hyper phases`, which are also specified in the
-_SetupPipeline-.
+The `SetupHyper` object controls the behaviour of these hyper-mode settings.
 """
 
 # %%
@@ -109,14 +93,14 @@ setup_hyper = al.SetupHyper(
     inversion_search=inversion_search,
     hyper_combined_search=hyper_combined_search,
 )
-setup_light = al.SetupLightSersic(light_centre=None)
-setup_mass = al.SetupMassTotal(no_shear=False)
+setup_light = al.SetupLightParametric(light_centre=None)
+setup_mass = al.SetupMassTotal(with_shear=True)
 setup_source = al.SetupSourceInversion(
     pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
 )
 
 setup = al.SetupPipeline(
-    path_prefix="c5_t6_hyper",
+    path_prefix="howtolens/c5_t6_hyper",
     setup_hyper=setup_hyper,
     setup_light=setup_light,
     setup_mass=setup_mass,
@@ -130,7 +114,7 @@ Lets import the pipeline and run it.
 # %%
 from autolens_workspace.howtolens.chapter_5_hyper_mode import tutorial_6_hyper_pipeline
 
-pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
+# pipeline_hyper = tutorial_6_hyper_pipeline.make_pipeline(setup=setup, settings=settings)
 
 # Uncomment to run.
 # pipeline_hyper.run(dataset=imaging, mask=mask)

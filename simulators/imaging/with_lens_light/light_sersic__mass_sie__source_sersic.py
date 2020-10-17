@@ -5,18 +5,9 @@ import autolens.plot as aplt
 This script simulates `Imaging` of a strong lens where:
 
  - The lens `Galaxy`'s `LightProfile`'s is an `EllipticalSersic`.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The lens total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 """
 The `dataset_type` describes the type of data being simulated (in this case, `Imaging` data) and `dataset_name` 
@@ -31,10 +22,10 @@ dataset_label = "with_lens_light"
 dataset_name = "light_sersic__mass_sie__source_sersic"
 
 """
-Create the path where the dataset will be output, which in this case is:
-`/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
+Returns the path where the dataset will be output, which in this case is:
+`/autolens_workspace/dataset/imaging/with_lens_light/light_parametric__mass_total__source_bulge`
 """
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -58,14 +49,11 @@ psf = al.Kernel.from_gaussian(
 )
 
 """
-To simulate the `Imaging` dataset we first create a simulator, which defines the expoosure time, background sky,
+To simulate the `Imaging` dataset we first create a simulator, which defines the exposure time, background sky,
 noise levels and psf of the dataset that is simulated.
 """
 simulator = al.SimulatorImaging(
-    exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-    psf=psf,
-    background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-    add_noise=True,
+    exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
 )
 
 """
@@ -82,7 +70,7 @@ We can use the **PyAutoLens** `convert` module to determine the elliptical compo
 """
 lens_galaxy = al.Galaxy(
     redshift=0.5,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=45.0),
         intensity=1.0,
@@ -99,7 +87,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
@@ -123,64 +111,6 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Lets plot the simulated `Imaging` dataset before we output it to fits."""
 aplt.Imaging.subplot_imaging(imaging=imaging)
-
-"""Output our simulated dataset to the dataset path as .fits files"""
-imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    overwrite=True,
-)
-
-"""
-Pickle the `Tracer` in the dataset folder, ensuring the true `Tracer` is safely stored and available if we need to 
-check how the dataset was simulated in the future. 
-
-This will also be accessible via the `Aggregator` if a model-fit is performed using the dataset.
-"""
-tracer.save(file_path=dataset_path, filename="true_tracer")
-
-
-# ####################################### OTHER EXAMPLE IMAGES #####################################
-
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
-dataset_name = "light_sersic__mass_sie__source_sersic__2"
-
-
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
-
-lens_galaxy = al.Galaxy(
-    redshift=0.5,
-    sersic=al.lp.EllipticalSersic(
-        centre=(0.0, 0.0),
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=80.0),
-        intensity=0.8,
-        effective_radius=1.3,
-        sersic_index=2.5,
-    ),
-    mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0),
-        einstein_radius=1.3,
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.6, phi=30.0),
-    ),
-    shear=al.mp.ExternalShear(elliptical_comps=(-0.02, 0.005)),
-)
-
-source_galaxy = al.Galaxy(
-    redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
-        centre=(-0.2, -0.3),
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, phi=10.0),
-        intensity=0.2,
-        effective_radius=1.5,
-        sersic_index=2.0,
-    ),
-)
-
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Output our simulated dataset to the dataset path as .fits files"""
 imaging.output_to_fits(

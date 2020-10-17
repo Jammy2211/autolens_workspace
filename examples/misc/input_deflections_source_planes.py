@@ -9,22 +9,12 @@ for example:
    strongly lensed clusters.
  - Deflection angles of a galaxy simulated in a cosmological galaxy formation simulation.
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
 import autolens as al
 import autolens.plot as aplt
 
 """
 In this example, our `input` deflection angle map is the true deflection angles of the `Imaging` dataset simulated in 
-the `mass_sie__source_sersic.py` simulator. You should be able to simply edit the `from_fits` methods below to point
+the `mass_sie__source_parametric.py` simulator. You should be able to simply edit the `from_fits` methods below to point
 to your own dataset and deflection maps.
 
 Lets load and plot this dataset.
@@ -32,7 +22,7 @@ Lets load and plot this dataset.
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -46,16 +36,16 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 """
 In `autolens_workspace/examples/misc/files` you`ll find the script `make_source_plane.py`, which creates the 
 image-plane  `Grid` and deflection angles we use in this example (which are identical to those used in the 
-`mass_sie__source_sersic.py` simulator). 
+`mass_sie__source_parametric.py` simulator). 
 """
 
 """Lets load the input deflection angle map from a .fits files (which is created in the code mentioned above)."""
 deflections_y = al.Array.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_y.fits",
+    file_path=f"examples/misc/files/deflections_y.fits",
     pixel_scales=imaging.pixel_scales,
 )
 deflections_x = al.Array.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/deflections_x.fits",
+    file_path=f"examples/misc/files/deflections_x.fits",
     pixel_scales=imaging.pixel_scales,
 )
 
@@ -65,14 +55,13 @@ aplt.Array(array=deflections_x)
 
 """Lets next load and plot the image-plane grid"""
 grid = al.Grid.from_fits(
-    file_path=f"{workspace_path}/examples/misc/files/grid.fits",
-    pixel_scales=imaging.pixel_scales,
+    file_path=f"examples/misc/files/grid.fits", pixel_scales=imaging.pixel_scales
 )
 aplt.Grid(grid=grid)
 
 """
 We now create our `InputDeflections` `MassProfile`, which represents our input deflection angle map as a 
-_MassProfile_ in PyAutoLens so that it can be used with objects like `Galaxy`'s and `Tracer``..
+`MassProfile` in PyAutoLens so that it can be used with objects like `Galaxy`'s and `Tracer``..
 
 This takes as input both the input deflection angles and their corresponding image-plane grid, with the latter used to
 compute new sets of deflection angles from the input deflections via interpolation.
@@ -127,7 +116,7 @@ lens_galaxy = al.Galaxy(redshift=0.5, mass=input_deflections)
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,

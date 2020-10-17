@@ -20,7 +20,7 @@ Phase 1:
     Lens Light: Previous Pipeline.
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: VoronoiMagnification + Constant
-    Previous Pipelines: source__sersic.py
+    Previous Pipelines: source__parametric.py
     Prior Passing: Lens Light / Mass (instance -> previous pipeline).
     Notes: Lens light & mass fixed, source `Inversion` parameters vary.
 
@@ -31,7 +31,7 @@ Phase 2:
     Lens Light: Previous Pipeline.
     Lens Mass: MassProfile (default=EllipticalIsothermal) + ExternalShear
     Source Light: VoronoiMagnification + Constant
-    Previous Pipelines: source__sersic.py
+    Previous Pipelines: source__parametric.py
     Prior Passing: Lens Light & Mass (model -> previous pipeline), source `Inversion` (instance -> phase 1).
     Notes: Lens light fixed, mass varies, source `Inversion` parameters fixed.
 
@@ -64,7 +64,7 @@ def make_pipeline(slam, settings):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
-    pipeline_name = "pipeline_source__inversion"
+    pipeline_name = "pipeline_source[inversion]"
 
     """
     This pipeline is tagged according to whether:
@@ -84,8 +84,10 @@ def make_pipeline(slam, settings):
     """
 
     phase1 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_1__source_inversion_magnification_initialization",
+        search=af.DynestyStatic(
+            name="phase[1]_light[fixed]_mass[fixed]_source[inversion_magnification_initialization]",
+            n_live_points=20,
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -105,7 +107,6 @@ def make_pipeline(slam, settings):
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=20),
     )
 
     phase1 = phase1.extend_with_multiple_hyper_phases(
@@ -121,8 +122,10 @@ def make_pipeline(slam, settings):
     """
 
     phase2 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_2__light_bulge_disk__mass_sie__source_inversion_magnification",
+        search=af.DynestyStatic(
+            name="phase[2]__light[fixed]_mass[total]_source[inversion_magnification]",
+            n_live_points=50,
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -142,7 +145,6 @@ def make_pipeline(slam, settings):
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50),
     )
 
     phase2 = phase2.extend_with_multiple_hyper_phases(
@@ -157,8 +159,12 @@ def make_pipeline(slam, settings):
     """
 
     phase3 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_3__source_inversion_initialization",
+        search=af.DynestyStatic(
+            name="phase[3]_light[fixed]_mass[fixed]_source[inversion_initialization]",
+            n_live_points=30,
+            evidence_tolerance=slam.setup_hyper.evidence_tolerance,
+            sample="rstagger",
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -170,19 +176,14 @@ def make_pipeline(slam, settings):
             ),
             source=al.GalaxyModel(
                 redshift=slam.redshift_source,
-                pixelization=slam.pipeline_source_inversion.setup_source.pixelization,
-                regularization=slam.pipeline_source_inversion.setup_source.regularization,
+                pixelization=slam.pipeline_source_inversion.setup_source.pixelization_prior_model,
+                regularization=slam.pipeline_source_inversion.setup_source.regularization_prior_model,
                 hyper_galaxy=phase2.result.hyper_combined.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(
-            n_live_points=30,
-            evidence_tolerance=slam.setup_hyper.evidence_tolerance,
-            sample="rstagger",
-        ),
     )
 
     phase3 = phase3.extend_with_multiple_hyper_phases(
@@ -197,29 +198,14 @@ def make_pipeline(slam, settings):
         3) Set priors on the lens galaxy `MassProfile`'s using the results of phase 2.
     """
 
-    mass = af.PriorModel(slam.pipeline_source_parametric.setup_mass.mass_profile)
-
-    """
-    SLaM: If the centre of the lens `Galaxy`'s mass was fixed in the parametric pipeline and phases 1-3 above, remove
-          the alignment and make the centre free parameters that are fitted for.
-    """
-
-    mass = slam.pipeline_source_inversion.setup_mass.unfix_mass_centre(
-        mass_prior_model=mass, index=-1
+    mass = slam.pipeline_source_parametric.setup_mass.mass_prior_model_with_updated_priors(
+        index=-1, unfix_mass_centre=True
     )
-
-    """SLaM: Unalign the lens mass and light centre, if *align_light_mass_centre* was True."""
-
-    mass = slam.pipeline_source_inversion.setup_mass.unalign_mass_centre_from_light_centre(
-        mass_prior_model=mass
-    )
-
-    mass.elliptical_comps = phase2.result.model.galaxies.lens.mass.elliptical_comps
-    mass.einstein_radius = phase2.result.model.galaxies.lens.mass.einstein_radius
 
     phase4 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_4__lens_light_sie__source_inversion",
+        search=af.DynestyStatic(
+            name="phase[4]_light[fixed]_mass[total]_source[inversion]", n_live_points=50
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
@@ -239,11 +225,12 @@ def make_pipeline(slam, settings):
         hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=50),
     )
 
     phase4 = phase4.extend_with_multiple_hyper_phases(
         setup_hyper=slam.setup_hyper, include_inversion=True
     )
 
-    return al.PipelineDataset(pipeline_name, phase1, phase2, phase3, phase4)
+    return al.PipelineDataset(
+        pipeline_name, path_prefix, phase1, phase2, phase3, phase4
+    )

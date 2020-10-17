@@ -26,7 +26,7 @@ import autolens.plot as aplt
 # %%
 """
 To begin, we will create an image of strong lens using a simple `EllipticalIsothermal` mass model and source with an
-_EllipticalExponential_ light profile. Although we are going to show how **PyAutoLens**`s positional analysis tools model
+`EllipticalExponential` light profile. Although we are going to show how **PyAutoLens**`s positional analysis tools model
 point-sources, showing the tools using an extended source will make it visibly clearer where the multiple images of
 the point source are!
 

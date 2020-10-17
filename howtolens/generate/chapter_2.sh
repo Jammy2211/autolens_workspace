@@ -11,12 +11,14 @@ rm -rf $HOWTOLENS_PATH/dataset/chapter_2/lens*
 rm $CHAPTER_PATH/*.ipynb
 rm -rf $CHAPTER_PATH/.ipynb_checkpoints
 
+echo "Running notebooks."
+cd $WORKSPACE_PATH
+find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=default/backend=Agg/g' {} +
+for f in $SCRIPTS_PATH/*.py; do python "$f"; done
+find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
+
 echo "Converting scripts to notebooks."
 cd $SCRIPTS_PATH
-
-find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=default/backend=Agg/g' {} +
-
-for f in *.py; do python "$f"; done
 py_to_notebook
 cp -r *.ipynb ../
 rm *.ipynb
@@ -24,19 +26,15 @@ cd ..
 git add *.ipynb
 rm __init__.ipynb
 
-find $WORKSPACE_PATH/config -type f -exec sed -i 's/backend=Agg/backend=default/g' {} +
+echo "Renaming cd magicmethod"
+find $CHAPTER_PATH/*.ipynb -type f -exec sed -i 's/#%cd/%cd/g' {} +
 
 echo "Moving new notebooks to PyAutolens/howtolens folder."
 rm -rf $PYAUTOLENS_PATH/howtolens/chapter_2_lens_modeling
-cp -r $HOWTOLENS_PATH/config $PYAUTOLENS_PATH/howtolens
-cp -r $HOWTOLENS_PATH/dataset $PYAUTOLENS_PATH/howtolens
-rm $PYAUTOLENS_PATH/howtolens/dataset/chapter_*/*.fits
+cp -r $WORKSPACE_PATH/dataset/howtolens/chapter_2 $PYAUTOLENS_PATH/howtolens/dataset
 cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
 cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
 cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
-
-echo "Renaming import autolens_workspace to just howtolens for Sphinx build."
-find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/from autolens_workspace./from /g' {} +
 
 echo "Renaming all code which runs phases"
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/aplt.FitImaging/# aplt.FitImaging/g' {} +
@@ -45,7 +43,7 @@ find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_custom_priors = 
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_light_traces_mass =/# result_light_traces_mass =/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase1_result = phase1.run/# phase1_result = phase1.run/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase2_result = phase2.run/# phase2_result = phase2.run/g' {} +
-find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase_2_pass.run/# phase_2_pass.run/g' {} +
+find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/phase[2]_pass.run/# phase[2]_pass.run/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_slow = phase_slow/# result_slow = phase_slow/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_fast = phase_fast/# result_fast = phase_fast/g' {} +
 find $PYAUTOLENS_PATH/howtolens/ -type f -exec sed -i 's/result_light_trace_mass = phase_light_traces/# result_light_trace_mass = phase_light_traces/g' {} +

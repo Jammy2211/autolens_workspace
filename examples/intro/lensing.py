@@ -2,7 +2,7 @@
 """
 __Example: Lensing__
 
-When two galaxies are aligned perfectly down the line-of-sight to Earth, the background `Galaxy`'s light is bent by the
+When two galaxies are aligned perfectly down the line-of-sight to Earth, the background galaxy's light is bent by the
 intervening mass of the foreground galaxy. Its light can be fully bent around the foreground galaxy, traversing multiple
 paths to the Earth, meaning that the background galaxy is observed multiple times. This by-chance alignment of two
 galaxies is called a strong gravitational lens and a two-dimensional scheme of such a system is pictured below.
@@ -30,9 +30,10 @@ grid = al.Grid.uniform(
 
 # %%
 """
-Our aim is to ray-trace this grid`s coordinates to calculate how the lens `Galaxy`'s mass deflects the source `Galaxy`'s
-light. We therefore need analytic functions representing light and mass distributions. For this, **PyAutoLens** uses
-`Profile` objects and below we use the elliptical `EllipticalSersic` `LightProfile`.object to represent a light distribution:
+Our aim is to ray-trace this `Grid`'s coordinates to calculate how the lens `Galaxy`'s mass deflects the source 
+`Galaxy`'s light. We therefore need analytic functions representing light and mass distributions. For this, 
+**PyAutoLens** uses `Profile` objects and below we use the elliptical `EllipticalSersic` `LightProfile` object to 
+represent a light distribution:
 """
 
 # %%
@@ -125,7 +126,7 @@ tracer = al.Tracer.from_galaxies(
 # %%
 """
 When computing the image from the tracer above, the tracer performs all ray-tracing for the given strong lens system.
-This includes using the lens `Galaxy`'s `MassProfile` to deflect the light-rays that are traced to the source galaxy.
+This includes using the lens total mass distribution to deflect the light-rays that are traced to the source galaxy.
 This makes the image below, where the source`s light appears as a multiply imaged and strongly lensed Einstein ring.
 """
 
@@ -170,58 +171,60 @@ system with multiple lens planes will be created, performing complex multi-plane
 To finish, lets create a tracer using 3 galaxies at different redshifts. The mass distribution of the first lens
 galaxy has separate components for its stellar mass and dark matter. This forms a system with two distinct Einstein
 rings!
+
+This can take a while to run (5 minutes +) due to the expensive nature of the deflection angle calculation.
 """
 
-# lens_galaxy_0 = al.Galaxy(
-#     redshift=0.5,
-#     bulge=al.lmp.EllipticalSersic(
-#         centre=(0.0, 0.0),
-#         elliptical_comps=(0.0, 0.05),
-#         intensity=0.5,
-#         effective_radius=0.3,
-#         sersic_index=2.5,
-#         mass_to_light_ratio=0.3,
-#     ),
-#     disk=al.lmp.EllipticalExponential(
-#         centre=(0.0, 0.0),
-#         elliptical_comps=(0.0, 0.1),
-#         intensity=1.0,
-#         effective_radius=2.0,
-#         mass_to_light_ratio=0.2,
-#     ),
-#     dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.08, scale_radius=30.0),
-# )
-#
-# lens_galaxy_1 = al.Galaxy(
-#     redshift=1.0,
-#     sersic=al.lp.EllipticalExponential(
-#         centre=(0.1, 0.1),
-#         elliptical_comps=(0.05, 0.1),
-#         intensity=3.0,
-#         effective_radius=0.1,
-#     ),
-#     mass=al.mp.EllipticalIsothermal(
-#         centre=(0.1, 0.1), elliptical_comps=(0.05, 0.1), einstein_radius=0.4
-#     ),
-# )
-#
-# source_galaxy = al.Galaxy(
-#     redshift=2.0,
-#     sersic=al.lp.EllipticalSersic(
-#         centre=(0.2, 0.2),
-#         elliptical_comps=(0.0, 0.111111),
-#         intensity=2.0,
-#         effective_radius=0.1,
-#         sersic_index=1.5,
-#     ),
-# )
-#
-# tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
-#
-# # %%
-# """
-# This is what the lens looks like:
-# """
-#
-# # %%
-# aplt.Tracer.image(tracer=tracer, grid=grid)
+lens_galaxy_0 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lmp.EllipticalSersic(
+        centre=(0.0, 0.0),
+        elliptical_comps=(0.0, 0.05),
+        intensity=0.5,
+        effective_radius=0.3,
+        sersic_index=2.5,
+        mass_to_light_ratio=0.3,
+    ),
+    disk=al.lmp.EllipticalExponential(
+        centre=(0.0, 0.0),
+        elliptical_comps=(0.0, 0.1),
+        intensity=1.0,
+        effective_radius=2.0,
+        mass_to_light_ratio=0.2,
+    ),
+    dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.08, scale_radius=30.0),
+)
+
+lens_galaxy_1 = al.Galaxy(
+    redshift=1.0,
+    bulge=al.lp.EllipticalExponential(
+        centre=(0.1, 0.1),
+        elliptical_comps=(0.05, 0.1),
+        intensity=3.0,
+        effective_radius=0.1,
+    ),
+    mass=al.mp.EllipticalIsothermal(
+        centre=(0.1, 0.1), elliptical_comps=(0.05, 0.1), einstein_radius=0.4
+    ),
+)
+
+source_galaxy = al.Galaxy(
+    redshift=2.0,
+    bulge=al.lp.EllipticalSersic(
+        centre=(0.2, 0.2),
+        elliptical_comps=(0.0, 0.111111),
+        intensity=2.0,
+        effective_radius=0.1,
+        sersic_index=1.5,
+    ),
+)
+
+tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
+
+# %%
+"""
+This is what the lens looks like:
+"""
+
+# %%
+aplt.Tracer.image(tracer=tracer, grid=grid)

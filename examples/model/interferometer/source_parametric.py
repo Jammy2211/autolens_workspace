@@ -3,7 +3,7 @@
 """
 __Example: Interferometer Source Parametric__
 
-To fit a lens model to an interferometer dataset, we again perform lens modeling using a non-linear search algorithm.
+To fit a lens model to an interferometer dataset, we again perform lens modeling using a `NonLinearSearch`.
 However, unlike CCD `Imaging` data, we fit the lens model in Fourier space, or the `uv-plane`, which circumvents issues
 that arise when trying to fit CLEANED images of interferometer data.
 
@@ -12,7 +12,7 @@ observations observe in excess of *millions* of visibilities, which can make cer
 interferometer data extremely slow and expensive.
 
 In this example, we fit an interferometer dataset consisting of 1 million visibilities, assuming a parametric
-_EllipticalSersic_ model for the source. This analysis would be very expensive if a direct Fourier transform is used to
+`EllipticalSersic` model for the source. This analysis would be very expensive if a direct Fourier transform is used to
 transform the lens model-image from  real-space to Fourier space and compare with the visibilities in the uv-plane.
 
 Instead, **PyAutoLens** uses the non-uniform fast Fourier transform (NUFFT) of the package PyNUFFT
@@ -23,20 +23,11 @@ Instead, **PyAutoLens** uses the non-uniform fast Fourier transform (NUFFT) of t
 """
 In this example script, we fit interferometer data of a strong lens system where:
 
- - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
+ - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -53,8 +44,8 @@ import autolens.plot as aplt
 import numpy as np
 
 dataset_type = "interferometer"
-dataset_name = "mass_sie__source_sersic__2"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_name}"
+dataset_name = "mass_sie__source_bulge__2"
+dataset_path = f"dataset/{dataset_type}/{dataset_name}"
 
 interferometer = al.Interferometer.from_fits(
     visibilities_path=f"{dataset_path}/visibilities.fits",
@@ -109,7 +100,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -145,42 +136,44 @@ nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), w
  - 50 live points.
 
 The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
-non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
+non-linear searches that can be used with **PyAutoLens**. If you do not know what a `NonLinearSearch` is or how it 
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
+
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
+
+ `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase_mass[sie]_source[bulge]`.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/interferometer/{dataset_name}",
+    name="phase_mass[sie]_source[bulge]",
+    n_live_points=50,
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
-
- `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__mass_sie__source_sersic`.
 """
 
 # %%
 phase = al.PhaseInterferometer(
-    path_prefix=f"examples/interferometer/{dataset_name}",
-    phase_name="phase__mass_sie__source_sersic",
+    search=search,
     real_space_mask=real_space_mask,
     galaxies=dict(lens=lens, source=source),
     settings=settings,
-    search=search,
 )
 
 # %%
 """
-We can now begin the fit by passing the dataset and visibilties mask to the phase, which will use the non-linear search 
+We can now begin the fit by passing the dataset and visibilties mask to the phase, which will use the `NonLinearSearch` 
 to fit the model to the data. 
 
 The fit outputs visualization on-the-fly, so checkout the path 
-`/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic` to see how your fit is doing!
+`/path/to/autolens_workspace/output/examples/phase_mass[sie]_source[bulge]` to see how your fit is doing!
 """
 
 # %%

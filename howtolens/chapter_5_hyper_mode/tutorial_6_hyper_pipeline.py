@@ -17,17 +17,17 @@ galaxy-names. When you create a `GalaxyModel`, you name the `Galaxy`'s for examp
 `lens` and the source galaxy `source`:
 
 phase1 = al.PhaseImaging(
-    phase_name="phase_1",
-    path_prefix=path_prefix,
+    name="phase[1]",
+    
     galaxies=dict(
 NAME --> lens=al.GalaxyModel(
             redshift=0.5,
-            sersic=al.lp.EllipticalSersic,
+            bulge=al.lp.EllipticalSersic,
             mass=al.mp.EllipticalIsothermal,
         )
     ),
       galaxies=dict(
-NAME --> source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+NAME --> source=al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
     ),
 )
 
@@ -146,10 +146,8 @@ def make_pipeline(setup, settings):
     """
 
     phase1 = al.PhaseImaging(
-        phase_name="phase_1__light_sersic",
-        path_prefix=path_prefix,
-        galaxies=dict(lens=al.GalaxyModel(redshift=0.5, sersic=al.lp.EllipticalSersic)),
-        search=af.DynestyStatic(n_live_points=30),
+        search=af.DynestyStatic(name="phase[1]_light[bulge]", n_live_points=30),
+        galaxies=dict(lens=al.GalaxyModel(redshift=0.5, bulge=al.lp.EllipticalSersic)),
     )
 
     """
@@ -176,7 +174,7 @@ def make_pipeline(setup, settings):
     """
 
     mass = af.PriorModel(al.mp.EllipticalIsothermal)
-    mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.sersic.centre
+    mass.centre = phase1.result.model_absolute(a=0.1).galaxies.lens.bulge.centre
 
     """
     You will note three new inputs to the phase below, `hyper_galaxy`, `hyper_image_sky` and `hyper_background_noise`.
@@ -187,21 +185,21 @@ def make_pipeline(setup, settings):
     """
 
     phase2 = al.PhaseImaging(
-        phase_name="phase_2__mass_sie__source_sersic",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[2]_mass_[sie]_source[bulge]", n_live_points=50
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase1.result.instance.galaxies.lens.sersic,
+                bulge=phase1.result.instance.galaxies.lens.bulge,
                 mass=mass,
                 shear=al.mp.ExternalShear,
                 hyper_galaxy=phase1.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
-            source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
+            source=al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic),
         ),
         hyper_image_sky=phase1.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=50),
     )
 
     """
@@ -228,23 +226,23 @@ def make_pipeline(setup, settings):
     """
 
     phase3 = al.PhaseImaging(
-        phase_name="phase_3__light_sersic__mass_sie__source_exp",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[3]_light[bulge]_mass[sie]_source[exp]", n_live_points=100
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase1.result.model.galaxies.lens.sersic,
+                bulge=phase1.result.model.galaxies.lens.bulge,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase2.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
             ),
             source=al.GalaxyModel(
-                redshift=1.0, sersic=phase2.result.model.galaxies.source.sersic
+                redshift=1.0, bulge=phase2.result.model.galaxies.source.bulge
             ),
         ),
         hyper_image_sky=phase2.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=100),
     )
 
     """The usual phase extension, which operates the same as the extension for phase 2."""
@@ -269,12 +267,13 @@ def make_pipeline(setup, settings):
     """
 
     phase4 = al.PhaseImaging(
-        phase_name="phase_4__source_inversion_initialize_magnification",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[4]_source[inversion_initialize_magnification]", n_live_points=20
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase3.result.instance.galaxies.lens.sersic,
+                bulge=phase3.result.instance.galaxies.lens.bulge,
                 mass=phase3.result.instance.galaxies.lens.mass,
                 shear=phase3.result.instance.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -287,7 +286,6 @@ def make_pipeline(setup, settings):
         ),
         hyper_image_sky=phase3.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase3.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=20),
     )
 
     """
@@ -304,12 +302,14 @@ def make_pipeline(setup, settings):
     """
 
     phase5 = al.PhaseImaging(
-        phase_name="phase_5__light_sersic__mass_sie__source_inversion_magnification",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[5]_light[bulge]_mass[sie]_source[inversion_magnification]",
+            n_live_points=100,
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase3.result.model.galaxies.lens.sersic,
+                bulge=phase3.result.model.galaxies.lens.bulge,
                 mass=phase3.result.model.galaxies.lens.mass,
                 shear=phase3.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase4.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -322,7 +322,6 @@ def make_pipeline(setup, settings):
         ),
         hyper_image_sky=phase4.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase4.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase5 = phase5.extend_with_multiple_hyper_phases(
@@ -336,12 +335,13 @@ def make_pipeline(setup, settings):
     """
 
     phase6 = al.PhaseImaging(
-        phase_name="phase_6__source_inversion_initialize",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[6]_source[inversion_initialize]", n_live_points=20
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase5.result.instance.galaxies.lens.sersic,
+                bulge=phase5.result.instance.galaxies.lens.bulge,
                 mass=phase5.result.instance.galaxies.lens.mass,
                 shear=phase5.result.instance.galaxies.lens.shear,
                 hyper_galaxy=phase5.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -354,7 +354,6 @@ def make_pipeline(setup, settings):
         ),
         hyper_image_sky=phase5.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase5.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=20),
     )
 
     """
@@ -373,12 +372,13 @@ def make_pipeline(setup, settings):
     """
 
     phase7 = al.PhaseImaging(
-        phase_name="phase_7__light_sersic__mass_sie__source_inversion",
-        path_prefix=path_prefix,
+        search=af.DynestyStatic(
+            name="phase[7]_light[bulge]_mass[sie]_source[inversion]", n_live_points=100
+        ),
         galaxies=dict(
             lens=al.GalaxyModel(
                 redshift=0.5,
-                sersic=phase5.model.galaxies.lens.sersic,
+                bulge=phase5.model.galaxies.lens.bulge,
                 mass=phase5.model.galaxies.lens.mass,
                 shear=phase5.model.galaxies.lens.shear,
                 hyper_galaxy=phase6.result.hyper_combined.instance.galaxies.lens.hyper_galaxy,
@@ -392,7 +392,6 @@ def make_pipeline(setup, settings):
         ),
         hyper_image_sky=phase6.result.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=phase6.result.hyper_combined.instance.optional.hyper_background_noise,
-        search=af.DynestyStatic(n_live_points=100),
     )
 
     phase7 = phase7.extend_with_multiple_hyper_phases(
@@ -400,5 +399,13 @@ def make_pipeline(setup, settings):
     )
 
     return al.PipelineDataset(
-        pipeline_name, phase1, phase2, phase3, phase4, phase5, phase6, phase7
+        pipeline_name,
+        path_prefix,
+        phase1,
+        phase2,
+        phase3,
+        phase4,
+        phase5,
+        phase6,
+        phase7,
     )

@@ -11,48 +11,36 @@ where in the final phase of the pipeline:
 
  - The lens `Galaxy`'s `LightProfile`'s are modeled as an `EllipticalSersic` + `EllipticalExponential`, representing
    a bulge + disk model.
- - The lens `Galaxy`'s stellar `MassProfile` is fitted using the `EllipticalSersic` + EllipticalExponential of the
+ - The lens `Galaxy`'s light matter mass distribution is fitted using the `EllipticalSersic` + EllipticalExponential of the
     `LightProfile`, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
- - The source `Galaxy`'s `LightProfile` is modeled using an `EllipticalSersic`.
+ - The source `Galaxy`'s light is modeled parametrically using an `EllipticalSersic`.
 
 This runner uses the SLaM pipelines:
 
- `slam/with_lens_light/source__sersic.py`.
+ `slam/with_lens_light/source__parametric.py`.
  `slam/with_lens_light/light__sersic.py`.
  `slam/with_lens_light/mass__light_dark__sersic.py`.
 
 Check them out for a detailed description of the analysis!
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-""" AUTOLENS + DATA SETUP """
 import autolens as al
 import autolens.plot as aplt
 
 # %%
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
 dataset_type = "imaging"
-dataset_label = "light_dark"
+dataset_label = "with_lens_light"
 dataset_name = "light_sersic__mass_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
 # %%
 """
-Create the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/imaging/light_bulge_disk__mass_mlr_nfw__source_parametric`
+Returns the path where the dataset will be loaded from, which in this case is
+`/autolens_workspace/dataset/imaging/light_sersic_exp__mass_mlr_nfw__source_parametric`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
@@ -109,7 +97,7 @@ for example if a shear was included in the mass model and the model used for the
 SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specific aspect of the strong 
 lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own setup object 
 which is equivalent to the `SetupPipeline` object, customizing the analysis in that pipeline. Each pipeline therefore
-has its own `SetupMass`, `SetupLight` and `SetupSource` object.
+has its own `SetupMass`, `SetupLightParametric` and `SetupSourceParametric` object.
 
 The `Setup` used in earlier pipelines determine the model used in later pipelines. For example, if the `Source` 
 pipeline is given a `Pixelization` and `Regularization`, than this `Inversion` will be used in the subsequent 
@@ -153,7 +141,7 @@ _SLaMPipelineSourceParametric_ determines the source model used by the parametri
 options can be found ? and ?.
 
 By default, this assumes an `EllipticalIsothermal` profile for the lens `Galaxy`'s mass and an `EllipticalSersic` + 
-_EllipticalExponential_ model for the lens `Galaxy`'s light. Our experience with lens modeling has shown they are the 
+`EllipticalExponential` model for the lens `Galaxy`'s light. Our experience with lens modeling has shown they are the 
 simplest models that provide a good fit to the majority of strong lenses.
 
 For this runner the `SLaMPipelineSourceParametric` customizes:
@@ -162,11 +150,11 @@ For this runner the `SLaMPipelineSourceParametric` customizes:
  - If there is an `ExternalShear` in the mass model or not.
 """
 
-setup_light = al.SetupLightBulgeDisk(light_centre=(0.0, 0.0))
+setup_light = al.SetupLightParametric(light_centre=(0.0, 0.0))
 setup_mass = al.SetupMassTotal(
-    mass_profile=al.mp.EllipticalIsothermal, no_shear=False, mass_centre=(0.0, 0.0)
+    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True, mass_centre=(0.0, 0.0)
 )
-setup_source = al.SetupSourceSersic()
+setup_source = al.SetupSourceParametric()
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
     setup_light=setup_light, setup_mass=setup_mass, setup_source=setup_source
@@ -176,26 +164,26 @@ pipeline_source_parametric = al.SLaMPipelineSourceParametric(
 """
 __SLaMPipelineLight__
 
-The `SLaMPipelineLight` pipeline fits the model for the lens `Galaxy`'s bulge + disk light model. 
+The `SLaMPipelineLightParametric` pipeline fits the model for the lens `Galaxy`'s bulge + disk light model. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens `Galaxy`'s light is input into `SLaMPipelineLight` below and this runner uses an 
+The model used to represent the lens `Galaxy`'s light is input into `SLaMPipelineLightParametric` below and this runner uses an 
  `EllipticalSersic`.
  
-For this runner the `SLaMPipelineLight` customizes:
+For this runner the `SLaMPipelineLightParametric` customizes:
 
  - That the `LightProfile` centre is fixed to (0.0, 0.0).
 
-The `SLaMPipelineLight` uses the mass model fitted in the previous `SLaMPipelineSource`'s.
+The `SLaMPipelineLightParametric` uses the mass model fitted in the previous `SLaMPipelineSource`'s.
 
-The `SLaMPipelineLight` and imported light pipelines determine the lens light model used in `Mass` pipelines.
+The `SLaMPipelineLightParametric` and imported light pipelines determine the lens light model used in `Mass` pipelines.
 """
 
 # %%
-setup_light = al.SetupLightSersic(light_centre=(0.0, 0.0))
+setup_light = al.SetupLightParametric(light_centre=(0.0, 0.0))
 
-pipeline_light = al.SLaMPipelineLight(setup_light=setup_light)
+pipeline_light = al.SLaMPipelineLightParametric(setup_light=setup_light)
 
 # %%
 """
@@ -214,7 +202,7 @@ For this runner the `SLaMPipelineMass` customizes:
  - If there is an `ExternalShear` in the mass model or not.
 """
 
-setup_mass = al.SetupMassLightDark(no_shear=False, mass_centre=(0.0, 0.0))
+setup_mass = al.SetupMassLightDark(with_shear=True, mass_centre=(0.0, 0.0))
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
 
@@ -229,10 +217,10 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    path_prefix=f"slam/{dataset_type}_{dataset_label}/{dataset_name}",
+    path_prefix=f"slam/{dataset_type}/{dataset_label}/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
-    pipeline_light=pipeline_light,
+    pipeline_light_parametric=pipeline_light,
     pipeline_mass=pipeline_mass,
 )
 
@@ -246,16 +234,16 @@ We then add the pipelines together and run this summed pipeline, which runs each
 """
 
 # %%
-from autolens_workspace.slam.pipelines.with_lens_light import source__sersic
+from autolens_workspace.slam.pipelines.with_lens_light import source__parametric
 from autolens_workspace.slam.pipelines.with_lens_light import light__sersic
 from autolens_workspace.slam.pipelines.with_lens_light import mass__light_dark__sersic
 
-source__sersic = source__sersic.make_pipeline(slam=slam, settings=settings)
+source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
 light__sersic = light__sersic.make_pipeline(slam=slam, settings=settings)
 mass__light_dark__sersic = mass__light_dark__sersic.make_pipeline(
     slam=slam, settings=settings
 )
 
-pipeline = source__sersic + light__sersic + mass__light_dark__sersic
+pipeline = source__parametric + light__sersic + mass__light_dark__sersic
 
 pipeline.run(dataset=imaging, mask=mask)

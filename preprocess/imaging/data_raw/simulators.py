@@ -31,7 +31,7 @@ def simulate_imaging(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -39,7 +39,7 @@ def simulate_imaging(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -47,10 +47,7 @@ def simulate_imaging(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -83,7 +80,7 @@ def simulate_imaging_in_counts(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -91,7 +88,7 @@ def simulate_imaging_in_counts(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -99,15 +96,14 @@ def simulate_imaging_in_counts(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
-    exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=grid.shape_2d)
+    exposure_time_map = al.Array.full(
+        fill_value=1000.0, shape_2d=grid.shape_2d, pixel_scales=grid.pixel_scales
+    )
     exposure_time_map.output_to_fits(
         file_path=f"{imaging_path}/exposure_time_map.fits", overwrite=True
     )
@@ -137,7 +133,7 @@ def simulate_imaging_in_adus(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -145,7 +141,7 @@ def simulate_imaging_in_adus(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -153,15 +149,14 @@ def simulate_imaging_in_adus(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
-    exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=grid.shape_2d)
+    exposure_time_map = al.Array.full(
+        fill_value=1000.0, shape_2d=grid.shape_2d, pixel_scales=grid.pixel_scales
+    )
     exposure_time_map.output_to_fits(
         file_path=f"{imaging_path}/exposure_time_map.fits", overwrite=True
     )
@@ -191,7 +186,7 @@ def simulate_imaging_with_large_stamp(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -199,7 +194,7 @@ def simulate_imaging_with_large_stamp(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -207,10 +202,7 @@ def simulate_imaging_with_large_stamp(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -233,7 +225,7 @@ def simulate_imaging_with_small_stamp(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -241,7 +233,7 @@ def simulate_imaging_with_small_stamp(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -249,10 +241,7 @@ def simulate_imaging_with_small_stamp(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -275,7 +264,7 @@ def simulate_imaging_with_offset_centre(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(1.0, 1.0), einstein_radius=1.2),
@@ -283,7 +272,7 @@ def simulate_imaging_with_offset_centre(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(1.0, 1.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -291,10 +280,7 @@ def simulate_imaging_with_offset_centre(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -317,7 +303,7 @@ def simulate_imaging_noise_map_wht(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -325,7 +311,7 @@ def simulate_imaging_noise_map_wht(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -333,10 +319,7 @@ def simulate_imaging_noise_map_wht(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -361,7 +344,7 @@ def simulate_imaging_with_large_psf(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -369,7 +352,7 @@ def simulate_imaging_with_large_psf(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -377,10 +360,7 @@ def simulate_imaging_with_large_psf(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -403,7 +383,7 @@ def simulate_imaging_with_even_psf(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -411,7 +391,7 @@ def simulate_imaging_with_even_psf(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -419,10 +399,7 @@ def simulate_imaging_with_even_psf(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -451,7 +428,7 @@ def simulate_imaging_with_unnormalized_psf(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -459,7 +436,7 @@ def simulate_imaging_with_unnormalized_psf(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -467,10 +444,7 @@ def simulate_imaging_with_unnormalized_psf(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
@@ -495,7 +469,7 @@ def simulate_imaging_with_psf_with_offset_centre(dataset_path):
 
     lens_galaxy = al.Galaxy(
         redshift=0.5,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.3, effective_radius=1.0, sersic_index=2.0
         ),
         mass=al.mp.SphericalIsothermal(centre=(0.0, 0.0), einstein_radius=1.2),
@@ -503,7 +477,7 @@ def simulate_imaging_with_psf_with_offset_centre(dataset_path):
 
     source_galaxy = al.Galaxy(
         redshift=1.0,
-        sersic=al.lp.SphericalSersic(
+        bulge=al.lp.SphericalSersic(
             centre=(0.0, 0.0), intensity=0.2, effective_radius=1.0, sersic_index=1.5
         ),
     )
@@ -511,10 +485,7 @@ def simulate_imaging_with_psf_with_offset_centre(dataset_path):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
-        psf=psf,
-        background_sky_map=al.Array.full(fill_value=0.1, shape_2d=grid.shape_2d),
-        add_noise=True,
+        exposure_time=300.0, psf=psf, background_sky_level=0.1, add_poisson_noise=True
     )
 
     imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)

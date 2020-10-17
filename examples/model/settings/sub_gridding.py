@@ -16,28 +16,6 @@ yourself with those first!
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
-""" AUTOLENS + DATA SETUP """
-
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -47,7 +25,7 @@ dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -71,17 +49,7 @@ we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitt
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
-
-# %%
-"""
-__Search__
-
-we'll use the default DynestyStatic sampler we used in the beginner examples.
-"""
-
-# %%
-search = af.DynestyStatic(n_live_points=50)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -98,29 +66,36 @@ settings = al.SettingsPhaseImaging(grid_class=al.Grid, sub_size=4)
 
 # %%
 """
-__Phase__
+__Search__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
-the lens model.
+we'll use the default `DynestyStatic` sampler we used in the beginner examples.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub`.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase_sub`.
 
 However, because the `SettingsPhase` include a bin_up_factor, the output path is tagged to reflelct this, meaning the
 full output path is:
 
- `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase__sub/settings__grid_sub_4`.
+ `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase_sub/settings__grid_sub_4`.
+"""
 
+# %%
+search = af.DynestyStatic(
+    path_prefix=f"examples/settings", name="phase__sub", n_live_points=50
+)
+
+# %%
+"""
+__Phase__
+
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
+the lens model.
 """
 
 # %%
 phase = al.PhaseImaging(
-    path_prefix=f"examples/settings",
-    phase_name="phase__sub",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 phase.run(dataset=imaging, mask=mask)

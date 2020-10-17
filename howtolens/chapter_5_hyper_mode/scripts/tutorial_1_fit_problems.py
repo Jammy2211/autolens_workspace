@@ -49,6 +49,12 @@ source-plane resolution and a regularization_coefficient that maximize the Bayes
 # %%
 #%matplotlib inline
 
+from pyprojroot import here
+
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 import autolens as al
 import autolens.plot as aplt
 
@@ -60,7 +66,7 @@ we'll use 3 sources whose effective radius and Sersic index are changed such tha
 # %%
 source_galaxy_flat = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -71,7 +77,7 @@ source_galaxy_flat = al.Galaxy(
 
 source_galaxy_compact = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -82,7 +88,7 @@ source_galaxy_compact = al.Galaxy(
 
 source_galaxy_super_compact = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.0, 0.0),
         elliptical_comps=(0.0, 0.15),
         intensity=0.2,
@@ -114,10 +120,10 @@ def simulate_for_source_galaxy(source_galaxy):
     tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
-        exposure_time_map=al.Array.full(fill_value=300.0, shape_2d=grid.shape_2d),
+        exposure_time=300.0,
         psf=psf,
-        background_sky_map=al.Array.full(fill_value=100.0, shape_2d=grid.shape_2d),
-        add_noise=True,
+        background_sky_level=100.0,
+        add_poisson_noise=True,
         noise_seed=1,
     )
 
@@ -266,7 +272,7 @@ print(fit_super_compact.log_evidence)
 """
 Okay, so what did we learn? The more compact our source, the worse the fit. This happens even though we are using the 
 *correct* lens mass model, telling us that something is going fundamentally wrong with our source reconstruction and 
-_Inversion_. As you might of guessed, both our `Pixelization`.nd `Regularization` scheme are to blame!
+`Inversion`. As you might of guessed, both our `Pixelization`.nd `Regularization` scheme are to blame!
 
 __Pixelization__
 
@@ -339,7 +345,7 @@ aplt.FitImaging.subplot_fit_imaging(
 # %%
 """
 So, whats the problem? Look closely at the `chi-squared image`. Here, you`ll note that a small subset of our data 
-have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared) is 
+have extremely large chi-squared values. This means our `NonLinearSearch` (which is trying minimize chi-squared) is 
 going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset of 
 the data (e.g. < 5% of pixels) contributes to the majority of the log likelihood (e.g. > 95% of the overall chi-squared). 
 This is *not* what we want, as instead of using the entire surface brightness profile of the lensed source galaxy to 

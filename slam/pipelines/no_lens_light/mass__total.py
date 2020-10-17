@@ -2,7 +2,7 @@ import autofit as af
 import autolens as al
 
 """
-In this pipeline, we fit the mass of a strong lens using an input `MassProfile` (default=_EllipticalPowerLaw_) + 
+In this pipeline, we fit the mass of a strong lens using an input `MassProfile` (default=`EllipticalPowerLaw`) + 
 shear model.
 
 The source model is chosen and mass model is initialized using the previously run Source pipeline.
@@ -24,7 +24,7 @@ def make_pipeline(slam, settings):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
-    pipeline_name = "pipeline_mass__total"
+    pipeline_name = "pipeline_mass[total]"
 
     """
     This pipeline is tagged according to whether:
@@ -50,26 +50,11 @@ def make_pipeline(slam, settings):
         3) Fit this source as a model if it is parametric and as an instance if it is an `Inversion`.
     """
 
-    """Setup the `EllipticalPowerLaw` `MassProfile`.and initialize its priors from the `EllipticalIsothermal`."""
+    """Setup the `MassProfile`.and initialize its priors from the `EllipticalIsothermal`."""
 
-    mass = af.PriorModel(slam.pipeline_mass.setup_mass.mass_profile)
-
-    """
-    SLaM: If only a parametric Source pipeline was used and it had an input fixed mass_centre, this will carry
-    through to this pipeline. Below, we unfix it so it is a free parameter.
-    
-    If a Source `Inversion` pipeline was run, it will already be unfixed.
-    """
-
-    if slam.pipeline_source_inversion is None:
-        mass = slam.pipeline_source_parametric.setup_mass.unfix_mass_centre(
-            mass_prior_model=mass, index=0
-        )
-    else:
-        mass.centre = af.last.model.galaxies.lens.mass.centre
-
-    mass.elliptical_comps = af.last.model.galaxies.lens.mass.elliptical_comps
-    mass.einstein_radius = af.last.model.galaxies.lens.mass.einstein_radius
+    mass = slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors(
+        index=0, unfix_mass_centre=True
+    )
 
     """
     SLaM: Setup the source model, which uses a variable parametric profile or fixed `Inversion` model.
@@ -78,8 +63,7 @@ def make_pipeline(slam, settings):
     source = slam.source_from_previous_pipeline_model_if_parametric(index=0)
 
     phase1 = al.PhaseImaging(
-        path_prefix=path_prefix,
-        phase_name="phase_1__mass_total__source",
+        search=af.DynestyStatic(name="phase[1]_mass[total]_source", n_live_points=100),
         galaxies=dict(
             lens=al.GalaxyModel(redshift=slam.redshift_lens, mass=mass, shear=shear),
             source=source,
@@ -87,7 +71,6 @@ def make_pipeline(slam, settings):
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
-        search=af.DynestyStatic(n_live_points=100),
     )
 
     # phase1 = phase1.extend_with_stochastic_phase(
@@ -102,4 +85,4 @@ def make_pipeline(slam, settings):
             setup_hyper=slam.setup_hyper, include_inversion=True
         )
 
-    return al.PipelineDataset(pipeline_name, phase1)
+    return al.PipelineDataset(pipeline_name, path_prefix, phase1)

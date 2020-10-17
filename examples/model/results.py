@@ -6,7 +6,7 @@ After fitting strong lens data a phase returns a `result` variable, which we hav
 examples scripts to plot the maximum log likelihood tracer and fits. However, this `Result` object has a lot more
 information than that, and this script will cover everything it contains.
 
-This script uses the result generated in the script `autolens_workspace/examples/beginner/mass_sie__source_sersic.py`.
+This script uses the result generated in the script `autolens_workspace/examples/beginner/mass_sie__source_parametric.py`.
 If you have not run the script or its results are not present in the output folder, the model-fit will be performed
 again to create the results.
 
@@ -19,15 +19,6 @@ The code below, which we have omitted comments from, reperforms all the tasks th
 model-fit in this script. If anything in this code is not clear to you, you should go over the beginner model-fit
 script again.
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -45,7 +36,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -59,16 +50,18 @@ mask = al.Mask2D.circular(
 )
 
 phase = al.PhaseImaging(
-    phase_name="phase__mass_sie__source_sersic",
-    path_prefix=f"examples/beginner/{dataset_name}",
+    search=af.DynestyStatic(
+        path_prefix=f"examples/beginner/{dataset_name}",
+        name="phase_mass[sie]_source[bulge]",
+        n_live_points=50,
+    ),
     galaxies=dict(
         lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
-        source=al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic),
+        source=al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic),
     ),
     settings=al.SettingsPhaseImaging(
         settings_masked_imaging=al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
     ),
-    search=af.DynestyStatic(n_live_points=50, evidence_tolerance=5.0),
 )
 
 result = phase.run(dataset=imaging, mask=mask)
@@ -88,7 +81,7 @@ aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 """
 The result contains a lot more information about the model-fit. 
 
-For example, its `Samples` object contains the complete set of non-linear search samples, for example every set of 
+For example, its `Samples` object contains the complete set of `NonLinearSearch` samples, for example every set of 
 parameters evaluated, their log likelihoods and so on, which are used for computing information about the model-fit 
 such as the error on every parameter. Our model-fit used the nested sampling algorithm Dynesty, so the `Samples` object
 returned is a `NestSamples` objct.

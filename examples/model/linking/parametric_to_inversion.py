@@ -18,17 +18,17 @@ In this example, we link two phases, where:
       priors are initialized using the results of phase 1.
 
 There are a number of benefits to linking a parametric source model to an _Inversion, as opposed to fitting the
-_Inversion_ in one phase:
+`Inversion` in one phase:
 
  - Parametric sources are computationally faster to evaluate and fit to the data than an `Inversion`. Thus, although
-      the `EllipticalSersic` carries with it more parameters that the non-linear search will have to fit for, the
+      the `EllipticalSersic` carries with it more parameters that the `NonLinearSearch` will have to fit for, the
       model-fit will be faster overall given the increased speed of each log likelihood evaluation.
 
  - `Inversion`'s often go to unphysical solutions where the mass model goes to extremely high / low normalizations
       and the source is reconstructed as a demagnified version of the lensed source (see Chapter 4, tutorial 6 for a
       complete description of this effect). A powerful way to prevent this from happening is to initialize the mass
       model with a fit using a parametric source (which does not suffer these unphysical solutions) and use this result
-      to ensure the non-linear search samples only the maximal likelihood regions of parameter space.
+      to ensure the `NonLinearSearch` samples only the maximal likelihood regions of parameter space.
       
  - To further remove these solutions, we use the `auto_positions` feature of the `SettingsPhaseImaging`, which use
       the maximum log likelihood mass model of the first phase to determine the positions in the image-plane the
@@ -38,30 +38,11 @@ _Inversion_ in one phase:
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens `Galaxy`'s `LightProfile` is omitted_.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s light is omitted_.
+ - The lens total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
@@ -74,7 +55,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -105,7 +86,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -145,30 +126,30 @@ and `autolens_workspace/examples/model/customize/non_linear_searches.py`.
 
 In this example, we omit the PriorPasser and will instead use the default values used to pass priors in the config 
 file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
+
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
+
+ `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase[1]`.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/parametric_to_inversion",
+    name="phase[1]",
+    n_live_points=50,
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
-
- `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase_1`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
-    path_prefix=f"examples/linking/parametric_to_inversion",
-    phase_name="phase_1",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
@@ -205,29 +186,29 @@ In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=40)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/parametric_to_inversion",
+    name="phase[2]",
+    n_live_points=40,
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase_2`.
+ `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase[2]`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
-    path_prefix=f"examples/linking/parametric_to_inversion",
-    phase_name="phase_2",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase2.run(dataset=imaging, mask=mask)
@@ -238,14 +219,14 @@ __Wrap Up__
 
 In this example, we passed used prior passing to initialize a lens mass model using a parametric source and pass this
 model to a second phase which modeled the source using an `Inversion`. We won in terms of efficiency and ensuring the
-_Inversion_ did not go to an unphysical solution.
+`Inversion` did not go to an unphysical solution.
 
 __Pipelines__
 
 The next level of PyAutoLens uses `Pipelines`, which link together multiple phases to perform very complex lens 
 modeling in robust and efficient ways. Pipelines which fit the source as an `Inversion`, for example:
 
- `autolens_wokspace/pipelines/no_lens_light/lens_sie__source_inversion.py`
+ `autolens_wokspace/pipelines/no_lens_light/mass_total__source_inversion.py`
 
 Exploit our ability to first model the source using a parametric profile and then switch to an `Inversion`, to ensure 
 more efficient and robust model-fits!

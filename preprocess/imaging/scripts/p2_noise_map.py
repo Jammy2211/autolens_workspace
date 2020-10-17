@@ -11,12 +11,13 @@ This tutorial describes preprocessing your dataset`s noise-map to adhere too the
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -29,13 +30,7 @@ For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw
 contains example data we'll use in this tutorial.
 """
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
+dataset_path = f"preprocess/imaging/data_raw"
 
 # %%
 """
@@ -82,7 +77,7 @@ you might of used.
 
 # %%
 
-# exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=noise_map.shape_2d)
+# exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=noise_map.shape_2d, pixel_scales=0.1)
 #
 # noise_map_processed = al.preprocess.array_from_counts_to_electrons_per_second(
 #     array=noise_map, exposure_time_map=exposure_time_map

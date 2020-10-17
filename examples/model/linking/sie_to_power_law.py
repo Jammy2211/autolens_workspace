@@ -17,7 +17,7 @@ In this example, we link two phases, where:
       `EllipticalSersic`.
 
 The `EllipticalPower` is a general form of the `EllipticalIsothermal` and it has one addition parameter relative to the
-_EllipticalIsothermal_, the `slope`. This controls the internal mass distriibution of the mass profile, whereby:
+`EllipticalIsothermal`, the `slope`. This controls the internal mass distriibution of the mass profile, whereby:
 
  - A higher slope concentrates more mass in the central regions of the `MassProfile` relative to the outskirts. 
  - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts. 
@@ -28,7 +28,7 @@ and slope. This proves challenging to sample in an efficient and robust manner, 
 not initalized so as to start sampling in the high likelhood regions of parameter space.
 
 We can use prior passing to perform this initialization!  The `EllipticalIsothermal` profile corresponds to an 
-_EllipticalPowerLaw_ with a slope = 2.0. Thus, we can first fit an `EllipticalIsothermal` model in a non-linear 
+`EllipticalPowerLaw` with a slope = 2.0. Thus, we can first fit an `EllipticalIsothermal` model in a non-linear 
 parameter space that does not have the strong degeneracy between mass, ellipticity and axis-ratio, which will 
 provide an efficient and robust fit. 
 
@@ -37,30 +37,11 @@ Phase 2 can then fit the `EllipticalPowerLaw`, using prior passing to initialize
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
-"""Set up the config and output paths."""
-
-# %%
-from autoconf import conf
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/config", output_path=f"{workspace_path}/output"
-)
-
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
- - The lens `Galaxy`'s `LightProfile` is omitted_.
- - The lens `Galaxy`'s `MassProfile` is an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s light is omitted_.
+ - The lens total mass distribution is an `EllipticalPowerLaw`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 
 """
@@ -73,7 +54,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_power_law__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -106,7 +87,7 @@ for phases 1 and 2 respectively..
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -131,27 +112,25 @@ file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/sie_to_power_law", name="phase[1]", n_live_points=50
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
 
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_sersic/phase_1`.
+ `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_bulge/phase[1]`.
 """
 
 # %%
 phase1 = al.PhaseImaging(
-    path_prefix=f"examples/linking/sie_to_power_law",
-    phase_name="phase_1",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
@@ -186,39 +165,37 @@ mass.einstein_radius = phase1_result.model.galaxies.lens.mass.einstein_radius
 
 lens = al.GalaxyModel(redshift=0.5, mass=mass)
 
-source = al.GalaxyModel(redshift=1.0, sersic=phase1_result.model.galaxies.source.sersic)
+source = al.GalaxyModel(redshift=1.0, bulge=phase1_result.model.galaxies.source.bulge)
 
 # %%
 """
 __Search__
 
 In phase 2, we use the nested sampling algorithm `Dynesty` again.
+
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
+
+ `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_bulge/phase[2]`.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/sie_to_power_law", name="phase[2]", n_live_points=50
+)
 
 # %%
 """
 __Phase__
 
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
 the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
-
- `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_sersic/phase_2`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
 # %%
 phase2 = al.PhaseImaging(
-    path_prefix=f"examples/linking/sie_to_power_law",
-    phase_name="phase_2",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase2.run(dataset=imaging, mask=mask)
@@ -239,5 +216,5 @@ modeling in robust and efficient ways. Pipelines which fit a power-law, for exam
  `autolens_wokspace/pipelines/no_lens_light/mass_power_law__source_inversion.py`
 
 Exploit our ability to first model the lens`s mass using an `EllipticalIsothermal` and then switch to an 
-_EllipticalPowerLaw_, to ensure more efficient and robust model-fits!
+`EllipticalPowerLaw`, to ensure more efficient and robust model-fits!
 """

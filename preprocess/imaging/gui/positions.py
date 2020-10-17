@@ -1,40 +1,34 @@
 import autolens as al
 import autolens.plot as aplt
-import autofit as af
-import os
 from matplotlib import pyplot as plt
 import numpy as np
 
-# This tool allows one to input a set of positions of a multiply imaged strongly lensed source, corresponding to a set
-# positions / pixels which are anticipated to trace to the same location in the source-plane.
+"""
+This tool allows one to input the lens light centre(s) of a strong lens(es), which can be used as a fixed value in
+pipelines. 
 
-# A non-linear sampler uses these positions to discard the mass-models where they do not trace within a threshold of
-# one another, speeding up the analysis and removing unwanted solutions with too much / too little mass.
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# The `dataset label` is the name of the dataset folder and `dataset_name` the folder the positions are stored in e.g,
-# the positions will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/positions.dat`.
+First, we set up the dataset we want to mark the positions of.
+"""
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 
-# Create the path where the mask will be output, which in this case is
-# `/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+"""
+The path where the dataset will be loaded from, which in this case is:
 
-# If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
+ `/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
+"""
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+
+"""If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
 pixel_scales = 0.1
 
-# When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
-# the highest flux to mark the position.
+"""
+When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
+the highest flux to mark the position.
+
+The `search_box_size` is the number of pixels around your click this search takes place.
+"""
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(
@@ -45,8 +39,10 @@ imaging = al.Imaging.from_fits(
 )
 image_2d = imaging.image.in_2d
 
-# For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
-# below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
+"""
+For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
+below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
+"""
 
 cmap = aplt.ColorMap(
     norm="linear",
@@ -60,8 +56,10 @@ norm = cmap.norm_from_array(array=None)
 
 positions = []
 
-# This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
-# positions on an image.
+"""
+This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
+positions on an image.
+"""
 
 
 def onclick(event):
@@ -114,9 +112,11 @@ plt.close(fig)
 
 positions = al.GridCoordinates(coordinates=positions)
 
-# Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
+"""Now lets plot the image and positions, so we can check that the positions overlap different regions of the source."""
 aplt.Array(array=imaging.image, positions=positions)
 
-# Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
-# .dat file in our pipelines!
+"""
+Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
+.dat file in our pipelines!
+"""
 positions.output_to_file(file_path=f"{dataset_path}/positions.dat", overwrite=True)

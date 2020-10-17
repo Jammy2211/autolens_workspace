@@ -13,12 +13,13 @@ This tutorial describes preprocessing your dataset`s image to adhere too the uni
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -31,13 +32,7 @@ For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw
 contains example data we'll use in this tutorial.
 """
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
+dataset_path = f"preprocess/imaging/data_raw"
 
 # %%
 """
@@ -102,11 +97,12 @@ an output of your data reduction pipeline.
 """
 
 # %%
-
 exposure_time = 1000.0
 
 exposure_time_map = al.Array.full(
-    fill_value=exposure_time, shape_2d=image_in_counts.shape_2d
+    fill_value=exposure_time,
+    shape_2d=image_in_counts.shape_2d,
+    pixel_scales=image_in_counts.pixel_scales,
 )
 
 image_converted_to_eps = al.preprocess.array_counts_to_eps(
@@ -120,11 +116,12 @@ If the effective exposure-time map is output as part of the data reduction, you 
 electrons per second instead.
 """
 
+# %%
 exposure_time_map = al.Array.from_fits(
-    file_path=f"{imaging_path}/exposure_time_map.fits"
+    file_path=f"{imaging_path}/exposure_time_map.fits",
+    pixel_scales=image_converted_to_eps.pixel_scales,
 )
 
-# %%
 image_converted_to_eps = al.preprocess.array_counts_to_eps(
     array_counts=image_in_counts, exposure_time_map=exposure_time_map
 )
@@ -147,7 +144,11 @@ image_in_adus = al.Array.from_fits(
 
 aplt.Array(array=image_in_adus)
 
-exposure_time_map = al.Array.full(fill_value=1000.0, shape_2d=image_in_counts.shape_2d)
+exposure_time_map = al.Array.full(
+    fill_value=1000.0,
+    shape_2d=image_in_counts.shape_2d,
+    pixel_scales=image_in_adus.pixel_scales,
+)
 
 image_converted_to_eps = al.preprocess.array_adus_to_eps(
     array_adus=image_in_adus, exposure_time_map=exposure_time_map, gain=4.0
@@ -266,7 +267,9 @@ This no longer gives an error!
 """
 
 # %%
-convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
+convolver = al.Convolver(
+    mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31), pixel_scales=mask.pixel_scales)
+)
 
 # %%
 # 3) ``.entering__
@@ -281,8 +284,7 @@ convolver = al.Convolver(mask=mask, kernel=al.Kernel.ones(shape_2d=(31, 31)))
 # Lets look at an off-center image - clearly both the lens galaxy and Einstein ring are offset in the positive y and x d
 # directions.
 
-# imaging_path = af.util.create_path(path=dataset_path,
-#                                                                           folder_names=[`imaging_offset_centre`])
+# imaging_path = f"{dataset_path}/imaging_offset_centre"
 
 # imaging_offset_centre = al.Imaging.from_fits(image_path=path+`image.fits`, pixel_scales=0.1,
 #                                   noise_map_path=path+`noise_map.fits`,

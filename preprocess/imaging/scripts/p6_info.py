@@ -19,27 +19,20 @@ other measurements of a lens not made by PyAutoLens. Examples of such data might
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
-import autolens as al
-import autolens.plot as aplt
 
 # %%
 """
 Setup the path to the autolens_workspace, using the correct path name below.
 """
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-preprocess_path = f"{workspace_path}/preprocess/imaging"
+preprocess_path = f"preprocess/imaging"
 
 # %%
 """
@@ -54,12 +47,12 @@ dataset_name = "mass_sie__source_sersic"
 
 # %%
 """
-Create the path where the info will be output, which in this case is
-`/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
+Returns the path where the info will be output, which in this case is
+`/autolens_workspace/dataset/imaging/no_lens_light/mass_total__source_bulge`
 """
 
 # %%
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 # %%
 """
@@ -91,7 +84,6 @@ info_file = "info.json"
 
 with open(info_file, "w+") as f:
     json.dump(info, f, indent=4)
-
 
 if os.path.exists(f"{dataset_path}/info.json"):
     os.remove(f"{dataset_path}/info.json")

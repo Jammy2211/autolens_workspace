@@ -31,8 +31,8 @@ light and mass we previously added together in intermediate pipelines now instea
 
 For example, if an intermediate pipeline previous wrote to the path:
 
-'output/intermediate/imaging/lens_name/pipeline_name/general_tag/source_tag+light_tag+mass_tag/phase_name/phase_tag
+'output/intermediate/imaging/lens_name/pipeline_name/general_tag/source_tag+light_tag+mass_tag/name/phase_tag
 
 An advanced pipeline will write to the path:
 
-'output/advanced/imaging/lens_name/pipeline_name/general_tag/source_tag/light_tag/mass_tag/phase_name/phase_tag
+'output/advanced/imaging/lens_name/pipeline_name/general_tag/source_tag/light_tag/mass_tag/name/phase_tag

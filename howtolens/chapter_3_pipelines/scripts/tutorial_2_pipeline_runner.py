@@ -1,4 +1,6 @@
-""""""
+"""
+
+"""
 
 # %%
 """
@@ -7,7 +9,7 @@ Tutorial 2: Two Lens Galaxies
 
 Up to now, all the images we've fitted had one lens galaxy. However, we saw in chapter 1 that our lens plane can
 consist of multiple galaxies which each contribute to the strong lensing. Multi-galaxy systems are challenging to
-model, because they add an extra 5-10 parameters to the non-linear search and, more problematically, the degeneracies
+model, because they add an extra 5-10 parameters to the `NonLinearSearch` and, more problematically, the degeneracies
 between the `MassProfile`'s of the two galaxies can be severe.
 
 However, we can still break their analysis down using a pipeline and give ourselves a shot at getting a good lens
@@ -20,25 +22,13 @@ pipeline that we can generalize to many lenses isn't currently possible with **P
 """
 
 # %%
-""" AUTOFIT + CONFIG SETUP """
-
-# %%
-from autoconf import conf
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-conf.instance = conf.Config(
-    config_path=f"{workspace_path}/howtolens/config",
-    output_path=f"{workspace_path}/howtolens/output",
-)
-
-# %%
-""" AUTOLENS + DATA SETUP """
-
-# %%
 #%matplotlib inline
+
+from pyprojroot import here
+
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
 
 import autolens as al
 import autolens.plot as aplt
@@ -53,13 +43,9 @@ we'll use new strong lensing data, where:
 """
 
 # %%
-from autolens_workspace.howtolens.simulators.chapter_3 import (
-    light_sersic_x2__mass_sie_x2__source_exp,
-)
-
 dataset_type = "chapter_3"
 dataset_name = "light_sersic_x2__mass_sie_x2__source_exp"
-dataset_path = f"{workspace_path}/howtolens/dataset/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/howtolens/{dataset_type}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -109,7 +95,7 @@ Multi-galaxy ray-tracing is just a lot more complicated, which means so is model
 So, how can we break the lens modeling up? As follows:
 
  1) Fit and subtract the light of each lens galaxy individually.
- 2) Use these results to initialize each lens `Galaxy`'s `MassProfile`.
+ 2) Use these results to initialize each lens total mass distribution.
 
 So, with this in mind, we've written a pipeline composed of 4 phases:
 
@@ -139,12 +125,12 @@ description of what inputting redshifts into **PyAutoLens** does.
 """
 
 # %%
-setup_light = al.SetupLightSersic()
-setup_mass = al.SetupMassTotal(no_shear=False)
-setup_source = al.SetupSourceSersic()
+setup_light = al.SetupLightParametric()
+setup_mass = al.SetupMassTotal(with_shear=True)
+setup_source = al.SetupSourceParametric()
 
 setup = al.SetupPipeline(
-    path_prefix="c3_t2_x2_galaxies",
+    path_prefix="howtolens/c3_t2_x2_galaxies",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_light=setup_light,

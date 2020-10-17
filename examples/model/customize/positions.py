@@ -10,7 +10,7 @@ they do not meet this threshold, the model is discard and a new sample is genera
 
 This provides two benefits:
 
-    1) The analysis runs faster as the non-linear search avoids searching regions of parameter space where the
+    1) The analysis runs faster as the `NonLinearSearch` avoids searching regions of parameter space where the
        mass-model is clearly not accurate.
 
     2) By removing these solutions, a global-maximum solution may be reached instead of a local-maxima. This is
@@ -21,20 +21,11 @@ This provides two benefits:
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens `Galaxy`'s `LightProfile` is omitted (and is not present in the simulated data).
- - The lens `Galaxy`'s `MassProfile` is modeled as an `EllipticalIsothermal`.
- - The source `Galaxy`'s `LightProfile` is modeled as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
+ - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
 
 # %%
 """
@@ -56,7 +47,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -116,7 +107,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 
 # %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
-source = al.GalaxyModel(redshift=1.0, sersic=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
 # %%
 """
@@ -126,11 +117,11 @@ Next, we specify the `SettingsPhaseImaging`, which describe how the model is fit
 function. Below, we specify:
 
  - A positions_threshold of 0.5, meaning that the four (y,x) coordinates specified by our positions must trace
-      within 0.5" of one another in the source-plane for a mass model to be accepted. If not, it is discarded and
-      a new model is sampled.
+   within 0.5" of one another in the source-plane for a mass model to be accepted. If not, it is discarded and
+   a new model is sampled.
 
-The threshold of 0.5" is large - food an accurate lens model we would anticipate the positions trace with < 0.01" of
-one another. However, we only want the threshold to aid the non-linear search with the generation of the initial 
+The threshold of 0.5" is large. For an accurate lens model we would anticipate the positions trace within < 0.01" of
+one another. However, we only want the threshold to aid the `NonLinearSearch` with the generation of the initial 
 mass models. 
 
 We do not want to risk inferring an incorrect mass model because our position threshold removed genuinely plausible 
@@ -155,41 +146,41 @@ nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), w
  - 50 live points.
 
 The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
-non-linear searches that can be used with **PyAutoLens**. If you do not know what a non-linear search is or how it 
+non-linear searches that can be used with **PyAutoLens**. If you do not know what a `NonLinearSearch` is or how it 
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
-"""
 
-# %%
-search = af.DynestyStatic(n_live_points=50)
-
-# %%
-"""
-__Phase__
-
-We can now combine the model, settings and non-linear search above to create and run a phase, fitting our data with
-the lens model.
-
-The `phase_name` and `path_prefix` below specify the path of the results in the output folder:  
+The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
  `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__positions`.
 """
 
 # %%
-phase = al.PhaseImaging(
-    path_prefix=f"examples/customimze/{dataset_name}",
-    phase_name="phase__positions",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+search = af.DynestyStatic(
+    path_prefix=f"examples/customize/{dataset_name}",
+    name="phase_positions",
+    n_live_points=50,
 )
 
 # %%
 """
-We can now begin the fit by passing the dataset and mask to the phase, which will use the non-linear search to fit
+__Phase__
+
+We can now combine the model, settings and `NonLinearSearch` above to create and run a phase, fitting our data with
+the lens model.
+"""
+
+# %%
+phase = al.PhaseImaging(
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
+)
+
+# %%
+"""
+We can now begin the fit by passing the dataset and mask to the phase, which will use the `NonLinearSearch` to fit
 the model to the data. The dataset contains the positions, which is how they are input in the model-fit.
 
 The fit outputs visualization on-the-fly, so checkout the path 
-`/path/to/autolens_workspace/output/examples/phase__mass_sie__source_sersic` to see how your fit is doing!
+`/path/to/autolens_workspace/output/examples/phase__mass_sie__source_bulge` to see how your fit is doing!
 """
 
 # %%

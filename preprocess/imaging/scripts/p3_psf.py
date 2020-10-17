@@ -10,12 +10,13 @@ This tutorial describes preprocessing your dataset`s psf to adhere too the units
 """
 
 # %%
-"""Lets begin by importing PyAutoFit, PyAutoLens and its plotting module."""
+from pyprojroot import here
 
-# %%
+workspace_path = str(here())
+#%cd $workspace_path
+print(f"Working Directory has been set to `{workspace_path}`")
+
 #%matplotlib inline
-
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -28,13 +29,7 @@ For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw
 contains example data we'll use in this tutorial.
 """
 
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-dataset_path = f"{workspace_path}/preprocess/imaging/data_raw"
+dataset_path = f"preprocess/imaging/data_raw"
 
 # %%
 """This populates the `data` path with example simulated `Imaging` data-sets."""

@@ -12,15 +12,6 @@ We we begin by loading the strong lens dataset `mass_sie__source_sersic` `from .
 """
 
 # %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
-# %%
 """
 Load the strong lens dataset `light_sersic__mass_sie__source_sersic` `from .fits files, which is the dataset 
 we will use to perform lens modeling.
@@ -33,7 +24,7 @@ import autolens.plot as aplt
 dataset_type = "imaging"
 dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"{workspace_path}/dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -96,15 +87,17 @@ wanted to fit a tracer where the lens light is included.
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllipticalIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
+        centre=(0.0, 0.0),
+        einstein_radius=1.6,
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, phi=45.0),
     ),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
-        elliptical_comps=(0.0, 0.111111),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
         sersic_index=2.5,
@@ -116,7 +109,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 # %%
 """
 Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and `Galaxy`
-objects. We can then use the *FitImaging* object to fit this tracer to the dataset. 
+objects. We can then use the `FitImaging` object to fit this tracer to the dataset. 
 
 The fit performs the necessary tasks to create the model image we fit the data with, such as blurring the tracer`s 
 image with the `Imaging` PSF. We can see this by comparing the tracer`s image (which isn't PSF convolved) and the 
@@ -139,7 +132,6 @@ we'll plot all 3 of these, alongside a subplot containing them all.
 
 For a good lens model where the model image and tracer are representative of the strong lens system the
 residuals, normalized residuals and chi-squareds are minimized:
-
 """
 
 aplt.FitImaging.residual_map(fit=fit)
@@ -164,7 +156,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.12, 0.12),
         elliptical_comps=(0.0, 0.111111),
         intensity=0.3,

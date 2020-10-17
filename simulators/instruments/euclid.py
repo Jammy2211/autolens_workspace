@@ -8,15 +8,6 @@ This script simulates `Imaging` of a strong lens where:
  - The resolution, PSF and S/N are representative of Euclid imaging.
 """
 
-# %%
-"""Use the WORKSPACE environment variable to determine the path to the `autolens_workspace`."""
-
-# %%
-import os
-
-workspace_path = os.environ["WORKSPACE"]
-print("Workspace Path: ", workspace_path)
-
 """
 The `dataset_type` describes the type of data being simulated (in this case, `Imaging` data) and `dataset_name` 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
@@ -29,7 +20,7 @@ dataset_type = "instruments"
 dataset_instrument = "euclid"
 
 """
-Create the path where the dataset will be output, which in this case is:
+Returns the path where the dataset will be output, which in this case is:
 `/autolens_workspace/dataset/imaging/instruments/euclid/mass_sie__source_sersic`
 """
 dataset_path = f"dataset/{dataset_type}/{dataset_instrument}"
@@ -53,14 +44,14 @@ psf = al.Kernel.from_gaussian(
 )
 
 """
-To simulate the `Imaging` dataset we first create a simulator, which defines the expoosure time, background sky,
+To simulate the `Imaging` dataset we first create a simulator, which defines the exposure time, background sky,
 noise levels and psf of the dataset that is simulated.
 """
 simulator = al.SimulatorImaging(
     exposure_time_map=al.Array.full(fill_value=2260.0, shape_2d=grid.shape_2d),
     psf=psf,
     background_sky_map=al.Array.full(fill_value=1.0, shape_2d=grid.shape_2d),
-    add_noise=True,
+    add_poisson_noise=True,
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
@@ -76,7 +67,7 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    sersic=al.lp.EllipticalSersic(
+    bulge=al.lp.EllipticalSersic(
         centre=(0.1, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
