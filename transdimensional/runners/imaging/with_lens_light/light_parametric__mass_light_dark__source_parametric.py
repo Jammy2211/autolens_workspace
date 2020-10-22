@@ -122,13 +122,14 @@ setup_light = al.SetupLightParametric(
 """
 This pipeline also uses a `SetupMassLightDark`, which customizes:
 
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and we do not 
+   include it in the mass model)..
  - If the centre of the `EllipticalChameleon` `LightMassProfile` and `SphericalNFWMCRLudlow` dark `MassProfile` are 
    aligned.
 """
 
 # %%
-setup_mass = al.SetupMassLightDark(align_light_dark_centre=True, with_shear=True)
+setup_mass = al.SetupMassLightDark(align_light_dark_centre=True, with_shear=False)
 
 # %%
 """

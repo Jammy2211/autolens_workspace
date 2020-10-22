@@ -9,7 +9,7 @@ Using a pipeline composed of five phases this runner fits `Imaging` of a strong 
 of the pipeline:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source galaxy is modeled parametrically as an `EllipticalSersic`.
 
 This uses the pipeline (Check it out full description of the pipeline):

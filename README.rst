@@ -7,7 +7,7 @@ instructions at `the PyAutoLens readthedocs <https://pyautolens.readthedocs.io/e
 Workspace Version
 =================
 
-This version of the workspace are built and tested for using **PyAutoLens v1.7.0**.
+This version of the workspace are built and tested for using **PyAutoLens v1.7.6**.
 
 Getting Started
 ===============

@@ -13,14 +13,14 @@ where in the final phase of the pipeline:
    a bulge + disk model.
  - The lens `Galaxy`'s light matter mass distribution is fitted using the `EllipticalSersic` + EllipticalExponential of the
     `LightProfile`, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
- - The lens total mass distribution is modeled as an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
  - The source `Galaxy`'s light is modeled parametrically using an `Inversion`.
 
 This runner uses the SLaM pipelines:
 
  `slam/with_lens_light/source__parametric.py`.
  `slam/with_lens_light/source___inversion.py`.
- `slam/with_lens_light/light__bulge_disk.py`.
+ `slam/with_lens_light/light__parametric.py`.
  `slam/with_lens_light/mass__total.py`.
 
 Check them out for a detailed description of the analysis!
@@ -55,6 +55,7 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
+    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask2D.circular(
@@ -161,12 +162,13 @@ simplest models that provide a good fit to the majority of strong lenses.
 For this runner the `SLaMPipelineSourceParametric` customizes:
 
  - The `MassProfile` fitted by the pipeline (and the following `SLaMPipelineSourceInversion`..
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 setup_light = al.SetupLightParametric()
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True
+    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=False
 )
 setup_source = al.SetupSourceParametric()
 
@@ -229,9 +231,10 @@ The `SLaMPipelineLightParametric` and imported light pipelines determine the len
 
 # %%
 setup_light = al.SetupLightParametric(
+    bulge_prior_model=al.lp.EllipticalSersic,
+    disk_prior_model=al.lp.EllipticalExponential,
     align_bulge_disk_centre=True,
     align_bulge_disk_elliptical_comps=False,
-    disk_as_sersic=False,
 )
 
 pipeline_light = al.SLaMPipelineLightParametric(setup_light=setup_light)
@@ -250,11 +253,12 @@ default of an `EllipticalPowerLaw` in this example.
 For this runner the `SLaMPipelineMass` customizes:
 
  - The `MassProfile` fitted by the pipeline.
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=True
+    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=False
 )
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
@@ -290,14 +294,14 @@ We then add the pipelines together and run this summed pipeline, which runs each
 # %%
 from autolens_workspace.slam.pipelines.with_lens_light import source__parametric
 from autolens_workspace.slam.pipelines.with_lens_light import source__inversion
-from autolens_workspace.slam.pipelines.with_lens_light import light__bulge_disk
+from autolens_workspace.slam.pipelines.with_lens_light import light__parametric
 from autolens_workspace.slam.pipelines.with_lens_light import mass__total
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
 source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-light__bulge_disk = light__bulge_disk.make_pipeline(slam=slam, settings=settings)
+light__parametric = light__parametric.make_pipeline(slam=slam, settings=settings)
 mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 
-pipeline = source__parametric + source__inversion + light__bulge_disk + mass__total
+pipeline = source__parametric + source__inversion + light__parametric + mass__total
 
-pipeline.run(dataset=imaging, mask=mask, info=info)
+pipeline.run(dataset=imaging, mask=mask)

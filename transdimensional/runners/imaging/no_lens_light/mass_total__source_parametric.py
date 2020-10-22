@@ -9,7 +9,7 @@ Using a pipeline composed of two phases this runner fits `Imaging` of a strong l
 of the pipeline:
 
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s two `LightProfile`'s are modeled as `EllipticalSersic``..
 
 This uses the pipeline (Check it out full description of the pipeline):
@@ -84,12 +84,13 @@ Pipelines use `Setup` objects to customize how different aspects of the model ar
 First, we create a `SetupMassTotal`, which customizes:
 
  - The `MassProfile` used to fit the lens's total mass distribution.
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 # %%
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=True
+    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=False
 )
 
 # %%

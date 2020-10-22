@@ -19,7 +19,7 @@ Phase 1:
     Lens Light & Mass: Depends on previous Light pipeline.
     Lens Mass: `LightMassProfile`'s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
-    Previous Pipelines: source__parametric.py and / or source__inversion.py and light__bulge_disk.py
+    Previous Pipelines: source__parametric.py and / or source__inversion.py and light__parametric.py
     Prior Passing: Lens Light (instance -> previous pipeline), Source (instance -> previous pipeline)
     Notes: Fixes the lens `LightProfile` and Source to the results of the previous pipeline.
 
@@ -70,18 +70,16 @@ def make_pipeline(slam, settings):
 
     """SLaM: Fix the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    bulge = (
-        slam.pipeline_mass.setup.setup_mass.bulge_prior_instance_with_updated_priors()
-    )
-    disk = slam.pipeline_mass.setup.setup_mass.disk_prior_instance_with_updated_priors()
+    bulge = slam.pipeline_mass.setup_mass.bulge_prior_instance_with_updated_priors()
+    disk = slam.pipeline_mass.setup_mass.disk_prior_instance_with_updated_priors()
     envelope = (
-        slam.pipeline_mass.setup.setup_mass.envelope_prior_instance_with_updated_priors()
+        slam.pipeline_mass.setup_mass.envelope_prior_instance_with_updated_priors()
     )
 
     dark = slam.pipeline_mass.setup_mass.dark_prior_model
     dark.mass_at_200 = af.LogUniformPrior(lower_limit=5e8, upper_limit=5e14)
     dark.redshift_object = slam.redshift_lens
-    dark.setup.redshift_source = slam.redshift_source
+    dark.redshift_source = slam.redshift_source
 
     """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in `SLaMPipelineMass`."""
 
@@ -118,11 +116,9 @@ def make_pipeline(slam, settings):
 
     """SLaM: Set priors on the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    bulge = slam.pipeline_mass.setup.setup_mass.bulge_prior_model_with_updated_priors()
-    disk = slam.pipeline_mass.setup.setup_mass.disk_prior_model_with_updated_priors()
-    envelope = (
-        slam.pipeline_mass.setup.setup_mass.envelope_prior_model_with_updated_priors()
-    )
+    bulge = slam.pipeline_mass.setup_mass.bulge_prior_model_with_updated_priors()
+    disk = slam.pipeline_mass.setup_mass.disk_prior_model_with_updated_priors()
+    envelope = slam.pipeline_mass.setup_mass.envelope_prior_model_with_updated_priors()
 
     lens = al.GalaxyModel(
         redshift=slam.redshift_lens,

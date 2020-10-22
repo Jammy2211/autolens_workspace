@@ -5,7 +5,7 @@ import autolens.plot as aplt
 This script simulates `Imaging` of a strong lens where:
 
  - The lens `Galaxy`'s `LightProfile`'s are an `EllipticalSersic` and `EllipticalExponential`.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
@@ -89,7 +89,6 @@ lens_galaxy = al.Galaxy(
         einstein_radius=1.6,
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=45.0),
     ),
-    shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
 )
 
 source_galaxy = al.Galaxy(

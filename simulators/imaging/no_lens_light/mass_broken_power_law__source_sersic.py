@@ -4,7 +4,7 @@ import autolens.plot as aplt
 """
 This script simulates `Imaging` of a strong lens where:
 
- - The lens total mass distribution is an EllipticalBrokenPowerLaw.
+ - The lens `Galaxy`'s total mass distribution is an EllipticalBrokenPowerLaw.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 

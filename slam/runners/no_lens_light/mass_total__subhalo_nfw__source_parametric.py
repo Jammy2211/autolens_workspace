@@ -11,7 +11,7 @@ Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits
 where in the final phase of the pipeline:
 
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - A dark matter subhalo`s within the lens galaxy is modeled as a `SphericalNFWMCRLudLow`.
  - The source galaxy is modeled as an `EllipticalSersic`.
 
@@ -139,9 +139,9 @@ For this runner the `SLaMPipelineSourceParametric` customizes:
 """
 
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True
+    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True, mass_centre=(0.0, 0.0)
 )
-setup_source = al.SetupSourceParametric()
+setup_source = al.SetupSourceParametric(disk_prior_model=al.lp.EllipticalExponential)
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
     setup_mass=setup_mass, setup_source=setup_source

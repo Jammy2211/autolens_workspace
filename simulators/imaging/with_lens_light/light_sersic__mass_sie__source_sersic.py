@@ -5,7 +5,7 @@ import autolens.plot as aplt
 This script simulates `Imaging` of a strong lens where:
 
  - The lens `Galaxy`'s `LightProfile`'s is an `EllipticalSersic`.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 

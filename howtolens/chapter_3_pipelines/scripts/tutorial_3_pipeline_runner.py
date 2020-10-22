@@ -31,7 +31,7 @@ import autolens.plot as aplt
 we'll use new strong lensing data, where:
 
  - The lens `Galaxy`'s light is omitted.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
@@ -86,34 +86,6 @@ settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imagi
 
 # %%
 """
-__Pipeline_Setup_And_Tagging__:
-
-For this pipeline the pipeline setup customizes:
-
- - If there is an `ExternalShear` in the mass model or not.
- 
-The `path_prefix` belows specify the path the pipeline results are written 
-
- `autolens_workspace/howtolens/output/c3_t3_complex_source/pipeline__light_and_source`
-
-The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
-description of what inputting redshifts into **PyAutoLens** does.
-"""
-
-# %%
-setup_mass = al.SetupMassTotal(with_shear=True)
-setup_source = al.SetupSourceParametric()
-
-setup = al.SetupPipeline(
-    path_prefix="howtolens/c3_t3_complex_source",
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    setup_mass=setup_mass,
-    setup_source=setup_source,
-)
-
-# %%
-"""
 __Pipeline Creation__
 
 To create a `Pipeline`, we call a `make_pipeline` function, which is written in its own Python script: 
@@ -134,7 +106,10 @@ from autolens_workspace.howtolens.chapter_3_pipelines import (
 )
 
 pipeline_complex_source = tutorial_3_pipeline_complex_source.make_pipeline(
-    setup=setup, settings=settings
+    path_prefix="howtolens/c3_t3_complex_source",
+    settings=settings,
+    redshift_lens=0.5,
+    redshift_source=1.0,
 )
 
 # Uncomment to run.

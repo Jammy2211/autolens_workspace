@@ -42,7 +42,7 @@ There are a number of benefits to linking a parametric source model to an _Inver
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s light is omitted_.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """

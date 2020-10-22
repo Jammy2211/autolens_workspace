@@ -5,7 +5,7 @@ import autolens as al
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is modeled parametrically using one or more input `LightProfile`s.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s light is modeled parametrically using one or more input `LightProfile`s.
 
 The pipeline is three phases:

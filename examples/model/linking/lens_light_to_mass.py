@@ -38,7 +38,7 @@ There are a number of benefits to using phase linking to model the lens`s light 
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s `LightProfile` is a bulge+disk `EllipticalSersic` and `EllipticalExponential`.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """
@@ -75,7 +75,7 @@ example our lens mooel is:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential` whose centres
       are aligned (11 parameters).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` (7 parameters).
 
 We are fitting on the lens`s light in phase 1 and only its mass and the source in phase 2, giving us non-linear
@@ -117,7 +117,11 @@ file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/lens_light_to_mass",
+    name="phase[1]",
+    n_live_points=50,
+)
 
 # %%
 """
@@ -132,13 +136,7 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 # %%
-phase1 = al.PhaseImaging(
-    path_prefix=f"examples/linking/lens_light_to_mass",
-    name="phase[1]",
-    settings=settings,
-    galaxies=dict(lens=lens),
-    search=search,
-)
+phase1 = al.PhaseImaging(search=search, settings=settings, galaxies=dict(lens=lens))
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
@@ -184,7 +182,11 @@ In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
 # %%
-search = af.DynestyStatic(n_live_points=50)
+search = af.DynestyStatic(
+    path_prefix=f"examples/linking/lens_light_to_mass",
+    name="phase[2]",
+    n_live_points=50,
+)
 
 # %%
 """
@@ -202,11 +204,7 @@ Note how the `lens` passed to this phase was set up above using the results of p
 
 # %%
 phase2 = al.PhaseImaging(
-    path_prefix=f"examples/linking/lens_light_to_mass",
-    name="phase[2]",
-    settings=settings,
-    galaxies=dict(lens=lens, source=source),
-    search=search,
+    settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase2.run(dataset=imaging, mask=mask)

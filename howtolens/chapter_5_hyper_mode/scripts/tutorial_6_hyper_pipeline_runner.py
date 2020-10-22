@@ -26,7 +26,7 @@ import autolens.plot as aplt
 we'll use strong lensing data, where:
 
  - The lens `Galaxy`'s light is an `EllipticalSersic`.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is four `EllipticalSersic``..
 """
 
@@ -96,7 +96,8 @@ setup_hyper = al.SetupHyper(
 setup_light = al.SetupLightParametric(light_centre=None)
 setup_mass = al.SetupMassTotal(with_shear=True)
 setup_source = al.SetupSourceInversion(
-    pixelization=al.pix.VoronoiBrightnessImage, regularization=al.reg.AdaptiveBrightness
+    pixelization_prior_model=al.pix.VoronoiBrightnessImage,
+    regularization_prior_model=al.reg.AdaptiveBrightness,
 )
 
 setup = al.SetupPipeline(

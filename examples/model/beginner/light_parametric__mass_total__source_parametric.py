@@ -15,7 +15,7 @@ both to perform the model-fit.
 In this example script, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential`.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.  
 """
 
@@ -76,7 +76,7 @@ example our lens model is:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential`,
    the centres of which are aligned (11 parameters).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=27.
@@ -131,7 +131,7 @@ The lens model is fitted to the data using a `NonLinearSearch`, which we specify
 nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/), with:
 
  - 100 live points.
- - 10 walks, which instructs the 100 live points to sample parameter space more throroughly before updating.
+ - 10 walks, which instructs the 100 live points to sample parameter space more thoroughly before updating.
 
 The script `autolens_workspace/examples/model/customize/non_linear_searches.py` gives a description of the types of
 non-linear searches that can be used with **PyAutoLens**. If you do not know what a `NonLinearSearch` is or how it 

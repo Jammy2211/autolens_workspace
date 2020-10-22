@@ -123,7 +123,7 @@ def make_pipeline(slam, settings):
 
     phase2 = al.PhaseImaging(
         search=af.DynestyStatic(
-            name="phase[2]__light[fixed]_mass[total]_source[inversion_magnification]",
+            name="phase[2]_light[fixed]_mass[total]_source[inversion_magnification]",
             n_live_points=50,
         ),
         galaxies=dict(

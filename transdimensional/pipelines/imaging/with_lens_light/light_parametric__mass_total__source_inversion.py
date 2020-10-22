@@ -5,7 +5,7 @@ import autolens as al
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential`.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear`.
  - The source `Galaxy`'s surface-brightness is modeled using an `Inversion`.
 
 The pipeline is five phases:

@@ -123,7 +123,7 @@ def make_pipeline(setup, settings):
     dark = setup.setup_mass.dark_prior_model
     dark.mass_at_200 = af.LogUniformPrior(lower_limit=5e8, upper_limit=5e14)
     dark.redshift_object = setup.redshift_lens
-    dark.setup.redshift_source = setup.redshift_source
+    dark.redshift_source = setup.redshift_source
 
     phase2 = al.PhaseImaging(
         search=af.DynestyStatic(

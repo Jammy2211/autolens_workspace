@@ -9,7 +9,7 @@ Using a pipeline composed of three phases this runner fits `Imaging` of a strong
 of the pipeline:
 .
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
+ - The lens `Galaxy`'s total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the pipeline (Check it out full description of the pipeline):

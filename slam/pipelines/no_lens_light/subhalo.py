@@ -153,7 +153,12 @@ def make_pipeline(slam, settings):
     source = slam.source_for_subhalo_pipeline()
 
     phase2_lens_plane = GridPhase(
-        search=af.DynestyStatic(name="phase[2]_mass[total]_source_subhalo[search_lens_plane]", n_live_points=50, walks=5, facc=0.2),
+        search=af.DynestyStatic(
+            name="phase[2]_mass[total]_source_subhalo[search_lens_plane]",
+            n_live_points=50,
+            walks=5,
+            facc=0.2,
+        ),
         galaxies=dict(lens=lens, subhalo=subhalo, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -200,7 +205,12 @@ def make_pipeline(slam, settings):
     """
 
     phase2_foreground_plane = GridPhase(
-        search=af.DynestyStatic(name="phase[2]_mass[total]_subhalo[search_foreground_plane]", n_live_points=50, walks=5, facc=0.2),
+        search=af.DynestyStatic(
+            name="phase[2]_mass[total]_subhalo[search_foreground_plane]",
+            n_live_points=50,
+            walks=5,
+            facc=0.2,
+        ),
         galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
@@ -225,7 +235,12 @@ def make_pipeline(slam, settings):
     )
 
     phase2_background_plane = GridPhase(
-        search=af.DynestyStatic(name="phase[2]_mass[total]_subhalo[search_background_plane]", n_live_points=50, walks=5, facc=0.2),
+        search=af.DynestyStatic(
+            name="phase[2]_mass[total]_subhalo[search_background_plane]",
+            n_live_points=50,
+            walks=5,
+            facc=0.2,
+        ),
         galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
         hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,

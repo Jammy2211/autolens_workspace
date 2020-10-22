@@ -10,7 +10,7 @@ Using two source pipelines and a mass pipeline this runner fits `Imaging` of a s
 phase of the pipeline:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
- - The lens total mass distribution is modeled as an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the SLaM pipelines:
@@ -153,12 +153,15 @@ modeling has shown they are the simpliest models that provide a good fit to the 
 For this runner the `SLaMPipelineSourceParametric` customizes:
 
  - The `MassProfile` fitted by the pipeline (and the following `SLaMPipelineSourceInversion`.
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 # %%
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True, mass_centre=(0.0, 0.0)
+    mass_prior_model=al.mp.EllipticalIsothermal,
+    with_shear=False,
+    mass_centre=(0.0, 0.0),
 )
 setup_source = al.SetupSourceParametric()
 
@@ -211,11 +214,12 @@ default of an `EllipticalPowerLaw` in this example.
 For this runner the `SLaMPipelineMass` customizes:
 
  - The `MassProfile` fitted by the pipeline.
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=True
+    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=False
 )
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)

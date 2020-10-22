@@ -13,7 +13,7 @@ problem. In this example we fit strong lens data using a variety of non-linear s
 In this example script, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 """
@@ -23,7 +23,7 @@ In this example script, we fit `Imaging` of a strong lens system where:
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s light is omitted_.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """

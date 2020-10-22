@@ -1,7 +1,3 @@
-"""
-
-"""
-
 # %%
 """
 Tutorial 2: Two Lens Galaxies
@@ -95,7 +91,7 @@ Multi-galaxy ray-tracing is just a lot more complicated, which means so is model
 So, how can we break the lens modeling up? As follows:
 
  1) Fit and subtract the light of each lens galaxy individually.
- 2) Use these results to initialize each lens total mass distribution.
+ 2) Use these results to initialize each lens `Galaxy`'s total mass distribution.
 
 So, with this in mind, we've written a pipeline composed of 4 phases:
 
@@ -105,38 +101,6 @@ So, with this in mind, we've written a pipeline composed of 4 phases:
  galaxies are fixed to (0.0", -1.0") and (0.0", 1.0").
  4) Fit all relevant parameters simultaneously, using priors from phases 1, 2 and 3.
 """
-
-# %%
-"""
-__Pipeline_Setup_And_Tagging__:
-
-For this pipeline the pipeline setup customizes:
-
- - If there is an `ExternalShear` in the mass model or not.
-
-The pipeline setup again `tags` the output path of a pipeline.
-
-The `path_prefix` belows specify the path the pipeline results are written 
-
- `autolens_workspace/howtolens/output/c3_t2_x2_galaxies/pipeline__light_and_source`
-
-The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
-description of what inputting redshifts into **PyAutoLens** does.
-"""
-
-# %%
-setup_light = al.SetupLightParametric()
-setup_mass = al.SetupMassTotal(with_shear=True)
-setup_source = al.SetupSourceParametric()
-
-setup = al.SetupPipeline(
-    path_prefix="howtolens/c3_t2_x2_galaxies",
-    redshift_lens=0.5,
-    redshift_source=1.0,
-    setup_light=setup_light,
-    setup_mass=setup_mass,
-    setup_source=setup_source,
-)
 
 # %%
 """
@@ -156,7 +120,10 @@ from autolens_workspace.howtolens.chapter_3_pipelines import (
 )
 
 pipeline_x2_galaxies = tutorial_2_pipeline_x2_lens_galaxies.make_pipeline(
-    setup=setup, settings=settings
+    path_prefix="howtolens/c3_t2_x2_galaxies",
+    settings=settings,
+    redshift_lens=0.5,
+    redshift_source=1.0,
 )
 
 # Uncomment to run.

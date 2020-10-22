@@ -9,7 +9,7 @@ Using a pipeline composed of two phases this runner fits `Interferometer` data o
 the final phase of the pipeline:
 
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s two `LightProfile`'s are modeled as `EllipticalSersic``..
 
 This uses the pipeline (Check it out full description of the pipeline):

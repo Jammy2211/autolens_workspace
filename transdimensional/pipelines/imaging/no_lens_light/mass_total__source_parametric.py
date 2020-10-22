@@ -5,7 +5,7 @@ import autolens as al
 In this pipeline, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
+ - The lens `Galaxy`'s total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
  - The source `Galaxy`'s is modeled parametrically using one or more input `LightProfile`s.
 .
 The pipeline is four phases:

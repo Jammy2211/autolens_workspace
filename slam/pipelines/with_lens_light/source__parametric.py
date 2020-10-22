@@ -93,7 +93,7 @@ def make_pipeline(slam, settings):
     Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s `LightProfile`, where we:
 
         1) Fix the foreground lens `LightProfile` to the result of phase 1.
-        2) Set priors on the centre of the lens total mass distribution by linking them to those inferred for
+        2) Set priors on the centre of the lens `Galaxy`'s total mass distribution by linking them to those inferred for
            the bulge of the `LightProfile` in phase 1.
         3) The source model determined from `SetupSourceParametric` (e.g. `bulge_prior_model`, `disk_prior_model`, 
            etc.)
@@ -199,7 +199,7 @@ def make_pipeline(slam, settings):
                 redshift=slam.redshift_lens,
                 bulge=phase3.result.model.galaxies.lens.bulge,
                 disk=phase3.result.model.galaxies.lens.disk,
-                envelope=phase3.result.model.galaxies.lens.disk,
+                envelope=phase3.result.model.galaxies.lens.envelope,
                 mass=phase2.result.model.galaxies.lens.mass,
                 shear=phase2.result.model.galaxies.lens.shear,
                 hyper_galaxy=phase3.result.hyper_combined.instance.optional.galaxies.lens.hyper_galaxy,

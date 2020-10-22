@@ -41,7 +41,7 @@ Phase 2 can then fit the `EllipticalPowerLaw`, using prior passing to initialize
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s light is omitted_.
- - The lens total mass distribution is an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalPowerLaw`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 
 """

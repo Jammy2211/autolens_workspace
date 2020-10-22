@@ -16,7 +16,7 @@ both to perform the model-fit.
 In this example script, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 """

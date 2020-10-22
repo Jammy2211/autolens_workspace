@@ -42,7 +42,7 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 This example scripts show a simple example of prior linking, where we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
 As discussed below, the first phase is set up to provide as fast a model-fit as possible without accurately quantifying
@@ -54,7 +54,7 @@ the errors on every parameter, whereas the second phase sacrifices this run-spee
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s light is omitted_.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 
 """

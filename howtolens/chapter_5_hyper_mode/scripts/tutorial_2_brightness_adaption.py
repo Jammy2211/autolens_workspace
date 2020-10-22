@@ -35,7 +35,7 @@ import autolens.plot as aplt
 we'll use the same strong lensing data as the previous tutorial, where:
 
  - The lens `Galaxy`'s light is omitted.
- - The lens total mass distribution is an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalSersic`.
 """
 
@@ -149,7 +149,7 @@ aplt.Inversion.reconstruction(
 Would you look at that! Our reconstruction of the image no longer has residuals! By congregating more source 
 pixels in the brightest regions of the source reconstruction we get a better fit. Furthermore, we can check that 
 this provides an increase in Bayesian log evidence, noting that the log evidence of the compact source when using a 
-VoronoiMagnification `Pixelization`.as 4216:
+VoronoiMagnification `Pixelization` as 4216:
 """
 
 # %%
@@ -302,7 +302,7 @@ is a risk that by congregating too many source pixels in its brightest regions w
 the source is bright, but not its brightest!
 
 The noise-floor allows these regions to maintain a higher weighting whilst the noise_power increases. This means that 
-the `Pixelization`.an fully adapt to the source`s brightest and faintest regions simultaneously.
+the `Pixelization` an fully adapt to the source`s brightest and faintest regions simultaneously.
 
 Lets look at once example:
 """

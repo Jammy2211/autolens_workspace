@@ -5,7 +5,7 @@ import autolens as al
 In this pipeline, we fit `Interferometer` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
+ - The lens `Galaxy`'s total mass distribution is modeled as an input total `MassProfile` (default=`EllipticalPowerLaw`).
  - The source `Galaxy`'s surface-brightness is modeled using an `Inversion`.
 .
 The pipeline is four phases:

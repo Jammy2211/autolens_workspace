@@ -9,7 +9,7 @@ Using a pipeline composed of three phases this runner fits `Interferometer` data
 the final phase of the pipeline:
 .
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens total mass distribution is modeled as an `EllipticalPowerLaw`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the pipeline (Check it out full description of the pipeline):

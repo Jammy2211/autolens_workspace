@@ -31,8 +31,8 @@ modeling is efficient!
 In this example script, we fit interferometer data of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
- - The source `Galaxy`'s light is modeled parametrically as an `VoronoiMagnification` `Pixelization`.and `Constant` 
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s light is modeled parametrically as an `VoronoiMagnification` `Pixelization` and `Constant` 
    regularization.
 
 """

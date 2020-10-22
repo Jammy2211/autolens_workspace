@@ -9,7 +9,7 @@ Using a pipeline composed of five phases this runner fits `Imaging` of a strong 
 of the pipeline:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential`.
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the pipeline (Check it out full description of the pipeline):
@@ -129,14 +129,15 @@ setup_light = al.SetupLightParametric(
 This pipeline also uses a `SetupMass`, which customizes:
 
  - The `MassProfile` used to fit the lens's total mass distribution.
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model)..
  - If the centre of the `MassProfile` is aligned with the centre of the `LightProfile`'s.
 """
 
 # %%
 setup_mass = al.SetupMassTotal(
     mass_prior_model=al.mp.EllipticalPowerLaw,
-    with_shear=True,
+    with_shear=False,
     align_bulge_mass_centre=False,
 )
 

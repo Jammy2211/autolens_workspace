@@ -16,12 +16,12 @@ both to perform the model-fit.
 In this example script, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
- - The lens total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s surface-brightness is modeled using an `Inversion`.
 
-An `Inversion` reconstructs the source`s light using a pixel-grid, which is regularized using a prior that enforces
-this reconstructioon to be smooth. This uses `Pixelization` and `Regularization` objects and in this example we will
-use their simplest forms, a `Rectangular` `Pixelization`.and `Constant` `Regularization`.scheme.
+An `Inversion` reconstructs the source`s light using a pixel-grid, which is regularized using a prior that forces
+this reconstruction to be smooth. This uses `Pixelization` and `Regularization` objects and in this example we will
+use their simplest forms, a `Rectangular` `Pixelization` and `Constant` `Regularization`.scheme.
 
 Inversions are covered in detail in chapter 4 of the **HowToLens** lectures.
 """

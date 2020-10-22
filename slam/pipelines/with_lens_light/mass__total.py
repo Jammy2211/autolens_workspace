@@ -18,7 +18,7 @@ Phase 1:
     Lens Light: Previous Light Pipeline Light.
     Lens Mass: Light + EllipticalPowerLaw + ExternalShear
     Source Light: Previous Pipeline Source.
-    Previous Pipelines: source__parametric.py and / or source__inversion.py and light__sersic.py or light__bulge_disk.py
+    Previous Pipelines: source__parametric.py and / or source__inversion.py and light__parametric.py or light__parametric.py
     Prior Passing: Lens Light (instance -> previous piepline) Lens Mass (model -> previous pipeline), 
                    Source (model / instance -> previous pipeline)
     Notes: If the source is parametric, its parameters are varied, if its an `Inversion`, they are fixed.
@@ -60,7 +60,9 @@ def make_pipeline(slam, settings):
 
     """SLaM: Use the source and lens light models from the previous *Source* and *Light* pipelines."""
 
-    lens = slam.lens_from_light_pipeline_for_mass_pipeline(mass=mass, shear=shear)
+    lens = slam.lens_from_light_parametric_pipeline_for_mass_total_pipeline(
+        mass=mass, shear=shear
+    )
 
     source = slam.source_from_previous_pipeline_model_if_parametric()
 

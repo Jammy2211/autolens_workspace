@@ -126,7 +126,7 @@ tracer = al.Tracer.from_galaxies(
 # %%
 """
 When computing the image from the tracer above, the tracer performs all ray-tracing for the given strong lens system.
-This includes using the lens total mass distribution to deflect the light-rays that are traced to the source galaxy.
+This includes using the lens `Galaxy`'s total mass distribution to deflect the light-rays that are traced to the source galaxy.
 This makes the image below, where the source`s light appears as a multiply imaged and strongly lensed Einstein ring.
 """
 
