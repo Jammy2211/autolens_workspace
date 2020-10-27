@@ -132,8 +132,8 @@ def make_pipeline(slam, settings):
     )
 
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
-    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
-    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
+    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
 
     subhalo.mass.redshift_object = slam.redshift_lens
     subhalo.mass.redshift_source = slam.redshift_source
@@ -186,8 +186,8 @@ def make_pipeline(slam, settings):
     subhalo_z_below.mass.mass_at_200 = af.LogUniformPrior(
         lower_limit=1.0e6, upper_limit=1.0e11
     )
-    subhalo_z_below.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
-    subhalo_z_below.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_below.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
+    subhalo_z_below.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
     subhalo_z_below.mass.redshift_source = slam.redshift_source
     subhalo_z_below.mass.redshift_object = af.UniformPrior(
         lower_limit=0.0, upper_limit=slam.redshift_lens
@@ -227,8 +227,8 @@ def make_pipeline(slam, settings):
     subhalo_z_above.mass.mass_at_200 = af.LogUniformPrior(
         lower_limit=1.0e6, upper_limit=1.0e11
     )
-    subhalo_z_above.mass.centre_0 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
-    subhalo_z_above.mass.centre_1 = af.UniformPrior(lower_limit=-2.5, upper_limit=2.5)
+    subhalo_z_above.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
+    subhalo_z_above.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
     subhalo_z_above.mass.redshift_source = slam.redshift_source
     subhalo_z_above.mass.redshift_object = af.UniformPrior(
         lower_limit=slam.redshift_lens, upper_limit=slam.redshift_source

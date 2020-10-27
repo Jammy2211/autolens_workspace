@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Linking Phases API__
 
@@ -37,7 +36,6 @@ More details on prior linking can be found in Chapter 2 of the HowToLens lecture
 `tutorial_5_linking_phases.py`.
 """
 
-# %%
 """
 This example scripts show a simple example of prior linking, where we fit `Imaging` of a strong lens system where:
 
@@ -49,25 +47,20 @@ As discussed below, the first phase is set up to provide as fast a model-fit as 
 the errors on every parameter, whereas the second phase sacrifices this run-speed for accuracy. 
 """
 
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
  - The lens `Galaxy`'s light is omitted_.
  - The lens `Galaxy`'s total mass distribution is an `EllipticalIsothermal`.
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
-
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -82,7 +75,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
@@ -95,11 +87,9 @@ example our lens mooel is:
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -107,10 +97,8 @@ You should be familiar with the `SettingsPhaseImaging` object from other example
 examples and `autolens_workspace/examples/model/customize/settings.py`
 """
 
-# %%
 settings = al.SettingsPhaseImaging()
 
-# %%
 """
 __Search__
 
@@ -130,7 +118,6 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/api/mass_sie__source_sersic/phase[1]`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/api",
     name="phase[1]",
@@ -139,7 +126,6 @@ search = af.DynestyStatic(
     prior_passer=af.PriorPasser(sigma=5.0, use_widths=True, use_errors=False),
 )
 
-# %%
 """
 __Phase__
 
@@ -147,20 +133,17 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase1 = al.PhaseImaging(
     settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
-# %%
 """
 Before reading on to phase 2, you may wish to inspect the results of the phase 1 model-fit to ensure the fast
 non-linear search has provided a reasonably accurate lens model.
 """
 
-# %%
 """
 __Model Linking__
 
@@ -170,11 +153,9 @@ The term `model` below tells PyAutoLens to pass the lens and source models as mo
 for by the non-linear search. In other linking examples, we'll see other ways to pass prior results.
 """
 
-# %%
 lens = phase1_result.model.galaxies.lens
 source = phase1_result.model.galaxies.source
 
-# %%
 """
 __Search__
 
@@ -191,12 +172,10 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 Note how the `lens` and `source` passed to this phase were set up above using the results of phase 1!
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/api", name="phase[2]", n_live_points=30
 )
 
-# %%
 """
 __Phase__
 
@@ -204,14 +183,12 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase2 = al.PhaseImaging(
     settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase2.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Prior Passing__
 
@@ -242,7 +219,6 @@ For the interested read a complete description of prior passing is given in chap
 is an extract of the full prior passing description.
 """
 
-# %%
 """
 __HowToLens Prior Passing__
 
@@ -311,7 +287,6 @@ search = af.DynestyStatic(
     prior_passer=af.PriorPasser(sigma=2.0, use_widths=False, use_errors=True)
 )
 
-# %%
 """
 The PriorPasser allows us to customize at what sigma the error values the model results are computed at to compute
 the passed sigma values and customizes whether the widths in the config file, these computed errors, or both, 

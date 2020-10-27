@@ -1,6 +1,5 @@
-# %%
 """
-__WELCOME__ 
+__TRANSDIMENSIONAL PIPELINES__
 
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
@@ -20,27 +19,15 @@ This uses the pipeline (Check it out full description of the pipeline):
 Check it out now for a detailed description of how it uses the hyper-mode features!
 """
 
-# %%
-import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
-# %%
-"""
-Returns the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
-"""
-
-# %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
-
-# %%
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
+
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
     psf_path=f"{dataset_path}/psf.fits",
@@ -48,29 +35,26 @@ imaging = al.Imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
-# %%
 """Next, we create the mask we'll fit this data-set with."""
+
 mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-# %%
 """Make a quick subplot to make sure the data looks as we expect."""
+
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Settings__
 
 `SettingsPhase` behave as they did in normal pipelines.
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 
 settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
-# %%
 """
 __PIPELINE SETUP__
 
@@ -83,7 +67,6 @@ The `SetupHyper` object controls the behaviour of  hyper-mode specifically:
 - If the background sky is modeled throughout the pipeline (default False)
 """
 
-# %%
 setup_hyper = al.SetupHyper(
     hyper_galaxies_lens=False,
     hyper_galaxies_source=False,
@@ -91,7 +74,6 @@ setup_hyper = al.SetupHyper(
     hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
 )
 
-# %%
 """
 Next, we create a `SetupMassTotal`, which customizes:
 
@@ -99,12 +81,10 @@ Next, we create a `SetupMassTotal`, which customizes:
  - If there is an `ExternalShear` in the mass model or not.
 """
 
-# %%
 setup_mass = al.SetupMassTotal(
     mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=True
 )
 
-# %%
 """
 In hyper-mode, we can use the `VoronoiBrightnessImage` `Pixelization` and `AdaptiveBrightness` `Regularization` 
 scheme, which adapts the `Pixelization` and `Regularization` to the morphology of the lensed source galaxy using the
@@ -117,7 +97,6 @@ This input is optional, a reduced source-resolution can provide faster run-times
 lead the source to be poorly reconstructed biasing the mass model. See **HowToLens** chapter 5 for more details.
 """
 
-# %%
 setup_source = al.SetupSourceInversion(
     pixelization_prior_model=al.pix.VoronoiBrightnessImage,
     regularization_prior_model=al.reg.AdaptiveBrightness,
@@ -143,15 +122,13 @@ The redshift of the lens and source galaxies are also input (see `examples/model
 description of what inputting redshifts into **PyAutoLens** does.
 """
 
-# %%
 setup = al.SetupPipeline(
-    path_prefix=f"hyper/{dataset_type}/{dataset_label}/{dataset_name}",
+    path_prefix=f"hyper/{dataset_name}",
     setup_hyper=setup_hyper,
     setup_mass=setup_mass,
     setup_source=setup_source,
 )
 
-# %%
 """
 __PIPELINE CREATION__
 
@@ -159,14 +136,12 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-# %%
 from autolens_workspace.transdimensional.pipelines.imaging.hyper import (
     mass_total__source_inversion,
 )
 
 pipeline = mass_total__source_inversion.make_pipeline(setup=setup, settings=settings)
 
-# %%
 """
 __Pipeline Run__
 

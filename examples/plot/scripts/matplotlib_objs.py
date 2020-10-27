@@ -1,7 +1,6 @@
 import autolens as al
 import autolens.plot as aplt
 
-# %%
 """
 In this example, we demonstrate how the appearance of figures in PyAutoLens can be customized, using an image of the 
 strong lens slacs1430+4105.
@@ -10,45 +9,19 @@ The customization functions demonstrated in this example are generic to any 2D a
 therefore be applied to the plotting of noise-maps, PSF`s, residual-maps, chi-squared-maps, etc. Many of the options
 can also be applied to the plotting of other data structures, for example `Grid`'s and `Mappers``..
 """
-
-# %%
-"""Use the WORKSPACE environment variable to determine the workspace path."""
-
-
-# %%
 """
 We have included the .fits dataset_type required for this example in the directory
 `autolens_workspace/output/dataset/imaging/slacs1430+4105/`.
-
-First, lets setup the path to the .fits file of the image.
 """
-
-# %%
-dataset_type = "slacs"
-dataset_name = "slacs1430+4105"
-
-# %%
-"""
-Returns the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/imaging/slacs1430+4105/`
-"""
-
-# %%
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/slacs/slacs1430+4105"
 image_path = f"{dataset_path}/image.fits"
-
-# %%
 """
 Now, lets load this arrays as an `Array` object. which is an ordinary NumPy ndarray but includes additional 
 functionality and attributes which are used during plotter. For example, it includes a pixel scale which converts the 
 axes of the arrays from pixels to arc-second coordinates (the vast majority of image-like objects you encourter in 
 PyAutoLens, residual-maps, images, noise-maps, etc, are `Array``.!).
 """
-
-# %%
 image = al.Array.from_fits(file_path=image_path, hdu=0, pixel_scales=0.03)
-
-# %%
 """
 **Plot**
 
@@ -56,16 +29,12 @@ We can use an `Array` plotter to plot the `Array`. We customize the plotters as 
 """
 
 aplt.Array(array=image)
-
-# %%
 """
 PyAutoLens`s visualization tools have a wide range of tools that enable one to customize the image that is plotted. 
 we'll cover each one by one ini this example script, noting that they follow the Matplotlib API as closely as possible.
 
 To customize a figure, note below how we create a `Plotter` object and pass that to the method `aplt.Array`.
 """
-
-# %%
 """
 **Figure**
 
@@ -78,13 +47,9 @@ The `Figure` object customizes the size of the figure the `Array` is plotted usi
 Note how carefully we have chosen the **PyAutoLens** default values of all Matplotlib objects to ensure the misaligned
 colorbar and weird figure shape don't impact most default visualization!
 """
-
-# %%
 plotter = aplt.Plotter(figure=aplt.Figure(figsize=(12, 12), aspect=0.5))
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **Units**
 
@@ -101,15 +66,11 @@ input below.
 An `Array` does not know its `cosmology` and thus this conversion is not possible, however when plotting objects
 such as a `Galaxy` or `Tracer` which have a redshift and cosmology this option automatically changes the units to kpc.
 """
-
-# %%
 plotter = aplt.Plotter(
     units=aplt.Units(use_scaled=True, conversion_factor=10.0, in_kpc=False)
 )
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **ColorMap**
 
@@ -121,8 +82,6 @@ The `ColorMap` object customizes the colormap of the image and scales of the nor
 3) Specify the linthresh and linscale parameters of symmetric log colormap (see 
 https://matplotlib.org/3.3.0/api/_as_gen/matplotlib.colors.SymLogNorm.html)
 """
-
-# %%
 plotter = aplt.Plotter(
     cmap=aplt.ColorMap(
         cmap="coolwarm",
@@ -135,8 +94,6 @@ plotter = aplt.Plotter(
 )
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **ColorBar**
 
@@ -148,8 +105,6 @@ The `ColorBar` object customizes the colorbar. Below we:
 3) Manually override the colorbar labels with new values (tick_labels), with their location on the colorbar running 
    from 0 -> 1 (tick_values).
 """
-
-# %%
 plotter = aplt.Plotter(
     cb=aplt.ColorBar(
         ticksize=20,
@@ -161,8 +116,6 @@ plotter = aplt.Plotter(
 )
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **Ticks**
 
@@ -171,8 +124,6 @@ The `Ticks` object customizes the figure ticks. Below we:
 1) Increase the size of the y and x ticks from 16 to 24.
 2) Manually override the tick labels with new values.
 """
-
-# %%
 plotter = aplt.Plotter(
     ticks=aplt.Ticks(
         ysize=24, xsize=24, y_manual=[1.0, 2.0, 3.0, 4.0], x_manual=[4.0, 5.0, 6.0, 7.0]
@@ -180,8 +131,6 @@ plotter = aplt.Plotter(
 )
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **Labels**
 
@@ -190,8 +139,6 @@ The `Labels` object customizes the figure labels. Below we:
 1) Manually set the figure title, y and x labels.
 2) Manually set the title, y and x label font sizes.
 """
-
-# %%
 plotter = aplt.Plotter(
     labels=aplt.Labels(
         title="SLACS1430+4105 Image",
@@ -204,8 +151,6 @@ plotter = aplt.Plotter(
 )
 
 aplt.Array(array=image, plotter=plotter)
-
-# %%
 """
 **Output**
 
@@ -213,8 +158,6 @@ The `Output` object allows us to output a figure to hard-disc.
 
 1) Output the figure to the folder `autolens_workspace/examples/plot/plots/array.png
 """
-
-# %%
 plotter = aplt.Plotter(
     output=aplt.Output(path=f"examples/plot/plots", filename="array", format="png")
 )

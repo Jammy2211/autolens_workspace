@@ -22,7 +22,6 @@ SLACS, which is the area of the critical curves in the image-plane.
 
 print(sie.einstein_radius_in_units(unit_length="arcsec", redshift_object=0.5))
 
-
 """The Einstein Radius requires the redshift of the profile (e.g. the lens galaxy) to be converted to kpc."""
 
 print(sie.einstein_radius_in_units(unit_length="kpc", redshift_object=0.5))

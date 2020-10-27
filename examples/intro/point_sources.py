@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Point Sources__
 
@@ -18,12 +17,9 @@ point-like source`s possible in **PyAutoLens**! we'll also show how these tools 
 and time-delays of the point-source.
 """
 
-
-# %%
 import autolens as al
 import autolens.plot as aplt
 
-# %%
 """
 To begin, we will create an image of strong lens using a simple `EllipticalIsothermal` mass model and source with an
 `EllipticalExponential` light profile. Although we are going to show how **PyAutoLens**`s positional analysis tools model
@@ -32,10 +28,9 @@ the point source are!
 
 Below, we set up a `Tracer` using a `Grid`, `LightProfile`, `MassProfile` and two `Galaxy``.. These objects are 
 introduced in the `lensing.py` example script, so if it is unclear what they are doing you should read through that
-example first before contuining!
+example first before continuing!
 """
 
-# %%
 grid = al.Grid.uniform(
     shape_2d=(100, 100),
     pixel_scales=0.05,  # <- The pixel-scale describes the conversion from pixel units to arc-seconds.
@@ -58,26 +53,21 @@ source_galaxy = al.Galaxy(redshift=1.0, light=exponential_light_profile)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
-# %%
 """
 Lets plot the image of our strongly lensed source galaxy. By eye, we can clearly see there are four multiple images 
 located in a cross configuration, which are the four (y,x) multiple image coordinates we want our positional solver
 to find! 
 """
 
-# %%
 # aplt.Tracer.image(tracer=tracer, grid=grid)
 
-# %%
 """
 Infact, the `Tracer` has the `PositionSolver` we introduce next built into it, and we can use this to plot the
 _Tracer_`s multiple images on the figure (they should appear as black dots on the image)!
 """
 
-# %%
 # aplt.Tracer.image(tracer=tracer, grid=grid, include=aplt.Include(multiple_images=True))
 
-# %%
 """
 At this point, you might be wondering why don't we use the image of the lensed source to compute our multiple images?
 Can`t we just find the pixels in the image whose flux is brighter than its neighboring pixels? 

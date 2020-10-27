@@ -40,9 +40,8 @@ we'll use the same strong lensing data as the previous tutorial, where:
 """
 
 # %%
-dataset_type = "chapter_5"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/howtolens/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/howtolens/chapter_4/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -178,7 +177,7 @@ actually modeled this image with **PyAutoLens** it wouldn't go to this solution 
 Einstein radius of 1.6? That`s true.
 
 However, for *real* strong gravitational lenses, there is no such thing as a `correct mass model`. Real galaxies are 
-not _EllipticalIsothermal profiles_, or power-laws, or NFW`s, or any of the symmetric and smooth analytic profiles we 
+not `EllipticalIsothermal` profiles_, or power-laws, or NFW`s, or any of the symmetric and smooth analytic profiles we 
 assume to model their mass. For real strong lenses our mass model will pretty much always lead to source-reconstruction 
 residuals, producing these skewed chi-squared distributions. **PyAutoLens** can`t remove them by simply improving the 
 mass model.

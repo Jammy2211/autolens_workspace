@@ -1,6 +1,5 @@
-# %%
 """
-__WELCOME__ 
+__TRANSDIMENSIONAL PIPELINES__
 
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
@@ -17,25 +16,15 @@ This uses the pipeline (Check it out full description of the pipeline):
  `autolens_workspace/pipelines/beginner/mass_power_law__source_inversion.py`.
 """
 
-# %%
 import autolens as al
 import autolens.plot as aplt
 import numpy as np
 
-dataset_type = "interferometer"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-# %%
-"""
-Returns the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/interferometer/mass_sie__source_sersic`
-"""
+dataset_path = f"dataset/interferometer/{dataset_name}"
 
-# %%
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
-
-# %%
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
 interferometer = al.Interferometer.from_fits(
@@ -46,30 +35,21 @@ interferometer = al.Interferometer.from_fits(
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-# %%
 """
 The perform a fit, we need two masks, firstly a ‘real-space mask’ which defines the grid the image of the lensed 
 source galaxy is evaluated using.
 """
 
-# %%
 real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
 
-# %%
-"""
-We also need a ‘visibilities mask’ which defines which visibilities are omitted from the chi-squared evaluation.
-"""
+"""We also need a ‘visibilities mask’ which defining which visibilities are omitted from the chi-squared evaluation."""
 
-# %%
 visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)
 
-# %%
 """Make a quick subplot to make sure the data looks as we expect."""
 
-# %%
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-# %%
 """
 __Settings__
 
@@ -81,12 +61,10 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-# %%
 settings_masked_interferometer = al.SettingsMaskedInterferometer(
     grid_class=al.Grid, sub_size=2, transformer_class=al.TransformerNUFFT
 )
 
-# %%
 """
 `Inversion`'s may infer unphysical solution where the source reconstruction is a demagnified reconstruction of the 
 lensed source (see **HowToLens** chapter 4). 
@@ -108,7 +86,6 @@ settings = al.SettingsPhaseInterferometer(
     settings_lens=settings_lens,
 )
 
-# %%
 """
 __Pipeline_Setup__:
 
@@ -120,10 +97,8 @@ First, we create a `SetupMassTotal`, which customizes:
  - If there is an `ExternalShear` in the mass model or not.
 """
 
-# %%
 setup_mass = al.SetupMassTotal(with_shear=True)
 
-# %%
 """
 Next, we create a `SetupSourceInversion` which customizes:
 
@@ -131,7 +106,6 @@ Next, we create a `SetupSourceInversion` which customizes:
  - The `Regularization` scheme used by the `Inversion` in phase 3 onwards in the pipeline.
 """
 
-# %%
 setup_source = al.SetupSourceInversion(
     pixelization_prior_model=al.pix.VoronoiMagnification,
     regularization_prior_model=al.reg.Constant,
@@ -156,16 +130,14 @@ The redshift of the lens and source galaxies are also input (see `examples/model
 description of what inputting redshifts into **PyAutoLens** does.
 """
 
-# %%
 setup = al.SetupPipeline(
-    path_prefix=f"transdimensional/{dataset_type}/{dataset_name}",
+    path_prefix=f"transdimensional/{dataset_name}",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,
     setup_source=setup_source,
 )
 
-# %%
 """
 __Pipeline Creation__
 
@@ -173,19 +145,16 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-# %%
 from autolens_workspace.transdimensional.pipelines.interferometer import (
     mass_total__source_inversion,
 )
 
 pipeline = mass_total__source_inversion.make_pipeline(setup=setup, settings=settings)
 
-# %%
 """
 __Pipeline Run__
 
 Running a pipeline is the same as running a phase, we simply pass it our lens dataset and mask to its run function.
 """
 
-# %%
 pipeline.run(dataset=interferometer)

@@ -1,5 +1,3 @@
-# %%
-
 """
 __Example: Modeling Positions__
 
@@ -17,17 +15,14 @@ This provides two benefits:
        because removing the incorrect mass models makes the non-linear parameter space less complex.
 """
 
-# %%
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
  - The lens `Galaxy`'s light is omitted (and is not present in the simulated data).
  - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
-
 """
 
-# %%
 """
 The positions are associated with the `Imaging` dataset and they are loaded from a `positions.dat` file which is in the
 same folder as the dataset itself. To create this file, we used a GUI to `draw on` the positions with our mouse. This
@@ -39,15 +34,12 @@ If you wish to use positions for modeling your own lens data, you should use thi
 every lens in you dataset.
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -57,7 +49,6 @@ imaging = al.Imaging.from_fits(
     positions_path=f"{dataset_path}/positions.dat",
 )
 
-# %%
 """
 The model-fit also requires a mask, which defines the regions of the image we use to fit the lens model to the data.
 
@@ -65,16 +56,14 @@ We can easily check the image-positions are accurate by plotting them using our 
 black dots on the image).
 """
 
-# %%
 mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=imaging.positions)
 
-# %%
 """
-Alternative, the positions can be set up manually in the runner script after loading the data. To do this, we use the 
+Alternatively, the positions can be set up manually in the runner script after loading the data. To do this, we use the 
 _GridCoordinates_ object, which is used by PyAutoLens to specify lists of (y,x) coordinates that are not on a uniform
 or regular grid (which the (y,x) coordinates of a `Grid` object are).
 """
@@ -92,7 +81,6 @@ imaging.positions = al.GridCoordinates(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=imaging.positions)
 
-# %%
 """
 __Model__
 
@@ -105,11 +93,9 @@ example our lens mooel is:
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -128,7 +114,6 @@ We do not want to risk inferring an incorrect mass model because our position th
 solutions!
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 settings_lens = al.SettingsLens(positions_threshold=0.5)
 
@@ -136,7 +121,6 @@ settings = al.SettingsPhaseImaging(
     settings_masked_imaging=settings_masked_imaging, settings_lens=settings_lens
 )
 
-# %%
 """
 __Search__
 
@@ -154,14 +138,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/beginner/mass_sie__source_sersic/phase__positions`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/customize/{dataset_name}",
     name="phase_positions",
     n_live_points=50,
 )
 
-# %%
 """
 __Phase__
 
@@ -169,12 +151,10 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
-# %%
 """
 We can now begin the fit by passing the dataset and mask to the phase, which will use the `NonLinearSearch` to fit
 the model to the data. The dataset contains the positions, which is how they are input in the model-fit.
@@ -183,10 +163,8 @@ The fit outputs visualization on-the-fly, so checkout the path
 `/path/to/autolens_workspace/output/examples/phase__mass_sie__source_bulge` to see how your fit is doing!
 """
 
-# %%
 result = phase.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Wrap Up__
 

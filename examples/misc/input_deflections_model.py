@@ -13,6 +13,7 @@ deflection angle map here once you have run this example).
 """
 
 ### --------------------------------------------------------------------------------------------------------------- ###import autofit as af
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
@@ -23,10 +24,9 @@ to your own dataset an deflection maps.
 
 Lets load and plot this dataset.
 """
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
+
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -88,6 +88,7 @@ lens model we fit to the data we`d waste a lot of time. However, because our def
 `grid` and `blurring_grid` we interpolated it to are fixed, by passing the latter as a `preload_grid` we can skip
 this expensive repeated calculation and speed up the code significantly. Yay!
 """
+
 image_plane_grid = al.Grid.uniform(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=1
 )
@@ -101,14 +102,11 @@ input_deflections = al.mp.InputDeflections(
     ),
 )
 
-"""
-We now create the lens and source `GalaxyModel``., where the source is an _EllipticalSersic-.
-"""
-lens = al.GalaxyModel(redshift=0.5, mass=input_deflections)
+"""We now create the lens and source `GalaxyModel`, where the source is an `EllipticalSersic`."""
 
+lens = al.GalaxyModel(redshift=0.5, mass=input_deflections)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -123,14 +121,12 @@ link -> <link>
 The `preload_grid` input into the `InputDelections` 
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.Grid, sub_size=mask.sub_size
 )
 
 settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
-# %%
 """
 __Search__
 
@@ -143,10 +139,8 @@ non-linear searches that can be used with **PyAutoLens**. If you do not know wha
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
 """
 
-# %%
 search = af.DynestyStatic(n_live_points=100)
 
-# %%
 """
 __Phase__
 
@@ -158,7 +152,6 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/beginner/light_sersic__mass_sie__source_sersic/phase__light_sersic__mass_sie__source_bulge`.
 """
 
-# %%
 phase = al.PhaseImaging(
     path_prefix=f"misc/{dataset_name}",
     name="phase__input_deflections",
@@ -167,7 +160,6 @@ phase = al.PhaseImaging(
     search=search,
 )
 
-# %%
 """
 We can now begin the fit by passing the dataset and mask to the phase, which will use the `NonLinearSearch` to fit
 the model to the data. 
@@ -176,5 +168,4 @@ The fit outputs visualization on-the-fly, so checkout the path
 `/path/to/autolens_workspace/output/misc/phase__input_deflections` to see how your fit is doing!
 """
 
-# %%
 result = phase.run(dataset=imaging, mask=mask)

@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Modeling__
 
@@ -9,8 +8,6 @@ Model-fitting is handled by our project **PyAutoFit**, a probabilistic programmi
 fitting. The setting up of configuration files is performed by our project **PyAutoConf**. we'll need to import
 both to perform the model-fit.
 """
-
-# %%
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
@@ -21,7 +18,6 @@ In this example script, we fit `Imaging` of a strong lens system where:
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.   
 """
 
-# %%
 """
 Load the strong lens dataset `light_chameleon__mass_mlr_nfw__source_sersic` `from .fits files, which is the dataset 
 we will use to perform lens modeling.
@@ -29,15 +25,12 @@ we will use to perform lens modeling.
 This is the same dataset we fitted in the `fitting.py` example.
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
 dataset_name = "light_chameleon__mass_mlr_nfw__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -46,19 +39,14 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-# %%
-"""
-The model-fit also requires a mask, which defines the regions of the image we use to fit the lens model to the data.
-"""
+"""The model-fit also requires a mask defining the regions of the image we fit the lens model to the data."""
 
-# %%
 mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Phase__
 
@@ -71,7 +59,6 @@ To perform lens modeling, we create a `PhaseImaging` object, which comprises:
 Once we have create the phase, we `run` it by passing it the data and mask.
 """
 
-# %%
 """
 __Model__
 
@@ -92,29 +79,27 @@ is not centred at (0.0", 0.0"), we recommend you reduce your data so it is (see 
 Alternatively, you can manually override the priors (see `autolens_workspace/examples/customize/priors.py`).
 """
 
-# %%
 """
 The `EllipticalChameleon` profile is the subtraction of two isothermal mass distributions, which each have their own 
 core radii. If the second `core_radius` is greater than that of the first, negative mass is created. To avoid this,
 we add an assertion that `core_radius_0` < `core_radius_1`.
 """
-# %%
+
 bulge = af.PriorModel(al.lmp.EllipticalChameleon)
 bulge.add_assertion(bulge.core_radius_0 < bulge.core_radius_1)
 
+"""
+This aligns the centres of the bulge and dark matter profile, so they share identical values during the 
+non-linear search.
+"""
 
-# %%
-"""This aligns the centres of the bulge and dark matter profile, so they share identical values during the 
-non-linear search."""
 dark = af.PriorModel(al.mp.SphericalNFW)
 bulge.centre = dark.centre
 
-
 lens = al.GalaxyModel(redshift=0.5, bulge=bulge, dark=dark)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
-
-# %%
 """
+
 __Settings__
 
 Next, we specify the `SettingsPhaseImaging`, which describe how the model is fitted to the data in the log likelihood
@@ -129,12 +114,10 @@ can be found in the example script `autolens/workspace/examples/model/customize/
 link -> <link>
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 
 settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
-# %%
 """
 __Search__
 
@@ -155,7 +138,6 @@ The `name` and `path_prefix` below specify the path where results are stored in 
      phase_light[bulge]_mass[mlr_nfw]_source[bulge]`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/beginner/{dataset_name}",
     name="phase_light[bulge]_mass[mlr_nfw]_source[bulge]",
@@ -163,7 +145,6 @@ search = af.DynestyStatic(
     walks=10,
 )
 
-# %%
 """
 __Phase__
 
@@ -171,12 +152,10 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
-# %%
 """
 We can now begin the fit by passing the dataset and mask to the phase, which will use the `NonLinearSearch` to fit
 the model to the data. 
@@ -185,31 +164,25 @@ The fit outputs visualization on-the-fly, so checkout the path
 `/path/to/autolens_workspace/output/examples/phase_light[bulge]_mass[mlr_nfw]_source[bulge]` to see how your fit is doing!
 """
 
-# %%
 result = phase.run(dataset=imaging, mask=mask)
 
-# %%
 """
 The phase above returned a result, which, for example, includes the lens model corresponding to the maximum
 log likelihood solution in parameter space.
 """
 
-# %%
 print(result.max_log_likelihood_instance)
 
-# %%
 """
 It also contains instances of the maximum log likelihood Tracer and FitImaging, which can be used to visualize
 the fit.
 """
 
-# %%
 aplt.Tracer.subplot_tracer(
     tracer=result.max_log_likelihood_tracer, grid=mask.geometry.masked_grid_sub_1
 )
 aplt.FitImaging.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
-# %%
 """
 Checkout `/path/to/autolens_workspace/examples/model/results.py` for a full description of the result object.
 """

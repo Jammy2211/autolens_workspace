@@ -61,7 +61,7 @@ for dataset_name in [
     For this pipeline the pipeline setup customizes:
 
   - The `Pixelization` used by the `Inversion` of this pipeline.
-  - The `Regularization` scheme used by of this pipeline.
+  - The `Regularization` scheme used by the `Inversion` of this pipeline.
   - If there is an `ExternalShear` in the mass model or not.
     """
 

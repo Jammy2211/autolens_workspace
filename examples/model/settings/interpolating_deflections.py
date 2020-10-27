@@ -1,4 +1,3 @@
-# %%
 """
 This example demonstrates how to use interpolated deflection-angles interpolation in the phase settings, which
 computes the deflection angles of a `MassProfile` on a coarse lower resolution `interpolation grid` and interpolates
@@ -7,12 +6,12 @@ these values to the image`s native sub-grid resolution.
 The benefits of this are:
 
  - For `MassProfile`'s that require computationally expensive numerical integration, this reduces the number of
-      integratals performed 100000`s to 1000`s, giving a potential speed up in run time of x100 or more!
+   integrals performed 100000`s to 1000`s, giving a potential speed up in run time of x100 or more!
 
 The downsides of this are:
 
  - The interpolated deflection angles will be inaccurate to some level of precision, depending on the resolution
-      of the interpolation grid. This could lead to inaccurate and biased mass models.
+   of the interpolation grid. This could lead to inaccurate and biased mass models.
 
 The interpolation grid is defined in terms of a pixel scale and it is automatically matched to the mask used in that
 phase. A higher resolution grid (i.e. lower pixel scale) will give more precise deflection angles, at the expense
@@ -35,17 +34,14 @@ I`ll assume that you are familiar with the beginner example scripts work, so if 
 yourself with those first!
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -60,18 +56,15 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
-we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitted in the beginner example scripts.
+we'll fit a `EllipticalIsothermal` + `EllipticalSersic` model which we often fitted in the beginner example scripts.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -83,15 +76,14 @@ function. In this example, we specify:
       
  - A pixel_scales_interp of 0.05, which is the resolution of the interpolation on which the deflection angles are
       computed and used to interpolate to the data`s native resolution.   
-      
 """
 
-# %%
-settings = al.SettingsPhaseImaging(
+settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.GridInterpolate, pixel_scales_interp=0.05
 )
 
-# %%
+settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
+
 """
 __Search__
 
@@ -107,12 +99,10 @@ reflelct this, meaning the full output path is:
  `/autolens_workspace/output/examples/settings/mass_sie__source_sersic/phase_interpolation/settings__grid_interp_0.05`.
 """
 
-# %%
 search = af.DynestyStatic(
-    path_prefix=f"examples/settings", name="phase__interpolation", n_live_points=50
+    path_prefix=f"examples/settings", name="phase_interpolation", n_live_points=50
 )
 
-# %%
 """
 __Phase__
 
@@ -120,7 +110,6 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )

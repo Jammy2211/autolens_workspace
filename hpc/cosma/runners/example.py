@@ -221,7 +221,7 @@ __Pipeline_Setup_And_Tagging__:
 For this runner the `SetupPipeline` customizes:
 
  - The `Pixelization` used by the `Inversion` of this pipeline.
- - The `Regularization` scheme used by of this pipeline.
+ - The `Regularization` scheme used by the `Inversion` of this pipeline.
  - If there is an `ExternalShear` in the mass model or not.
 
 The `SetupPipeline` `tags` the output path of a pipeline. For example, if `with_shear` is True, the pipeline`s output 

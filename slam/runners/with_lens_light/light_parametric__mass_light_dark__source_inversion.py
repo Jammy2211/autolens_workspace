@@ -1,4 +1,3 @@
-# %%
 """
 __SLaM (Source, Light and Mass)__
 
@@ -25,29 +24,19 @@ This runner uses the SLaM pipelines:
 
 Check them out for a detailed description of the analysis!
 """
+
 import autolens as al
 import autolens.plot as aplt
 
-# %%
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
+
 dataset_name = "light_chameleon_x2__mass_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
-# %%
-"""
-Returns the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/imaging/light_sersic_exp__mass_mlr_nfw__source_parametric`
-"""
+dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
-# %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
-
-# %%
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
 
-# %%
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
     psf_path=f"{dataset_path}/psf.fits",
@@ -61,7 +50,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Settings__
 
@@ -73,21 +61,18 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-# %%
 """
 Due to the slow deflection angle calculation of the `EllipticalSersic` and `EllipticalExponential` `MassProfile`'s
 we use `GridInterpolate` objects to speed up the analysis. This is specified separately for the `Grid` used to fit
 the source `LightProfile` and perform the `Inversion`.
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.GridInterpolate,
     grid_inversion_class=al.GridInterpolate,
     pixel_scales_interp=0.1,
 )
 
-# %%
 """
 `Inversion`'s may infer unphysical solution where the source reconstruction is a demagnified reconstruction of the 
 lensed source (see **HowToLens** chapter 4). 
@@ -100,7 +85,6 @@ multiplied by to set the threshold in the next phase. The *auto_positions_minimu
 threshold can go to, even after multiplication.
 """
 
-# %%
 settings_lens = al.SettingsLens(
     auto_positions_factor=3.0, auto_positions_minimum_threshold=0.8
 )
@@ -109,7 +93,6 @@ settings = al.SettingsPhaseImaging(
     settings_masked_imaging=settings_masked_imaging, settings_lens=settings_lens
 )
 
-# %%
 """
 __PIPELINE SETUP__
 
@@ -132,7 +115,6 @@ the same `SLaMPipelineSource`. they will reuse those results before branching of
 _SLaMPipelineLight_ and / or `SLaMPipelineMass` pipelines. 
 """
 
-# %%
 """
 __HYPER SETUP__
 
@@ -144,7 +126,6 @@ the values computed by the hyper-phase at the end of the Source pipeline. By fix
 _SLaMPipelineLight_ and `SLaMPipelineMass` pipelines, model comparison can be performed in a consistent fashion.
 """
 
-# %%
 hyper = al.SetupHyper(
     hyper_galaxies_lens=False,
     hyper_galaxies_source=False,
@@ -153,7 +134,6 @@ hyper = al.SetupHyper(
     hyper_fixed_after_source=True,
 )
 
-# %%
 """
 __SLaMPipelineSourceParametric__
 
@@ -182,7 +162,6 @@ pipeline_source_parametric = al.SLaMPipelineSourceParametric(
     setup_light=setup_light, setup_mass=setup_mass, setup_source=setup_source
 )
 
-# %%
 """
 __SLaMPipelineSourceInversion__
 
@@ -197,7 +176,7 @@ By default, this again assumes `EllipticalIsothermal` profile for the lens `Gala
 For this runner the `SLaMPipelineSourceInversion` customizes:
 
  - The `Pixelization` used by the `Inversion` of this pipeline.
- - The `Regularization` scheme used by of this pipeline.
+ - The `Regularization` scheme used by the `Inversion` of this pipeline.
  - If a fixed number of pixels are used by the `Inversion`.
 
 The `SLaMPipelineSourceInversion` use`s the `SetupLightParametric` and `SetupMass` of the `SLaMPipelineSourceParametric`.
@@ -214,7 +193,6 @@ setup_source = al.SetupSourceInversion(
 
 pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_source)
 
-# %%
 """
 __SLaMPipelineLight__
 
@@ -235,7 +213,6 @@ The `SLaMPipelineLightParametric` uses the mass model fitted in the previous `SL
 The `SLaMPipelineLightParametric` and imported light pipelines determine the lens light model used in `Mass` pipelines.
 """
 
-# %%
 setup_light = al.SetupLightParametric(
     bulge_prior_model=al.lp.EllipticalSersic,
     disk_prior_model=al.lp.EllipticalExponential,
@@ -246,7 +223,6 @@ setup_light = al.SetupLightParametric(
 
 pipeline_light = al.SLaMPipelineLightParametric(setup_light=setup_light)
 
-# %%
 """
 __SLaMPipelineMass__
 
@@ -266,8 +242,6 @@ For this runner the `SLaMPipelineMass` customizes:
 setup_mass = al.SetupMassLightDark(with_shear=True)
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
-
-# %%
 """
 __SLaM__
 
@@ -278,7 +252,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    path_prefix=f"slam/{dataset_type}/{dataset_label}/{dataset_name}",
+    path_prefix=f"slam/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,
@@ -286,7 +260,6 @@ slam = al.SLaM(
     pipeline_mass=pipeline_mass,
 )
 
-# %%
 """
 __PIPELINE CREATION__
 
@@ -295,7 +268,6 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
 """
 
-# %%
 from autolens_workspace.slam.pipelines.with_lens_light import source__parametric
 from autolens_workspace.slam.pipelines.with_lens_light import source__inversion
 from autolens_workspace.slam.pipelines.with_lens_light import light__parametric

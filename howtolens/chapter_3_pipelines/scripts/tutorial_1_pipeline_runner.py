@@ -52,9 +52,8 @@ we'll use strong lensing data, where:
 """
 
 # %%
-dataset_type = "chapter_3"
 dataset_name = "light_sersic__mass_sie__source_exp"
-dataset_path = f"dataset/howtolens/{dataset_type}/{dataset_name}"
+dataset_path = f"dataset/howtolens/chapter_3/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",

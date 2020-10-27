@@ -1,6 +1,5 @@
 import autolens as al
 
-# %%
 """
 __Settings__
 
@@ -20,7 +19,6 @@ can be found in the example script `autolens/workspace/examples/model/customize/
 link -> <link>
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(
     grid_class=al.GridInterpolate, pixel_scales_interp=0.1
 )

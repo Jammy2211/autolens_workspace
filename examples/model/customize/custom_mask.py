@@ -1,4 +1,3 @@
-# %%
 """
 This example demonstrates how to load and use a custom mask from your hard-disk and use this as the mask in a pipeline.
 
@@ -23,17 +22,14 @@ I`ll assume that you are familiar with the beginner example scripts work, so if 
 yourself with those first!
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -63,18 +59,15 @@ ontaminating bright sources away from the lens and zoom in around the mask to em
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask_custom)
 
-# %%
 """
 __Model__
 
-we'll fit a _EllipticalIsothermal + `EllipticalSersic` model which we often fitted in the beginner example scripts.
+we'll fit a `EllipticalIsothermal` + `EllipticalSersic` model which we often fitted in the beginner example scripts.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Search__
 
@@ -87,14 +80,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 Note that we pass the phase run function our custom mask, which means it is used to perform the model-fit!
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/customize/{dataset_name}",
     name="phase_custom_mask",
     n_live_points=50,
 )
 
-# %%
 """
 __Settings__
 
@@ -102,10 +93,8 @@ Next, we specify the `SettingsPhaseImaging`, which in this example simmply use t
 examples.
 """
 
-# %%
 settings = al.SettingsPhaseImaging()
 
-# %%
 """
 __Phase__
 
@@ -113,7 +102,6 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase = al.PhaseImaging(
     galaxies=dict(lens=lens, source=source), settings=settings, search=search
 )

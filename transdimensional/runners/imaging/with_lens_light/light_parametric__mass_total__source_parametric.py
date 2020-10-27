@@ -1,6 +1,5 @@
-# %%
 """
-__WELCOME__ 
+__TRANSDIMENSIONAL PIPELINES__
 
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
@@ -17,29 +16,17 @@ This uses the pipeline (Check it out full description of the pipeline):
  `autolens_workspace/pipelines/imaging/with_lens_light/light_parametric__mass_total__source_parametric.py`.
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
 dataset_name = "light_sersic__mass_sie__source_sersic"
 pixel_scales = 0.1
 
-# %%
-"""
-Returns the path where the dataset will be loaded from, which in this case is
-`/autolens_workspace/dataset/imaging/light_sersic__mass_sie__source_sersic`
-"""
+dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
-# %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
-
-# %%
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
 
-# %%
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
     psf_path=f"{dataset_path}/psf.fits",
@@ -47,21 +34,16 @@ imaging = al.Imaging.from_fits(
     pixel_scales=pixel_scales,
 )
 
-# %%
 """Next, we create the mask we'll fit this data-set with."""
 
-# %%
 mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, radius=3.0
 )
 
-# %%
 """Make a quick subplot to make sure the data looks as we expect."""
 
-# %%
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Settings__
 
@@ -73,12 +55,10 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 
 settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
-# %%
 """
 __Pipeline_Setup__:
 
@@ -86,7 +66,7 @@ Pipelines use `Setup` objects to customize how different aspects of the model ar
 
 First, we create a `SetupLightParametric` which customizes:
 
- - The `LightProfile`'s use to fit different components of the lens light, such as its `bulge` and `disk`.
+ - The `LightProfile`'s which fit different components of the lens light, such as its `bulge` and `disk`.
  - The alignment of these components, for example if the `bulge` and `disk` centres are aligned.
  - If the centre of the lens light profile is manually input and fixed for modeling.
  
@@ -95,7 +75,6 @@ not fix its centre to an input value. We have included options of `SetupLightPar
 `None`, illustrating how it could be edited to fit different models.
 """
 
-# %%
 setup_light = al.SetupLightParametric(
     bulge_prior_model=al.lp.EllipticalSersic,
     disk_prior_model=None,
@@ -105,7 +84,6 @@ setup_light = al.SetupLightParametric(
     light_centre=None,
 )
 
-# %%
 """
 This pipeline also uses a `SetupMass`, which customizes:
 
@@ -114,14 +92,12 @@ This pipeline also uses a `SetupMass`, which customizes:
   - If the centre of the `MassProfile` is aligned with the centre of the `LightProfile`'s.
 """
 
-# %%
 setup_mass = al.SetupMassTotal(
     mass_prior_model=al.mp.EllipticalPowerLaw,
     with_shear=True,
     align_bulge_mass_centre=False,
 )
 
-# %%
 """
 Next, we create a `SetupSourceParametric` which customizes the parametric source model in an identical way to how 
 `SetupLightParametric` customizes the parametric lens light model.
@@ -130,7 +106,6 @@ This example uses a single `bulge` with an `EllipticalSersic` and we've included
 be customized.
 """
 
-# %%
 setup_source = al.SetupSourceParametric(
     bulge_prior_model=al.lp.EllipticalSersic,
     disk_prior_model=None,
@@ -140,7 +115,6 @@ setup_source = al.SetupSourceParametric(
     light_centre=None,
 )
 
-# %%
 """
 _Pipeline Tagging_
 
@@ -160,9 +134,8 @@ The redshift of the lens and source galaxies are also input (see `examples/model
 description of what inputting redshifts into **PyAutoLens** does.
 """
 
-# %%
 setup = al.SetupPipeline(
-    path_prefix=f"transdimensional/{dataset_type}/{dataset_label}/{dataset_name}",
+    path_prefix=f"transdimensional/{dataset_name}",
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_light=setup_light,
@@ -170,7 +143,6 @@ setup = al.SetupPipeline(
     setup_source=setup_source,
 )
 
-# %%
 """
 __Pipeline Creation__
 
@@ -178,7 +150,6 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-# %%
 from autolens_workspace.transdimensional.pipelines.imaging.with_lens_light import (
     light_parametric__mass_total__source_parametric,
 )
@@ -187,12 +158,10 @@ pipeline = light_parametric__mass_total__source_parametric.make_pipeline(
     setup=setup, settings=settings
 )
 
-# %%
 """
 __Pipeline Run__
 
 Running a pipeline is the same as running a phase, we simply pass it our lens dataset and mask to its run function.
 """
 
-# %%
 pipeline.run(dataset=imaging, mask=mask)

@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Linking Lens Light To Mass__
 
@@ -6,7 +5,6 @@ Before reading this example, make sure you have read the `autolens_workspace/exa
 example script, which describes phase linking and details the API for this.
 """
 
-# %%
 """
 In this example, we link two phases, where:
 
@@ -33,7 +31,6 @@ There are a number of benefits to using phase linking to model the lens`s light 
       so in this example we omit such an approach.
 """
 
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
@@ -43,15 +40,12 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
 dataset_name = "light_sersic_exp__mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -66,7 +60,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
@@ -82,7 +75,6 @@ We are fitting on the lens`s light in phase 1 and only its mass and the source i
 parameter spaces of N=13 and N=12 respectively.
 """
 
-# %%
 bulge = af.PriorModel(al.lp.EllipticalSersic)
 disk = af.PriorModel(al.lp.EllipticalExponential)
 
@@ -90,7 +82,6 @@ bulge.centre = disk.centre
 
 lens = al.GalaxyModel(redshift=0.5, bulge=bulge, disk=disk)
 
-# %%
 """
 __Settings__
 
@@ -98,14 +89,12 @@ You should be familiar with the `SettingsPhaseImaging` object from other example
 examples and `autolens_workspace/examples/model/customize/settings.py`
 """
 
-# %%
 settings_lens = al.SettingsLens(
     auto_positions_factor=3.0, auto_positions_minimum_threshold=0.2
 )
 
 settings = al.SettingsPhaseImaging(settings_lens=settings_lens)
 
-# %%
 """
 __Search__
 
@@ -116,14 +105,12 @@ In this example, we omit the PriorPasser and will instead use the default values
 file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/lens_light_to_mass",
     name="phase[1]",
     n_live_points=50,
 )
 
-# %%
 """
 __Phase__
 
@@ -135,18 +122,15 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_sersic_exp__mass_sie__source_sersic/phase[1]`.
 """
 
-# %%
 phase1 = al.PhaseImaging(search=search, settings=settings, galaxies=dict(lens=lens))
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
-# %%
 """
 Before reading on to phase 2, you may wish to inspect the results of the phase 1 model-fit to ensure the fast
 non-linear search has provided a reasonably accurate lens light model.
 """
 
-# %%
 """
 __Model Linking__
 
@@ -160,8 +144,6 @@ We also use the inferred centre of the lens light model in phase 1 to initialize
 in phase 2. This uses the term `model` to pass priors, as we saw in other examples.
 """
 
-# %%
-
 mass = af.PriorModel(al.mp.EllipticalIsothermal)
 
 mass.centre = phase1_result.model.galaxies.lens.bulge.centre
@@ -174,21 +156,18 @@ lens = al.GalaxyModel(
 )
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Search__
 
 In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/lens_light_to_mass",
     name="phase[2]",
     n_live_points=50,
 )
 
-# %%
 """
 __Phase__
 
@@ -202,14 +181,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
-# %%
 phase2 = al.PhaseImaging(
     settings=settings, galaxies=dict(lens=lens, source=source), search=search
 )
 
 phase2.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Wrap Up__
 

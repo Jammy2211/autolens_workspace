@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Linking Parametric To Inversion__
 
@@ -6,7 +5,6 @@ Before reading this example, make sure you have read the `autolens_workspace/exa
 example script, which describes phase linking and details the API for this.
 """
 
-# %%
 """
 In this example, we link two phases, where:
 
@@ -37,7 +35,6 @@ There are a number of benefits to linking a parametric source model to an _Inver
       unphysically large / small mass models are removed.
 """
 
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
@@ -47,15 +44,12 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -70,7 +64,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
@@ -84,11 +77,9 @@ example our lens mooel is:
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -110,14 +101,12 @@ The setting below lead to the following behaviour for each phase:
   `auto_positions_minimum_threshold`, it is rounded up to this minimum value.
 """
 
-# %%
 settings_lens = al.SettingsLens(
     auto_positions_factor=3.0, auto_positions_minimum_threshold=0.2
 )
 
 settings = al.SettingsPhaseImaging(settings_lens=settings_lens)
 
-# %%
 """
 __Search__
 
@@ -132,14 +121,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/parametric_to_inversion/mass_sie__source_sersic/phase[1]`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/parametric_to_inversion",
     name="phase[1]",
     n_live_points=50,
 )
 
-# %%
 """
 __Phase__
 
@@ -147,20 +134,17 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase1 = al.PhaseImaging(
     search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
-# %%
 """
 Before reading on to phase 2, you may wish to inspect the results of the phase 1 model-fit to ensure the fast
 non-linear search has provided a reasonably accurate lens model.
 """
 
-# %%
 """
 __Model Linking__
 
@@ -170,7 +154,6 @@ The term `model` below tells PyAutoLens to pass the lens and source models as mo
 for by the non-linear search. In other linking examples, we'll see other ways to pass prior results.
 """
 
-# %%
 lens = phase1_result.model.galaxies.lens
 source = al.GalaxyModel(
     redshift=1.0,
@@ -178,21 +161,18 @@ source = al.GalaxyModel(
     regularization=al.reg.Constant,
 )
 
-# %%
 """
 __Search__
 
 In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/parametric_to_inversion",
     name="phase[2]",
     n_live_points=40,
 )
 
-# %%
 """
 __Phase__
 
@@ -206,14 +186,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
-# %%
 phase2 = al.PhaseImaging(
     search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase2.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Wrap Up__
 

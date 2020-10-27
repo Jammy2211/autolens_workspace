@@ -1,5 +1,3 @@
-# %%
-
 """
 __Example: Non-linear Searches__
 
@@ -8,7 +6,6 @@ very effective `NonLinearSearch` for lens modeling, but may not always be the op
 problem. In this example we fit strong lens data using a variety of non-linear searches.
 """
 
-# %%
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
@@ -18,7 +15,6 @@ In this example script, we fit `Imaging` of a strong lens system where:
 
 """
 
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
@@ -28,15 +24,12 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -51,7 +44,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
@@ -64,11 +56,9 @@ example our lens mooel is:
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -76,12 +66,10 @@ Next, we specify the `SettingsPhaseImaging`, which in this example simmply use t
 examples.
 """
 
-# %%
 settings_masked_imaging = al.SettingsMaskedImaging()
 
 settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
 
-# %%
 """
 __Searches__
 
@@ -92,7 +80,6 @@ Below we use the following non-linear searches:
     3) MCMC
 """
 
-# %%
 """
 __Nested Sampling__
 
@@ -105,14 +92,12 @@ The `name` and `path_prefix` below specify the path where results are stored in 
     settings__grid_sub_2/dynesty__`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/customize/{dataset_name}",
     name="phase_non_linear_searches",
     n_live_points=50,
 )
 
-# %%
 """
 __Phase__
 
@@ -120,14 +105,12 @@ We can now combine the model, settings and `NonLinearSearch` above to create and
 the lens model.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 result = phase.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Optimizer__
 
@@ -146,7 +129,6 @@ Performing the model-fit in 3000 iterations is significantly faster than the `Dy
 example scripts, that often require > 20000 - 50000 iterations.
 """
 
-# %%
 search = af.PySwarmsLocal(
     path_prefix=f"examples/customize/{dataset_name}",
     name="phase__non_linear_searches",
@@ -154,7 +136,6 @@ search = af.PySwarmsLocal(
     iters=5000,
 )
 
-# %%
 """
 __Phase__
 
@@ -166,19 +147,16 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/customize`.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 result = phase.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __MCMC__
 """
 
-# %%
 search = af.Emcee(
     path_prefix=f"examples/customize/{dataset_name}",
     name="phase_non_linear_searches",
@@ -186,7 +164,6 @@ search = af.Emcee(
     nsteps=1000,
 )
 
-# %%
 """
 __Phase__
 
@@ -198,7 +175,6 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/customize`.
 """
 
-# %%
 phase = al.PhaseImaging(
     search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )

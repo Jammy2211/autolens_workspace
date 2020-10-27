@@ -9,6 +9,7 @@ for example:
    strongly lensed clusters.
  - Deflection angles of a galaxy simulated in a cosmological galaxy formation simulation.
 """
+
 import autolens as al
 import autolens.plot as aplt
 
@@ -19,10 +20,9 @@ to your own dataset and deflection maps.
 
 Lets load and plot this dataset.
 """
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
+
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -40,6 +40,7 @@ image-plane  `Grid` and deflection angles we use in this example (which are iden
 """
 
 """Lets load the input deflection angle map from a .fits files (which is created in the code mentioned above)."""
+
 deflections_y = al.Array.from_fits(
     file_path=f"examples/misc/files/deflections_y.fits",
     pixel_scales=imaging.pixel_scales,
@@ -50,10 +51,12 @@ deflections_x = al.Array.from_fits(
 )
 
 """Lets plot the deflection angles to make sure they look like what we expect!"""
+
 aplt.Array(array=deflections_y)
 aplt.Array(array=deflections_x)
 
 """Lets next load and plot the image-plane grid"""
+
 grid = al.Grid.from_fits(
     file_path=f"examples/misc/files/grid.fits", pixel_scales=imaging.pixel_scales
 )
@@ -66,6 +69,7 @@ We now create our `InputDeflections` `MassProfile`, which represents our input d
 This takes as input both the input deflection angles and their corresponding image-plane grid, with the latter used to
 compute new sets of deflection angles from the input deflections via interpolation.
 """
+
 image_plane_grid = al.Grid.uniform(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales
 )
@@ -139,6 +143,7 @@ our input deflection angle map fit the image of a strong lens we are comparing t
 
 In this case, it gives a good fit, because we are using the true deflection angle map and source model!
 """
+
 masked_imaging = al.MaskedImaging(imaging=imaging, mask=mask)
 fit_imaging = al.FitImaging(masked_imaging=masked_imaging, tracer=tracer)
 aplt.FitImaging.subplot_fit_imaging(fit=fit_imaging)
@@ -149,12 +154,14 @@ source galaxy.
 
 we'll reconstruct the source on a 30 x 30 `Rectangular` source-plane `Pixelization`.
 """
+
 pixelization = al.pix.Rectangular(shape=(30, 30))
 
 """
 A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below. These mappings are used when 
 reconstructing the source `Galaxy`'s light.
 """
+
 mapper = pixelization.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 
 aplt.Mapper.subplot_image_and_mapper(
@@ -186,6 +193,7 @@ Finally, lets plot:
  - The corresponding reconstructed image-plane image of the lensed source `Galaxy` (which accounts for PSF blurring).
  - The residuals of the fit to the `MaskedImaging`.
 """
+
 aplt.Inversion.reconstruction(inversion=inversion)
 aplt.Inversion.reconstructed_image(inversion=inversion)
 residual_map = masked_imaging.image - inversion.mapped_reconstructed_image

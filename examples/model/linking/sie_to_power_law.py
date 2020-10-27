@@ -1,4 +1,3 @@
-# %%
 """
 __Example: Linking Parametric To Inversion__
 
@@ -6,7 +5,6 @@ Before reading this example, make sure you have read the `autolens_workspace/exa
 example script, which describes phase linking and details the API for this.
 """
 
-# %%
 """
 In this example, we link two phases, where:
 
@@ -36,7 +34,6 @@ Phase 2 can then fit the `EllipticalPowerLaw`, using prior passing to initialize
 `Galaxy`'s mass *and* the source `Galaxy`'s light. 
 """
 
-# %%
 """
 As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In this strong lensing dataset:
 
@@ -46,15 +43,12 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
-# %%
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
 dataset_name = "mass_power_law__source_sersic"
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 imaging = al.Imaging.from_fits(
     image_path=f"{dataset_path}/image.fits",
@@ -69,7 +63,6 @@ mask = al.Mask2D.circular(
 
 aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
 
-# %%
 """
 __Model__
 
@@ -85,11 +78,9 @@ The number of free parameters and therefore the dimensionality of non-linear par
 for phases 1 and 2 respectively..
 """
 
-# %%
 lens = al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal)
 source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
 
-# %%
 """
 __Settings__
 
@@ -97,10 +88,8 @@ You should be familiar with the `SettingsPhaseImaging` object from other example
 examples and `autolens_workspace/examples/model/customize/settings.py`
 """
 
-# %%
 settings = al.SettingsPhaseImaging()
 
-# %%
 """
 __Search__
 
@@ -111,12 +100,10 @@ In this example, we omit the PriorPasser and will instead use the default values
 file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/sie_to_power_law", name="phase[1]", n_live_points=50
 )
 
-# %%
 """
 __Phase__
 
@@ -128,20 +115,17 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_bulge/phase[1]`.
 """
 
-# %%
 phase1 = al.PhaseImaging(
     search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
-# %%
 """
 Before reading on to phase 2, you may wish to inspect the results of the phase 1 model-fit to ensure the fast
 non-linear search has provided a reasonably accurate lens model.
 """
 
-# %%
 """
 __Model Linking__
 
@@ -155,8 +139,6 @@ mass model above. Instead, we pass each individual parameter of the `EllipticalI
 to retain its default `UniformPrior` which has a lower_limit=1.5 and upper_limit=3.0.
 """
 
-# %%
-
 mass = af.PriorModel(al.mp.EllipticalPowerLaw)
 
 mass.centre = phase1_result.model.galaxies.lens.mass.centre
@@ -167,7 +149,6 @@ lens = al.GalaxyModel(redshift=0.5, mass=mass)
 
 source = al.GalaxyModel(redshift=1.0, bulge=phase1_result.model.galaxies.source.bulge)
 
-# %%
 """
 __Search__
 
@@ -178,12 +159,10 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/sie_to_power_law/lens_power_law__source_bulge/phase[2]`.
 """
 
-# %%
 search = af.DynestyStatic(
     path_prefix=f"examples/linking/sie_to_power_law", name="phase[2]", n_live_points=50
 )
 
-# %%
 """
 __Phase__
 
@@ -193,14 +172,12 @@ the lens model.
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """
 
-# %%
 phase2 = al.PhaseImaging(
     search=search, settings=settings, galaxies=dict(lens=lens, source=source)
 )
 
 phase2.run(dataset=imaging, mask=mask)
 
-# %%
 """
 __Wrap Up__
 
