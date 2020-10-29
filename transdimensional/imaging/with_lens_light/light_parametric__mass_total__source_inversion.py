@@ -165,7 +165,7 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-from autolens_workspace.transdimensional.pipelines.imaging.with_lens_light import (
+from pipelines import (
     light_parametric__mass_total__source_inversion,
 )
 

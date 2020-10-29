@@ -225,10 +225,10 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
 """
 
-from .pipelines import source__parametric
-from .pipelines import source__inversion
-from .pipelines import mass__total
-from .pipelines import subhalo
+from pipelines import source__parametric
+from pipelines import source__inversion
+from pipelines import mass__total
+from pipelines import subhalo
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
 source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)

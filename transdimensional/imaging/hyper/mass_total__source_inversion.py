@@ -136,7 +136,7 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-from autolens_workspace.transdimensional.pipelines.imaging.hyper import (
+from pipelines import (
     mass_total__source_inversion,
 )
 

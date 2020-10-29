@@ -4,23 +4,21 @@ __TRANSDIMENSIONAL PIPELINES__
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
 
-Using a pipeline composed of three phases this runner fits `Interferometer` data of a strong lens system, where in
+Using a pipeline composed of two phases this runner fits `Interferometer` data of a strong lens system, where in
 the final phase of the pipeline:
-.
+
  - The lens `Galaxy`'s light is omitted from the data and model.
- - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
- - The source galaxy is modeled using an `Inversion`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The source `Galaxy`'s two `LightProfile`'s are modeled as `EllipticalSersic``..
 
 This uses the pipeline (Check it out full description of the pipeline):
-
- `autolens_workspace/pipelines/beginner/mass_power_law__source_inversion.py`.
 """
 
 import autolens as al
 import autolens.plot as aplt
 import numpy as np
 
-dataset_name = "mass_sie__source_sersic"
+dataset_name = "mass_sie__source_sersic_"
 pixel_scales = 0.1
 
 dataset_path = f"dataset/interferometer/{dataset_name}"
@@ -65,25 +63,8 @@ settings_masked_interferometer = al.SettingsMaskedInterferometer(
     grid_class=al.Grid, sub_size=2, transformer_class=al.TransformerNUFFT
 )
 
-"""
-`Inversion`'s may infer unphysical solution where the source reconstruction is a demagnified reconstruction of the 
-lensed source (see **HowToLens** chapter 4). 
-
-To prevent this, auto-positioning is used, which uses the lens mass model of earlier phases to automatically set 
-positions and a threshold that resample inaccurate mass models (see `examples/model/positions.py`).
-
-The `auto_positions_factor` is a factor that the threshold of the inferred positions using the previous mass model are 
-multiplied by to set the threshold in the next phase. The *auto_positions_minimum_threshold* is the minimum value this
-threshold can go to, even after multiplication.
-"""
-
-settings_lens = al.SettingsLens(
-    auto_positions_factor=3.0, auto_positions_minimum_threshold=0.8
-)
-
 settings = al.SettingsPhaseInterferometer(
-    settings_masked_interferometer=settings_masked_interferometer,
-    settings_lens=settings_lens,
+    settings_masked_interferometer=settings_masked_interferometer
 )
 
 """
@@ -100,16 +81,16 @@ First, we create a `SetupMassTotal`, which customizes:
 setup_mass = al.SetupMassTotal(with_shear=True)
 
 """
-Next, we create a `SetupSourceInversion` which customizes:
+Next, we create a `SetupSourceParametric` which customizes:
 
- - The `Pixelization` used by the `Inversion` in phase 3 onwards in the pipeline.
- - The `Regularization` scheme used by the `Inversion` in phase 3 onwards in the pipeline.
+ - The `LightProfile`'s which fit different components of the source light, such as its `bulge` and `disk`.
+ - The alignment of these components, for example if the `bulge` and `disk` centres are aligned.
+ 
+In this example we fit the source light as one component, a `bulge` represented as an `EllipticalSersic`. We have 
+included options of `SetupSourceParametric` with input values of `None`, illustrating how it could be edited to fit different models.
 """
 
-setup_source = al.SetupSourceInversion(
-    pixelization_prior_model=al.pix.VoronoiMagnification,
-    regularization_prior_model=al.reg.Constant,
-)
+setup_source = al.SetupSourceParametric()
 
 """
 _Pipeline Tagging_
@@ -124,9 +105,9 @@ to different output folders and thus not clash with one another!
 The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/transdimensional/dataset_type/dataset_name` 
- `autolens_workspace/output/transdimensional/interferometer/mass_sie__source_sersic`
+ `autolens_workspace/output/transdimensional/interferometer/mass_sie__source_sersic_x2/`
  
-The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
+ The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
 description of what inputting redshifts into **PyAutoLens** does.
 """
 
@@ -145,7 +126,7 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-from autolens_workspace.transdimensional.pipelines.interferometer import (
+from pipelines import (
     mass_total__source_inversion,
 )
 
