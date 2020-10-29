@@ -12,6 +12,18 @@ The noise-map will be output as `/autolens_workspace/dataset/dataset_type/datase
 The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
 
+"""To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
+uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
+uv_wavelengths_file = "alma_uv_wavelengths_x100k"
+# uv_wavelengths_file = "alma_uv_wavelengths_x500k"
+# uv_wavelengths_file = "alma_uv_wavelengths_x1m"
+# uv_wavelengths_file = "alma_uv_wavelengths_x5m"
+# uv_wavelengths_file = "alma_uv_wavelengths_x10m"
+
+uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
+    file_path=f"{uv_wavelengths_path}/{uv_wavelengths_file}.fits", hdu=0
+)
+
 """
 The `dataset_type` describes the type of data being simulated (in this case, `Imaging` data) and `dataset_name` 
 gives it a descriptive name. They define the folder the dataset is output to on your hard-disk:
@@ -29,7 +41,7 @@ The path where the dataset will be output, which in this case is
 `/autolens_workspace/dataset/interferometer/instruments/sma/mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/{dataset_type}/{dataset_instrument}"
+dataset_path = f"dataset/{dataset_type}/{dataset_instrument}/{uv_wavelengths_file}"
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -46,17 +58,6 @@ grid = al.GridIterate.uniform(
 )
 
 """
-To perform the Fourier transform we need the wavelengths of the baselines. 
-
-The uvtools package on this workspace has the scripts necessary for simulating the baselines of a 12000s ALMA exposure 
-without any channel averaging. This will produce an `Interferometer` datasset with ~1m visibilities. 
-"""
-
-from autolens_workspace.simulators.interferometer.uvtools import load_utils
-
-uv_wavelengths = load_utils.uv_wavelengths_single_channel()
-
-"""
 To simulate the interferometer dataset we first create a simulator, which defines the shape, resolution and pixel-scale 
 of the visibilities that are simulated, as well as its exposure time, noise levels and uv-wavelengths.
 """
@@ -66,6 +67,7 @@ simulator = al.SimulatorInterferometer(
     exposure_time=100.0,
     background_sky_level=0.1,
     noise_sigma=0.01,
+    transformer_class=al.TransformerNUFFT
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
@@ -106,6 +108,9 @@ interferometer dataset.
 
 interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
+print(interferometer.visibilities.shape)
+stop
+
 """Lets plot the simulated interferometer dataset before we output it to fits."""
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
@@ -118,17 +123,3 @@ interferometer.output_to_fits(
     uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
     overwrite=True,
 )
-
-plotter = aplt.Plotter(
-    labels=aplt.Labels(title="Visibilities"),
-    output=aplt.Output(path=dataset_path, filename="visibilities", format="png"),
-)
-
-aplt.Interferometer.visibilities(interferometer=interferometer, plotter=plotter)
-
-plotter = aplt.Plotter(
-    labels=aplt.Labels(title="UV-Wavelengths"),
-    output=aplt.Output(path=dataset_path, filename="uv_wavelengths", format="png"),
-)
-
-aplt.Interferometer.visibilities(interferometer=interferometer, plotter=plotter)
