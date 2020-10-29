@@ -67,7 +67,7 @@ simulator = al.SimulatorInterferometer(
     exposure_time=100.0,
     background_sky_level=0.1,
     noise_sigma=0.01,
-    transformer_class=al.TransformerNUFFT
+    transformer_class=al.TransformerNUFFT,
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""

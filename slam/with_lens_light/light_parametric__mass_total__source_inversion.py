@@ -10,9 +10,9 @@ where in the final phase of the pipeline:
 
  - The lens `Galaxy`'s `LightProfile`'s are modeled as an `EllipticalSersic` + `EllipticalExponential`, representing
    a bulge + disk model.
- - The lens `Galaxy`'s light matter mass distribution is fitted using the `EllipticalSersic` + `EllipticalExponential` of the
+ - The lens `Galaxy`'s light matter mass distribution is fitted using the `EllipticalSersic` + EllipticalExponential of the
     `LightProfile`, where it is converted to a stellar mass distribution via constant mass-to-light ratios.
- - The lens `Galaxy`'s dark matter mass distribution is modeled as a `SphericalNFW`.
+ - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
  - The source `Galaxy`'s light is modeled parametrically using an `Inversion`.
 
 This runner uses the SLaM pipelines:
@@ -20,7 +20,7 @@ This runner uses the SLaM pipelines:
  `slam/with_lens_light/source__parametric.py`.
  `slam/with_lens_light/source___inversion.py`.
  `slam/with_lens_light/light__parametric.py`.
- `slam/with_lens_light/mass__light_dark.py`.
+ `slam/with_lens_light/mass__total.py`.
 
 Check them out for a detailed description of the analysis!
 """
@@ -30,9 +30,8 @@ import autolens.plot as aplt
 
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
 
-dataset_name = "light_chameleon_x2__mass_mlr_nfw__source_sersic"
+dataset_name = "light_sersic_exp__mass_sie__source_sersic"
 pixel_scales = 0.1
-
 dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
@@ -42,6 +41,7 @@ imaging = al.Imaging.from_fits(
     psf_path=f"{dataset_path}/psf.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
     pixel_scales=pixel_scales,
+    positions_path=f"{dataset_path}/positions.dat",
 )
 
 mask = al.Mask2D.circular(
@@ -61,17 +61,7 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-"""
-Due to the slow deflection angle calculation of the `EllipticalSersic` and `EllipticalExponential` `MassProfile`'s
-we use `GridInterpolate` objects to speed up the analysis. This is specified separately for the `Grid` used to fit
-the source `LightProfile` and perform the `Inversion`.
-"""
-
-settings_masked_imaging = al.SettingsMaskedImaging(
-    grid_class=al.GridInterpolate,
-    grid_inversion_class=al.GridInterpolate,
-    pixel_scales_interp=0.1,
-)
+settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
 
 """
 `Inversion`'s may infer unphysical solution where the source reconstruction is a demagnified reconstruction of the 
@@ -127,11 +117,12 @@ _SLaMPipelineLight_ and `SLaMPipelineMass` pipelines, model comparison can be pe
 """
 
 hyper = al.SetupHyper(
-    hyper_galaxies_lens=False,
+    hyper_galaxies_lens=True,
     hyper_galaxies_source=False,
     hyper_image_sky=False,
-    hyper_background_noise=False,
+    hyper_background_noise=True,
     hyper_fixed_after_source=True,
+    evidence_tolerance=50.0,
 )
 
 """
@@ -149,12 +140,13 @@ simplest models that provide a good fit to the majority of strong lenses.
 For this runner the `SLaMPipelineSourceParametric` customizes:
 
  - The `MassProfile` fitted by the pipeline (and the following `SLaMPipelineSourceInversion`..
- - If there is an `ExternalShear` in the mass model or not.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
 setup_light = al.SetupLightParametric()
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True
+    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=False
 )
 setup_source = al.SetupSourceParametric()
 
@@ -216,7 +208,6 @@ The `SLaMPipelineLightParametric` and imported light pipelines determine the len
 setup_light = al.SetupLightParametric(
     bulge_prior_model=al.lp.EllipticalSersic,
     disk_prior_model=al.lp.EllipticalExponential,
-    envelope_prior_model=None,
     align_bulge_disk_centre=True,
     align_bulge_disk_elliptical_comps=False,
 )
@@ -226,22 +217,26 @@ pipeline_light = al.SLaMPipelineLightParametric(setup_light=setup_light)
 """
 __SLaMPipelineMass__
 
-The `SLaMPipelineMass` pipeline fits the model for the lens `Galaxy`'s decomposed stellar and dark matter mass distribution. 
+The `SLaMPipelineMass` pipeline fits the model for the lens `Galaxy`'s total mass distribution. 
 
 A full description of all options can be found ? and ?.
 
-The model used to represent the lens `Galaxy`'s mass is an `EllipticalSersic` and `EllipticalExponential` 
-_LightMassProfile_ representing the bulge and disk fitted in the previous pipeline, alongside a `SphericalNFW` for the
-dark matter halo.
+The model used to represent the lens `Galaxy`'s mass is input into `SLaMPipelineMassTotal` and this runner uses the 
+default of an `EllipticalPowerLaw` in this example.
 
 For this runner the `SLaMPipelineMass` customizes:
 
- - If there is an `ExternalShear` in the mass model or not.
+ - The `MassProfile` fitted by the pipeline.
+ - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
+   we do not include it in the mass model).
 """
 
-setup_mass = al.SetupMassLightDark(with_shear=True)
+setup_mass = al.SetupMassTotal(
+    mass_prior_model=al.mp.EllipticalPowerLaw, with_shear=False
+)
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
+
 """
 __SLaM__
 
@@ -268,16 +263,16 @@ We import and make pipelines as per usual, albeit we'll now be doing this for mu
 We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
 """
 
-from autolens_workspace.slam.pipelines.with_lens_light import source__parametric
-from autolens_workspace.slam.pipelines.with_lens_light import source__inversion
-from autolens_workspace.slam.pipelines.with_lens_light import light__parametric
-from autolens_workspace.slam.pipelines.with_lens_light import mass__light_dark
+from .pipelines import source__parametric
+from .pipelines import source__inversion
+from .pipelines import light__parametric
+from .pipelines import mass__total
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
 source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
 light__parametric = light__parametric.make_pipeline(slam=slam, settings=settings)
-mass__light_dark = mass__light_dark.make_pipeline(slam=slam, settings=settings)
+mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 
-pipeline = source__parametric + source__inversion + light__parametric + mass__light_dark
+pipeline = source__parametric + source__inversion + light__parametric + mass__total
 
 pipeline.run(dataset=imaging, mask=mask)
