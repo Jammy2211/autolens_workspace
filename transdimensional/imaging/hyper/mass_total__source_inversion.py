@@ -1,5 +1,5 @@
 """
-__TRANSDIMENSIONAL PIPELINES__
+__Transdimensional Pipelines__
 
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
@@ -14,7 +14,7 @@ of previous phases in a pipeline to later phases, and uses these images (called 
 
 This uses the pipeline (Check it out full description of the pipeline):
 
- `autolens_workspace/pipelines/imaging/hyper/mass_total__source_inversion.py`.
+ `autolens_workspace/transdimensional/imaging/hyper/pipelines/mass_total__source_inversion.py`.
 
 Check it out now for a detailed description of how it uses the hyper-mode features!
 """
@@ -136,9 +136,7 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-from pipelines import (
-    mass_total__source_inversion,
-)
+from pipelines import mass_total__source_inversion
 
 pipeline = mass_total__source_inversion.make_pipeline(setup=setup, settings=settings)
 

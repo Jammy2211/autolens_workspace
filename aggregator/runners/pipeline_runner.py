@@ -78,9 +78,7 @@ for dataset_name in [
         setup_source=setup_source,
     )
 
-    from autolens_workspace.transdimensional.pipelines.imaging.no_lens_light import (
-        mass_total__source_inversion,
-    )
+    from pipelines import mass_total__source_inversion
 
     pipeline = mass_total__source_inversion.make_pipeline(
         setup=setup, settings=settings

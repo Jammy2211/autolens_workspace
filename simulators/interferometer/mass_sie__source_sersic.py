@@ -47,7 +47,7 @@ grid = al.GridIterate.uniform(
 )
 
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
-uv_wavelengths_path = f"simulators/interferometer/uvtools"
+uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
     file_path=f"{uv_wavelengths_path}/sma_uv_wavelengths.fits", hdu=0
 )

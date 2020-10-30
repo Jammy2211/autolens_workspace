@@ -1,5 +1,5 @@
 """
-__TRANSDIMENSIONAL PIPELINES__
+__Transdimensional Pipelines__
 
 This transdimensional pipeline runner loads a strong lens dataset and analyses it using a transdimensional lens
 modeling pipeline.
@@ -15,7 +15,7 @@ of the pipeline:
 
 This uses the pipeline (Check it out full description of the pipeline):
 
- `autolens_workspace/pipelines/imaging/with_lens_light/light_parametric__mass_mlr_dark__source_parametric.py`.
+ `autolens_workspace/transdimensional/imaging/with_lens_light/pipelines/light_parametric__mass_mlr_dark__source_parametric.py`.
 """
 
 import autolens as al
@@ -137,9 +137,7 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 `Setup` and `SettingsPhase` above.
 """
 
-from pipelines import (
-    light_parametric__mass_light_dark__source_parametric,
-)
+from pipelines import light_parametric__mass_light_dark__source_parametric
 
 pipeline = light_parametric__mass_light_dark__source_parametric.make_pipeline(
     setup=setup, settings=settings

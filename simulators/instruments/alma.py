@@ -15,9 +15,9 @@ The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
 uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
 uv_wavelengths_file = "alma_uv_wavelengths_x100k"
-# uv_wavelengths_file = "alma_uv_wavelengths_x500k"
-# uv_wavelengths_file = "alma_uv_wavelengths_x1m"
-# uv_wavelengths_file = "alma_uv_wavelengths_x5m"
+uv_wavelengths_file = "alma_uv_wavelengths_x500k"
+uv_wavelengths_file = "alma_uv_wavelengths_x1m"
+uv_wavelengths_file = "alma_uv_wavelengths_x5m"
 # uv_wavelengths_file = "alma_uv_wavelengths_x10m"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
@@ -107,9 +107,6 @@ interferometer dataset.
 """
 
 interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
-
-print(interferometer.visibilities.shape)
-stop
 
 """Lets plot the simulated interferometer dataset before we output it to fits."""
 

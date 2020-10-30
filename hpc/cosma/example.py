@@ -259,11 +259,9 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 """
 
 # %%
-from autolens_workspace.transdimensional.pipelines.imaging.no_lens_light import (
-    mass_sie__source_inversion,
-)
+from pipelines import mass_total__source_inversion
 
-pipeline = mass_sie__source_inversion.make_pipeline(setup=setup, settings=settings)
+pipeline = mass_total__source_inversion.make_pipeline(setup=setup, settings=settings)
 
 # %%
 """
