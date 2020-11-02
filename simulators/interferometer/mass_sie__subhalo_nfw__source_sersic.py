@@ -19,11 +19,11 @@ gives it a descriptive name. They define the folder the dataset is output to on 
 """
 
 dataset_type = "interferometer"
-dataset_name = "mas_sie__subhalo_nfw__source_sersic"
+dataset_name = "mass_sie__subhalo_nfw__source_sersic"
 
 """
 The path where the dataset will be output, which in this case is
-`/autolens_workspace/dataset/interferometer/mas_sie__subhalo_nfw__source_bulge`
+`/autolens_workspace/dataset/interferometer/mass_sie__subhalo_nfw__source_bulge`
 """
 
 dataset_path = f"dataset/{dataset_type}/{dataset_name}"

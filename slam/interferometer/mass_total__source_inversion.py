@@ -28,7 +28,7 @@ import numpy as np
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"dataset/interferometer/no_lens_light/{dataset_name}"
+dataset_path = f"dataset/interferometer/{dataset_name}"
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
@@ -259,9 +259,15 @@ from pipelines import source__parametric
 from pipelines import source__inversion
 from pipelines import mass__total
 
-source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
-source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-# mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
+source__parametric = source__parametric.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
+source__inversion = source__inversion.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
+mass__total = mass__total.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
 
-pipeline = source__parametric + source__inversion  # + mass__total
-pipeline.run(dataset=interferometer)
+pipeline = source__parametric + source__inversion + mass__total
+pipeline.run(dataset=interferometer, mask=visibilities_mask)

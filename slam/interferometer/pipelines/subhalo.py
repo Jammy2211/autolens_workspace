@@ -94,7 +94,6 @@ def make_pipeline(slam, settings, real_space_mask):
     phase1 = al.PhaseInterferometer(
         search=af.DynestyStatic(name="phase[1]_mass[total_refine]", n_live_points=100),
         galaxies=dict(lens=lens, source=source),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
@@ -161,7 +160,6 @@ def make_pipeline(slam, settings, real_space_mask):
             facc=0.2,
         ),
         galaxies=dict(lens=lens, subhalo=subhalo, source=source),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
@@ -214,7 +212,6 @@ def make_pipeline(slam, settings, real_space_mask):
             facc=0.2,
         ),
         galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
@@ -245,7 +242,6 @@ def make_pipeline(slam, settings, real_space_mask):
             facc=0.2,
         ),
         galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
@@ -270,7 +266,6 @@ def make_pipeline(slam, settings, real_space_mask):
     #     galaxies=dict(
     #         lens=af.last[-1].model.galaxies.lens, source=source, subhalo=subhalo
     #     ),
-    #     hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
     #     hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
     #     settings=settings,
     #     search=af.DynestyStatic(n_live_points=100),

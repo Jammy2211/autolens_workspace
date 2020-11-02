@@ -68,7 +68,6 @@ def make_pipeline(slam, settings, real_space_mask):
             lens=al.GalaxyModel(redshift=slam.redshift_lens, mass=mass, shear=shear),
             source=source,
         ),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,

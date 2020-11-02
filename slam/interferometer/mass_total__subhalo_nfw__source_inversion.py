@@ -31,7 +31,7 @@ import numpy as np
 dataset_name = "mass_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.05
 
-dataset_path = f"dataset/interferometer/no_lens_light/{dataset_name}"
+dataset_path = f"dataset/interferometer/{dataset_name}"
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
@@ -263,11 +263,19 @@ from pipelines import source__inversion
 from pipelines import mass__total
 from pipelines import subhalo
 
-source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
-source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
-subhalo = subhalo.make_pipeline(slam=slam, settings=settings)
+source__parametric = source__parametric.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
+source__inversion = source__inversion.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
+mass__total = mass__total.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
+subhalo = subhalo.make_pipeline(
+    slam=slam, settings=settings, real_space_mask=real_space_mask
+)
 
 pipeline = source__parametric + source__inversion + mass__total + subhalo
 
-pipeline.run(dataset=interferometer)
+pipeline.run(dataset=interferometer, mask=visibilities_mask)
