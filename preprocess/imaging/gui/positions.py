@@ -9,8 +9,7 @@ pipelines.
 
 First, we set up the dataset we want to mark the positions of.
 """
-dataset_type = "imaging"
-dataset_label = "no_lens_light"
+
 dataset_name = "mass_sie__source_sersic"
 
 """
@@ -18,9 +17,11 @@ The path where the dataset will be loaded from, which in this case is:
 
  `/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_sersic`
 """
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+
+dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
 
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
+
 pixel_scales = 0.1
 
 """
@@ -29,6 +30,7 @@ the highest flux to mark the position.
 
 The `search_box_size` is the number of pixels around your click this search takes place.
 """
+
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(
@@ -113,10 +115,12 @@ plt.close(fig)
 positions = al.GridCoordinates(coordinates=positions)
 
 """Now lets plot the image and positions, so we can check that the positions overlap different regions of the source."""
+
 aplt.Array(array=imaging.image, positions=positions)
 
 """
 Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
 .dat file in our pipelines!
 """
+
 positions.output_to_file(file_path=f"{dataset_path}/positions.dat", overwrite=True)

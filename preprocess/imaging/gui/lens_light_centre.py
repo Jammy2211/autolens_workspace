@@ -9,8 +9,7 @@ pipelines.
 
 First, we set up the dataset we want to mark the lens light centre of.
 """
-dataset_type = "imaging"
-dataset_label = "with_lens_light"
+
 dataset_name = "light_sersic__mass_sie__source_sersic"
 
 """
@@ -18,9 +17,11 @@ The path where the dataset will be loaded from, which in this case is:
 
  `/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
 """
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+
+dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
 
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
+
 pixel_scales = 0.1
 
 """
@@ -29,6 +30,7 @@ the highest flux to mark the position.
 
 The `search_box_size` is the number of pixels around your click this search takes place.
 """
+
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(

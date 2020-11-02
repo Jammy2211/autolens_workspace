@@ -103,7 +103,7 @@ source = al.GalaxyModel(
 """
 __Settings__
 
-Next, we specify the *SettingsPhaseInterferometer*, which describes how the model is fitted to the data in the log 
+Next, we specify the *SettingsMaskedInterferometer*, which describes how the model is fitted to the data in the log 
 likelihood function. Below, we specify:
  
  - That a regular `Grid` is used to fit create the model-image (in real space) when fitting the data 
@@ -113,18 +113,31 @@ likelihood function. Below, we specify:
 
  - The method used to Fourier transform this real-space image of the strong lens to the uv-plane, to compare directly
    to the visiblities. In this example, we use a non-uniform fast Fourier transform.
-
- - Uses preconditioning in the linear algebra, which speeds up the calculation.
-
- - Instructs the linear algebra solvers too use linear operators, which perform the the `Inversion` in an efficient 
-   and memory light way.
 """
 
 settings_masked_interferometer = al.SettingsMaskedInterferometer(
     grid_class=al.Grid, sub_size=2, transformer_class=al.TransformerDFT
 )
+
+"""
+We also specify the *SettingsInversion*, which describes how the `Inversion` fits the source `Pixelization` and 
+with `Regularization`. 
+
+This can perform the linear algebra calculation that performs the `Inversion` using two options: 
+
+ - As matrices: this is numerically more accurate and does not approximate the `log_evidence` of the `Inversion`. For
+  datasets of < 100 0000 visibilities we recommend that you use this option. However, for > 100 000 visibilities this
+  approach requires excessive amounts of memory on your computer (> 16 GB) and thus becomes unfeasible. 
+  
+ - As linear operators: this numerically less accurate and approximates the `log_evidence` of the `Inversioon`. However,
+ it is the only viable options for large visibility datasets. It does not represent the linear algebra as matrices in
+ memory and thus makes the analysis of > 10 million visibilities feasible.
+
+By default we use the linear operators approach.  
+"""
+
 settings_inversion = al.SettingsInversion(
-    use_linear_operators=False, use_preconditioner=True
+    use_linear_operators=True, use_preconditioner=True
 )
 
 settings = al.SettingsPhaseInterferometer(

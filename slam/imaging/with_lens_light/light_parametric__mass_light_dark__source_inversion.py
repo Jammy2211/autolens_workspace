@@ -17,10 +17,10 @@ where in the final phase of the pipeline:
 
 This runner uses the SLaM pipelines:
 
- `slam/with_lens_light/source__parametric.py`.
- `slam/with_lens_light/source___inversion.py`.
- `slam/with_lens_light/light__parametric.py`.
- `slam/with_lens_light/mass__light_dark.py`.
+ `slam/imaging/with_lens_light/source__parametric.py`.
+ `slam/imaging/with_lens_light/source___inversion.py`.
+ `slam/imaging/with_lens_light/light__parametric.py`.
+ `slam/imaging/with_lens_light/mass__light_dark.py`.
 
 Check them out for a detailed description of the analysis!
 """

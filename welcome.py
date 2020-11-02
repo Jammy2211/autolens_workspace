@@ -18,7 +18,6 @@ input(
     - Load configuration settings from config files in the `autolens_workspace/config` folder.
     - Load example data from the `autolens_workspace/dataset` folder.
     - Output the results of models fits to your hard-disk to the `autolens/output` folder. 
-    - Import modules from the `autolens_workspace`, for example `from autolens_workspace.transdimensional import pipelines`.
 
     If you have any errors relating to importing modules, loading data or outputting results it is likely because you
     are not running the script with the `autolens_workspace` as the working directory!

@@ -16,10 +16,10 @@ where in the final phase of the pipeline:
 
 This runner uses the SLaM pipelines:
 
- `slam/no_lens_light/pipelines/source__mass_sie__source_parametric.py`.
- `slam/no_lens_light/pipelines/source__mass_sie__source_inversion.py`.
- `slam/no_lens_light/pipelines/mass__mass_power_law__source.py`.
- `slam/no_lens_light/pipelines/subhalo__mass__subhalo_nfw__source.py`.
+ `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_parametric.py`.
+ `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_inversion.py`.
+ `slam/imaging/no_lens_light/pipelines/mass__mass_power_law__source.py`.
+ `slam/imaging/no_lens_light/pipelines/subhalo__mass__subhalo_nfw__source.py`.
 
 Check them out for a detailed description of the analysis!
 """

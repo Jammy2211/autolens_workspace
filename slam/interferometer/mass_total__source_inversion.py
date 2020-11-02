@@ -5,7 +5,7 @@ This SLaM pipeline runner loads a strong lens dataset and analyses it using a SL
 
 __THIS RUNNER__
 
-Using two source pipelines and a mass pipeline this runner fits `Imaging` of a strong lens system, where in the final
+Using two source pipelines and a mass pipeline this runner fits `Interferometer` of a strong lens system, where in the final
 phase of the pipeline:
 
  - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
@@ -14,40 +14,47 @@ phase of the pipeline:
 
 This uses the SLaM pipelines:
 
- `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_parametric.py`.
- `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_inversion.py`.
- `slam/imaging/no_lens_light/pipelines/mass__mass_power_law__source.py`.
+ `slam/interferometer/pipelines/source__mass_sie__source_parametric.py`.
+ `slam/interferometer/pipelines/source__mass_sie__source_inversion.py`.
+ `slam/interferometer/pipelines/mass__mass_power_law__source.py`.
 
 Check them out for a detailed description of the analysis!
 """
 
 import autolens as al
 import autolens.plot as aplt
+import numpy as np
 
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = f"dataset/interferometer/no_lens_light/{dataset_name}"
 
-"""Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
-imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+interferometer = al.Interferometer.from_fits(
+    visibilities_path=f"{dataset_path}/visibilities.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
-    pixel_scales=pixel_scales,
+    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
 )
 
-mask = al.Mask2D.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=pixel_scales, radius=3.0
-)
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
+"""
+The perform a fit, we need two masks, firstly a ‘real-space mask’ which defines the grid the image of the lensed 
+source galaxy is evaluated using.
+"""
+
+real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
+
+"""We also need a ‘visibilities mask’ which defining which visibilities are omitted from the chi-squared evaluation."""
+
+visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)
 
 """
 __Settings__
 
-The `SettingsPhaseImaging` describe how the model is fitted to the data in the log likelihood function.
+The `SettingsPhaseInterferometer` describe how the model is fitted to the data in the log likelihood function.
 
 These settings are used and described throughout the `autolens_workspace/examples/model` example scripts, with a 
 complete description of all settings given in `autolens_workspace/examples/model/customize/settings.py`.
@@ -55,7 +62,30 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_interferometer = al.SettingsMaskedInterferometer(
+    grid_class=al.Grid, sub_size=2, transformer_class=al.TransformerNUFFT
+)
+
+"""
+We also specify the *SettingsInversion*, which describes how the `Inversion` fits the source `Pixelization` and 
+with `Regularization`. 
+
+This can perform the linear algebra calculation that performs the `Inversion` using two options: 
+
+ - As matrices: this is numerically more accurate and does not approximate the `log_evidence` of the `Inversion`. For
+  datasets of < 100 0000 visibilities we recommend that you use this option. However, for > 100 000 visibilities this
+  approach requires excessive amounts of memory on your computer (> 16 GB) and thus becomes unfeasible. 
+
+ - As linear operators: this numerically less accurate and approximates the `log_evidence` of the `Inversioon`. However,
+ it is the only viable options for large visibility datasets. It does not represent the linear algebra as matrices in
+ memory and thus makes the analysis of > 10 million visibilities feasible.
+
+By default we use the linear operators approach.  
+"""
+
+settings_inversion = al.SettingsInversion(
+    use_linear_operators=True, use_preconditioner=True
+)
 
 """
 `Inversion`'s may infer unphysical solution where the source reconstruction is a demagnified reconstruction of the 
@@ -73,8 +103,10 @@ settings_lens = al.SettingsLens(
     auto_positions_factor=3.0, auto_positions_minimum_threshold=0.8
 )
 
-settings = al.SettingsPhaseImaging(
-    settings_masked_imaging=settings_masked_imaging, settings_lens=settings_lens
+settings = al.SettingsPhaseInterferometer(
+    settings_masked_interferometer=settings_masked_interferometer,
+    settings_inversion=settings_inversion,
+    settings_lens=settings_lens,
 )
 
 """
@@ -232,4 +264,4 @@ source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings
 # mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 
 pipeline = source__parametric + source__inversion  # + mass__total
-pipeline.run(dataset=imaging, mask=mask)
+pipeline.run(dataset=interferometer)

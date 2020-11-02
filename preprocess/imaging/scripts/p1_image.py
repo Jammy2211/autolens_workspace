@@ -40,7 +40,7 @@ This populates the `data_raw` path with example simulated `Imaging` data-sets.
 """
 
 # %%
-from autolens_workspace.preprocess.imaging.data_raw import simulators
+import simulators
 
 simulators.simulate_all_imaging(dataset_path=dataset_path)
 

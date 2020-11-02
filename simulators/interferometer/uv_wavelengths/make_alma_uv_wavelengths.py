@@ -2,7 +2,7 @@ from astropy.io import fits
 import numpy as np
 
 import autolens as al
-from autolens_workspace.simulators.interferometer.uv_wavelengths import uv_util
+import uv_util
 
 """Load the ALMA UV baselines."""
 

@@ -6,7 +6,7 @@ pipeline.
 
 __THIS RUNNER__
 
-Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits `Imaging` of a strong lens system,
+Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits `Interferometer` of a strong lens system,
 where in the final phase of the pipeline:
 
  - The lens `Galaxy`'s light is omitted from the data and model.
@@ -16,40 +16,48 @@ where in the final phase of the pipeline:
 
 This runner uses the SLaM pipelines:
 
- `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_parametric.py`.
- `slam/imaging/no_lens_light/pipelines/mass__mass_power_law__source.py`.
- `slam/imaging/no_lens_light/pipelines/subhalo__mass__subhalo_nfw__source.py`.
+ `slam/interferometer/pipelines/source__mass_sie__source_parametric.py`.
+ `slam/interferometer/pipelines/source__mass_sie__source_inversion.py`.
+ `slam/interferometer/pipelines/mass__mass_power_law__source.py`.
+ `slam/interferometer/pipelines/subhalo__mass__subhalo_nfw__source.py`.
 
 Check them out for a detailed description of the analysis!
 """
 
 import autolens as al
 import autolens.plot as aplt
+import numpy as np
 
 dataset_name = "mass_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.05
 
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = f"dataset/interferometer/no_lens_light/{dataset_name}"
 
-"""Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
-imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+interferometer = al.Interferometer.from_fits(
+    visibilities_path=f"{dataset_path}/visibilities.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
-    pixel_scales=pixel_scales,
+    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
 )
 
-mask = al.Mask2D.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=pixel_scales, radius=3.0
-)
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
+"""
+The perform a fit, we need two masks, firstly a ‘real-space mask’ which defines the grid the image of the lensed 
+source galaxy is evaluated using.
+"""
+
+real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
+
+"""We also need a ‘visibilities mask’ which defining which visibilities are omitted from the chi-squared evaluation."""
+
+visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)
 
 """
 __Settings__
 
-The `SettingsPhaseImaging` describe how the model is fitted to the data in the log likelihood function.
+The `SettingsPhaseInterferometer` describe how the model is fitted to the data in the log likelihood function.
 
 These settings are used and described throughout the `autolens_workspace/examples/model` example scripts, with a 
 complete description of all settings given in `autolens_workspace/examples/model/customize/settings.py`.
@@ -57,9 +65,35 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_interferometer = al.SettingsMaskedInterferometer(
+    grid_class=al.Grid, sub_size=2
+)
 
-settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
+"""
+We also specify the *SettingsInversion*, which describes how the `Inversion` fits the source `Pixelization` and 
+with `Regularization`. 
+
+This can perform the linear algebra calculation that performs the `Inversion` using two options: 
+
+ - As matrices: this is numerically more accurate and does not approximate the `log_evidence` of the `Inversion`. For
+  datasets of < 100 0000 visibilities we recommend that you use this option. However, for > 100 000 visibilities this
+  approach requires excessive amounts of memory on your computer (> 16 GB) and thus becomes unfeasible. 
+
+ - As linear operators: this numerically less accurate and approximates the `log_evidence` of the `Inversioon`. However,
+ it is the only viable options for large visibility datasets. It does not represent the linear algebra as matrices in
+ memory and thus makes the analysis of > 10 million visibilities feasible.
+
+By default we use the linear operators approach.  
+"""
+
+settings_inversion = al.SettingsInversion(
+    use_linear_operators=True, use_preconditioner=True
+)
+
+settings = al.SettingsPhaseInterferometer(
+    settings_masked_interferometer=settings_masked_interferometer,
+    settings_inversion=settings_inversion,
+)
 
 """
 __PIPELINE SETUP__
@@ -79,8 +113,8 @@ Mass pipelines. The assumptions regarding the lens light chosen by the `Light` o
 
 The `Setup` again tags the path structure of every pipeline in a unique way, such than combinations of different
 SLaM pipelines can be used to fit lenses with different models. If the earlier pipelines are identical (e.g. they use
-the same `SLaMPipelineSource`. they will reuse those results before branching off to fit different models in the `SLaMPipelineLightParametric` 
-and / or `SLaMPipelineMass` pipelines. 
+the same `SLaMPipelineSource`. they will reuse those results before branching off to fit different models in the 
+`SLaMPipelineLightParametric` and / or `SLaMPipelineMass` pipelines. 
 """
 
 """
@@ -119,13 +153,41 @@ For this runner the `SLaMPipelineSourceParametric` customizes:
 """
 
 setup_mass = al.SetupMassTotal(
-    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True, mass_centre=(0.0, 0.0)
+    mass_prior_model=al.mp.EllipticalIsothermal, with_shear=True
 )
-setup_source = al.SetupSourceParametric(disk_prior_model=al.lp.EllipticalExponential)
+setup_source = al.SetupSourceParametric()
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
     setup_mass=setup_mass, setup_source=setup_source
 )
+
+"""
+__SLaMPipelineSourceInversion__
+
+The Source inversion pipeline aims to initialize a robust model for the source galaxy using an `Inversion`.
+
+_SLaMPipelineSourceInversion_ determines the `Inversion` used by the inversion source pipeline. A full description of all 
+options can be found ? and ?.
+
+By default, this again assumes `EllipticalIsothermal` profile for the lens `Galaxy`'s mass model.
+
+For this runner the `SLaMPipelineSourceInversion` customizes:
+
+ - The `Pixelization` used by the `Inversion` of this pipeline.
+ - The `Regularization` scheme used by the `Inversion` of this pipeline.
+
+The `SLaMPipelineSourceInversion` use`s the `SetupMass` of the `SLaMPipelineSourceParametric`.
+
+The `SLaMPipelineSourceInversion` determines the source model used in the `SLaMPipelineLightParametric` and `SLaMPipelineMass` pipelines, which in this
+example therefore both use an `Inversion`.
+"""
+
+setup_source = al.SetupSourceInversion(
+    pixelization_prior_model=al.pix.VoronoiBrightnessImage,
+    regularization_prior_model=al.reg.AdaptiveBrightness,
+)
+
+pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_source)
 
 """
 __SLaMPipelineMassTotal__
@@ -153,7 +215,7 @@ pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
 __SetupSubhalo__
 
 The final pipeline fits the lens and source model including a `SphericalNFW` subhalo, using a grid-search of non-linear
-searches. 
+searchesn. 
 
 A full description of all options can be found ? and ?.
 
@@ -183,6 +245,7 @@ slam = al.SLaM(
     path_prefix=f"slam/{dataset_name}",
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
+    pipeline_source_inversion=pipeline_source_inversion,
     pipeline_mass=pipeline_mass,
     setup_subhalo=setup_subhalo,
 )
@@ -196,13 +259,15 @@ We then add the pipelines together and run this summed pipeline, which runs each
 """
 
 from pipelines import source__parametric
+from pipelines import source__inversion
 from pipelines import mass__total
 from pipelines import subhalo
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
+source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
 mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 subhalo = subhalo.make_pipeline(slam=slam, settings=settings)
 
-pipeline = source__parametric + mass__total + subhalo
+pipeline = source__parametric + source__inversion + mass__total + subhalo
 
-pipeline.run(dataset=imaging, mask=mask)
+pipeline.run(dataset=interferometer)

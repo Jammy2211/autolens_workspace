@@ -46,10 +46,6 @@ real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, rad
 
 visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)
 
-"""Make a quick subplot to make sure the data looks as we expect."""
-
-aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
-
 """
 __Settings__
 
@@ -63,6 +59,27 @@ The settings chosen here are applied to all phases in the pipeline.
 
 settings_masked_interferometer = al.SettingsMaskedInterferometer(
     grid_class=al.Grid, sub_size=2, transformer_class=al.TransformerNUFFT
+)
+
+"""
+We also specify the *SettingsInversion*, which describes how the `Inversion` fits the source `Pixelization` and 
+with `Regularization`. 
+
+This can perform the linear algebra calculation that performs the `Inversion` using two options: 
+
+ - As matrices: this is numerically more accurate and does not approximate the `log_evidence` of the `Inversion`. For
+  datasets of < 100 0000 visibilities we recommend that you use this option. However, for > 100 000 visibilities this
+  approach requires excessive amounts of memory on your computer (> 16 GB) and thus becomes unfeasible. 
+
+ - As linear operators: this numerically less accurate and approximates the `log_evidence` of the `Inversioon`. However,
+ it is the only viable options for large visibility datasets. It does not represent the linear algebra as matrices in
+ memory and thus makes the analysis of > 10 million visibilities feasible.
+
+By default we use the linear operators approach.  
+"""
+
+settings_inversion = al.SettingsInversion(
+    use_linear_operators=True, use_preconditioner=True
 )
 
 """
@@ -83,6 +100,7 @@ settings_lens = al.SettingsLens(
 
 settings = al.SettingsPhaseInterferometer(
     settings_masked_interferometer=settings_masked_interferometer,
+    settings_inversion=settings_inversion,
     settings_lens=settings_lens,
 )
 

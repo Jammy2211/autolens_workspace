@@ -7,7 +7,6 @@ export CHAPTER_PATH=$HOWTOLENS_PATH/chapter_1_introduction
 export SCRIPTS_PATH=$CHAPTER_PATH/scripts
 
 echo "Removing old notebooks."
-
 rm $CHAPTER_PATH/*.ipynb
 rm -rf $CHAPTER_PATH/.ipynb_checkpoints
 
@@ -36,7 +35,7 @@ cp -r $HOWTOLENS_PATH/simulators $PYAUTOLENS_PATH/howtolens
 cp -r $CHAPTER_PATH $PYAUTOLENS_PATH/howtolens/
 cp $PYAUTOLENS_PATH/__init__.py $PYAUTOLENS_PATH/howtolens/
 
-echo "Moving new notebooks to PyAutolens/howtolens folder."
+echo "Adding new notebooks to GitHub."
 cd $PYAUTOLENS_PATH
 git add -f $PYAUTOLENS_PATH/howtolens/dataset/chapter_1
 git add -f $PYAUTOLENS_PATH/howtolens/chapter_1_introduction

@@ -6,7 +6,7 @@ pipeline.
 
 __THIS RUNNER__
 
-Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits `Imaging` of a strong lens system,
+Using 1 source pipeline, a mass pipeline and a subhalo pipeline this runner fits `Interferometer` of a strong lens system,
 where in the final phase of the pipeline:
 
  - The lens `Galaxy`'s light is omitted from the data and model.
@@ -16,40 +16,47 @@ where in the final phase of the pipeline:
 
 This runner uses the SLaM pipelines:
 
- `slam/imaging/no_lens_light/pipelines/source__mass_sie__source_parametric.py`.
- `slam/imaging/no_lens_light/pipelines/mass__mass_power_law__source.py`.
- `slam/imaging/no_lens_light/pipelines/subhalo__mass__subhalo_nfw__source.py`.
+ `slam/interferometer/pipelines/source__mass_sie__source_parametric.py`.
+ `slam/interferometer/pipelines/mass__mass_power_law__source.py`.
+ `slam/interferometer/pipelines/subhalo__mass__subhalo_nfw__source.py`.
 
 Check them out for a detailed description of the analysis!
 """
 
 import autolens as al
 import autolens.plot as aplt
+import numpy as np
 
 dataset_name = "mass_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.05
 
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = f"dataset/interferometer/no_lens_light/{dataset_name}"
 
-"""Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
+"""Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
-imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+interferometer = al.Interferometer.from_fits(
+    visibilities_path=f"{dataset_path}/visibilities.fits",
     noise_map_path=f"{dataset_path}/noise_map.fits",
-    pixel_scales=pixel_scales,
+    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
 )
 
-mask = al.Mask2D.circular(
-    shape_2d=imaging.shape_2d, pixel_scales=pixel_scales, radius=3.0
-)
+aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
-aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask)
+"""
+The perform a fit, we need two masks, firstly a ‘real-space mask’ which defines the grid the image of the lensed 
+source galaxy is evaluated using.
+"""
+
+real_space_mask = al.Mask2D.circular(shape_2d=(200, 200), pixel_scales=0.05, radius=3.0)
+
+"""We also need a ‘visibilities mask’ which defining which visibilities are omitted from the chi-squared evaluation."""
+
+visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)
 
 """
 __Settings__
 
-The `SettingsPhaseImaging` describe how the model is fitted to the data in the log likelihood function.
+The `SettingsPhaseInterferometer` describe how the model is fitted to the data in the log likelihood function.
 
 These settings are used and described throughout the `autolens_workspace/examples/model` example scripts, with a 
 complete description of all settings given in `autolens_workspace/examples/model/customize/settings.py`.
@@ -57,9 +64,13 @@ complete description of all settings given in `autolens_workspace/examples/model
 The settings chosen here are applied to all phases in the pipeline.
 """
 
-settings_masked_imaging = al.SettingsMaskedImaging(grid_class=al.Grid, sub_size=2)
+settings_masked_interferometer = al.SettingsMaskedInterferometer(
+    grid_class=al.Grid, sub_size=2
+)
 
-settings = al.SettingsPhaseImaging(settings_masked_imaging=settings_masked_imaging)
+settings = al.SettingsPhaseInterferometer(
+    settings_masked_interferometer=settings_masked_interferometer
+)
 
 """
 __PIPELINE SETUP__
@@ -205,4 +216,4 @@ subhalo = subhalo.make_pipeline(slam=slam, settings=settings)
 
 pipeline = source__parametric + mass__total + subhalo
 
-pipeline.run(dataset=imaging, mask=mask)
+pipeline.run(dataset=interferometer)
