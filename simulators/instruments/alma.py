@@ -14,10 +14,11 @@ The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name
 
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
 uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
-uv_wavelengths_file = "alma_uv_wavelengths_x100k"
-uv_wavelengths_file = "alma_uv_wavelengths_x500k"
-uv_wavelengths_file = "alma_uv_wavelengths_x1m"
-uv_wavelengths_file = "alma_uv_wavelengths_x5m"
+uv_wavelengths_file = "alma_uv_wavelengths_x10k"
+# uv_wavelengths_file = "alma_uv_wavelengths_x100k"
+# uv_wavelengths_file = "alma_uv_wavelengths_x500k"
+# uv_wavelengths_file = "alma_uv_wavelengths_x1m"
+# uv_wavelengths_file = "alma_uv_wavelengths_x5m"
 # uv_wavelengths_file = "alma_uv_wavelengths_x10m"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
@@ -54,7 +55,7 @@ total flux emitted within a pixel.
 """
 
 grid = al.GridIterate.uniform(
-    shape_2d=(151, 151), pixel_scales=0.05, fractional_accuracy=0.9999
+    shape_2d=(251, 251), pixel_scales=0.05, fractional_accuracy=0.9999
 )
 
 """
@@ -66,8 +67,8 @@ simulator = al.SimulatorInterferometer(
     uv_wavelengths=uv_wavelengths,
     exposure_time=100.0,
     background_sky_level=0.1,
-    noise_sigma=0.01,
-    transformer_class=al.TransformerNUFFT,
+    noise_sigma=100.0,
+    transformer_class=al.TransformerDFT,
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
@@ -79,17 +80,16 @@ lens_galaxy = al.Galaxy(
         einstein_radius=1.6,
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=45.0),
     ),
-    shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllipticalSersic(
-        centre=(0.1, 0.1),
+        centre=(-0.5, -0.5),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
-        sersic_index=2.5,
+        sersic_index=3.0,
     ),
 )
 
@@ -100,6 +100,7 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 """Lets look at the tracer`s image - this is the image we'll be simulating."""
 
 aplt.Tracer.image(tracer=tracer, grid=grid)
+aplt.Plane.image(plane=tracer.source_plane, grid=grid)
 
 """
 We can now pass this simulator a tracer, which creates the ray-traced image plotted above and simulates it as an

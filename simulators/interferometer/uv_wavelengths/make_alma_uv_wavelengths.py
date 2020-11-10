@@ -25,7 +25,7 @@ total number of visibilities.
 """
 
 time_trim_min = 0
-time_trim_max = int(total_integration_time / 2.0)
+time_trim_max = int(total_integration_time / 1000.0)
 uv_util.check_time_steps(
     t_int=time_per_visibility, t_trim_max=time_trim_max, t_trim_min=time_trim_min
 )
@@ -49,7 +49,6 @@ uv_wavelengths = uv_reshaped_trimmed.reshape(
         uv_reshaped_trimmed.shape[0],
     )
 )
-
 
 al.util.array.numpy_array_2d_to_fits(
     array_2d=uv_wavelengths,

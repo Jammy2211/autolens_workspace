@@ -43,11 +43,11 @@ total flux emitted within a pixel.
 """
 
 grid = al.GridIterate.uniform(
-    shape_2d=(151, 151), pixel_scales=0.05, fractional_accuracy=0.9999
+    shape_2d=(251, 251), pixel_scales=0.05, fractional_accuracy=0.9999
 )
 
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
-uv_wavelengths_path = f"simulators/interferometer/uvtools"
+uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
     file_path=f"{uv_wavelengths_path}/sma_uv_wavelengths.fits", hdu=0
@@ -62,7 +62,8 @@ simulator = al.SimulatorInterferometer(
     uv_wavelengths=uv_wavelengths,
     exposure_time=100.0,
     background_sky_level=0.1,
-    noise_sigma=0.01,
+    noise_sigma=200.0,
+    transformer_class=al.TransformerDFT,
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
@@ -74,17 +75,16 @@ lens_galaxy = al.Galaxy(
         einstein_radius=1.6,
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=45.0),
     ),
-    shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllipticalSersic(
-        centre=(0.1, 0.1),
+        centre=(-0.3, -0.3),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, phi=60.0),
         intensity=0.3,
         effective_radius=1.0,
-        sersic_index=2.5,
+        sersic_index=3.0,
     ),
 )
 

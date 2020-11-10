@@ -170,7 +170,6 @@ The `SLaMPipelineSourceInversion` determines the source model used in the `SLaMP
 setup_source = al.SetupSourceInversion(
     pixelization_prior_model=al.pix.VoronoiBrightnessImage,
     regularization_prior_model=al.reg.AdaptiveBrightness,
-    inversion_pixels_fixed=1200,
 )
 
 pipeline_source_inversion = al.SLaMPipelineSourceInversion(setup_source=setup_source)
