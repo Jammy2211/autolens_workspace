@@ -20,6 +20,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -53,9 +54,11 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging"
+imaging_path = path.join(dataset_path, "imaging")
 
-image = al.Array.from_fits(file_path=f"{imaging_path}/image.fits", pixel_scales=0.1)
+image = al.Array.from_fits(
+    file_path=path.join(imaging_path, "image.fits"), pixel_scales=0.1
+)
 
 # %%
 """
@@ -85,7 +88,7 @@ Lets look at an image that is in units of counts - its easy to tell because the 
 imaging_path = f"{dataset_path}/imaging_in_counts"
 
 image_in_counts = al.Array.from_fits(
-    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "image.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=image_in_counts)
@@ -139,7 +142,7 @@ instrumental gain of the data.
 imaging_path = f"{dataset_path}/imaging_in_adus"
 
 image_in_adus = al.Array.from_fits(
-    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "image.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=image_in_adus)
@@ -177,7 +180,7 @@ Lets look at an example of a very large postage stamp - we can barely even see t
 imaging_path = f"{dataset_path}/imaging_with_large_stamp"
 
 image_large_stamp = al.Array.from_fits(
-    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "image.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=image_large_stamp)
@@ -213,7 +216,7 @@ sensible masks we get an error, because the masks`s blurring region goes into th
 
 # %%
 image_small_stamp = al.Array.from_fits(
-    file_path=f"{imaging_path}/image.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "image.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=image_small_stamp)

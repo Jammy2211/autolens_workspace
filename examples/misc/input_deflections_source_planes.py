@@ -10,6 +10,7 @@ for example:
  - Deflection angles of a galaxy simulated in a cosmological galaxy formation simulation.
 """
 
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -22,12 +23,12 @@ Lets load and plot this dataset.
 """
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=0.1,
 )
 
@@ -42,11 +43,11 @@ image-plane  `Grid` and deflection angles we use in this example (which are iden
 """Lets load the input deflection angle map from a .fits files (which is created in the code mentioned above)."""
 
 deflections_y = al.Array.from_fits(
-    file_path=f"examples/misc/files/deflections_y.fits",
+    file_path=path.join("examples", "misc", "files", "deflections_y.fits"),
     pixel_scales=imaging.pixel_scales,
 )
 deflections_x = al.Array.from_fits(
-    file_path=f"examples/misc/files/deflections_x.fits",
+    file_path=path.join("examples", "misc", "files", "deflections_x.fits"),
     pixel_scales=imaging.pixel_scales,
 )
 
@@ -58,7 +59,8 @@ aplt.Array(array=deflections_x)
 """Lets next load and plot the image-plane grid"""
 
 grid = al.Grid.from_fits(
-    file_path=f"examples/misc/files/grid.fits", pixel_scales=imaging.pixel_scales
+    file_path=path.join("examples", "misc", "files", "grid.fits"),
+    pixel_scales=imaging.pixel_scales,
 )
 aplt.Grid(grid=grid)
 

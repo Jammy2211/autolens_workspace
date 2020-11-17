@@ -18,7 +18,7 @@ Create the path where the mask will be output, which in this case is
  `/autolens_workspace/dataset/imaging/mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
 
@@ -27,7 +27,7 @@ pixel_scales = 0.1
 """First, load the `Imaging` dataset, so that the mask can be plotted over the strong lens image."""
 
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 """Load the GUI for drawing the mask. Push Esc when you are finished drawing the mask."""
@@ -45,4 +45,4 @@ Now we`re happy with the mask, lets output it to the dataset folder of the lens,
 file in our pipelines!
 """
 
-mask.output_to_fits(file_path=f"{dataset_path}/mask.fits", overwrite=True)
+mask.output_to_fits(file_path=path.join(dataset_path, "mask.fits"), overwrite=True)

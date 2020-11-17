@@ -25,6 +25,8 @@ workspace_path = str(here())
 #%cd $workspace_path
 print(f"Working Directory has been set to `{workspace_path}`")
 
+from os import path
+
 #%matplotlib inline
 
 # %%
@@ -32,7 +34,7 @@ print(f"Working Directory has been set to `{workspace_path}`")
 Setup the path to the autolens_workspace, using the correct path name below.
 """
 
-preprocess_path = f"preprocess/imaging"
+preprocess_path = path.join("preprocess", "imaging")
 
 # %%
 """
@@ -52,7 +54,7 @@ Returns the path where the info will be output, which in this case is
 """
 
 # %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 # %%
 """
@@ -85,17 +87,17 @@ info_file = "info.json"
 with open(info_file, "w+") as f:
     json.dump(info, f, indent=4)
 
-if os.path.exists(f"{dataset_path}/info.json"):
-    os.remove(f"{dataset_path}/info.json")
+if os.path.exists(path.join(dataset_path, "info.json")):
+    os.remove(path.join(dataset_path, "info.json"))
 
-shutil.move("info.json", f"{dataset_path}/info.json")
+shutil.move("info.json", path.join(dataset_path, "info.json"))
 
 # %%
 """
 For the info to be available to the results of a model-fit, the runner must load the info file from the .json and 
 pass it to the phase.run() or pipeline.run() function:
 
-info_file = f"{dataset_path}/info.json"
+info_file = path.join(dataset_path, "info.json")
 
 with open(info_file, "r") as f:
     info = json.load(f)

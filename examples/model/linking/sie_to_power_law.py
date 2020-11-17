@@ -43,17 +43,18 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 dataset_name = "mass_power_law__source_sersic"
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
     pixel_scales=0.1,
 )
 
@@ -101,7 +102,9 @@ file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/sie_to_power_law", name="phase[1]", n_live_points=50
+    path_prefix=path.join("examples", "linking", "sie_to_power_law"),
+    name="phase[1]",
+    n_live_points=50,
 )
 
 """
@@ -160,7 +163,9 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/sie_to_power_law", name="phase[2]", n_live_points=50
+    path_prefix=path.join("examples", "linking", "sie_to_power_law"),
+    name="phase[2]",
+    n_live_points=50,
 )
 
 """

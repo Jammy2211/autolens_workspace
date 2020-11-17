@@ -15,6 +15,7 @@ The phase fits each lens with:
  - An `EllipticalSersic` `LightProfile`.for the source `Galaxy`'s light.
 """
 
+from os import path
 import autofit as af
 import autolens as al
 
@@ -29,7 +30,7 @@ for dataset_name in [
 ]:
 
     """Set up the config and output paths."""
-    dataset_path = f"dataset/aggregator/{dataset_name}"
+    dataset_path = path.join("dataset", "aggregator", dataset_name)
 
     """
     Info:
@@ -52,9 +53,9 @@ for dataset_name in [
     command `name=dataset_name`. we'll use this name in the aggregator tutorials.
     """
     imaging = al.Imaging.from_fits(
-        image_path=f"{dataset_path}/image.fits",
-        psf_path=f"{dataset_path}/psf.fits",
-        noise_map_path=f"{dataset_path}/noise_map.fits",
+        image_path=path.join(dataset_path, "image.fits"),
+        psf_path=path.join(dataset_path, "psf.fits"),
+        noise_map_path=path.join(dataset_path, "noise_map.fits"),
         pixel_scales=pixel_scales,
         name=dataset_name,
     )
@@ -72,7 +73,7 @@ for dataset_name in [
     lens datasets have a `true_tracer.pickle` file which we pass in below, which we use in the `Aggregator` tutorials to
     easily illustrate how we can check if a model-fit recovers its true input parameters.
     """
-    pickle_files = [f"{dataset_path}/true_tracer.pickle"]
+    pickle_files = [path.join(dataset_path, "true_tracer.pickle")]
 
     # %%
     """
@@ -86,7 +87,7 @@ for dataset_name in [
 
     phase = al.PhaseImaging(
         search=af.DynestyStatic(
-            path_prefix=f"aggregator/phase_runner/{dataset_name}",
+            path_prefix=path.join("aggregator", "phase_runner", dataset_name),
             name="phase_aggregator",
             n_live_points=50,
         ),

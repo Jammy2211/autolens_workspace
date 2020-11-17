@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -39,7 +40,13 @@ def make_pipeline(slam, settings):
         3) The lens`s light model is fixed or variable.
     """
 
-    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_tag}/{slam.light_parametric_tag}/{slam.mass_tag}"
+    path_prefix = path.join(
+        slam.path_prefix,
+        pipeline_name,
+        slam.source_tag,
+        slam.light_parametric_tag,
+        slam.mass_tag,
+    )
 
     """SLaM: Set whether shear is included in the mass model using the `ExternalShear` model of the Source pipeline."""
 

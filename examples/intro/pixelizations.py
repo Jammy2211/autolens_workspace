@@ -19,16 +19,17 @@ Note how complex the lensed source galaxy looks, with multiple clumps of light -
 represent using `LightProfile`'s!
 """
 
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
 dataset_name = "mass_sie__source_sersic_x4"
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=0.05,
 )
 

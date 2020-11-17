@@ -55,17 +55,18 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
  - The source `Galaxy`'s `LightProfile` is an `EllipticalExponential`.
 """
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
     pixel_scales=0.1,
 )
 
@@ -119,7 +120,7 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/api",
+    path_prefix=path.join("examples", "linking", "api"),
     name="phase[1]",
     n_live_points=50,
     evidence_tolerance=20.0,
@@ -173,7 +174,9 @@ Note how the `lens` and `source` passed to this phase were set up above using th
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/api", name="phase[2]", n_live_points=30
+    path_prefix=path.join("examples", "linking", "api"),
+    name="phase[2]",
+    n_live_points=30,
 )
 
 """

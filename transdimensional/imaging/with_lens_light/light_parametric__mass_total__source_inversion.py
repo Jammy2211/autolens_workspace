@@ -15,7 +15,7 @@ This uses the pipeline (Check it out full description of the pipeline):
 
  `autolens_workspace/transdimensional/imaging/with_lens_light/pipelines/light_parametric_disk__mass_sie__source_inversion.py`.
 """
-
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -27,9 +27,9 @@ dataset_path = f"dataset/{dataset_name}"
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=pixel_scales,
 )
 
@@ -150,7 +150,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 """
 
 setup = al.SetupPipeline(
-    path_prefix=f"transdimensional/{dataset_name}",
+    path_prefix=path.join("transdimensional", dataset_name),
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_light=setup_light,

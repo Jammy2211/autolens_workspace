@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -66,7 +67,7 @@ def make_pipeline(slam, settings):
         2) The lens galaxy mass model includes an  `ExternalShear`.
     """
 
-    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_parametric_tag}"
+    path_prefix = path.join(slam.path_prefix, pipeline_name, slam.source_parametric_tag)
 
     """
     Phase 1: Fit only the lens `Galaxy`'s light, where we:

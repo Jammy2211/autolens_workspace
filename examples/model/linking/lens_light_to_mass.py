@@ -40,17 +40,18 @@ As per usual, load the `Imaging` data, create the `Mask2D` and plot them. In thi
 
 """
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 dataset_name = "light_sersic_exp__mass_sie__source_sersic"
-dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    psf_path=f"{dataset_path}/psf.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
     pixel_scales=0.1,
 )
 
@@ -106,7 +107,7 @@ file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/lens_light_to_mass",
+    path_prefix=path.join("examples", "linking", "lens_light_to_mass"),
     name="phase[1]",
     n_live_points=50,
 )
@@ -163,7 +164,7 @@ In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/linking/lens_light_to_mass",
+    path_prefix=path.join("examples", "linking", "lens_light_to_mass"),
     name="phase[2]",
     n_live_points=50,
 )

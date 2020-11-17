@@ -24,7 +24,7 @@ This runner uses the SLaM pipelines:
 
 Check them out for a detailed description of the analysis!
 """
-
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -32,16 +32,16 @@ import autolens.plot as aplt
 
 dataset_name = "light_sersic_exp__mass_sie__source_sersic"
 pixel_scales = 0.1
-dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=pixel_scales,
-    positions_path=f"{dataset_path}/positions.dat",
+    positions_path=path.join(dataset_path, "positions.dat"),
 )
 
 mask = al.Mask2D.circular(
@@ -246,7 +246,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    path_prefix=f"slam/{dataset_name}",
+    path_prefix=path.join("slam", dataset_name),
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_source_inversion=pipeline_source_inversion,

@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -64,7 +65,7 @@ def make_pipeline(setup, settings, real_space_mask):
         2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
+    path_prefix = path.join(setup.path_prefix, pipeline_name, setup.tag)
 
     """
     Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
@@ -197,7 +198,6 @@ def make_pipeline(setup, settings, real_space_mask):
                 regularization=phase3.result.inversion.instance.galaxies.source.regularization,
             ),
         ),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
         hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,

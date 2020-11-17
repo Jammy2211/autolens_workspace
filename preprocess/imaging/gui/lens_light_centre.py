@@ -1,3 +1,4 @@
+from os import path
 import autolens as al
 import autolens.plot as aplt
 from matplotlib import pyplot as plt
@@ -18,7 +19,7 @@ The path where the dataset will be loaded from, which in this case is:
  `/autolens_workspace/dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
 
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
 
@@ -34,9 +35,9 @@ The `search_box_size` is the number of pixels around your click this search take
 search_box_size = 5
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=pixel_scales,
 )
 image_2d = imaging.image.in_2d
@@ -55,7 +56,10 @@ def onclick(event):
         y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
         x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
 
-        y_pixels, x_pixels = image_2d.geometry.pixel_coordinates_from_scaled_coordinates(
+        (
+            y_pixels,
+            x_pixels,
+        ) = image_2d.geometry.pixel_coordinates_from_scaled_coordinates(
             scaled_coordinates=(y_arcsec, x_arcsec)
         )
 

@@ -18,6 +18,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -51,10 +52,10 @@ formatting standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging"
+imaging_path = path.join(dataset_path, "imaging")
 
 noise_map = al.Array.from_fits(
-    file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "noise_map.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=noise_map)
@@ -90,7 +91,7 @@ you might of used.
 # noise_map_processed = al.preprocess.array_with_new_shape(array=noise_map_large_stamp, new_shape=(130, 130))
 
 # noise_map_processed = al.Array.from_fits(
-#     file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
+#     file_path=path.join(imaging_path, "noise_map.fits"), pixel_scales=0.1
 # )
 
 # aplt.Array(array=noise_map_processed)
@@ -104,10 +105,10 @@ the values of the noise-map go to very large values in excess of 10000.
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging_noise_map_wht"
+imaging_path = path.join(dataset_path, "imaging_noise_map_wht")
 
 weight_map = al.Array.from_fits(
-    file_path=f"{imaging_path}/noise_map.fits", pixel_scales=0.1
+    file_path=path.join(imaging_path, "noise_map.fits"), pixel_scales=0.1
 )
 
 aplt.Array(array=weight_map)

@@ -10,6 +10,8 @@
 # `autolens_workspace/pipelines/beginner/no_lens_light/mass_total__source_inversion.py`
 
 # If anything doesn`t make sense check those scripts out for details!
+
+from os import path
 import autolens as al
 
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
@@ -24,7 +26,7 @@ for dataset_name in [
 
     # Create the path where the dataset will be loaded from, which in this case is
     # `/autolens_workspace/aggregator/dataset/imaging/mass_sie__source_sersic`
-    dataset_path = f"aggregator/dataset/{dataset_name}"
+    dataset_path = path.join("aggregator", "dataset", dataset_name)
 
     ### Info ###
 
@@ -44,11 +46,11 @@ for dataset_name in [
 
     """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
-        image_path=f"{dataset_path}/image.fits",
-        psf_path=f"{dataset_path}/psf.fits",
-        noise_map_path=f"{dataset_path}/noise_map.fits",
+        image_path=path.join(dataset_path, "image.fits"),
+        psf_path=path.join(dataset_path, "psf.fits"),
+        noise_map_path=path.join(dataset_path, "noise_map.fits"),
         pixel_scales=pixel_scales,
-        positions_path=f"{dataset_path}/positions.dat",
+        positions_path=path.join(dataset_path, "positions.dat"),
         name=name,
     )
 

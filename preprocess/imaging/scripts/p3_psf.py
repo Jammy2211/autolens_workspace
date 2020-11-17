@@ -16,7 +16,8 @@ workspace_path = str(here())
 #%cd $workspace_path
 print(f"Working Directory has been set to `{workspace_path}`")
 
-#%matplotlib inline
+#%matplotlib
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -29,7 +30,7 @@ For this tutorial, we'll use the `autolens_workspace/preprocess/imaging/data_raw
 contains example data we'll use in this tutorial.
 """
 
-dataset_path = f"preprocess/imaging/data_raw"
+dataset_path = path.join("preprocess", "imaging", "data_raw")
 
 # %%
 """This populates the `data` path with example simulated `Imaging` data-sets."""
@@ -48,7 +49,7 @@ standards I describe in this tutorial!
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging"
+imaging_path = path.join(dataset_path, "imaging")
 
 psf = al.Kernel.from_fits(file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1)
 
@@ -67,7 +68,7 @@ Lets look at an image where a large PSF kernel is loaded.
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging_with_large_psf"
+imaging_path = path.join(dataset_path, "imaging_with_large_psf")
 
 large_psf = al.Kernel.from_fits(
     file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1
@@ -94,7 +95,7 @@ the convolution routine which can lead to systematics in the lens analysis.
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging_with_even_psf"
+imaging_path = path.join(dataset_path, "imaging_with_even_psf")
 
 even_psf = al.Kernel.from_fits(
     file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1
@@ -133,7 +134,7 @@ being False.
 """
 
 # %%
-imaging_path = f"{dataset_path}/imaging_with_unnormalized_psf"
+imaging_path = path.join(dataset_path, "imaging_with_unnormalized_psf")
 
 unnormalized_psf = al.Kernel.from_fits(
     file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1, renormalize=False
@@ -149,7 +150,10 @@ The PSF is renormaized if the renormalize=True.
 
 # %%
 normalized_psf = al.Kernel.from_fits(
-    file_path=f"{imaging_path}/psf.fits", hdu=0, pixel_scales=0.1, renormalize=True
+    file_path=path.join(imaging_path, "psf.fits"),
+    hdu=0,
+    pixel_scales=0.1,
+    renormalize=True,
 )
 
 aplt.Array(array=normalized_psf)

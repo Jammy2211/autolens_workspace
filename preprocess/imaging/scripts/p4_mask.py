@@ -15,6 +15,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -49,7 +50,7 @@ Returns the path where the mask will be output, which in this case is
 """
 
 # %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 # %%
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
@@ -64,7 +65,7 @@ First, load the image of the dataset, so that the mask can be plotted over the s
 
 # %%
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 # %%
@@ -129,7 +130,7 @@ file in our pipelines!
 """
 
 # %%
-mask.output_to_fits(file_path=f"{dataset_path}/mask.fits", overwrite=True)
+mask.output_to_fits(file_path=path.join(dataset_path, "mask.fits"), overwrite=True)
 
 # %%
 """

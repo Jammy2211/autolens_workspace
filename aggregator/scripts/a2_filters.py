@@ -18,6 +18,7 @@ workspace_path = str(here())
 #%cd $workspace_path
 print(f"Working Directory has been set to `{workspace_path}`")
 
+from os import path
 import autofit as af
 
 # %%
@@ -26,16 +27,16 @@ First, set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
-agg = af.Aggregator(directory="output/aggregator")
+agg = af.Aggregator(directory=path.join("output", "aggregator"))
 
 # %%
 """
-We can first filter results to only include completed results. By including the `completed_only` input below, any 
+We can filter results to only include completed results. By including the `completed_only` input below, any 
 results which are in the middle of a non-linear will be omitted and not loaded in the `Aggregator`.
 """
 
 # %%
-agg = af.Aggregator(directory="output/aggregator", completed_only=True)
+agg = af.Aggregator(directory=path.join("output", "aggregator"), completed_only=True)
 
 # %%
 """

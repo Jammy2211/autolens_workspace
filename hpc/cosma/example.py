@@ -20,7 +20,9 @@ This exmaple assumes you are using cosma7 and outputting results to the cosma7 o
  `/cosma7/data/dp004/cosma_username`.
 """
 
-cosma_path = "/cosma7/data/dp004/cosma_username"
+from os import path
+
+cosma_path = path.join("cosma7", "data", "dp004", "cosma_username")
 
 """
 Use this path to set the path to the dataset directory on COSMA, as well as the folders within this directory the .fits
@@ -30,13 +32,13 @@ are stored in.
 dataset_folder = "example"
 dataset_name = "mass_sie__source_sersic"
 
-cosma_dataset_path = f"{cosma_path}/dataset/{dataset_folder}/{dataset_name}"
+cosma_dataset_path = path.join(cosma_path, dataset, dataset_folder, dataset_name)
 
 """
 Now use it to set the output path on COSMA.
 """
 
-cosma_output_path = f"{cosma_path}/output"
+cosma_output_path = path.join(cosma_path, "output")
 
 # %%
 """In contrast to the dataset and output folders, our workspace path is in your COSMA home directory.."""
@@ -163,7 +165,7 @@ Returns the path where the dataset will be loaded from, which in this case is:
 """
 
 # %%
-dataset_path = f"{cosma_dataset_path}/{dataset_type}/{dataset_name}"
+dataset_path = path.join(cosma_dataset_path, dataset_type, dataset_name)
 
 """
 COMPLETE
@@ -177,9 +179,9 @@ your own COSMA run going!
 
 # %%
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=pixel_scales,
 )
 
@@ -245,7 +247,7 @@ setup_source = al.SetupSourceInversion(
 
 # %%
 setup = al.SetupPipeline(
-    path_prefix=f"pipelines/{dataset_type}/{dataset_name}",
+    path_prefix=path.join("pipelines", dataset_type, dataset_name),
     setup_mass=setup_mass,
     setup_source=setup_source,
 )

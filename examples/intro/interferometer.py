@@ -15,15 +15,16 @@ we'll use in this example.
 
 import autolens as al
 import autolens.plot as aplt
+from os import path
 import numpy as np
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/interferometer/{dataset_name}"
+dataset_path = path.join("dataset", "interferometer ", dataset_name)
 
 interferometer = al.Interferometer.from_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
 )
 
 """

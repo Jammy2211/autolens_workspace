@@ -1,4 +1,4 @@
-import autofit as af
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -30,7 +30,7 @@ The path where the dataset will be output, which in this case is
 `/autolens_workspace/dataset/interferometer/mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_name)
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -49,7 +49,7 @@ grid = al.GridIterate.uniform(
 """To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
 uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
-    file_path=f"{uv_wavelengths_path}/sma_uv_wavelengths.fits", hdu=0
+    file_path=path.join(uv_wavelengths_path, "sma_uv_wavelengths.fits"), hdu=0
 )
 
 """
@@ -117,8 +117,8 @@ interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Output our simulated dataset to the dataset path as .fits files"""
 interferometer.output_to_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
     overwrite=True,
 )

@@ -1,3 +1,4 @@
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -21,11 +22,12 @@ gives it a descriptive name. They define the folder the dataset is output to on 
  - The noise-map will be output to `/autolens_workspace/dataset/dataset_type/dataset_name/lens_name/noise_map.fits`.
  - The psf will be output to `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
+
 dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__0"
 
 """Create the path where the dataset is output."""
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_name)
 
 """The grid use to create the image."""
 grid = al.GridIterate.uniform(
@@ -74,9 +76,9 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Output our simulated dataset to the dataset path as .fits files"""
 imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     overwrite=True,
 )
 
@@ -103,7 +105,7 @@ dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__1"
 
 """Create the path where the dataset is output."""
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_name)
 
 """
         Returns a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
@@ -144,9 +146,9 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Output our simulated dataset to the dataset path as .fits files"""
 imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     overwrite=True,
 )
 
@@ -174,10 +176,10 @@ dataset_type = "aggregator"
 dataset_name = "mass_sie__source_sersic__2"
 
 """Create the path where the dataset is output."""
-dataset_path = f"dataset/{dataset_type}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_name)
 
 """
-        Returns a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
+Returns a simulator, which defines the shape, resolution and pixel-scale of the image that is simulated, as well as
 its exposure time, noise levels and psf.
 """
 simulator = al.SimulatorImaging(
@@ -215,9 +217,9 @@ imaging = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 """Output our simulated dataset to the dataset path as .fits files"""
 imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     overwrite=True,
 )
 

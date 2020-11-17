@@ -22,17 +22,18 @@ Load the strong lens dataset `light_sersic__mass_sie__source_sersic` `from .fits
 we will use to perform lens modeling.
 """
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
 dataset_name = "light_sersic_exp__mass_sie__source_sersic"
-dataset_path = f"dataset/imaging/with_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=0.1,
 )
 
@@ -128,7 +129,7 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/beginner/{dataset_name}",
+    path_prefix=path.join("examples", "beginner", dataset_name),
     name="phase_light[bulge]_mass[sie]_source[bulge]",
     n_live_points=100,
     walks=10,

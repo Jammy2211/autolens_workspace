@@ -12,7 +12,9 @@ To begin, we set up the `InputDeflections` object in an identical fashion to the
 deflection angle map here once you have run this example).
 """
 
-### --------------------------------------------------------------------------------------------------------------- ###import autofit as af
+### --------------------------------------------------------------------------------------------------------------- ###
+
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -26,12 +28,12 @@ Lets load and plot this dataset.
 """
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     pixel_scales=0.1,
 )
 
@@ -139,7 +141,11 @@ non-linear searches that can be used with **PyAutoLens**. If you do not know wha
 operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture series.
 """
 
-search = af.DynestyStatic(n_live_points=100)
+search = af.DynestyStatic(
+    path_prefix=path.join("misc", dataset_name),
+    name="phase__input_deflections",
+    n_live_points=100,
+)
 
 """
 __Phase__
@@ -153,11 +159,7 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 phase = al.PhaseImaging(
-    path_prefix=f"misc/{dataset_name}",
-    name="phase__input_deflections",
-    galaxies=dict(lens=lens, source=source),
-    settings=settings,
-    search=search,
+    search=search, galaxies=dict(lens=lens, source=source), settings=settings
 )
 
 """

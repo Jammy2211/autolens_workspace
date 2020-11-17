@@ -42,9 +42,11 @@ contains example data we'll use in this tutorial.
 
 dataset_path = f"preprocess/imaging/data_raw/imaging"
 
-image = al.Array.from_fits(file_path=f"{dataset_path}/image.fits", pixel_scales=0.1)
+image = al.Array.from_fits(
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=0.1
+)
 noise_map = al.Array.from_fits(
-    file_path=f"{dataset_path}/noise_map.fits", pixel_scales=0.1
+    file_path=path.join(dataset_path, "noise_map.fits"), pixel_scales=0.1
 )
 
 # %%

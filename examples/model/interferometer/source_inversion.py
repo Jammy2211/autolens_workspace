@@ -40,20 +40,21 @@ Unlike the other example scripts, we use the `Interferometer` class to load this
 files containing its visibilities, noise-map and uv_wavelengths.
 """
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 import numpy as np
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = f"dataset/interferometer/{dataset_name}"
+dataset_path = path.join("dataset", "interferometer ", dataset_name)
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
 interferometer = al.Interferometer.from_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
 )
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
@@ -163,7 +164,7 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 search = af.DynestyStatic(
-    path_prefix=f"examples/interferometer/{dataset_name}",
+    path_prefix=path.join("examples", "interferometer", dataset_name),
     name="phase_mass[sie]_source[inversion]",
     n_live_points=50,
 )

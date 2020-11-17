@@ -1,4 +1,4 @@
-import autofit as af
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -25,7 +25,7 @@ The path where the dataset will be output, which in this case is:
 `/autolens_workspace/dataset/imaging/instruments/euclid/mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/{dataset_type}/{dataset_instrument}"
+dataset_path = path.join("dataset", dataset_type, dataset_instrument)
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -104,9 +104,9 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 """Output our simulated dataset to the dataset path as .fits files"""
 
 imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     overwrite=True,
 )
 

@@ -21,6 +21,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -49,7 +50,7 @@ Returns the path where the noise-map will be output, which in this case is
 """
 
 # %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 # %%
 """
@@ -66,7 +67,7 @@ First, load the dataset image, so that the location of galaxies is clear when sc
 
 # %%
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 aplt.Array(array=image)
@@ -78,7 +79,7 @@ Next, load the noise-map, which we will use the scale the noise-map.
 
 # %%
 noise_map = al.Array.from_fits(
-    file_path=f"{dataset_path}/noise_map.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "noise_map.fits"), pixel_scales=pixel_scales
 )
 
 aplt.Array(array=noise_map)
@@ -155,7 +156,9 @@ file in our pipelines!
 """
 
 # %%
-image.output_to_fits(file_path=f"{dataset_path}/image_scaled.fits", overwrite=True)
+image.output_to_fits(
+    file_path=path.join(dataset_path, "image_scaled.fits"), overwrite=True
+)
 
 # %%
 """
@@ -193,7 +196,9 @@ Finally, we can output the scaled mask incase we need it in the future.
 """
 
 # %%
-mask.output_to_fits(file_path=f"{dataset_path}/mask_scaled.fits", overwrite=True)
+mask.output_to_fits(
+    file_path=path.join(dataset_path, "mask_scaled.fits"), overwrite=True
+)
 
 # %%
 """

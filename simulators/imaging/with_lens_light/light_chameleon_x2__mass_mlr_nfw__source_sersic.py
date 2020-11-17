@@ -1,3 +1,4 @@
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -28,7 +29,7 @@ The path where the dataset will be output, which in this case is:
 `/autolens_workspace/dataset/imaging/with_lens_light/light_chameleon_x2__mass_mlr_nfw__source_sersic`
 """
 
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 
 """
@@ -128,9 +129,9 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 """Output our simulated dataset to the dataset path as .fits files"""
 
 imaging.output_to_fits(
-    image_path=f"{dataset_path}/image.fits",
-    psf_path=f"{dataset_path}/psf.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
+    image_path=path.join(dataset_path, "image.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
     overwrite=True,
 )
 

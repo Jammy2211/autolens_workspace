@@ -1,3 +1,4 @@
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -12,17 +13,18 @@ The noise-map will be output as `/autolens_workspace/dataset/dataset_type/datase
 The psf will be output as `/autolens_workspace/dataset/dataset_type/dataset_name/psf.fits`.
 """
 
-"""To perform the Fourier transform we need the wavelengths of the baselines, which we'll load from the fits file below."""
-uv_wavelengths_path = f"simulators/interferometer/uv_wavelengths"
-uv_wavelengths_file = "alma_uv_wavelengths_x10k"
+"""To perform the Fourier transform we need the wavelengths of the baselines."""
+
+uv_wavelengths_path = path.join("simulators", "interferometer", "uv_wavelengths")
+# uv_wavelengths_file = "alma_uv_wavelengths_x10k"
 # uv_wavelengths_file = "alma_uv_wavelengths_x100k"
-# uv_wavelengths_file = "alma_uv_wavelengths_x500k"
+uv_wavelengths_file = "alma_uv_wavelengths_x500k"
 # uv_wavelengths_file = "alma_uv_wavelengths_x1m"
 # uv_wavelengths_file = "alma_uv_wavelengths_x5m"
 # uv_wavelengths_file = "alma_uv_wavelengths_x10m"
 
 uv_wavelengths = al.util.array.numpy_array_1d_from_fits(
-    file_path=f"{uv_wavelengths_path}/{uv_wavelengths_file}.fits", hdu=0
+    file_path=path.join(uv_wavelengths_path, f"{uv_wavelengths_file}.fits"), hdu=0
 )
 
 """
@@ -42,7 +44,9 @@ The path where the dataset will be output, which in this case is
 `/autolens_workspace/dataset/interferometer/instruments/sma/mass_sie__source_sersic`
 """
 
-dataset_path = f"dataset/{dataset_type}/{dataset_instrument}/{uv_wavelengths_file}"
+dataset_path = path.join(
+    "dataset", dataset_type, dataset_instrument, uv_wavelengths_file
+)
 
 """
 For simulating an image of a strong lens, we recommend using a GridIterate object. This represents a grid of (y,x) 
@@ -55,7 +59,7 @@ total flux emitted within a pixel.
 """
 
 grid = al.GridIterate.uniform(
-    shape_2d=(251, 251), pixel_scales=0.05, fractional_accuracy=0.9999
+    shape_2d=(256, 256), pixel_scales=0.05, fractional_accuracy=0.9999
 )
 
 """
@@ -68,7 +72,7 @@ simulator = al.SimulatorInterferometer(
     exposure_time=100.0,
     background_sky_level=0.1,
     noise_sigma=100.0,
-    transformer_class=al.TransformerDFT,
+    transformer_class=al.TransformerNUFFT,
 )
 
 """Setup the lens `Galaxy`'s mass (SIE+Shear) and source galaxy light (elliptical Sersic) for this simulated lens."""
@@ -113,11 +117,23 @@ interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=grid)
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
 
+transformer = simulator.transformer_class(
+    uv_wavelengths=simulator.uv_wavelengths,
+    real_space_mask=tracer.image_from_grid(grid=grid).in_1d_binned.mask,
+)
+
+image = transformer.image_from_visibilities(visibilities=interferometer.visibilities)
+
+import matplotlib.pyplot as plt
+
+plt.imshow(image)
+plt.show()
+
 """Output our simulated dataset to the dataset path as .fits files"""
 
 interferometer.output_to_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
     overwrite=True,
 )

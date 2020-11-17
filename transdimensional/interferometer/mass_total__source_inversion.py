@@ -15,7 +15,7 @@ This uses the pipeline (Check it out full description of the pipeline):
 
  `autolens_workspace/transdimensional/interferometer/pipelines/mass_power_law__source_inversion.py`.
 """
-
+from os import path
 import autolens as al
 import autolens.plot as aplt
 import numpy as np
@@ -23,14 +23,15 @@ import numpy as np
 dataset_name = "mass_sie__source_sersic"
 pixel_scales = 0.1
 
-dataset_path = f"dataset/interferometer/{dataset_name}"
+# dataset_path = path.join("dataset", "interferometer ", dataset_name)
+dataset_path = path.join("dataset", "instruments", "sma")
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
 interferometer = al.Interferometer.from_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
 )
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
@@ -79,7 +80,7 @@ By default we use the linear operators approach.
 """
 
 settings_inversion = al.SettingsInversion(
-    use_linear_operators=True, use_preconditioner=True
+    use_linear_operators=True, use_preconditioner=False
 )
 
 """
@@ -149,7 +150,7 @@ description of what inputting redshifts into **PyAutoLens** does.
 """
 
 setup = al.SetupPipeline(
-    path_prefix=f"transdimensional/{dataset_name}",
+    path_prefix=path.join("transdimensional", dataset_name),
     redshift_lens=0.5,
     redshift_source=1.0,
     setup_mass=setup_mass,
@@ -165,7 +166,9 @@ To create a pipeline we import it from the pipelines folder and run its `make_pi
 
 from pipelines import mass_total__source_inversion
 
-pipeline = mass_total__source_inversion.make_pipeline(setup=setup, settings=settings)
+pipeline = mass_total__source_inversion.make_pipeline(
+    setup=setup, settings=settings, real_space_mask=real_space_mask
+)
 
 """
 __Pipeline Run__
@@ -173,4 +176,4 @@ __Pipeline Run__
 Running a pipeline is the same as running a phase, we simply pass it our lens dataset and mask to its run function.
 """
 
-pipeline.run(dataset=interferometer)
+pipeline.run(dataset=interferometer, mask=visibilities_mask)

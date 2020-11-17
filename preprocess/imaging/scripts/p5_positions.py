@@ -23,7 +23,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
-import autofit as af
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -50,7 +50,7 @@ Returns the path where the positions will be output, which in this case is
 """
 
 # %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 # %%
 """
@@ -67,7 +67,7 @@ First, load the `Imaging` dataset, so that the positions can be plotted over the
 
 # %%
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 # %%
@@ -95,7 +95,9 @@ Now we`re happy with the positions, lets output them to the dataset folder of th
 """
 
 # %%
-positions.output_to_file(file_path=f"{dataset_path}/positions.dat", overwrite=True)
+positions.output_to_file(
+    file_path=path.join(dataset_path, "positions.dat"), overwrite=True
+)
 
 # %%
 """

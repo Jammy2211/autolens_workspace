@@ -13,6 +13,7 @@ workspace_path = str(here())
 #%cd $workspace_path
 print(f"Working Directory has been set to `{workspace_path}`")
 
+from os import path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -24,7 +25,7 @@ First, set up the aggregator as we did in the previous tutorial.
 """
 
 # %%
-agg = af.Aggregator(directory="output/aggregator")
+agg = af.Aggregator(directory=path.join("output", "aggregator"))
 
 # %%
 """

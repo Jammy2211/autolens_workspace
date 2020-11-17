@@ -20,7 +20,7 @@ Create the path where the noise-map will be output, which in this case is
  `/autolens_workspace/dataset/imaging/no_lens_light/mass_sie__source_bulge_intervening_objects/`
 """
 
-dataset_path = f"dataset/imaging/no_lens_light/{dataset_name}"
+dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
 
 """If you use this tool for your own dataset, you *must* double check this pixel scale is correct!"""
 
@@ -29,7 +29,7 @@ pixel_scales = 0.1
 """First, load the `Imaging` dataset, so that the location of galaxies is clear when scaling the noise-map."""
 
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 cmap = aplt.ColorMap(
@@ -75,12 +75,14 @@ Now we`re happy with the image, lets output it to the dataset folder of the lens
 file in our pipelines!
 """
 
-image.output_to_fits(file_path=f"{dataset_path}/image_scaled.fits", overwrite=True)
+image.output_to_fits(
+    file_path=path.join(dataset_path, "image_scaled.fits"), overwrite=True
+)
 
 """Next, load the `Imaging` noise-map, which we will use the scale the noise-map."""
 
 noise_map = al.Array.from_fits(
-    file_path=f"{dataset_path}/noise_map.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "noise_map.fits"), pixel_scales=pixel_scales
 )
 
 """
@@ -109,4 +111,6 @@ noise_map.output_to_fits(
 
 """Lets also output the mask."""
 
-mask.output_to_fits(file_path=f"{dataset_path}/mask_scaled.fits", overwrite=True)
+mask.output_to_fits(
+    file_path=path.join(dataset_path, "mask_scaled.fits"), overwrite=True
+)

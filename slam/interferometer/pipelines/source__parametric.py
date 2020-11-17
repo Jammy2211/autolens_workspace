@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -34,7 +35,7 @@ def make_pipeline(slam, settings, real_space_mask):
            etc.)
     """
 
-    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_parametric_tag}"
+    path_prefix = path.join(slam.path_prefix, pipeline_name, slam.source_parametric_tag)
 
     """
     Phase 1: Fit the lens`s `MassProfile`'s and source galaxy.

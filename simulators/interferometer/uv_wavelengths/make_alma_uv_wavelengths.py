@@ -1,14 +1,58 @@
 from astropy.io import fits
-import numpy as np
-
-import autolens as al
+from os import path
 import uv_util
+import numpy as np
+from astropy import constants, units as au
+import autolens as al
+
+
+def convert_array_to_wavelengths(array, frequency):
+
+    array_converted = ((array * au.m) * (frequency * au.Hz) / constants.c).decompose()
+
+    return array_converted.value
+
+
+def convert_uv_coords_from_meters_to_wavelengths(uv, frequencies):
+
+    if np.shape(frequencies):
+
+        u_wavelengths, v_wavelengths = np.zeros(
+            shape=(2, len(frequencies), uv.shape[1])
+        )
+
+        for i in range(len(frequencies)):
+            u_wavelengths[i, :] = convert_array_to_wavelengths(
+                array=uv[0, :], frequency=frequencies[i]
+            )
+            v_wavelengths[i, :] = convert_array_to_wavelengths(
+                array=uv[1, :], frequency=frequencies[i]
+            )
+
+    else:
+
+        u_wavelengths = convert_array_to_wavelengths(
+            array=uv[0, :], frequency=frequencies
+        )
+        v_wavelengths = convert_array_to_wavelengths(
+            array=uv[1, :], frequency=frequencies
+        )
+
+    return np.stack(arrays=(u_wavelengths, v_wavelengths), axis=-1)
+
 
 """Load the ALMA UV baselines."""
 
 uv_full = fits.getdata(
-    filename=f"simulators/interferometer/uv_wavelengths/alma_uv.fits"
+    filename=path.join("simulators", "interferometer", "uv_wavelengths", "alma_uv.fits")
 )
+
+uv_full = np.transpose(
+    convert_uv_coords_from_meters_to_wavelengths(
+        uv=uv_full, frequencies=260 * au.GHz.to(au.Hz)
+    )
+)
+
 
 """
 These settings control the total integration time, time per visibility observations and number of
@@ -25,7 +69,7 @@ total number of visibilities.
 """
 
 time_trim_min = 0
-time_trim_max = int(total_integration_time / 1000.0)
+time_trim_max = int(total_integration_time / 1.0)
 uv_util.check_time_steps(
     t_int=time_per_visibility, t_trim_max=time_trim_max, t_trim_min=time_trim_min
 )
@@ -50,8 +94,14 @@ uv_wavelengths = uv_reshaped_trimmed.reshape(
     )
 )
 
+print(uv_wavelengths.shape)
+
 al.util.array.numpy_array_2d_to_fits(
     array_2d=uv_wavelengths,
-    file_path=f"simulators/interferometer/uv_wavelengths/"
-    f"alma_uv_wavelengths_x{uv_wavelengths.shape[0]}.fits",
+    file_path=path.join(
+        "simulators",
+        "interferometer",
+        "uv_wavelengths",
+        f"alma_uv_wavelengths_x{uv_wavelengths.shape[0]}.fits",
+    ),
 )

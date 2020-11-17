@@ -1,4 +1,5 @@
 import autofit as af
+from os import path
 import autolens as al
 
 """
@@ -85,6 +86,7 @@ hyper-galaxy-image. This causes some very nasty problems. Thus, the same mask mu
 To ensure this happens, for hyper-galaxy-pipelines we require that the mask is passed to the `pipeline.run` function.
 
 import autofit as af
+from os import path
 import autolens as al
 
 For our example hyper-pipeline,we`re going to run 7 (!) phases. There isn't much new here compared to normal

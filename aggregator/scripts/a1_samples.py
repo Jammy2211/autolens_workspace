@@ -41,6 +41,7 @@ workspace_path = str(here())
 #%cd $workspace_path
 print(f"Working Directory has been set to `{workspace_path}`")
 
+from os import path
 import autofit as af
 
 # %%
@@ -49,7 +50,7 @@ To set up the aggregator we simply pass it the folder of the results we want to 
 """
 
 # %%
-agg = af.Aggregator(directory="output/aggregator/phase_runner")
+agg = af.Aggregator(directory=path.join("output", "aggregator", "phase_runner"))
 
 # %%
 """

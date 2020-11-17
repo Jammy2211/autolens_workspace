@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -75,7 +76,7 @@ def make_pipeline(slam, settings):
         4) The lens light model used in the previous pipeline.
     """
 
-    path_prefix = f"{slam.path_prefix}/{pipeline_name}/{slam.source_inversion_tag}"
+    path_prefix = path.join(slam.path_prefix, pipeline_name, slam.source_inversion_tag)
 
     """
     Phase 1: fit the `Pixelization` and `Regularization`, where we:

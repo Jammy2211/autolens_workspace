@@ -16,6 +16,7 @@ Using a pipeline composed of three phases this runner fits `Imaging` of a strong
  - An `Inversion` for the source `Galaxy`'s light.
 """
 
+from os import path
 import autolens as al
 
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
@@ -29,13 +30,13 @@ for dataset_name in [
 ]:
 
     """Set up the config and output paths."""
-    dataset_path = f"dataset/aggregator/{dataset_name}"
+    dataset_path = path.join("dataset", "aggregator", dataset_name)
 
     """Using the dataset path, load the data (image, noise-map, PSF) as an `Imaging` object from .fits files."""
     imaging = al.Imaging.from_fits(
-        image_path=f"{dataset_path}/image.fits",
-        psf_path=f"{dataset_path}/psf.fits",
-        noise_map_path=f"{dataset_path}/noise_map.fits",
+        image_path=path.join(dataset_path, "image.fits"),
+        psf_path=path.join(dataset_path, "psf.fits"),
+        noise_map_path=path.join(dataset_path, "noise_map.fits"),
         pixel_scales=pixel_scales,
     )
 
@@ -73,7 +74,7 @@ for dataset_name in [
     )
 
     setup = al.SetupPipeline(
-        path_prefix=f"aggregator/{dataset_name}",
+        path_prefix=path.join("aggregator", dataset_name),
         setup_mass=setup_mass,
         setup_source=setup_source,
     )

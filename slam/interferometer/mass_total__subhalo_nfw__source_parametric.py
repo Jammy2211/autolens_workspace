@@ -22,7 +22,7 @@ This runner uses the SLaM pipelines:
 
 Check them out for a detailed description of the analysis!
 """
-
+from os import path
 import autolens as al
 import autolens.plot as aplt
 import numpy as np
@@ -30,14 +30,14 @@ import numpy as np
 dataset_name = "mass_sie__subhalo_nfw__source_sersic"
 pixel_scales = 0.05
 
-dataset_path = f"dataset/interferometer/{dataset_name}"
+dataset_path = path.join("dataset", "interferometer ", dataset_name)
 
 """Using the dataset path, load the data (image, noise-map, PSF) as an `Interferometer` object from .fits files."""
 
 interferometer = al.Interferometer.from_fits(
-    visibilities_path=f"{dataset_path}/visibilities.fits",
-    noise_map_path=f"{dataset_path}/noise_map.fits",
-    uv_wavelengths_path=f"{dataset_path}/uv_wavelengths.fits",
+    visibilities_path=path.join(dataset_path, "visibilities.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
 )
 
 aplt.Interferometer.subplot_interferometer(interferometer=interferometer)
@@ -191,7 +191,7 @@ based on the input values. It also handles pipeline tagging and path structure.
 """
 
 slam = al.SLaM(
-    path_prefix=f"slam/{dataset_name}",
+    path_prefix=path.join("slam", dataset_name),
     setup_hyper=hyper,
     pipeline_source_parametric=pipeline_source_parametric,
     pipeline_mass=pipeline_mass,

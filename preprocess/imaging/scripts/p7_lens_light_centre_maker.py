@@ -24,7 +24,7 @@ workspace_path = str(here())
 print(f"Working Directory has been set to `{workspace_path}`")
 
 #%matplotlib inline
-import autofit as af
+from os import path
 import autolens as al
 import autolens.plot as aplt
 
@@ -52,7 +52,7 @@ Returns the path where the lens light centres will be output, which in this case
 """
 
 # %%
-dataset_path = f"dataset/{dataset_type}/{dataset_label}/{dataset_name}"
+dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 # %%
 """
@@ -69,7 +69,7 @@ First, load the `Imaging` dataset, so that the lens light centres can be plotted
 
 # %%
 image = al.Array.from_fits(
-    file_path=f"{dataset_path}/image.fits", pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 # %%
@@ -96,7 +96,7 @@ load them from a .dat file in our pipelines!
 
 # %%
 light_centre.output_to_file(
-    file_path=f"{dataset_path}/light_centre.dat", overwrite=True
+    file_path=path.join(dataset_path, "light_centre.dat"), overwrite=True
 )
 
 # %%

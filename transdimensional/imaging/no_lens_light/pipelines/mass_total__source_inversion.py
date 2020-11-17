@@ -1,3 +1,4 @@
+from os import path
 import autofit as af
 import autolens as al
 
@@ -64,7 +65,7 @@ def make_pipeline(setup, settings):
         2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
-    path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
+    path_prefix = path.join(setup.path_prefix, pipeline_name, setup.tag)
 
     """
     Phase 1: Fit the lens`s `MassProfile`'s and source `LightProfile`, where we:
