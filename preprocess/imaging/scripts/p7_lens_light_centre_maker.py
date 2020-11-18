@@ -78,7 +78,7 @@ Now, create a lens light centre, which is a Coordinate object of (y,x) values.
 """
 
 # %%
-light_centre = al.GridCoordinates([[(0.0, 0.0)]])
+light_centre = al.GridIrregularGrouped([[(0.0, 0.0)]])
 
 # %%
 """

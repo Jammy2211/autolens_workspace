@@ -101,7 +101,7 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-light_centres = al.GridCoordinates(coordinates=light_centres)
+light_centres = al.GridIrregularGrouped(grid=light_centres)
 
 """
 Now lets plot the image and lens light centre, so we can check that the centre overlaps the brightest pixel in the

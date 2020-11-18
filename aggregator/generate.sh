@@ -1,5 +1,5 @@
 echo "Setting up Environment variables."
-export PYAUTO_PATH=/home/jammy/PycharmProjects/PyAuto
+export PYAUTO_PATH=/Users/Jammy/Code/PyAuto
 export PYAUTOLENS_PATH=$PYAUTO_PATH/PyAutoLens
 export WORKSPACE_PATH=$PYAUTO_PATH/autolens_workspace
 export AGGREGATOR_PATH=$WORKSPACE_PATH/advanced/aggregator

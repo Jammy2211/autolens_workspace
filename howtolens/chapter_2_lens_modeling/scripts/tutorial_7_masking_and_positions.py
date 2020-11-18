@@ -145,14 +145,14 @@ one another (which is controlled by the `position_threshold` parameter input int
 We can easily check the image-positions are accurate by plotting them using our `Imaging` `Plotter`.(they are the magenta 
 dots on the image).
 
-To specify these positions, we use the `GridCoordinates` object, which is used by **PyAutoLens** in general to specify (y,x)
+To specify these positions, we use the `GridIrregularGrouped` object, which is used by **PyAutoLens** in general to specify (y,x)
 coordinates.
 """
 
 # %%
 
-positions = al.GridCoordinates(
-    coordinates=[(1.6, 0.0), (0.0, 1.6), (-1.6, 0.0), (0.0, -1.6)]
+positions = al.GridIrregularGrouped(
+    grid=[(1.6, 0.0), (0.0, 1.6), (-1.6, 0.0), (0.0, -1.6)]
 )
 
 aplt.Imaging.subplot_imaging(imaging=imaging, positions=positions)
@@ -239,8 +239,8 @@ These are plotted in different colours to represent that they trace from differe
 """
 
 # %%
-positions = al.GridCoordinates(
-    coordinates=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]]
+positions = al.GridIrregularGrouped(
+    grid=[[(2.65, 0.0), (-0.55, 0.0)], [(-2.65, 0.0), (0.55, 0.0)]]
 )
 
 aplt.Imaging.subplot_imaging(imaging=imaging, positions=positions)

@@ -22,7 +22,7 @@ This exmaple assumes you are using cosma7 and outputting results to the cosma7 o
 
 from os import path
 
-cosma_path = path.join("cosma7", "data", "dp004", "cosma_username")
+cosma_path = path.join(path.sep, "cosma7", "data", "dp004", "cosma_username")
 
 """
 Use this path to set the path to the dataset directory on COSMA, as well as the folders within this directory the .fits

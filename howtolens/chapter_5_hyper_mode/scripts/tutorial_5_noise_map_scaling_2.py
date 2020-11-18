@@ -183,8 +183,10 @@ fit = fit_masked_imaging_with_lens_and_source_galaxy(
     source_galaxy=source_magnification,
 )
 
-lens_contribution_map = lens_galaxy_hyper.hyper_galaxy.contribution_map_from_hyper_images(
-    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_lens
+lens_contribution_map = (
+    lens_galaxy_hyper.hyper_galaxy.contribution_map_from_hyper_images(
+        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_lens
+    )
 )
 
 aplt.Array(
@@ -193,8 +195,10 @@ aplt.Array(
     plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Contribution Map")),
 )
 
-source_contribution_map = source_magnification_hyper.hyper_galaxy.contribution_map_from_hyper_images(
-    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_source
+source_contribution_map = (
+    source_magnification_hyper.hyper_galaxy.contribution_map_from_hyper_images(
+        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_source
+    )
 )
 
 aplt.Array(

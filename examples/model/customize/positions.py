@@ -65,7 +65,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging, mask=mask, positions=imaging.posit
 
 """
 Alternatively, the positions can be set up manually in the runner script after loading the data. To do this, we use the 
-_GridCoordinates_ object, which is used by PyAutoLens to specify lists of (y,x) coordinates that are not on a uniform
+_GridIrregularGrouped_ object, which is used by PyAutoLens to specify lists of (y,x) coordinates that are not on a uniform
 or regular grid (which the (y,x) coordinates of a `Grid` object are).
 """
 
@@ -76,7 +76,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-imaging.positions = al.GridCoordinates(
+imaging.positions = al.GridIrregularGrouped(
     [(1.55, -0.55), (1.15, 1.15), (-0.65, 1.55), (-0.95, -0.95)]
 )
 
@@ -176,7 +176,7 @@ PyAutoLens supports the following more advanced use of positional information:
 
  - If the unlensed source contains multiple components or clumps of light, one may wish to mark positions that 
       signify they correspond to these different regions of the source-plane. To do this, a list of list of tuples
-      can be input into the GridCoordinates object, e.g:
+      can be input into the GridIrregularGrouped object, e.g:
       
       [[(1.0, 1.0), (0.5, 0.5)], [(-1.0, 1.0), (-0.5, 0.5)]]
 

@@ -1,4 +1,4 @@
-export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/howtolens/
+export WORKSPACE=/Users/Jammy/Code/PyAuto/autolens_workspace/howtolens/
 rm -rf *.ipynb
 rm -rf .ipynb_checkpoints
 cd scripts
@@ -8,4 +8,4 @@ cp -r *.ipynb ../
 rm *.ipynb
 cd ..
 git add *.ipynb
-export WORKSPACE=/home/jammy/PycharmProjects/PyAuto/autolens_workspace/
+export WORKSPACE=/Users/Jammy/Code/PyAuto/autolens_workspace/
