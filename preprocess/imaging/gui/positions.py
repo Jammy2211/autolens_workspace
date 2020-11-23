@@ -1,3 +1,4 @@
+from os import path
 import autolens as al
 import autolens.plot as aplt
 from matplotlib import pyplot as plt
@@ -67,15 +68,18 @@ positions on an image.
 def onclick(event):
     if event.dblclick:
 
-        y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
-        x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
+        # y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
+        # x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
+        #
+        # (
+        #     y_pixels,
+        #     x_pixels,
+        # ) = image_2d.geometry.pixel_coordinates_2d_from(
+        #     scaled_coordinates_2d=(y_arcsec, x_arcsec)
+        # )
 
-        (
-            y_pixels,
-            x_pixels,
-        ) = image_2d.geometry.pixel_coordinates_from_scaled_coordinates(
-            scaled_coordinates=(y_arcsec, x_arcsec)
-        )
+        y_pixels = event.ydata
+        x_pixels = event.xdata
 
         flux = -np.inf
 

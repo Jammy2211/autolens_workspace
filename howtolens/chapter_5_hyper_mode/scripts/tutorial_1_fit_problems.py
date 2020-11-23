@@ -142,7 +142,7 @@ mask = al.Mask2D.circular(
 
 # %%
 """
-Now, lets simulate all 3 of our source`s as `Imaging` data.
+Now, lets simulate all 3 of our source's as `Imaging` data.
 """
 
 # %%
@@ -241,12 +241,12 @@ print(fit_compact.log_evidence)
 
 # %%
 """
-Oh no! The fit doesn`t look so good! Sure, we reconstruct *most* of the lensed source`s structure, but there are two 
+Oh no! The fit doesn`t look so good! Sure, we reconstruct *most* of the lensed source's structure, but there are two 
 clear `blobs` in the residual-map where we are failing to reconstruct the central regions of the source galaxy.
 
 Take a second to think about why this might be. Is it the `Pixelization`. The `Regularization`.
 
-Okay, so finally, we`re going to fit our super compact source. Given that the results for the compact source didn`t 
+Okay, so finally, we're going to fit our super compact source. Given that the results for the compact source didn`t 
 look so good, you`d be right in assuming this is just going to make things even worse. Again, think about why this 
 might be.
 """
@@ -287,8 +287,8 @@ chapter!
 
 It turns out that adapting to the magnification wasn`t the best idea all along. As we simulated more compact sources 
 the magnification (which is determined via the mass model) didn`t change. So, we foolishly reconstructed each source
-using fewer and fewer pixels, leading to a worse and worse fit! Furthermore, these source`s happened to be located in 
-the highest magnification regions of the source plane! If the source`s were further away from the centre of the 
+using fewer and fewer pixels, leading to a worse and worse fit! Furthermore, these source's happened to be located in 
+the highest magnification regions of the source plane! If the source's were further away from the centre of the 
 caustic, the `VoronoiMagnification` `Pixelization`.would use *even less* pixels to reconstruct it. That is NOT what we 
 want!
 
@@ -313,20 +313,20 @@ As you can see, all pixels are regularized with our input regularization_coeffic
 Is this the best way to regularize the source? Well, as you`ve probably guessed, it isn't. But why not? Its 
 because different regions of the source demand different levels of regularization:
 
- 1) In the source`s central regions its flux gradient is steepest; the change in flux between two source pixels is 
+ 1) In the source's central regions its flux gradient is steepest; the change in flux between two source pixels is 
  much larger than in the exterior regions where the gradient is flatter (or there is no source flux at all). To 
- reconstruct the detailed structure of the source`s cuspy inner regions, the regularization_coefficient needs to 
+ reconstruct the detailed structure of the source's cuspy inner regions, the regularization_coefficient needs to 
  be much lower to avoid over-smoothing.
 
  2) On the flip side, the source reconstruction wants to assume a high regularization_coefficient further out 
- because the source`s flux gradient is flat (or there is no source signal at all). Higher 
+ because the source's flux gradient is flat (or there is no source signal at all). Higher 
  regularization_coefficients will increase the Bayesian log evidence because by smoothing more source-pixels it 
  makes the solution `simpler`, given that correlating the flux in these source pixels the solution effectively 
  uses fewer source-pixels (e.g. degrees of freedom).
 
 So, herein lies the pitfall of a constant `Regularization`.cheme. Some parts of the reconstructed source demand a 
 low regularization_coefficient whereas other parts want a high value. Unfortunately, we end up with an intermediate 
-regularization coefficient that over-smooths the source`s central regions whilst failing to fully correlate exterior 
+regularization coefficient that over-smooths the source's central regions whilst failing to fully correlate exterior 
 pixels. Thus, by using an adaptive `Regularization`.cheme, new solutions that further increase the Bayesian log 
 evidence become accessible.
 
@@ -344,7 +344,7 @@ aplt.FitImaging.subplot_fit_imaging(
 
 # %%
 """
-So, whats the problem? Look closely at the `chi-squared image`. Here, you`ll note that a small subset of our data 
+So, whats the problem? Look closely at the `chi-squared image`. Here, you'll note that a small subset of our data 
 have extremely large chi-squared values. This means our `NonLinearSearch` (which is trying minimize chi-squared) is 
 going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset of 
 the data (e.g. < 5% of pixels) contributes to the majority of the log likelihood (e.g. > 95% of the overall chi-squared). 

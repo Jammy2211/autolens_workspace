@@ -32,7 +32,7 @@ grid = al.Grid.uniform(shape_2d=(100, 100), pixel_scales=0.05, sub_size=2)
 Next, lets create a `LightProfile` using the `light_profiles` module, which in **PyAutoLens** is imported as `lp` for 
 conciseness. we'll use an `EllipticalSersic` function, which is an analytic function often use to depict galaxies.
 
-(If you are unsure what the `elliptical_comps` are, I`ll give a description of them at the end of the tutorial.)
+(If you are unsure what the `elliptical_comps` are, I'll give a description of them at the end of the tutorial.)
 """
 
 # %%
@@ -131,12 +131,12 @@ print(sis_mass_profile)
 # %%
 """
 Just like above, we can pass a `Grid` to a `MassProfile` to compute its deflection angles. These are returned as the 
-_Grid_`s we used in the previous tutorials, so have full access to the 2D / 1D methods and mappings. And, just like 
+`Grid``s we used in the previous tutorials, so have full access to the 2D / 1D methods and mappings. And, just like 
 the image above, they are computed on the sub-grid, so that we can bin up their values to compute more accurate 
 deflection angles.
 
 (If you are new to gravitiational lensing, and are unclear on what a `deflection-angle` means or what it is used for, 
-then I`ll explain all in tutorial 4 of this chapter. For now, just look at the pretty pictures they make, and worry 
+then I'll explain all in tutorial 4 of this chapter. For now, just look at the pretty pictures they make, and worry 
 about what they mean in tutorial 4!).
 """
 
@@ -206,7 +206,7 @@ aplt.MassProfile.magnification(mass_profile=sis_mass_profile, grid=grid)
 Congratulations, you`ve completed your second **PyAutoLens** tutorial! Before moving on to the next one, experiment with 
 __PyAutoLens__ by doing the following:
 
-1) Change the `LightProfile`'s effective radius and Sersic index - how does the image`s appearance change?
+1) Change the `LightProfile`'s effective radius and Sersic index - how does the image's appearance change?
 2) Change the `MassProfile`'s einstein radius - what happens to the deflection angles, potential and convergence?
 3) Experiment with different `LightProfile`'s and `MassProfile`'s in the light_profiles and mass_profiles modules. 
 In particular, use the `EllipticalIsothermal` `Profile`.to introduce ellipticity into a `MassProfile`.
@@ -242,5 +242,5 @@ The elliptical components are related to the axis-ratio and position angle phi a
     elliptical_comp[1] = elliptical_comp_x = fac * np.cos(2 * phi)
 
 The reason we use the elliptical components, instead of the axis-ratio and phi, to define a `Profile` geometry is that it
-improves the lens modeling process. What is lens modeling? You`ll find out in chapter 2!
+improves the lens modeling process. What is lens modeling? You'll find out in chapter 2!
 """

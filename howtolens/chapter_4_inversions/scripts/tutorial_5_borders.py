@@ -59,7 +59,7 @@ aplt.Imaging.subplot_imaging(
 
 # %%
 """
-As you can see, for a circular `Mask2D`, the border *is* the edge of our `Mask2D` (the ring of black dots we`re used to 
+As you can see, for a circular `Mask2D`, the border *is* the edge of our `Mask2D` (the ring of black dots we're used to 
 seeing whenever we plot a `Mask2D`.. For an annular `Mask2D`, not every pixel on the edge of the mask is necessarily a part 
 of its border!
 """
@@ -117,7 +117,7 @@ def perform_fit_with_source_galaxy_mask_and_border(
 Okay, so lets first look at our `Mapper` without using a border using our annular `Mask2D`.
 
 First, note how we set up the border. We use a `SettingsPixelization` object, which is analogous to the 
-_SettingsMaskedImaging_ and `SettingsLens` objects we used in previous tutorials. Later, you`ll see how these 
+`SettingsMaskedImaging` and `SettingsLens` objects we used in previous tutorials. Later, you'll see how these 
 settings can also be passed to a `SettingsPhaseImaging` object, to control the behaviour of the `Pixelization` during a
 model-fit.
 """
@@ -272,7 +272,7 @@ not really a physical treatment of the ray-tracing, is it?
 
 Well, you`re right. However, the *only* physical way to do this would be to use a `Mask2D` so large that all demangified 
 central pixels are surrounded by traced image-pixels. This would require a `Mask2D` so large our computer would crash, 
-That`s not a good solution, thus borders provide us with a workaround, one that I`ve extensively tested and have found 
+That`s not a good solution, thus borders provide us with a workaround, one that I've extensively tested and have found 
 that, provided your `Mask2D` isn't too small, doesn`t lead to systematic biases.
 
 Next, I'm going to quickly highlight how important borders are when modeling multiple lens galaxies. Their complex 

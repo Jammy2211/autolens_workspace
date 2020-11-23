@@ -62,7 +62,7 @@ simulator = al.SimulatorInterferometer(
     uv_wavelengths=uv_wavelengths,
     exposure_time=100.0,
     background_sky_level=0.1,
-    noise_sigma=200.0,
+    noise_sigma=100.0,
     transformer_class=al.TransformerDFT,
 )
 

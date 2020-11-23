@@ -4,7 +4,7 @@ Tutorial 4: Noise-Map Scaling 1
 ===============================
 
 In tutorial 1, we discussed how when our `Inversion` didn`t fit a compact source well we had skewed and undesirable
-chi-squared distribution. A small subset of the lensed source`s brightest pixels were fitted poorly, contributing
+chi-squared distribution. A small subset of the lensed source's brightest pixels were fitted poorly, contributing
 to the majority of our chi-squared signal. In terms of lens modeling, this meant that we would over-fit these regions
 of the image. We would prefer that our lens model provides a global fit to the entire lensed source galaxy.
 
@@ -63,7 +63,7 @@ masked_imaging = al.MaskedImaging(
 
 # %%
 """
-Next, we`re going to fit the image using our magnification based grid. To perform the fit, we'll use a convenience 
+Next, we're going to fit the image using our magnification based grid. To perform the fit, we'll use a convenience 
 function to fit the lens data we simulated above.
 
 In this fitting function, we have changed the lens `Galaxy`'s einstein radius to 1.55 from the `true` simulated value of 
@@ -112,11 +112,11 @@ aplt.Inversion.reconstruction(
 # %%
 """
 The fit isn't great. The main structure of the lensed source is reconstructed, but there are residuals. These 
-residuals are worse than we saw in the previous tutorials (when source`s compact central structure was the problem). 
+residuals are worse than we saw in the previous tutorials (when source's compact central structure was the problem). 
 So, the obvious question is can our adaptive `Pixelization` and `Regularization`.chemes address the problem?
 
 Lets find out, using this solution as our hyper-galaxy-image. In this case, our hyper-galaxy-image isn't a perfect 
-fit to the data. This shouldn`t be too problematic, as the solution still captures the source`s overall structure. 
+fit to the data. This shouldn`t be too problematic, as the solution still captures the source's overall structure. 
 The `Pixelization` / `Regularization`.yper-galaxy-parameters have enough flexibility in how they use this image to 
 adapt themselves, so the hyper-galaxy-image doesn`t *need* to be perfect.
 """
@@ -126,8 +126,8 @@ hyper_image = fit.model_image.in_1d_binned
 
 # %%
 """
-You`ll note that, unlike before, this source galaxy receives two types of hyper-galaxy-images, a `hyper_galaxy_image` 
-(like before) and a `hyper_model_image` (which is new). I`ll come back to this later.
+You'll note that, unlike before, this source galaxy receives two types of hyper-galaxy-images, a `hyper_galaxy_image` 
+(like before) and a `hyper_model_image` (which is new). I'll come back to this later.
 """
 
 # %%
@@ -185,7 +185,7 @@ mass model.
 
 This is where noise-map scaling comes in. If we have no alternative, the best way to get Gaussian-distribution 
 (e.g. more uniform) chi-squared fit is to increase the variances of image pixels with high chi-squared values. So, 
-that`s what we`re going to do, by making our source galaxy a `hyper-galaxy`, a galaxy which use`s its hyper-galaxy 
+that`s what we're going to do, by making our source galaxy a `hyper-galaxy`, a galaxy which use`s its hyper-galaxy 
 image to increase the noise in pixels where it has a large signal. Let take a look.
 """
 
@@ -259,10 +259,8 @@ source_contribution_factor_1 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = (
-    source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
-    )
+contribution_map = source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
 aplt.Array(
@@ -279,10 +277,8 @@ source_contribution_factor_3 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = (
-    source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
-    )
+contribution_map = source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
 aplt.Array(
@@ -313,7 +309,7 @@ aplt.Array(
 """
 By increasing the contribution factor we allocate more pixels with higher contributions (e.g. values closer to 1.0) 
 than pixels with lower values. This is all the contribution_factor does; it scales how we allocate contributions to 
-the source galaxy. Now, we`re going to use this contribution map to scale the noise-map, as follows:
+the source galaxy. Now, we're going to use this contribution map to scale the noise-map, as follows:
 
  1) Multiply the baseline (e.g. unscaled) noise-map of the image-data by the contribution map made in step 3) above. 
  This means that only noise-map values where the contribution map has large values (e.g. near 1.0) are going to 
@@ -386,13 +382,13 @@ clear what they do; they simply change the amount by which the noise is increase
 And with that, we've completed the first of two tutorials on noise-map scaling. To end, I want you to have a quick 
 think, is there anything else that you can think of that would mean we need to scale the noise? In this tutorial, 
 it was the inadequacy of our mass-model that lead to significant residuals and a skewed chi-squared distribution. 
-What else might cause residuals? I`ll give you a couple below;
+What else might cause residuals? I'll give you a couple below;
 
- 1) A mismatch between our model of the `Imaging` data`s Point Spread Function (PSF) and the true PSF of the 
+ 1) A mismatch between our model of the `Imaging` data's Point Spread Function (PSF) and the true PSF of the 
  telescope optics of the data.
     
  2) Unaccounted for effects in our idata-reduction for the image, in particular the presense of correlated signal and 
- noise during the image`s instrument reduction.
+ noise during the image's instrument reduction.
     
  3) A sub-optimal background sky subtraction of the image, which can leave large levels of signal in the outskirts of 
  the image that are not due to the strong lens system itself.

@@ -3,8 +3,8 @@
 Tutorial 2: Brightness Adaption
 ===============================
 
-In the previous tutorial we motivated a need to adapt our `Pixelization`.o the source`s morphology, such that source
-pixels congregates in the source`s brightest regions regardless of where it is located in the source-plane. This
+In the previous tutorial we motivated a need to adapt our `Pixelization`.o the source's morphology, such that source
+pixels congregates in the source's brightest regions regardless of where it is located in the source-plane. This
 raises an interesting question; how do we adapt our source `Pixelization`.o the reconstructed source, before we've
 actually reconstructed the source and therefore know what to adapt it too?
 
@@ -63,7 +63,7 @@ masked_imaging = al.MaskedImaging(
 
 # %%
 """
-Next, we`re going to fit the image using our magnification based grid. The code below does all the usual steps 
+Next, we're going to fit the image using our magnification based grid. The code below does all the usual steps 
 required to do this.
 """
 
@@ -159,12 +159,12 @@ print("Evidence using brightness based `Pixelization`. ", fit.log_evidence)
 # %%
 """
 It increases! By over 200, which, for a Bayesian log evidence, is pretty damn large! By any measure, this 
-_Pixelization_ is a huge success. It turns out that we should have been adapting to the source`s brightness all along! 
-In doing so, we will *always* reconstruct the detailed structure of the source`s brightest regions with a sufficiently 
+_Pixelization_ is a huge success. It turns out that we should have been adapting to the source's brightness all along! 
+In doing so, we will *always* reconstruct the detailed structure of the source's brightest regions with a sufficiently 
 high resolution. Hurrah!
 
 So, we are now able to adapt our `Pixelization`.o the morphology of our lensed source galaxy. To my knowledge, this 
-is the *best* approach one can take in lens modeling. Its more tricky to implement (as I`ll explain next) and 
+is the *best* approach one can take in lens modeling. Its more tricky to implement (as I'll explain next) and 
 introduces extra non-linear parameters. But the pay-off is more than worth it, as we fit our data better and 
 end up using far fewer source pixels to fit the data because we don't `waste` pixels reconstructing regions of the 
 source-plane where there is no signal.
@@ -172,7 +172,7 @@ source-plane where there is no signal.
 
 # %%
 """
-Okay, so how does the hyper_image actually adapt our `Pixelization`.o the source`s brightness? It uses a `weighted 
+Okay, so how does the hyper_image actually adapt our `Pixelization`.o the source's brightness? It uses a `weighted 
 KMeans clustering algorithm`, which is a standard algorithm for partioning data in statistics.
 
 In simple terms, this algorithm works as follows:
@@ -257,10 +257,8 @@ source_weight_power_10 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_10 = (
-    source_weight_power_10.pixelization.weight_map_from_hyper_image(
-        hyper_image=source_weight_power_10.hyper_galaxy_image
-    )
+cluster_weight_power_10 = source_weight_power_10.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_power_10.hyper_galaxy_image
 )
 
 aplt.Array(array=cluster_weight_power_10, mask=mask)
@@ -304,7 +302,7 @@ is a risk that by congregating too many source pixels in its brightest regions w
 the source is bright, but not its brightest!
 
 The noise-floor allows these regions to maintain a higher weighting whilst the noise_power increases. This means that 
-the `Pixelization` an fully adapt to the source`s brightest and faintest regions simultaneously.
+the `Pixelization` an fully adapt to the source's brightest and faintest regions simultaneously.
 
 Lets look at once example:
 """
@@ -339,9 +337,9 @@ To end, lets think about the Bayesian log evidence which goes to significantly h
 grid. At this point, it might be worth reminding yourself how the Bayesian log evidence works by going back to the 
 `introduction` text file.
 
-So, why do you think why adapting to the source`s brightness increases the log evidence?
+So, why do you think why adapting to the source's brightness increases the log evidence?
 
-It is because by adapting to the source`s morphology we can now access solutions that fit the data really well 
+It is because by adapting to the source's morphology we can now access solutions that fit the data really well 
 (e.g. to the Gaussian noise-limit) but use significantly fewer source-pixels than other al. For instance, a typical 
 magnification based `Grid` uses resolutions of 40 x 40, or 1600 pixels. In contrast, a morphology based `Grid` typically 
 uses just 300-800 pixels (depending on the source itself). Clearly, the easiest way to make our source solution simpler 

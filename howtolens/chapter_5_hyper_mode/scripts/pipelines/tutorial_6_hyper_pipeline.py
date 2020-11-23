@@ -10,7 +10,7 @@ and don't want to scale.
 ##HYPER IMAGE PASSING ###
 
 So, lets start with hyper-image passing. That is, how do we pass the model images of the lens and source galaxies to
-later phases to use them as hyper-galaxy-images? Well, I`ve got some good news, *we no nothing*. **PyAutoLens** automatically
+later phases to use them as hyper-galaxy-images? Well, I've got some good news, *we no nothing*. **PyAutoLens** automatically
 passes hyper-images between phases!
 
 However, **PyAutoLens** does need to know which hyper-images to pass to which galaxies. To do this, **PyAutoLens** uses
@@ -89,7 +89,7 @@ import autofit as af
 from os import path
 import autolens as al
 
-For our example hyper-pipeline,we`re going to run 7 (!) phases. There isn't much new here compared to normal
+For our example hyper-pipeline,we're going to run 7 (!) phases. There isn't much new here compared to normal
 pipelines. But, the large number of phases are required to fully model the lens with hyper-mode features. An overview
 of the pipeline is as follows:
 
@@ -167,7 +167,7 @@ def make_pipeline(setup, settings):
     """
     Phase 2:
 
-    This phase fits for the lens`s mass model and source`s `LightProfile` using the lens subtracted image from phase
+    This phase fits for the lens`s mass model and source's `LightProfile` using the lens subtracted image from phase
     1. The lens galaxy hyper-galaxy is included, such that high chi-squared values in the central regions of the
     image due to a poor lens light subtraction are reduced by noise scaling and do not impact the fit.
 
@@ -291,7 +291,7 @@ def make_pipeline(setup, settings):
     )
 
     """
-    This is the usual phase extensions. Given we`re only using this `Inversion` to refine our hyper-galaxy-images, we
+    This is the usual phase extensions. Given we're only using this `Inversion` to refine our hyper-galaxy-images, we
     won't bother reoptimizing its hyper-galaxy-parameters
     """
 
@@ -331,7 +331,7 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 6: use our hyper-galaxy-mode features to adapt the `Pixelization`.o the source`s morphology
+    Phase 6: use our hyper-galaxy-mode features to adapt the `Pixelization`.o the source's morphology
     and the `Regularization`.o its brightness! This phase works like a hyper initialization phase, whereby we fix
     the lens and source models to the best-fit of the previous phase and just optimize the hyper-galaxy-parameters.
     """

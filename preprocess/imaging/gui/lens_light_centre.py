@@ -56,11 +56,8 @@ def onclick(event):
         y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
         x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
 
-        (
-            y_pixels,
-            x_pixels,
-        ) = image_2d.geometry.pixel_coordinates_from_scaled_coordinates(
-            scaled_coordinates=(y_arcsec, x_arcsec)
+        (y_pixels, x_pixels) = image_2d.geometry.pixel_coordinates_2d_from(
+            scaled_coordinates_2d=(y_arcsec, x_arcsec)
         )
 
         flux = -np.inf

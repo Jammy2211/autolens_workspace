@@ -76,7 +76,7 @@ function. In this example, we specify:
       angles.
       
  - A pixel_scales_interp of 0.05, which is the resolution of the interpolation on which the deflection angles are
-      computed and used to interpolate to the data`s native resolution.   
+      computed and used to interpolate to the data's native resolution.   
 """
 
 settings_masked_imaging = al.SettingsMaskedImaging(

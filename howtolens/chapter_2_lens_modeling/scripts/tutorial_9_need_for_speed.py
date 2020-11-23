@@ -29,19 +29,19 @@ speeding up, I strongly recommend that you look up Numba:
 
 http://numba.pydata.org/
 
-We've worked very hard to `Profile` every line of code in **PyAutoLens** and we`re confident its as fast, if not faster,
+We've worked very hard to `Profile` every line of code in **PyAutoLens** and we're confident its as fast, if not faster,
 than any code written in C. In fact, we know this - I wrote the original version of AutoLens in Fortran (bless my
 poor soul) and we timed it against **PyAutoLens**. After invoking the magic of Numba, **PyAutoLens** ran 3 times faster than
 the Fortran code - I felt pretty smug at that point.
 
 We probably arn`t going to see much more of speed-up via optimization then. Of course, if you`d like to prove me
-wrong, go for it - I`ll buy you a beer at a conference someday if you can optimize any function in **PyAutoLens** better
+wrong, go for it - I'll buy you a beer at a conference someday if you can optimize any function in **PyAutoLens** better
 than me!
 
 __Data Quantity__
 
 The final factor driving run-speed is the quantity of data that is being modeled. For every image-pixel that we fit,
-we have to compute the `LightProfile` image, the `MassProfile` deflection angles and convolve it with the telescope`s
+we have to compute the `LightProfile` image, the `MassProfile` deflection angles and convolve it with the telescope's
 PSF. The larger that PSF is, the more convolution operations we have to perform too.
 
 In the previous exercises, we used images with a pixel scale of 0.1". I sneakily chose this value cause its fairly
@@ -75,6 +75,6 @@ you might write a pipeline to perform the following analyses:
  lens galaxy parameters. Can you setup phases that fit each galaxy individiually, before fitting them jointly?
 
  3) The source galaxy is really complex. Infact, in your strong lens image you count 12 distinct multiple images,
- meaning that there are at least three distinct source`s of light in the source plane. This is a potentially very
+ meaning that there are at least three distinct source's of light in the source plane. This is a potentially very
  complex non-linear parameter space, so how might you break down the analysis?
 """

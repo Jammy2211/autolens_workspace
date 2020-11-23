@@ -9,7 +9,7 @@ What could leave significant residuals in our model-fit? What might happen to al
 image, meaning these residuals contribute *even more* to the chi-squared distribution?
 
 Yep, you guessed it, it`s the lens galaxy `LightProfile` fit and subtraction. Just like our overly simplified mass
-profile`s mean we can`t perfectly reconstruct the source`s light, the same is true of the Sersic profiles we use to
+profile`s mean we can`t perfectly reconstruct the source's light, the same is true of the Sersic profiles we use to
 fit the lens `Galaxy`'s light. Lets take a look.
 """
 
@@ -183,10 +183,8 @@ fit = fit_masked_imaging_with_lens_and_source_galaxy(
     source_galaxy=source_magnification,
 )
 
-lens_contribution_map = (
-    lens_galaxy_hyper.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_lens
-    )
+lens_contribution_map = lens_galaxy_hyper.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_lens
 )
 
 aplt.Array(
@@ -195,10 +193,8 @@ aplt.Array(
     plotter=aplt.Plotter(labels=aplt.Labels(title="Lens Contribution Map")),
 )
 
-source_contribution_map = (
-    source_magnification_hyper.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_source
-    )
+source_contribution_map = source_magnification_hyper.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image_source
 )
 
 aplt.Array(
@@ -239,7 +235,7 @@ therefore scale the noise-map of that individual galaxy in the image. This is wh
 the image require different levels of noise-map scaling.
 
 Finally, I want to quickly mention two more ways that we change our data during th fitting process. One scales the 
-background noise and one scales the image`s background sky. To do this, we use the `hyper_data` module in **PyAutoLens**.
+background noise and one scales the image's background sky. To do this, we use the `hyper_data` module in **PyAutoLens**.
 """
 
 # %%
@@ -307,5 +303,5 @@ run times. Yay!
 
 With that, we have introduced every feature of hyper-galaxy-mode. The only thing left for us to do is to bring it 
 all together and consider how we use all of these features in **PyAutoLens** pipelines. That is what we'll discuss in the 
-next tutorial, and then you`ll be ready to perform your own hyper-galaxy-fits!
+next tutorial, and then you'll be ready to perform your own hyper-galaxy-fits!
 """

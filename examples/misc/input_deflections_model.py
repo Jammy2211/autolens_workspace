@@ -41,7 +41,7 @@ aplt.Imaging.subplot_imaging(imaging=imaging)
 
 """
 In `autolens_workspace/examples/misc/files` you`ll find the script `make_source_plane.py`, which creates the image-plane 
-_Grid_ and deflection angles we use in this example (which are identical to those used in the 
+`Grid` and deflection angles we use in this example (which are identical to those used in the 
 `mass_sie__source_parametric.py` simulator). 
 """
 

@@ -5,7 +5,7 @@ Tutorial 3: Adaptive Regularization
 
 In tutorial 1, we considered why our `Constant` `Regularization`.cheme was sub-optimal. Diffferent regions of the
 source demand different levels of `Regularization`, motivating a `Regularization`.cheme which adapts to the reconstructed
-source`s surface brightness.
+source's surface brightness.
 
 This raises the same question as before, how do we adapt our `Regularization`.cheme to the source before we've
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
@@ -58,7 +58,7 @@ masked_imaging = al.MaskedImaging(
 
 # %%
 """
-Next, we`re going to fit the image using our magnification based grid. To perform the fits, we'll use a convenience 
+Next, we're going to fit the image using our magnification based grid. To perform the fits, we'll use a convenience 
 function to fit the lens data we simulated above.
 """
 
@@ -115,7 +115,7 @@ aplt.Inversion.regularization_weights(
 # %%
 """
 Lets now look at adaptive `Regularization`.n action, by setting up a hyper-galaxy-image and using the 
-`AdaptiveBrightness` `Regularization`.cheme. This introduces additional hyper-galaxy-parameters, that I`ll explain next.
+`AdaptiveBrightness` `Regularization`.cheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
 """
 
 # %%
@@ -144,7 +144,7 @@ aplt.Inversion.regularization_weights(
 
 # %%
 """
-So, as expected, we now have a variable `Regularization` scheme. The `Regularization`.f the source`s brightest regions 
+So, as expected, we now have a variable `Regularization` scheme. The `Regularization`.f the source's brightest regions 
 is much lower than that of its outer regions. As discussed before, this is what we want. Lets quickly check that this 
 does, indeed, increase the Bayesian log evidence:
 """
@@ -159,7 +159,7 @@ Yep! Of course, combining the adaptive `Pixelization`.nd `Regularization`.ill on
 
 However, as shown below, we don't fit the source as well as the morphology based `Pixelization` did in the last chapter. 
 This is because although the adaptive `Regularization` scheme improves the fit, the magnification based 
-_Pixelization_ simply *does not*  have sufficient resolution to resolve the source`s cuspy central `LightProfile`.
+_Pixelization_ simply *does not*  have sufficient resolution to resolve the source's cuspy central `LightProfile`.
 """
 
 # %%
@@ -173,7 +173,7 @@ __How does adaptive `Regularization` work?__
 
 For every source-pixel, we have a mapping between that pixel and a set of pixels in the hyper-galaxy-image. Therefore, 
 for every source-pixel, if we sum the values of all hyper-galaxy-image pixels that map to it we get an estimate of 
-how much of the lensed source`s signal we expect will be reconstructed. We call this each pixel`s `pixel signal`.
+how much of the lensed source's signal we expect will be reconstructed. We call this each pixel`s `pixel signal`.
 
 If a source-pixel has a higher pixel-signal, we anticipate that it`ll reconstruct more flux and we use this information 
 to regularize it less. Conversely, if the pixel-signal is close to zero, the source pixel will reconstruct near-zero 
@@ -203,13 +203,13 @@ This works as follows:
  pixels with low pixel-signals. Thus, pixels in the inner regions of the source may be given a lower level of 
  `Regularization`.han pixels further away, as desired.
 
-Thus, we now adapt our `Regularization` scheme to the source`s surface brightness. Where its brighter (and therefore 
+Thus, we now adapt our `Regularization` scheme to the source's surface brightness. Where its brighter (and therefore 
 has a steeper flux gradient) we apply a lower level of `Regularization` than further out. Furthermore, in the edges of 
 the source-plane where no source-flux is present we will assume a high regularization_coefficients that smooth over 
 all source-pixels.
 
 Try looking at a couple of extra solutions which use with different inner and outer regularization_coefficients or 
-signal scales. I doubt you`ll notice a lot change visually, but the log evidence certainly has a lot of room for 
+signal scales. I doubt you'll notice a lot change visually, but the log evidence certainly has a lot of room for 
 manoveur with different values.
 
 You may find solutions that raise an `InversionException`. These solutions mean that the matrix used during the 
@@ -255,7 +255,7 @@ in making a source reconstruction `more simple` and `less complex`.
 As you might of guessed, adaptive `Regularization`.gain increases the Bayesian log evidence by making the source 
 reconstruction simpler:
 
- 1) Reducing `Regularization` in the source`s brightest regions produces a `simpler` solution in that we are not 
+ 1) Reducing `Regularization` in the source's brightest regions produces a `simpler` solution in that we are not 
  over-smoothing our reconstruction of its brightest regions.
     
  2) Increasing `Regularization` in the outskirts produces a simpler solution by correlating more source-pixels, 

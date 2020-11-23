@@ -120,7 +120,7 @@ print()
 
 # %%
 """
-Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we`re interested in. 
+Using the plotters we've used throughout this chapter, we can visualize any aspect of a fit we're interested in. 
 For example, if we want to plot the image of the source galaxy `MassProfile`, we can do this in a variety of 
 different ways
 """
@@ -156,7 +156,7 @@ aplt.LightProfile.image(
 
 # %%
 """
-And, we`re done, not just with the tutorial, but the chapter!
+And, we're done, not just with the tutorial, but the chapter!
 
 To end, I want to quickly talk about code-design and structure. Yeah, I know, as a scientist, you don't like code 
 and certainly don't want to think about code! However, the point is, with **PyAutoLens**, you don't need to!

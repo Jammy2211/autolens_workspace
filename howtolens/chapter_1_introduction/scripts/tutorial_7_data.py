@@ -23,7 +23,7 @@ import autolens.plot as aplt
 
 # %%
 """
-To simulate an image, we need to model the telescope`s optics. we'll do this by convolving the image with a 
+To simulate an image, we need to model the telescope's optics. we'll do this by convolving the image with a 
 Point-Spread Function using a `Kernel` object, which we can simulate as a Gaussian.
 """
 
@@ -122,6 +122,8 @@ Output these files to.fits files, we'll begin to analyze them in the next tutori
 The `dataset_path` specifies where the data is output, this time in the directory `chapter_path/data`.
 
 """
+
+# %%
 dataset_path = path.join("dataset", "howtolens", "chapter_1")
 print("Dataset Path: ", dataset_path)
 

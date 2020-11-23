@@ -52,10 +52,8 @@ If we assume this mass profile is at redshift 0.5 and it is lensing a source at 
 in solar masses.
 """
 
-critical_surface_density = (
-    al.util.cosmology.critical_surface_density_between_redshifts_from(
-        redshift_0=0.5, redshift_1=1.0, cosmology=cosmo.Planck15
-    )
+critical_surface_density = al.util.cosmology.critical_surface_density_between_redshifts_from(
+    redshift_0=0.5, redshift_1=1.0, cosmology=cosmo.Planck15
 )
 einstein_mass_kpc = einstein_mass * critical_surface_density
 print("Einstein Mass (kpc) = ", einstein_mass_kpc)
@@ -104,12 +102,10 @@ print("Einstein Radius via Tracer (kpc) = ", einstein_radius_kpc)
 einstein_mass = image_plane_galaxy.einstein_mass_angular_via_tangential_critical_curve
 print("Einstein Mass via Tracer (angular) = ", einstein_mass)
 
-critical_surface_density = (
-    al.util.cosmology.critical_surface_density_between_redshifts_from(
-        redshift_0=image_plane_galaxy.redshift,
-        redshift_1=source_plane_galaxy.redshift,
-        cosmology=cosmo.Planck15,
-    )
+critical_surface_density = al.util.cosmology.critical_surface_density_between_redshifts_from(
+    redshift_0=image_plane_galaxy.redshift,
+    redshift_1=source_plane_galaxy.redshift,
+    cosmology=cosmo.Planck15,
 )
 einstein_mass_kpc = einstein_mass * critical_surface_density
 print("Einstein Mass via Tracer (kpc) = ", einstein_mass_kpc)
