@@ -7,9 +7,9 @@ modeling pipeline.
 Using a pipeline composed of five phases this runner fits `Imaging` of a strong lens system, where in the final phase
 of the pipeline:
 
- - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalChameleon`.
- - The lens `Galaxy`'s light matter mass distribution is fitted with the `EllipticalChameleon` of the
-      `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
+ - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light matter mass distribution is fitted with the `EllipticalSersic` of the `LightProfile`,
+ where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
  - The lens `Galaxy`'s dark matter mass distribution is modeled as a _SphericalNFW_.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
 
@@ -21,7 +21,7 @@ from os import path
 import autolens as al
 import autolens.plot as aplt
 
-dataset_name = "light_chameleon__mass_mlr_dark__source_sersic"
+dataset_name = "light_sersic__mass_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
 dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
@@ -71,13 +71,13 @@ First, we create a `SetupLightParametric` which customizes:
  - The alignment of these components, for example if the `bulge` and `disk` centres are aligned.
  - If the centre of the lens light profile is manually input and fixed for modeling.
  
-In this example we fit the lens light as just one component, a `bulge` represented as an `EllipticalChameleon`. We do 
+In this example we fit the lens light as just one component, a `bulge` represented as an `EllipticalSersic`. We do 
 not fix its centre to an input value. We have included options of `SetupLightParametric` with input values of
 `None`, illustrating how it could be edited to fit different models.
 """
 
 setup_light = al.SetupLightParametric(
-    bulge_prior_model=al.lp.EllipticalChameleon,
+    bulge_prior_model=al.lp.EllipticalSersic,
     disk_prior_model=None,
     envelope_prior_model=None,
     align_bulge_disk_centre=False,
@@ -90,11 +90,11 @@ This pipeline also uses a `SetupMassLightDark`, which customizes:
 
  - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and we do not 
    include it in the mass model)..
- - If the centre of the `EllipticalChameleon` `LightMassProfile` and `SphericalNFWMCRLudlow` dark `MassProfile` are 
+ - If the centre of the `EllipticalSersic` `LightMassProfile` and `SphericalNFWMCRLudlow` dark `MassProfile` are 
    aligned.
 """
 
-setup_mass = al.SetupMassLightDark(align_light_dark_centre=True, with_shear=False)
+setup_mass = al.SetupMassLightDark(align_bulge_dark_centre=True, with_shear=False)
 
 """
 Next, we create a `SetupSourceParametric` which does not customize the pipeline behaviour except for tagging (see below).
@@ -115,7 +115,7 @@ to different output folders and thus not clash with one another!
 The `path_prefix` below specifies the path the pipeline results are written to, which is:
 
  `autolens_workspace/output/transdimensional/dataset_type/dataset_name` 
- `autolens_workspace/output/transdimensional/imaging/light_chameleon__mass_mlr_dark__source_sersic/`
+ `autolens_workspace/output/transdimensional/imaging/light_sersic__mass_mlr_dark__source_sersic/`
 
 The redshift of the lens and source galaxies are also input (see `examples/model/customize/redshift.py`) for a 
 description of what inputting redshifts into **PyAutoLens** does.

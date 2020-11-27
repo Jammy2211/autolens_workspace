@@ -35,7 +35,7 @@ imaging = al.Imaging.from_fits(
 
 aplt.Imaging.subplot_imaging(imaging=imaging)
 
-"""We are going to fit this data, so we must create *Mask2D* and *MaskedImaging* objects."""
+"""We are going to fit this data, so we must create `Mask2D` and `MaskImaging` objects."""
 
 mask = al.Mask2D.circular(
     shape_2d=imaging.shape_2d, pixel_scales=imaging.pixel_scales, sub_size=1, radius=3.6

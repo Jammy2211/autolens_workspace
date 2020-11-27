@@ -196,7 +196,7 @@ print("etc.")
 # %%
 """
 Congratulations, you`ve completed your first **PyAutoLens** tutorial! Before moving on to the next one, experiment with 
-__PyAutoLens__ by doing the following:
+**PyAutoLens** by doing the following:
 
 1) Change the pixel-scale of the `Grid`'s - what happens to the Cartesian coordinates?
 2) Change the resolution of the `Grid`'s - what happens Cartesian coordinates?

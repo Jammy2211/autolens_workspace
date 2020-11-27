@@ -204,7 +204,7 @@ aplt.MassProfile.magnification(mass_profile=sis_mass_profile, grid=grid)
 # %%
 """
 Congratulations, you`ve completed your second **PyAutoLens** tutorial! Before moving on to the next one, experiment with 
-__PyAutoLens__ by doing the following:
+**PyAutoLens** by doing the following:
 
 1) Change the `LightProfile`'s effective radius and Sersic index - how does the image's appearance change?
 2) Change the `MassProfile`'s einstein radius - what happens to the deflection angles, potential and convergence?

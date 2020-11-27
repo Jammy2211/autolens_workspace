@@ -360,7 +360,7 @@ Disadvantage:
  - Its potentially expensive. Very expensive. For very complex models, the run times can begin to take hours, days, 
  weeks or, dare I say it, months!
 
-So, we can now fit strong lenses with **PyAutoLens**. And when it fails, we know how to get it to work. I hope you`re 
+So, we can now fit strong lenses with **PyAutoLens**. And when it fails, we know how to get it to work. I hope you're 
 feeling pretty smug. You might even be thinking `why should I bother with the rest of these tutorials, if I can fit 
 strong a lens already`.
 

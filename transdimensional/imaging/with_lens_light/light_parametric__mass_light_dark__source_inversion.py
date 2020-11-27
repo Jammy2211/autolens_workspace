@@ -7,8 +7,9 @@ modeling pipeline.
 Using a pipeline composed of five phases this runner fits `Imaging` of a strong lens system, where in the final phase
 of the pipeline:
 
- - The lens `Galaxy`'s light is modeled parametrically as two `EllipticalChameleon`'s.
- - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal`.
+ - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential`.
+ - The lens `Galaxy`'s light matter mass distribution is fitted with the `EllipticalSersic` and `EllipticalExponential`
+   of the `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
  - The source galaxy is modeled using an `Inversion`.
 
 This uses the pipeline (Check it out full description of the pipeline):
@@ -19,7 +20,7 @@ from os import path
 import autolens as al
 import autolens.plot as aplt
 
-dataset_name = "light_chameleon_x2__mass_mlr_nfw__source_sersic"
+dataset_name = "light_sersic_exp__mass_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
 dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
@@ -87,14 +88,14 @@ First, we create a `SetupLightParametric` which customizes:
  - The alignment of these components, for example if the `bulge` and `disk` centres are aligned.
  - If the centre of the lens light profile is manually input and fixed for modeling.
  
-In this example we fit the lens light as just one component, a `bulge` represented as an `EllipticalChameleon`. We do 
-not fix its centre to an input value. We have included options of `SetupLightParametric` with input values of
-`None`, illustrating how it could be edited to fit different models.
+In this example we fit the lens light as two component, a `bulge` represented as an `EllipticalSersic` and `disk` 
+represented as an `EllipticalExponential`. We do not fix its centre to an input value. We have included options 
+of `SetupLightParametric` with input values of `None`, illustrating how it could be edited to fit different models.
 """
 
 setup_light = al.SetupLightParametric(
-    bulge_prior_model=al.lp.EllipticalChameleon,
-    disk_prior_model=al.lp.EllipticalChameleon,
+    bulge_prior_model=al.lp.EllipticalSersic,
+    disk_prior_model=al.lp.EllipticalExponential,
     envelope_prior_model=None,
     align_bulge_disk_centre=False,
     align_bulge_disk_elliptical_comps=False,

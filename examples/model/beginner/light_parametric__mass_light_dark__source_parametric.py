@@ -11,15 +11,15 @@ both to perform the model-fit.
 """
 In this example script, we fit `Imaging` of a strong lens system where:
 
- - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalChameleon`.
- - The lens `Galaxy`'s light matter mass distribution is fitted with the `EllipticalChameleon` of the 
-      `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
+ - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light matter mass distribution is fitted with the `EllipticalSersic` of the 
+ `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio.
  - The lens `Galaxy`'s dark matter mass distribution is modeled as a `SphericalNFW`.
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.   
 """
 
 """
-Load the strong lens dataset `light_chameleon__mass_mlr_nfw__source_sersic` `from .fits files, which is the dataset 
+Load the strong lens dataset `light_sersic__mass_mlr_nfw__source_sersic` `from .fits files, which is the dataset 
 we will use to perform lens modeling.
 
 This is the same dataset we fitted in the `fitting.py` example.
@@ -30,7 +30,7 @@ import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-dataset_name = "light_chameleon__mass_mlr_nfw__source_sersic"
+dataset_name = "light_sersic__mass_mlr_nfw__source_sersic"
 dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)
 
 imaging = al.Imaging.from_fits(
@@ -66,10 +66,10 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens model is:
 
- - An `EllipticalChameleon` `LightAndMassProfile` for the lens `Galaxy`'s light and mass (8 parameters) [note that we use 
+ - An `EllipticalSersic` `LightAndMassProfile` for the lens `Galaxy`'s light and mass (8 parameters) [note that we use 
       the `al.lmp` module to create this, signifying it represents both the light and mass].
  - A `SphericalNFW` `MassProfile` for the lens `Galaxy`'s dark matter whose centre is aligned with 
-   the `EllipticalChameleon` (3 parameters).
+   the `EllipticalSersic` (3 parameters).
  - An `EllipticalSersic` `LightProfile` for the source `Galaxy`'s mass (7 parameters).
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.
@@ -81,19 +81,10 @@ Alternatively, you can manually override the priors (see `autolens_workspace/exa
 """
 
 """
-The `EllipticalChameleon` profile is the subtraction of two isothermal mass distributions, which each have their own 
-core radii. If the second `core_radius` is greater than that of the first, negative mass is created. To avoid this,
-we add an assertion that `core_radius_0` < `core_radius_1`.
-"""
-
-bulge = af.PriorModel(al.lmp.EllipticalChameleon)
-bulge.add_assertion(bulge.core_radius_0 < bulge.core_radius_1)
-
-"""
 This aligns the centres of the bulge and dark matter profile, so they share identical values during the 
 non-linear search.
 """
-
+bulge = af.PriorModel(al.lmp.EllipticalSersic)
 dark = af.PriorModel(al.mp.SphericalNFW)
 bulge.centre = dark.centre
 
@@ -135,7 +126,7 @@ operates, I recommend you complete chapters 1 and 2 of the HowToLens lecture ser
 
 The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/beginner/light_chameleon__mass_mlr_nfw__source_sersic/
+ `/autolens_workspace/output/examples/beginner/light_sersic__mass_mlr_nfw__source_sersic/
      phase_light[bulge]_mass[mlr_nfw]_source[bulge]`.
 """
 

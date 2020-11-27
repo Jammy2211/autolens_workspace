@@ -84,7 +84,7 @@ def make_pipeline(setup, settings):
                 redshift=setup.redshift_lens,
                 bulge=setup.setup_light.bulge_prior_model,
                 disk=setup.setup_light.disk_prior_model,
-                envelope=setup.setup_light.envelope_as_model,
+                envelope=setup.setup_light.envelope_prior_model,
             )
         ),
         settings=settings,

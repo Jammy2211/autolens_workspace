@@ -254,7 +254,7 @@ def make_pipeline(setup, settings):
     """
     Phase 4:
 
-    Next, we initialize a magnification based `Pixelization`.nd constant `Regularization`.cheme. But, you`re probably
+    Next, we initialize a magnification based `Pixelization`.nd constant `Regularization`.cheme. But, you're probably
     wondering, why do we bother with these at all? Why not jump straight to the brightness based `Pixelization`.nd
     adaptive regularization?
 

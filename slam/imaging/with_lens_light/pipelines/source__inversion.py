@@ -199,8 +199,10 @@ def make_pipeline(slam, settings):
         3) Set priors on the lens galaxy `MassProfile`'s using the results of phase 2.
     """
 
-    mass = slam.pipeline_source_parametric.setup_mass.mass_prior_model_with_updated_priors(
-        index=-1, unfix_mass_centre=True
+    mass = (
+        slam.pipeline_source_parametric.setup_mass.mass_prior_model_with_updated_priors(
+            index=-1, unfix_mass_centre=True
+        )
     )
 
     phase4 = al.PhaseImaging(

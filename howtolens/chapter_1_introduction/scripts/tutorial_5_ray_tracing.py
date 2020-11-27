@@ -162,7 +162,7 @@ aplt.Plane.plane_grid(
 
 # %%
 """
-__PyAutoLens__ has tools for plotting a `Tracer`. A ray-tracing subplot plots the following:
+**PyAutoLens** has tools for plotting a `Tracer`. A ray-tracing subplot plots the following:
 
 1) The image, computed by tracing the source-`Galaxy`'s light `forwards` through the `Tracer`.
 
@@ -218,7 +218,7 @@ print(image_plane_convergence.in_2d[1, 0])
 
 # %%
 """
-I've left the rest below commented to avoid too many print statements, but if you`re feeling adventurous go ahead 
+I've left the rest below commented to avoid too many print statements, but if you're feeling adventurous go ahead 
 and uncomment the lines below!
 """
 
@@ -264,7 +264,7 @@ __Multi-plane lensin__g:
  However, there are strong lens system where there are more than 2 planes! 
 
  In these instances, the  convergence, potential and deflections of each plane is different to the overall values 
- given by the `Tracer`.  This is beyond the scope of this chapter, but be reassured that what you`re learning now 
+ given by the `Tracer`.  This is beyond the scope of this chapter, but be reassured that what you're learning now 
  will prepare you for the advanced chapters later on!
 
 And with that, we're done. You`ve performed your first ray-tracing with **PyAutoLens**! There are no exercises for this 

@@ -4,7 +4,7 @@ Tutorial 3: Inversions
 ======================
 
 We've covered `Mapper``., which, if I haven`t emphasised it enough yet, map things. Now, we're going to look at how we
-can use these `Mapper`'s (which map things) to reconstruct the source galaxy - I hope you`re excited!
+can use these `Mapper`'s (which map things) to reconstruct the source galaxy - I hope you're excited!
 """
 
 # %%
@@ -195,7 +195,7 @@ Lets discuss how an `Inversion` actually works. The explanation I give below is 
 technical details of how an `Inversion` *actually* works. To be good at lens modeling you don't need to understand the 
 nitty-gritty details of linear inversions, you just need an instinct for how to use them as a tool to model lenses.
 
-Nevertheless, I know a lot of you hate `black-boxes`, or have an interest in linear algrebra. If you`re that way 
+Nevertheless, I know a lot of you hate `black-boxes`, or have an interest in linear algrebra. If you're that way 
 inclined, then checkout the documentation of the autolens source code for more information. In particular, you should 
 look at the following functions in the project PyAutoArray:
 

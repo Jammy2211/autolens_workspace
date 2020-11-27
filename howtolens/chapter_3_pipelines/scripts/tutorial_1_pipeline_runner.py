@@ -18,7 +18,7 @@ blob of light in the centre of the imaging) looks nothing like the source's ligh
 we would say that these two model components (the lens`s light and source's light) are not covariant.
 
 So, as a newly trained lens modeler, what does the lack of covariance between these parameters make you think?
-Hopefully, you`re thinking, why should I bother fitting the lens and source galaxy simultaneously? Surely we can
+Hopefully, you're thinking, why should I bother fitting the lens and source galaxy simultaneously? Surely we can
 find the right regions of non-linear parameter space by fitting each separately first? This is what we're going to do
 in this tutorial, using a pipeline composed of a modest 3 phases:
 
@@ -122,7 +122,7 @@ pipeline_lens_and_source = tutorial_1_pipeline_lens_and_source.make_pipeline(
 """
 Okay, good job, we're running our first pipeline in **PyAutoLens**! But what does it *actually* do? Well, to find 
 that out, go to the script `pipelines/tutorial_1_pipeline_lens_and_source.py`, which contains a full description of 
-the pipeline, as well as an overview of the tools we use to write the most general pipelines possible. Once you`re 
+the pipeline, as well as an overview of the tools we use to write the most general pipelines possible. Once you're 
 done, come back to this pipeline runner script and we'll wrap up tutorial 1.
 """
 

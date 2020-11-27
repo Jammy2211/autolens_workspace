@@ -270,7 +270,7 @@ aplt.Mapper.subplot_image_and_mapper(
 This successfully addresses both of the issues above! However, you might be thinking, isn't that a bit of a hack? Its 
 not really a physical treatment of the ray-tracing, is it?
 
-Well, you`re right. However, the *only* physical way to do this would be to use a `Mask2D` so large that all demangified 
+Well, you're right. However, the *only* physical way to do this would be to use a `Mask2D` so large that all demangified 
 central pixels are surrounded by traced image-pixels. This would require a `Mask2D` so large our computer would crash, 
 That`s not a good solution, thus borders provide us with a workaround, one that I've extensively tested and have found 
 that, provided your `Mask2D` isn't too small, doesn`t lead to systematic biases.
@@ -454,8 +454,8 @@ aplt.Inversion.reconstruction(
 
 # %%
 """
-And with that, borders are done. In truth, borders should pretty much take care of themselves when you`re using 
-__PyAutoLens__ and you probably won't think about them much. However, as I showed above, if you don't choose a large enough 
+And with that, borders are done. In truth, borders should pretty much take care of themselves when you're using 
+**PyAutoLens** and you probably won't think about them much. However, as I showed above, if you don't choose a large enough 
 mask things can go wrong - thus, its important you know what borders are, so you can look out for this potential 
 source of systematics!
 """

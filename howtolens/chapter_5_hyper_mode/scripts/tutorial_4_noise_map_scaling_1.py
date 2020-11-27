@@ -173,7 +173,7 @@ pixels.
 This is even more problematic when we try and use the Bayesian log evidence to objectively quantify the quality of the 
 fit, as it means it cannot obtain a solution that provides a reduced chi-squared of 1.
 
-So, you`re probably wondering, why can`t we just change the mass model to fit the data better? Surely if we 
+So, you're probably wondering, why can`t we just change the mass model to fit the data better? Surely if we 
 actually modeled this image with **PyAutoLens** it wouldn't go to this solution anyway but instead infer the correct 
 Einstein radius of 1.6? That`s true.
 
@@ -259,8 +259,10 @@ source_contribution_factor_1 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
-    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
+contribution_map = (
+    source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
+        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
+    )
 )
 
 aplt.Array(
@@ -277,8 +279,10 @@ source_contribution_factor_3 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
-    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
+contribution_map = (
+    source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
+        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
+    )
 )
 
 aplt.Array(

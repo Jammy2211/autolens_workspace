@@ -30,7 +30,7 @@ import autolens.plot as aplt
 
 """Specify the dataset type, label and name, which we use to determine the path we load the data from."""
 
-dataset_name = "light_chameleon_x2__mass_mlr_nfw__source_sersic"
+dataset_name = "light_sersic_exp__mass_mlr_nfw__source_sersic"
 pixel_scales = 0.1
 
 dataset_path = path.join("dataset", "imaging", "with_lens_light", dataset_name)

@@ -98,7 +98,7 @@ transformer_class = al.TransformerNUFFT
 
 """
 The perform a fit, we follow the same process we did for imaging, creating a *MaskedInterferometer* object which 
-behaves analogously to a *MaskedImaging* object.
+behaves analogously to a `MaskImaging` object.
 """
 
 visibilities_mask = np.full(fill_value=False, shape=interferometer.visibilities.shape)

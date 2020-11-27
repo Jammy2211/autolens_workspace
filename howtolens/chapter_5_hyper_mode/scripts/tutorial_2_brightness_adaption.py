@@ -257,8 +257,10 @@ source_weight_power_10 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_10 = source_weight_power_10.pixelization.weight_map_from_hyper_image(
-    hyper_image=source_weight_power_10.hyper_galaxy_image
+cluster_weight_power_10 = (
+    source_weight_power_10.pixelization.weight_map_from_hyper_image(
+        hyper_image=source_weight_power_10.hyper_galaxy_image
+    )
 )
 
 aplt.Array(array=cluster_weight_power_10, mask=mask)
@@ -346,7 +348,7 @@ uses just 300-800 pixels (depending on the source itself). Clearly, the easiest 
 is to use fewer pixels overall!
 
 This provides a second benefit. If the best solutions in our fit want to use the fewest source-pixels possible and 
-__PyAutoLens__ can now access those solutions, this means that hyper-galaxy-mode will run much faster than the magnification 
+**PyAutoLens** can now access those solutions, this means that hyper-galaxy-mode will run much faster than the magnification 
 based grid! Put simply, fewer source-pixels means lower computational overheads. YAY!
 
 Tutorial 2 done, next up, adaptive regularization!

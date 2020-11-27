@@ -271,7 +271,7 @@ shape. As a result of this, the corresponding caustic in the source plane also a
  
 This is a numerical issue with the way that **PyAutoLens** computes the critical curves and caustics - without this issue
 both would appear perfect symmetric and smooth! Implementing a more robust calculation of these quantities is on the
-__PyAutoLens__ featre list, but for now you'll just have to accept this aspect of the visualization is sub-optimal!
+**PyAutoLens** featre list, but for now you'll just have to accept this aspect of the visualization is sub-optimal!
 """
 
 # %%

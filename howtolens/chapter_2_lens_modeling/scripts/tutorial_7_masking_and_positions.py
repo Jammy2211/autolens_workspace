@@ -302,7 +302,7 @@ There are two things you should bare in mind in terms of masking and positions:
 
  1) Customizing the mask and positions for the analysis of one strong lens gets the analysis running fast and can 
  provide accurate non-linear sampling. However, for a large sample of lenses, customizing the mask and positions 
- will begin to take a lot of time. If you`re willing to put that time and effort in, great, but these solutions 
+ will begin to take a lot of time. If you're willing to put that time and effort in, great, but these solutions 
  *do not* scale-up to large samples of lenses.
     
  2) A word of warning - be *extremely* careful when using positions, especially if it is unclear if the lensed 

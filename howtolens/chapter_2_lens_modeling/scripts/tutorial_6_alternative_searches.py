@@ -303,7 +303,7 @@ So, when should we use Dynesty and when should we use PySwarms? Its simple:
     
 There is one exception however, for complex models whose priors have not be well tuned or initialized by a previous 
 phase, PySwarms has a tendancy to locate a local maxima. Dynesty`s slower but more complete sampling of parameter space 
-will often find the global maxima when PySwarms doesn`t. So, if you`re not happy with the results PySwarms is giving, 
+will often find the global maxima when PySwarms doesn`t. So, if you're not happy with the results PySwarms is giving, 
 it may be shrewd to bite-the-button on run-time and use Dynesty to get your initial lens model fit.
 
 In the next chapter, when we introduce pipelines, you'll note that are our general strategy to lens modeling is to

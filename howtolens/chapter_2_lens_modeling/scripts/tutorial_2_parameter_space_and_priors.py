@@ -219,7 +219,7 @@ And, we're done. This tutorial had some pretty difficult concepts to wrap your h
 enough how important it is that you develop an intuition for non-linear searches and the notion of a non-linear 
 parameter space. Becoming good at lens modeling is all being able to navigate a complex, degenerate and highly 
 non-linear parameter space! Luckily, we're going to keep thinking about this in the next set of tutorials, so if 
-you`re not feeling too confident yet, you will be soon!
+you're not feeling too confident yet, you will be soon!
 
 Before continuing to the next tutorial, I want you think about whether anything could go wrong when we search a 
 non-linear parameter space. Is it possible that we won't find the highest log likelihood lens model? Why might this be?

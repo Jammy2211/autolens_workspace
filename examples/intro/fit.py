@@ -5,7 +5,7 @@ __Example: Fitting__
 fit `Imaging` data of a strong lens.
 
 The autolens_workspace comes distributed with simulated images of strong lenses (an example of how these simulations
-are made can be found in the `simulate.py` exampe, with all simulator scripts located in `autolens_workspac/simulators`.
+are made can be found in the `simulate.py` example, with all simulator scripts located in `autolens_workspac/simulators`.
 
 We we begin by loading the strong lens dataset `mass_sie__source_sersic` `from .fits files:
 """
