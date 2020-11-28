@@ -228,7 +228,7 @@ from pipelines import mass__total
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
 source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-# mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
+mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
 
-pipeline = source__parametric + source__inversion  # + mass__total
+pipeline = source__parametric + source__inversion  + mass__total
 pipeline.run(dataset=imaging, mask=mask)

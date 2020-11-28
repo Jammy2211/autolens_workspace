@@ -19,7 +19,7 @@ from os import path
 import numpy as np
 
 dataset_name = "mass_sie__source_sersic"
-dataset_path = path.join("dataset", "interferometer ", dataset_name)
+dataset_path = path.join("dataset", "interferometer", dataset_name)
 
 interferometer = al.Interferometer.from_fits(
     visibilities_path=path.join(dataset_path, "visibilities.fits"),
