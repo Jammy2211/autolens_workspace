@@ -259,10 +259,8 @@ source_contribution_factor_1 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = (
-    source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
-    )
+contribution_map = source_contribution_factor_1.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
 aplt.Array(
@@ -279,10 +277,8 @@ source_contribution_factor_3 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-contribution_map = (
-    source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
-        hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
-    )
+contribution_map = source_contribution_factor_3.hyper_galaxy.contribution_map_from_hyper_images(
+    hyper_model_image=hyper_image, hyper_galaxy_image=hyper_image
 )
 
 aplt.Array(

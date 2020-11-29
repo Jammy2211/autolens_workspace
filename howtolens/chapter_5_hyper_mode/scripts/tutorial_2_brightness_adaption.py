@@ -257,10 +257,8 @@ source_weight_power_10 = al.Galaxy(
     binned_hyper_galaxy_image=hyper_image,
 )
 
-cluster_weight_power_10 = (
-    source_weight_power_10.pixelization.weight_map_from_hyper_image(
-        hyper_image=source_weight_power_10.hyper_galaxy_image
-    )
+cluster_weight_power_10 = source_weight_power_10.pixelization.weight_map_from_hyper_image(
+    hyper_image=source_weight_power_10.hyper_galaxy_image
 )
 
 aplt.Array(array=cluster_weight_power_10, mask=mask)
