@@ -66,7 +66,7 @@ Refine the best-fit detected subhalo from the previous phase.
 """
 
 
-def make_pipeline(slam, settings, real_space_mask):
+def make_pipeline(slam, settings, real_space_mask, mass_results):
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline_subhalo"
@@ -95,13 +95,25 @@ def make_pipeline(slam, settings, real_space_mask):
 
     """SLaM: Setup the lens and source passing them from the previous pipelines in the same way as described above."""
 
-    lens = slam.lens_for_subhalo_pipeline()
-    source = slam.source_from_previous_pipeline_model_if_parametric()
+    lens = slam.lens_for_subhalo_pipeline_from_results(results=mass_results)
+    source = slam.source_from_results_model_if_parametric(results=mass_results)
+
+    if hasattr(mass_results.last, "hyper_combined"):
+
+        hyper_background_noise = (
+            mass_results.last.hyper.instance.optional.hyper_background_noise
+        )
+
+    else:
+
+        hyper_background_noise = None
 
     phase1 = al.PhaseInterferometer(
         search=af.DynestyStatic(name="phase[1]_mass[total_refine]", n_live_points=100),
-        galaxies=dict(lens=lens, source=source),
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        galaxies=af.CollectionPriorModel(lens=lens, source=source),
+        hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
+            result=mass_results.last
+        ),
         settings=settings,
         real_space_mask=real_space_mask,
     )
@@ -139,8 +151,14 @@ def make_pipeline(slam, settings, real_space_mask):
     )
 
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
-    subhalo.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
-    subhalo.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
+    subhalo.mass.centre_0 = af.UniformPrior(
+        lower_limit=-slam.setup_subhalo.grid_dimensions_arcsec,
+        upper_limit=slam.setup_subhalo.grid_dimensions_arcsec,
+    )
+    subhalo.mass.centre_1 = af.UniformPrior(
+        lower_limit=-slam.setup_subhalo.grid_dimensions_arcsec,
+        upper_limit=slam.setup_subhalo.grid_dimensions_arcsec,
+    )
 
     subhalo.mass.redshift_object = slam.redshift_lens
     subhalo.mass.redshift_source = slam.redshift_source
@@ -150,14 +168,14 @@ def make_pipeline(slam, settings, real_space_mask):
           *mass_is_model* parameter of `SetupSubhalo`.
     """
 
-    lens = slam.lens_for_subhalo_pipeline()
+    lens = slam.lens_for_subhalo_pipeline_from_results(results=mass_results)
 
     """
     SLaM: Setup the source model, which uses the the phase1 result is a model or instance depending on the 
     *source_is_model* parameter of `SetupSubhalo`.
     """
 
-    source = slam.source_for_subhalo_pipeline()
+    source = slam.source_for_subhalo_pipeline_from_results(results=mass_results)
 
     phase2_lens_plane = GridPhase(
         search=af.DynestyStatic(
@@ -166,8 +184,8 @@ def make_pipeline(slam, settings, real_space_mask):
             walks=5,
             facc=0.2,
         ),
-        galaxies=dict(lens=lens, subhalo=subhalo, source=source),
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        galaxies=af.CollectionPriorModel(lens=lens, subhalo=subhalo, source=source),
+        hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
         number_of_steps=slam.setup_subhalo.grid_size,
@@ -186,18 +204,24 @@ def make_pipeline(slam, settings, real_space_mask):
 
     """The subhalo redshift is free to vary between 0.0 and the lens galaxy redshift."""
 
-    subhalo_z_below = al.GalaxyModel(
+    subhalo_z_multi = al.GalaxyModel(
         redshift=slam.redshift_lens, mass=al.mp.SphericalNFWMCRLudlow
     )
 
-    subhalo_z_below.mass.mass_at_200 = af.LogUniformPrior(
+    subhalo_z_multi.mass.mass_at_200 = af.LogUniformPrior(
         lower_limit=1.0e6, upper_limit=1.0e11
     )
-    subhalo_z_below.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
-    subhalo_z_below.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
-    subhalo_z_below.mass.redshift_source = slam.redshift_source
-    subhalo_z_below.mass.redshift_object = af.UniformPrior(
-        lower_limit=0.0, upper_limit=slam.redshift_lens
+    subhalo_z_multi.mass.centre_0 = af.UniformPrior(
+        lower_limit=-slam.setup_subhalo.grid_dimensions_arcsec,
+        upper_limit=slam.setup_subhalo.grid_dimensions_arcsec,
+    )
+    subhalo_z_multi.mass.centre_1 = af.UniformPrior(
+        lower_limit=-slam.setup_subhalo.grid_dimensions_arcsec,
+        upper_limit=slam.setup_subhalo.grid_dimensions_arcsec,
+    )
+    subhalo_z_multi.mass.redshift_source = slam.redshift_source
+    subhalo_z_multi.mass.redshift_object = af.UniformPrior(
+        lower_limit=0.0, upper_limit=slam.redshift_source
     )
 
     """
@@ -211,45 +235,17 @@ def make_pipeline(slam, settings, real_space_mask):
           `LightProfile` they are varied (this is customized using source_is_model).
     """
 
-    phase2_foreground_plane = GridPhase(
+    phase2_multi_plane = GridPhase(
         search=af.DynestyStatic(
-            name="phase[2]_mass[total]_subhalo[search_foreground_plane]",
+            name="phase[2]_mass[total]_subhalo[search_multi_plane]",
             n_live_points=50,
             walks=5,
             facc=0.2,
         ),
-        galaxies=dict(lens=lens, subhalo=subhalo_z_below, source=source),
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
-        settings=settings,
-        real_space_mask=real_space_mask,
-        number_of_steps=slam.setup_subhalo.grid_size,
-    )
-
-    """The subhalo redshift is free to vary between and the lens and source galaxy redshifts."""
-
-    subhalo_z_above = al.GalaxyModel(
-        redshift=slam.redshift_lens, mass=al.mp.SphericalNFWMCRLudlow
-    )
-
-    subhalo_z_above.mass.mass_at_200 = af.LogUniformPrior(
-        lower_limit=1.0e6, upper_limit=1.0e11
-    )
-    subhalo_z_above.mass.centre_0 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
-    subhalo_z_above.mass.centre_1 = af.UniformPrior(lower_limit=-3.0, upper_limit=3.0)
-    subhalo_z_above.mass.redshift_source = slam.redshift_source
-    subhalo_z_above.mass.redshift_object = af.UniformPrior(
-        lower_limit=slam.redshift_lens, upper_limit=slam.redshift_source
-    )
-
-    phase2_background_plane = GridPhase(
-        search=af.DynestyStatic(
-            name="phase[2]_mass[total]_subhalo[search_background_plane]",
-            n_live_points=50,
-            walks=5,
-            facc=0.2,
+        galaxies=af.CollectionPriorModel(
+            lens=lens, subhalo=subhalo_z_multi, source=source
         ),
-        galaxies=dict(lens=lens, subhalo=subhalo_z_above, source=source),
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
         real_space_mask=real_space_mask,
         number_of_steps=slam.setup_subhalo.grid_size,
@@ -270,23 +266,23 @@ def make_pipeline(slam, settings, real_space_mask):
     # phase2 = al.PhaseInterferometer(
     #     name="phase[2]__subhalo_refine",
     #     path_prefix=path_prefix,
-    #     galaxies=dict(
+    #     galaxies=af.CollectionPriorModel(
     #         lens=af.last[-1].model.galaxies.lens, source=source, subhalo=subhalo
     #     ),
-    #     hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+    #     hyper_background_noise=af.last.hyper.instance.optional.hyper_background_noise,
     #     settings=settings,
     #     search=af.DynestyStatic(n_live_points=100),
     # )
     #
     # phase2 = phase2.extend_with_multiple_hyper_phases(
-    #     setup=slam.hyper, include_inversion=False
+    #     setup=slam.hyper
     # )
 
     return al.PipelineDataset(
         pipeline_name,
         path_prefix,
+        mass_results,
         phase1,
         phase2_lens_plane,
-        phase2_foreground_plane,
-        phase2_background_plane,
+        phase2_multi_plane,
     )

@@ -107,7 +107,9 @@ the lens model.
 """
 
 phase = al.PhaseImaging(
-    search=search, galaxies=dict(lens=lens, source=source), settings=settings
+    search=search,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    settings=settings,
 )
 
 result = phase.run(dataset=imaging, mask=mask)
@@ -149,7 +151,9 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 phase = al.PhaseImaging(
-    search=search, galaxies=dict(lens=lens, source=source), settings=settings
+    search=search,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    settings=settings,
 )
 
 result = phase.run(dataset=imaging, mask=mask)
@@ -177,7 +181,9 @@ The `name` and `path_prefix` below specify the path where results are stored in 
 """
 
 phase = al.PhaseImaging(
-    search=search, galaxies=dict(lens=lens, source=source), settings=settings
+    search=search,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    settings=settings,
 )
 
 result = phase.run(dataset=imaging, mask=mask)

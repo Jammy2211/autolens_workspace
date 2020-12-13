@@ -123,7 +123,9 @@ The `name` and `path_prefix` below specify the path where results are stored in 
  `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_sersic_exp__mass_sie__source_sersic/phase[1]`.
 """
 
-phase1 = al.PhaseImaging(search=search, settings=settings, galaxies=dict(lens=lens))
+phase1 = al.PhaseImaging(
+    search=search, settings=settings, galaxies=af.CollectionPriorModel(lens=lens)
+)
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
 
@@ -183,7 +185,9 @@ Note how the `lens` passed to this phase was set up above using the results of p
 """
 
 phase2 = al.PhaseImaging(
-    settings=settings, galaxies=dict(lens=lens, source=source), search=search
+    settings=settings,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    search=search,
 )
 
 phase2.run(dataset=imaging, mask=mask)

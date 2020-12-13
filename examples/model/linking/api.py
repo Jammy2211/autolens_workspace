@@ -135,7 +135,9 @@ the lens model.
 """
 
 phase1 = al.PhaseImaging(
-    settings=settings, galaxies=dict(lens=lens, source=source), search=search
+    settings=settings,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    search=search,
 )
 
 phase1_result = phase1.run(dataset=imaging, mask=mask)
@@ -187,7 +189,9 @@ the lens model.
 """
 
 phase2 = al.PhaseImaging(
-    settings=settings, galaxies=dict(lens=lens, source=source), search=search
+    settings=settings,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    search=search,
 )
 
 phase2.run(dataset=imaging, mask=mask)

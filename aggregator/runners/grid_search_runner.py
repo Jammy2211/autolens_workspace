@@ -75,8 +75,8 @@ for dataset_name in [
     hyper = al.SetupHyper(
         hyper_galaxies_lens=False,
         hyper_galaxies_source=False,
-        hyper_image_sky=False,
-        hyper_background_noise=False,
+        hyper_image_sky=None,
+        hyper_background_noise=None,
     )
 
     source = al.SLaMPipelineSource(with_shear=False)

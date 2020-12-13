@@ -68,7 +68,7 @@ def make_pipeline(setup, settings, real_space_mask):
         search=af.DynestyStatic(
             name="phase[1]_mass[sie]_source[parametric]", n_live_points=50
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=al.mp.EllipticalIsothermal,
@@ -111,7 +111,7 @@ def make_pipeline(setup, settings, real_space_mask):
         search=af.DynestyStatic(
             name="phase[2]__source_inversion_initialization", n_live_points=20
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=phase1.result.instance.galaxies.lens.mass,

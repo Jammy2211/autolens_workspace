@@ -79,7 +79,7 @@ def make_pipeline(setup, settings):
 
     phase1 = al.PhaseImaging(
         search=af.DynestyStatic(name="phase[1]_light[parametric]", n_live_points=50),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=setup.setup_light.bulge_prior_model,
@@ -102,7 +102,7 @@ def make_pipeline(setup, settings):
         search=af.DynestyStatic(
             name="phase[2]_light[fixed]_mass[sie]_source[parametric]", n_live_points=60
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=phase1.result.instance.galaxies.lens.bulge,
@@ -127,14 +127,16 @@ def make_pipeline(setup, settings):
         1) Set the lens`s light, mass, and source`s light using the results of phases 1 and 2.
     """
 
-    mass = setup.setup_mass.mass_prior_model_with_updated_priors()
+    mass = setup.setup_mass.mass_prior_model_with_updated_priors_from_result(
+        result=phase2.result
+    )
 
     phase3 = al.PhaseImaging(
         search=af.DynestyStatic(
             name="phase[3]_light[parametric]_mass[total]_source[parametric]",
             n_live_points=100,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=phase1.result.model.galaxies.lens.bulge,

@@ -45,7 +45,7 @@ def make_pipeline(slam, settings):
         search=af.DynestyStatic(
             name="phase[1]_mass[total]_source[parametric]", n_live_points=200, walks=10
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
                 mass=slam.pipeline_source_parametric.setup_mass.mass_prior_model,
@@ -61,6 +61,6 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase1 = phase1.extend_with_multiple_hyper_phases(setup_hyper=slam.setup_hyper)
+    phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
 
-    return al.PipelineDataset(pipeline_name, path_prefix, phase1)
+    return al.PipelineDataset(pipeline_name, path_prefix, None, phase1)

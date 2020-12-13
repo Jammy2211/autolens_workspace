@@ -70,8 +70,8 @@ The `SetupHyper` object controls the behaviour of  hyper-mode specifically:
 setup_hyper = al.SetupHyper(
     hyper_galaxies_lens=False,
     hyper_galaxies_source=False,
-    hyper_background_noise=False,
-    hyper_image_sky=False,  # <- By default this feature is off, as it rarely changes the lens model.
+    hyper_background_noise=None,
+    hyper_image_sky=None,  # <- By default this feature is off, as it rarely changes the lens model.
 )
 
 """

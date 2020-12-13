@@ -67,7 +67,7 @@ def make_pipeline(setup, settings):
         search=af.DynestyStatic(
             name="phase[1]_mass[sie]_source[parametric]", n_live_points=50
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=al.mp.EllipticalIsothermal,
@@ -97,13 +97,15 @@ def make_pipeline(setup, settings):
     priors, still benefitting from the initialized `Inversion` parameters.
     """
 
-    mass = setup.setup_mass.mass_prior_model_with_updated_priors()
+    mass = setup.setup_mass.mass_prior_model_with_updated_priors_from_result(
+        result=phase1.result
+    )
 
     phase2 = al.PhaseImaging(
         search=af.DynestyStatic(
             name="phase[2]_mass[total]_source[parametric]", n_live_points=20
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=mass,

@@ -8,7 +8,7 @@ __THIS RUNNER__
 Using two source pipelines and a mass pipeline this runner fits `Imaging` of a strong lens system, where in the final
 phase of the pipeline:
 
- - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic`.
+ - The lens `Galaxy`'s light is omitted from the data and model.
  - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalPowerLaw`.
  - The source galaxy is modeled using an `Inversion`.
 
@@ -86,12 +86,11 @@ for example if a shear was included in the mass model and the model used for the
 SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specific aspect of the strong 
 lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own setup object 
 which is equivalent to the `SetupPipeline` object, customizing the analysis in that pipeline. Each pipeline therefore
-has its own `SetupMass`, `SetupLightParametric` and `SetupSourceParametric` object.
+has its own `SetupMass` and `SetupSourceParametric` object.
 
 The `Setup` used in earlier pipelines determine the model used in later pipelines. For example, if the `Source` 
 pipeline is given a `Pixelization` and `Regularization`, than this `Inversion` will be used in the subsequent 
-`SLaMPipelineLightParametric` and  Mass pipelines. The assumptions regarding the lens light chosen by the `Light` 
-object are carried forward to the  `Mass`  pipeline.
+`SLaMPipelineMass` pipeline.
 
 The `Setup` again tags the path structure of every pipeline in a unique way, such than combinations of different
 SLaM pipelines can be used to fit lenses with different models. If the earlier pipelines are identical (e.g. they use
@@ -113,8 +112,8 @@ _SLaMPipelineLight_ and `SLaMPipelineMass` pipelines, model comparison can be pe
 hyper = al.SetupHyper(
     hyper_galaxies_lens=False,
     hyper_galaxies_source=False,
-    hyper_image_sky=False,
-    hyper_background_noise=False,
+    hyper_image_sky=None,
+    hyper_background_noise=None,
 )
 
 """
@@ -122,17 +121,33 @@ __SLaMPipelineSourceParametric__
 
 The parametric source pipeline aims to initialize a robust model for the source galaxy using `LightProfile` objects. 
 
-_SLaMPipelineSourceParametric_ determines the source model used by the parametric source pipeline. A full description 
-of all options can be found ? and ?.
+ Source: This parametric source model is used by the SLaM Mass pipeline that follows, and thus sets the complexity of 
+ the parametric source model of the overall fit. 
+ 
+ For this runner the `SetupSourceParametric` customizes: 
+ 
+ - That the bulge of the source `Galaxy` is fitted using an `EllipticalSersic`.
+ - There is has no over `LightProfile` components (e.g. a disk, envelope)_.
+"""
 
-By default, this assumes an `EllipticalIsothermal` profile for the lens `Galaxy`'s mass. Our experience with lens 
-modeling has shown they are the simpliest models that provide a good fit to the majority of strong lenses.
+setup_source = al.SetupSourceParametric(
+    bulge_prior_model=al.lp.EllipticalSersic,
+    disk_prior_model=None,
+    envelope_prior_model=None,
+)
 
-For this runner the `SLaMPipelineSourceParametric` customizes:
+"""
+ Mass: The `MassProfile` used to model the lens `Galaxy`'s mass. This is changed in the SLaM Mass pipeline that follows.
+ 
+ Our experience with lens modeling has shown the `EllipticalIsothermal` profile is the simpliest model to fit that 
+ provide a good fit to the majority of strong lenses.
+ 
+ For this runner the `SetupMassProfile` customizes:
 
- - The `MassProfile` fitted by the pipeline (and the following `SLaMPipelineSourceInversion`.
- - If there is an `ExternalShear` in the mass model or not (this lens was not simulated with shear and 
-   we do not include it in the mass model).
+ - That the mass of the lens `Galaxy` is fitted using an `EllipticalIsothermal`.
+ - That there is not `ExternalShear` in the mass model (this lens was not simulated with shear and we do not include 
+ it in the mass model).
+ - That the mass profile centre is (0.0, 0.0) (this assumption will be relaxed in the SLaM Mass Pipeline.
 """
 
 setup_mass = al.SetupMassTotal(
@@ -140,7 +155,8 @@ setup_mass = al.SetupMassTotal(
     with_shear=False,
     mass_centre=(0.0, 0.0),
 )
-setup_source = al.SetupSourceParametric()
+
+"""We combine the `SetupSource` and `SetupMass` above to create the SLaM parametric Source Pipeline."""
 
 pipeline_source_parametric = al.SLaMPipelineSourceParametric(
     setup_mass=setup_mass, setup_source=setup_source
@@ -227,8 +243,14 @@ from pipelines import source__inversion
 from pipelines import mass__total
 
 source__parametric = source__parametric.make_pipeline(slam=slam, settings=settings)
-source__inversion = source__inversion.make_pipeline(slam=slam, settings=settings)
-mass__total = mass__total.make_pipeline(slam=slam, settings=settings)
+source_results = source__parametric.run(dataset=imaging, mask=mask)
 
-pipeline = source__parametric + source__inversion + mass__total
-pipeline.run(dataset=imaging, mask=mask)
+source__inversion = source__inversion.make_pipeline(
+    slam=slam, settings=settings, source_parametric_results=source_results
+)
+source_results = source__inversion.run(dataset=imaging, mask=mask)
+
+mass__total = mass__total.make_pipeline(
+    slam=slam, settings=settings, source_results=source_results
+)
+mass_results = mass__total.run(dataset=imaging, mask=mask)

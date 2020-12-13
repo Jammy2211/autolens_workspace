@@ -21,7 +21,7 @@ Phase 1:
 """
 
 
-def make_pipeline(slam, settings):
+def make_pipeline(slam, settings, source_results):
 
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
@@ -40,7 +40,7 @@ def make_pipeline(slam, settings):
 
     """SLaM: Set whether shear is included in the mass model."""
 
-    shear = slam.pipeline_mass.shear_from_previous_pipeline(index=0)
+    shear = slam.pipeline_mass.shear_from_result(result=source_results.last)
 
     """
     Phase 1: Fit the lens`s `MassProfile`'s and source, where we:
@@ -53,24 +53,28 @@ def make_pipeline(slam, settings):
 
     """Setup the `MassProfile`.and initialize its priors from the `EllipticalIsothermal`."""
 
-    mass = slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors(
-        index=0, unfix_mass_centre=True
+    mass = slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors_from_result(
+        result=source_results.last, unfix_mass_centre=True
     )
 
     """
     SLaM: Setup the source model, which uses a variable parametric profile or fixed `Inversion` model.
     """
 
-    source = slam.source_from_previous_pipeline_model_if_parametric(index=0)
+    source = slam.source_from_results_model_if_parametric(results=source_results)
 
     phase1 = al.PhaseImaging(
         search=af.DynestyStatic(name="phase[1]_mass[total]_source", n_live_points=100),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(redshift=slam.redshift_lens, mass=mass, shear=shear),
             source=source,
         ),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
+            result=source_results.last
+        ),
+        hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
+            result=source_results.last
+        ),
         settings=settings,
     )
 
@@ -82,8 +86,6 @@ def make_pipeline(slam, settings):
 
     if not slam.setup_hyper.hyper_fixed_after_source:
 
-        phase1 = phase1.extend_with_multiple_hyper_phases(
-            setup_hyper=slam.setup_hyper, include_inversion=True
-        )
+        phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
 
-    return al.PipelineDataset(pipeline_name, path_prefix, phase1)
+    return al.PipelineDataset(pipeline_name, path_prefix, source_results, phase1)

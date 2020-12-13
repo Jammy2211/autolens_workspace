@@ -79,7 +79,7 @@ def make_pipeline(setup, settings):
         search=af.DynestyStatic(
             name="phase[1]_mass[sie]_source[bulge]", n_live_points=50
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=al.mp.EllipticalIsothermal,
@@ -104,7 +104,7 @@ def make_pipeline(setup, settings):
         search=af.DynestyStatic(
             name="phase[2]_mass[sie]_source[inversion_initialization]", n_live_points=20
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=phase1.result.instance.galaxies.lens.mass,
@@ -130,7 +130,7 @@ def make_pipeline(setup, settings):
         search=af.DynestyStatic(
             name="phase[3]_mass[sie]_source[inversion]", n_live_points=50
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=phase1.result.model.galaxies.lens.mass,
@@ -171,13 +171,15 @@ def make_pipeline(setup, settings):
     priors, still benefitting from the initialized `Inversion` parameters..
     """
 
-    mass = setup.setup_mass.mass_prior_model_with_updated_priors()
+    mass = setup.setup_mass.mass_prior_model_with_updated_priors_from_result(
+        result=phase3.result
+    )
 
     phase4 = al.PhaseImaging(
         search=af.DynestyStatic(
             name="phase[4]_mass[total]_source[inversion]", n_live_points=100
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 mass=mass,
@@ -189,8 +191,8 @@ def make_pipeline(setup, settings):
                 regularization=phase3.result.inversion.instance.galaxies.source.regularization,
             ),
         ),
-        hyper_image_sky=af.last.hyper_combined.instance.optional.hyper_image_sky,
-        hyper_background_noise=af.last.hyper_combined.instance.optional.hyper_background_noise,
+        hyper_image_sky=af.last.hyper.instance.optional.hyper_image_sky,
+        hyper_background_noise=af.last.hyper.instance.optional.hyper_background_noise,
         settings=settings,
     )
 

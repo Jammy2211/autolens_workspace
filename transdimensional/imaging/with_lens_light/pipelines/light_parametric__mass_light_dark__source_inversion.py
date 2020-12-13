@@ -96,7 +96,7 @@ def make_pipeline(setup, settings):
 
     phase1 = al.PhaseImaging(
         search=af.DynestyStatic(name="phase[1]_light[parametric]", n_live_points=50),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=setup.setup_light.bulge_prior_model,
@@ -131,7 +131,7 @@ def make_pipeline(setup, settings):
             name="phase[2]_light[fixed]_mass[light_dark]_source[bulge]",
             n_live_points=60,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=bulge,
@@ -162,7 +162,7 @@ def make_pipeline(setup, settings):
             name="phase[3]_light[parametric]_mass[light_dark]_source[bulge]",
             n_live_points=100,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=bulge,
@@ -190,7 +190,7 @@ def make_pipeline(setup, settings):
             name="phase[4]_light[fixed]_mass[fixed]_source[inversion_initialization]",
             n_live_points=20,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=phase3.result.instance.galaxies.lens.bulge,
@@ -220,7 +220,7 @@ def make_pipeline(setup, settings):
             name="phase[5]_light[parametric]_mass[light_dark]_source[inversion]",
             n_live_points=100,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=setup.redshift_lens,
                 bulge=phase3.result.model.galaxies.lens.bulge,

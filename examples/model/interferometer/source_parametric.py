@@ -144,7 +144,7 @@ the lens model.
 phase = al.PhaseInterferometer(
     search=search,
     real_space_mask=real_space_mask,
-    galaxies=dict(lens=lens, source=source),
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
     settings=settings,
 )
 

@@ -167,7 +167,9 @@ the lens model.
 """
 
 phase = al.PhaseImaging(
-    search=search, galaxies=dict(lens=lens, source=source), settings=settings
+    search=search,
+    galaxies=af.CollectionPriorModel(lens=lens, source=source),
+    settings=settings,
 )
 
 """

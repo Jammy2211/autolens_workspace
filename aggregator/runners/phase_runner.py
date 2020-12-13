@@ -91,7 +91,7 @@ for dataset_name in [
             name="phase_aggregator",
             n_live_points=50,
         ),
-        galaxies=dict(
+        galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(redshift=0.5, mass=al.mp.EllipticalIsothermal),
             source=al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic),
         ),
