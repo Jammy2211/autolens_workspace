@@ -211,7 +211,7 @@ __PIPELINE CREATION__
 
 We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
-We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
+We then run each pipeline, passing the results of previous pipelines to subsequent pipelines.
 """
 
 from pipelines import source__parametric
@@ -226,5 +226,7 @@ mass__total = mass__total.make_pipeline(
 )
 mass_results = mass__total.run(dataset=imaging, mask=mask)
 
-subhalo = subhalo.make_pipeline(slam=slam, settings=settings, mass_results=mass_results)
+subhalo = subhalo.make_pipeline_single_plane(
+    slam=slam, settings=settings, mass_results=mass_results
+)
 subhalo.run(dataset=imaging, mask=mask)

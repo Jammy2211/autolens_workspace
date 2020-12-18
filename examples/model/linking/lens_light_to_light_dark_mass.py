@@ -11,8 +11,9 @@ In this example, we link two phases, where:
  - The first phase models the lens `Galaxy`'s light using a bulge and disk, using `EllipticalSersic` and 
       `EllipticalExponential` profiles. The source is present in the image, but modeling it is omitted.
       
- - The second phase models the lens `Galaxy`'s mass using an `EllipticalIsothermal` and source `Galaxy`'s light using
-      an `EllipticalSersic`. The lens light model is fixed to the result of phase 1.
+ - The second phase models the lens `Galaxy`'s mass distribution is fitted with the `EllipticalSersic` of the 
+ `LightProfile`, where it is converted to a stellar mass distribution via a constant mass-to-light ratio. The lens 
+ light model uses prior initialized from the result of phase 1.
 
 The idea behind this phase is that for many strong lenses the lens `Galaxy`'s light is distinct from the source `Galaxy`'s
 light. This makes it a valid approach to subtract the lens`s light in a first step and then focus-in on fitting
@@ -20,15 +21,13 @@ the lens mass model and source`s light.
 
 There are a number of benefits to using phase linking to model the lens`s light and its mass and the source separately:
 
- - The non-linear parameter space defined by a bulge-disk (N=11), isothermal mass (N=5) and parametric 
-      Sersic source (N=7) has N=27 dimensions. By splitting the model-fit into two phases, we fit parameter spaces of
-      dimensions N=11 and N=12. These are more efficient to sample and pose less risk of us inferred a local maxima or
-      unphysical solution.
+ - The non-linear parameter space defined by a bulge-disk (N=11), stellar and dark mass model (N=5) and parametric 
+   Sersic source (N=7) has N=27 dimensions. By splitting the model-fit into two phases, we fit parameter spaces of
+   dimensions N=11 and then N=27 with many priors initialized. These are more efficient to sample and pose less risk 
+   of us inferring a local maxima or unphysical solution.
 
  - The lens `Galaxy`'s light traces the majority of its mass. Thus, we can use the lens light model inferred in phase 
-      1 to place priors initializing the sampling of the mass model`s centre. In pricple we could do this for other
-      parameters, for example the `elliptical_comp`s of the two profiles, however light does not perfectly trace mass
-      so in this example we omit such an approach.
+   1 to place priors initializing the light mass model in phase 2.
 """
 
 """
@@ -67,8 +66,8 @@ __Model__
 We compose our lens model using `GalaxyModel` objects, which represent the galaxies we fit to our data. In this 
 example our lens mooel is:
 
- - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential` whose centres
-      are aligned (11 parameters).
+ - The lens `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` and `EllipticalExponential` whose 
+   centres are aligned (11 parameters).
  - The lens `Galaxy`'s total mass distribution is modeled as an `EllipticalIsothermal` and `ExternalShear` (7 parameters).
  - The source `Galaxy`'s light is modeled parametrically as an `EllipticalSersic` (7 parameters).
 
@@ -107,7 +106,7 @@ file `autolens_workspace/config/non_linear/nest/DynestyStatic.ini`
 """
 
 search = af.DynestyStatic(
-    path_prefix=path.join("examples", "linking", "lens_light_to_mass"),
+    path_prefix=path.join("examples", "linking", "lens_light_to_light_dark_mass"),
     name="phase[1]",
     n_live_points=50,
 )
@@ -120,7 +119,7 @@ the lens model.
 
 The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_sersic_exp__mass_sie__source_sersic/phase[1]`.
+ `/autolens_workspace/output/examples/linking/lens_light_to_light_dark_mass/light_sersic_exp__mass_sie__source_sersic/phase[1]`.
 """
 
 phase1 = al.PhaseImaging(
@@ -147,17 +146,19 @@ We also use the inferred centre of the lens light model in phase 1 to initialize
 in phase 2. This uses the term `model` to pass priors, as we saw in other examples.
 """
 
-mass = af.PriorModel(al.mp.EllipticalIsothermal)
+bulge = af.PriorModel(al.lmp.EllipticalSersic)
+bulge.take_attributes(source=phase1_result.instance)
 
-mass.centre = phase1_result.model.galaxies.lens.bulge.centre
+disk = af.PriorModel(al.lmp.EllipticalSersic)
+disk.take_attributes(source=phase1_result.instance)
 
 lens = al.GalaxyModel(
     redshift=0.5,
     bulge=phase1_result.instance.galaxies.lens.bulge,
     disk=phase1_result.instance.galaxies.lens.disk,
-    mass=mass,
+    dark=af.PriorModel(al.mp.SphericalNFW),
 )
-source = al.GalaxyModel(redshift=1.0, bulge=al.lp.EllipticalSersic)
+source = al.GalaxyModel(redshift=1.0, bulge=phase1_result.model.galaxies.source.bulge)
 
 """
 __Search__
@@ -166,7 +167,7 @@ In phase 2, we use the nested sampling algorithm `Dynesty` again.
 """
 
 search = af.DynestyStatic(
-    path_prefix=path.join("examples", "linking", "lens_light_to_mass"),
+    path_prefix=path.join("examples", "linking", "lens_light_to_light_dark_mass"),
     name="phase[2]",
     n_live_points=50,
 )
@@ -179,7 +180,7 @@ the lens model.
 
 The `name` and `path_prefix` below specify the path where results are stored in the output folder:  
 
- `/autolens_workspace/output/examples/linking/lens_light_to_mass/light_sersic_exp__mass_sie__source_sersic/phase[2]`.
+ `/autolens_workspace/output/examples/linking/lens_light_to_light_dark_mass/light_sersic_exp__mass_sie__source_sersic/phase[2]`.
 
 Note how the `lens` passed to this phase was set up above using the results of phase 1!
 """

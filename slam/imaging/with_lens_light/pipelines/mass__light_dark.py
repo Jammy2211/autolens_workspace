@@ -16,7 +16,7 @@ Phase 1:
     Fit the lens light and mass model as a decomposed profile, using the lens light and source model from 
     a previous pipeline. The lens `LightProfile`'s are fixed to the results of the previous pipeline to provide a fast
     initialization of the new `MassProfile` parameters.
-    
+
     Lens Light & Mass: Depends on previous Light pipeline.
     Lens Mass: `LightMassProfile`'s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
@@ -25,10 +25,10 @@ Phase 1:
     Notes: Fixes the lens `LightProfile` and Source to the results of the previous pipeline.
 
 Phase 2:
-    
+
     Include all previously fixed lens `LightProfile` parameters in the model, initializing the `MassProflie` parameters
     from the results of phase 1.
-    
+
     Lens Light & Mass: Depends on previous Light pipeline.
     Lens Mass: `LightMassProfile`'s + SphericalNFW + ExternalShear
     Source Light: Previous Pipeline Source.
@@ -39,7 +39,6 @@ Phase 2:
 
 
 def make_pipeline(slam, settings, source_results, light_results):
-
     """SETUP PIPELINE & PHASE NAMES, TAGS AND PATHS"""
 
     pipeline_name = "pipeline_mass[light_dark]"
@@ -79,13 +78,7 @@ def make_pipeline(slam, settings, source_results, light_results):
 
     """SLaM: Fix the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    bulge = slam.pipeline_mass.setup_mass.bulge_prior_model_with_updated_priors(
-        results=light_results, as_instance=True
-    )
-    disk = slam.pipeline_mass.setup_mass.disk_prior_model_with_updated_priors(
-        results=light_results, as_instance=True
-    )
-    envelope = slam.pipeline_mass.setup_mass.envelope_prior_model_with_updated_priors(
+    bulge, disk, envelope = slam.pipeline_mass.setup_mass.light_and_mass_prior_models_with_updated_priors(
         results=light_results, as_instance=True
     )
 
@@ -93,6 +86,10 @@ def make_pipeline(slam, settings, source_results, light_results):
     dark.mass_at_200 = af.LogUniformPrior(lower_limit=5e8, upper_limit=5e14)
     dark.redshift_object = slam.redshift_lens
     dark.redshift_source = slam.redshift_source
+
+    slam.pipeline_mass.setup_mass.align_bulge_and_dark_centre(
+        results=light_results, bulge_prior_model=bulge, dark_prior_model=dark
+    )
 
     """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in `SLaMPipelineMass`."""
 
@@ -135,14 +132,15 @@ def make_pipeline(slam, settings, source_results, light_results):
 
     """SLaM: Set priors on the `LightProfile` parameters of the bulge, disk and envelope to the results of the Light pipeline."""
 
-    bulge = slam.pipeline_mass.setup_mass.bulge_prior_model_with_updated_priors(
-        results=light_results
+    bulge, disk, envelope = slam.pipeline_mass.setup_mass.light_and_mass_prior_models_with_updated_priors(
+        results=light_results, as_instance=False
     )
-    disk = slam.pipeline_mass.setup_mass.disk_prior_model_with_updated_priors(
-        results=light_results
-    )
-    envelope = slam.pipeline_mass.setup_mass.envelope_prior_model_with_updated_priors(
-        results=light_results
+
+    slam.pipeline_mass.setup_mass.light_prior_models_update_mass_to_light_parameters(
+        result=phase1.result,
+        bulge_prior_model=bulge,
+        disk_prior_model=disk,
+        envelope_prior_model=envelope,
     )
 
     lens = al.GalaxyModel(
@@ -169,7 +167,6 @@ def make_pipeline(slam, settings, source_results, light_results):
     )
 
     if not slam.setup_hyper.hyper_fixed_after_source:
-
         phase2 = phase2.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
 
     return al.PipelineDataset(pipeline_name, path_prefix, light_results, phase1, phase2)

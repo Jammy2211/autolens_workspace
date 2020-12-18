@@ -94,7 +94,13 @@ This pipeline also uses a `SetupMassLightDark`, which customizes:
    aligned.
 """
 
-setup_mass = al.SetupMassLightDark(align_bulge_dark_centre=True, with_shear=False)
+setup_mass = al.SetupMassLightDark(
+    bulge_prior_model=al.lmp.EllipticalSersic,
+    disk_prior_model=None,
+    envelope_prior_model=None,
+    align_bulge_dark_centre=True,
+    with_shear=False,
+)
 
 """
 Next, we create a `SetupSourceParametric` which does not customize the pipeline behaviour except for tagging (see below).

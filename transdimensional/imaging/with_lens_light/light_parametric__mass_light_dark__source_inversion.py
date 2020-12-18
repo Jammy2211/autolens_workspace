@@ -111,7 +111,12 @@ This pipeline also uses a `SetupMassLightDark`, which customizes:
 """
 
 setup_mass = al.SetupMassLightDark(
-    align_bulge_dark_centre=True, constant_mass_to_light_ratio=True, with_shear=True
+    bulge_prior_model=al.lmp.EllipticalSersic,
+    disk_prior_model=al.lmp.EllipticalExponential,
+    envelope_prior_model=None,
+    align_bulge_dark_centre=True,
+    constant_mass_to_light_ratio=True,
+    with_shear=True,
 )
 
 """

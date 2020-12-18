@@ -236,7 +236,7 @@ __PIPELINE CREATION__
 
 We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
-We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
+We then run each pipeline, passing the results of previous pipelines to subsequent pipelines.
 """
 
 from pipelines import source__parametric

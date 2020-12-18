@@ -254,7 +254,13 @@ For this runner the `SLaMPipelineMass` customizes:
  - If there is an `ExternalShear` in the mass model or not.
 """
 
-setup_mass = al.SetupMassLightDark(with_shear=True)
+setup_mass = al.SetupMassLightDark(
+    bulge_prior_model=al.lmp.EllipticalSersic,
+    disk_prior_model=al.lmp.EllipticalExponential,
+    envelope_prior_model=None,
+    align_bulge_dark_centre=True,
+    constant_mass_to_light_ratio=False,
+)
 
 pipeline_mass = al.SLaMPipelineMass(setup_mass=setup_mass)
 """
@@ -280,7 +286,7 @@ __PIPELINE CREATION__
 
 We import and make pipelines as per usual, albeit we'll now be doing this for multiple pipelines!
 
-We then add the pipelines together and run this summed pipeline, which runs each individual pipeline back-to-back.
+We then run each pipeline, passing the results of previous pipelines to subsequent pipelines.
 """
 
 from pipelines import source__parametric

@@ -153,7 +153,7 @@ def make_pipeline(setup, settings):
         1) Set the lens`s bulge, disk, dark, and source`s light using the results of phases 1 and 2.
     """
 
-    bulge = setup.setup_mass.bulge_prior_model_with_updated_priors()
+    bulge = setup.setup_mass.light_and_mass_prior_models_with_updated_priors()
     disk = setup.setup_mass.disk_prior_model_with_updated_priors()
     envelope = setup.setup_mass.envelope_prior_model_with_updated_priors()
 
