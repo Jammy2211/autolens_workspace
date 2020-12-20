@@ -88,9 +88,7 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase1 = phase1.extend_with_hyper_phase(
-        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
-    )
+    phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=False)
 
     """
     Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s `LightProfile`, where we:
@@ -142,9 +140,7 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase2 = phase2.extend_with_hyper_phase(
-        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
-    )
+    phase2 = phase2.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=False)
 
     """
     Phase 3: Refit the lens `Galaxy`'s bulge and disk `LightProfile`'s using fixed mass and source instances from phase 2, 
@@ -184,9 +180,7 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase3 = phase3.extend_with_hyper_phase(
-        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
-    )
+    phase3 = phase3.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=False)
 
     """
     Phase 4: Simultaneously fit the lens and source galaxies, where we:
@@ -221,9 +215,7 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase4 = phase4.extend_with_hyper_phase(
-        setup_hyper=slam.setup_hyper, include_hyper_image_sky=True
-    )
+    phase4 = phase4.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=True)
 
     return al.PipelineDataset(
         pipeline_name, path_prefix, None, phase1, phase2, phase3, phase4

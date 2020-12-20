@@ -53,8 +53,10 @@ def make_pipeline(slam, settings, real_space_mask, source_results):
 
     """Setup the `MassProfile`.and initialize its priors from the `EllipticalIsothermal`."""
 
-    mass = slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors_from_result(
-        result=source_results.last
+    mass = (
+        slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors_from_result(
+            result=source_results.last
+        )
     )
 
     """
@@ -74,6 +76,7 @@ def make_pipeline(slam, settings, real_space_mask, source_results):
         ),
         settings=settings,
         real_space_mask=real_space_mask,
+        use_as_hyper_dataset=True
     )
 
     # phase1 = phase1.extend_with_stochastic_phase(

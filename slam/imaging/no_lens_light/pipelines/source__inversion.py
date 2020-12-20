@@ -102,7 +102,7 @@ def make_pipeline(slam, settings, source_parametric_results):
             ),
         ),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=source_parametric_results.last
+            result=source_parametric_results.last, as_model=False
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=source_parametric_results.last
@@ -124,20 +124,19 @@ def make_pipeline(slam, settings, source_parametric_results):
         galaxies=af.CollectionPriorModel(
             lens=al.GalaxyModel(
                 redshift=slam.redshift_lens,
-                mass=source_parametric_results[-1].model.galaxies.lens.mass,
-                shear=source_parametric_results[-1].model.galaxies.lens.shear,
+                mass=source_parametric_results.last.model.galaxies.lens.mass,
+                shear=source_parametric_results.last.model.galaxies.lens.shear,
             ),
             source=al.GalaxyModel(
                 redshift=slam.redshift_source,
                 pixelization=phase1.result.instance.galaxies.source.pixelization,
                 regularization=phase1.result.instance.galaxies.source.regularization,
-                hyper_galaxy=phase1.result.hyper.instance.optional.galaxies.source.hyper_galaxy,
+                hyper_galaxy=phase1.result.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
         hyper_image_sky=phase1.result.instance.hyper_image_sky,
         hyper_background_noise=phase1.result.instance.hyper_background_noise,
         settings=settings,
-        use_as_hyper_dataset=True,
     )
 
     """
@@ -169,7 +168,7 @@ def make_pipeline(slam, settings, source_parametric_results):
         hyper_image_sky=phase2.result.instance.hyper_image_sky,
         hyper_background_noise=phase2.result.instance.hyper_background_noise,
         settings=settings,
-        use_as_hyper_dataset=True,
+        use_as_hyper_dataset=True
     )
 
     """
@@ -203,9 +202,12 @@ def make_pipeline(slam, settings, source_parametric_results):
         hyper_image_sky=phase3.result.instance.hyper_image_sky,
         hyper_background_noise=phase3.result.instance.hyper_background_noise,
         settings=settings,
+        use_as_hyper_dataset=True,
     )
 
-    phase4 = phase4.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase4 = phase4.extend_with_hyper_phase(
+        setup_hyper=slam.setup_hyper, include_hyper_image_sky=True
+    )
 
     return al.PipelineDataset(
         pipeline_name,

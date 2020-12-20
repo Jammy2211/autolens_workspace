@@ -61,6 +61,6 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=True)
 
     return al.PipelineDataset(pipeline_name, path_prefix, None, phase1)

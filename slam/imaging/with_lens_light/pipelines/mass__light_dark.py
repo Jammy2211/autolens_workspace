@@ -88,7 +88,9 @@ def make_pipeline(slam, settings, source_results, light_results):
     dark.redshift_source = slam.redshift_source
 
     slam.pipeline_mass.setup_mass.align_bulge_and_dark_centre(
-        results=light_results, bulge_prior_model=bulge, dark_prior_model=dark
+        results=light_results,
+        bulge_prior_model=bulge,
+        dark_prior_model=dark
     )
 
     """SLaM: Include a Super-Massive Black Hole (SMBH) in the mass model is specified in `SLaMPipelineMass`."""
@@ -117,7 +119,7 @@ def make_pipeline(slam, settings, source_results, light_results):
         ),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=light_results.last
+            result=light_results.last, as_model=False
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=light_results.last
@@ -151,7 +153,9 @@ def make_pipeline(slam, settings, source_results, light_results):
         dark=phase1.result.model.galaxies.lens.dark,
         shear=source_results.last.model.galaxies.lens.shear,
         smbh=phase1.result.model.galaxies.lens.smbh,
-        hyper_galaxy=phase1.result.hyper.instance.optional.galaxies.lens.hyper_galaxy,
+        hyper_galaxy=slam.setup_hyper.hyper_galaxy_lens_from_result(
+            result=light_results.last
+        ),
     )
 
     source = slam.source_from_results_model_if_parametric(results=source_results)
@@ -161,12 +165,15 @@ def make_pipeline(slam, settings, source_results, light_results):
             name="phase[2]_light[parametric]_mass[light_dark]_source", n_live_points=100
         ),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
-        hyper_image_sky=phase1.result.hyper.instance.optional.hyper_image_sky,
+        hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
+            result=light_results.last, as_model=True
+        ),
         hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
+        use_as_hyper_dataset=True
     )
 
     if not slam.setup_hyper.hyper_fixed_after_source:
-        phase2 = phase2.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+        phase2 = phase2.extend_with_hyper_phase(setup_hyper=slam.setup_hyper, include_hyper_image_sky=True)
 
     return al.PipelineDataset(pipeline_name, path_prefix, light_results, phase1, phase2)

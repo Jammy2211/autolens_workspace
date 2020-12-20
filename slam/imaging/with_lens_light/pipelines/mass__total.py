@@ -61,8 +61,10 @@ def make_pipeline(slam, settings, source_results, light_results):
            previous pipelines.
     """
 
-    mass = slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors_from_result(
-        result=source_results.last, unfix_mass_centre=True
+    mass = (
+        slam.pipeline_mass.setup_mass.mass_prior_model_with_updated_priors_from_result(
+            result=source_results.last, unfix_mass_centre=True
+        )
     )
 
     """SLaM: Use the source and lens light models from the previous *Source* and *Light* pipelines."""
@@ -79,16 +81,19 @@ def make_pipeline(slam, settings, source_results, light_results):
         ),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=light_results.last
+            result=light_results.last, as_model=True
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=light_results.last
         ),
         settings=settings,
+        use_as_hyper_dataset=True
     )
 
     if not slam.setup_hyper.hyper_fixed_after_source:
 
-        phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+        phase1 = phase1.extend_with_hyper_phase(
+            setup_hyper=slam.setup_hyper, include_hyper_image_sky=True
+        )
 
     return al.PipelineDataset(pipeline_name, path_prefix, light_results, phase1)

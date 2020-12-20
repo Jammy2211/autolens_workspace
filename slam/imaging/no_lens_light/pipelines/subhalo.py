@@ -20,10 +20,9 @@ Phase 1:
     Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
     Prior Passing: Lens mass (model -> previous pipeline), source light (instance or model -> previous pipeline).
 
-Phase 2 (single-plane pipeline) - Lens Plane:
+Phase 2 (part 1) - Lens Plane:
 
-    Perform the subhalo detection analysis using a `GridSearch` of non-linear searches where the subhalo redshift
-    is at the redshift of the lens galaxy.
+    Perform the subhalo detection analysis using a `GridSearch` of non-linear searches.
 
     Lens Mass: Previous mass pipeline model.
     Subhalo: SphericalNFWLudlow
@@ -32,11 +31,10 @@ Phase 2 (single-plane pipeline) - Lens Plane:
     Prior Passing: Lens mass (phase 1), source light (instance or model -> previous pipeline).
     Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^11).
 
-Phase 2 (multi-plane pipeline) - Multi Plane:
+Phase 2 (part 2) - Foreground Plane:
 
-    Perform the subhalo detection analysis using a `GridSearch` of non-linear searches. where the subhalo redshift is 
-    a free parameter.
-
+    Perform the subhalo detection analysis.
+    
     Lens Mass: Previous mass pipeline model.
     Source Light: Previous source pipeilne model.
     Subhalo: SphericalNFWLudlow
@@ -44,6 +42,17 @@ Phase 2 (multi-plane pipeline) - Multi Plane:
     Prior Passing: Lens mass (phase 1), source light (instance or model -> previous pipeline).
     Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^11).
 
+Phase 2 (part 3) - Background Plane:
+
+    Refine the best-fit detected subhalo from the previous phase, by varying also the lens mass model.
+    
+    Lens Mass: Previous mass pipeline model.
+    Source Light: Previous source pipeilne model.
+    Subhalo: SphericalNFWLudlow
+    Previous Pipeline: no_lens_light/mass/*/lens_*__source.py
+    Prior Passing: Lens mass & source light (model ->phase 1), subhalo mass (instance or model -> phase 2).
+    Notes: Priors on subhalo are tuned to give realistic masses (10^6 - 10^11).
+    
 Phase 3:
 
 Refine the best-fit detected subhalo from the previous phase.
@@ -93,7 +102,7 @@ def make_pipeline_single_plane(slam, settings, mass_results):
         search=af.DynestyStatic(name="phase[1]_mass[total_refine]", n_live_points=100),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=mass_results.last
+            result=mass_results.last, as_model=True
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=mass_results.last
@@ -168,7 +177,7 @@ def make_pipeline_single_plane(slam, settings, mass_results):
             facc=0.2,
         ),
         galaxies=af.CollectionPriorModel(lens=lens, subhalo=subhalo, source=source),
-        hyper_image_sky=phase1.result.hyper.instance.optional.hyper_image_sky,
+        hyper_image_sky=phase1.result.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
         number_of_steps=slam.setup_subhalo.grid_size,
@@ -193,7 +202,7 @@ def make_pipeline_single_plane(slam, settings, mass_results):
     #         subhalo=subhalo,
     #         source=phase2.result.model.galaxies.source,
     #     ),
-    # #    hyper_image_sky=phase2.result.hyper.instance.optional.hyper_image_sky,
+    # #    hyper_image_sky=phase1.result.instance.optional.hyper_image_sky,
     # #    hyper_background_noise=phase2.result.hyper.instance.optional.hyper_background_noise,
     #     settings=settings,
     # )
@@ -204,7 +213,7 @@ def make_pipeline_single_plane(slam, settings, mass_results):
         mass_results,
         phase1,
         phase2,
-        #     phase3,
+   #     phase3,
     )
 
 
@@ -244,7 +253,7 @@ def make_pipeline_multi_plane(slam, settings, mass_results):
         search=af.DynestyStatic(name="phase[1]_mass[total_refine]", n_live_points=100),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=mass_results.last
+            result=mass_results.last, as_model=True
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=mass_results.last
@@ -323,7 +332,7 @@ def make_pipeline_multi_plane(slam, settings, mass_results):
         galaxies=af.CollectionPriorModel(
             lens=lens, subhalo=subhalo_z_multi, source=source
         ),
-        hyper_image_sky=phase1.result.hyper.instance.optional.hyper_image_sky,
+        hyper_image_sky=phase1.result.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
         number_of_steps=slam.setup_subhalo.grid_size,
@@ -348,7 +357,7 @@ def make_pipeline_multi_plane(slam, settings, mass_results):
     #         subhalo=subhalo,
     #         source=phase2.result.model.galaxies.source,
     #     ),
-    #     #     hyper_image_sky=phase2.result.hyper.instance.optional.hyper_image_sky,
+    #     #     hyper_image_sky=phase1.result.instance.optional.hyper_image_sky,
     #     #     hyper_background_noise=phase2.result.hyper.instance.optional.hyper_background_noise,
     #     settings=settings,
     # )
@@ -359,5 +368,5 @@ def make_pipeline_multi_plane(slam, settings, mass_results):
         mass_results,
         phase1,
         phase2,
-        #    phase3,
+    #    phase3,
     )

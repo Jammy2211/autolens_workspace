@@ -81,16 +81,19 @@ def make_pipeline(slam, settings, source_results):
         ),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(
-            result=source_results.last
+            result=source_results.last, as_model=True
         ),
         hyper_background_noise=slam.setup_hyper.hyper_background_noise_from_result(
             result=source_results.last
         ),
         settings=settings,
+        use_as_hyper_dataset=True
     )
 
     if not slam.setup_hyper.hyper_fixed_after_source:
 
-        phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+        phase1 = phase1.extend_with_hyper_phase(
+            setup_hyper=slam.setup_hyper,
+        )
 
     return al.PipelineDataset(pipeline_name, path_prefix, source_results, phase1)
