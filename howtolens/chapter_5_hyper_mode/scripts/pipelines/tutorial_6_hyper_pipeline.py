@@ -46,7 +46,7 @@ non-linear search (e.g. Dynesty)? We don't fit for them simultaneously with the 
 creates an unnecessarily large parameter space which we`d fail to fit accurately and efficiently.
 
 Instead, we `extend` phases with extra phases that specifically fit certain components of hyper-galaxy-model. You`ve
-hopefully already seen the following code, which optimizes the parameters of an `Inversion` (e.g. the `Pixelization`.nd
+hopefully already seen the following code, which optimizes the parameters of an `Inversion` (e.g. the `Pixelization` and
 regularization):
 
 phase1 = phase1.extend_with_inversion_phase()
@@ -62,8 +62,8 @@ phase1 = phase1.extend_with_multiple_hyper_phases(
 
 This extends the phase with 3 additional phases:
 
-1) Fit the `Inversion` parameters using the `Pixelization`.nd `Regularization`.cheme that were used in the main phase.
-   (e.g. a brightness-based `Pixelization`.nd adaptive `Regularization`.cheme. The best-fit lens and source
+1) Fit the `Inversion` parameters using the `Pixelization` and `Regularization` scheme that were used in the main phase.
+   (e.g. a brightness-based `Pixelization` and adaptive `Regularization` scheme. The best-fit lens and source
    models are used. This is called the `inversion` phase.
 
 2) Simultaneously fit the hyper-galaxies, background sky and background noise hyper parameters using the best-fit
@@ -104,15 +104,15 @@ Phase 3) Fit the lens light, mass and source using priors from phases 1 & 2, usi
          from phase 2.
 Phase 3 Extension) Fit the lens / source hyper-galaxy and background noise.
 
-Phase 4) Initialize an `Inversion` of the source-galaxy, using a magnification based `Pixelization`.nd constant
-         `Regularization`.cheme.
+Phase 4) Initialize an `Inversion` of the source-galaxy, using a magnification based `Pixelization` and constant
+         `Regularization` scheme.
 Phase 4 Extension) Fit the lens / source hyper-galaxy and background noise.
 
 Phase 5) Refine the lens light and mass models using the `Inversion` from phase 4.
 Phase 5 Extension) Fit the lens / source hyper-galaxy and background noise.
 
-Phase 6) Initialize an `Inversion` of the source-galaxy, using a brightness based `Pixelization`.nd adaptive
-         `Regularization`.cheme.
+Phase 6) Initialize an `Inversion` of the source-galaxy, using a brightness based `Pixelization` and adaptive
+         `Regularization` scheme.
 Phase 6 Extension) Fit the lens / source hyper-galaxy, background noise and reoptimize the `Inversion`.
 
 Phase 7) Refine the lens light and mass models using the `Inversion` from phase 6 and lens / source hyper galaxy.
@@ -136,7 +136,7 @@ def make_pipeline(setup, settings):
     This pipeline is tagged according to whether:
 
         1) Hyper-fitting setup (galaxies, sky, background noise) are used.
-        2) The `Pixelization`.nd `Regularization`.cheme of the pipeline (fitted in phases 3 & 4).
+        2) The `Pixelization` and `Regularization` scheme of the pipeline (fitted in phases 3 & 4).
     """
 
     path_prefix = f"{setup.path_prefix}/{pipeline_name}/{setup.tag}"
@@ -256,8 +256,8 @@ def make_pipeline(setup, settings):
     """
     Phase 4:
 
-    Next, we initialize a magnification based `Pixelization`.nd constant `Regularization`.cheme. But, you're probably
-    wondering, why do we bother with these at all? Why not jump straight to the brightness based `Pixelization`.nd
+    Next, we initialize a magnification based `Pixelization` and constant `Regularization` scheme. But, you're probably
+    wondering, why do we bother with these at all? Why not jump straight to the brightness based `Pixelization` and
     adaptive regularization?
 
     Well, its to do with the hyper-galaxy-images of our source. At the end of phase 3, we've only fitted the source galaxy
@@ -266,7 +266,7 @@ def make_pipeline(setup, settings):
 
     So, its beneficial for us to introduce an intermediate `Inversion` using a magnification based grid, that fits
     all components of the source accurately giving us a good quality hyper-galaxy image for the brightness based
-    `Pixelization`.nd adaptive regularization. Its for this reason we've also omitted the hyper-galaxy source galaxy
+    `Pixelization` and adaptive regularization. Its for this reason we've also omitted the hyper-galaxy source galaxy
     from the phases above; if the hyper-galaxy-image were poor, so is the hyper noise-map!
     """
 
@@ -300,8 +300,8 @@ def make_pipeline(setup, settings):
     phase4 = phase4.extend_with_hyper_phase(setup_hyper=setup.setup_hyper)
 
     """
-    Phase 5: Refine the lens light and mass models using this magnification based `Pixelization`.nd constant
-    `Regularization`.cheme. If our source model was a bit dodgy because it was more complex than a single Sersic, it
+    Phase 5: Refine the lens light and mass models using this magnification based `Pixelization` and constant
+    `Regularization` scheme. If our source model was a bit dodgy because it was more complex than a single Sersic, it
     probably means our lens model was too, so a quick refinement in phase 5 is worth the effort!
     """
 
@@ -333,8 +333,8 @@ def make_pipeline(setup, settings):
     )
 
     """
-    Phase 6: use our hyper-galaxy-mode features to adapt the `Pixelization`.o the source's morphology
-    and the `Regularization`.o its brightness! This phase works like a hyper initialization phase, whereby we fix
+    Phase 6: use our hyper-galaxy-mode features to adapt the `Pixelization` to the source's morphology
+    and the `Regularization` to its brightness! This phase works like a hyper initialization phase, whereby we fix
     the lens and source models to the best-fit of the previous phase and just optimize the hyper-galaxy-parameters.
     """
 
@@ -361,7 +361,7 @@ def make_pipeline(setup, settings):
     )
 
     """
-    For this phase, we'll also extend it with an `Inversion` phase. This ensures our `Pixelization`.nd regularization
+    For this phase, we'll also extend it with an `Inversion` phase. This ensures our `Pixelization` and regularization
     are fully optimized in conjunction with the hyper-galaxies and background noise-map.
     """
 

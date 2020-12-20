@@ -8,7 +8,7 @@ chi-squared distribution. A small subset of the lensed source's brightest pixels
 to the majority of our chi-squared signal. In terms of lens modeling, this meant that we would over-fit these regions
 of the image. We would prefer that our lens model provides a global fit to the entire lensed source galaxy.
 
-With our adaptive `Pixelization`.nd `Regularization` we are now able to fit the data to the noise-limit and remove this
+With our adaptive `Pixelization` and `Regularization` we are now able to fit the data to the noise-limit and remove this
 skewed chi-squared distribution. So, why do we need to introduce noise-map scaling? Well, we achieve a good fit when
 our lens`s mass model is accurate (in the previous tutorials we used the *correct* lens mass model). But, what if our
 lens mass model isn't accurate? Well, we'll have residuals which will cause the same problem as before; a skewed
@@ -160,7 +160,7 @@ print("Evidence = ", fit.log_evidence)
 # %%
 """
 The solution is better, but far from perfect. Furthermore, this solution maximizes the Bayesian log evidence, meaning 
-there is no reasonable way to change our source `Pixelization` or `Regularization`.o better fit the data. The problem 
+there is no reasonable way to change our source `Pixelization` or `Regularization` to better fit the data. The problem 
 is with our lens`s mass model!
 
 This poses a major problem for our model-fitting. A small subset of our data has such large chi-squared values the 

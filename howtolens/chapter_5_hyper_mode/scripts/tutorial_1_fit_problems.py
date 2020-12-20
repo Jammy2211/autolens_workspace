@@ -11,7 +11,7 @@ latter was better than the former, because it dedicated more source-pixels to th
 had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
 which improved computational efficiency and the Bayesian log evidence.
 
-So far, we've used just one `Regularization`.cheme; Constant. As the name suggests, this `Regularization`.cheme applies
+So far, we've used just one `Regularization` scheme; Constant. As the name suggests, this `Regularization` scheme applies
 just one regularization_coefficient when regularizing source-pixels with one another. In case you`ve forgot, here is
 a refresher of `Regularization`, from chapter 4:
 
@@ -33,13 +33,13 @@ best way to do this is to fit *everything* accurately, including the noise.
 
 ----------------------------------------------
 
-So, when using a Constant `Regularization`.cheme, we regularize the source by adding up the difference in fluxes
+So, when using a Constant `Regularization` scheme, we regularize the source by adding up the difference in fluxes
 between all source-pixels multiplied by one single value of a regularization_coefficient. This means that every
 single source pixel receives the same `level` of `Regularization`, regardless of whether it is reconstructing the
 bright central regions of the source or its faint exterior regions.
 
 
-In this tutorial, we'll learn that our magnification-based `Pixelization`.nd constant `Regularization`.chemes are far
+In this tutorial, we'll learn that our magnification-based `Pixelization` and constant `Regularization`.chemes are far
 from optimal. To understand why, we'll inspect fits to three strong lenses, simulated using the same `MassProfile` but
 with different sources whose `LightProfile`'s become gradually more compact. For all 3 fits, we'll use the same
 source-plane resolution and a regularization_coefficient that maximize the Bayesian log evidence. Thus, these are the
@@ -194,7 +194,7 @@ def fit_imaging_with_voronoi_magnification_pixelization(
 
 # %%
 """
-Lets fit our first source with the flattest `LightProfile`. One should note that this uses the highest _Regularization_
+Lets fit our first source with the flattest `LightProfile`. One should note that this uses the highest `Regularization`
 coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
 
@@ -272,7 +272,7 @@ print(fit_super_compact.log_evidence)
 """
 Okay, so what did we learn? The more compact our source, the worse the fit. This happens even though we are using the 
 *correct* lens mass model, telling us that something is going fundamentally wrong with our source reconstruction and 
-`Inversion`. As you might of guessed, both our `Pixelization`.nd `Regularization` scheme are to blame!
+`Inversion`. As you might of guessed, both our `Pixelization` and `Regularization` scheme are to blame!
 
 __Pixelization__
 
@@ -294,8 +294,8 @@ want!
 
 __Regularization__
 
-Regularization also causes problems. When using a `Constant` `Regularization`.cheme, we regularize the source by 
-adding up the difference in fluxes between all source-pixels multiplied by one single value of a _Regularization_
+Regularization also causes problems. When using a `Constant` `Regularization` scheme, we regularize the source by 
+adding up the difference in fluxes between all source-pixels multiplied by one single value of a `Regularization`
 coefficient. This means that, every single source pixel receives the same `level` of `Regularization`, regardless of 
 whether it is reconstructing the bright central regions of the source or its faint exterior regions. Lets look:
 """
@@ -324,10 +324,10 @@ because different regions of the source demand different levels of regularizatio
  makes the solution `simpler`, given that correlating the flux in these source pixels the solution effectively 
  uses fewer source-pixels (e.g. degrees of freedom).
 
-So, herein lies the pitfall of a constant `Regularization`.cheme. Some parts of the reconstructed source demand a 
+So, herein lies the pitfall of a constant `Regularization` scheme. Some parts of the reconstructed source demand a 
 low regularization_coefficient whereas other parts want a high value. Unfortunately, we end up with an intermediate 
 regularization coefficient that over-smooths the source's central regions whilst failing to fully correlate exterior 
-pixels. Thus, by using an adaptive `Regularization`.cheme, new solutions that further increase the Bayesian log 
+pixels. Thus, by using an adaptive `Regularization` scheme, new solutions that further increase the Bayesian log 
 evidence become accessible.
 
 __Noise Map__

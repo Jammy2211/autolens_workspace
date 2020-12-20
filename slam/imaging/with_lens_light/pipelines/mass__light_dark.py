@@ -19,7 +19,7 @@ Phase 1:
 
     Lens Light & Mass: Depends on previous Light pipeline.
     Lens Mass: `LightMassProfile`'s + SphericalNFW + ExternalShear
-    Source Light: Previous Pipeline Source.
+    Source Light: Previous Pipeline Source, model if parametric, instance if inversion.
     Previous Pipelines: source__parametric.py and / or source__inversion.py and light__parametric.py
     Prior Passing: Lens Light (instance -> previous pipeline), Source (instance -> previous pipeline)
     Notes: Fixes the lens `LightProfile` and Source to the results of the previous pipeline.
@@ -108,12 +108,12 @@ def make_pipeline(slam, settings, source_results, light_results):
         ),
     )
 
-    source = slam.source_from_results(results=source_results, source_is_model=False)
+    source = slam.source_from_results_model_if_parametric(results=source_results)
 
     phase1 = al.PhaseImaging(
         search=af.DynestyStatic(
             name="phase[1]_light[fixed]_mass[light_dark]_source[fixed]",
-            n_live_points=50,
+            n_live_points=75,
         ),
         galaxies=af.CollectionPriorModel(lens=lens, source=source),
         hyper_image_sky=slam.setup_hyper.hyper_image_sky_from_result(

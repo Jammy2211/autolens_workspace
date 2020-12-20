@@ -3,11 +3,11 @@
 Tutorial 3: Adaptive Regularization
 ===================================
 
-In tutorial 1, we considered why our `Constant` `Regularization`.cheme was sub-optimal. Diffferent regions of the
-source demand different levels of `Regularization`, motivating a `Regularization`.cheme which adapts to the reconstructed
+In tutorial 1, we considered why our `Constant` `Regularization` scheme was sub-optimal. Diffferent regions of the
+source demand different levels of `Regularization`, motivating a `Regularization` scheme which adapts to the reconstructed
 source's surface brightness.
 
-This raises the same question as before, how do we adapt our `Regularization`.cheme to the source before we've
+This raises the same question as before, how do we adapt our `Regularization` scheme to the source before we've
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 phase of the pipeline that we've begun calling the `hyper-galaxy-image`.
 """
@@ -115,7 +115,7 @@ aplt.Inversion.regularization_weights(
 # %%
 """
 Lets now look at adaptive `Regularization`.n action, by setting up a hyper-galaxy-image and using the 
-`AdaptiveBrightness` `Regularization`.cheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
+`AdaptiveBrightness` `Regularization` scheme. This introduces additional hyper-galaxy-parameters, that I'll explain next.
 """
 
 # %%
@@ -155,7 +155,7 @@ print("Evidence using adaptive `Regularization`. ", fit.log_evidence)
 
 # %%
 """
-Yep! Of course, combining the adaptive `Pixelization`.nd `Regularization`.ill only further benefit our lens modeling!
+Yep! Of course, combining the adaptive `Pixelization` and `Regularization`.ill only further benefit our lens modeling!
 
 However, as shown below, we don't fit the source as well as the morphology based `Pixelization` did in the last chapter. 
 This is because although the adaptive `Regularization` scheme improves the fit, the magnification based 
@@ -247,7 +247,7 @@ print("Evidence using adaptive `Regularization`. ", fit.log_evidence)
 
 # %%
 """
-To end, lets consider what this adaptive `Regularization`.cheme means in the context of maximizing the Bayesian
+To end, lets consider what this adaptive `Regularization` scheme means in the context of maximizing the Bayesian
 log_evidence. In the previous tutorial, we noted that by using a brightness-based adaptive `Pixelization` we increased 
 the Bayesian log evidence by allowing for new solutions which fit the data user fewer source pixels; the key criteria 
 in making a source reconstruction `more simple` and `less complex`.

@@ -3,9 +3,9 @@
 Tutorial 2: Brightness Adaption
 ===============================
 
-In the previous tutorial we motivated a need to adapt our `Pixelization`.o the source's morphology, such that source
+In the previous tutorial we motivated a need to adapt our `Pixelization` to the source's morphology, such that source
 pixels congregates in the source's brightest regions regardless of where it is located in the source-plane. This
-raises an interesting question; how do we adapt our source `Pixelization`.o the reconstructed source, before we've
+raises an interesting question; how do we adapt our source `Pixelization` to the reconstructed source, before we've
 actually reconstructed the source and therefore know what to adapt it too?
 
 To do this, we define a `hyper-galaxy-image` of the lensed source galaxy. This is a model image of the source
@@ -115,7 +115,7 @@ hyper_image = fit.model_image.in_1d_binned
 # %%
 """
 Now lets take a look at brightness based adaption in action! Below, we define a source-galaxy using our new 
-_VoronoiBrightnessImage_ `Pixelization`.nd use this to fit the lens-data. 
+_VoronoiBrightnessImage_ `Pixelization` and use this to fit the lens-data. 
 
 We also attach the hyper_galaxy_image to this galaxy, because the `Pixelization` uses this hyper_galaxy_image for 
 adaption, the galaxy needs to know what hyper-galaxy-image it uses to adapt its `Pixelization` too!
@@ -163,7 +163,7 @@ _Pixelization_ is a huge success. It turns out that we should have been adapting
 In doing so, we will *always* reconstruct the detailed structure of the source's brightest regions with a sufficiently 
 high resolution. Hurrah!
 
-So, we are now able to adapt our `Pixelization`.o the morphology of our lensed source galaxy. To my knowledge, this 
+So, we are now able to adapt our `Pixelization` to the morphology of our lensed source galaxy. To my knowledge, this 
 is the *best* approach one can take in lens modeling. Its more tricky to implement (as I'll explain next) and 
 introduces extra non-linear parameters. But the pay-off is more than worth it, as we fit our data better and 
 end up using far fewer source pixels to fit the data because we don't `waste` pixels reconstructing regions of the 
@@ -172,7 +172,7 @@ source-plane where there is no signal.
 
 # %%
 """
-Okay, so how does the hyper_image actually adapt our `Pixelization`.o the source's brightness? It uses a `weighted 
+Okay, so how does the hyper_image actually adapt our `Pixelization` to the source's brightness? It uses a `weighted 
 KMeans clustering algorithm`, which is a standard algorithm for partioning data in statistics.
 
 In simple terms, this algorithm works as follows:
@@ -266,7 +266,7 @@ aplt.Array(array=cluster_weight_power_10, mask=mask)
 # %%
 """
 When we increase the weight-power the brightest regions of the hyper-galaxy-image become weighted higher relative 
-to the fainter regions. This means that t e KMeans algorithm will adapt its `Pixelization`.o the brightest regions of 
+to the fainter regions. This means that t e KMeans algorithm will adapt its `Pixelization` to the brightest regions of 
 the source.
 """
 

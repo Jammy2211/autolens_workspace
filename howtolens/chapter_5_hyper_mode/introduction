@@ -2,9 +2,9 @@ In this chapter, we will introduce **PyAutoLens**'s 'hyper-mode'. In hyper mode,
 in an earlier phase of a pipeline) to adapt various aspects of our model to the strong lens image being analysed. In
 particular, we will:
 
-1) Adapt the source `Pixelization`.o the reconstructed source's morphology.
+1) Adapt the source `Pixelization` to the reconstructed source's morphology.
 
-2) Adapt the source `Regularization`.cheme to the reconstructed source's surface brightness.
+2) Adapt the source `Regularization` scheme to the reconstructed source's surface brightness.
 
 3) Scale the noise-map of the `Imaging` data in regions we fit the lens and source galaxies poorly.
 
@@ -73,8 +73,8 @@ why this approach gave Bayesian Evidence values that were neither objective nor 
 
 At the end of this chapter, you'll be able to:
 
-1) Adapt an inversions's `Pixelization`.o the morphology of the reconstructed source galaxy.
-2) Adapt the `Regularization`.cheme applied to this source to its surface brightness profile.
+1) Adapt an inversions's `Pixelization` to the morphology of the reconstructed source galaxy.
+2) Adapt the `Regularization` scheme applied to this source to its surface brightness profile.
 3) Use hyper-galaxies to scale the image's noise-map during fitting, to prevent over-fitting regions of the image.
 4) Include aspects of the data reduction in the model fitting, for example the background sky subtraction.
 5) Use these features in **PyAutoLens**'s pipeline frame.

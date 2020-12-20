@@ -88,7 +88,9 @@ def make_pipeline(slam, settings):
         settings=settings,
     )
 
-    phase1 = phase1.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase1 = phase1.extend_with_hyper_phase(
+        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
+    )
 
     """
     Phase 2: Fit the lens`s `MassProfile`'s and source `Galaxy`'s `LightProfile`, where we:
@@ -104,7 +106,7 @@ def make_pipeline(slam, settings):
 
     """SLaM: Align the bulge and mass model centres if align_bulge_mass_centre is True."""
 
-    if slam.pipeline_source_parametric.setup_mass.mass_centre is not None:
+    if slam.pipeline_source_parametric.setup_mass.mass_centre is None:
         if slam.pipeline_source_parametric.setup_mass.align_bulge_mass_centre:
             mass.centre = phase1.result.instance.galaxies.lens.bulge.centre
         else:
@@ -136,12 +138,13 @@ def make_pipeline(slam, settings):
                 hyper_galaxy=phase1.result.hyper.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
-        hyper_image_sky=phase1.result.hyper.instance.optional.hyper_image_sky,
         hyper_background_noise=phase1.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
     )
 
-    phase2 = phase2.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase2 = phase2.extend_with_hyper_phase(
+        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
+    )
 
     """
     Phase 3: Refit the lens `Galaxy`'s bulge and disk `LightProfile`'s using fixed mass and source instances from phase 2, 
@@ -177,12 +180,13 @@ def make_pipeline(slam, settings):
                 hyper_galaxy=phase2.result.hyper.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
-        hyper_image_sky=phase2.result.hyper.instance.optional.hyper_image_sky,
         hyper_background_noise=phase2.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
     )
 
-    phase3 = phase3.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase3 = phase3.extend_with_hyper_phase(
+        setup_hyper=slam.setup_hyper, include_hyper_image_sky=False
+    )
 
     """
     Phase 4: Simultaneously fit the lens and source galaxies, where we:
@@ -213,12 +217,13 @@ def make_pipeline(slam, settings):
                 hyper_galaxy=phase3.result.hyper.instance.optional.galaxies.source.hyper_galaxy,
             ),
         ),
-        hyper_image_sky=phase3.result.hyper.instance.optional.hyper_image_sky,
         hyper_background_noise=phase3.result.hyper.instance.optional.hyper_background_noise,
         settings=settings,
     )
 
-    phase4 = phase4.extend_with_hyper_phase(setup_hyper=slam.setup_hyper)
+    phase4 = phase4.extend_with_hyper_phase(
+        setup_hyper=slam.setup_hyper, include_hyper_image_sky=True
+    )
 
     return al.PipelineDataset(
         pipeline_name, path_prefix, None, phase1, phase2, phase3, phase4

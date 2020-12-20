@@ -94,7 +94,7 @@ lens_galaxy = al.Galaxy(
         effective_radius=1.6,
         mass_to_light_ratio=0.05,
     ),
-    mass=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.12, scale_radius=20.0),
+    dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.12, scale_radius=20.0),
     shear=al.mp.ExternalShear(elliptical_comps=(-0.02, 0.005)),
 )
 

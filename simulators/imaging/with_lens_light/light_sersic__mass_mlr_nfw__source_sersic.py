@@ -77,7 +77,7 @@ lens_galaxy = al.Galaxy(
         sersic_index=4.0,
         mass_to_light_ratio=0.2,
     ),
-    mass=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.1, scale_radius=20.0),
+    dark=al.mp.SphericalNFW(centre=(0.0, 0.0), kappa_s=0.1, scale_radius=20.0),
 )
 
 source_galaxy = al.Galaxy(

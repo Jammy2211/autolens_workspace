@@ -80,18 +80,18 @@ The `SetupHyper` object controls the behaviour of these hyper-mode settings.
 """
 
 # %%
-hyper_galaxies_search = af.DynestyStatic(n_live_points=100, evidence_tolerance=0.8)
-hyper_search_no_inversion = af.DynestyStatic(n_live_points=30, evidence_tolerance=0.8)
-hyper_search_with_inversion = af.DynestyStatic(n_live_points=50, evidence_tolerance=0.8)
 
 setup_hyper = al.SetupHyper(
     hyper_galaxies_lens=True,
     hyper_galaxies_source=True,
     hyper_background_noise=al.hyper_data.HyperBackgroundNoise,
     hyper_image_sky=None,  # <- By default this feature is off, as it rarely changes the lens model.
-    hyper_galaxies_search=hyper_galaxies_search,
-    hyper_search_no_inversion=hyper_search_no_inversion,
-    hyper_search_with_inversion=hyper_search_with_inversion,
+    hyper_search_no_inversion=af.DynestyStatic(
+        n_live_points=30, evidence_tolerance=0.8
+    ),
+    hyper_search_with_inversion=af.DynestyStatic(
+        n_live_points=50, evidence_tolerance=0.8
+    ),
 )
 setup_light = al.SetupLightParametric(light_centre=None)
 setup_mass = al.SetupMassTotal(with_shear=True)
