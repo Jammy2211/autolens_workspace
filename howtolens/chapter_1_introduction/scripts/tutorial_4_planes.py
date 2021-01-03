@@ -11,27 +11,13 @@ line of sight, such that the foreground `Galaxy`'s mass (represented as `MassPro
 as `LightProfile`'s) of the background source galaxy(s).
 
 When the alignment is just right and the lens is just massive enough, the background source galaxy appears multiple
-times. The schematic below shows a crude drawing of such a system, where two light-rays from the source are bending
-around the lens galaxy and into the observer (light should bend `smoothly`, but drawing this on a keyboard wasn`t
-possible - so just pretend the diagonal lines coming from the observer and source are less jagged)
+times. The schematic below shows such a system, where two light-rays from the source are bending
+around the lens galaxy and into the observer (light should bend smoothly)
 """
 
 # %%
 """
-Observer                  Image-Plane               Source-Plane
-
-(z=0, Earth)               (z = 0.5)                (z = 1.0)
-
-         ----------------------------------------------
-        /                                              \ <---- This is one of the source's light-rays
-       /                      --                        \
-  p   /                      /  \                      __
-  |  /                      /   \                     /  \
- /\  \                      \   /                     \__/
-      \                     \__/                 Source Galaxy (s)
-       \                Lens Galaxy(s)                /
-         \                                           / <----- And this is its other light-ray
-          ------------------------------------------/
+![Schematic of Gravitational Lensing](https://i.imgur.com/zB6tIdI.jpg)
 """
 
 # %%
@@ -208,7 +194,7 @@ aplt.Plane.image_and_source_plane_subplot(
 
 # %%
 """
-Clearly, the source-plane`s `Grid` is very different to the image-planes! It's not uniform and its certranly not boring!
+Clearly, the source-plane`s `Grid` is very different to the image-planes! It's not uniform and its certainly not boring!
 
 We can now ask the question - `what does our source-galaxy look like in the image-plane`? That is, to us, the observer 
 on Earth, how does the source-galaxy appear after lensing?. To do this, we simple trace the source `Galaxy`'s light 

@@ -45,6 +45,13 @@ lens modeling with **PyAutoLens**. It can be found in the workspace & consists o
 - **Inversions**: How to perform pixelized reconstructions of the source-galaxy.
 - **Hyper-Mode**: How to use **PyAutoLens** advanced modeling features that adapt the model to the strong lens being analysed.
 
+
+Contribution
+============
+To make changes in the tutorial notebooks, please make changes in the the corresponding python files(.py) present in the
+``scripts`` folder of each chapter. Please note that  marker ``# %%`` alternates between code cells and markdown cells.
+
+
 Support
 =======
 
