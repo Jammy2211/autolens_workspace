@@ -28,7 +28,9 @@ non-linear will be omitted and not loaded in the `Aggregator`.
 For these tutorials, we only performed 3 model-fits which ran to completion, so this does not remove any results. For
 general database use when you may have many model-fits running simultaneously, this filter can prove useful.
 """
-agg = af.Aggregator.from_database("database.sqlite", completed_only=True)
+agg = af.Aggregator.from_database(
+    path.join("output", "database.sqlite"), completed_only=True
+)
 
 """
 We can use the `Aggregator`'s to query the database and return only specific fits that we are interested in. We first 
@@ -37,30 +39,23 @@ input into the model-fit's search.
 
 By querying using the string `mass_sie__source_sersic__1` the model-fit to only the second strong lens is returned:
 """
-# Feature Missing
-# agg_query = agg.query(agg.directory.contains("mass_sie__source_sersic__1"))
-# samples_gen = agg_query.values("samples")
-# agg_filter = agg.filter(agg.directory.contains("runner"))
+unique_tag = agg.unique_tag
+agg_query = agg.query(unique_tag == "mass_sie__source_sersic__1")
+samples_gen = agg_query.values("samples")
 
 """
-As expected, this list now has only 1 MCMCSamples corresponding to the second dataset.
+As expected, this list now has only 1 DynestySamples corresponding to the second dataset.
 """
-# print("Directory Filtered NestedSampler Samples: \n")
-# print("Total Samples Objects = ", len(list(agg_filter.values("samples"))), "\n\n")
+print("Directory Filtered DynestySampler Samples: \n")
+print("Total Samples Objects = ", len(samples_gen), "\n\n")
 
 """
 If we query using an incorrect dataset name we get no results:
 """
-# Feature Missing
-# agg_query = agg.query(agg.directory.contains("invalid_string"))
-# samples_gen = agg_query.values("samples")
-# agg_filter_incorrect = agg.filter(agg.directory.contains("invalid_string"))
-# print("Incorrect Phase Name Filtered NestedSampler Samples: \n")
-# print(
-#     "Total Samples Objects = ",
-#     len(list(agg_filter_incorrect.values("samples"))),
-#     "\n\n",
-# )
+unique_tag = agg.unique_tag
+agg_query = agg.query(unique_tag == "incorrect_name")
+samples_gen = agg_query.values("samples")
+
 
 """
 We can also query based on the model fitted. 
@@ -77,12 +72,7 @@ Models with multiple galaxies are therefore easily accessed via the database.]
 """
 lens = agg.galaxies.lens
 agg_query = agg.query(lens.mass == al.mp.EllIsothermal)
-samples_gen = agg_query.values("samples")
-print(
-    "Total Samples Objects via `EllIsothermal` model query = ",
-    len(list(samples_gen)),
-    "\n",
-)
+print("Total Samples Objects via `EllIsothermal` model query = ", len(agg_query), "\n")
 
 """
 Queries using the results of model-fitting are also supported. Below, we query the database to find all fits where the 
@@ -91,10 +81,9 @@ the first of the three model-fits).
 """
 bulge = agg.galaxies.source.bulge
 agg_query = agg.query(bulge.sersic_index < 3.0)
-samples_gen = agg_query.values("samples")
 print(
     "Total Samples Objects In Query `source.bulge.sersic_index < 3.0` = ",
-    len(list(samples_gen)),
+    len(agg_query),
     "\n",
 )
 
@@ -107,10 +96,9 @@ The OR logical clause is also supported via the symbol |.
 """
 mass = agg.galaxies.lens.mass
 agg_query = agg.query((mass == al.mp.EllIsothermal) & (mass.einstein_radius > 1.0))
-samples_gen = agg_query.values("samples")
 print(
     "Total Samples Objects In Query `EllIsothermal and einstein_radius > 3.0` = ",
-    len(list(samples_gen)),
+    len(agg_query),
     "\n",
 )
 

@@ -2,6 +2,44 @@ import autofit as af
 import autolens as al
 
 from typing import Tuple, Optional
+from sqlalchemy.orm import Session
+
+
+class SettingsAutoFit:
+    def __init__(
+        self,
+        path_prefix: str,
+        unique_tag: Optional[str] = None,
+        info: Optional[dict] = None,
+        number_of_cores: Optional[int] = 1,
+        session: Optional[Session] = None,
+    ):
+        """
+        The settings of PyAutoFit that are used throughout a SLaM pipeline.
+
+        Parameters
+        ----------
+        path_prefix
+            The prefix of folders between the output path and the search folders.
+        unique_tag
+            The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
+            the folder after the path prefix and before the search name. This is typically the name of the dataset.
+        info : dict
+            Optional dictionary containing information about the model-fit that is stored in the database and can be
+            loaded by the aggregator after the model-fit is complete.
+        number_of_cores
+            The number of CPU cores used to parallelize the model-fit. This is used internally in a non-linear search
+            for most model fits, but is done on a per-fit basis for grid based searches (e.g. sensitivity mapping).
+        session
+            The SQLite database session which is active means results are directly wrtten to the SQLite database
+            at the end of a fit and loaded from the database at the start.
+        """
+
+        self.path_prefix = path_prefix
+        self.unique_tag = unique_tag
+        self.info = info
+        self.number_of_cores = number_of_cores
+        self.session = session
 
 
 def set_lens_light_centres(lens, light_centre: Tuple[float, float]):

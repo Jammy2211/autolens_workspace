@@ -22,36 +22,13 @@ import autolens.plot as aplt
 """
 First, set up the aggregator as we did in the previous tutorial.
 """
-agg = af.Aggregator.from_database("database.sqlite")
+agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
-We can also use the aggregator to load the dataset of every lens our search fitted. This generator returns the 
-the `Imaging` objects that we passed to the `Analysis` class when we performed the model-fit.
-"""
-dataset_gen = agg.values("dataset")
-
-print("Datasets:")
-print(dataset_gen, "\n")
-print(list(dataset_gen)[0])
-
-for dataset in agg.values("dataset"):
-
-    imaging_plotter = aplt.ImagingPlotter(imaging=dataset)
-    imaging_plotter.subplot_imaging()
-
-"""
-The masks we used to fit the lenses is contained in this `Imaging` object too.
+The masks we used to fit the lenses is accessible via the aggregator.
 """
 mask_gen = agg.values("mask")
-print([dataset.mask for dataset in dataset_gen])
-
-"""
-The name of the dataset we assigned when we ran the search is also available, which helps us to label the lenses 
-on plots.
-"""
-print("Dataset Names:")
-dataset_gen = agg.values("dataset")
-print([dataset.name for dataset in dataset_gen])
+print([mask for mask in mask_gen])
 
 """
 The info dictionary we passed is also available.
@@ -59,6 +36,65 @@ The info dictionary we passed is also available.
 print("Info:")
 info_gen = agg.values("info")
 print([info for info in info_gen])
+
+"""
+We can also use the aggregator to load the dataset of every lens our search fitted. 
+
+The individual masked `data`, `noise_map` and `psf` are stored in the database, as opposed to the `Imaging` object, 
+which saves of hard-disk space used. Thus, we need to create the `Imaging` object ourselves to inspect it. 
+"""
+data_gen = agg.values(name="data")
+noise_map_gen = agg.values(name="noise_map")
+psf_gen = agg.values(name="psf")
+settings_imaging_gen = agg.values(name="settings_dataset")
+
+for (data, noise_map, psf, settings_imaging) in zip(
+    data_gen, noise_map_gen, psf_gen, settings_imaging_gen
+):
+
+    imaging = al.Imaging(
+        image=data,
+        noise_map=noise_map,
+        psf=psf,
+        settings=settings_imaging,
+        setup_convolver=True,
+    )
+
+    imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
+    imaging_plotter.subplot_imaging()
+
+"""
+We should be doing this using a generator, as shown below.
+"""
+
+
+def make_imaging_gen(fit,):
+
+    data = fit.value(name="data")
+    noise_map = fit.value(name="noise_map")
+    psf = fit.value(name="psf")
+    settings_imaging = fit.value(name="settings_dataset")
+
+    imaging = al.Imaging(
+        image=data,
+        noise_map=noise_map,
+        psf=psf,
+        settings=settings_imaging,
+        setup_convolver=True,
+    )
+
+    imaging.apply_settings(settings=settings_imaging)
+
+    return imaging
+
+
+imaging_gen = agg.map(func=make_imaging_gen)
+
+for imaging in imaging_gen:
+
+    imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
+    imaging_plotter.subplot_imaging()
+
 
 """
 We now have access to the `Imaging` data we used to perform a model-fit, and the results of that model-fit in the form
@@ -69,14 +105,11 @@ corresponding dataset, via the following generator:
 """
 
 
-def make_fit_generator(agg_obj):
+def make_fit_generator(fit):
 
-    samples = agg_obj.samples
-    imaging = agg_obj.dataset
+    imaging = make_imaging_gen(fit=fit)
 
-    tracer = al.Tracer.from_galaxies(
-        galaxies=samples.max_log_likelihood_instance.galaxies
-    )
+    tracer = al.Tracer.from_galaxies(galaxies=fit.instance.galaxies)
 
     return al.FitImaging(imaging=imaging, tracer=tracer)
 
@@ -96,16 +129,14 @@ These settings objected are contained in the database and can therefore also be 
 """
 
 
-def make_fit_generator(agg_obj):
+def make_fit_generator(fit):
 
-    samples = agg_obj.samples
-    imaging = agg_obj.dataset
-    settings_pixelization = agg_obj.settings_pixelization
-    settings_inversion = agg_obj.settings_inversion
+    imaging = make_imaging_gen(fit=fit)
 
-    tracer = al.Tracer.from_galaxies(
-        galaxies=samples.max_log_likelihood_instance.galaxies
-    )
+    settings_pixelization = fit.value(name="settings_pixelization")
+    settings_inversion = fit.value(name="settings_inversion")
+
+    tracer = al.Tracer.from_galaxies(galaxies=fit.instance.galaxies)
 
     return al.FitImaging(
         imaging=imaging,
@@ -118,6 +149,7 @@ def make_fit_generator(agg_obj):
 fit_gen = agg.map(func=make_fit_generator)
 
 for fit in fit_gen:
+
     fit_imaging_plotter = aplt.FitImagingPlotter(fit=fit)
     fit_imaging_plotter.subplot_fit_imaging()
 
@@ -130,8 +162,8 @@ including the settings.
 
 def plot_fit(agg_obj):
 
-    imaging = al.agg.imaging_from_agg_obj(agg_obj=agg_obj)
-    tracer = al.agg.tracer_from_agg_obj(agg_obj=agg_obj)
+    imaging = al.agg.imaging_via_database_from(fit=agg_obj)
+    tracer = al.agg.tracer_via_database_from(fit=agg_obj)
 
     return al.FitImaging(imaging=imaging, tracer=tracer)
 
@@ -148,7 +180,7 @@ Of course, we also provide a convenience method to directly make the Imaging and
 imaging_gen = al.agg.Imaging(aggregator=agg)
 
 for imaging in imaging_gen:
-    print(imaging.name)
+    print(imaging)
 
 fit_gen = al.agg.FitImaging(aggregator=agg)
 

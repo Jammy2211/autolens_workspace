@@ -8,16 +8,13 @@ import numpy as np
 
 
 def detection_single_plane(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     mass_results: af.ResultsCollection,
     subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
-    number_of_cores: int = 1,
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ) -> af.ResultsCollection:
     """
     The SLaM SUBHALO PIPELINE for fitting imaging data with or without a lens light component, where it is assumed
@@ -25,8 +22,6 @@ def detection_single_plane(
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
     analysis
         The analysis class which includes the `log_likelihood_function` and can be customized for the SLaM model-fit.
     setup_hyper
@@ -43,9 +38,6 @@ def detection_single_plane(
     number_of_cores
         The number of cores used to perform the non-linear search grid search. If 1, each model-fit on the grid is
         performed in serial, if > 1 fits are distributed in parallel using the Python multiprocessing module.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -79,14 +71,15 @@ def detection_single_plane(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[1]_mass[total_refine]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=100,
     )
 
-    result_1 = search.fit(model=model, analysis=analysis)
+    result_1 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Model + Search + Analysis + Model-Fit (Search 2)__
@@ -136,17 +129,20 @@ def detection_single_plane(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[2]_mass[total]_source_subhalo[search_lens_plane]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
         walks=5,
         facc=0.2,
     )
 
     subhalo_grid_search = af.SearchGridSearch(
-        search=search, number_of_steps=number_of_steps, number_of_cores=number_of_cores
+        search=search,
+        number_of_steps=number_of_steps,
+        number_of_cores=settings_autofit.number_of_cores,
     )
 
     grid_search_result = subhalo_grid_search.fit(
@@ -198,29 +194,27 @@ def detection_single_plane(
     )
 
     search = af.DynestyStatic(
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[3]_subhalo[single_plane_refine]",
-        unique_tag=unique_tag,
-        session=session,
-        path_prefix=path_prefix,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=100,
     )
 
-    result_3 = search.fit(model=model, analysis=analysis)
+    result_3 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     return af.ResultsCollection([result_1, grid_search_result, result_3])
 
 
 def detection_multi_plane(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     mass_results: af.ResultsCollection,
     subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
-    number_of_cores: int = 1,
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ) -> af.ResultsCollection:
     """
     The SLaM SUBHALO PIPELINE for fitting imaging data with or without a lens light component, where the subhalo is a
@@ -228,8 +222,6 @@ def detection_multi_plane(
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
     analysis
         The analysis which includes the `log_likelihood_function` and can be customized for the SLaM model-fit.
     setup_hyper
@@ -246,9 +238,6 @@ def detection_multi_plane(
     number_of_cores
         The number of cores used to perform the non-linear search grid search. If 1, each model-fit on the grid is
         performed in serial, if > 1 fits are distributed in parallel using the Python multiprocessing module.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -282,14 +271,15 @@ def detection_multi_plane(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[1]_mass[total_refine]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=100,
     )
 
-    result_1 = search.fit(model=model, analysis=analysis)
+    result_1 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Model + Search + Analysis + Model-Fit (Search 2)__
@@ -341,17 +331,20 @@ def detection_multi_plane(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[2]_mass[total]_source_subhalo[multi_plane]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
         walks=5,
         facc=0.2,
     )
 
     subhalo_grid_search = af.SearchGridSearch(
-        search=search, number_of_steps=number_of_steps, number_of_cores=number_of_cores
+        search=search,
+        number_of_steps=number_of_steps,
+        number_of_cores=settings_autofit.number_of_cores,
     )
 
     grid_search_result = subhalo_grid_search.fit(
@@ -405,20 +398,21 @@ def detection_multi_plane(
     )
 
     search = af.DynestyStatic(
+        path_prefix=settings_autofit.path_prefix,
         name="subhalo[3]_subhalo[multi_plane_refine]",
-        unique_tag=unique_tag,
-        session=session,
-        path_prefix=path_prefix,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=100,
     )
 
-    result_3 = search.fit(model=model, analysis=analysis)
+    result_3 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     return af.ResultsCollection([result_1, grid_search_result, result_3])
 
 
 def sensitivity_mapping_imaging(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     mask: al.Mask2D,
     psf: al.Kernel2D,
     mass_results: af.ResultsCollection,
@@ -426,9 +420,6 @@ def sensitivity_mapping_imaging(
     subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
-    number_of_cores: int = 1,
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ):
     """
     The SLaM SUBHALO PIPELINE for performing sensitivity mapping to imaging data with or without a lens light
@@ -436,8 +427,6 @@ def sensitivity_mapping_imaging(
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
     mask
         The Mask2D that is applied to the imaging data for model-fitting.
     psf
@@ -458,9 +447,6 @@ def sensitivity_mapping_imaging(
     number_of_cores
         The number of cores used to perform the non-linear search grid search. If 1, each model-fit on the grid is
         performed in serial, if > 1 fits are distributed in parallel using the Python multiprocessing module.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -583,7 +569,7 @@ def sensitivity_mapping_imaging(
     """
     We next specify the search used to perform each model fit by the sensitivity mapper.
     """
-    search = af.DynestyStatic(path_prefix=path_prefix, nlive=50)
+    search = af.DynestyStatic(path_prefix=settings_autofit.path_prefix, nlive=50)
 
     """
     We can now combine all of the objects created above and perform sensitivity mapping. The inputs to the `Sensitivity`
@@ -621,14 +607,14 @@ def sensitivity_mapping_imaging(
         simulate_function=simulate_function,
         analysis_class=analysis_cls,
         number_of_steps=number_of_steps,
-        number_of_cores=number_of_cores,
+        number_of_cores=settings_autofit.number_of_cores,
     )
 
     return sensitivity_mapper.run()
 
 
 def sensitivity_mapping_interferometer(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     uv_wavelengths: np.ndarray,
     real_space_mask: al.Mask2D,
     mass_results: af.ResultsCollection,
@@ -636,9 +622,6 @@ def sensitivity_mapping_interferometer(
     subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
-    number_of_cores: int = 1,
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ):
     """
     The SLaM SUBHALO PIPELINE for performing sensitivity mapping to imaging data with or without a lens light
@@ -800,7 +783,7 @@ def sensitivity_mapping_interferometer(
     """
     We next specify the search used to perform each model fit by the sensitivity mapper.
     """
-    search = af.DynestyStatic(path_prefix=path_prefix, nlive=50)
+    search = af.DynestyStatic(path_prefix=settings_autofit.path_prefix, nlive=50)
 
     """
     We can now combine all of the objects created above and perform sensitivity mapping. The inputs to the `Sensitivity`
@@ -838,7 +821,7 @@ def sensitivity_mapping_interferometer(
         simulate_function=simulate_function,
         analysis_class=analysis_cls,
         number_of_steps=number_of_steps,
-        number_of_cores=number_of_cores,
+        number_of_cores=settings_autofit.number_of_cores,
     )
 
     return sensitivity_mapper.run()

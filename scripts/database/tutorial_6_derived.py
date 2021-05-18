@@ -22,7 +22,7 @@ import numpy as np
 """
 First, we set up the aggregator as we did in the previous tutorial.
 """
-agg = af.Aggregator.from_database("database.sqlite")
+agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
 To begin, lets compute the axis ratio of a lens model, including the errors on the axis ratio. In the previous tutorials, 
@@ -54,9 +54,9 @@ def weighted_mean_and_standard_deviation(values, weight_list):
     """
     values = np.asarray(values)
     weight_list = np.asarray(weight_list)
-    average = np.average(values, weight_list=weight_list)
+    average = np.average(values, weights=weight_list)
     # Fast and numerically precise:
-    variance = np.average((values - average) ** 2, weight_list=weight_list)
+    variance = np.average((values - average) ** 2, weights=weight_list)
     return average, np.sqrt(variance)
 
 
@@ -70,9 +70,9 @@ computing derived quantities it is good practise to always use a generator.
 """
 
 
-def axis_ratio_error_from_agg_obj(agg_obj):
+def axis_ratio_error_from_agg_obj(fit):
 
-    samples = agg_obj.samples
+    samples = fit.value(name="samples")
 
     axis_ratios = []
     weight_list = []

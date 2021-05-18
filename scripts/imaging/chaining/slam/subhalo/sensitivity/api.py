@@ -261,7 +261,6 @@ sensitivity = s.Sensitivity(
     simulate_function=simulate_function,
     analysis_class=AnalysisImagingSensitivity,
     number_of_steps=2,
-    number_of_cores=2,
 )
 
 sensitivity_result = sensitivity.run()

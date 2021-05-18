@@ -7,7 +7,7 @@ from typing import Union, Optional
 
 
 def with_lens_light(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     source_results: af.ResultsCollection,
@@ -15,16 +15,15 @@ def with_lens_light(
     lens_disk: af.Model(al.lp.LightProfile) = None,
     lens_envelope: af.Model(al.lp.LightProfile) = None,
     end_with_hyper_extension: bool = False,
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ) -> af.ResultsCollection:
     """
     The SlaM LIGHT PARAMETRIC PIPELINE for fitting imaging data with a lens light component.
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
+    settings_autofit
+        A collection of settings that control the behaviour of PyAutoFit thoughout the pipeline (e.g. paths, database,
+        parallelization, etc.).
     analysis
         The analysis class which includes the `log_likelihood_function` and can be customized for the SLaM model-fit.
     setup_hyper
@@ -43,9 +42,6 @@ def with_lens_light(
     end_with_hyper_extension
         If `True` a hyper extension is performed at the end of the pipeline. If this feature is used, you must be
         certain you have manually passed the new hyper images geneted in this search to the next pipelines.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -98,14 +94,17 @@ def with_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="light[1]_light[parametric]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=75,
     )
 
-    result_1 = search.fit(model=model, analysis=analysis.no_positions)
+    result_1 = search.fit(
+        model=model, analysis=analysis.no_positions, info=settings_autofit.info
+    )
 
     """
     __Hyper Extension__

@@ -23,7 +23,6 @@ likely already encountered when analysing the results of a model-fit. Neverthele
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-import os
 from os import path
 import autofit as af
 import autolens.plot as aplt
@@ -32,7 +31,7 @@ import autolens.plot as aplt
 First, note how the results are not contained in the `output` folder after each search completes. Instead, they are
 contained in the `database.sqlite` file, which we can load using the `Aggregator`.
 """
-agg = af.Aggregator.from_database("database.sqlite")
+agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
 Before using the aggregator to inspect results, let me quickly cover Python generators. A generator is an object that 
@@ -56,13 +55,13 @@ the `Samples` class acts as an interface to the results of the non-linear search
 samples_gen = agg.values("samples")
 
 """
-When we print this the length of this generator converted to a list of outputs we see 3 different NestSamples 
+When we print this the length of this generator converted to a list of outputs we see 3 different DynestySamples 
 instances. These correspond to each fit of each search to each of our 3 images.
 """
 print("NestedSampler Samples: \n")
 print(samples_gen)
 print()
-print("Total Samples Objects = ", len(list(samples_gen)), "\n")
+print("Total Samples Objects = ", len(agg), "\n")
 
 """
 The `Samples` class contains all the parameter samples, which is a list of lists where:
@@ -80,7 +79,7 @@ for samples in agg.values("samples"):
 print("Samples: \n")
 print(agg.values("samples"))
 print()
-print("Total Samples Objects = ", len(list(agg.values("samples"))), "\n")
+print("Total Samples Objects = ", len(agg), "\n")
 
 """
 The `Samples` class contains the log likelihood, log prior, log posterior and weight_list of every sample, where:

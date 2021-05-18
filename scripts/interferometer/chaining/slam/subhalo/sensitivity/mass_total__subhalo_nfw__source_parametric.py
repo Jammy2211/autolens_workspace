@@ -70,11 +70,17 @@ interferometer_plotter.subplot_interferometer()
 interferometer_plotter.subplot_dirty_images()
 
 """
-__Paths__
+__Settings AutoFit__
 
-The path the results of all chained searches are output:
+The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
-path_prefix = path.join("interferometer", "slam")
+settings_autofit = slam.SettingsAutoFit(
+    path_prefix=path.join("interferometer", "slam"),
+    unique_tag=dataset_name,
+    info=None,
+    number_of_cores=None,
+    session=None,
+)
 
 """
 __Redshifts__
@@ -113,8 +119,7 @@ light, which in this example:
 analysis = al.AnalysisInterferometer(dataset=interferometer)
 
 source_parametric_results = slam.source_parametric.no_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     mass=af.Model(al.mp.EllIsothermal),
@@ -138,8 +143,7 @@ using the lens mass model and source model of the SOURCE PIPELINE to initialize 
 analysis = al.AnalysisInterferometer(dataset=interferometer)
 
 mass_results = slam.mass_total.no_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_parametric_results,
@@ -171,7 +175,7 @@ class AnalysisInterferometerSensitivity(al.AnalysisInterferometer):
 
 
 subhalo_results = slam.subhalo.sensitivity_mapping_interferometer(
-    path_prefix=path_prefix,
+    settings_autofit=settings_autofit,
     analysis_cls=AnalysisInterferometerSensitivity,
     uv_wavelengths=interferometer.uv_wavelengths,
     real_space_mask=real_space_mask,
@@ -179,7 +183,6 @@ subhalo_results = slam.subhalo.sensitivity_mapping_interferometer(
     subhalo_mass=af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec=3.0,
     number_of_steps=2,
-    number_of_cores=2,
 )
 
 """

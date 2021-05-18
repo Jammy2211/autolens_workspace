@@ -7,7 +7,7 @@ from typing import Union, Optional
 
 
 def no_lens_light(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     source_parametric_results: af.ResultsCollection,
@@ -15,16 +15,12 @@ def no_lens_light(
         al.pix.VoronoiBrightnessImage
     ),
     regularization: af.Model(al.reg.Regularization) = af.Model(al.reg.Constant),
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ) -> af.ResultsCollection:
     """
     The S:aM SOURCE INVERSION PIPELINE for fitting imaging data without a lens light component.
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
     analysis
         The analysis class which includes the `log_likelihood_function` and can be customized for the SLaM model-fit.
     setup_hyper
@@ -35,9 +31,6 @@ def no_lens_light(
         The pixelization used by the `Inversion` which fits the source light.
     regularization
         The regularization used by the `Inversion` which fits the source light.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -78,14 +71,17 @@ def no_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[1]_mass[fixed]_source[inversion_magnification_initialization]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=30,
     )
 
-    result_1 = search.fit(model=model, analysis=analysis.no_positions)
+    result_1 = search.fit(
+        model=model, analysis=analysis.no_positions, info=settings_autofit.info
+    )
 
     """
     __Model + Search + Analysis + Model-Fit (Search 2)__
@@ -120,14 +116,15 @@ def no_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[2]_mass[total]_source[fixed]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
     )
 
-    result_2 = search.fit(model=model, analysis=analysis)
+    result_2 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Model + Search + Analysis + Model-Fit (Search 3)__
@@ -161,18 +158,21 @@ def no_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[3]_mass[fixed]_source[inversion_initialization]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=30,
-        dlogz=setup_hyper.dlogz,
+        dlogz=10.0,
         sample="rstagger",
     )
 
     analysis.set_hyper_dataset(result=result_2)
 
-    result_3 = search.fit(model=model, analysis=analysis.no_positions)
+    result_3 = search.fit(
+        model=model, analysis=analysis.no_positions, info=settings_autofit.info
+    )
     result_3.use_as_hyper_dataset = True
 
     """
@@ -218,14 +218,15 @@ def no_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[4]_mass[total]_source[fixed]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
     )
 
-    result_4 = search.fit(model=model, analysis=analysis)
+    result_4 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Hyper Extension__
@@ -248,7 +249,7 @@ def no_lens_light(
 
 
 def with_lens_light(
-    path_prefix: str,
+    settings_autofit: slam_util.SettingsAutoFit,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     source_parametric_results: af.ResultsCollection,
@@ -256,16 +257,12 @@ def with_lens_light(
         al.pix.VoronoiBrightnessImage
     ),
     regularization: af.Model(al.reg.Regularization) = af.Model(al.reg.Constant),
-    unique_tag: Optional[str] = None,
-    session: Optional[bool] = None,
 ) -> af.ResultsCollection:
     """
     The SLaM SOURCE INVERSION PIPELINE for fitting imaging data with a lens light component.
 
     Parameters
     ----------
-    path_prefix
-        The prefix of folders between the output path and the search folders.
     analysis
         The analysis class which includes the `log_likelihood_function` and can be customized for the SLaM model-fit.
     setup_hyper
@@ -276,9 +273,6 @@ def with_lens_light(
         The pixelization used by the `Inversion` which fits the source light.
     regularization
         The regularization used by the `Inversion` which fits the source light.
-    unique_tag
-        The unique tag for this model-fit, which will be given a unique entry in the sqlite database and also acts as
-        the folder after the path prefix and before the search name. This is typically the name of the dataset.
     """
 
     """
@@ -327,14 +321,17 @@ def with_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[1]_light[fixed]_mass[fixed]_source[inversion_magnification_initialization]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=30,
     )
 
-    result_1 = search.fit(model=model, analysis=analysis.no_positions)
+    result_1 = search.fit(
+        model=model, analysis=analysis.no_positions, info=settings_autofit.info
+    )
 
     """
     __Model + Search + Analysis + Model-Fit (Search 2)__
@@ -375,14 +372,15 @@ def with_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[2]_light[fixed]_mass[total]_source[inversion_magnification]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
     )
 
-    result_2 = search.fit(model=model, analysis=analysis)
+    result_2 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Model + Search + Analysis + Model-Fit (Search 3)__
@@ -422,18 +420,21 @@ def with_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[3]_light[fixed]_mass[fixed]_source[inversion_initialization]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=30,
-        dlogz=setup_hyper.dlogz,
+        dlogz=10.0,
         sample="rstagger",
     )
 
     analysis.set_hyper_dataset(result=result_2)
 
-    result_3 = search.fit(model=model, analysis=analysis.no_positions)
+    result_3 = search.fit(
+        model=model, analysis=analysis.no_positions, info=settings_autofit.info
+    )
     result_3.use_as_hyper_dataset = True
 
     """
@@ -485,14 +486,15 @@ def with_lens_light(
     )
 
     search = af.DynestyStatic(
-        path_prefix=path_prefix,
+        path_prefix=settings_autofit.path_prefix,
         name="source_inversion[4]_light[fixed]_mass[total]_source[inversion]",
-        unique_tag=unique_tag,
-        session=session,
+        unique_tag=settings_autofit.unique_tag,
+        number_of_cores=settings_autofit.number_of_cores,
+        session=settings_autofit.session,
         nlive=50,
     )
 
-    result_4 = search.fit(model=model, analysis=analysis)
+    result_4 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)
 
     """
     __Hyper Extension__

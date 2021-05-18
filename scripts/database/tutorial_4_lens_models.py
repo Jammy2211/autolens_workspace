@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 """
 First, set up the aggregator as we did in the previous tutorial.
 """
-agg = af.Aggregator.from_database("database.sqlite")
+agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
 Next, lets create a list of instances of the maximum log likelihood models of each fit.
@@ -63,12 +63,15 @@ lists which we discussed in the previous tutorial. If we had fitted hundreds of 
 overloading the memory on our laptop.
 
 We can again avoid using lists for any objects that could potentially be memory intensive, using generators.
+
+The `fit` in the function below corresponds to a `Fit` object in the database, and it has access to many of the
+objects we have been loading generators of via the `agg.values` method in previous tutorials.
 """
 
 
-def make_tracer_generator(agg_obj):
+def make_tracer_generator(fit):
 
-    samples = agg_obj.samples
+    samples = fit.value(name="samples")
 
     return al.Tracer.from_galaxies(
         galaxies=samples.max_log_likelihood_instance.galaxies
@@ -137,22 +140,23 @@ print()
 
 """
 Now lets use a generator.
+
+The `Fit` in the database includes the `instance` corresponding to the maximum log likelihood model. Below, you can see
+we access this model and its `galaxies` to print the best fit model.
 """
 
 
-def print_max_log_likelihood_mass(agg_obj):
+def print_max_log_likelihood_mass(fit):
 
-    samples = agg_obj.samples
-
-    einstein_mass = samples.instance.galaxies.lens.einstein_mass_angular_from_grid(
+    einstein_mass = fit.instance.galaxies.lens.einstein_mass_angular_from_grid(
         grid=grid
     )
 
     print("Einstein Mass (angular units) = ", einstein_mass)
 
     critical_surface_density = al.util.cosmology.critical_surface_density_between_redshifts_from(
-        redshift_0=samples.instance.galaxies.lens.redshift,
-        redshift_1=samples.instance.galaxies.source.redshift,
+        redshift_0=fit.instance.galaxies.lens.redshift,
+        redshift_1=fit.instance.galaxies.source.redshift,
         cosmology=cosmo.Planck15,
     )
 
@@ -162,72 +166,10 @@ def print_max_log_likelihood_mass(agg_obj):
     print("Einstein Mass (kpc) = ", "{:.4e}".format(einstein_mass_kpc))
 
 
+print()
 print("Maximum Log Likelihood Lens Einstein Masses:")
 agg.map(func=print_max_log_likelihood_mass)
 
-"""
-Lets next do something a bit more ambitious. Lets create a plot of the einstein_radius vs axis_ratio of each 
-`EllIsothermal` `MassProfile`.
-
-These plots don't use anything too memory intensive (like a tracer) so we are fine to go back to lists for this.
-"""
-mp_instances = [samps.median_pdf_instance for samps in agg.values("samples")]
-mp_einstein_radii = [
-    instance.galaxies.lens.mass.einstein_radius for instance in mp_instances
-]
-mp_elliptical_comps = [
-    instance.galaxies.lens.mass.elliptical_comps for instance in mp_instances
-]
-
-mp_axis_ratios = [
-    al.convert.axis_ratio_from(elliptical_comps=ell) for ell in mp_elliptical_comps
-]
-
-print(mp_einstein_radii)
-print(mp_axis_ratios)
-
-plt.scatter(mp_einstein_radii, mp_axis_ratios, marker="x")
-plt.show()
-
-"""
-Now lets also include error bars at 3 sigma confidence.
-"""
-ue3_instances = [
-    samps.error_instance_at_upper_sigma(sigma=3.0) for samps in agg.values("samples")
-]
-le3_instances = [
-    samps.error_instance_at_lower_sigma(sigma=3.0) for samps in agg.values("samples")
-]
-
-ue3_einstein_radii = [
-    instance.galaxies.lens.mass.einstein_radius for instance in ue3_instances
-]
-le3_einstein_radii = [
-    instance.galaxies.lens.mass.einstein_radius for instance in le3_instances
-]
-ue3_elliptical_comps = [
-    instance.galaxies.lens.mass.elliptical_comps for instance in ue3_instances
-]
-le3_elliptical_comps = [
-    instance.galaxies.lens.mass.elliptical_comps for instance in le3_instances
-]
-
-ue3_axis_ratios = [
-    al.convert.axis_ratio_from(elliptical_comps=ell) for ell in ue3_elliptical_comps
-]
-le3_axis_ratios = [
-    al.convert.axis_ratio_from(elliptical_comps=ell) for ell in le3_elliptical_comps
-]
-
-plt.errorbar(
-    x=mp_einstein_radii,
-    y=mp_axis_ratios,
-    marker=".",
-    linestyle="",
-    xerr=[le3_einstein_radii, ue3_einstein_radii],
-    yerr=[le3_axis_ratios, ue3_axis_ratios],
-)
-plt.show()
 
 """
 In the runner, we used the pickle_files input to search.run() to pass a .pickle file from the dataset folder to 

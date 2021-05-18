@@ -65,11 +65,17 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
-__Paths__
+__Settings AutoFit__
 
-The path the results of all chained searches are output:
+The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
-path_prefix = path.join("imaging", "slam")
+settings_autofit = slam.SettingsAutoFit(
+    path_prefix=path.join("imaging", "slam"),
+    unique_tag=dataset_name,
+    info=None,
+    number_of_cores=None,
+    session=None,
+)
 
 """
 __Redshifts__
@@ -115,8 +121,7 @@ bulge.centre = (0.0, 0.0)
 disk.centre = (0.0, 0.0)
 
 source_parametric_results = slam.source_parametric.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     lens_bulge=bulge,
@@ -155,8 +160,7 @@ disk = af.Model(al.lp.EllExponential)
 bulge.centre = disk.centre
 
 light_results = slam.light_parametric.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_parametric_results,
@@ -185,8 +189,7 @@ lens light model of the LIGHT PARAMETRIC PIPELINE. In this example it:
 analysis = al.AnalysisImaging(dataset=imaging)
 
 mass_results = slam.mass_total.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_parametric_results,

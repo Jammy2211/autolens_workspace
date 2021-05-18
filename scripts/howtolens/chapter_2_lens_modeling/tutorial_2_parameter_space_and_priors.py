@@ -181,14 +181,17 @@ We can now fit this custom model with a search like we did in tutorial 1.
 If you look at the `model.info` file in the output folder of the non-linear search, you'll see that certain priors 
 have been updated to the priors we set above.
 
-When setting up dynesty, we include a new input `number_of_cores=2`. The non-linear search can use parallel processing 
+__Number Of Cores__
+
+When setting up dynesty, we include a new input `number_of_cores=1`. The non-linear search can use parallel processing 
 to sample multiple lens models at once on your CPU. When `number_of_cores=2` the search will run roughly two times as
 fast, for `number_of_cores=3` three times as fast, and so on. The downside is more cores on your CPU will be in-use
 which may hurt the general performance of your computer.
 
 You should experiment to figure out the highest value which does not give a noticeable loss in performance of your 
 computer. If you know that your processor is a quad-core process you should be able to use `number_of_cores=4`, 
-and even higher end processors can potentially use even higher values.
+and even higher end processors can potentially use even higher values. For users on a Windows Operating system,
+using `number_of_cores>1` may lead to an error, in which case it should be reduced back to 1 to fix it.
 
 __Unique Identifier__
 

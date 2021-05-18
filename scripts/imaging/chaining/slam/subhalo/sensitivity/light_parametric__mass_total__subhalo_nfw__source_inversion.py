@@ -68,11 +68,17 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
-__Paths__
+__Settings AutoFit__
 
-The path the results of all chained searches are output:
+The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
-path_prefix = path.join("imaging", "slam")
+settings_autofit = slam.SettingsAutoFit(
+    path_prefix=path.join("imaging", "slam"),
+    unique_tag=dataset_name,
+    info=None,
+    number_of_cores=None,
+    session=None,
+)
 
 """
 __Redshifts__
@@ -118,8 +124,7 @@ bulge.centre = (0.0, 0.0)
 disk.centre = (0.0, 0.0)
 
 source_parametric_results = slam.source_parametric.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     lens_bulge=bulge,
@@ -157,13 +162,13 @@ settings_lens = al.SettingsLens(
 
 analysis = al.AnalysisImaging(
     dataset=imaging,
+    hyper_result=source_parametric_results.last,
     positions=source_parametric_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
 )
 
 source_inversion_results = slam.source_inversion.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_parametric_results=source_parametric_results,
@@ -205,8 +210,7 @@ disk = af.Model(al.lp.EllExponential)
 bulge.centre = disk.centre
 
 light_results = slam.light_parametric.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_inversion_results,
@@ -246,12 +250,12 @@ preloads = al.Preloads.setup(
 analysis = al.AnalysisImaging(
     dataset=imaging,
     positions=source_inversion_results.last.image_plane_multiple_image_positions,
+    hyper_result=source_inversion_results.last,
     preloads=preloads,
 )
 
 mass_results = slam.mass_total.with_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_inversion_results,
@@ -293,7 +297,7 @@ class AnalysisImagingSensitivity(al.AnalysisImaging):
 
 
 subhalo_results = slam.subhalo.sensitivity_mapping_imaging(
-    path_prefix=path_prefix,
+    settings_autofit=settings_autofit,
     analysis_cls=AnalysisImagingSensitivity,
     mask=mask,
     psf=imaging.psf,
@@ -301,7 +305,6 @@ subhalo_results = slam.subhalo.sensitivity_mapping_imaging(
     subhalo_mass=af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec=3.0,
     number_of_steps=2,
-    number_of_cores=2,
 )
 
 """

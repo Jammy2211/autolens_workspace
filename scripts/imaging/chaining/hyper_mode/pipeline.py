@@ -328,7 +328,7 @@ search = af.DynestyStatic(
     name="hyper[6]_light[fixed]_mass[fixed]_source[inversion_initialization]",
     unique_tag=dataset_name,
     nlive=30,
-    dlogz=setup_hyper.dlogz,
+    dlogz=10.0,
     sample="rstagger",
 )
 

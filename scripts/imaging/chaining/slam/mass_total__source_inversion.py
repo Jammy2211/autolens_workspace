@@ -65,11 +65,17 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
-__Paths__
+__Settings AutoFit__
 
-The path the results of all chained searches are output:
+The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
-path_prefix = path.join("imaging", "slam")
+settings_autofit = slam.SettingsAutoFit(
+    path_prefix=path.join("imaging", "slam"),
+    unique_tag=dataset_name,
+    info=None,
+    number_of_cores=None,
+    session=None,
+)
 
 """
 __Redshifts__
@@ -109,7 +115,7 @@ __Settings__:
 analysis = al.AnalysisImaging(dataset=imaging)
 
 source_parametric_results = slam.source_parametric.no_lens_light(
-    path_prefix=path_prefix,
+    settings_autofit=settings_autofit,
     setup_hyper=setup_hyper,
     analysis=analysis,
     mass=af.Model(al.mp.EllIsothermal),
@@ -145,13 +151,13 @@ settings_lens = al.SettingsLens(
 
 analysis = al.AnalysisImaging(
     dataset=imaging,
+    hyper_result=source_parametric_results.last,
     positions=source_parametric_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
 )
 
 source_inversion_results = slam.source_inversion.no_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_parametric_results=source_parametric_results,
@@ -204,8 +210,7 @@ analysis = al.AnalysisImaging(
 )
 
 mass_results = slam.mass_total.no_lens_light(
-    path_prefix=path_prefix,
-    unique_tag=dataset_name,
+    settings_autofit=settings_autofit,
     analysis=analysis,
     setup_hyper=setup_hyper,
     source_results=source_inversion_results,
