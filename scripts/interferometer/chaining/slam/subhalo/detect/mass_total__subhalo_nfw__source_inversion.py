@@ -278,11 +278,16 @@ settings_lens = al.SettingsLens(
     )
 )
 
+preloads = al.Preloads.setup(
+    result=source_inversion_results.last.hyper, pixelization=True
+)
+
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
-    positions=mass_results.last.image_plane_multiple_image_positions,
     hyper_result=source_inversion_results.last,
+    positions=mass_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
+    preloads=preloads,
 )
 
 subhalo_results = slam.subhalo.detection_single_plane(

@@ -248,8 +248,9 @@ preloads = al.Preloads.setup(
 
 analysis = al.AnalysisImaging(
     dataset=imaging,
-    positions=mass_results.last.image_plane_multiple_image_positions,
     hyper_result=source_inversion_results.last,
+    positions=mass_results.last.image_plane_multiple_image_positions,
+    settings_lens=settings_lens,
     preloads=preloads,
 )
 

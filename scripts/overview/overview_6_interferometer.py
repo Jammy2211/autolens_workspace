@@ -12,12 +12,15 @@ image` such as correlated noise.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import autofit as af
 import autolens as al
 import autolens.plot as aplt
 from os import path
 import numpy as np
 
 """
+__Real Space Mask__
+
 To begin, we define a real-space mask. Although interferometer lens modeling is performed in the uv-plane and 
 therefore Fourier space, we still need to define the grid of coordinates in real-space from which the lensed source's 
 images are computed. It is this image that is mapped to Fourier space to compare to the uv-plane data.
@@ -27,6 +30,8 @@ real_space_mask = al.Mask2D.circular(
 )
 
 """
+__Dataset__
+
 We next load an interferometer dataset from fits files, which follows the same API that we have seen for an `Imaging`
 object.
 """
@@ -51,6 +56,8 @@ interferometer_plotter.figures_2d(visibilities=True, uv_wavelengths=True)
 
 
 """
+__Tracer__
+
 To perform uv-plane modeling, **PyAutoLens** generates an image of the strong lens system in real-space via a `Tracer`. 
 
 Lets quickly set up the `Tracer` we'll use in this example.
@@ -84,6 +91,8 @@ tracer_plotter = aplt.TracerPlotter(
 tracer_plotter.figures_2d(image=True)
 
 """
+__UV-Plane__
+
 To perform uv-plane modeling, **PyAutoLens** next Fourier transforms this image from real-sapce to the uv-plane.
 This operation uses a *Transformer* object, of which there are multiple available in **PyAutoLens**. This includes
 a direct Fourier transform which performs the exact Fourier transformw without approximation.
@@ -109,6 +118,8 @@ interferometer = interferometer.apply_settings(
 )
 
 """
+__Fitting__
+
 The interferometer can now be used with a `FitInterferometer` object to fit it to a data-set:
 """
 fit = al.FitInterferometer(interferometer=interferometer, tracer=tracer)
@@ -148,5 +159,78 @@ inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion)
 inversion_plotter.figures_2d(reconstruction=True)
 
 """
-Finish.
+__Lens Modeling__
+
+It is straight forward to fit a lens model to an interferometer dataset, using the same API that we saw for imaging
+data in the `overview/modeling.py` example.
+
+__Model__
+
+We first compose the model, in the same way described in the `modeling.py` overview script:
+"""
+lens_galaxy_model = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.EllIsothermal)
+
+source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, disk=al.lp.EllExponential)
+
+model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+
+"""
+__Non-linear Search__
+
+We again choose the non-linear search `dynesty` (https://github.com/joshspeagle/dynesty).
+"""
+search = af.DynestyStatic(name="overview_interferometer")
+
+"""
+__Analysis__
+
+Whereas we previously used an `AnalysisImaging` object, we instead use an `AnalysisInterferometer` object which fits 
+the lens model in the correct way for an interferometer dataset. 
+
+This includes mapping the lens model from real-space to the uv-plane via the Fourier transform discussed above.
+"""
+analysis = al.AnalysisInterferometer(dataset=interferometer)
+
+"""
+__Model-Fit__
+
+We can now begin the model-fit by passing the model and analysis object to the search, which performs a non-linear
+search to find which models fit the data with the highest likelihood.
+
+The results can be found in the `output/overview_interferometer` folder in the `autolens_workspace`.
+"""
+result = search.fit(model=model, analysis=analysis)
+
+"""
+__Result__
+
+The **PyAutoLens** visualization library and `FitInterferometer` object includes specific methods for plotting the 
+results.
+"""
+fit_interferometer_plotter = aplt.FitInterferometerPlotter(
+    fit=result.max_log_likelihood_fit
+)
+fit_interferometer_plotter.subplot_fit_interferometer()
+fit_interferometer_plotter.subplot_fit_dirty_images()
+
+"""
+__Simulation__
+
+Simulated interferometer datasets can be generated using the ``SimulatorInterferometer`` object, which includes adding
+Gaussian noise to the visibilities:
+"""
+simulator = al.SimulatorInterferometer(
+    uv_wavelengths=interferometer.uv_wavelengths,
+    exposure_time=300.0,
+    background_sky_level=1.0,
+    noise_sigma=0.01,
+)
+
+interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=interferometer.grid)
+
+"""
+__Wrap Up__
+
+The `interferometer` package of the `autolens_workspace` contains numerous example scripts for performing 
+interferometer modeling and simulating strong lens interferometer datasets.
 """

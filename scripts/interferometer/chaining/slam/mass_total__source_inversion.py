@@ -192,11 +192,16 @@ settings_lens = al.SettingsLens(
     )
 )
 
+preloads = al.Preloads.setup(
+    result=source_inversion_results.last.hyper, pixelization=True
+)
+
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
     hyper_result=source_inversion_results.last,
     positions=source_inversion_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
+    preloads=preloads,
 )
 
 mass_results = slam.mass_total.no_lens_light(

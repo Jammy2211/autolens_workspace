@@ -23,6 +23,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 Load the `Imaging` data that we'll reconstruct the lensed source galaxy's light of using a pixelization.
 
 Note how complex the lensed source galaxy looks, with multiple clumps of light - this would be very difficult to 
@@ -42,6 +44,8 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
+__Masking__
+
 We are going to fit this data, so we must create `Mask2D` and `Imaging` objects.
 """
 mask = al.Mask2D.circular(
@@ -51,10 +55,12 @@ mask = al.Mask2D.circular(
 imaging = imaging.apply_mask(mask=mask)
 
 """
-To reconstruct the source as a `Pixelization`, we simply pass it the `Pixelization` class we want to reconstruct its l
-ight on as well as the `Regularization` scheme describing how we smooth the source reconstruction. 
+__Pixelization + Regularization__
 
-First, lets use a *Rectangular* `Pixelization` with resolution 40 x 40 and *Constant* regularizaton scheme with a 
+To reconstruct the source on a pixel-grid, we simply pass it the `Pixelization` class we want to reconstruct its 
+light on as well as the `Regularization` scheme describing how we smooth the source reconstruction. 
+
+First, lets use a `Rectangular` pixelization with resolution 40 x 40 and `Constant` regularizaton scheme with a 
 relatitvely high regularization-coefficient. The higher this coefficient, the more our source reconstruction will be
 smoothed.
 
@@ -74,6 +80,8 @@ source_galaxy = al.Galaxy(
 )
 
 """
+__Fit__
+
 Now that our source-galaxy has a `Pixelization` and `Regularization`, we are able to fit the data using these in the 
 same way as before, by simply passing the source galaxy to a `Tracer` and using this `Tracer` to create a `FitImaging`
 object.
@@ -83,6 +91,8 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 fit = al.FitImaging(imaging=imaging, tracer=tracer)
 
 """
+__Inversion__
+
 The fit has been performed using an `Inversion` for the source galaxy. We can see this by plotting the source-plane
 of the `FitImaging` using the `subplot_of_plane` mat_plot_2d. Note how the bottom-right panel shows a pixelized grid.
 """
@@ -90,7 +100,9 @@ fit_imaging_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_imaging_plotter.subplot_of_planes(plane_index=1)
 
 """
-**PyAutoLens** supports many different pixel-grids. Below, we use a *VoronoiMagnification* pixelization, which defines
+__Alternative Pixelizations__
+
+**PyAutoLens** supports many different pixel-grids. Below, we use a `VoronoiMagnification` pixelization, which defines
 the source-pixel centres in the image-plane and ray traces them to the source-plane. 
 
 The source pixel-grid is therefore adapted to the mass-model magnification pattern, placing more source-pixel in the
@@ -117,10 +129,12 @@ fit_imaging_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_imaging_plotter.subplot_fit_imaging()
 
 """
-This script has given a brief overview of *Inversions* with **PyAutoLens**. However, there is a lot more to using
+__Wrap Up__
+
+This script has given a brief overview of pixelizations with **PyAutoLens**. However, there is a lot more to using
 *Inversions* then presented here. 
 
-In the `autolens_workspace/notebooks/modeling/inversion` folder you will find example scripts of how to fit a model to a 
+In the `autolens_workspace/notebooks/modeling` folder you will find example scripts of how to fit a model to a 
 strong lens using an `Inversion`. In chapters 4 and 5 of the **HowToLens** lectures we fully cover all details of  
 *Inversions*, specifically:
 

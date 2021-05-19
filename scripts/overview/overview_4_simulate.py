@@ -17,7 +17,9 @@ import autolens.plot as aplt
 from astropy import cosmology as cosmo
 
 """
-In this overview `autolens_workspace/scripts/overview/lensing.py` we used a  tracer and grid to create an image of
+__Grid + Lens__
+
+In this overview `autolens_workspace/scripts/overview/lensing.py` we used a tracer and grid to create an image of
  a strong lens.
 """
 grid = al.Grid2D.uniform(
@@ -50,6 +52,8 @@ tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
 tracer_plotter.figures_2d(image=True)
 
 """
+__Simulator__
+
 Simulating strong lens images uses a `SimulatorImaging` object, which models the process that an instrument like the
 Hubble Space Telescope goes through observe a strong lens. This includes accounting for the exposure time to 
 determine the signal-to-noise of the data, blurring the observed light of the strong lens with the telescope optics 
@@ -78,6 +82,8 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
+__Wrap Up__
+
 The `autolens_workspace` includes many example simulators for simulating strong lenses with a range of different 
 physical properties, to make imaging datasets for a variety of telescopes (e.g. Hubble, Euclid) as well as 
 interferometer datasets.

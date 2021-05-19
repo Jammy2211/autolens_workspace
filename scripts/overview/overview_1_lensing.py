@@ -22,6 +22,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Grids__
+
 To describe the deflection of light, **PyAutoLens** uses `Grid2D` data structures, which are two-dimensional
 Cartesian grids of (y,x) coordinates. 
 
@@ -33,6 +35,8 @@ grid = al.Grid2D.uniform(
 )
 
 """
+__Light Profiles__
+
 Our aim is to ray-trace this `Grid2D`'s coordinates to calculate how the lens galaxy's mass deflects the source 
 galaxy's light. We therefore need analytic functions representing a galaxy's light and mass distributions. 
 
@@ -62,6 +66,8 @@ light_profile_plotter = aplt.LightProfilePlotter(
 light_profile_plotter.figures_2d(image=True)
 
 """
+__Mass Profiles__
+
 **PyAutoLens** uses `MassProfile` objects to represent a galaxy's mass distribution and perform ray-tracing
 calculations. 
 
@@ -85,6 +91,8 @@ mass_profile_plotter.figures_2d(
 """
 The deflection angles describe how a given mass distribution deflects the light-rays of the source galaxy, allowing
 us create strong lens systems like the one shown above!
+
+__Galaxies__
 
 A `Galaxy` object is a collection of `LightProfile` and `MassProfile` objects at a given redshift. The code below 
 creates two galaxies representing the lens and source galaxies shown in the strong lensing diagram above.
@@ -111,6 +119,8 @@ tracer = al.Tracer.from_galaxies(
 )
 
 """
+__Ray Tracing__
+
 We can now create the image of a strong lens system! 
 
 When calculating this image, the `Tracer` performs all ray-tracing for the strong lens system. This includes using the 
@@ -133,7 +143,7 @@ The `Tracer` is composed of planes, for the system above just two planes, an ima
 source-plane (at redshift=1.0). When creating the image from a Tracer, the `MassProfile` is used to `ray-trace` the 
 image-plane grid to the source-plane grid, via the `MassProfile`'s deflection angles.
 
-We can use the Tracer`s traced_grid method to plot the image-plalne and source-plane grids.
+We can use the Tracer`s traced_grid method to plot the image-plane and source-plane grids.
 """
 traced_grids = tracer.traced_grids_of_planes_from_grid(grid=grid)
 
@@ -144,6 +154,8 @@ grid_plotter = aplt.Grid2DPlotter(grid=traced_grids[1])
 grid_plotter.figure_2d()  # Source-plane grid.
 
 """
+__Extending Objects__
+
 The PyAutoLens API has been designed such that all of the objects introduced above are extensible. `Galaxy` objects can
 take many `Profile`'s and `Tracer`'s many `Galaxy`'s. 
 
@@ -206,5 +218,8 @@ tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
 tracer_plotter.figures_2d(image=True)
 
 """
-Finish.
+__Wrap Up__
+
+A more detailed description of **PyAutoLens**'s lensing calculations are given in chapter 1 of the **HowToLens** 
+tutorials, which I strongly advise new users check out!
 """

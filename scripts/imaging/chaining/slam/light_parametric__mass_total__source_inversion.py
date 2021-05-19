@@ -244,13 +244,22 @@ __Preloads__:
  This ensures the source pixel-grid is not recalculated every iteration of the log likelihood function, speeding up 
  the model-fit (this is only possible because the source pixelization is fixed). 
 """
-preloads = al.Preloads.setup(
-    result=source_inversion_results.last.hyper, pixelization=True
+settings_lens = al.SettingsLens(
+    positions_threshold=source_parametric_results.last.positions_threshold_from(
+        factor=3.0, minimum_threshold=0.2
+    )
 )
 
+preloads = al.Preloads.setup(result=light_results.last.hyper, pixelization=True)
+
 analysis = al.AnalysisImaging(
-    dataset=imaging, hyper_result=source_inversion_results.last, preloads=preloads
+    dataset=imaging,
+    hyper_result=light_results.last,
+    positions=source_inversion_results.last.image_plane_multiple_image_positions,
+    settings_lens=settings_lens,
+    preloads=preloads,
 )
+
 
 mass_results = slam.mass_total.with_lens_light(
     settings_autofit=settings_autofit,

@@ -27,6 +27,8 @@ import autolens.plot as aplt
 import autofit as af
 
 """
+__Dataset__
+
 In this example, we fit simulated imaging of the strong lens SLACS1430+4105. First, lets load this
 imaging dataset and plot it.
 """
@@ -41,6 +43,8 @@ imaging = al.Imaging.from_fits(
 )
 
 """
+__Masking__
+
 We next mask the dataset, to remove the exterior regions of the image that do not contain emission from the lens or
 source galaxy.
 
@@ -56,6 +60,8 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot()
 
 """
+__Model__
+
 We compose the lens model that we fit to the data using `Model` objects. These behave analogously to `Galaxy`
 objects but their  `LightProfile` and `MassProfile` parameters are not specified and are instead determined by a
 fitting procedure.
@@ -81,6 +87,8 @@ we could easily extend this object to compose highly complex models containing m
 model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
 
 """
+__Non-linear Search__
+
 We now choose the non-linear search, which is the fitting method used to determine the set of `LightProfile`
 and `MassProfile` parameters that best-fit our data.
 
@@ -90,12 +98,16 @@ very effective at lens modeling.
 search = af.DynestyStatic(name="overview_modeling")
 
 """
+__Analysis__
+
 We next create an `AnalysisImaging` object, which contains the `log likelihood function` that the non-linear search 
 calls to fit the lens model to the data.
 """
 analysis = al.AnalysisImaging(dataset=imaging)
 
 """
+__Model-Fit__
+
 To perform the model-fit we pass the model and analysis to the search's fit method. This will output results (e.g.,
 dynesty samples, model parameters, visualization) to hard-disk.
 
@@ -106,6 +118,8 @@ errors non-linear samples and the visualization of the best-fit lens model infer
 result = search.fit(model=model, analysis=analysis)
 
 """
+__Results__
+
 Whilst navigating the output folder, you may of noted the results were contained in a folder that appears as a random
 collection of characters. 
 
@@ -134,4 +148,9 @@ parameter samples, log likelihood values and tools to compute the errors on the 
 
 The script `autolens_workspace/notebooks/imaging/modeling/result.py` contains a full description of all information 
 contained in a ``Result``.
+
+__Wrap Up__
+
+A more detailed description of lens modeling with **PyAutoLens**'s is given in chapter 2 of the **HowToLens** 
+tutorials, which I strongly advise new users check out!
 """

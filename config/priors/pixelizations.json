@@ -6,7 +6,7 @@
             "upper_limit": 45.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 8.0
             },
             "gaussian_limits": {
                 "lower": 3.0,
@@ -19,7 +19,7 @@
             "upper_limit": 45.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 8.0
             },
             "gaussian_limits": {
                 "lower": 3.0,
@@ -34,7 +34,7 @@
             "upper_limit": 45.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 8.0
             },
             "gaussian_limits": {
                 "lower": 3.0,
@@ -47,7 +47,7 @@
             "upper_limit": 45.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 8.0
             },
             "gaussian_limits": {
                 "lower": 3.0,
@@ -62,7 +62,7 @@
             "upper_limit": 2500.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 100.0
             },
             "gaussian_limits": {
                 "lower": 50.0,
@@ -75,7 +75,7 @@
             "upper_limit": 1.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 0.1
             },
             "gaussian_limits": {
                 "lower": 0.0,
@@ -88,7 +88,7 @@
             "upper_limit": 20.0,
             "width_modifier": {
                 "type": "Absolute",
-                "value": 0.001
+                "value": 5.0
             },
             "gaussian_limits": {
                 "lower": 0.0,

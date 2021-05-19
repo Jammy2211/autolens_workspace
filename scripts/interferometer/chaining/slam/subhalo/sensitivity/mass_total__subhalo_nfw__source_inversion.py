@@ -176,9 +176,22 @@ using the lens mass model and source model of the SOURCE PIPELINE to initialize 
  - Uses the `EllSersic` model representing a bulge for the source's light.
  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.
 """
+settings_lens = al.SettingsLens(
+    positions_threshold=source_inversion_results.last.positions_threshold_from(
+        factor=3.0, minimum_threshold=0.2
+    )
+)
+
+preloads = al.Preloads.setup(
+    result=source_inversion_results.last.hyper, pixelization=True
+)
+
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
+    hyper_result=source_inversion_results.last,
     positions=source_inversion_results.last.image_plane_multiple_image_positions,
+    settings_lens=settings_lens,
+    preloads=preloads,
 )
 
 mass_results = slam.mass_total.no_lens_light(

@@ -5,7 +5,7 @@ Overview: Fit
 **PyAutoLens** uses `Tracer` objects to represent a strong lensing system. Now, we`re going use these objects to
 fit `Imaging` data of a strong lens.
 
-The autolens_workspace comes distributed with simulated images of strong lenses (an example of how these simulations
+The `autolens_workspace` comes distributed with simulated images of strong lenses (an example of how these simulations
 are made can be found in the `simulate.py` example, with all simulator scripts located in `autolens_workspac/simulators`.
 """
 # %matplotlib inline
@@ -19,6 +19,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Loading Data__
+
 We we begin by loading the strong lens dataset `mass_sie__source_sersic` from .fits files:
 
 Load the strong lens dataset `light_sersic__mass_sie__source_sersic` from .fits files, which is the dataset 
@@ -47,6 +49,8 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.subplot_imaging()
 
 """
+__Masking__
+
 We now need to mask the data, so that regions where there is no signal (e.g. the edges) are omitted from the fit.
 """
 mask = al.Mask2D.circular(
@@ -72,6 +76,8 @@ imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
 imaging_plotter.figures_2d(image=True)
 
 """
+__Fitting__
+
 Following the lensing.py example, we can make a tracer from a collection of `LightProfile`, `MassProfile` and `Galaxy`
 objects.
 
@@ -136,6 +142,8 @@ fit_imaging_plotter.figures_2d(
 fit_imaging_plotter.subplot_fit_imaging()
 
 """
+__Bad Lens Model__
+
 In contrast, a bad lens model will show features in the residual-map and chi-squareds.
 
 We can produce such an image by creating a tracer with different lens and source galaxies. In the example below, we 
@@ -173,5 +181,8 @@ fit_imaging_plotter.figures_2d(
 fit_imaging_plotter.subplot_fit_imaging()
 
 """
-Finish.
+__Wrap Up__
+
+A more detailed description of **PyAutoLens**'s fitting methods are given in chapter 1 of the **HowToLens** 
+tutorials, which I strongly advise new users check out!
 """

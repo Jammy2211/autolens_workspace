@@ -57,18 +57,10 @@ point_source_dict = al.PointSourceDict.from_json(
 )
 
 """
-We can print the `positions` and `fluxes` of this dataset, as well as their noise-map values.
+We can print this dictionary to see the `name`, `positions` and `fluxes` of the dataset, as well as their noise-map values.
 """
-print("Point Source Dataset Name:")
-print(point_source_dict["point_0"].name)
-print("Point Source Multiple Image (y,x) Arc-second Coordinates:")
-print(point_source_dict["point_0"].positions.in_list)
-print("Point Source Multiple Image Noise-map Values:")
-print(point_source_dict["point_0"].positions_noise_map.in_list)
-print("Point Source Flux Values:")
-print(point_source_dict["point_0"].fluxes.in_list)
-print("Point Source Flux Noise-map Values:")
-print(point_source_dict["point_0"].fluxes_noise_map.in_list)
+print("Point Source Dict:")
+print(point_source_dict)
 
 """
 We can plot our positions dataset over the observed image.
@@ -95,16 +87,19 @@ example we fit a lens model where:
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 
-NOTE: 
+__Name Pairing__
 
-Every point-source dataset in the `PointSourceDict` has a name. Its `name` pairs the dataset to the `PointSource` 
-in the model below. Specifically, because the name of the dataset is `point_0`, there must be a corresponding
-`PointSource` model component in the model below with the name `point_0` for the model-fit to be possible.
+Every point-source dataset in the `PointSourceDict` has a name, which in this example was `point_0`. This `name` pairs 
+the dataset to the `PointSource` in the model below. Because the name of the dataset is `point_0`, the 
+only `PointSource` object that is used to fit it must have the name `point_0`.
 
-In this example, where there is just one source, named pairing appears unecessary. However, point-source datasets may
-have many source galaxies in them, and name pairing ensures every point source in the model is compared against its
-point source dataset.
+If there is no point-source in the model that has the same name as a `PointSourceDataset`, that data is not used in
+the model-fit. If a point-source is included in the model whose name has no corresponding entry in 
+the `PointSourceDataset` **PyAutoLens** will raise an error.
 
+In this example, where there is just one source, name pairing appears unecessary. However, point-source datasets may
+have many source galaxies in them, and name pairing is necessary to ensure every point source in the lens model is 
+fitted to its particular lensed images in the `PointSourceDict`!
 **PyAutoLens** assumes that the lens galaxy centre is near the coordinates (0.0", 0.0"). 
 
 If for your dataset the  lens is not centred at (0.0", 0.0"), we recommend that you either: 
