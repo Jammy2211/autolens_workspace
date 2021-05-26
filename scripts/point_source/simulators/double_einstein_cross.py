@@ -5,7 +5,7 @@ Simulator: Point Source
 This script simulates `Positions` data of a strong lens where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal` and `ExternalShear`.
- - The source `Galaxy` is a `PointSource`.
+ - The source `Galaxy` is a `Point`.
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -39,7 +39,7 @@ dataset_path = path.join("dataset", dataset_type, dataset_name)
 """
 __Ray Tracing__
 
-Setup the lens galaxy's mass (SIE+Shear) and source galaxy `PointSource` for this simulated lens. We include a 
+Setup the lens galaxy's mass (SIE+Shear) and source galaxy `Point` for this simulated lens. We include a 
 faint dist in the source for purely visualization purposes to show where the multiple images appear.
 
 For lens modeling, defining ellipticity in terms of the `elliptical_comps` improves the model-fitting procedure.
@@ -69,14 +69,14 @@ source_galaxy_0 = al.Galaxy(
     light=al.lp.EllExponential(
         centre=(0.02, 0.03), intensity=0.1, effective_radius=0.02
     ),
-    point_0=al.ps.PointSource(centre=(0.02, 0.03)),
+    point_0=al.ps.Point(centre=(0.02, 0.03)),
 )
 
 
 source_galaxy_1 = al.Galaxy(
     redshift=2.0,
     light=al.lp.EllExponential(centre=(0.0, 0.0), intensity=0.1, effective_radius=0.02),
-    point_1=al.ps.PointSource(centre=(0.0, 0.0)),
+    point_1=al.ps.Point(centre=(0.0, 0.0)),
 )
 
 """
@@ -150,7 +150,7 @@ magnifications_0 = tracer.magnification_via_hessian_from_grid(grid=positions_0)
 magnifications_1 = tracer.magnification_via_hessian_from_grid(grid=positions_1)
 
 """
-We can now compute the observed fluxes of the `PointSource`, give we know how much each is magnified.
+We can now compute the observed fluxes of the `Point`, give we know how much each is magnified.
 """
 flux = 1.0
 fluxes_0 = [flux * np.abs(magnification) for magnification in magnifications_0]
@@ -183,14 +183,14 @@ tracer_plotter.subplot_tracer()
 Create a point-source dictionary data object and output this to a `.json` file, which is the format used to load and
 analyse the dataset.
 """
-point_source_dataset_0 = al.PointSourceDataset(
+point_dataset_0 = al.PointDataset(
     name="point_0",
     positions=positions_0,
     positions_noise_map=positions_0.values_from_value(value=grid.pixel_scale),
     fluxes=fluxes_0,
     fluxes_noise_map=al.ValuesIrregular(values=[1.0, 1.0, 1.0, 1.0]),
 )
-point_source_dataset_1 = al.PointSourceDataset(
+point_dataset_1 = al.PointDataset(
     name="point_1",
     positions=positions_1,
     positions_noise_map=positions_1.values_from_value(value=grid.pixel_scale),
@@ -198,12 +198,12 @@ point_source_dataset_1 = al.PointSourceDataset(
     fluxes_noise_map=al.ValuesIrregular(values=[1.0, 1.0, 1.0, 1.0]),
 )
 
-point_source_dict = al.PointSourceDict(
-    point_source_dataset_list=[point_source_dataset_0, point_source_dataset_1]
+point_dict = al.PointDict(
+    point_dataset_list=[point_dataset_0, point_dataset_1]
 )
 
-point_source_dict.output_to_json(
-    file_path=path.join(dataset_path, "point_source_dict.json"), overwrite=True
+point_dict.output_to_json(
+    file_path=path.join(dataset_path, "point_dict.json"), overwrite=True
 )
 
 

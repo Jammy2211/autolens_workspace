@@ -2,15 +2,15 @@
 Modeling: Point-Source Mass Total
 =================================
 
-In this script, we fit a `PointSourceDict` with a strong lens model where:
+In this script, we fit a `PointDict` with a strong lens model where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal`.
- - The source `Galaxy` is a point source `PointSource`.
+ - The source `Galaxy` is a point source `Point`.
 
 The point-source dataset used in this example includes the flux of every point-source multiple image. However we omit
-the fluxes from the fit and the lens model (by using a `PointSource` model instead of a `PointSourceFlux`). We make
+the fluxes from the fit and the lens model (by using a `Point` model instead of a `PointFlux`). We make
 this choice because most strong lens models of point sources it is common practise to omit flux information from the
-model-fit. Changing the point source model `PointSourceFlux` will therefore use this flux information.
+model-fit. Changing the point source model `PointFlux` will therefore use this flux information.
 
 The `ExternalShear` is also not included in the mass model, where it is for the `imaging` and `interferometer` examples.
 For a quadruply imaged point source (8 data points) there is insufficient information to fully constain a model with
@@ -46,26 +46,26 @@ image = al.Array2D.from_fits(
 )
 
 """
-We now load the point source dataset we will fit using point source modeling. We load this data as a `PointSourceDict`,
+We now load the point source dataset we will fit using point source modeling. We load this data as a `PointDict`,
 which is a Python dictionary containing the positions and fluxes of every point source. 
 
 In this example there is just one point source, but point source model can be applied to datasets with any number 
 of source's.
 """
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
 """
 We can print this dictionary to see the `name`, `positions` and `fluxes` of the dataset, as well as their noise-map values.
 """
 print("Point Source Dict:")
-print(point_source_dict)
+print(point_dict)
 
 """
 We can plot our positions dataset over the observed image.
 """
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
@@ -73,7 +73,7 @@ array_plotter.figure_2d()
 """
 We can also just plot the positions, omitting the image.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=point_source_dict["point_0"].positions)
+grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
 grid_plotter.figure_2d()
 
 """
@@ -83,23 +83,23 @@ We compose our lens model using `Model` objects, which represent the galaxies we
 example we fit a lens model where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal` [5 parameters].
- - The source galaxy's light is a point `PointSource` [2 parameters].
+ - The source galaxy's light is a point `Point` [2 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 
 __Name Pairing__
 
-Every point-source dataset in the `PointSourceDict` has a name, which in this example was `point_0`. This `name` pairs 
-the dataset to the `PointSource` in the model below. Because the name of the dataset is `point_0`, the 
-only `PointSource` object that is used to fit it must have the name `point_0`.
+Every point-source dataset in the `PointDict` has a name, which in this example was `point_0`. This `name` pairs 
+the dataset to the `Point` in the model below. Because the name of the dataset is `point_0`, the 
+only `Point` object that is used to fit it must have the name `point_0`.
 
-If there is no point-source in the model that has the same name as a `PointSourceDataset`, that data is not used in
+If there is no point-source in the model that has the same name as a `PointDataset`, that data is not used in
 the model-fit. If a point-source is included in the model whose name has no corresponding entry in 
-the `PointSourceDataset` **PyAutoLens** will raise an error.
+the `PointDataset` **PyAutoLens** will raise an error.
 
 In this example, where there is just one source, name pairing appears unecessary. However, point-source datasets may
 have many source galaxies in them, and name pairing is necessary to ensure every point source in the lens model is 
-fitted to its particular lensed images in the `PointSourceDict`!
+fitted to its particular lensed images in the `PointDict`!
 **PyAutoLens** assumes that the lens galaxy centre is near the coordinates (0.0", 0.0"). 
 
 If for your dataset the  lens is not centred at (0.0", 0.0"), we recommend that you either: 
@@ -108,7 +108,7 @@ If for your dataset the  lens is not centred at (0.0", 0.0"), we recommend that 
  - Manually override the lens model priors (`autolens_workspace/notebooks/imaging/modeling/customize/priors.py`).
 """
 lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.EllIsothermal)
-source = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.PointSource)
+source = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.Point)
 
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
@@ -175,11 +175,11 @@ search = af.DynestyStatic(
 """
 __Analysis__
 
-The `AnalysisPointSource` object defines the `log_likelihood_function` used by the non-linear search to fit the model 
-to the `PointSourceDataset`.
+The `AnalysisPoint` object defines the `log_likelihood_function` used by the non-linear search to fit the model 
+to the `PointDataset`.
 """
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 """

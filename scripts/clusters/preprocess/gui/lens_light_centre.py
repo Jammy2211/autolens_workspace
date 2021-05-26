@@ -1,9 +1,9 @@
 """
-GUI Preprocessing: Positions
-============================
+GUI Preprocessing: Lens Light Centre
+====================================
 
-This tool allows one to input the positions of strong lenses via a GUI, which can be used to resample inaccurate
-mass models during lensing modeling.
+This tool allows one to input the lens light centre(s) of a strong lens(es) via a GUI, which can be used as a fixed
+value in pipelines.
 
 This GUI is adapted from the following code: https://gist.github.com/brikeats/4f63f867fd8ea0f196c78e9b835150ab
 """
@@ -21,23 +21,24 @@ import numpy as np
 
 """
 Setup the path the datasets we'll use to illustrate preprocessing, which is the 
-folder `dataset/imaging/no_lens_light/mass_sie__source_sersic`.
+folder `dataset/imaging/with_lens_light/light_sersic__mass_sie__source_sersic`.
 """
-dataset_name = "mass_sie__source_sersic"
-dataset_path = path.join("dataset", "imaging", "no_lens_light", dataset_name)
+dataset_path = path.join("..", "sdssj1152p3312")
 
 """
 If you use this tool for your own dataset, you *must* double check this pixel scale is correct!
 """
-pixel_scales = 0.1
+pixel_scales = 0.03
 
 """
-Load the image which we will use to mark the positions.
+Load the image which we will use to mark the lens light centre.
 """
 image = al.Array2D.from_fits(
-    file_path=path.join(dataset_path, "image.fits"),
+    file_path=path.join(dataset_path, "f160w_image.fits"),
+    hdu=0,
     pixel_scales=pixel_scales
 )
+image_2d = image.native
 
 """
 When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
@@ -48,47 +49,39 @@ The `search_box_size` is the number of pixels around your click this search take
 search_box_size = 5
 
 """
-For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
-below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
+The `norm` object created below customizes the minimum and maximum values of the colormap that is plotted, which can be
+useful for datasets with a high dynamic range.
 """
 cmap = aplt.Cmap(
     norm="linear",
-    vmin=1.0e-4,
-    vmax=np.max(image),
+    vmin=0.0,
+    vmax=0.05,
 )
 
 norm = cmap.norm_from_array(array=None)
-
-positions = []
 
 """
 This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
 positions on an image.
 """
+light_centres = []
 
 
 def onclick(event):
     if event.dblclick:
 
-        # y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
-        # x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
-        #
-        # (
-        #     y_pixels,
-        #     x_pixels,
-        # ) = image_2d.mask.pixel_coordinates_2d_from(
-        #     scaled_coordinates_2d=(y_arcsec, x_arcsec)
-        # )
+        y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
+        x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
 
-        y_pixels = event.ydata
-        x_pixels = event.xdata
+        (y_pixels, x_pixels) = image.mask.pixel_coordinates_2d_from(
+            scaled_coordinates_2d=(y_arcsec, x_arcsec)
+        )
 
         flux = -np.inf
 
         for y in range(y_pixels - search_box_size, y_pixels + search_box_size):
             for x in range(x_pixels - search_box_size, x_pixels + search_box_size):
-                flux_new = image[y, x]
-                #      print(y, x, flux_new)
+                flux_new = image_2d[y, x]
                 if flux_new > flux:
                     flux = flux_new
                     y_pixels_max = y
@@ -107,7 +100,7 @@ def onclick(event):
         print("Max flux pixel:", y_pixels_max, x_pixels_max)
         print("Arc-sec Coordinate", y_arcsec, x_arcsec)
 
-        positions.append((y_arcsec, x_arcsec))
+        light_centres.append((y_arcsec, x_arcsec))
 
 
 n_y, n_x = image.shape_native
@@ -121,19 +114,22 @@ plt.show()
 fig.canvas.mpl_disconnect(cid)
 plt.close(fig)
 
-positions = al.Grid2DIrregular(grid=positions)
+light_centres = al.Grid2DIrregular(grid=light_centres)
 
 """
-Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
+Now lets plot the image and lens light centre, so we can check that the centre overlaps the brightest pixel in the
+lens light.
 """
-array_plotter = aplt.Array2DPlotter(array=image)
-array_plotter.figure_2d()
+visuals_2d = aplt.Visuals2D(light_profile_centres=light_centres)
+aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 
-
 """
-Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a
-.json file in our pipelines!
+Now we`re happy with the lens light centre(s), lets output them to the dataset folder of the lens, so that we can 
+load them from a.json file in our pipelines!
 """
-positions.output_to_json(
-    file_path=path.join(dataset_path, "positions.json"), overwrite=True
-)
+try:
+    light_centres.output_to_json(
+        file_path=path.join(dataset_path, "light_centres.json"), overwrite=True
+    )
+except AttributeError:
+    pass

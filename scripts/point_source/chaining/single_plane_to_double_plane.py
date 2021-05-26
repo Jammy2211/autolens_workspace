@@ -2,20 +2,20 @@
 Chaining: Single-Plane to Double-Plane
 ======================================
 
-In this script, we chain two searches to fit a `PointSourceDict` with a strong lens model where:
+In this script, we chain two searches to fit a `PointDict` with a strong lens model where:
 
  - The lens galaxy is at `redshift=0.5` and its total mass distribution is an `EllIsothermal`.
  - An intermediate lens and source galaxy is at `redshift=1.0`, with an `EllIsothermal` total mass distribution
- and its emission is a point-source `PointSource`.
- - The second source `Galaxy` is at `redshift=2.0` is a point `PointSource`.
+ and its emission is a point-source `Point`.
+ - The second source `Galaxy` is at `redshift=2.0` is a point `Point`.
 
 The two searches break down as follows:
 
  1) Model only the positional data of the source at redshift=1.0, where the lens galaxy's mass is an `EllIsothermal`
- and the source galaxy's as a point `PointSource`.
+ and the source galaxy's as a point `Point`.
 
  2) Model the positional data of both source galaxies, where the first lens galaxy's mass an an `EllIsothermal`, the
- second source is also an `EllIsothermal` and both source galaxy's are a point `PointSource`.
+ second source is also an `EllIsothermal` and both source galaxy's are a point `Point`.
 
 __Why Chain?__
 
@@ -58,26 +58,26 @@ image = al.Array2D.from_fits(
 )
 
 """
-__PointSourceDict__
+__PointDict__
 
-Load and plot the `PointSourceDict` dataset, which is the dataset used to perform lens modeling.
+Load and plot the `PointDict` dataset, which is the dataset used to perform lens modeling.
 """
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
 print("Point Source Multiple Image (y,x) Arc-second Coordinates:")
-print(point_source_dict["point_0"].positions.in_list)
-print(point_source_dict["point_1"].positions.in_list)
+print(point_dict["point_0"].positions.in_list)
+print(point_dict["point_1"].positions.in_list)
 
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
 
-grid_plotter = aplt.Grid2DPlotter(grid=point_source_dict["point_0"].positions)
+grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
 grid_plotter.figure_2d()
-grid_plotter = aplt.Grid2DPlotter(grid=point_source_dict["point_1"].positions)
+grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_1"].positions)
 grid_plotter.figure_2d()
 
 """
@@ -104,14 +104,14 @@ __Model (Search 1)__
 In search 1 we fit a lens model where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal` [5 parameters].
- - The intermediate source galaxy is a point `PointSource` [2 parameters].
+ - The intermediate source galaxy is a point `Point` [2 parameters].
  - The second source galaxy is included, so its redshift is used to perform multi-plane ray-tracing, but no model
  components are included [0 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=9.
 """
 lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.EllIsothermal)
-source_0 = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.PointSource)
+source_0 = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.Point)
 source_1 = af.Model(al.Galaxy, redshift=2.0)
 
 model = af.Collection(
@@ -133,8 +133,8 @@ search = af.DynestyStatic(
     nlive=50,
 )
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_1 = search.fit(model=model, analysis=analysis)
@@ -145,10 +145,10 @@ __Model (Search 2)__
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal` [5 parameters: priors initialized from search 1].
- - The intermediate source galaxy's emission is again a point `PointSource` [2 parameters: priors initialized from 
+ - The intermediate source galaxy's emission is again a point `Point` [2 parameters: priors initialized from 
  search 1].
  - The intermediate source galaxy's total mass distribution is also modeled as an `EllIsothermal` [5 parameters].
- - The second source galaxy is modeling using a point `PointSource` [2 parameters: no prior initialization].
+ - The second source galaxy is modeling using a point `Point` [2 parameters: no prior initialization].
  
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 
@@ -163,7 +163,7 @@ source_0 = af.Model(
     point_0=result_1.model.galaxies.source_0.point_0,
 )
 
-source_1 = af.Model(al.Galaxy, redshift=2.0, point_1=al.ps.PointSource)
+source_1 = af.Model(al.Galaxy, redshift=2.0, point_1=al.ps.Point)
 
 
 model = af.Collection(
@@ -185,8 +185,8 @@ search = af.DynestyStatic(
     nlive=75,
 )
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_2 = search.fit(model=model, analysis=analysis)

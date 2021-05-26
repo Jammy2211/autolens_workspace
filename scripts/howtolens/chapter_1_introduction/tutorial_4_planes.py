@@ -16,7 +16,7 @@ to the observer following multiple distinct paths.
 ![Schematic of Gravitational Lensing](https://i.imgur.com/zB6tIdI.jpg)
 
 As an observer, we don't see the source's true appearance (e.g. a round blob of light). Instead, we only observe its 
-light after it has been deflected and lensed by the foreground galaxys.
+light after it has been deflected and lensed by the foreground galaxies.
 
 In the schematic above, we used the terms 'image-plane' and 'source-plane'. In lensing, a 'plane' is a collection of
 galaxies at the same redshift (meaning that they are physically parallel to one another). In this tutorial, we'll

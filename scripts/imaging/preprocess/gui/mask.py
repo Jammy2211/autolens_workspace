@@ -5,6 +5,8 @@ GUI Preprocessing: Mask
 This tool allows one to mask a bespoke mask for a given image of a strong lens using an interactive GUI. This mask
 can then be loaded before a pipeline is run and passed to that pipeline so as to become the default masked used by a
 search (if a mask function is not passed to that search).
+
+This GUI is adapted from the following code: https://gist.github.com/brikeats/4f63f867fd8ea0f196c78e9b835150ab
 """
 # %matplotlib inline
 # from pyprojroot import here

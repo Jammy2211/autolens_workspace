@@ -169,7 +169,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=fit.inversion.mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=fit.imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=fit.imaging.image_a)
 
 """
 So, why is this happening? What is the mass profile physically doing to create these source plane coordinates at 
@@ -242,7 +242,7 @@ visuals_2d = aplt.Visuals2D(indexes=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
 mapper_plotter = aplt.MapperPlotter(
     mapper=fit.inversion.mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
-mapper_plotter.subplot_image_and_mapper(image=fit.imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=fit.imaging.image_a)
 
 """
 This successfully addresses both of the issues above! However, you might be thinking, isn't that a bit of a hack? Its 

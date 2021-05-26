@@ -2,11 +2,11 @@
 Modeling: Point-Source Mass Total
 =================================
 
-In this script, we fit a `PointSourceDict` of a strong lens with multiple lens galaxies where:
+In this script, we fit a `PointDict` of a strong lens with multiple lens galaxies where:
 
  - The cluster consists of three whose light models are `SphSersic` profiles and total mass distributions
  are `SphIsothermal` models.
- - The source `Galaxy` is modeled as a point source `PointSource`.
+ - The source `Galaxy` is modeled as a point source `Point`.
 
 The point-source dataset used in this example consists of the the positions of the lensed source's multiple images and
 their fluxes, both of which are used in the fit.
@@ -68,14 +68,14 @@ image = al.Array2D.from_fits(
 )
 
 """
-We now load the point source dataset we will fit using point source modeling. We load this data as a `PointSourceDict`,
+We now load the point source dataset we will fit using point source modeling. We load this data as a `PointDict`,
 which is a Python dictionary containing the positions and fluxes of every point source. 
 
 In this example there is just one point source, corresponding to the bright pixel of each lensed multiple image. For
 other galaxy cluster examples point source datasets and models containing multiple sources are fitted.
 """
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
 """
@@ -83,12 +83,12 @@ We can print this dictionary to see the `name`, `positions` and `fluxes` of the 
 values.
 """
 print("Point Source Dict:")
-print(point_source_dict)
+print(point_dict)
 
 """
 We can plot our positions dataset over the observed image.
 """
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
@@ -96,7 +96,7 @@ array_plotter.figure_2d()
 """
 We can also just plot the positions, omitting the image.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=point_source_dict["point_0"].positions)
+grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
 grid_plotter.figure_2d()
 
 """
@@ -124,7 +124,7 @@ example we fit a lens model where:
 
  - There are three lens galaxy's with `SphIsothermal` total mass distributions, with the prior on the centre of each 
  profile informed by its observed centre of light [9 parameters].
- - The source galaxy's light is a point `PointSourceFlux` [3 parameters].
+ - The source galaxy's light is a point `PointFlux` [3 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 
@@ -142,17 +142,17 @@ dataset!
 
 __Name Pairing__
 
-Every point-source dataset in the `PointSourceDict` has a name, which in this example was `point_0`. This `name` pairs 
-the dataset to the `PointSource` in the model below. Because the name of the dataset is `point_0`, the 
-only `PointSource` object that is used to fit it must have the name `point_0`.
+Every point-source dataset in the `PointDict` has a name, which in this example was `point_0`. This `name` pairs 
+the dataset to the `Point` in the model below. Because the name of the dataset is `point_0`, the 
+only `Point` object that is used to fit it must have the name `point_0`.
 
-If there is no point-source in the model that has the same name as a `PointSourceDataset`, that data is not used in
+If there is no point-source in the model that has the same name as a `PointDataset`, that data is not used in
 the model-fit. If a point-source is included in the model whose name has no corresponding entry in 
-the `PointSourceDataset` **PyAutoLens** will raise an error.
+the `PointDataset` **PyAutoLens** will raise an error.
 
 In this example, where there is just one source, name pairing appears unecessary. However, point-source datasets may
 have many source galaxies in them, and name pairing is necessary to ensure every point source in the lens model is 
-fitted to its particular lensed images in the `PointSourceDict`!
+fitted to its particular lensed images in the `PointDict`!
 **PyAutoLens** assumes that the lens galaxy centre is near the coordinates (0.0", 0.0"). 
 
 If for your dataset the  lens is not centred at (0.0", 0.0"), we recommend that you either: 
@@ -211,11 +211,11 @@ search = af.DynestyStatic(
 """
 __Analysis__
 
-The `AnalysisPointSource` object defines the `log_likelihood_function` used by the non-linear search to fit the model 
-to the `PointSourceDataset`.
+The `AnalysisPoint` object defines the `log_likelihood_function` used by the non-linear search to fit the model 
+to the `PointDataset`.
 """
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 """

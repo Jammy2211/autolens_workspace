@@ -2,16 +2,16 @@
 Chaining: SIE to Power-law
 ==========================
 
-In this script, we chain two searches to fit a `PointSourceDict` with a strong lens model where:
+In this script, we chain two searches to fit a `PointDict` with a strong lens model where:
 
  - The lens galaxy's total mass distribution is an `EllPowerLaw`.
- - The source `Galaxy` is a point source `PointSource`.
+ - The source `Galaxy` is a point source `Point`.
 
 The two searches break down as follows:
 
- 1) Models the lens galaxy's mass as an `EllIsothermal` and the source galaxy's as a point `PointSource`.
+ 1) Models the lens galaxy's mass as an `EllIsothermal` and the source galaxy's as a point `Point`.
 
- 2) Models the lens galaxy's mass an an `EllPowerLaw` and the source galaxy's as a point `PointSource`.
+ 2) Models the lens galaxy's mass an an `EllPowerLaw` and the source galaxy's as a point `Point`.
 
 __Why Chain?__
 
@@ -57,23 +57,23 @@ image = al.Array2D.from_fits(
 )
 
 """
-__PointSourceDict__
+__PointDict__
 
-Load and plot the `PointSourceDict` dataset, which is the dataset used to perform lens modeling.
+Load and plot the `PointDict` dataset, which is the dataset used to perform lens modeling.
 """
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
 print("Point Source Multiple Image (y,x) Arc-second Coordinates:")
-print(point_source_dict["point_0"].positions.in_list)
+print(point_dict["point_0"].positions.in_list)
 
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
 
-grid_plotter = aplt.Grid2DPlotter(grid=point_source_dict["point_0"].positions)
+grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
 grid_plotter.figure_2d()
 
 """
@@ -100,12 +100,12 @@ __Model (Search 1)__
 In search 1 we fit a lens model where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal` [5 parameters].
- - The source galaxy's is a point `PointSource` [2 parameters].
+ - The source galaxy's is a point `Point` [2 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=9.
 """
 lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.EllIsothermal)
-source = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.PointSource)
+source = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.Point)
 
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
@@ -121,8 +121,8 @@ search = af.DynestyStatic(
     path_prefix=path_prefix, name="search[1]__sie", unique_tag=dataset_name, nlive=50
 )
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_1 = search.fit(model=model, analysis=analysis)
@@ -133,7 +133,7 @@ __Model (Search 2)__
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
  - The lens galaxy's total mass distribution is an `EllPowerLaw` [6 parameters: priors initialized from search 1].
- - The source galaxy's light is again a point `PointSource` [2 parameters: priors initialized from search 1].
+ - The source galaxy's light is again a point `Point` [2 parameters: priors initialized from search 1].
  
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=10.
 
@@ -178,8 +178,8 @@ search = af.DynestyStatic(
     nlive=75,
 )
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_2 = search.fit(model=model, analysis=analysis)

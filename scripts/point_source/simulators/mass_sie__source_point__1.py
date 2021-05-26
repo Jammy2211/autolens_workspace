@@ -5,7 +5,7 @@ Simulator: Point Source
 This script simulates `Positions` data of a strong lens where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal`.
- - The source `Galaxy` is a `PointSource`.
+ - The source `Galaxy` is a `Point`.
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -39,7 +39,7 @@ dataset_path = path.join("dataset", dataset_type, dataset_name)
 """
 __Ray Tracing__
 
-Setup the lens galaxy's mass (SIE) and source galaxy `PointSource` for this simulated lens. We include a 
+Setup the lens galaxy's mass (SIE) and source galaxy `Point` for this simulated lens. We include a 
 faint dist in the source for purely visualization purposes to show where the multiple images appear.
 
 For lens modeling, defining ellipticity in terms of the `elliptical_comps` improves the model-fitting procedure.
@@ -64,7 +64,7 @@ source_galaxy = al.Galaxy(
     light=al.lp.EllExponential(
         centre=(0.05, 0.05), intensity=0.1, effective_radius=0.02
     ),
-    point_0=al.ps.PointSource(centre=(0.05, 0.05)),
+    point_0=al.ps.Point(centre=(0.05, 0.05)),
 )
 
 """
@@ -109,7 +109,7 @@ Use the positions to compute the magnification of the `Tracer` at every position
 magnifications = tracer.magnification_via_hessian_from_grid(grid=positions)
 
 """
-We can now compute the observed fluxes of the `PointSource`, give we know how much each is magnified.
+We can now compute the observed fluxes of the `Point`, give we know how much each is magnified.
 """
 flux = 1.0
 fluxes = [flux * np.abs(magnification) for magnification in magnifications]
@@ -140,7 +140,7 @@ tracer_plotter.subplot_tracer()
 Create a point-source dictionary data object and output this to a `.json` file, which is the format used to load and
 analyse the dataset.
 """
-point_source_dataset = al.PointSourceDataset(
+point_dataset = al.PointDataset(
     name="point_0",
     positions=positions,
     positions_noise_map=positions.values_from_value(value=grid.pixel_scale),
@@ -148,10 +148,10 @@ point_source_dataset = al.PointSourceDataset(
     fluxes_noise_map=al.ValuesIrregular(values=[1.0, 1.0, 1.0, 1.0]),
 )
 
-point_source_dict = al.PointSourceDict(point_source_dataset_list=[point_source_dataset])
+point_dict = al.PointDict(point_dataset_list=[point_dataset])
 
-point_source_dict.output_to_json(
-    file_path=path.join(dataset_path, "point_source_dict.json"), overwrite=True
+point_dict.output_to_json(
+    file_path=path.join(dataset_path, "point_dict.json"), overwrite=True
 )
 
 """

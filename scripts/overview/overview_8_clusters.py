@@ -64,13 +64,13 @@ model and reduces the computational run-time of the model-fit.
 Lets load the lens's point-source data, where the brightest pixels of the source are used as the locations of its
 centre:
 """
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
-array_plotter = aplt.Array2DPlotter(array=imaging.image, visuals_2d=visuals_2d)
+array_plotter = aplt.Array2DPlotter(array=imaging.image_a, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
 
 """
@@ -108,8 +108,8 @@ overview.
 """
 search_1 = af.DynestyStatic(name="overview_clusters_group")
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_1 = search_1.fit(model=model, analysis=analysis)

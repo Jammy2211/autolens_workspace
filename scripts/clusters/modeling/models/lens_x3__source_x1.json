@@ -112,7 +112,7 @@
             "regularization": null,
             "hyper_galaxy": null,
             "point_0": {
-                "class_path": "autogalaxy.profiles.point_sources.PointSourceFlux",
+                "class_path": "autogalaxy.profiles.point_sources.PointFlux",
                 "type": "model",
                 "centre": {
                     "type": "tuple_prior",

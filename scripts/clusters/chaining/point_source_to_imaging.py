@@ -55,13 +55,13 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-point_source_dict = al.PointSourceDict.from_json(
-    file_path=path.join(dataset_path, "point_source_dict.json")
+point_dict = al.PointDict.from_json(
+    file_path=path.join(dataset_path, "point_dict.json")
 )
 
-visuals_2d = aplt.Visuals2D(positions=point_source_dict.positions_list)
+visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
-array_plotter = aplt.Array2DPlotter(array=imaging.image, visuals_2d=visuals_2d)
+array_plotter = aplt.Array2DPlotter(array=imaging.image_a, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
 
 """
@@ -69,7 +69,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("clusters", "chaining", "point_source_to_imaging")
+path_prefix = path.join("clusters", "chaining", "point_to_imaging")
 
 """
 __PositionsSolver__
@@ -89,7 +89,7 @@ Compose the lens model by loading it from a .json file made in the file `cluster
 
  - There are three lens galaxy's with `SphIsothermal` total mass distributions, with the prior on the centre of each 
  profile informed by its observed centre of light [9 parameters].
- - The source galaxy's light is a point `PointSourceFlux` [3 parameters].
+ - The source galaxy's light is a point `PointFlux` [3 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
@@ -114,8 +114,8 @@ search_1 = af.DynestyStatic(
     number_of_cores=1,
 )
 
-analysis = al.AnalysisPointSource(
-    point_source_dict=point_source_dict, solver=positions_solver
+analysis = al.AnalysisPoint(
+    point_dict=point_dict, solver=positions_solver
 )
 
 result_1 = search_1.fit(model=model, analysis=analysis)
@@ -192,7 +192,7 @@ settings_lens = al.SettingsLens(positions_threshold=2.0 * imaging.pixel_scales[0
 
 analysis = al.AnalysisImaging(
     dataset=imaging,
-    positions=point_source_dict["point_0"].positions,
+    positions=point_dict["point_0"].positions,
     settings_lens=settings_lens,
 )
 

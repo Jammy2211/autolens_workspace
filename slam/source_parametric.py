@@ -163,7 +163,7 @@ def with_lens_light(
     redshift_source
         The redshift of the source galaxy fitted, used by the pipeline for converting arc-seconds to kpc, masses to
         solMass, etc.
-    mass_centre : (float, float)
+    mass_centre
        If input, a fixed (y,x) centre of the mass profile is used which is not treated as a free parameter by the
        non-linear search.
     """
@@ -288,7 +288,8 @@ def with_lens_light(
         unique_tag=settings_autofit.unique_tag,
         number_of_cores=settings_autofit.number_of_cores,
         session=settings_autofit.session,
-        nlive=100,
+        nlive=250,
+        walks=10
     )
 
     result_3 = search.fit(model=model, analysis=analysis, info=settings_autofit.info)

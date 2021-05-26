@@ -88,7 +88,7 @@ include_2d = aplt.Include2D(mapper_source_grid_slim=True)
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 Using a mapper, we can now make these mappings appear the other way round. That is, we can input a source-pixel
@@ -101,7 +101,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 There we have it, multiple imaging in all its glory. Try changing the source-pixel indexes of the line below. This 
@@ -112,7 +112,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 Okay, so I think we can agree, mapper's map things! More specifically, they map source-plane pixels to multiple pixels 
@@ -134,7 +134,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 Lets use an annular `Mask2D`, which will capture the ring-like shape of the lensed source galaxy.
@@ -169,7 +169,7 @@ Lets plot it.
 include_2d = aplt.Include2D(mask=True, mapper_source_grid_slim=True)
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include_2d)
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 First, look how much closer we are to the source-plane (The axis sizes have decreased from ~ -2.5" -> 2.5" to 
@@ -181,7 +181,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 __Wrap Up__

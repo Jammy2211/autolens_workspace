@@ -54,7 +54,7 @@ mass_2.centre_1 = af.GaussianPrior(mean=-5.0, sigma=0.5)
 
 lens_2 = af.Model(al.Galaxy, redshift=0.5, mass=mass_2)
 
-point_0 = af.Model(al.ps.PointSourceFlux)
+point_0 = af.Model(al.ps.PointFlux)
 point_0.centre_0 = af.GaussianPrior(mean=0.0, sigma=3.0)
 point_0.centre_1 = af.GaussianPrior(mean=0.0, sigma=3.0)
 

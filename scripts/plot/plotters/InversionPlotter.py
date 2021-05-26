@@ -62,7 +62,7 @@ We can extract the `Inversion` from the `Tracer` by passing it the imaging data.
 """
 inversion = tracer.inversion_imaging_from_grid_and_data(
     grid=imaging.grid,
-    image=imaging.image,
+    image=imaging.image_a,
     noise_map=imaging.noise_map,
     convolver=imaging.convolver,
 )

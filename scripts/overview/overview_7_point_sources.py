@@ -74,9 +74,9 @@ tracer_plotter.figures_2d(image=True)
 __Point Source__
 
 The image above visually illustrates where the source's light traces in the image-plane. Lets now treat this source
-as a point source, by setting up a source galaxy and `Tracer` using the `PointSource` class. 
+as a point source, by setting up a source galaxy and `Tracer` using the `Point` class. 
 """
-point_source = al.ps.PointSource(centre=(0.07, 0.07))
+point_source = al.ps.Point(centre=(0.07, 0.07))
 
 source_galaxy = al.Galaxy(redshift=1.0, point=point_source)
 
@@ -85,8 +85,8 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 """
 __Solving the Lens Equation__
 
-For a `PointSource`, our goal is to find the (y,x) coordinates in the image-plane that directly map to the centre
-of the `PointSource` in the source plane. In this example, we therefore need to compute the 4 image-plane that map
+For a `Point`, our goal is to find the (y,x) coordinates in the image-plane that directly map to the centre
+of the `Point` in the source plane. In this example, we therefore need to compute the 4 image-plane that map
 directly to the location (0.07", 0.07") in the source plane.
 
 This is often referred to as 'solving the lens equation' in the literature.
@@ -122,12 +122,12 @@ __Lens Modeling__
 **PyAutoLens** has full support for modeling strong lens datasets as a point-source. This might be used for analysing
 strongly lensed quasars or supernovae, which are so compact we do not observe their extended emission.
 
-To perform point-source modeling, we first create a ``PointSourceDataset`` containing the image-plane (y,x) positions
+To perform point-source modeling, we first create a ``PointDataset`` containing the image-plane (y,x) positions
 of each multiple image and their noise values (which would be the resolution of the imaging data they are observed). 
 
 The positions below correspond to those of an `EllIsothermal` mass model.
 """
-point_source_dataset = al.PointSourceDataset(
+point_dataset = al.PointDataset(
     name="point_0",
     positions=al.Grid2DIrregular(
         [[1.1488, -1.1488], [1.109, 1.109], [-1.109, -1.109], [-1.1488, 1.1488]]
@@ -141,36 +141,36 @@ __Point Source Dictionary__
 In this simple example we model a single point source, which might correspond to one lensed quasar or supernovae.
 However, **PyAutoLens** supports model-fits to datasets with many lensed point-sources, for example in galaxy clusters.
 
-Each point source dataset is therefore passed into a `PointSourceDict` object before the model-fit is performed. For 
+Each point source dataset is therefore passed into a `PointDict` object before the model-fit is performed. For 
 this simple example only one dataset is passed in, but in the galaxy-cluster examples you'll see this object makes it
 straightforward to model datasets with many lensed sources.
 """
-point_source_dict = al.PointSourceDict(point_source_dataset_list=[point_source_dataset])
+point_dict = al.PointDict(point_dataset_list=[point_dataset])
 
 """
 We can print the `positions` of this dictionary and dataset, as well as their noise-map values.
 """
 print("Point Source Dataset Name:")
-print(point_source_dict["point_0"].name)
+print(point_dict["point_0"].name)
 print("Point Source Multiple Image (y,x) Arc-second Coordinates:")
-print(point_source_dict["point_0"].positions.in_list)
+print(point_dict["point_0"].positions.in_list)
 print("Point Source Multiple Image Noise-map Values:")
-print(point_source_dict["point_0"].positions_noise_map.in_list)
+print(point_dict["point_0"].positions_noise_map.in_list)
 
 """
 __Naming__
 
-Every point-source dataset in the `PointSourceDict` has a name, which in this example was `point_0`. This `name` pairs 
-the dataset to the `PointSource` in the model below. Because the name of the dataset is `point_0`, the 
-only `PointSource` object that is used to fit it must have the name `point_0`.
+Every point-source dataset in the `PointDict` has a name, which in this example was `point_0`. This `name` pairs 
+the dataset to the `Point` in the model below. Because the name of the dataset is `point_0`, the 
+only `Point` object that is used to fit it must have the name `point_0`.
 
-If there is no point-source in the model that has the same name as a `PointSourceDataset`, that data is not used in
+If there is no point-source in the model that has the same name as a `PointDataset`, that data is not used in
 the model-fit. If a point-source is included in the model whose name has no corresponding entry in 
-the `PointSourceDataset` **PyAutoLens** will raise an error.
+the `PointDataset` **PyAutoLens** will raise an error.
 
 In this example, where there is just one source, name pairing appears unecessary. However, point-source datasets may
 have many source galaxies in them, and name pairing is necessary to ensure every point source in the lens model is 
-fitted to its particular lensed images in the `PointSourceDict`!
+fitted to its particular lensed images in the `PointDict`!
 
 __Model__
 
@@ -180,7 +180,7 @@ lens_galaxy_model = af.Model(
     al.Galaxy, redshift=0.5, bulge=al.lp.EllSersic, mass=al.mp.EllIsothermal
 )
 
-source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.PointSource)
+source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.Point)
 
 model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
 
@@ -194,13 +194,13 @@ search = af.DynestyStatic(name="overview_point_source")
 """
 __Analysis__
 
-Whereas we previously used an `AnalysisImaging` object, we instead use an `AnalysisPointSource` object which fits the
+Whereas we previously used an `AnalysisImaging` object, we instead use an `AnalysisPoint` object which fits the
 lens model in the correct way for a point source dataset.
 
-This includes mapping the `name`'s of each dataset in the `PointSourceDict` to the names of the point sources in the
+This includes mapping the `name`'s of each dataset in the `PointDict` to the names of the point sources in the
 lens model.
 """
-analysis = al.AnalysisPointSource(point_source_dict=point_source_dict, solver=solver)
+analysis = al.AnalysisPoint(point_dict=point_dict, solver=solver)
 
 """
 __Model-Fit__
@@ -215,7 +215,7 @@ result = search.fit(model=model, analysis=analysis)
 """
 __Result__
 
-The **PyAutoLens** visualization library and `FitPointSource` object includes specific methods for plotting the results.
+The **PyAutoLens** visualization library and `FitPoint` object includes specific methods for plotting the results.
 """
 
 """

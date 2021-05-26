@@ -99,7 +99,7 @@ def with_lens_light(
         unique_tag=settings_autofit.unique_tag,
         number_of_cores=settings_autofit.number_of_cores,
         session=settings_autofit.session,
-        nlive=75,
+        nlive=150,
     )
 
     result_1 = search.fit(

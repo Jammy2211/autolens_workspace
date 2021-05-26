@@ -59,7 +59,7 @@ def simulate_imaging(dataset_path):
     )
 
     new_hdul = fits.HDUList()
-    new_hdul.append(fits.ImageHDU(imaging.image.native))
+    new_hdul.append(fits.ImageHDU(imaging.image_a.native))
     new_hdul.append(fits.ImageHDU(imaging.noise_map.native))
     new_hdul.append(fits.ImageHDU(imaging.psf.native))
 
@@ -110,7 +110,7 @@ def simulate_imaging_in_counts(dataset_path):
     )
 
     imaging.data = al.preprocess.array_eps_to_counts(
-        array_eps=imaging.image, exposure_time_map=exposure_time_map
+        array_eps=imaging.image_a, exposure_time_map=exposure_time_map
     )
     imaging.noise_map = al.preprocess.array_eps_to_counts(
         array_eps=imaging.noise_map, exposure_time_map=exposure_time_map
@@ -165,7 +165,7 @@ def simulate_imaging_in_adus(dataset_path):
     )
 
     imaging.data = al.preprocess.array_eps_to_adus(
-        array_eps=imaging.image, exposure_time_map=exposure_time_map, gain=4.0
+        array_eps=imaging.image_a, exposure_time_map=exposure_time_map, gain=4.0
     )
     imaging.noise_map = al.preprocess.array_eps_to_adus(
         array_eps=imaging.noise_map, exposure_time_map=exposure_time_map, gain=4.0

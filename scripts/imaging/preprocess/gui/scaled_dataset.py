@@ -7,6 +7,8 @@ This tool allows one to mask a bespoke noise-map for a given image of a strong l
 This noise-map is primarily used for increasing the variances of pixels that have non-modeled components in an image,
 for example intervening line-of-sight galaxies that are near the lens, but not directly interfering with the
 analysis of the lens and source galaxies.
+
+This GUI is adapted from the following code: https://gist.github.com/brikeats/4f63f867fd8ea0f196c78e9b835150ab
 """
 # %matplotlib inline
 # from pyprojroot import here

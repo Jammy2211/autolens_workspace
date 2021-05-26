@@ -83,7 +83,7 @@ mapper = rectangular.mapper_from_grid_and_sparse_grid(grid=source_plane_grid)
 include_2d = aplt.Include2D(mask=True, mapper_source_grid_slim=True)
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include_2d)
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 __Inversion__
@@ -188,7 +188,7 @@ visuals_2d = aplt.Visuals2D(pixelization_indexes=[[445], [285], [313], [132], [1
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
-mapper_plotter.subplot_image_and_mapper(image=imaging.image)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
 
 """
 These mappings are known before the inversion reconstructs the source galaxy, which means before this inversion is

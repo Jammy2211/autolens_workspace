@@ -162,7 +162,9 @@ For this runner the SUBHALO PIPELINE customizes:
  - The `number_of_cores` used for the gridsearch, where `number_of_cores > 1` performs the model-fits in paralle using
  the Python multiprocessing module.
 """
-analysis = al.AnalysisImaging(dataset=imaging)
+analysis = al.AnalysisImaging(
+    dataset=imaging,
+)
 
 subhalo_results = slam.subhalo.detection_single_plane(
     settings_autofit=settings_autofit,

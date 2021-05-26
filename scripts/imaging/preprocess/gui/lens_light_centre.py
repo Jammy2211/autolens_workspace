@@ -4,6 +4,8 @@ GUI Preprocessing: Lens Light Centre
 
 This tool allows one to input the lens light centre(s) of a strong lens(es) via a GUI, which can be used as a fixed
 value in pipelines.
+
+This GUI is adapted from the following code: https://gist.github.com/brikeats/4f63f867fd8ea0f196c78e9b835150ab
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -30,20 +32,20 @@ If you use this tool for your own dataset, you *must* double check this pixel sc
 pixel_scales = 0.1
 
 """
+Load the image which we will use to mark the lens light centre.
+"""
+image = al.Array2D.from_fits(
+    file_path=path.join(dataset_path, "image.fits"),
+    pixel_scales=pixel_scales
+)
+
+"""
 When you click on a pixel to mark a position, the search box looks around this click and finds the pixel with
 the highest flux to mark the position.
 
 The `search_box_size` is the number of pixels around your click this search takes place.
 """
 search_box_size = 5
-
-imaging = al.Imaging.from_fits(
-    image_path=path.join(dataset_path, "image.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    pixel_scales=pixel_scales,
-)
-image_2d = imaging.image.native
 
 """
 This code is a bit messy, but sets the image up as a matplotlib figure which one can double click on to mark the
@@ -58,7 +60,7 @@ def onclick(event):
         y_arcsec = np.rint(event.ydata / pixel_scales) * pixel_scales
         x_arcsec = np.rint(event.xdata / pixel_scales) * pixel_scales
 
-        (y_pixels, x_pixels) = image_2d.mask.pixel_coordinates_2d_from(
+        (y_pixels, x_pixels) = image.mask.pixel_coordinates_2d_from(
             scaled_coordinates_2d=(y_arcsec, x_arcsec)
         )
 
@@ -66,14 +68,14 @@ def onclick(event):
 
         for y in range(y_pixels - search_box_size, y_pixels + search_box_size):
             for x in range(x_pixels - search_box_size, x_pixels + search_box_size):
-                flux_new = image_2d[y, x]
+                flux_new = image[y, x]
                 #      print(y, x, flux_new)
                 if flux_new > flux:
                     flux = flux_new
                     y_pixels_max = y
                     x_pixels_max = x
 
-        grid_arcsec = image_2d.mask.grid_scaled_from_grid_pixels_1d(
+        grid_arcsec = image.mask.grid_scaled_from_grid_pixels_1d(
             grid_pixels_1d=al.Grid2D.manual_native(
                 grid=[[[y_pixels_max + 0.5, x_pixels_max + 0.5]]],
                 pixel_scales=pixel_scales,
@@ -89,11 +91,11 @@ def onclick(event):
         light_centres.append((y_arcsec, x_arcsec))
 
 
-n_y, n_x = imaging.image.shape_native
+n_y, n_x = image.shape_native
 hw = int(n_x / 2) * pixel_scales
 ext = [-hw, hw, -hw, hw]
 fig = plt.figure(figsize=(14, 14))
-plt.imshow(imaging.image.native, cmap="jet", extent=ext)
+plt.imshow(image.native, cmap="jet", extent=ext)
 plt.colorbar()
 cid = fig.canvas.mpl_connect("button_press_event", onclick)
 plt.show()
@@ -107,7 +109,7 @@ Now lets plot the image and lens light centre, so we can check that the centre o
 lens light.
 """
 visuals_2d = aplt.Visuals2D(light_profile_centres=light_centres)
-aplt.Array2DPlotter(array=imaging.image, visuals_2d=visuals_2d)
+aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 
 """
 Now we`re happy with the lens light centre(s), lets output them to the dataset folder of the lens, so that we can 

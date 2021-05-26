@@ -49,7 +49,7 @@ def set_lens_light_centres(lens, light_centre: Tuple[float, float]):
     ----------
     lens : af.Model(al.Galaxy)
         The `Galaxy` containing the light models of the distribution of the lens galaxy's bulge, disk and envelope.
-    light_centre : (float, float) or None
+    light_centre
        If input, the centre of every light model centre is set using this (y,x) value.
     """
 

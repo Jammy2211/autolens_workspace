@@ -1,7 +1,7 @@
 import autofit as af
 import autolens as al
 
-from typing import Union
+from typing import Union, Dict, Optional
 
 
 def hyper_fit(
@@ -62,6 +62,8 @@ def stochastic_fit(
     include_lens_light: bool = False,
     include_pixelization: bool = False,
     include_regularization: bool = False,
+    search_cls : af.NonLinearSearch = af.DynestyStatic,
+    search_dict : Optional[Dict] = None
 ):
     """
     Extend a model-fit with a stochastic model-fit, which refits a model but introduces a log likelihood cap whereby
@@ -93,6 +95,9 @@ def stochastic_fit(
         fitted for (if `False` it is passed as an `instance`).
     """
 
+    if search_dict is None:
+        search_dict = {"nlive": 100}
+
     stochastic_model = al.util.model.stochastic_model_from(
         result=result,
         include_lens_light=include_lens_light,
@@ -101,5 +106,6 @@ def stochastic_fit(
     )
 
     return al.util.model.stochastic_fit(
-        stochastic_model=stochastic_model, result=result, analysis=analysis
+        stochastic_model=stochastic_model,         search_cls=search_cls,
+        search_dict=search_dict, result=result, analysis=analysis
     )
