@@ -121,9 +121,7 @@ search = af.DynestyStatic(
     path_prefix=path_prefix, name="search[1]__sie", unique_tag=dataset_name, nlive=50
 )
 
-analysis = al.AnalysisPoint(
-    point_dict=point_dict, solver=positions_solver
-)
+analysis = al.AnalysisPoint(point_dict=point_dict, solver=positions_solver)
 
 result_1 = search.fit(model=model, analysis=analysis)
 
@@ -178,9 +176,7 @@ search = af.DynestyStatic(
     nlive=75,
 )
 
-analysis = al.AnalysisPoint(
-    point_dict=point_dict, solver=positions_solver
-)
+analysis = al.AnalysisPoint(point_dict=point_dict, solver=positions_solver)
 
 result_2 = search.fit(model=model, analysis=analysis)
 

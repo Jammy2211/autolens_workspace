@@ -178,9 +178,7 @@ __Analysis__
 The `AnalysisPoint` object defines the `log_likelihood_function` used by the non-linear search to fit the model 
 to the `PointDataset`.
 """
-analysis = al.AnalysisPoint(
-    point_dict=point_dict, solver=positions_solver
-)
+analysis = al.AnalysisPoint(point_dict=point_dict, solver=positions_solver)
 
 """
 __Model-Fit__

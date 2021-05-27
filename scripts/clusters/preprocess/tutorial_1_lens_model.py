@@ -36,18 +36,12 @@ We will use this to verify that our strong lens galaxy centres are aligned with 
 dataset_path = path.join("..", "sdssj1152p3312")
 
 image = al.Array2D.from_fits(
-    file_path=path.join(dataset_path, "f160w_image.fits"),
-    hdu=0,
-    pixel_scales=0.03
+    file_path=path.join(dataset_path, "f160w_image.fits"), hdu=0, pixel_scales=0.03
 )
 
-mat_plot_2d = aplt.MatPlot2D(
-    cmap=aplt.Cmap(vmin=0.0, vmax=0.1)
-)
+mat_plot_2d = aplt.MatPlot2D(cmap=aplt.Cmap(vmin=0.0, vmax=0.1))
 
-array_plotter = aplt.Array2DPlotter(
-    array=image.native, mat_plot_2d=mat_plot_2d
-)
+array_plotter = aplt.Array2DPlotter(array=image.native, mat_plot_2d=mat_plot_2d)
 array_plotter.figure_2d()
 
 """
@@ -106,13 +100,18 @@ Each row corresponds to a galaxy in the cluster and the columns from left to rig
  
 Below, we extract each column of this table into Python lists.
 """
+
+
 def catalogue_to_lists(file):
 
     with open(file) as f:
         l = f.read().split("\n")
 
     combined = list(zip(*[item.split("    ") for item in filter(lambda item: item, l)]))
-    return [list(map(int, combined[0]))] + [list(map(float, column)) for column in combined[1:]]
+    return [list(map(int, combined[0]))] + [
+        list(map(float, column)) for column in combined[1:]
+    ]
+
 
 catalogue_file = path.join("dataset", "clusters", "sdssj1152p3312", "lens.cat")
 catalogue = catalogue_to_lists(file=catalogue_file)
@@ -183,16 +182,14 @@ galaxies = [bcg, dark]
 
 for index in range(len(galaxy_centres)):
 
-    mass = af.Model(al.sr.SphIsothermalMLR,
+    mass = af.Model(
+        al.sr.SphIsothermalMLR,
         centre=galaxy_centres[index],
         magnitude=magnitude_list[index],
-        relation=mass_light_relation)
-
-    galaxy = af.Model(
-        al.Galaxy,
-        redshift=redshift_lens,
-        mass=mass
+        relation=mass_light_relation,
     )
+
+    galaxy = af.Model(al.Galaxy, redshift=redshift_lens, mass=mass)
 
     galaxies.append(galaxy)
 

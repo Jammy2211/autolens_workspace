@@ -61,7 +61,7 @@ point_dict = al.PointDict.from_json(
 
 visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
-array_plotter = aplt.Array2DPlotter(array=imaging.image_a, visuals_2d=visuals_2d)
+array_plotter = aplt.Array2DPlotter(array=imaging.image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
 
 """
@@ -114,9 +114,7 @@ search_1 = af.DynestyStatic(
     number_of_cores=1,
 )
 
-analysis = al.AnalysisPoint(
-    point_dict=point_dict, solver=positions_solver
-)
+analysis = al.AnalysisPoint(point_dict=point_dict, solver=positions_solver)
 
 result_1 = search_1.fit(model=model, analysis=analysis)
 

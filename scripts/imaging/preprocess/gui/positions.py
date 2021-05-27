@@ -35,8 +35,7 @@ pixel_scales = 0.1
 Load the image which we will use to mark the positions.
 """
 image = al.Array2D.from_fits(
-    file_path=path.join(dataset_path, "image.fits"),
-    pixel_scales=pixel_scales
+    file_path=path.join(dataset_path, "image.fits"), pixel_scales=pixel_scales
 )
 
 """
@@ -51,11 +50,7 @@ search_box_size = 5
 For lenses with bright lens light emission, it can be difficult to get the source light to show. The normalization
 below uses a log-scale with a capped maximum, which better contrasts the lens and source emission.
 """
-cmap = aplt.Cmap(
-    norm="linear",
-    vmin=1.0e-4,
-    vmax=np.max(image),
-)
+cmap = aplt.Cmap(norm="linear", vmin=1.0e-4, vmax=np.max(image))
 
 norm = cmap.norm_from_array(array=None)
 

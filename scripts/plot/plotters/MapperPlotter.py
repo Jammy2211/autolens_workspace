@@ -68,7 +68,7 @@ mapper_plotter.figure_2d()
 The `Mapper` can also be plotted with a subplot of its original image.
 """
 mapper_plotter = aplt.MapperPlotter(mapper=mapper)
-mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 
 """
 The Indexes of `Mapper` plots can be highlighted to show how certain image pixels map to the source plane.
@@ -78,7 +78,7 @@ visuals_2d = aplt.Visuals2D(
 )
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
-mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 
 """
 A `Mapper` contains the following attributes which can be plotted automatically via the `Include2D` object.
@@ -92,7 +92,7 @@ include_2d = aplt.Include2D(
     mapper_source_grid_slim=True,
 )
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include_2d)
-mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 
 """
 Finish.

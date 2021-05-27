@@ -50,7 +50,7 @@ The image and noise map are stored as an `Array2D` object, whereas the PSF is a 
 perform 2D convolution.
 """
 print("Image:")
-print(type(imaging.image_a))
+print(type(imaging.image))
 print("Noise-Map:")
 print(type(imaging.noise_map))
 print("PSF:")
@@ -123,7 +123,7 @@ print("Mask2D")
 print(imaging.mask)
 print()
 print("Masked Image:")
-print(imaging.image_a)
+print(imaging.image)
 print()
 print("Masked Noise-Map:")
 print(imaging.noise_map)
@@ -140,15 +140,15 @@ on a slightly different meaning, it only contains image-pixels that were not mas
 the `shape_slim` attribute of the image, and comparing it to the `pixels_in_mask` of the mask.
 """
 print("The number of unmasked pixels")
-print(imaging.image_a.shape_slim)
+print(imaging.image.shape_slim)
 print(imaging.noise_map.shape_slim)
-print(imaging.image_a.mask.pixels_in_mask)
+print(imaging.image.mask.pixels_in_mask)
 
 """
 We can use the `slim` attribute to print certain values of the image:
 """
 print("First unmasked image value:")
-print(imaging.image_a.slim[0])
+print(imaging.image.slim[0])
 print("First unmasked noise-map value:")
 print(imaging.noise_map.slim[0])
 
@@ -157,9 +157,9 @@ The `native` representation of the image `Array2D` retains the dimensions [total
 however the exterior pixels have values of 0.0 indicating that they have been masked.
 """
 print("Example masked pixels in the image's native representation:")
-print(imaging.image_a.shape_native)
-print(imaging.image_a.native[0, 0])
-print(imaging.image_a.native[2, 2])
+print(imaging.image.shape_native)
+print(imaging.image.native[0, 0])
+print(imaging.image.native[2, 2])
 print("Example masked noise map values in its native representation:")
 print(imaging.noise_map.native[0, 0])
 

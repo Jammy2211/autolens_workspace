@@ -23,30 +23,6 @@
             "sigma": 0.3
         }
     },
-    "PointSourceChi": {
-        "centre_0": {
-            "type": "Gaussian",
-            "lower_limit": "-inf",
-            "upper_limit": "inf",
-            "width_modifier": {
-                "type": "Absolute",
-                "value": 0.001
-            },
-            "mean": 0.0,
-            "sigma": 0.3
-        },
-        "centre_1": {
-            "type": "Gaussian",
-            "lower_limit": "-inf",
-            "upper_limit": "inf",
-            "width_modifier": {
-                "type": "Absolute",
-                "value": 0.001
-            },
-            "mean": 0.0,
-            "sigma": 0.3
-        }
-    },
     "PointFlux": {
         "centre_0": {
             "type": "Gaussian",

@@ -65,6 +65,8 @@ follows:
 
 Below, we extract each column of this table into Python lists.
 """
+
+
 def catalogue_to_lists(file):
 
     with open(file) as f:
@@ -72,7 +74,10 @@ def catalogue_to_lists(file):
 
     combined = list(zip(*[item.split(" ") for item in filter(lambda item: item, l)]))
     print(combined)
-    return [list(map(int, combined[0]))] + [list(map(float, column)) for column in combined[1:]]
+    return [list(map(int, combined[0]))] + [
+        list(map(float, column)) for column in combined[1:]
+    ]
+
 
 catalogue_file = path.join("dataset", "clusters", "sdssj1152p3312", "source.cat")
 catalogue = catalogue_to_lists(file=catalogue_file)

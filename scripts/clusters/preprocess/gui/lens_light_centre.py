@@ -36,7 +36,7 @@ Load the image which we will use to mark the lens light centre.
 image = al.Array2D.from_fits(
     file_path=path.join(dataset_path, "f160w_image.fits"),
     hdu=0,
-    pixel_scales=pixel_scales
+    pixel_scales=pixel_scales,
 )
 image_2d = image.native
 
@@ -52,11 +52,7 @@ search_box_size = 5
 The `norm` object created below customizes the minimum and maximum values of the colormap that is plotted, which can be
 useful for datasets with a high dynamic range.
 """
-cmap = aplt.Cmap(
-    norm="linear",
-    vmin=0.0,
-    vmax=0.05,
-)
+cmap = aplt.Cmap(norm="linear", vmin=0.0, vmax=0.05)
 
 norm = cmap.norm_from_array(array=None)
 

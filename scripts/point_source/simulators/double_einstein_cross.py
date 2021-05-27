@@ -198,9 +198,7 @@ point_dataset_1 = al.PointDataset(
     fluxes_noise_map=al.ValuesIrregular(values=[1.0, 1.0, 1.0, 1.0]),
 )
 
-point_dict = al.PointDict(
-    point_dataset_list=[point_dataset_0, point_dataset_1]
-)
+point_dict = al.PointDict(point_dataset_list=[point_dataset_0, point_dataset_1])
 
 point_dict.output_to_json(
     file_path=path.join(dataset_path, "point_dict.json"), overwrite=True

@@ -181,7 +181,7 @@ mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, visuals_2d=visuals_2d, include_2d=include_2d
 )
 
-mapper_plotter.subplot_image_and_mapper(image=imaging.image_a)
+mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 
 """
 We can now use a `Mapper` to perform the `Inversion` and reconstruct the source galaxy's light. 
@@ -205,7 +205,7 @@ Finally, lets plot:
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True, reconstruction=True)
 
-residual_map = imaging.image_a - inversion.mapped_reconstructed_image
+residual_map = imaging.image - inversion.mapped_reconstructed_image
 array_plotter = aplt.Array2DPlotter(array=residual_map)
 array_plotter.figure_2d()
 

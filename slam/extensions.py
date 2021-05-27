@@ -62,8 +62,8 @@ def stochastic_fit(
     include_lens_light: bool = False,
     include_pixelization: bool = False,
     include_regularization: bool = False,
-    search_cls : af.NonLinearSearch = af.DynestyStatic,
-    search_dict : Optional[Dict] = None
+    search_cls: af.NonLinearSearch = af.DynestyStatic,
+    search_dict: Optional[Dict] = None,
 ):
     """
     Extend a model-fit with a stochastic model-fit, which refits a model but introduces a log likelihood cap whereby
@@ -106,6 +106,9 @@ def stochastic_fit(
     )
 
     return al.util.model.stochastic_fit(
-        stochastic_model=stochastic_model,         search_cls=search_cls,
-        search_dict=search_dict, result=result, analysis=analysis
+        stochastic_model=stochastic_model,
+        search_cls=search_cls,
+        search_dict=search_dict,
+        result=result,
+        analysis=analysis,
     )
