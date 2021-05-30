@@ -93,7 +93,7 @@ be able to:
 ### OVERVIEW OF CHAPTER 2 - Bayesian Inference and Non-linear Optimization ###
 
 In chapter 2, we'll cover Bayesian inference and non-linear analysis, in particular how we use these tools to
-fit `Imaging` of a strong gravitational lens with a lens model. At the end, you'll understand:
+fit `Imaging` data of a strong gravitational lens with a lens model. At the end, you'll understand:
 
 1) The concept of a `NonLinearSearch` and non-linear parameter space.
 2) How to fit a lens model to strong lens `Imaging` via  non-linear search.

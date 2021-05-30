@@ -78,7 +78,7 @@ as a point source, by setting up a source galaxy and `Tracer` using the `Point` 
 """
 point_source = al.ps.Point(centre=(0.07, 0.07))
 
-source_galaxy = al.Galaxy(redshift=1.0, point=point_source)
+source_galaxy = al.Galaxy(redshift=1.0, point_0=point_source)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
@@ -172,6 +172,22 @@ In this example, where there is just one source, name pairing appears unecessary
 have many source galaxies in them, and name pairing is necessary to ensure every point source in the lens model is 
 fitted to its particular lensed images in the `PointDict`!
 
+__Fitting__
+
+Just like we used a `Tracer` to fit imaging and interferometer data, we can use it to fit point-source data via the
+`FitPoint` object.
+
+This uses the names of each point-source in the dataset and model to create individual fits to the `positions`, 
+`fluxes` and other attributes that could be fitted. This allows us to inspect the residual-map, 
+chi-squared, likelihood, etc of every individual fit to part of our point source dataset.  
+"""
+fit = al.FitPointDict(point_dict=point_dict, tracer=tracer, positions_solver=solver)
+
+print(fit["point_0"].positions.residual_map)
+print(fit["point_0"].positions.chi_squared_map)
+print(fit["point_0"].positions.log_likelihood)
+
+"""
 __Model__
 
 We first compose the model, in the same way described in the `modeling.py` overview script:
@@ -182,7 +198,8 @@ lens_galaxy_model = af.Model(
 
 source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, point_0=al.ps.Point)
 
-model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+galaxies = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+model = af.Collection(galaxies=galaxies)
 
 """
 __Non-linear Search__

@@ -2,7 +2,7 @@
 Simulator: HST Up
 =================
 
-This script simulates `Imaging` of a strong lens where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens where:
 
  - The resolution, PSF and S/N are representative of Hubble Space Telescope `Imaging` that has been multidrizzled to
    higher resolution.

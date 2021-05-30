@@ -1,6 +1,16 @@
 """
-Preprocess: Point Data
-======================
+MOdel Makers: Cluster Sources
+=============================
+
+For group & cluster modeling, there can be tens or hundreds of lens and source galaxies. Manually writing the lens
+model of each in the Python scripts we used to perform lens model becomes unfeasible and it better for us to manage
+model composition in a separate file and store them in .json files.
+
+Furthermore, for clusters, it is unfeasible to manually write out the model of each object, even in this separate
+Python script. This example interfaces with a galaxy catalogue file from SourceExtractor
+https://sextractor.readthedocs.io/ to compose the model that is fitted in the file `cluster/modeling/example.ipynb`.
+
+__Source Dataset + Model__
 
 Galaxy clusters often contain many lensed background sources, which we typically model as point sources where the (y,x)
 locations of the brightest pixels of each lensed source are used as constraints. Flux and time-delay information may
@@ -16,28 +26,37 @@ This script shows how to create the `PointDict` object for a cluster that is use
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import os
 from os import path
 import json
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-import clusters_util
+import cluster_util
 
 """
+__Downloading Data__
+
+The **PyAutoLens** example cluster datasets are too large in filesize to distribute with the autolens workspace.
+
+They are therefore stored in a separate GitHub repo:
+
+ https://github.com/Jammy2211/autolens_cluster_datasets
+
+Before running this script, make sure you have downloaded the example datasets and moved them to the folder 
+`autolens_workspace/dataset/clusters`.
+
 __Dataset__
 
 First, lets load and plot the image of our example strong lens cluster, sdssj1152p3312. 
 
 We will use this to verify that our source positions are aligned with the data.
 """
-dataset_path = path.join("dataset", "clusters", "sdssj1152p3312")
-
-dataset_image_path = path.join("..", "sdssj1152p3312")
+dataset_name = "cluster"
+dataset_path = path.join("dataset", "clusters", dataset_name)
 
 image = al.Array2D.from_fits(
-    file_path=path.join(dataset_image_path, "f160w_image.fits"),
-    hdu=0,
-    pixel_scales=0.03,
+    file_path=path.join(dataset_path, "f160w_image.fits"), hdu=0, pixel_scales=0.03
 )
 
 mat_plot_2d = aplt.MatPlot2D(cmap=aplt.Cmap(vmin=0.0, vmax=0.1))
@@ -79,14 +98,14 @@ The columns from left to right are as  follows:
 7) The redshift of the source galaxy.
 8) Another 0., for some reason.
 
-Below, we use the method `soruce_catalogue_to_lists` in `clusters_util` to extract each column of this table into 
+Below, we use the method `soruce_catalogue_to_lists` in `cluster_util` to extract each column of this table into 
 Python lists. 
 
 (Your catalogue files may well have a different structure and format to the example one used in this tutorial. You may
 need to write your own `source_catalogue_to_lists` function to do this.)
 """
-catalogue_file = path.join("dataset", "clusters", "sdssj1152p3312", "source.cat")
-catalogue = clusters_util.source_catalogue_to_lists(file=catalogue_file)
+catalogue_file = path.join("dataset", "clusters", "cluster", "source.cat")
+catalogue = cluster_util.source_catalogue_to_lists(file=catalogue_file)
 
 """
 We next convert the coordinates of each multiple image from RA / DEC to arc-second coordinates in the frame of the 
@@ -98,6 +117,7 @@ dec_list = catalogue[2]
 # galaxy_centres = al.Grid2DIrregular.from_ra_dec(ra=ra_list, dec=dec_list, origin=bcg_centre)
 
 multiple_image_list = [(1.0, 2.0)] * len(ra_list)
+multiple_image_list = al.Grid2DIrregular(grid=multiple_image_list)
 
 """
 The galaxy ids are used for creating the `PointDict` data and the models for each source galaxy.
@@ -110,14 +130,14 @@ We now use the unique ids to create:
 - A list of every source galaxy id.
 - A list of list of the multiple images of every source. 
 
-This uses methods in the `clusters_util` package.
+This uses methods in the `cluster_util` package.
 
 By restructuring the catalogue into lists / list of lists that are grouped on a per source basis, this will be it 
 simpler to create the `PointDict` and create the cluster's lens model.
 """
-id_per_source = clusters_util.list_per_source_from(value_list=id_list)
+id_per_source = cluster_util.list_per_source_from(value_list=id_list)
 
-multiple_image_list_per_source = clusters_util.list_of_lists_per_source_from(
+multiple_image_list_per_source = cluster_util.list_of_lists_per_source_from(
     id_list=id_list, value_list=multiple_image_list
 )
 
@@ -181,7 +201,7 @@ Below, we create a list of the redshifts per source galaxy.
 """
 redshift_list = catalogue[6]
 
-redshift_per_source = clusters_util.list_per_source_from(value_list=redshift_list)
+redshift_per_source = cluster_util.list_per_source_from(value_list=redshift_list)
 
 
 """
@@ -198,7 +218,7 @@ achieve the same effect.
 
 Each source galaxy in our model is stored in a dictionary, with the name of each galaxy following the syntax `galaxy_id`.
 """
-galaxies = {}
+sources = {}
 
 for id, redshift in zip(id_per_source, redshift_per_source):
 
@@ -207,18 +227,24 @@ for id, redshift in zip(id_per_source, redshift_per_source):
     source_galaxy = af.Model(al.Galaxy, redshift=redshift)
     setattr(source_galaxy, f"point_{id}", point)
 
-    galaxies[f"source_{id}"] = source_galaxy
+    sources[f"source_{id}"] = source_galaxy
 
-print(galaxies)
+print(sources)
 
 """
-We now convert this dictionary of `Model` galaxies to a `Collection1 and write it to a `.json` file, so we can load it
+We now convert this dictionary of `Model` sources to a `Collection1 and write it to a `.json` file, so we can load it
 in our model fitting script:
 """
-galaxies = af.Collection(galaxies)
+sources = af.Collection(sources)
 
-model_path = path.join("scripts", "clusters", "modeling", "models")
+model_path = path.join("scripts", "clusters", "models", dataset_name)
+os.makedirs(model_path, exist_ok=True)
+
 model_file = path.join(model_path, "sources.json")
 
 with open(model_file, "w+") as f:
-    json.dump(galaxies.dict, f, indent=4)
+    json.dump(sources.dict, f, indent=4)
+
+"""
+Finish.
+"""

@@ -1,15 +1,25 @@
 """
-Preprocess: Galaxy Catalogue
+Model Makers: Cluster Lenses
 ============================
 
-To model galaxy clusters comprised of many lens galaxies, the lens model is composed of three distinct object types:
+For cluster modeling, there can be tens or hundreds of lens and source galaxies. Manually writing the lens model of
+each in the Python scripts we used to perform lens model becomes unfeasible and it better for us to manage model
+composition in a separate file and store them in .json files.
 
- 1) Galaxies that are sufficiently massive or near a lensed arc that their mass is modeled explicitly (e.g.
+Furthermore, for clusters, it is unfeasible to manually write out the model of each object, even in this separate
+Python script. This example interfaces with a galaxy catalogue file from SourceExtractor
+https://sextractor.readthedocs.io/ to compose the model that is fitted in the file `cluster/modeling/example.ipynb`.
+
+__Lens Model__
+
+To model galaxy clusters comprised of many lenses, the lens model is composed of three distinct object types:
+
+ 1) lenses that are sufficiently massive or near a lensed arc that their mass is modeled explicitly (e.g.
  the Brightest Cluster Galaxy).
 
  2) The dark matter component(s) of the galaxy cluster.
 
- 3) Tens or hundreds of smaller galaxies that contribute collectively to the lensing, but are too low mass to model
+ 3) Tens or hundreds of smaller lenses that contribute collectively to the lensing, but are too low mass to model
  individually. These are modeled collectively via a scaling relation that assumes light (or some other galaxy property)
  traces mass.
 
@@ -22,22 +32,35 @@ so it can be loaded in a model-fitting script.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import os
 import numpy as np
 from os import path
 import json
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
-import clusters_util
+import cluster_util
 
 """
+__Downloading Data__
+
+The **PyAutoLens** example cluster datasets are too large in filesize to distribute with the autolens workspace.
+
+They are therefore stored in a separate GitHub repo:
+
+ https://github.com/Jammy2211/autolens_cluster_datasets
+
+Before running this script, make sure you have downloaded the example datasets and moved them to the folder 
+`autolens_workspace/dataset/clusters`.
+
 __Dataset__
 
-First, lets load and plot the image of our example strong lens cluster, sdssj1152p3312. 
+First, lets load and plot the image of our example strong lens cluster, cluster. 
 
 We will use this to verify that our strong lens galaxy centres are aligned with the data.
 """
-dataset_path = path.join("..", "sdssj1152p3312")
+dataset_name = "cluster"
+dataset_path = path.join("dataset", "clusters", dataset_name)
 
 image = al.Array2D.from_fits(
     file_path=path.join(dataset_path, "f160w_image.fits"), hdu=0, pixel_scales=0.03
@@ -51,7 +74,7 @@ array_plotter.figure_2d()
 """
 __Redshift__
 
-The redshift of the galaxy cluster, and therefore all of its member galaxies, is used by the lens model and therefore 
+The redshift of the galaxy cluster, and therefore all of its member lenses, is used by the lens model and therefore 
 must be set. 
 """
 redshift_lens = 0.5
@@ -60,7 +83,7 @@ redshift_lens = 0.5
 __Brightest Cluster Galaxy (BCG)__
 
 We next create the model of the brightest cluster galaxy (BCG), which will be fitted for individually in the lens 
-model using an `EllIsothermal` model. This can easily be extended to include multiple galaxies in the cluster.
+model using an `EllIsothermal` model. This can easily be extended to include multiple lenses in the cluster.
 
 The centre of the BCG will be the origin of our coordinate system, so we do not need to update the priors on its 
 centre (which are centred around (0.0", 0.0") by default.
@@ -88,7 +111,7 @@ halo = af.Model(al.Galaxy, redshift=redshift_lens, dark=dark)
 """
 __Scaling Relation__
 
-To model galaxy clusters comprised of many lens galaxies, we need to use a galaxy catalogue (e.g. from Source
+To model galaxy clusters comprised of many lens lenses, we need to use a galaxy catalogue (e.g. from Source
 Extractor https://sextractor.readthedocs.io/) to compose a strong lens model with every galaxy in the cluster and
 convert it to a **PyAutoLens** lens model.
 
@@ -104,21 +127,21 @@ Each row corresponds to a galaxy in the cluster and the columns from left to rig
  6) The positon angle theta of the ellipse (e.g. -85.400000).
  7) The magnitude of the galaxy (e.g. 18.062900).
  
-Below, we use the method `lens_catalogue_to_lists` in `clusters_util` to extract each column of this table into 
+Below, we use the method `lens_catalogue_to_lists` in `cluster_util` to extract each column of this table into 
 Python lists. 
 
 (Your catalogue files may well have a different structure and format to the example one used in this tutorial. You may
 need to write your own `lens_catalogue_to_lists` function to do this.)
 """
-catalogue_file = path.join("dataset", "clusters", "sdssj1152p3312", "lens.cat")
-catalogue = clusters_util.lens_catalogue_to_lists(file=catalogue_file)
+catalogue_file = path.join("dataset", "clusters", "cluster", "lens.cat")
+catalogue = cluster_util.lens_catalogue_to_lists(file=catalogue_file)
 
 """
 __Coordinate System__
 
 The galaxy catalogue omits the Brightest Cluster Galaxy (BGC) of the cluster, given that it is individually included in
-the lens model for this cluster (as opposed to the galaxies in the galaxy catalogue whose mass is assumed to lie on the
-luminosity-to-mass scaling relation). If other galaxies were modeled individually they too should be removed from the
+the lens model for this cluster (as opposed to the lenses in the galaxy catalogue whose mass is assumed to lie on the
+luminosity-to-mass scaling relation). If other lenses were modeled individually they too should be removed from the
 galaxy catalogue.
 
 We therefore manually input the arcsecond central coordinates of the BCG, which will act as the origin of our
@@ -135,6 +158,7 @@ ra_list = catalogue[1]
 dec_list = catalogue[2]
 
 galaxy_centres = [(1.0, 2.0)] * len(ra_list)
+galaxy_centres = al.Grid2DIrregular(grid=galaxy_centres)
 
 """
 The galaxy luminosities in (magnitude units) will be used to create the cluster lens model.
@@ -180,7 +204,7 @@ When creating each mass model:
 By linking the scaling relation model to each mass model, this ensures that when we perform model-fitting the einstein
 radius (and therefore mass) of every individual galaxy is set using its luminosity via the scaling relation.
 """
-galaxies = [bcg, dark]
+lenses = [bcg, dark]
 
 for index in range(len(galaxy_centres)):
 
@@ -188,33 +212,34 @@ for index in range(len(galaxy_centres)):
         al.sr.SphIsothermalMLR,
         relation=mass_light_relation,
         luminosity=luminosity_list[index],
-        centre=galaxy_centres[index],
+        centre=galaxy_centres.in_list[index],
     )
 
     galaxy = af.Model(al.Galaxy, redshift=redshift_lens, mass=mass)
 
-    galaxies.append(galaxy)
+    lenses.append(galaxy)
 
 """
 __Model__
 
-We now create the overall lens model from the BCG, dark matter halo, scaling relation and galaxies on the scaling 
-relation.
+We now create the overall model from the BCG, dark matter halo, scaling relation and lenses on the scaling relation.
 
 If we print it, we see it consists of over 70 model galaxy objects!
 """
-model = af.Collection(scaling_relation=mass_light_relation, galaxies=galaxies)
+lenses = af.Collection(scaling_relation=mass_light_relation, lenses=lenses)
 
-print(model)
+print(lenses)
 
 """
 We now write the model to a .json file, so it can be loaded in our model-fitting script.
 """
-model_path = path.join("scripts", "clusters", "modeling", "models")
+model_path = path.join("scripts", "clusters", "models", dataset_name)
+os.makedirs(model_path, exist_ok=True)
+
 model_file = path.join(model_path, "lenses.json")
 
 with open(model_file, "w+") as f:
-    json.dump(model.dict, f, indent=4)
+    json.dump(lenses.dict, f, indent=4)
 
 """
 Finish.

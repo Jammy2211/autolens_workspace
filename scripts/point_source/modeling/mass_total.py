@@ -2,7 +2,7 @@
 Modeling: Point-Source Mass Total
 =================================
 
-In this script, we fit a `PointDict` with a strong lens model where:
+This script fits a `PointDict` data of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's total mass distribution is an `EllIsothermal`.
  - The source `Galaxy` is a point source `Point`.

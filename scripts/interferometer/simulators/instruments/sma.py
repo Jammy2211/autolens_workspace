@@ -2,7 +2,7 @@
 Simulator: SMA
 ==============
 
-This script simulates `Interferometer` data of a strong lens where:
+This script simulates `Interferometer` data of a 'galaxy-scale' strong lens where:
 
  - The resolution, UV wavelengths and S/N are representative of Square Mile Array (SMA) interferometry.
 """

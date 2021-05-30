@@ -11,8 +11,8 @@ def no_lens_light(
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     source_results: af.ResultsCollection,
-    mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.EllIsothermal),
-    smbh: af.Model(al.mp.MassProfile) = None,
+    mass: af.Model = af.Model(al.mp.EllIsothermal),
+    smbh: Optional[af.Model] = None,
     mass_centre: Optional[Tuple[float, float]] = None,
     end_with_hyper_extension: bool = False,
 ) -> af.ResultsCollection:
@@ -118,8 +118,8 @@ def with_lens_light(
     setup_hyper: al.SetupHyper,
     source_results: af.ResultsCollection,
     light_results: af.ResultsCollection,
-    mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.EllIsothermal),
-    smbh: af.Model(al.mp.MassProfile) = None,
+    mass: af.Model = af.Model(al.mp.EllIsothermal),
+    smbh: Optional[af.Model] = None,
     mass_centre: Optional[Tuple[float, float]] = None,
     end_with_hyper_extension: bool = False,
 ) -> af.ResultsCollection:

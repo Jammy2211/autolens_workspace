@@ -2,7 +2,7 @@
 Simulator: SIS
 ==============
 
-This script simulates `Imaging` of a strong lens where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens where:
 
  - The lens galaxy's total mass distribution is an `SphIsothermal`.
  - The source galaxy's `LightProfile` is an `EllSersic`.

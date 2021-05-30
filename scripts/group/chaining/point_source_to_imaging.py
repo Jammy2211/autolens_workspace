@@ -2,9 +2,9 @@
 Chaining: Point Source to Imaging
 =================================
 
-In this script, we chain three searches to fit `Imaging` of a strong lens with multiple lens galaxies where:
+This script chains three searches to fit `Imaging` data of a strong lens with multiple lens galaxies where:
 
- - The cluster consists of three whose light models are `SphSersic` profiles and total mass distributions
+ - The group consists of three whose light models are `SphSersic` profiles and total mass distributions
  are `SphIsothermal` models.
  - The source galaxy's `LightProfile` is an `EllSersic`.
 
@@ -43,10 +43,10 @@ import autolens.plot as aplt
 """
 __Dataset__
 
-Load the strong lens dataset `lens_x3__source_x1` point source dataset and imaging, and plot them.
+Load the strong lens dataset `group` point source dataset and imaging, and plot them.
 """
-dataset_name = "lens_x3__source_x1"
-dataset_path = path.join("dataset", "clusters", dataset_name)
+dataset_name = "group"
+dataset_path = path.join("dataset", "group", dataset_name)
 
 imaging = al.Imaging.from_fits(
     image_path=path.join(dataset_path, "image.fits"),
@@ -69,7 +69,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("clusters", "chaining", "point_to_imaging")
+path_prefix = path.join("group", "chaining", "point_to_imaging")
 
 """
 __PositionsSolver__
@@ -85,7 +85,7 @@ positions_solver = al.PositionsSolver(grid=grid, pixel_scale_precision=0.025)
 """
 __Model (Search 1)__
 
-Compose the lens model by loading it from a .json file made in the file `clusters/modeling/models/lens_x3__source_x1.py`:
+Compose the lens model by loading it from a .json file made in the file `group/modeling/models/group.py`:
 
  - There are three lens galaxy's with `SphIsothermal` total mass distributions, with the prior on the centre of each 
  profile informed by its observed centre of light [9 parameters].
@@ -93,7 +93,7 @@ Compose the lens model by loading it from a .json file made in the file `cluster
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
-model_path = path.join("scripts", "clusters", "chaining", "models")
+model_path = path.join("scripts", "group", "models")
 model_file = path.join(model_path, "lens_x3__source_x1.json")
 
 model = af.Collection.from_json(file=model_file)

@@ -2,7 +2,7 @@
 Pipelines: Light Parametric + Mass Light Dark + Source Parametric
 =================================================================
 
-By chaining together three searches this script fits strong lens `Imaging`, where in the final model:
+By chaining together three searches this script  fits `Imaging` dataset of a 'galaxy-scale' strong lens, where in the final model:
 
  - The lens galaxy's light is a parametric `EllSersic`.
  - The lens galaxy's stellar mass distribution is tied to the light model above.

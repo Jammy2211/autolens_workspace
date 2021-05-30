@@ -2,14 +2,14 @@
 SLaM (Source, Light and Mass): Light Parametric + Mass Total + Source Parametric
 ================================================================================
 
-SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specific aspect of the strong
-lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own inputs which
-which customize the model and analysis in that pipeline.
+SLaM pipelines break the analysis of 'galaxy-scale' strong lenses down into multiple pipelines which focus on modeling
+a specific aspect of the strong lens, first the Source, then the (lens) Light and finally the Mass. Each of these
+pipelines has it own inputs which which customize the model and analysis in that pipeline.
 
 The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
 uses a parametric `EllSersic` profile for the bulge, this will be used in the subsequent MASS LIGHT DARK PIPELINE.
 
-Using a SOURCE PARAMETRIC PIPELINE, LIGHT PIPELINE and a MASS LIGHT DARK PIPELINE this SLaM script fits `Imaging` of
+Using a SOURCE PARAMETRIC PIPELINE, LIGHT PIPELINE and a MASS LIGHT DARK PIPELINE this SLaM script  fits `Imaging` dataset of
 a strong lens system, where in the final model:
 
  - The lens galaxy's light is a bulge `EllSersic`.

@@ -12,7 +12,7 @@ def detection_single_plane(
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     mass_results: af.ResultsCollection,
-    subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
+    subhalo_mass: af.Model = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
 ) -> af.ResultsCollection:
@@ -212,7 +212,7 @@ def detection_multi_plane(
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     setup_hyper: al.SetupHyper,
     mass_results: af.ResultsCollection,
-    subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
+    subhalo_mass: af.Model = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
 ) -> af.ResultsCollection:
@@ -417,7 +417,7 @@ def sensitivity_mapping_imaging(
     psf: al.Kernel2D,
     mass_results: af.ResultsCollection,
     analysis_cls: ClassVar[al.AnalysisImaging],
-    subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
+    subhalo_mass: af.Model = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
 ):
@@ -619,7 +619,7 @@ def sensitivity_mapping_interferometer(
     real_space_mask: al.Mask2D,
     mass_results: af.ResultsCollection,
     analysis_cls: ClassVar[al.AnalysisInterferometer],
-    subhalo_mass: af.Model(al.mp.MassProfile) = af.Model(al.mp.SphNFWMCRLudlow),
+    subhalo_mass: af.Model = af.Model(al.mp.SphNFWMCRLudlow),
     grid_dimension_arcsec: float = 3.0,
     number_of_steps: Union[Tuple[int], int] = 5,
 ):

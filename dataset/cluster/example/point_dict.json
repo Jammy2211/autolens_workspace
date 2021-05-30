@@ -1,0 +1,84 @@
+[
+    {
+        "name": "point_1",
+        "positions": [
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ]
+        ],
+        "positions_noise_map": [
+            0.03,
+            0.03,
+            0.03,
+            0.03,
+            0.03
+        ],
+        "fluxes": null,
+        "fluxes_noise_map": null
+    },
+    {
+        "name": "point_2",
+        "positions": [
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ]
+        ],
+        "positions_noise_map": [
+            0.03,
+            0.03,
+            0.03,
+            0.03
+        ],
+        "fluxes": null,
+        "fluxes_noise_map": null
+    },
+    {
+        "name": "point_3",
+        "positions": [
+            [
+                1.0,
+                2.0
+            ],
+            [
+                1.0,
+                2.0
+            ]
+        ],
+        "positions_noise_map": [
+            0.03,
+            0.03
+        ],
+        "fluxes": null,
+        "fluxes_noise_map": null
+    }
+]

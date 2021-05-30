@@ -2,7 +2,7 @@
 Pipelines: Mass Total + Source Inversion
 ========================================
 
-By chaining together three searches this script fits strong lens `Imaging`, where in the final model:
+By chaining together three searches this script  fits `Imaging` dataset of a 'galaxy-scale' strong lens, where in the final model:
 .
  - The lens galaxy's light is omitted from the data and model.
  - The lens galaxy's total mass distribution is an `EllPowerLaw`.

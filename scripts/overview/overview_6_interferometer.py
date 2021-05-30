@@ -69,13 +69,13 @@ lens_galaxy = al.Galaxy(
         einstein_radius=1.6,
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, angle=45.0),
     ),
-    shear=al.mp.ExternalShear(elliptical_comps=(0.0, 0.05)),
+    shear=al.mp.ExternalShear(elliptical_comps=(0.05, 0.05)),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllSersic(
-        centre=(0.1, 0.1),
+        centre=(0.0, 0.0),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, angle=60.0),
         intensity=0.3,
         effective_radius=1.0,
@@ -154,6 +154,8 @@ fit = al.FitInterferometer(
 
 fit_interferometer_plotter = aplt.FitInterferometerPlotter(fit=fit)
 fit_interferometer_plotter.subplot_fit_interferometer()
+fit_interferometer_plotter.subplot_fit_dirty_images()
+fit_interferometer_plotter.subplot_fit_real_space()
 
 inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion)
 inversion_plotter.figures_2d(reconstruction=True)
@@ -172,7 +174,8 @@ lens_galaxy_model = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.EllIsothermal)
 
 source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, disk=al.lp.EllExponential)
 
-model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+galaxies = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+model = af.Collection(galaxies=galaxies)
 
 """
 __Non-linear Search__

@@ -2,9 +2,9 @@
 SLaM (Source, Light and Mass): Light Parametric + Mass Total + Subhalo NFW + Source Parametric
 ==============================================================================================
 
-SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specific aspect of the strong
-lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own inputs which
-which customize the model and analysis in that pipeline.
+SLaM pipelines break the analysis of 'galaxy-scale' strong lenses down into multiple pipelines which focus on modeling
+a specific aspect of the strong lens, first the Source, then the (lens) Light and finally the Mass. Each of these
+pipelines has it own inputs which which customize the model and analysis in that pipeline.
 
 The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
 uses a parametric `EllSersic` profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
@@ -122,8 +122,7 @@ analysis = al.AnalysisInterferometer(dataset=interferometer)
 
 bulge = af.Model(al.lp.EllSersic)
 disk = af.Model(al.lp.EllExponential)
-bulge.centre = (0.0, 0.0)
-disk.centre = (0.0, 0.0)
+bulge.centre = disk.centre
 
 source_parametric_results = slam.source_parametric.with_lens_light(
     settings_autofit=settings_autofit,

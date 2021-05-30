@@ -1,23 +1,16 @@
 """
-Overview: Clusters
-------------------
+Overview: Groups
+----------------
 
 The strong lenses we've discussed so far have just a single lens galaxy responsible for the lensing, with a single
-source galaxy observed to be lensed. A strong lensing cluster is a system where there are multiple lens galaxies,
-deflecting the one or more background sources.
+source galaxy observed.
 
-Galaxy clusters range in scale, between the following two extremes:
+A strong lensing group is a system which has a distinct 'primary' lens galaxy and a handful of lower mass galaxies
+nearby. They typically contain just one or two lensed sources whose arcs are extended and visible. Their Einstein
+Radii range between typical values of 5.0" -> 10.0" and with care, it is feasible to fit the source's extended
+emission in the imaging or interferometer data.
 
- - Groups: Strong lenses with a distinct 'primary' lens galaxy and a handful of lower mass galaxies nearby. These
- typically have just one or two lensed sources whose arcs are visible. The Einstein Radii of these systems typically
- range from range 5.0" -> 10.0" (with galaxy scale lenses typically below 5.0").
-
- - Clusters: These are objects with tens or hundreds of lens galaxies and lensed sources, where the lensed sources
- are all at different redshfits. .
-
-**PyAutoLens** has tools for modeling cluster datasets anywhere between these two extremes, and the example datasets
-available throughout the `autolens_workspace` illustrate the different tools that be used for modeling clusters of
-different scales.
+Strong lensing clusters, which contain many hundreds of lens and source galaxies, are covered in the next overview.
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -31,7 +24,7 @@ import autolens as al
 import autolens.plot as aplt
 
 """
-__Group Scale__
+__Dataset__
 
 In this overview lets begin on the group scale with a simulated strong lens which clearly has a distinct primary
 lens galaxy, but additional galaxies can be seen in and around the Einstein ring. These galaxies are faint and small
@@ -39,7 +32,7 @@ in number, but their lensing effects on the source are significant enough that w
 lens model.
 """
 dataset_name = "lens_x3__source_x1"
-dataset_path = path.join("dataset", "clusters", dataset_name)
+dataset_path = path.join("dataset", "group", dataset_name)
 
 imaging = al.Imaging.from_fits(
     image_path=path.join(dataset_path, "image.fits"),
@@ -87,30 +80,47 @@ positions_solver = al.PositionsSolver(grid=grid, pixel_scale_precision=0.025)
 """
 __Model__
 
-We now compose the lens model. For clusters there could be many hundreds of galaxies in the model. Whereas previous 
-examples explicitly wrote the model out via Python code, for cluster modeling we opt to write it in .json files which
+We now compose the lens model. For groups there could be many lens and source galaxies in the model. Whereas previous 
+examples explicitly wrote the model out via Python code, for group modeling we opt to write it in .json files which
 are loaded in this script.
 
-The code below loads a model from the .json file `clusters/modeling/models/lens_x3__source_x1.py`. This model includes
-all three lens galaxies where the priors on the centres have been paired to thei brightest pixels in the observed image,
-alongside a source galaxy which is modeled as a point source.
+The code below loads a model from a `.json` file created by the script `group/models/lens_x3__source_x1.py`. This 
+model includes all three lens galaxies where the priors on the centres have been paired to the brightest pixels in the 
+observed image, alongside a source galaxy which is modeled as a point source.
 """
-model_path = path.join("scripts", "clusters", "modeling", "models")
+model_path = path.join("scripts", "group", "models")
 model_file = path.join(model_path, "lens_x3__source_x1.json")
 
-model = af.Collection.from_json(file=model_file)
+lenses_file = path.join(model_path, "lenses.json")
+lenses = af.Collection.from_json(file=lenses_file)
+
+sources_file = path.join(model_path, "sources.json")
+sources = af.Collection.from_json(file=sources_file)
+
+galaxies = lenses + sources
+
+model = af.Collection(galaxies=galaxies)
 
 """
-__Search + Analysis + Model-Fit (Search 1)__
+__Search + Analysis + Model-Fit__
 
 We are now able to model this dataset as a point source, using the exact same tools we used in the point source 
 overview.
 """
-search_1 = af.DynestyStatic(name="overview_clusters_group")
+search = af.DynestyStatic(name="overview_groups")
 
 analysis = al.AnalysisPoint(point_dict=point_dict, solver=positions_solver)
 
-result_1 = search_1.fit(model=model, analysis=analysis)
+result = search.fit(model=model, analysis=analysis)
+
+"""
+__Result__
+
+The result contains information on every galaxy in our lens model:
+"""
+print(result.max_log_likelihood_instance.galaxies.lens_0.mass)
+print(result.max_log_likelihood_instance.galaxies.lens_1.mass)
+print(result.max_log_likelihood_instance.galaxies.lens_2.mass)
 
 """
 __Full Image Fitting__
@@ -124,5 +134,10 @@ that you can study the properties of the highly magnified source galaxy.
 
 This type of modeling uses a lot of **PyAutoLens**'s advanced model-fitting features which are described in chapters 3
 and 4 of the **HowToLens** tutorials. An example performing this analysis to the lens above can be found in the 
-notebook `clusters/modeling/chaining/lens_x3__source_x1.ipynb`.
+notebook `groups/chaining/point_source_to_imaging.ipynb`.
+
+__Wrap Up__
+
+The `group` package of the `autolens_workspace` contains numerous example scripts for performing group-sale modeling 
+and simulating group-scale strong lens datasets.
 """

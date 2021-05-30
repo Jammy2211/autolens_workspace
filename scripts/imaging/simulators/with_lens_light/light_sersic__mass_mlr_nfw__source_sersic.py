@@ -2,7 +2,7 @@
 Simulator: Sersic + Dark
 ========================
 
-This script simulates `Imaging` of a strong lens using decomposed light and dark matter profiles where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens using decomposed light and dark matter profiles where:
 
  - The lens galaxy's light matter mass distribution is an `EllSersic`.
  - The lens galaxy's dark `MassProfile` is a `SphNFW`.

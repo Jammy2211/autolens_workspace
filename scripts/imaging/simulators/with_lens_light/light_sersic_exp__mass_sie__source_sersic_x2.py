@@ -2,7 +2,7 @@
 Simulator: Light x2 + SIE
 =========================
 
-This script simulates `Imaging` of a strong lens where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens where:
 
  - The lens galaxy's light's are an `EllSersic` and `EllExponential`.
  - The lens galaxy's total mass distribution is an `EllIsothermal` and `ExternalShear`.

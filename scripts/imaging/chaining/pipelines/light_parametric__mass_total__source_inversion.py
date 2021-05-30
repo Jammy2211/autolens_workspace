@@ -2,7 +2,7 @@
 Pipelines: Light Parametric + Mass Total + Source Inversion
 ===========================================================
 
-By chaining together five searches this script fits strong lens `Imaging`, where in the final model:
+By chaining together five searches this script  fits `Imaging` dataset of a 'galaxy-scale' strong lens, where in the final model:
 
  - The lens galaxy's light is a parametric `EllSersic` and `EllExponential`.
  - The lens galaxy's total mass distribution is an `EllIsothermal`.

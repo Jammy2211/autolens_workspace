@@ -3,7 +3,7 @@ import autolens as al
 from . import slam_util
 from . import extensions
 
-from typing import Union, Optional
+from typing import Union
 
 
 def no_lens_light(

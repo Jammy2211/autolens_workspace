@@ -2,7 +2,7 @@
 Modeling: Light Parametric + Mass Light Dark + Source Parametric
 ================================================================
 
-In this script, we fit `Imaging` with a strong lens model where:
+This script  fits `Imaging` dataset of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's light is a parametric `EllSersic`.
  - The lens galaxy's stellar mass distribution is tied to the light model above.

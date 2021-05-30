@@ -2,7 +2,7 @@
 Modeling: Mass Total + Source Inversion
 =======================================
 
-In this script, we fit `Interferometer` data with a strong lens model where:
+This script fits `Interferometer` dataset of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's light is omitted (and is not present in the simulated data).
  - The lens galaxy's total mass distribution is an `EllIsothermal` and `ExternalShear`.

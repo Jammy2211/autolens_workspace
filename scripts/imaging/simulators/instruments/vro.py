@@ -2,7 +2,7 @@
 Simulator: VRO
 ==============
 
-This script simulates `Imaging` of a strong lens where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens where:
 
  - The resolution, PSF and S/N are representative of the Vera Rubin Observatory imaging.
 """

@@ -83,8 +83,12 @@ source_galaxy_model = af.Model(al.Galaxy, redshift=1.0, disk=al.lp.EllExponentia
 """
 We combine the lens and source model galaxies above into a `Collection`, which is the model we will fit. Note how
 we could easily extend this object to compose highly complex models containing many galaxies.
+
+The reason we create separate `Collection`'s for the `galaxies` and `model` is because the `model`
+can be extended to include other components than just galaxies.
 """
-model = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+galaxies = af.Collection(lens=lens_galaxy_model, source=source_galaxy_model)
+model = af.Collection(galaxies=galaxies)
 
 """
 __Non-linear Search__
@@ -128,8 +132,22 @@ Fitting an identical model, search and dataset will generate the same identifier
 will use the existing results to resume the model-fit. In contrast, if you change the model, search or dataset, a new 
 unique identifier will be generated, ensuring that the model-fit results are output into a separate folder.
 
-The fit above returns a ``Result`` object, which contains the maximum log likelihood ``Tracer`` and ``FitImaging``
-objects and information on the posterior estimated by Dynesty, all of which can easily be plotted.
+The fit above returns a `Result` object, which includes lots of information on the lens model. Below, 
+we print the maximum log likelihood model inferred.
+"""
+print(result.max_log_likelihood_instance.galaxies.lens)
+print(result.max_log_likelihood_instance.galaxies.source)
+
+"""
+In fact, the result contains the full posterior information of our non-linear search, including all
+parameter samples, log likelihood values and tools to compute the errors on the lens model. **PyAutoLens** includes
+visualization tools for plotting this.
+"""
+dynesty_plotter = aplt.DynestyPlotter(samples=result.samples)
+dynesty_plotter.cornerplot()
+
+"""
+The result also contains the maximum log likelihood `Tracer` and `FitImaging` objects which can easily be plotted.
 """
 tracer_plotter = aplt.TracerPlotter(
     tracer=result.max_log_likelihood_tracer, grid=imaging.grid
@@ -139,16 +157,8 @@ tracer_plotter.subplot_tracer()
 fit_imaging_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
 fit_imaging_plotter.subplot_fit_imaging()
 
-dynesty_plotter = aplt.DynestyPlotter(samples=result.samples)
-dynesty_plotter.cornerplot()
 
 """
-In fact, this ``Result`` object contains the full posterior information of our non-linear search, including all
-parameter samples, log likelihood values and tools to compute the errors on the lens model.
-
-The script `autolens_workspace/notebooks/imaging/modeling/result.py` contains a full description of all information 
-contained in a ``Result``.
-
 __Wrap Up__
 
 A more detailed description of lens modeling with **PyAutoLens**'s is given in chapter 2 of the **HowToLens** 

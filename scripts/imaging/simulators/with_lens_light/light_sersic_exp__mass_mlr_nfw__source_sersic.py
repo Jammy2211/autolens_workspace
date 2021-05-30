@@ -2,7 +2,7 @@
 Simulator: Sersic x2 + Dark
 ===========================
 
-This script simulates `Imaging` of a strong lens using decomposed light and dark matter profiles where:
+This script simulates `Imaging` of a 'galaxy-scale' strong lens using decomposed light and dark matter profiles where:
 
  - The lens galaxy's light matter mass distribution is an `EllSersic` + EllExponential representing a
       bulge + disk system.

@@ -2,7 +2,7 @@
 Modeling: Light Parametric + Mass Total + Source Parametric
 ===========================================================
 
-In this script, we fit `Imaging` with a strong lens model where:
+This script  fits `Imaging` dataset of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's light is a parametric `EllSersic` bulge and `EllExponential` disk.
  - The lens galaxy's total mass distribution is an `EllIsothermal` and `ExternalShear`.

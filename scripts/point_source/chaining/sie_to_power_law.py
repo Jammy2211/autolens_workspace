@@ -2,7 +2,7 @@
 Chaining: SIE to Power-law
 ==========================
 
-In this script, we chain two searches to fit a `PointDict` with a strong lens model where:
+This script chains two searches to fit `PointDict` data of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's total mass distribution is an `EllPowerLaw`.
  - The source `Galaxy` is a point source `Point`.

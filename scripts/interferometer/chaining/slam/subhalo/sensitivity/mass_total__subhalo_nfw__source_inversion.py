@@ -2,9 +2,9 @@
 SLaM (Source, Light and Mass): Mass Total + Subhalo NFW + Source Parametric Sensitivity Mapping
 ===============================================================================================
 
-SLaM pipelines break the analysis down into multiple pipelines which focus on modeling a specific aspect of the strong
-lens, first the Source, then the (lens) Light and finally the Mass. Each of these pipelines has it own inputs which
-which customize the model and analysis in that pipeline.
+SLaM pipelines break the analysis of 'galaxy-scale' strong lenses down into multiple pipelines which focus on modeling
+a specific aspect of the strong lens, first the Source, then the (lens) Light and finally the Mass. Each of these
+pipelines has it own inputs which which customize the model and analysis in that pipeline.
 
 The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
 uses a parametric `EllSersic` profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.

@@ -2,7 +2,7 @@
 Chaining: Lens Light To Mass
 ============================
 
-In this script, we chain two searches to fit `Imaging` with a strong lens model where:
+This script chains two searches to fit `Imaging` data of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy's light is a bulge+disk `EllSersic` and `EllExponential`.
  - The lens galaxy's total mass distribution is an `EllIsothermal` and `ExternalShear`.

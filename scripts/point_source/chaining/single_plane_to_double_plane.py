@@ -2,7 +2,7 @@
 Chaining: Single-Plane to Double-Plane
 ======================================
 
-In this script, we chain two searches to fit a `PointDict` with a strong lens model where:
+This script chains two searches to fit `PointDict` data of a 'galaxy-scale' strong lens with a model where:
 
  - The lens galaxy is at `redshift=0.5` and its total mass distribution is an `EllIsothermal`.
  - An intermediate lens and source galaxy is at `redshift=1.0`, with an `EllIsothermal` total mass distribution

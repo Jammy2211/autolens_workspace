@@ -1,10 +1,11 @@
 """
-Simulator: Lens x3 Source x1
-============================
+Simulator: Group
+================
 
-This script simulates `Imaging` and a `PointDataset` of a strong lensing cluster where:
+This script simulates `Imaging` and a `PointDataset` of a 'group-scale' strong lens where:
 
- - The cluster consists of three lens galaxies whose total mass distributions are `SphIsothermal` models.
+ - The group consists of three lens galaxies whose ligth distributions are `SphSersic` profiles and
+ total mass distributions are `SphIsothermal` profiles.
  - A single source galaxy is observed whose `LightProfile` is an `EllSersic`.
 
 The brightest pixels of the source in the image-plane are used to create a point-source dataset.
@@ -30,12 +31,12 @@ gives it a descriptive name. They define the folder the dataset is output to on 
  - The noise-map will be output to `/autolens_workspace/dataset/dataset_type/dataset_label/dataset_name/noise_map.fits`.
  - The psf will be output to `/autolens_workspace/dataset/dataset_type/dataset_label/dataset_name/psf.fits`.
 """
-dataset_type = "clusters"
+dataset_type = "group"
 dataset_name = "lens_x3__source_x1"
 
 """
 The path where the dataset will be output, which in this case is:
-`/autolens_workspace/dataset/clusters/lens_x3__source_x1`
+`/autolens_workspace/output/group`
 """
 dataset_path = path.join("dataset", dataset_type, dataset_name)
 
@@ -89,7 +90,7 @@ lens_galaxy_0 = al.Galaxy(
 lens_galaxy_1 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SphSersic(
-        centre=(3.5, 2.5), intensity=0.3, effective_radius=0.8, sersic_index=3.0
+        centre=(3.5, 2.5), intensity=0.9, effective_radius=0.8, sersic_index=3.0
     ),
     mass=al.mp.SphIsothermal(centre=(3.5, 2.5), einstein_radius=0.8),
 )
@@ -97,7 +98,7 @@ lens_galaxy_1 = al.Galaxy(
 lens_galaxy_2 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SphSersic(
-        centre=(-4.4, -5.0), intensity=0.3, effective_radius=0.8, sersic_index=3.0
+        centre=(-4.4, -5.0), intensity=0.9, effective_radius=0.8, sersic_index=3.0
     ),
     mass=al.mp.SphIsothermal(centre=(-4.4, -5.0), einstein_radius=1.0),
 )
@@ -107,7 +108,7 @@ source_galaxy = al.Galaxy(
     bulge=al.lp.EllSersic(
         centre=(0.0, 0.1),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, angle=60.0),
-        intensity=1.0,
+        intensity=3.0,
         effective_radius=0.4,
         sersic_index=1.0,
     ),
@@ -130,8 +131,8 @@ tracer_plotter.figures_2d(image=True)
 """
 __Point Source__
 
-It is common for galaxy cluster datasets to be modeled assuming that the source is a point-source. Even if it isn't,
-this can be necessary due to computational run-time making it unfeasible to fit the imaging dataset outright.
+It is common for group-scale strong lens datasets to be modeled assuming that the source is a point-source. Even if 
+it isn't, this can be necessary due to computational run-time making it unfeasible to fit the imaging dataset outright.
 
 We will use a `PositionSolver` to locate the multiple images, using computationally slow but robust settings to ensure w
 e accurately locate the image-plane positions.
@@ -225,7 +226,9 @@ imaging.output_to_fits(
 Output a subplot of the simulated dataset, the image and a subplot of the `Tracer`'s quantities to the dataset path 
 as .png files.
 """
-mat_plot_2d = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
+mat_plot_2d = aplt.MatPlot2D(
+    cmap=aplt.Cmap(vmax=15.0), output=aplt.Output(path=dataset_path, format="png")
+)
 
 imaging_plotter = aplt.ImagingPlotter(imaging=imaging, mat_plot_2d=mat_plot_2d)
 imaging_plotter.subplot_imaging()

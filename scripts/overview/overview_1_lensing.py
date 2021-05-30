@@ -30,7 +30,7 @@ Cartesian grids of (y,x) coordinates.
 Below, we make and plot a uniform Cartesian grid:
 """
 grid = al.Grid2D.uniform(
-    shape_native=(50, 50),
+    shape_native=(100, 100),
     pixel_scales=0.1,  # <- The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
 

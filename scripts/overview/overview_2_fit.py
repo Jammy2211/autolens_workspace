@@ -91,18 +91,19 @@ lens_galaxy = al.Galaxy(
     mass=al.mp.EllIsothermal(
         centre=(0.0, 0.0),
         einstein_radius=1.6,
-        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.7, angle=45.0),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, angle=45.0),
     ),
+    shear=al.mp.ExternalShear(elliptical_comps=(0.05, 0.05)),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllSersic(
-        centre=(0.1, 0.1),
+        centre=(0.0, 0.0),
         elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, angle=60.0),
         intensity=0.3,
-        effective_radius=1.0,
-        sersic_index=2.5,
+        effective_radius=0.1,
+        sersic_index=1.0,
     ),
 )
 
@@ -142,36 +143,45 @@ fit_imaging_plotter.figures_2d(
 fit_imaging_plotter.subplot_fit_imaging()
 
 """
+The overall quality of the fit is quantified with the `log_likelihood`.
+"""
+print(fit.log_likelihood)
+
+"""
 __Bad Lens Model__
 
 In contrast, a bad lens model will show features in the residual-map and chi-squareds.
 
 We can produce such an image by creating a tracer with different lens and source galaxies. In the example below, we 
-change the centre of the source galaxy from (0.1, 0.1) to (0.12, 0.12), which leads to residuals appearing
+change the centre of the source galaxy from (0.0, 0.0) to (0.05, 0.05), which leads to residuals appearing
 in the fit.
 """
 lens_galaxy = al.Galaxy(
     redshift=0.5,
     mass=al.mp.EllIsothermal(
-        centre=(0.0, 0.0), einstein_radius=1.6, elliptical_comps=(0.17647, 0.0)
+        centre=(0.0, 0.0),
+        einstein_radius=1.6,
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.9, angle=45.0),
     ),
+    shear=al.mp.ExternalShear(elliptical_comps=(0.05, 0.05)),
 )
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.EllSersic(
-        centre=(0.12, 0.12),
-        elliptical_comps=(0.0, 0.111111),
+        centre=(0.1, 0.1),
+        elliptical_comps=al.convert.elliptical_comps_from(axis_ratio=0.8, angle=60.0),
         intensity=0.3,
-        effective_radius=1.0,
-        sersic_index=2.5,
+        effective_radius=0.1,
+        sersic_index=1.0,
     ),
 )
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """
-Lets create a new fit using this tracer and replot its residuals, normalized residuals and chi-squareds.
+Lets create a new fit using this tracer, replot its residuals, normalized residuals 
+and chi-squared and confirm its log likelihood decreases.
 """
 fit = al.FitImaging(imaging=imaging, tracer=tracer)
 
@@ -179,6 +189,8 @@ fit_imaging_plotter.figures_2d(
     residual_map=True, normalized_residual_map=True, chi_squared_map=True
 )
 fit_imaging_plotter.subplot_fit_imaging()
+
+print(fit.log_likelihood)
 
 """
 __Wrap Up__

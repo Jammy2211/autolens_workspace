@@ -2,7 +2,7 @@
 SLaM (Source, Light and Mass): Light Parametric + Mass Total + Source Inversion
 ===============================================================================
 
-Using two source pipelines, a light pipeline and a mass pipeline this SLaM runner fits `Imaging` of a strong lens
+Using two source pipelines, a light pipeline and a mass pipeline this SLaM runner  fits `Imaging` dataset of a strong lens
 system where in the final model:
 
  - The lens galaxy's light is a bulge+disk `EllSersic` and `EllExponential`.
@@ -111,8 +111,7 @@ analysis = al.AnalysisImaging(dataset=imaging)
 
 bulge = af.Model(al.lp.EllSersic)
 disk = af.Model(al.lp.EllExponential)
-bulge.centre = (0.0, 0.0)
-disk.centre = (0.0, 0.0)
+bulge.centre = disk.centre
 
 source_parametric_results = slam.source_parametric.with_lens_light(
     settings_autofit=settings_autofit,
