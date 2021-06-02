@@ -227,7 +227,7 @@ Output a subplot of the simulated dataset, the image and a subplot of the `Trace
 as .png files.
 """
 mat_plot_2d = aplt.MatPlot2D(
-    cmap=aplt.Cmap(vmax=15.0), output=aplt.Output(path=dataset_path, format="png")
+    output=aplt.Output(path=dataset_path, format="png")
 )
 
 imaging_plotter = aplt.ImagingPlotter(imaging=imaging, mat_plot_2d=mat_plot_2d)

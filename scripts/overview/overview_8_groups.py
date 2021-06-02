@@ -123,7 +123,7 @@ print(result.max_log_likelihood_instance.galaxies.lens_1.mass)
 print(result.max_log_likelihood_instance.galaxies.lens_2.mass)
 
 """
-__Full Image Fitting__
+__Extended Source Fitting__
 
 For group-scale lenses like this one, with a modest number of lens and source galaxies, **PyAutoLens** has all the
 tools you need to perform extended surface-brightness fitting to the source's extended emission, including the use

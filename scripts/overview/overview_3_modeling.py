@@ -157,6 +157,36 @@ tracer_plotter.subplot_tracer()
 fit_imaging_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
 fit_imaging_plotter.subplot_fit_imaging()
 
+"""
+__Model Customization__
+
+The `Model` can be fully customized, making it simple to parameterize and fit many different lens models
+using any combination of ``LightProfile``'s and ``MassProfile``'s light profiles:
+"""
+
+lens_galaxy_model = af.Model(
+    al.Galaxy,
+    redshift=0.5,
+    bulge=al.lp.EllDevVaucouleurs,
+    mass=al.mp.EllIsothermal
+)
+
+"""
+This aligns the light and mass profile centres in the model, reducing the
+number of free parameter fitted for by Dynesty by 2.
+"""
+lens_galaxy_model.bulge.centre = lens_galaxy_model.mass.centre
+
+"""
+This fixes the lens galaxy light profile's effective radius to a value of
+0.8 arc-seconds, removing another free parameter.
+"""
+lens_galaxy_model.bulge.effective_radius = 0.8
+
+"""
+This forces the mass profile's einstein radius to be above 1.0 arc-seconds.
+"""
+lens_galaxy_model.mass.add_assertion(lens_galaxy_model.mass.einstein_radius > 1.0)
 
 """
 __Wrap Up__

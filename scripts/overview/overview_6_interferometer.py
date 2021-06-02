@@ -26,7 +26,7 @@ therefore Fourier space, we still need to define the grid of coordinates in real
 images are computed. It is this image that is mapped to Fourier space to compare to the uv-plane data.
 """
 real_space_mask = al.Mask2D.circular(
-    shape_native=(200, 200), pixel_scales=0.05, radius=3.0
+    shape_native=(400, 400), pixel_scales=0.025, radius=3.0
 )
 
 """
@@ -217,7 +217,7 @@ fit_interferometer_plotter.subplot_fit_interferometer()
 fit_interferometer_plotter.subplot_fit_dirty_images()
 
 """
-__Simulation__
+__Simulation__3
 
 Simulated interferometer datasets can be generated using the ``SimulatorInterferometer`` object, which includes adding
 Gaussian noise to the visibilities:
@@ -229,7 +229,9 @@ simulator = al.SimulatorInterferometer(
     noise_sigma=0.01,
 )
 
-interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=interferometer.grid)
+real_space_grid = al.Grid2D.uniform(shape_native=real_space_mask.shape_native, pixel_scales=real_space_mask.pixel_scales)
+
+interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=real_space_grid)
 
 """
 __Wrap Up__

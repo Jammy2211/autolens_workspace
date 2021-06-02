@@ -48,12 +48,50 @@ def hyper_fit(
         include_hyper_image_sky=include_hyper_image_sky,
     )
 
+    set_upper_limit_of_pixelization_pixels_prior(hyper_model=hyper_model, result=result)
+
     return al.util.model.hyper_fit(
         hyper_model=hyper_model,
         setup_hyper=setup_hyper,
         result=result,
         analysis=analysis.no_positions,
     )
+
+
+def set_upper_limit_of_pixelization_pixels_prior(
+    hyper_model: af.Collection, result: af.Result
+):
+    """
+    If the pixelization being fitted in the hyper-model fit is a `VoronoiBrightnessImage` pixelization, this function
+    sets the upper limit of its `pixels` prior to the number of data points in the mask.
+
+    This ensures the KMeans algorithm does not raise an exception due to having fewer data points than source pixels.
+
+    Parameters
+    ----------
+    hyper_model : Collection
+        The hyper model used by the hyper-fit, which models hyper-components like a `Pixelization` or `HyperGalaxy`'s.
+    result
+        The result of a previous `Analysis` search whose maximum log likelihood model forms the basis of the hyper model.
+    """
+
+    if hasattr(hyper_model, "galaxies"):
+
+        pixels_in_mask = result.analysis.dataset.mask.pixels_in_mask
+
+        if pixels_in_mask < hyper_model.galaxies.source.pixelization.pixels.upper_limit:
+
+            if (
+                hyper_model.galaxies.source.pixelization.cls
+                is al.pix.VoronoiBrightnessImage
+            ):
+
+                lower_limit = hyper_model.galaxies.source.pixelization.pixels.lower_limit
+
+                hyper_model.galaxies.source.pixelization.pixels = af.UniformPrior(
+                    lower_limit=lower_limit, upper_limit=pixels_in_mask
+                )
+
 
 
 def stochastic_fit(

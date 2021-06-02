@@ -83,7 +83,7 @@ source_galaxy = al.Galaxy(redshift=1.0, point_0=point_source)
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """
-__Solving the Lens Equation__
+__Position Solving-_
 
 For a `Point`, our goal is to find the (y,x) coordinates in the image-plane that directly map to the centre
 of the `Point` in the source plane. In this example, we therefore need to compute the 4 image-plane that map

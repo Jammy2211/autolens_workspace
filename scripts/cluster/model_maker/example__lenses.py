@@ -1,6 +1,6 @@
 """
-Model Makers: Cluster Lenses
-============================
+Model Maker: Cluster Lenses
+===========================
 
 For cluster modeling, there can be tens or hundreds of lens and source galaxies. Manually writing the lens model of
 each in the Python scripts we used to perform lens model becomes unfeasible and it better for us to manage model

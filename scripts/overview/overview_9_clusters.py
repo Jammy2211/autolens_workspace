@@ -110,7 +110,7 @@ from catalogue files is given in the following scripts:
  `autolens_workspace/notebooks/cluster/model_maker/example__lenses.ipynb` 
  `autolens_workspace/notebooks/cluster/model_maker/example__sources.ipynb`  
 
-This file is used to load the model below and it can be easily altered to compose a cluster model suited to your lens 
+These files are used to load the model below and they can be easily altered to compose a cluster model suited to your lens 
 dataset!
 
 For this cluster model, we set up every source galaxy as a `PointSrcChi` model. This evaluates 
@@ -157,7 +157,7 @@ print(result.max_log_likelihood_instance.galaxies.dark.mass)
 print(result.max_log_likelihood_instance.galaxies.scaling_relation)
 
 """
-__Full Image Fitting__
+__Extended Source Fitting__
 
 For clsuter-scale lenses fitting the extended surface-brightness is extremely difficult. The models become high 
 dimensional and difficult to fit, and it becomes very computationally. Furthermore, the complexity of cluster mass 

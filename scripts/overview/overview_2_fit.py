@@ -148,7 +148,7 @@ The overall quality of the fit is quantified with the `log_likelihood`.
 print(fit.log_likelihood)
 
 """
-__Bad Lens Model__
+__Bad Fit__
 
 In contrast, a bad lens model will show features in the residual-map and chi-squareds.
 

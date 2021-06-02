@@ -55,12 +55,15 @@ The examples in the ``notebooks`` and ``scripts`` folders are structured as foll
 - ``overview``: Examples giving an overview of **PyAutoLens**'s core features.
 - ``howtolens``: Detailed step-by-step Jupyter notebook tutorials on how to use **PyAutoLens**.
 - ``imaging``: Examples for analysing and simulating CCD imaging data.
-- ``interferometer``: Examples for analysing and simulating interferometer.
+- ``interferometer``: Examples for analysing and simulating interferometer datasets.
+- ``group``: Group-scale lens modeling and simulations examples.
+- ``cluster``: Cluster-scale lens modeling and simulation exampless.
 - ``database``: Examples for using database tools which load libraries of model-fits to large datasets.
 - ``plot``: An API reference guide for **PyAutoLens**'s plotting tools.
 - ``misc``: Miscelaneous scripts for specific lens analysis.
 
-In the ``imaging`` and ``interferometer`` folders you'll find the following packages:
+In the ``imaging``, ``interferometer``, ``point_source``, ``group`` and ``cluster`` folders you'll find the following
+packages:
 
 - ``modeling``: Examples of how to fit a lens model to data via a non-linear search.
 - ``chaining``: Advanced modeling scripts which chain together multiple non-linear searches.
@@ -82,7 +85,7 @@ tutorials.
 Workspace Version
 -----------------
 
-This version of the workspace are built and tested for using **PyAutoLens v1.12.2**.
+This version of the workspace is built and tested for using **PyAutoLens v2021.6.02.1**.
 
 HowToLens
 ---------
