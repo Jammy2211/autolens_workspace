@@ -53,7 +53,7 @@ First, lets load and plot the image of our example strong lens cluster, sdssj115
 We will use this to verify that our source positions are aligned with the data.
 """
 dataset_name = "cluster"
-dataset_path = path.join("dataset", "clusters", dataset_name)
+dataset_path = path.join("dataset", "cluster", dataset_name)
 
 image = al.Array2D.from_fits(
     file_path=path.join(dataset_path, "f160w_image.fits"), hdu=0, pixel_scales=0.03
@@ -104,7 +104,7 @@ Python lists.
 (Your catalogue files may well have a different structure and format to the example one used in this tutorial. You may
 need to write your own `source_catalogue_to_lists` function to do this.)
 """
-catalogue_file = path.join("dataset", "clusters", "cluster", "source.cat")
+catalogue_file = path.join("dataset", "cluster", "cluster", "source.cat")
 catalogue = cluster_util.source_catalogue_to_lists(file=catalogue_file)
 
 """
@@ -237,7 +237,7 @@ in our model fitting script:
 """
 sources = af.Collection(sources)
 
-model_path = path.join("scripts", "clusters", "models", dataset_name)
+model_path = path.join(dataset_path, "models")
 os.makedirs(model_path, exist_ok=True)
 
 model_file = path.join(model_path, "sources.json")

@@ -61,7 +61,7 @@ optional, and if it were not included in the model-fit visualization would simpl
 the image.
 """
 dataset_name = "cluster"
-dataset_path = path.join("dataset", "clusters", dataset_name)
+dataset_path = path.join("dataset", "cluster", dataset_name)
 
 image = al.Array2D.from_fits(
     file_path=path.join(dataset_path, "f160w_image.fits"), pixel_scales=0.03
@@ -152,7 +152,7 @@ from catalogue files is given in the following scripts:
 This file is used to load the model below and it can be easily altered to compose a cluster model suited to your lens 
 dataset!
 """
-model_path = path.join("scripts", "clusters", "models", dataset_name)
+model_path = path.join("scripts", "cluster", "models", dataset_name)
 
 lenses_file = path.join(model_path, "lenses.json")
 lenses = af.Collection.from_json(file=lenses_file)
@@ -213,7 +213,7 @@ users on a Windows Operating system, using `number_of_cores>1` may lead to an er
 reduced back to 1 to fix it.
 """
 search = af.DynestyStatic(
-    path_prefix=path.join("clusters"),
+    path_prefix=path.join("cluster"),
     name="large_scale",
     unique_tag=dataset_name,
     nlive=50,

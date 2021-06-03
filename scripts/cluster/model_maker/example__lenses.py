@@ -60,7 +60,7 @@ First, lets load and plot the image of our example strong lens cluster, cluster.
 We will use this to verify that our strong lens galaxy centres are aligned with the data.
 """
 dataset_name = "cluster"
-dataset_path = path.join("dataset", "clusters", dataset_name)
+dataset_path = path.join("dataset", "cluster", dataset_name)
 
 image = al.Array2D.from_fits(
     file_path=path.join(dataset_path, "f160w_image.fits"), hdu=0, pixel_scales=0.03
@@ -133,7 +133,7 @@ Python lists.
 (Your catalogue files may well have a different structure and format to the example one used in this tutorial. You may
 need to write your own `lens_catalogue_to_lists` function to do this.)
 """
-catalogue_file = path.join("dataset", "clusters", "cluster", "lens.cat")
+catalogue_file = path.join("dataset", "cluster", "cluster", "lens.cat")
 catalogue = cluster_util.lens_catalogue_to_lists(file=catalogue_file)
 
 """
@@ -233,7 +233,7 @@ print(lenses)
 """
 We now write the model to a .json file, so it can be loaded in our model-fitting script.
 """
-model_path = path.join("scripts", "clusters", "models", dataset_name)
+model_path = path.join(dataset_path, "models")
 os.makedirs(model_path, exist_ok=True)
 
 model_file = path.join(model_path, "lenses.json")

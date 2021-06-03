@@ -30,10 +30,10 @@ import autolens as al
 """
 __Paths__
 
-The path where the models are output.
+The path where the models are output, which is also where the data is stored.
 """
 dataset_name = "lens_x3__source_x1"
-model_path = path.join("scripts", "group", "models", dataset_name)
+model_path = path.join("dataset", "group", dataset_name)
 
 os.makedirs(model_path, exist_ok=True)
 
