@@ -165,10 +165,7 @@ using any combination of ``LightProfile``'s and ``MassProfile``'s light profiles
 """
 
 lens_galaxy_model = af.Model(
-    al.Galaxy,
-    redshift=0.5,
-    bulge=al.lp.EllDevVaucouleurs,
-    mass=al.mp.EllIsothermal
+    al.Galaxy, redshift=0.5, bulge=al.lp.EllDevVaucouleurs, mass=al.mp.EllIsothermal
 )
 
 """

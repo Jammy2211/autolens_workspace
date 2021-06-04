@@ -226,9 +226,7 @@ imaging.output_to_fits(
 Output a subplot of the simulated dataset, the image and a subplot of the `Tracer`'s quantities to the dataset path 
 as .png files.
 """
-mat_plot_2d = aplt.MatPlot2D(
-    output=aplt.Output(path=dataset_path, format="png")
-)
+mat_plot_2d = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
 imaging_plotter = aplt.ImagingPlotter(imaging=imaging, mat_plot_2d=mat_plot_2d)
 imaging_plotter.subplot_imaging()
