@@ -48,7 +48,10 @@ def hyper_fit(
         include_hyper_image_sky=include_hyper_image_sky,
     )
 
-    set_upper_limit_of_pixelization_pixels_prior(hyper_model=hyper_model, result=result)
+    try:
+        set_upper_limit_of_pixelization_pixels_prior(hyper_model=hyper_model, result=result)
+    except AttributeError:
+        pass
 
     return al.util.model.hyper_fit(
         hyper_model=hyper_model,

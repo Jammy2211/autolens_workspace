@@ -85,7 +85,7 @@ tutorials.
 Workspace Version
 -----------------
 
-This version of the workspace is built and tested for using **PyAutoLens v2021.6.02.1**.
+This version of the workspace is built and tested for using **PyAutoLens v2021.6.04.1**.
 
 HowToLens
 ---------
