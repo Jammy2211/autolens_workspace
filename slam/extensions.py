@@ -49,7 +49,9 @@ def hyper_fit(
     )
 
     try:
-        set_upper_limit_of_pixelization_pixels_prior(hyper_model=hyper_model, result=result)
+        set_upper_limit_of_pixelization_pixels_prior(
+            hyper_model=hyper_model, result=result
+        )
     except AttributeError:
         pass
 
@@ -89,12 +91,13 @@ def set_upper_limit_of_pixelization_pixels_prior(
                 is al.pix.VoronoiBrightnessImage
             ):
 
-                lower_limit = hyper_model.galaxies.source.pixelization.pixels.lower_limit
+                lower_limit = (
+                    hyper_model.galaxies.source.pixelization.pixels.lower_limit
+                )
 
                 hyper_model.galaxies.source.pixelization.pixels = af.UniformPrior(
                     lower_limit=lower_limit, upper_limit=pixels_in_mask
                 )
-
 
 
 def stochastic_fit(

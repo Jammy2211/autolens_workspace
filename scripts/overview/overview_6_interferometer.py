@@ -229,7 +229,9 @@ simulator = al.SimulatorInterferometer(
     noise_sigma=0.01,
 )
 
-real_space_grid = al.Grid2D.uniform(shape_native=real_space_mask.shape_native, pixel_scales=real_space_mask.pixel_scales)
+real_space_grid = al.Grid2D.uniform(
+    shape_native=real_space_mask.shape_native, pixel_scales=real_space_mask.pixel_scales
+)
 
 interferometer = simulator.from_tracer_and_grid(tracer=tracer, grid=real_space_grid)
 

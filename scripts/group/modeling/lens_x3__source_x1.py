@@ -127,7 +127,7 @@ file `group/models`.
 This file is used to load the model below and it can be easily altered to compose a group model suited to your lens 
 dataset!
 """
-model_path = path.join("scripts", "models", dataset_name)
+model_path = path.join("dataset", "group", dataset_name)
 
 lenses_file = path.join(model_path, "lenses.json")
 lenses = af.Collection.from_json(file=lenses_file)

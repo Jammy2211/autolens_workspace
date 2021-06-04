@@ -233,7 +233,7 @@ print(lenses)
 """
 We now write the model to a .json file, so it can be loaded in our model-fitting script.
 """
-model_path = path.join(dataset_path, "models")
+model_path = path.join(dataset_path)
 os.makedirs(model_path, exist_ok=True)
 
 model_file = path.join(model_path, "lenses.json")

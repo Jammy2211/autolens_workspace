@@ -154,7 +154,7 @@ for dataset_name in dataset_names:
         unique_tag=dataset_name,  # This makes the unique identifier use the dataset name
         session=session,  # This instructs the search to write to the .sqlite database.
         nlive=50,
-        maxcall=5000
+        maxcall=5000,
     )
 
     analysis = al.AnalysisImaging(dataset=imaging)

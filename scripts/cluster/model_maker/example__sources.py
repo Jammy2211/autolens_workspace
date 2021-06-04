@@ -237,7 +237,7 @@ in our model fitting script:
 """
 sources = af.Collection(sources)
 
-model_path = path.join(dataset_path, "models")
+model_path = path.join(dataset_path)
 os.makedirs(model_path, exist_ok=True)
 
 model_file = path.join(model_path, "sources.json")
