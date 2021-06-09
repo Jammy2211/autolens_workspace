@@ -15,6 +15,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load example imaging of of a strong lens as an `Imaging` object.
 """
 dataset_name = "mass_sie__source_sersic"
@@ -28,6 +30,8 @@ imaging = al.Imaging.from_fits(
 )
 
 """
+__Grid__
+
 Now, lets set up a `Grid2D` (using the image of this imaging).
 """
 grid = al.Grid2D.uniform(
@@ -35,6 +39,8 @@ grid = al.Grid2D.uniform(
 )
 
 """
+__Tracer__
+
 The `Mapper` maps pixels from the image-plane of our `Imaging` data to its source plane, via a lens model.
 
 Lets create a `Tracer` which we will use to create the `Mapper`.
@@ -54,17 +60,23 @@ source_galaxy = al.Galaxy(
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """
+__Mapper__
+
 We can extract the `Mapper` from the `Tracer` by passig it the `Grid2D`.
 """
 mapper = tracer.mappers_of_planes_from_grid(grid=grid)[1]
 
 """
+__Figures__
+
 We now pass the mapper to a `MapperPlotter` and call various `figure_*` methods to plot different attributes.
 """
 mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d()
 
 """
+__Subplots__
+
 The `Mapper` can also be plotted with a subplot of its original image.
 """
 mapper_plotter = aplt.MapperPlotter(mapper=mapper)
@@ -81,6 +93,8 @@ mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
 mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 
 """
+__Include__
+
 A `Mapper` contains the following attributes which can be plotted automatically via the `Include2D` object.
 """
 include_2d = aplt.Include2D(
@@ -91,6 +105,7 @@ include_2d = aplt.Include2D(
     mapper_source_pixelization_grid=True,
     mapper_source_grid_slim=True,
 )
+
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include_2d)
 mapper_plotter.subplot_image_and_mapper(image=imaging.image)
 

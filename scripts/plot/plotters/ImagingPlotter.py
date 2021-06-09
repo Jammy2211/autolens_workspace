@@ -15,6 +15,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load example imaging of of a strong lens as an `Imaging` object.
 """
 dataset_name = "mass_sie__source_sersic"
@@ -28,6 +30,8 @@ imaging = al.Imaging.from_fits(
 )
 
 """
+__Figures__
+
 We now pass the imaging to an `ImagingPlotter` and call various `figure_*` methods to plot different attributes.
 """
 imaging_plotter = aplt.ImagingPlotter(imaging=imaging)
@@ -41,16 +45,22 @@ imaging_plotter.figures_2d(
 )
 
 """
+__Subplots__
+
 The `ImagingPlotter` may also plot a subplot of all of these attributes.
 """
 imaging_plotter.subplot_imaging()
 
 """`
+__Include__
+
 Imaging` contains the following attributes which can be plotted automatically via the `Include2D` object.
 
 (By default, an `Array2D` does not contain a `Mask2D`, we therefore manually created an `Array2D` with a mask to illustrate
 the plotted of a mask and its border below).
 """
+include_2d = aplt.Include2D(origin=True, mask=True, border=True)
+
 mask = al.Mask2D.circular_annular(
     shape_native=imaging.shape_native,
     pixel_scales=imaging.pixel_scales,
@@ -58,8 +68,6 @@ mask = al.Mask2D.circular_annular(
     outer_radius=3.0,
 )
 imaging = imaging.apply_mask(mask=mask)
-
-include_2d = aplt.Include2D(origin=True, mask=True, border=True)
 imaging_plotter = aplt.ImagingPlotter(imaging=imaging, include_2d=include_2d)
 imaging_plotter.subplot_imaging()
 

@@ -14,11 +14,15 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Grid__
+
 Lets create a simple uniform grid.
 """
 grid = al.Grid2D.uniform(shape_native=(30, 30), pixel_scales=0.1)
 
 """
+__Figures__
+
 We now pass the grid to a `Grid2DPlotter` and call the `figure` method.
 """
 grid_plotter = aplt.Grid2DPlotter(grid=grid)
@@ -38,9 +42,12 @@ grid_plotter = aplt.Grid2DPlotter(grid=lensed_grid)
 grid_plotter.figure_2d()
 
 """
+__Include__
+
 A `Grid2D` contains the following attributes which can be plotted automatically via the `Include2D` object.
 """
 include_2d = aplt.Include2D(origin=True)
+
 grid_plotter = aplt.Grid2DPlotter(grid=lensed_grid, include_2d=include_2d)
 grid_plotter.figure_2d()
 

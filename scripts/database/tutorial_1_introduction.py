@@ -32,6 +32,8 @@ import autofit as af
 import autolens as al
 
 """
+__Dataset__
+
 For each dataset we load it from hard-disc, set up its `Analysis` class and fit it with a non-linear search. 
 
 The 3 datasets are in the `autolens_workspace/dataset/database` folder.
@@ -154,7 +156,6 @@ for dataset_name in dataset_names:
         unique_tag=dataset_name,  # This makes the unique identifier use the dataset name
         session=session,  # This instructs the search to write to the .sqlite database.
         nlive=50,
-        maxcall=5000,
     )
 
     analysis = al.AnalysisImaging(dataset=imaging)

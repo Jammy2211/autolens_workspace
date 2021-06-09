@@ -20,11 +20,15 @@ import autolens as al
 import numpy as np
 
 """
+__Database File__
+
 First, we set up the aggregator as we did in the previous tutorial.
 """
 agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
+__Dervied Example: Axis Ratio__
+
 To begin, lets compute the axis ratio of a lens model, including the errors on the axis ratio. In the previous tutorials, 
 we saw that the errors on a quantity like the elliptical_comps is simple, because it was sampled by the non-linear 
 search. Thus, to get their we can uses the Samples object to simply marginalize over all over parameters via the 1D 
@@ -108,6 +112,8 @@ print("Axis Ratio Errors:")
 print(axis_ratio_errors)
 
 """
+__Fit__
+
 We can also iterate over every Fit of our results, to extracting derived information on the fit. Below, we reperform
 every source reconstruction of the fit and ?
 """

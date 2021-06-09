@@ -28,12 +28,16 @@ import autofit as af
 import autolens.plot as aplt
 
 """
+__Database File__
+
 First, note how the results are not contained in the `output` folder after each search completes. Instead, they are
 contained in the `database.sqlite` file, which we can load using the `Aggregator`.
 """
 agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
 
 """
+__Generators__
+
 Before using the aggregator to inspect results, let me quickly cover Python generators. A generator is an object that 
 iterates over a function when it is called. The aggregator creates all of the objects that it loads from the database 
 as generators (as opposed to a list, or dictionary, or other Python type).
@@ -64,6 +68,8 @@ print()
 print("Total Samples Objects = ", len(agg), "\n")
 
 """
+__Samples__
+
 The `Samples` class contains all the parameter samples, which is a list of lists where:
  
  - The outer list is the size of the total number of samples.
@@ -104,6 +110,8 @@ for samples in agg.values("samples"):
     print(samples.weight_list[9])
 
 """
+__Maximum Likelihood Model__
+
 We can use the outputs to create a list of the maximum log likelihood model of each fit to our three images.
 """
 ml_vector = [samps.max_log_likelihood_vector for samps in agg.values("samples")]
@@ -112,6 +120,8 @@ print("Max Log Likelihood Model Parameter Lists: \n")
 print(ml_vector, "\n\n")
 
 """
+__Parameter Names__
+
 This provides us with lists of all model parameters. However, this isn't that much use, which values correspond to 
 which parameters?
 
@@ -132,6 +142,8 @@ print("Maximum Log Likelihood Model Instances: \n")
 print(ml_instances, "\n")
 
 """
+__Instances__
+
 A model instance contains all the model components of our fit, most importantly the list of galaxies we specified in 
 the pipeline.
 """
@@ -153,6 +165,8 @@ print(ml_instances[0].galaxies.lens.mass)
 print(ml_instances[1].galaxies.source.bulge)
 
 """
+__Median PDF__
+
 We can access the `median pdf` model, which is the model computed by marginalizing over the samples of every parameter 
 in 1D and taking the median of this PDF.
 """
@@ -167,6 +181,8 @@ print(mp_instances[0].galaxies.lens.mass)
 print()
 
 """
+__Errors__
+
 We can compute the model parameters at a given sigma value (e.g. at 3.0 sigma limits).
 
 These parameter values do not account for covariance between the model. For example if two parameters are degenerate 
@@ -226,6 +242,8 @@ print(ue3_instances, "\n")
 print(le3_instances, "\n")
 
 """
+__Bayesian Evidence__
+
 The maximum log likelihood of each model fit and its Bayesian log evidence (estimated via the nested sampling 
 algorithm) are also available.
 
@@ -238,6 +256,8 @@ print([max(samps.log_likelihood_list) for samps in agg.values("samples")])
 print([samps.log_evidence for samps in agg.values("samples")])
 
 """
+__Results__
+
 We can also print the "model_results" of all searches, which is string that summarizes every fit`s lens model providing 
 quick inspection of all results.
 """
@@ -246,6 +266,8 @@ print("Model Results Summary: \n")
 print(results, "\n")
 
 """
+__PDFs__
+
 The Probability Density Functions (PDF's) of the every model-fit can be plotted using Dynesty's in-built visualization 
 tools, which are wrapped via the `DynestyPlotter` object.
 """

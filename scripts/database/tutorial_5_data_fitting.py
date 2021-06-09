@@ -20,6 +20,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Database File__
+
 First, set up the aggregator as we did in the previous tutorial.
 """
 agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
@@ -38,6 +40,8 @@ info_gen = agg.values("info")
 print([info for info in info_gen])
 
 """
+__Dataset via List__
+
 We can also use the aggregator to load the dataset of every lens our search fitted. 
 
 The individual masked `data`, `noise_map` and `psf` are stored in the database, as opposed to the `Imaging` object, 
@@ -64,6 +68,8 @@ for (data, noise_map, psf, settings_imaging) in zip(
     imaging_plotter.subplot_imaging()
 
 """
+__Dataset via Generators__
+
 We should be doing this using a generator, as shown below.
 """
 
@@ -97,6 +103,8 @@ for imaging in imaging_gen:
 
 
 """
+__Performing a Fit__
+
 We now have access to the `Imaging` data we used to perform a model-fit, and the results of that model-fit in the form
 of a `Samples` object. 
 
@@ -154,6 +162,8 @@ for fit in fit_gen:
     fit_imaging_plotter.subplot_fit_imaging()
 
 """
+__Convenience Methods__
+
 The PyAutoLens aggregator module also provides convenience methods for setting up objects *within* a generator. Below, 
 we make the `Imaging` and `Tracer` using these methods, which perform the same functions as the generator above, 
 including the settings.
@@ -214,6 +224,8 @@ for fit in fit_gen:
     fit_imaging_plotter.subplot_fit_imaging()
 
 """
+__Visualization Customization__
+
 The benefit of inspecting fits using the aggregator, rather than the files outputs to the hard-disk, is that we can 
 customize the plots using the PyAutoLens mat_plot_2d.
 

@@ -26,6 +26,8 @@ import autolens.plot as aplt
 import matplotlib.pyplot as plt
 
 """
+__Database File__
+
 First, set up the aggregator as we did in the previous tutorial.
 """
 agg = af.Aggregator.from_database(path.join("output", "database.sqlite"))
@@ -36,8 +38,12 @@ Next, lets create a list of instances of the maximum log likelihood models of ea
 ml_instances = [samps.max_log_likelihood_instance for samps in agg.values("samples")]
 
 """
+__Tracer via Lists__
+
 A model instance contains a list of `Galaxy` instances, which is what we are using to passing to functions in 
-PyAutoLens. Lets create the maximum log likelihood tracer of every fit.
+PyAutoLens. 
+
+Lets create the maximum log likelihood tracer of every fit.
 """
 ml_tracers = [
     al.Tracer.from_galaxies(galaxies=instance.galaxies) for instance in ml_instances
@@ -58,6 +64,8 @@ for tracer in ml_tracers:
     tracer_plotter.figures_2d(convergence=True)
 
 """
+__Tracer via Generators__
+
 Okay, so we can make a list of tracers and plot their convergences. However, we'll run into the same problem using 
 lists which we discussed in the previous tutorial. If we had fitted hundreds of images we`d have hundreds of tracers, 
 overloading the memory on our laptop.
@@ -94,6 +102,8 @@ for tracer in tracer_gen:
     tracer_plotter.figures_2d(convergence=True, potential=True)
 
 """
+__Conveninence Methods__
+
 Its cumbersome to always have to define a `make_tracer_generator` function to make a tracer generator, given that 
 you`ll probably do the exact same thing in every Jupyter Notebook you ever write!
 
@@ -108,6 +118,8 @@ for tracer in tracer_gen:
     tracer_plotter.figures_2d(convergence=True, potential=True)
 
 """
+__Einstein Mass Example__
+
 Because instances are just lists of galaxies we can directly extract attributes of the `Galaxy` class. Lets print 
 the Einstein mass of each of our most-likely lens galaxies.
 
@@ -172,6 +184,8 @@ agg.map(func=print_max_log_likelihood_mass)
 
 
 """
+__Pickle Files__
+
 In the runner, we used the pickle_files input to search.run() to pass a .pickle file from the dataset folder to 
 the database. 
 

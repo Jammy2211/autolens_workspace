@@ -21,6 +21,8 @@ import autolens as al
 
 
 """
+__Database File__
+
 First, we set up the aggregator like we did in the previous tutorial. However, we can also filter results to only 
 include completed results. By including the `completed_only` input below, any results which are in the middle of a 
 non-linear will be omitted and not loaded in the `Aggregator`.
@@ -33,6 +35,8 @@ agg = af.Aggregator.from_database(
 )
 
 """
+__Unique Tag__
+
 We can use the `Aggregator`'s to query the database and return only specific fits that we are interested in. We first 
 do this, using the `unique_tag` which we can query to load the results of a specific `dataset_name` string we 
 input into the model-fit's search. 
@@ -58,6 +62,24 @@ samples_gen = agg_query.values("samples")
 
 
 """
+__Search Name__
+
+We can also use the `name` of the search used to fit to the model as a query. 
+
+In this example, all three fits used the same search, which had the `name` `database_example`. Thus, using it as a 
+query in this example is somewhat pointless. However, querying based on the search name is very useful for model-fits
+which use search chaining (see chapter 3 **HowToLens**), where the results of a particular fit in the chain can be
+instantly loaded.
+
+As expected, this query contains all 3 results.
+"""
+name = agg.name
+agg_query = agg.query(name == "database_example")
+print("Total Queried Results = ", len(agg_query), "\n\n")
+
+"""
+__Model Queries__
+
 We can also query based on the model fitted. 
 
 For example, we can load all results which fitted an `EllIsothermal` model-component, which in this simple 
@@ -88,6 +110,8 @@ print(
 )
 
 """
+__Logic__
+
 Advanced queries can be constructed using logic, for example we below we combine the two queries above to find all
 results which fitted an `EllIsothermal` mass model AND (using the & symbol) inferred a value of sersic index of 
 less than 3.0 for the source's bulge. 

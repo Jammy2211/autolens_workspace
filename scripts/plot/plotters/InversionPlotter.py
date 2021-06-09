@@ -15,6 +15,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load example imaging of of a strong lens as an `Imaging` object.
 """
 dataset_name = "mass_sie__source_sersic"
@@ -39,6 +41,8 @@ mask = al.Mask2D.circular_annular(
 imaging = imaging.apply_mask(mask=mask)
 
 """
+__Tracer__
+
 The `Inversion` maps pixels from the image-plane of our `Imaging` data to its source plane, via a lens model.
 
 Lets create a `Tracer` which we will use to create the `Inversion`.
@@ -68,6 +72,8 @@ inversion = tracer.inversion_imaging_from_grid_and_data(
 )
 
 """
+__Figures__
+
 We now pass the inversion to a `InversionPlotter` and call various `figure_*` methods to plot different attributes.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
@@ -84,12 +90,16 @@ inversion_plotter.figures_2d(
 )
 
 """
+__Subplots__
+
 The `Inversion` attributes can also be plotted as a subplot.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.subplot_inversion()
 
 """`
+__Include__
+
 Inversion`'s have their own unique attributes that can be plotted via the `Include2D` class:
 """
 include_2d = aplt.Include2D(

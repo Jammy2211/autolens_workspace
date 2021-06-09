@@ -15,6 +15,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load an example image of of a strong lens as an `Array2D`.
 """
 dataset_path = path.join("dataset", "slacs", "slacs1430+4105")
@@ -22,17 +24,23 @@ image_path = path.join(dataset_path, "image.fits")
 image = al.Array2D.from_fits(file_path=image_path, hdu=0, pixel_scales=0.03)
 
 """
+__Figures__
+
 We now pass the array to an `Array2DPlotter` and call the `figure` method.
 """
 array_plotter = aplt.Array2DPlotter(array=image)
 array_plotter.figure_2d()
 
 """
+__Include__
+
 An `Array2D` contains the following attributes which can be plotted automatically via the `Include2D` object.
 
 (By default, an `Array2D` does not contain a `Mask2D`, we therefore manually created an `Array2D` with a mask to illustrate
 plotting its mask and border below).
 """
+include_2d = aplt.Include2D(origin=True, mask=True, border=True)
+
 mask = al.Mask2D.circular_annular(
     shape_native=image.shape_native,
     pixel_scales=image.pixel_scales,
@@ -40,8 +48,6 @@ mask = al.Mask2D.circular_annular(
     outer_radius=3.0,
 )
 masked_image = al.Array2D.manual_mask(array=image.native, mask=mask)
-
-include_2d = aplt.Include2D(origin=True, mask=True, border=True)
 
 array_plotter = aplt.Array2DPlotter(array=masked_image, include_2d=include_2d)
 array_plotter.figure_2d()

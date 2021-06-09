@@ -14,6 +14,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Grid__
+
 First, lets create a image-plane `Grid2D` and ray-trace it via `MassProfile` to create a source-plane `Grid2D`.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
@@ -27,6 +29,8 @@ lens_galaxy = al.Galaxy(redshift=0.5, mass=mass_profile)
 lensed_grid = grid.grid_from_deflection_grid(deflection_grid=deflections)
 
 """
+__Plane__
+
 We create a `Plane` representing a source-plane containing a `Galaxy` with a `LightProfile`.
 """
 bulge = al.lp.EllSersic(
@@ -43,6 +47,8 @@ image_plane = al.Plane(galaxies=[lens_galaxy])
 source_plane = al.Plane(galaxies=[source_galaxy])
 
 """
+__Figures__
+
 We can plot the `image_plane` by passing it and our `grid to a` PlanePlotter` and calling various `figure_*` methods.
 
 In this script our `lens_galaxy` only had a `MassProfile` so only methods like `figure_convergence` are
@@ -66,6 +72,8 @@ appears in the source-plane before lensing) using the `figure_plane_image` metho
 plane_plotter.figures_2d(plane_image=True)
 
 """
+__Visuals__
+
 It is feasible for us to plot the caustics in the source-plane. However, to calculate the `Caustics` we must manually
 compute them from the image-plane `MassProfile` and pass them to the source-plane mat_plot_2d. 
 """
@@ -76,6 +84,8 @@ plane_plotter = aplt.PlanePlotter(
 plane_plotter.figures_2d(plane_image=True)
 
 """
+__Include__
+
 For `PlanePlotter`'s, `GalaxyPlotter`'s and `LightProfilePlotter's that are plotting source-plane images, the only
 way to plot the caustics is to manually extract them from the foreground `MassProfile`'s, as shown above. This is 
 because these source-plane objects have no knowledge of what objects are in the image-plane.

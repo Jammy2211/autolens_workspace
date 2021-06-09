@@ -16,6 +16,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load example interferometer of of a strong lens as an `Interferometer` object.
 """
 dataset_name = "mass_sie__source_sersic"
@@ -34,6 +36,8 @@ interferometer = al.Interferometer.from_fits(
 )
 
 """
+__Fit__
+
 We now mask the data and fit it with a `Tracer` to create a `FitInterferometer` object.
 """
 lens_galaxy = al.Galaxy(
@@ -61,6 +65,8 @@ tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 fit = al.FitInterferometer(interferometer=interferometer, tracer=tracer)
 
 """
+__Figures__
+
 We now pass the FitInterferometer to an `FitInterferometerPlotter` and call various `figure_*` methods 
 to plot different attributes.
 """
@@ -79,11 +85,6 @@ fit_interferometer_plotter.figures_2d(
 )
 
 """
-The `FitInterferometerPlotter` may also plot a subplot of these attributes.
-"""
-fit_interferometer_plotter.subplot_fit_interferometer()
-
-"""
 The dirty images of the interferometer fit can also be plotted, which use the transformer of the interferometer 
 to map the visibilities, noise-map, residual-map or other quantitiy to a real-space image.
 
@@ -100,7 +101,6 @@ fit_interferometer_plotter.figures_2d(
     dirty_normalized_residual_map=True,
     dirty_chi_squared_map=True,
 )
-fit_interferometer_plotter.subplot_fit_dirty_images()
 
 """
 It can plot of the image of an input plane, where this image is the real-space image of the `Tracer`.
@@ -115,7 +115,16 @@ fit_interferometer_plotter.figures_2d_of_planes(plane_image=True, plane_index=0)
 fit_interferometer_plotter.figures_2d_of_planes(plane_image=True, plane_index=1)
 
 """
-These can be combined to plot the appearance of the galaxy in real-space.
+__Subplots__
+
+The `FitInterferometerPlotter` may also plot a subplot of these attributes.
+"""
+fit_interferometer_plotter.subplot_fit_interferometer()
+fit_interferometer_plotter.subplot_fit_dirty_images()
+
+
+"""
+The plane images can be combined to plot the appearance of the galaxy in real-space.
 """
 fit_interferometer_plotter.subplot_fit_real_space()
 

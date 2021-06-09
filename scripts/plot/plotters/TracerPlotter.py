@@ -14,6 +14,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Tracer__
+
 First, lets create a `Tracer`.
 """
 lens_galaxy = al.Galaxy(
@@ -33,11 +35,15 @@ source_galaxy = al.Galaxy(
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """
+__Grid__
+
 We also need an image-plane `Grid2D` which we'll ray-trace via the `Tracer`.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
 """
+__Figures__
+
 We now pass the tracer` and grid to a `TracerPlotter` and call various `figure_*` methods to plot different attributes.
 """
 tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
@@ -51,6 +57,8 @@ tracer_plotter.figures_2d(
 )
 
 """
+__Include__
+
 A `Tracer` and its `Grid2D` contains the following attributes which can be plotted automatically via 
 the `Include2D` object.
 
@@ -77,6 +85,8 @@ tracer_plotter.figures_2d(image=True, source_plane=True)
 tracer_plotter.subplot_tracer()
 
 """
+__Plane Image__
+
 Whereas a `PlanePlotter` had a method to plot its `plane_image`, it did not know the caustics of the source-plane as
 they depend on the `MassProfile`'s of `Galaxy`'s in lower redshift planes. When we plot a plane image with a `Tracer`,
 this information is now available and thus the caustics of the source-plane are now plotted.

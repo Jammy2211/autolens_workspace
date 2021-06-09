@@ -15,6 +15,8 @@ import autolens as al
 import autolens.plot as aplt
 
 """
+__Dataset__
+
 First, lets load example interferometer of of a strong lens as an `Interferometer` object.
 """
 dataset_name = "mass_sie__source_sersic"
@@ -32,6 +34,8 @@ interferometer = al.Interferometer.from_fits(
 )
 
 """
+__Figures__
+
 We now pass the interferometer to an `InterferometerPlotter` and call various `figure_*` methods to plot different 
 attributes.
 """
@@ -47,11 +51,6 @@ interferometer_plotter.figures_2d(
 )
 
 """
-The `InterferometerPlotter` may also plot a subplot of all of these attributes.
-"""
-interferometer_plotter.subplot_interferometer()
-
-"""
 The dirty images of the interferometer dataset can also be plotted, which use the transformer of the interferometer 
 to map the visibilities, noise-map or other quantity to a real-space image.
 """
@@ -61,12 +60,22 @@ interferometer_plotter.figures_2d(
     dirty_signal_to_noise_map=True,
     dirty_inverse_noise_map=True,
 )
+
+"""
+__Subplots__
+
+The `InterferometerPlotter` may also plot a subplot of all of these attributes.
+"""
+interferometer_plotter.subplot_interferometer()
 interferometer_plotter.subplot_dirty_images()
 
 """
+__Include__
+
 The `Interferometer` contains the following attributes which can be plotted automatically via the `Include2D` object.
 """
 include_2d = aplt.Include2D()
+
 interferometer_plotter = aplt.InterferometerPlotter(
     interferometer=interferometer, include_2d=include_2d
 )
