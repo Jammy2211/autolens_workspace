@@ -116,6 +116,8 @@ fluxes = [flux * np.abs(magnification) for magnification in magnifications]
 fluxes = al.ValuesIrregular(values=fluxes)
 
 """
+__Output__
+
 We now output the image of this strong lens to `.fits` which can be used for visualize when performing point-source 
 modeling and to `.png` for general inspection.
 """
@@ -155,6 +157,24 @@ point_dict.output_to_json(
 )
 
 """
+__Visualize__
+
+Output a subplot of the simulated point source dataset and the tracer's quantities to the dataset path as .png files.
+"""
+mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
+mat_plot_2d = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
+
+point_dataset_plotter = aplt.PointDatasetPlotter(
+    point_dataset=point_dataset, mat_plot_1d=mat_plot_1d, mat_plot_2d=mat_plot_2d
+)
+point_dataset_plotter.subplot_point_dataset()
+
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot_2d)
+tracer_plotter.subplot_tracer()
+
+"""
+__Pickles__
+
 Pickle the `Tracer` in the dataset folder, ensuring the true `Tracer` is safely stored and available if we need to 
 check how the dataset was simulated in the future. 
 

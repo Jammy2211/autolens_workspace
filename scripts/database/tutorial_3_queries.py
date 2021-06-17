@@ -43,7 +43,7 @@ input into the model-fit's search.
 
 By querying using the string `mass_sie__source_sersic__1` the model-fit to only the second strong lens is returned:
 """
-unique_tag = agg.unique_tag
+unique_tag = agg.search.unique_tag
 agg_query = agg.query(unique_tag == "mass_sie__source_sersic__1")
 samples_gen = agg_query.values("samples")
 
@@ -51,15 +51,14 @@ samples_gen = agg_query.values("samples")
 As expected, this list now has only 1 DynestySamples corresponding to the second dataset.
 """
 print("Directory Filtered DynestySampler Samples: \n")
-print("Total Samples Objects = ", len(samples_gen), "\n\n")
+print("Total Samples Objects via unique tag = ", len(samples_gen), "\n\n")
 
 """
 If we query using an incorrect dataset name we get no results:
 """
-unique_tag = agg.unique_tag
+unique_tag = agg.search.unique_tag
 agg_query = agg.query(unique_tag == "incorrect_name")
 samples_gen = agg_query.values("samples")
-
 
 """
 __Search Name__
@@ -73,9 +72,9 @@ instantly loaded.
 
 As expected, this query contains all 3 results.
 """
-name = agg.name
+name = agg.search.name
 agg_query = agg.query(name == "database_example")
-print("Total Queried Results = ", len(agg_query), "\n\n")
+print("Total Queried Results via search name = ", len(agg_query), "\n\n")
 
 """
 __Model Queries__
@@ -119,7 +118,9 @@ less than 3.0 for the source's bulge.
 The OR logical clause is also supported via the symbol |.
 """
 mass = agg.galaxies.lens.mass
-agg_query = agg.query((mass == al.mp.EllIsothermal) & (mass.einstein_radius > 1.0))
+agg_query = agg.query(
+    (mass == al.mp.EllIsothermal) & (mass.einstein_radius_elliptical > 1.0)
+)
 print(
     "Total Samples Objects In Query `EllIsothermal and einstein_radius > 3.0` = ",
     len(agg_query),

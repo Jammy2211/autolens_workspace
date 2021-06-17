@@ -204,8 +204,26 @@ point_dict.output_to_json(
     file_path=path.join(dataset_path, "point_dict.json"), overwrite=True
 )
 
+"""
+__Visualize__
+
+Output a subplot of the simulated point source dictionary and the tracer's quantities to the dataset path as .png files.
+"""
+mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
+mat_plot_2d = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
+
+point_dict_plotter = aplt.PointDictPlotter(
+    point_dict=point_dict, mat_plot_1d=mat_plot_1d, mat_plot_2d=mat_plot_2d
+)
+point_dict_plotter.subplot_positions()
+point_dict_plotter.subplot_fluxes()
+
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot_2d)
+tracer_plotter.subplot_tracer()
 
 """
+__Pickles__
+
 Pickle the `Tracer` in the dataset folder, ensuring the true `Tracer` is safely stored and available if we need to 
 check how the dataset was simulated in the future. 
 

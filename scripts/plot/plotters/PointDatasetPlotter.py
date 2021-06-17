@@ -28,17 +28,14 @@ point_dict = al.PointDict.from_json(
 
 point_dataset = point_dict["point_0"]
 
-point_dataset.fluxes = None
-point_dataset.fluxes_noise_map = None
-
 """
 __Figures__
 
-We now pass the point dataset to an `PointDatasetPlotter` and call various `figure_*` methods to plot different 
+We now pass the point dataset to a `PointDatasetPlotter` and call various `figure_*` methods to plot different 
 attributes.
 """
 point_dataset_plotter = aplt.PointDatasetPlotter(point_dataset=point_dataset)
-point_dataset_plotter.figures_2d(positions=True, fluxes=True)
+# point_dataset_plotter.figures_2d(positions=True, fluxes=True)
 
 """
 __Subplots__

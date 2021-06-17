@@ -130,7 +130,7 @@ For the mass, we again must account for how its centre was fixed to (0.0", 0.0")
 Passing the other parameters is the same as how we passed the bulge parameters, as is the shear.
 """
 mass = af.Model(al.mp.EllIsothermal)
-mass.einstein_radius = result_1.model.galaxies.lens.mass.einstein_radius
+mass.einstein_radius = result_1.model.galaxies.lens.mass.einstein_radius_elliptical
 mass.elliptical_comps = result_1.model.galaxies.lens.mass.elliptical_comps
 shear = result_1.model.galaxies.lens.shear
 

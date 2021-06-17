@@ -63,18 +63,19 @@ print("Point Source Dict:")
 print(point_dict)
 
 """
-We can plot our positions dataset over the observed image.
+We can also just plot the positions and fluxes of the `PointDict`.
+"""
+point_dict_plotter = aplt.PointDictPlotter(point_dict=point_dict)
+point_dict_plotter.subplot_positions()
+point_dict_plotter.subplot_fluxes()
+
+"""
+We can also plot our positions dataset over the observed image.
 """
 visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
-
-"""
-We can also just plot the positions, omitting the image.
-"""
-grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
-grid_plotter.figure_2d()
 
 """
 __Model__

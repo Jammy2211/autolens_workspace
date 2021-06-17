@@ -161,7 +161,7 @@ lens.mass.centre_1 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
 Lets also change the prior on the lens galaxy's einstein radius to a `GaussianPrior` centred on 1.4". For real lens 
 modeling, this might be done by visually estimating the radius the lens's arcs / ring appear.
 """
-lens.mass.einstein_radius = af.GaussianPrior(mean=1.4, sigma=0.2)
+lens.mass.einstein_radius_elliptical = af.GaussianPrior(mean=1.4, sigma=0.2)
 
 """
 We can also customize the source galaxy, lets say we believe it is compact and limit its effective radius.

@@ -183,7 +183,9 @@ lens_galaxy_model.bulge.effective_radius = 0.8
 """
 This forces the mass profile's einstein radius to be above 1.0 arc-seconds.
 """
-lens_galaxy_model.mass.add_assertion(lens_galaxy_model.mass.einstein_radius > 1.0)
+lens_galaxy_model.mass.add_assertion(
+    lens_galaxy_model.mass.einstein_radius_elliptical > 1.0
+)
 
 """
 __Wrap Up__

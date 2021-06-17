@@ -197,7 +197,7 @@ settings_lens = al.SettingsLens(
 
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
-    hyper_result=source_inversion_results.last,
+    hyper_dataset_result=source_inversion_results.last,
     positions=source_inversion_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
 )
@@ -241,7 +241,7 @@ settings_lens = al.SettingsLens(
 
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
-    hyper_result=source_inversion_results.last,
+    hyper_dataset_result=source_inversion_results.last,
     positions=source_inversion_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
 )
@@ -283,7 +283,7 @@ preloads = al.Preloads.setup(
 
 analysis = al.AnalysisInterferometer(
     dataset=interferometer,
-    hyper_result=source_inversion_results.last,
+    hyper_dataset_result=source_inversion_results.last,
     positions=mass_results.last.image_plane_multiple_image_positions,
     settings_lens=settings_lens,
     preloads=preloads,

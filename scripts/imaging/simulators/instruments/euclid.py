@@ -126,8 +126,9 @@ imaging.output_to_fits(
 )
 
 """
-Output a subplot of the simulated dataset, the image and a subplot of the `Tracer`'s quantities to the dataset path 
-as .png files.
+__Visualize__
+
+Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
 mat_plot_2d = aplt.MatPlot2D(
     title=aplt.Title(label="Euclid Image"),
@@ -142,6 +143,8 @@ tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_pl
 tracer_plotter.subplot_tracer()
 
 """
+__Pickles__
+
 Pickle the `Tracer` in the dataset folder, ensuring the true `Tracer` is safely stored and available if we need to 
 check how the dataset was simulated in the future. 
 

@@ -70,11 +70,12 @@ print(point_dict["point_0"].positions.in_list)
 
 visuals_2d = aplt.Visuals2D(positions=point_dict.positions_list)
 
+point_dict_plotter = aplt.PointDictPlotter(point_dict=point_dict)
+point_dict_plotter.subplot_positions()
+point_dict_plotter.subplot_fluxes()
+
 array_plotter = aplt.Array2DPlotter(array=image, visuals_2d=visuals_2d)
 array_plotter.figure_2d()
-
-grid_plotter = aplt.Grid2DPlotter(grid=point_dict["point_0"].positions)
-grid_plotter.figure_2d()
 
 """
 __Paths__
