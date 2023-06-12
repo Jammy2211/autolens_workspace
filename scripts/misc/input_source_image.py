@@ -28,7 +28,7 @@ We first load the image of the galaxy (from a .fits file) which will be lensed.
 
 This image is typically a real galaxy image that is not gravitationally lensed. 
 """
-data_path = path.join("scripts", "misc", "galaxy_data.fits")
+data_path = path.join("scripts", "misc", "galaxy_image.fits")
 
 galaxy_image = al.Array2D.from_fits(file_path=data_path, pixel_scales=0.02)
 
