@@ -1,0 +1,94 @@
+dataset:
+  subplot_dataset: true
+  data: false
+  noise_map: false
+  signal_to_noise_map: false
+imaging:
+  psf: false
+interferometer:
+  amplitudes_vs_uv_distances: false
+  dirty_image: false
+  dirty_noise_map: false
+  dirty_signal_to_noise_map: false
+  phases_vs_uv_distances: false
+  uv_wavelengths: false
+positions:
+  image_with_positions: true
+fit:
+  subplot_fit: true
+  subplot_of_planes: false
+  subplot_plane_images: false
+  subtracted_images_of_planes: false
+  chi_squared_map: false
+  data: false
+  model_data: false
+  model_images_of_planes: false
+  noise_map: false
+  normalized_residual_map: false
+  residual_map: false
+  signal_to_noise_map: false
+  all_at_end_fits: false
+  all_at_end_png: false
+fit: {}
+fit_interferometer:
+  amplitudes_vs_uv_distances: false
+  dirty_chi_squared_map: false
+  dirty_image: false
+  dirty_noise_map: false
+  dirty_normalized_residual_map: false
+  dirty_residual_map: false
+  dirty_signal_to_noise_map: false
+  phases_vs_uv_distances: false
+  uv_wavelengths: false
+ray_tracing:
+  all_at_end_fits: false
+  all_at_end_png: false
+  convergence: false
+  deflections: false
+  image: false
+  magnification: false
+  potential: false
+  source_plane_image: false
+  subplot_plane_images: false
+  subplot_ray_tracing: true
+inversion:
+  subplot_inversion: true
+  errors: false
+  reconstructed_image: false
+  reconstruction: false
+  regularization_weights: false
+  all_at_end_png: true                     # Plot all individual plots listed below as .png (even if False)?
+  all_at_end_fits: true                    # Plot all individual plots listed below as .fits (even if False)?
+  all_at_end_pdf: false                    # Plot all individual plots listed below as publication-quality .pdf (even if False)?
+galaxies:
+  convergence: false
+  image: false
+  potential: false
+fit_quantity:
+  subplot_fit: true
+  chi_squared_map: false
+  image: true
+  model_image: false
+  noise_map: false
+  residual_map: false
+  normalized_residual_map: false
+  all_at_end_png: true                     # Plot all individual plots listed below as .png (even if False)?
+  all_at_end_fits: true                    # Plot all individual plots listed below as .fits (even if False)?
+  all_at_end_pdf: false                    # Plot all individual plots listed below as publication-quality .pdf (even if False)?
+adapt:
+  images_of_planes: true
+  contribution_map_list: true
+  model_image: true
+other:
+  stochastic_histogram: false
+plane:
+  subplot_plane: true
+  subplot_galaxy_images: false
+  convergence: false
+  deflections: false
+  image: false
+  magnification: false
+  potential: false
+  source_plane_image: false
+  all_at_end_fits: false
+  all_at_end_png: false
