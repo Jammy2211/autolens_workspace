@@ -1,0 +1,105 @@
+{
+    "type": "autolens.lens.ray_tracing.Tracer",
+    "planes": [
+        {
+            "type": "autogalaxy.plane.plane.Plane",
+            "galaxies": [
+                {
+                    "bulge": {
+                        "type": "autogalaxy.profiles.light.snr.sersic.Sersic",
+                        "signal_to_noise_ratio": 50.0,
+                        "centre": [
+                            0.0,
+                            0.0
+                        ],
+                        "ell_comps": [
+                            0.05263157894736841,
+                            3.2227547345982974e-18
+                        ],
+                        "effective_radius": 0.6,
+                        "sersic_index": 3.0
+                    },
+                    "disk": {
+                        "type": "autogalaxy.profiles.light.snr.exponential.Exponential",
+                        "signal_to_noise_ratio": 20.0,
+                        "centre": [
+                            0.0,
+                            0.0
+                        ],
+                        "ell_comps": [
+                            0.152828012432548,
+                            0.08823529411764709
+                        ],
+                        "effective_radius": 1.6
+                    },
+                    "mass": {
+                        "type": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                        "centre": [
+                            0.0,
+                            0.0
+                        ],
+                        "ell_comps": [
+                            0.05263157894736841,
+                            3.2227547345982974e-18
+                        ],
+                        "einstein_radius": 1.6
+                    },
+                    "shear": {
+                        "type": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+                        "gamma_1": 0.05,
+                        "gamma_2": 0.05
+                    },
+                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "redshift": 0.5
+                }
+            ],
+            "redshift": 0.5,
+            "run_time_dict": null
+        },
+        {
+            "type": "autogalaxy.plane.plane.Plane",
+            "galaxies": [
+                {
+                    "bulge": {
+                        "type": "autogalaxy.profiles.light.snr.sersic.Sersic",
+                        "signal_to_noise_ratio": 20.0,
+                        "centre": [
+                            0.25,
+                            0.15
+                        ],
+                        "ell_comps": [
+                            -0.15282801243254798,
+                            -0.08823529411764716
+                        ],
+                        "effective_radius": 0.7,
+                        "sersic_index": 1.0
+                    },
+                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "redshift": 1.0
+                },
+                {
+                    "bulge": {
+                        "type": "autogalaxy.profiles.light.snr.sersic.Sersic",
+                        "signal_to_noise_ratio": 10.0,
+                        "centre": [
+                            0.7,
+                            -0.5
+                        ],
+                        "ell_comps": [
+                            0.045580284409707295,
+                            -0.026315789473684195
+                        ],
+                        "effective_radius": 1.6,
+                        "sersic_index": 3.0
+                    },
+                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "redshift": 1.0
+                }
+            ],
+            "redshift": 1.0,
+            "run_time_dict": null
+        }
+    ],
+    "cosmology": "Planck15",
+    "run_time_dict": null
+}

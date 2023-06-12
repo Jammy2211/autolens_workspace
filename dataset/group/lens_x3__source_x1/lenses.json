@@ -1,0 +1,110 @@
+{
+    "type": "collection",
+    "lens_0": {
+        "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+        "type": "model",
+        "redshift": 0.5,
+        "mass": {
+            "class_path": "autogalaxy.profiles.mass.total.isothermal.IsothermalSph",
+            "type": "model",
+            "centre": {
+                "type": "tuple_prior",
+                "centre_0": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": 0.0,
+                    "sigma": 0.5
+                },
+                "centre_1": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": 0.0,
+                    "sigma": 0.5
+                }
+            },
+            "einstein_radius": {
+                "lower_limit": 0.0,
+                "upper_limit": 8.0,
+                "type": "Uniform"
+            }
+        },
+        "shear": {
+            "class_path": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+            "type": "model",
+            "gamma_1": {
+                "lower_limit": -0.2,
+                "upper_limit": 0.2,
+                "type": "Uniform"
+            },
+            "gamma_2": {
+                "lower_limit": -0.2,
+                "upper_limit": 0.2,
+                "type": "Uniform"
+            }
+        }
+    },
+    "lens_1": {
+        "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+        "type": "model",
+        "redshift": 0.5,
+        "mass": {
+            "class_path": "autogalaxy.profiles.mass.total.isothermal.IsothermalSph",
+            "type": "model",
+            "centre": {
+                "type": "tuple_prior",
+                "centre_0": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": 3.5,
+                    "sigma": 0.5
+                },
+                "centre_1": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": 2.5,
+                    "sigma": 0.5
+                }
+            },
+            "einstein_radius": {
+                "lower_limit": 0.0,
+                "upper_limit": 8.0,
+                "type": "Uniform"
+            }
+        }
+    },
+    "lens_2": {
+        "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+        "type": "model",
+        "redshift": 0.5,
+        "mass": {
+            "class_path": "autogalaxy.profiles.mass.total.isothermal.IsothermalSph",
+            "type": "model",
+            "centre": {
+                "type": "tuple_prior",
+                "centre_0": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": -4.4,
+                    "sigma": 0.5
+                },
+                "centre_1": {
+                    "lower_limit": -Infinity,
+                    "upper_limit": Infinity,
+                    "type": "Gaussian",
+                    "mean": -5.0,
+                    "sigma": 0.5
+                }
+            },
+            "einstein_radius": {
+                "lower_limit": 0.0,
+                "upper_limit": 8.0,
+                "type": "Uniform"
+            }
+        }
+    }
+}

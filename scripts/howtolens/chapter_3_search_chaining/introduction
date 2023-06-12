@@ -1,0 +1,12 @@
+You are now familiar and have a clear understanding of lens modeling. In this chapter, we'll
+introduce search chaining, a concept we mentioned in the previous chapter. Search chaining allows us to generically link
+searches together, so that we can seamlessly navigate the complex non-linear parameter spaces that come when fitting
+realistic lens models.
+
+With these pipelines, you'll be able to:
+
+1) Fit a lens mass model and source light model to an image of a strongly lensed source.
+2) Additionally fit the lens galaxy's light, if it is present.
+3) Write customized pipelines for strong lens systems with multiple lens galaxies or source galaxies.
+4) Customize pipelines such that the priors on parameters during the fit are adjusted to provide a more robust or
+   efficient fit.
