@@ -1,5 +1,5 @@
 The ``howtolens`` folder contains **HowToLens** lectures, which teach a new user what strong lensing is and how to model
-a strong lenstick_maker.min_value.
+a strong lens.
 
 Folders
 -------

@@ -15,22 +15,9 @@
                             0.05263157894736841,
                             3.2227547345982974e-18
                         ],
-                        "intensity": 4.0,
+                        "intensity": 2.0,
                         "effective_radius": 0.6,
                         "sersic_index": 3.0
-                    },
-                    "disk": {
-                        "type": "autogalaxy.profiles.light.standard.exponential.Exponential",
-                        "centre": [
-                            0.0,
-                            0.0
-                        ],
-                        "ell_comps": [
-                            0.152828012432548,
-                            0.08823529411764709
-                        ],
-                        "intensity": 2.0,
-                        "effective_radius": 1.6
                     },
                     "mass": {
                         "type": "autogalaxy.profiles.mass.total.isothermal.Isothermal",

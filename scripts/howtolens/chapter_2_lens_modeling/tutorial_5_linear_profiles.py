@@ -131,8 +131,8 @@ For standard light profiles, the log likelihood evaluation time is of order ~0.0
 For linear light profiles, the log likelihood evaluation increases to around ~0.05 seconds per likelihood evaluation.
 This is still fast, but it does mean that the fit may take around five times longer to run.
 
-However, because three free parameters have been removed from the model (the `intensity` of the lens bulge, lens disk 
-and source bulge), the total number of likelihood evaluations will reduce. Furthermore, the simpler parameter space
+However, because two free parameters have been removed from the model (the `intensity` of the lens bulge and 
+source bulge), the total number of likelihood evaluations will reduce. Furthermore, the simpler parameter space
 likely means that the fit will take less than 10000 per free parameter to converge.
 
 Fits using standard light profiles and linear light profiles therefore take roughly the same time to run. However,

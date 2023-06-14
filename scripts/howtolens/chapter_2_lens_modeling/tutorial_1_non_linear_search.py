@@ -412,7 +412,7 @@ confirm this yourself if you want, by comparing the inferred parameters to those
 
 __Wrap Up__
 
-And with that, we are done. You have successfully modeled your first strong lenstick_maker.min_value! Before moving 
+And with that, we are done. You have successfully modeled your first strong lens! Before moving 
 onto the next tutorial, I want you to think about the following:
 
  1) a non-linear search is often said to search a `non-linear parameter-space`, why is the term parameter-space 

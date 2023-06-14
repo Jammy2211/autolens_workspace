@@ -9,7 +9,7 @@ In this chapter, you learnt:
 5) The importance of factoring in run-speed when modeling a lens, and tricks to speed up the analysis.
 6) About masking data and using positions in the analysis.
 
-At this point, you are ready to begin modeling lensestick_maker.min_value. The 'modeling' folders in the
+At this point, you are ready to begin modeling lenses. The 'modeling' folders in the
 autolens_workspace contains a number of scripts that can be easily adopted to model lens using a variety of different
 approaches, lens models and non-linear searches. If you have your own lens data, I'd recommend you adapt these
 scripts to your data. If you don't have your own data, checkout the 'simulators' folder to simulate your own dataset!

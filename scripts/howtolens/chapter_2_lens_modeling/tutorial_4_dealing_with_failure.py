@@ -474,7 +474,7 @@ Disadvantage:
  - Its potentially expensive. Very expensive. For very complex models, the run times can hours, days, weeks or, dare 
  I say it, months!
 
-So, we can now fit strong lensestick_maker.min_value. And when it fails, we know how to get it to work. 
+So, we can now fit strong lenses. And when it fails, we know how to get it to work. 
 
 In chapter 3 of **HowToLens**, we will introduce a technique called 'non-linear search chaining', which performs a model 
 fit by chaining together multiple searches back-to-back . This allows us to combine the 3 different approaches 

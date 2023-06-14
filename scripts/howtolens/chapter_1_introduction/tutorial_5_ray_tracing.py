@@ -259,6 +259,6 @@ When there are more than 2 planes, the convergence, potential and deflections at
 that of the entire multi-plane strong lens system. This is beyond the scope of this chapter, but be reassured that 
 what you're learning now will prepare you for the advanced chapters later on!
 
-And with that, we're done. You`ve performed your first ray-tracingtick_maker.min_value! There are no exercises for this 
+And with that, we're done. You`ve performed your first ray-tracing! There are no exercises for this 
 chapter, and we're going to take a deeper look at ray-tracing in the next chapter.
 """

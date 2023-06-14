@@ -107,7 +107,7 @@ around it and therefore fail to locate a new point with a sizeable increase in l
 convergence around the highest likleihod solutions, but may even mean the global maxima solution is not located at all.
 If `walks` is too large the walk takes longer than necessary, slowing down the code.
 
-Through testing, we have found that `walks` = 5 - 10 is optimal for lens modelingtick_maker.min_value. Higher values
+Through testing, we have found that `walks` = 5 - 10 is optimal for lens modeling. Higher values
 of walks take longer to run, but are better at avoiding Dynesty inferred a local maxima as they more thoroughly
 sample parameter space. The parameter `facc` controls the size of the steps the random walk takes. We have found 
 **PyAutoLens** performs best for `facc` = 0.2-0.3, but feel free to experiment with these values.

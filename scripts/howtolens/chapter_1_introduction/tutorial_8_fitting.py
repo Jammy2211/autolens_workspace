@@ -426,7 +426,7 @@ print(fit.log_likelihood)
 """
 __Wrap Up__
 
-Congratulations, you`ve fitted your first strong lenstick_maker.min_value! Perform the following exercises:
+Congratulations, you`ve fitted your first strong lens! Perform the following exercises:
 
  1) In this example, we `knew` the correct solution, because we simulated the lens ourselves. In the real Universe, 
  we have no idea what the correct solution is. How would you go about finding the correct solution? Could you find a 
