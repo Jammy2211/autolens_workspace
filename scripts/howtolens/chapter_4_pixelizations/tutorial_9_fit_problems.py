@@ -139,11 +139,11 @@ __Simulator__
 
 Now, lets simulate all 3 of our source's as to create `Imaging` data.
 """
-data_source_flat = simulate_for_source_galaxy(source_galaxy=source_galaxy_flat)
+dataset_source_flat = simulate_for_source_galaxy(source_galaxy=source_galaxy_flat)
 
-data_source_compact = simulate_for_source_galaxy(source_galaxy=source_galaxy_compact)
+dataset_source_compact = simulate_for_source_galaxy(source_galaxy=source_galaxy_compact)
 
-data_source_super_compact = simulate_for_source_galaxy(
+dataset_source_super_compact = simulate_for_source_galaxy(
     source_galaxy=source_galaxy_super_compact
 )
 
@@ -187,7 +187,7 @@ Lets fit our first source which was simulated using the flattest light profile. 
 highest regularization coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
 fit_flat = fit_data_with_delaunay_magnification_pixelization(
-    dataset=data_source_flat, mask=mask, coefficient=9.2
+    dataset=dataset_source_flat, mask=mask, coefficient=9.2
 )
 
 include = aplt.Include2D(mapper_image_plane_mesh_grid=True, mask=True)
@@ -206,7 +206,7 @@ lots of pixels! Nice!
 Now, lets fit the next source, which is more compact.
 """
 fit_compact = fit_data_with_delaunay_magnification_pixelization(
-    dataset=data_source_compact, mask=mask, coefficient=3.3
+    dataset=dataset_source_compact, mask=mask, coefficient=3.3
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit_compact, include_2d=include)
@@ -225,7 +225,7 @@ Finally, lets fit the very compact source. Given that the results for the compac
 be right in assuming this is just going to make things even worse. Again, think about why this might be.
 """
 fit_super_compact = fit_data_with_delaunay_magnification_pixelization(
-    data=data_source_super_compact, mask=mask, coefficient=3.1
+    dataset=dataset_source_super_compact, mask=mask, coefficient=3.1
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit_super_compact, include_2d=include)

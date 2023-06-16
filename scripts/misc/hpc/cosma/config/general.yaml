@@ -34,7 +34,7 @@ parallel:
   warn_environment_variables: true
 pixelization:
   voronoi_nn_max_interpolation_neighbors: 100
-profiling:
+run_times:
   parallel_profile: false
   should_profile: false
   repeats: 1
