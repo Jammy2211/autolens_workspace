@@ -567,7 +567,7 @@ of **HowToLens*.
 __Other Basis Functions__
 
 In addition to the Gaussians used in this example, there are a number of other linear light profiles 
-implemented in **PyAutoGalaxy** which are designed to be used as basis functions:
+implemented in which are designed to be used as basis functions:
 
  - Shapelets: Shapelets are basis functions with analytic properties that are appropriate for capturing the 
    exponential / disk-like features of a galaxy. They do so over a wide range of scales, and can often represent 
