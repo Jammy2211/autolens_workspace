@@ -58,7 +58,7 @@ __Paths__
 
 All four searches will use the same `path_prefix`, so we write it here to avoid repetition.
 """
-path_prefix = path.join("howtolens", "chapter_3", "tutorial_5_complex_source")
+path_prefix = path.join("howtolens", "chapter_3", "tutorial_4_complex_source")
 
 """
 __Search Chaining Approach__

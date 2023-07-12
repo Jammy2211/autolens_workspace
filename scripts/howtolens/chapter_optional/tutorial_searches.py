@@ -143,9 +143,9 @@ search = af.DynestyStatic(
 analysis = al.AnalysisImaging(dataset=dataset)
 
 print(
-    "Dynesty has begun running - checkout the workspace/output"
+    "The non-linear search has begun running - checkout the workspace/output"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_slow = search.fit(model=model, analysis=analysis)
@@ -173,14 +173,14 @@ search = af.DynestyStatic(
 )
 
 print(
-    "Dynesty has begun running - checkout the workspace/output"
+    "The non-linear search has begun running - checkout the workspace/output"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_fast = search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 """
 Lets check that this search, despite its faster sampling settings, still gives us the global maxima solution.
@@ -274,9 +274,9 @@ search = af.PySwarmsLocal(
 )
 
 print(
-    "Dynesty has begun running - checkout the workspace/output"
+    "The non-linear search has begun running - checkout the workspace/output"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_pso = search.fit(model=model, analysis=analysis)
@@ -345,7 +345,7 @@ search = af.Zeus(
 print(
     "Zeus has begun running - checkout the workspace/output"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_zeus = search.fit(model=model, analysis=analysis)
@@ -365,14 +365,14 @@ search = af.Emcee(
 )
 
 print(
-    "Emcee has begun running - checkout the workspace/output"
+    "The non-linear search has begun running - checkout the workspace/output"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_emcee = search.fit(model=model, analysis=analysis)
 
-print("Emcee has finished run - you may now continue the notebook.")
+print("The search has finished run - you may now continue the notebook.")
 
 fit_plotter = aplt.FitImagingPlotter(fit=result_emcee.max_log_likelihood_fit)
 fit_plotter.subplot_fit()

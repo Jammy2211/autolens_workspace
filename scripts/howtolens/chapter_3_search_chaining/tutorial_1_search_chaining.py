@@ -171,14 +171,14 @@ Lets run the search, noting that our liberal approach to reducing the lens model
 11 parameters.
 """
 print(
-    "Dynesty has begun running - checkout the workspace/output/5_chaining_searches"
+    "The non-linear search has begun running - checkout the workspace/output/5_chaining_searches"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 """
 __Result__
@@ -328,14 +328,14 @@ print(
 Run the search.
 """
 print(
-    "Dynesty has begun running - checkout the workspace/output/5_chaining_searches"
+    "The non-linear search has begun running - checkout the workspace/output/5_chaining_searches"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 """
 __Result__

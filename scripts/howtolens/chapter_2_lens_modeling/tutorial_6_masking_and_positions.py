@@ -254,14 +254,14 @@ search = af.DynestyStatic(
 )
 
 print(
-    "Dynesty has begun running - checkout the workspace/output/t7_with_positions"
+    "The non-linear search has begun running - checkout the workspace/output/t7_with_positions"
     "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 """
 __Wrap Up__

@@ -255,14 +255,14 @@ print(
 Run the non-linear search.
 """
 print(
-    "Dynesty has begun running - checkout the autolens_workspace/output/howtolens/chapter_2/tutorial_2_parameter_space_and_priors"
+    "The non-linear search has begun running - checkout the autolens_workspace/output/howtolens/chapter_2/tutorial_2_parameter_space_and_priors"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result = search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 """
 __Result__

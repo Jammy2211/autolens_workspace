@@ -230,14 +230,14 @@ print(
 Run the non-linear search.
 """
 print(
-    "Dynesty has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_custom_priors"
+    "The non-linear search has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_custom_priors"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_custom_priors = search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 print(result_custom_priors.info)
 
@@ -344,14 +344,14 @@ print(
 Run the non-linear search.
 """
 print(
-    "Dynesty has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_reducing_complexity"
+    "The non-linear search has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_reducing_complexity"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 result_light_trace_mass = search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 print(result_light_trace_mass.info)
 
@@ -442,14 +442,14 @@ print(
 Run the non-linear search.
 """
 print(
-    "Dynesty has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_look_harder"
+    "The non-linear search has begun running - checkout the workspace/output/howtolens/chapter_2/tutorial_4_look_harder"
     " folder for live output of the results, images and lens model."
-    " This Jupyter notebook cell with progress once Dynesty has completed - this could take some time!"
+    " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
 # result_look_harder = search.fit(model=model, analysis=analysis)
 
-print("Dynesty has finished run - you may now continue the notebook.")
+print("Search has finished run - you may now continue the notebook.")
 
 # print(result_look_harder_mass.info)
 
