@@ -73,11 +73,11 @@ model_1 = af.Collection(
     )
 )
 
-search_1 = af.DynestyStatic(
+search_1 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_4"),
     name="search[1]_mass[sie]_source[lp]",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -137,11 +137,11 @@ model_2 = af.Collection(
     )
 )
 
-search_2 = af.DynestyStatic(
+search_2 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_4"),
     name="search[2]_mass[sie]_source[pix_init]",
     unique_tag=dataset_name,
-    nlive=20,
+    n_live=50,
 )
 
 analysis_2 = al.AnalysisImaging(
@@ -219,11 +219,11 @@ model_3 = af.Collection(
     )
 )
 
-search_3 = af.DynestyStatic(
+search_3 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_4"),
     name="search[3]_mass[sie]_source[pix]",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
 )
 
 """

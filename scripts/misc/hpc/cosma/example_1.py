@@ -4,7 +4,7 @@ __WELCOME__
 
 Welcome to a cosma modeling script Python script, which illustrates how to load a strong lens dataset and analyse it on cosma.
 
-This example illustrates how to fit a single dataset with a parallelized Dynesty model-fit. You should
+This example illustrates how to fit a single dataset with a parallelized Nautilus model-fit. You should
 only read this example after reading and understanding this example.
 
 All aspects of this script which are explained in `example_0.py`, for example setting up the cosma dataset and output
@@ -58,7 +58,7 @@ off multiply jobs we now simply set off a single `python3` command in the batch 
 `example_1` has no corresponding `example_1.conf` file.
     
 We still pass the integer on the right which is used  to load a specific dataset. This is somewhat optional, but it is
-benefitial for scripts which perform single-CPU fits or multi-CPU Dynesty fits to use the same code to load
+benefitial for scripts which perform single-CPU fits or multi-CPU Nautilus fits to use the same code to load
 data.
 """
 import sys
@@ -127,15 +127,15 @@ __Search__
 
 Here is where we differ from `example_0.py`. 
 
-The only change is that the `number_of_cores` input into `DynestyStatic` is now 16.
+The only change is that the `number_of_cores` input into `Nautilus` is now 16.
 
 
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("cosma_example"),
     name="mass[sie]_source[bulge]",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=16,
 )
 
@@ -161,7 +161,7 @@ We could pass the `number_of_cores` using the command:
     number_of_cores=int(sys.argv[2])
 
 
-It should also be noted that one cannot combine a `.conf` submission script with multi-CPU Dynesty parallelization.
+It should also be noted that one cannot combine a `.conf` submission script with multi-CPU Nautilus parallelization.
 
 Which this should, in principle, be possible, the Python multi-processing library does not seem to happy about it when
 we do this. So, just don't bother!

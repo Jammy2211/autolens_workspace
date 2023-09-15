@@ -120,12 +120,12 @@ __Search + Analysis + Model-Fit (Search 1)__
 """
 analysis_1 = al.AnalysisImaging(dataset=dataset)
 
-search_1 = af.DynestyStatic(
+search_1 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[1]__left_lens_light[bulge]",
     unique_tag=dataset_name,
-    nlive=30,
-    dlogz=5.0,
+    n_live=75,
+    f_live=5.0,
 )
 
 """
@@ -181,12 +181,12 @@ model_2 = af.Collection(
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
 
-search_2 = af.DynestyStatic(
+search_2 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[2]__right_lens_light[bulge]",
     unique_tag=dataset_name,
-    nlive=30,
-    dlogz=5.0,
+    n_live=75,
+    f_live=5.0,
 )
 
 """
@@ -256,12 +256,12 @@ model_3 = af.Collection(
 
 analysis_3 = al.AnalysisImaging(dataset=dataset)
 
-search_3 = af.DynestyStatic(
+search_3 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[3]__mass_x2[sie]__source[exp]",
     unique_tag=dataset_name,
-    nlive=50,
-    dlogz=5.0,
+    n_live=100,
+    f_live=5.0,
 )
 
 """
@@ -336,12 +336,12 @@ model_4 = af.Collection(
 
 analysis_4 = al.AnalysisImaging(dataset=dataset)
 
-search_4 = af.DynestyStatic(
+search_4 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[4]_light_x2[bulge]_mass_x2[sie]_source[exp]",
     unique_tag=dataset_name,
-    nlive=60,
-    dlogz=0.3,
+    n_live=100,
+    f_live=0.3,
 )
 
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)

@@ -9,14 +9,14 @@ accurately.
 
 It would be desirable if we could make our model have more flexibility enabling it to fit more complex galaxy
 structures, but in a way that does not increase (or perhaps even decreases) the number of non-linear parameters.
-This would keep the `dynesty` model-fit efficient and accurate.
+This would keep the `Nautilus` model-fit efficient and accurate.
 
 This is possible using linear light profiles, which solve for their `intensity` parameter via efficient linear 
 algebra, using a process called an inversion. The inversion always computes `intensity` values that give the best 
 fit to the data (e.g. they minimize the chi-squared and therefore maximize the likelihood). 
 
 This tutorial will first fit a model using two linear light profiles. Because their `intensity` values are solved for 
-implicitly, this means they are not a dimension of the non-linear parameter space fitted by `dynesty`, therefore 
+implicitly, this means they are not a dimension of the non-linear parameter space fitted by `Nautilus`, therefore 
 reducing the complexity of parameter space and making the fit faster and more accurate.
 
 This tutorial will then show how many linear light profiles can be combined into a `Basis`, which comes from the term
@@ -113,11 +113,11 @@ print(model.info)
 """
 We now create this search and run it.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_5_linear_light_profile",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
@@ -343,10 +343,10 @@ In this example we fit a `Basis` model for the lens galaxy bulge where:
 __Relations__
 
 The model below is composed using relations of the form `y = a + (log10(i+1) + b)`, where the values  of `a` 
-and `b` are the non-linear free parameters fitted for by `dynesty`. This is the same relation used in the
+and `b` are the non-linear free parameters fitted for by `Nautilus`. This is the same relation used in the
 simple fitting example above.
 
-For example, if `dynesty` samples a model where `a=0.01` and `b=5.0`, it will use a `Basis` containing 10 Gaussians 
+For example, if `Nautilus` samples a model where `a=0.01` and `b=5.0`, it will use a `Basis` containing 10 Gaussians 
 whoses `sigma` values are are follows:
 
  - gaussian[0] -> sigma = 0.01 + (5.0 * log10(0.0 + 1.0)) = 0.01 + 0.0 = 0.01
@@ -416,11 +416,11 @@ print(model.info)
 """
 We now fit the model.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_5_basis",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
@@ -506,7 +506,7 @@ fit_plotter.subplot_fit()
 
 """
 We can easily extend the model-fit performed above to include regularization, where the `coefficient` parameters 
-associated with each `Basis` are included in the `dynesty` non-linear parameter space and fitted for.
+associated with each `Basis` are included in the `Nautilus` non-linear parameter space and fitted for.
 """
 
 lens_basis = af.Model(
@@ -536,11 +536,11 @@ print(model.info)
 """
 We now fit the model.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_5_basis_regularization",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 

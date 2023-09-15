@@ -30,11 +30,11 @@ are performed back-to-back. A key motivation for this is that it gives us a lot 
 dimensionality, priors and settings so as to perform faster and more efficient lens modeling.
 
 In the optional **HowToGalaxy** tutorial `chapter_optional/tutorial_searches.ipynb` we discuss other non-linear
-searches supported by **HowToGalaxy** which use a different approach to sample parameter sample than `dynesty`. For
+searches supported by **HowToGalaxy** which use a different approach to sample parameter sample than `Nautilus`. For
 those familiar with statistical inference, this includes maximum likelihood estimators and MCMC algorithms.
 
 For lens modeling, we have not found another non-linear search that provides as robust and efficient results as
-dynesty. We therefore recommend uses stick to `dynesty`.
+Nautilus. We therefore recommend uses stick to `Nautilus`.
 
 __Algorithmic Optimization__
 

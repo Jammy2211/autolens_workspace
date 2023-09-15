@@ -8,7 +8,7 @@ This example shows how to set off many single CPU jobs in a single COSMA submiss
 fits a different imaging dataset using the same lens model analysis. This form of parallelization is therefore
 benefitial when we have many datasets we wish to fit simultaneously.
 
-The script `example_1.py` describes how to fit a single dataset with a parallelized Dynesty model-fit. You should
+The script `example_1.py` describes how to fit a single dataset with a parallelized Nautilus model-fit. You should
 only read this example after reading and understanding this example.
 
 This fits a lens model using a simple example taken from the autolens_workspace.
@@ -173,7 +173,7 @@ This completes all COSMA specific code required for submitting jobs to COSMA. Al
 COSMA, and is simply the code you are used to running in modeling script scripts not on COSMA.
 
 In this example, we assumed that every job used a single CPU and we paralleized over the datasets being fitted. 
-Checkout the file `example_1.py` for a description of how to fit a single dataset and parallelie the Dynesty search
+Checkout the file `example_1.py` for a description of how to fit a single dataset and parallelie the Nautilus search
 over multiply cores.
 """
 import autofit as af
@@ -234,7 +234,7 @@ model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 """
 __Search__
 
-The lens model is fitted to the data using the nested sampling algorithm Dynesty (see `start.here.py` for a 
+The lens model is fitted to the data using the nested sampling algorithm Nautilus (see `start.here.py` for a 
 full description).
 
 The folders: 
@@ -249,18 +249,18 @@ The `name` and `path_prefix` below specify the path where results ae stored in t
 
  `/autolens_workspace/output/imaging/modeling/simple__no_lens_light/mass[sie]_source[bulge]/unique_identifier`.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("cosma_example"),
     name="mass[sie]_source[bulge]",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
 """
 __Analysis__
 
-Create the `AnalysisImaging` object defining how the via Dynesty the model is fitted to the data.
+Create the `AnalysisImaging` object defining how the via Nautilus the model is fitted to the data.
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 

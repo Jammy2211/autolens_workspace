@@ -62,10 +62,10 @@ guess models that are near other, high likelihood, models.
 **Credit: Amy Etherington**
 
 In this tutorial, and throughout this enture chapter, we are going to use the non-linear search
-called `dynesty` (https://github.com/joshspeagle/dynesty). I have found this to be a great non-linear search for
+called `Nautilus` (https://github.com/joshspeagle/Nautilus). I have found this to be a great non-linear search for
 lens modeling, albeit alternatives are available in **PyAutoLens** and will be discussed later in this chapter.
 
-For now, lets not worry about the details of how dynesty actually works and simply keep in our minds the described of
+For now, lets not worry about the details of how Nautilus actually works and simply keep in our minds the described of
 a non-linear search provided above.
 """
 # %matplotlib inline
@@ -193,7 +193,7 @@ print(model.info)
 __Search__
 
 We now create the non-linear search object which will fit the lens model, which as discussed above is the nested
-sampling algorithm dynesty. We pass the `DynestyStatic` object the following:
+sampling algorithm Nautilus. We pass the `Nautilus` object the following:
    
  - A `path_prefix` which tells the search to output its results in the 
  folder `autolens_workspace/output/howtolens/chapter_2`. 
@@ -201,16 +201,15 @@ sampling algorithm dynesty. We pass the `DynestyStatic` object the following:
  - A `name`, which gives the search a name and means the full output path is 
    `autolens_workspace/output/howtolens/chapter_2/tutorial_1_non_linear_search`. 
 
- - Input parameters like `nlive` and `walks` which control how it samples parameter space. These are discussed
+ - Input parameters like `n_live` and `walks` which control how it samples parameter space. These are discussed
  in more detail in a later tutorial.
 
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_1_non_linear_search",
     unique_tag=dataset_name,
-    nlive=40,
-    walks=5,
+    n_live=80,
 )
 
 """
@@ -327,6 +326,33 @@ result = search.fit(model=model, analysis=analysis)
 print("Search has finished run - you may now continue the notebook.")
 
 """
+__Output Folder__
+
+Now this is running you should checkout the `autolens_workspace/output` folder. This is where the results of the 
+search are written to hard-disk (in the `tutorial_1_non_linear_search` folder), where all outputs are human 
+readable (e.g. as .json, .csv or text files).
+
+As the fit progresses, results are written to the `output` folder on the fly using the highest likelihood model found
+by the non-linear search so far. This means you can inspect the results of the model-fit as it runs, without having to
+wait for the non-linear search to terminate.
+ 
+The `output` folder includes:
+
+ - `model.info`: Summarizes the lens model, its parameters and their priors discussed in the next tutorial.
+ 
+ - `model.results`: Summarizes the highest likelihood lens model inferred so far including errors.
+ 
+ - `images`: Visualization of the highest likelihood model-fit to the dataset, (e.g. a fit subplot showing the lens 
+ and source galaxies, model data and residuals).
+ 
+ - `files`: A folder containing .fits files of the dataset, the model as a human-readable .json file, 
+ a `.csv` table of every non-linear search sample and other files containing information about the model-fit.
+ 
+ - search.summary: A file providing summary statistics on the performance of the non-linear search.
+ 
+ - `search_internal`: Internal files of the non-linear search (in this case Nautilus) used for resuming the fit and
+  visualizing the search.
+
 __Result Info__
 
 A concise readable summary of the results is given by printing its `info` attribute.
@@ -338,14 +364,6 @@ the `model.info` attribute display optimally on your computer. This attribute al
 print(result.info)
 
 """
-__Output Folder__
-
-Now this is running you should checkout the `autolens_workspace/output` folder.
-
-This is where the results of the search are written to your hard-disk (in the `tutorial_1_non_linear_search` folder). 
-When its completed, images, results and information about the fit appear in this folder, meaning that you don't need 
-to keep running Python code to see the result.
-
 __Unique Identifier__
 
 In the output folder, you will note that results are in a folder which is a collection of random characters. This acts 
@@ -355,30 +373,6 @@ that are used in the fit.
 An identical combination of model, search and dataset generates the same identifier, meaning that rerunning the
 script will use the existing results to resume the model-fit. In contrast, if you change the model, search or dataset,
 a new unique identifier will be generated, ensuring that the model-fit results are output into a separate folder. 
-
-__On The Fly Outputs__
-
-Even when the search is running, information about the highest likelihood model inferred by the search so-far 
-is output to this folder on-the-fly. If you navigate to the folder: 
-
- `output/howtolens/chapter_1/tutorials_1_non_linear_search/unique_identifier` 
- 
-Even before the search has finished, you will see:
-
- 1) The `images` folder, where images of the highest likelihood lens model are output on-the-fly. This includes the
- `FitImaging` subplot we plotted in the previous chapter, which therefore gives a real sense of 'how good' the model
- fit is.
- 
- 2) The `samples` folder, which contains a `.csv` table of every sample of the non-linear search as well as other 
- information. 
- 
- 3) The `model.info` file, which lists the lens model, its parameters and their priors (discussed in the next tutorial).
- 
- 4) The `model.results` file, which lists the highest likelihood lens model and the most probable lens model with 
- errors (this outputs on-the-fly).
- 
- 5) The `search.summary` file, which provides a summary of the non-linear search settings and statistics on how well
- it is performing.
 
 __Result__
 
@@ -393,7 +387,7 @@ fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
 fit_plotter.subplot_fit()
 
 """
-The Probability Density Functions (PDF's) of the results can be plotted using Dynesty's in-built visualization 
+The Probability Density Functions (PDF's) of the results can be plotted using Nautilus's in-built visualization 
 library, which is wrapped via the `DynestyPlotter` object.
 
 The PDF shows the 1D and 2D probabilities estimated for every parameter after the model-fit. The two dimensional 

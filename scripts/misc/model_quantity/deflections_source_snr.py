@@ -124,7 +124,7 @@ model = af.Collection(galaxies=af.Collection(lens=lens))
 """
 __Search__
 
-The lens model is fitted to the data using the nested sampling algorithm Dynesty (see `start.here.py` for a 
+The lens model is fitted to the data using the nested sampling algorithm Nautilus (see `start.here.py` for a 
 full description).
 
 The folders: 
@@ -154,7 +154,7 @@ the `dataset_name` to the search's `unique_tag`.
 
 __Number Of Cores__
 
-We include an input `number_of_cores`, which when above 1 means that Dynesty uses parallel processing to sample multiple 
+We include an input `number_of_cores`, which when above 1 means that Nautilus uses parallel processing to sample multiple 
 lens models at once on your CPU. When `number_of_cores=2` the search will run roughly two times as
 fast, for `number_of_cores=3` three times as fast, and so on. The downside is more cores on your CPU will be in-use
 which may hurt the general performance of your computer.
@@ -168,10 +168,10 @@ use a value above this.
 For users on a Windows Operating system, using `number_of_cores>1` may lead to an error, in which case it should be 
 reduced back to 1 to fix it.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("misc", "modeling"),
     name="quantity_via_deflections_fit_source_snr",
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
@@ -203,7 +203,7 @@ The search returns a result object, which whose `info` attribute shows the resul
 print(result.info)
 
 """
-We plot the maximum likelihood fit, tracer images and posteriors inferred via dynesty.
+We plot the maximum likelihood fit, tracer images and posteriors inferred via Nautilus.
 
 Checkout `autolens_workspace/*/imaging/results` for a full description of analysing results in **PyAutoLens**.
 """

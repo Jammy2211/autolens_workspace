@@ -44,12 +44,11 @@ model = af.Collection(
     )
 )
 
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_1_non_linear_search",
     unique_tag=dataset_name,
-    nlive=40,
-    walks=5,
+    n_live=80,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)

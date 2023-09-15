@@ -90,11 +90,11 @@ model = af.Collection(
     )
 )
 
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_5_with_custom_mask",
     unique_tag=dataset_name,
-    nlive=40,
+    n_live=80,
     number_of_cores=1,
 )
 
@@ -245,11 +245,11 @@ __Search__
 
 Run the non-linear search.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_5_with_positions",
     unique_tag=dataset_name,
-    nlive=40,
+    n_live=80,
     number_of_cores=1,
 )
 

@@ -198,11 +198,11 @@ print(model.info)
 We can now create this custom search and run it. Our non-linear search will now start by sampling higher likelihood 
 regions of parameter space, given our improved and more informed priors.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_custom_priors",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
@@ -313,11 +313,11 @@ print(model.info)
 """
 We now create this search and run it.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_reducing_complexity",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
     number_of_cores=1,
 )
 
@@ -390,10 +390,10 @@ In approaches 1 and 2 we extended our non-linear search an olive branch and help
 regions of parameter space. In approach 3 ,we're going to tell it to just `look harder`.
 
 Every non-linear search has settings which govern how thoroughly it searches parameter space, with the number of live
-points that was passed to `Dynesty` an example of such a setting. The more thoroughly the search looks, the more likely 
+points that was passed to `Nautilus` an example of such a setting. The more thoroughly the search looks, the more likely 
 it is that it`ll find the global maximum lens model. However,  the search will also take longer!
 
-Below, we create a more thorough dynesty search, that uses `nlive=200` and `walks=10`. What these settings
+Below, we create a more thorough Nautilus search, that uses `n_live=200` and `walks=10`. What these settings
 are actually changing is discussed in the optional tutorial `howtolens/chapter_optional/tutorial_searches.ipynb`.
 
 Due to the long run times of this search, we comment it output below so it does not run. Feel free to undo these
@@ -411,12 +411,11 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.Exponential)
 
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_look_harder",
     unique_tag=dataset_name,
-    nlive=200,
-    walks=10,
+    n_live=200,
     number_of_cores=1,
 )
 """
@@ -424,7 +423,7 @@ __Run Time__
 
 The run time of the `log_likelihood_function` is around the usual value. 
 
-Due to the more thorough dynesty settings, the the model-fit should take more than 10000 iterations per free parameter 
+Due to the more thorough Nautilus settings, the the model-fit should take more than 10000 iterations per free parameter 
 to converge and thus take longer than we are used too.
 """
 run_time_dict, info_dict = analysis.profile_log_likelihood_function(

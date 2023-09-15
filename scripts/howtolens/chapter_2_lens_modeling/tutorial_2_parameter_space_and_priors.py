@@ -197,7 +197,7 @@ have been updated to the priors we set above.
 
 __Number Of Cores__
 
-When setting up dynesty, we include a new input `number_of_cores=1`. The non-linear search can use parallel processing 
+When setting up Nautilus, we include a new input `number_of_cores=1`. The non-linear search can use parallel processing 
 to sample multiple lens models at once on your CPU. When `number_of_cores=2` the search will run roughly two times as
 fast, for `number_of_cores=3` three times as fast, and so on. The downside is more cores on your CPU will be in-use
 which may hurt the general performance of your computer.
@@ -221,11 +221,11 @@ The unique tag also places an additional folder after the `path_prefix`. Althoug
 separate (as each model-fit has its own unique tag) it makes the results more readable in the output folder, as you
 can see which data each model was fitted too.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_2_custom_priors",
     unique_tag=dataset_name,
-    nlive=40,
+    n_live=80,
     number_of_cores=1,
 )
 

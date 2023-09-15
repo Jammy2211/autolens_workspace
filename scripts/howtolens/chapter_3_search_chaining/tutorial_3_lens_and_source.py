@@ -120,12 +120,12 @@ __Search + Analysis + Model-Fit (Search 1)__
 """
 analysis_1 = al.AnalysisImaging(dataset=dataset)
 
-search_1 = af.DynestyStatic(
+search_1 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[1]_light[bulge]",
     unique_tag=dataset_name,
-    nlive=30,
-    dlogz=5.0,
+    n_live=75,
+    f_live=5.0,
 )
 
 """
@@ -218,12 +218,12 @@ model_2 = af.Collection(
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
 
-search_2 = af.DynestyStatic(
+search_2 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[2]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
-    nlive=50,
-    dlogz=5.0,
+    n_live=100,
+    f_live=5.0,
 )
 
 """
@@ -281,7 +281,7 @@ In search 3 we fit a lens model where:
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=23.
 
 There isn't a huge amount to say about this search, we have initialized the priors on all of our models parameters
-and the only thing that is left to do is fit for all model components simultaneously, with slower Dynesty settings
+and the only thing that is left to do is fit for all model components simultaneously, with slower Nautilus settings
 that will give us more accurate parameter values and errors.
 """
 model_3 = af.Collection(
@@ -300,11 +300,11 @@ model_3 = af.Collection(
 
 analysis_3 = al.AnalysisImaging(dataset=dataset)
 
-search_3 = af.DynestyStatic(
+search_3 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[3]_light[bulge]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
-    nlive=100,
+    n_live=150,
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)

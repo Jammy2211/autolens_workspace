@@ -125,24 +125,24 @@ model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 __Search__
 
 The source is fitted to the `Imaging` data via the input deflection angles using a non-linear search, which we 
-specify below as the nested sampling algorithm Dynesty (https://dynesty.readthedocs.io/en/latest/). Checkout 
+specify below as the nested sampling algorithm Nautilus (https://Nautilus.readthedocs.io/en/latest/). Checkout 
 other examples on the workspace if you are unsure what this does!
 
 The script `autolens_workspace/*/modeling/customize/non_linear_searches.py` gives a description of the types of
 non-linear searches that **PyAutoLens** supports. If you do not know what a non-linear search is or how it 
 operates, checkout chapters 1 and 2 of the HowToLens lecture series.
 """
-search = af.DynestyStatic(
+search = af.Nautilus(
     path_prefix=path.join("misc"),
     name="search__input_deflections",
     unique_tag=dataset_name,
-    nlive=100,
+    n_live=150,
 )
 
 """
 __Analysis__
 
-Create the `AnalysisImaging` object defining how the via Dynesty the model is fitted to the data.
+Create the `AnalysisImaging` object defining how the via Nautilus the model is fitted to the data.
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 

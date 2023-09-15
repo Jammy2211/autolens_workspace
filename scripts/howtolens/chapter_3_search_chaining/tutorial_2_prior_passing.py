@@ -91,11 +91,11 @@ __Search__
 We also create the same search as the previous tutorial, using the same name to ensure we use the same results, and 
 run it.
 """
-search_1 = af.DynestyStatic(
+search_1 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_3"),
     name="tutorial_1_search_chaining_1",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -201,11 +201,11 @@ __Search__
 Lets setup and run the search. I have given it a different name to the previous tutorial so we can compare the priors
 that were passed.
 """
-search_2 = af.DynestyStatic(
+search_2 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_3"),
     name="tutorial_2_search_chaining_2",
     unique_tag=dataset_name,
-    nlive=50,
+    n_live=100,
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
@@ -352,22 +352,8 @@ The intensity of an image depends on its units, S/N, galaxy brightness, etc. The
 one can use to generically chain the intensity of any two proflies. Thus, it makes more sense to chain them using 
 the relative value from a previous search.
 
-We can customize how priors are passed from the results of a search and non-linear search by inputting to the search 
-a `PriorPasser` object:
-
-"""
-search = af.DynestyStatic(
-    prior_passer=af.PriorPasser(sigma=2.0, use_widths=False, use_errors=True)
-)
-
-"""
-The PriorPasser allows us to customize at what sigma the error values the model results are computed at to compute
-the passed sigma values and customizes whether the widths in the config file, these computed errors, or both, 
-are used to set the sigma values of the passed priors.
-
-The default values of the `PriorPasser` are found in the config file of every non-linear search, in the [prior_passer]
-section. All non-linear searches by default use a sigma value of 3.0, use_width=True and use_errors=True. We anticipate
-you should not need to change these values to get lens modeling to work proficiently!
+We can customize how priors are passed from the results of a search and non-linear search by editing the
+ `prior_passer` settings in the `general.yaml` config file.
 
 __EXAMPLE__
 
