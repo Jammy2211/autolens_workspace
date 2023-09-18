@@ -195,6 +195,23 @@ We can now fit this custom model with a search like we did in tutorial 1.
 If you look at the `model.info` file in the output folder of the non-linear search, you'll see that certain priors 
 have been updated to the priors we set above.
 
+__What is n_live?__
+
+Nautilus samples parameter space by placing down "live points", which correspond to models of the lens and source
+galaxies. Each live point has an associated `log_likelihood` which quantifies how well it fits the data. The 
+live points map-out where in parameter space there are high likelihood solutions, so that it can focus on searching
+these regions.
+
+Nautilus has one main setting that trades-off accuracy and computational run-time, the number of `live_points`. 
+A higher number of live points gives a more accurate result because it maps out parameter space more thoroughly, 
+but this increases the run-time. A lower value may lead to less reliable lens modeling (e.g. the fit may infer 
+a local maxima), but is faster. 
+
+The suitable value depends on the model complexity whereby models with more parameters require more live points. 
+The default value of 200 is sufficient for the vast majority of common lens models. Lower values often given reliable
+results though, and speed up the run-times. In this example, given the model is quite simple (N=7 parameters), we 
+reduce the number of live points to 120 to speed up the run-time.
+
 __Number Of Cores__
 
 When setting up Nautilus, we include a new input `number_of_cores=1`. The non-linear search can use parallel processing 
@@ -225,8 +242,8 @@ search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_2_custom_priors",
     unique_tag=dataset_name,
-    n_live=80,
-    number_of_cores=1,
+    n_live=120,
+    number_of_cores=4,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)

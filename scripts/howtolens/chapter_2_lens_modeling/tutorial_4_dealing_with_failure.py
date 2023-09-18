@@ -202,7 +202,7 @@ search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_custom_priors",
     unique_tag=dataset_name,
-    n_live=100,
+    n_live=150,
     number_of_cores=1,
 )
 
@@ -317,7 +317,7 @@ search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_reducing_complexity",
     unique_tag=dataset_name,
-    n_live=100,
+    n_live=200,
     number_of_cores=1,
 )
 
@@ -393,7 +393,7 @@ Every non-linear search has settings which govern how thoroughly it searches par
 points that was passed to `Nautilus` an example of such a setting. The more thoroughly the search looks, the more likely 
 it is that it`ll find the global maximum lens model. However,  the search will also take longer!
 
-Below, we create a more thorough Nautilus search, that uses `n_live=200` and `walks=10`. What these settings
+Below, we create a more thorough Nautilus search, that uses `n_live=200`. What these settings
 are actually changing is discussed in the optional tutorial `howtolens/chapter_optional/tutorial_searches.ipynb`.
 
 Due to the long run times of this search, we comment it output below so it does not run. Feel free to undo these
@@ -415,7 +415,7 @@ search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_4_look_harder",
     unique_tag=dataset_name,
-    n_live=200,
+    n_live=300,
     number_of_cores=1,
 )
 """
@@ -446,16 +446,14 @@ print(
     " This Jupyter notebook cell with progress once search has completed - this could take some time!"
 )
 
-# result_look_harder = search.fit(model=model, analysis=analysis)
+result_look_harder = search.fit(model=model, analysis=analysis)
 
 print("Search has finished run - you may now continue the notebook.")
 
-# print(result_look_harder_mass.info)
+print(result_look_harder.info)
 
-# fit_plotter = aplt.FitImagingPlotter(
-#     fit=result_look_harder.max_log_likelihood_fit
-# )
-# fit_plotter.subplot_fit()
+fit_plotter = aplt.FitImagingPlotter(fit=result_look_harder.max_log_likelihood_fit)
+fit_plotter.subplot_fit()
 
 """
 lets list the advantages and disadvantages of simply adjusting the non-linear search:

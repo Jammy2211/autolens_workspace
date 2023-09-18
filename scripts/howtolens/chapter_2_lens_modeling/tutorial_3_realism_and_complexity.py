@@ -72,7 +72,7 @@ dataset_plotter = aplt.ImagingPlotter(
 dataset_plotter.subplot_dataset()
 
 """
-__Model + Search + Analysis__
+__Model__
 
 Now lets fit the dataset using a search.
 
@@ -95,12 +95,18 @@ model = af.Collection(
     )
 )
 
+"""
+__Search + Analysis__
+
+We set up `Nautilus` as we did in the previous tutorial, however given the increase in model complexity we'll use
+a higher `n_live` value of 150 to ensure we sample the complex parameter space efficiently.
+"""
 search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_3_realism_and_complexity",
     unique_tag=dataset_name,
-    n_live=100,
-    number_of_cores=1,
+    n_live=200,
+    number_of_cores=5,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -180,8 +186,8 @@ search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
     name="tutorial_3_realism_and_complexity__local_maxima",
     unique_tag=dataset_name,
-    n_live=50,
-    number_of_cores=1,
+    n_live=75,
+    number_of_cores=5,
 )
 
 print(

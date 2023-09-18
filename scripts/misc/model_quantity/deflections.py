@@ -195,7 +195,7 @@ tracer_plotter.subplot_tracer()
 fit_quantity_plotter = aplt.FitQuantityPlotter(fit=result.max_log_likelihood_fit)
 fit_quantity_plotter.subplot_fit()
 
-search_plotter = aplt.DynestyPlotter(samples=result.samples)
+search_plotter = aplt.NautilusPlotter(samples=result.samples)
 search_plotter.cornerplot()
 
 """
