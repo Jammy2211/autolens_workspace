@@ -50,7 +50,7 @@ mask = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
     inner_radius=1.4,
-    outer_radius=2.4,
+    outer_radius=2.7,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -66,8 +66,8 @@ We can decrease the `inner_radius` to correct for this.
 mask = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    inner_radius=0.6,
-    outer_radius=2.4,
+    inner_radius=0.4,
+    outer_radius=2.7,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -80,19 +80,23 @@ dataset_plotter.subplot_dataset()
 """
 __Model + Analysis__
 
-Lets fit the data using this mask, by creating the search as per usual. Note that the `imaging` data with this mask
-applied is passed into the `AnalysisImaging` object, ensuring that this is the mask the model-fit uses. 
+Lets fit the data using this mask, by creating the search as per usual. 
+
+Note that the `imaging` data with this mask applied is passed into the `AnalysisImaging` object, ensuring that this 
+is the mask the model-fit uses. 
+
+we also use a linear light profile, simplifying the model as discussed in the previous tutorial.
 """
 model = af.Collection(
     galaxies=af.Collection(
         lens=af.Model(al.Galaxy, redshift=0.5, mass=al.mp.IsothermalSph),
-        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.ExponentialSph),
+        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.ExponentialSph),
     )
 )
 
 search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
-    name="tutorial_5_with_custom_mask",
+    name="tutorial_6_with_custom_mask",
     unique_tag=dataset_name,
     n_live=80,
     number_of_cores=1,
@@ -247,7 +251,7 @@ Run the non-linear search.
 """
 search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
-    name="tutorial_5_with_positions",
+    name="tutorial_6_with_positions",
     unique_tag=dataset_name,
     n_live=80,
     number_of_cores=1,

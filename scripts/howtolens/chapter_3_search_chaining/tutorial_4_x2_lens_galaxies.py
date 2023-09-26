@@ -94,7 +94,7 @@ So, with this in mind, we'll perform an analysis using searches:
 
 __Model + Search + Analysis + Model-Fit (Search 1)__
 
-In search 1 we fit a lens model where:
+Search 1 fits a lens model where:
 
  - The left lens galaxy's light is a parametric linear `Sersic` bulge with a fixed centre [4 parameters].
 
@@ -125,7 +125,7 @@ search_1 = af.Nautilus(
     name="search[1]__left_lens_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    f_live=5.0,
+    number_of_cores=1,
 )
 
 """
@@ -154,7 +154,7 @@ result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 """
 __Model + Search + Analysis + Model-Fit (Search 2)__
 
-In search 2 we fit a lens model where:
+Search 2 fits a lens model where:
 
  - The left lens galaxy's light is a parametric linear `Sersic` bulge [0 parameters: fixed from search 1].
 
@@ -186,7 +186,7 @@ search_2 = af.Nautilus(
     name="search[2]__right_lens_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    f_live=5.0,
+    number_of_cores=1,
 )
 
 """
@@ -214,7 +214,7 @@ result_2 = search_2.fit(model=model_2, analysis=analysis_2)
 """
 __Model + Search + Analysis + Model-Fit (Search 3)__
 
-In search 3 we fit a lens model where:
+Search 3 fits a lens model where:
 
  - The left lens galaxy's light is a parametric linear `Sersic` bulge [0 parameters: fixed from search 1].
 
@@ -261,7 +261,7 @@ search_3 = af.Nautilus(
     name="search[3]__mass_x2[sie]__source[exp]",
     unique_tag=dataset_name,
     n_live=100,
-    f_live=5.0,
+    number_of_cores=1,
 )
 
 """
@@ -293,7 +293,7 @@ result_3 = search_3.fit(model=model_3, analysis=analysis_3)
 """
 __Model + Search + Analysis + Model-Fit (Search 4)__
 
-In search 4 we fit a lens model where:
+Search 4 fits a lens model where:
 
  - The left lens galaxy's light is a parametric linear `Sersic` bulge [6 parameters: priors initialized from search 1].
 
@@ -341,7 +341,7 @@ search_4 = af.Nautilus(
     name="search[4]_light_x2[bulge]_mass_x2[sie]_source[exp]",
     unique_tag=dataset_name,
     n_live=100,
-    f_live=0.3,
+    number_of_cores=1,
 )
 
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)

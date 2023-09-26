@@ -56,7 +56,7 @@ dataset_plotter.subplot_dataset()
 """
 __Model + Search + Analysis + Model-Fit (Search 1)__
 
-In search 1 we fit a lens model where:
+Search 1 fits a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
  
@@ -111,7 +111,7 @@ We use the results of search 1 to create the lens model fitted in search 2, wher
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=3.
 
-This search allows us to very efficiently set up the resolution of the pixelization and regularization coefficient 
+This search allows us to very efficiently set up the resolution of the mesh and regularization coefficient 
 of the regularization scheme, before using these models to refit the lens mass model.
 
 Also, note how we can pass the `SettingsPixelization` object to an analysis class to customize if the border relocation

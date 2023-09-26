@@ -145,6 +145,7 @@ search_1 = af.Nautilus(
     name="tutorial_1_search_chaining_1",
     unique_tag=dataset_name,
     n_live=100,
+    number_of_cores=1,
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -222,7 +223,7 @@ bulge.centre.centre_1 = af.GaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
 )
 bulge.ell_comps.ell_comps_0 = af.GaussianPrior(
-    mean=0.33333, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+    mean=0.05, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
 bulge.ell_comps.ell_comps_1 = af.GaussianPrior(
     mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
@@ -244,7 +245,7 @@ mass.centre.centre_1 = af.GaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
 )
 mass.ell_comps.ell_comps_0 = af.GaussianPrior(
-    mean=0.33333, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+    mean=0.05, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
 mass.ell_comps.ell_comps_1 = af.GaussianPrior(
     mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
@@ -265,22 +266,22 @@ source_bulge.centre.centre_1 = af.GaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
 )
 source_bulge.ell_comps.ell_comps_0 = af.GaussianPrior(
-    mean=0.43, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
+    mean=0.08, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
 source_bulge.ell_comps.ell_comps_1 = af.GaussianPrior(
-    mean=0.23, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
+    mean=-0.06, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
 )
 source_bulge.effective_radius = af.GaussianPrior(
-    mean=0.14, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
+    mean=0.1, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
 )
 source_bulge.sersic_index = af.GaussianPrior(
-    mean=1.0, sigma=3.0, lower_limit=0.0, upper_limit=np.inf
+    mean=1.0, sigma=1.0, lower_limit=0.0, upper_limit=np.inf
 )
 
 """
 We now compose the model with these components that have had their priors customized. 
 """
-lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=mass)
+lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=mass, shear=shear)
 
 source = af.Model(al.Galaxy, redshift=1.0, bulge=source_bulge)
 
@@ -299,7 +300,8 @@ search_2 = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_3"),
     name="tutorial_1_search_chaining_2",
     unique_tag=dataset_name,
-    n_live=100,
+    n_live=150,
+    number_of_cores=1,
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)

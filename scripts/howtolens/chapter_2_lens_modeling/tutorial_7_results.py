@@ -1,5 +1,5 @@
 """
-Tutorial 5: Results
+Tutorial 7: Results
 ===================
 
 In the previous tutorials, each search returned a `Result` object, which we used to plot the maximum log likelihood

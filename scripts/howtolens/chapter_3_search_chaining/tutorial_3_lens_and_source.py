@@ -21,6 +21,25 @@ in this tutorial, using a pipeline composed of a modest 3 searches:
 
 Of course, given that we do not care for the errors in searches 1 and 2, we will set up our non-linear search to
 perform sampling as fast as possible!
+
+__Dated Tutorial__
+
+This example tutorial was written ~4 years ago, when **PyAutoLens** was in its infancy and had a number of limitations:
+
+ - The non-linear search used MultiNest or dynesty, which were less reliable (e.g. more likely to infer a local maxima
+  for complex lens models) and less efficient than Nautilus.
+
+ - Linear light profiles and techniques like a Multi-Gaussian Expansion were not available.
+
+With all the new features added to **PyAutoLens** since, we no longer recommend that one breaks down the fitting of
+the lens and source galaxy's light into separate searches, as perform in this search chaining example. Instead, we
+would recommend you fit the lens and source simultaneously, using linear light profiles to make the model simpler
+or a Multi-Gaussian Expansion.
+
+However, the example is still useful for demonstrating the core concepts of search chaining, which is still vital
+for fitting complex lens model. Therefore, we recommend you still read through this tutorial and try to get a good
+understanding of how search chaining works, but bear in mind that the example is a little dated and we now recommend
+you fit the lens and source simultaneously!
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -91,7 +110,7 @@ dataset_plotter.subplot_dataset()
 """
 __Model + Search + Analysis + Model-Fit (Search 1)__
 
-In search 1 we fit a lens model where:
+Search 1 fits a lens model where:
 
  - The lens galaxy's light is a parametric linear `Sersic` bulge [6 parameters].
  
@@ -105,9 +124,7 @@ We use linear light profiles througout this script, given that the model is quit
 simplify it.
 """
 model_1 = af.Collection(
-    galaxies=af.Collection(
-        lens=af.Model(al.Galaxy, redshift=0.5, bulge=al.lp_linear.Sersic)
-    )
+    galaxies=af.Collection(lens=af.Model(al.Galaxy, redshift=0.5, bulge=al.lp.Sersic))
 )
 
 """
@@ -125,7 +142,7 @@ search_1 = af.Nautilus(
     name="search[1]_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    f_live=5.0,
+    number_of_cores=4,
 )
 
 """
@@ -161,14 +178,14 @@ print(result_1.info)
 """
 __Masking (Search 2)__
 
-In search 2 we are only fitting the source's light, thus we can apply an annular mask that removes regions of the
+Search 2 we are only fitting the source's light, thus we can apply an annular mask that removes regions of the
 image that contained only the lens's light.
 """
 mask = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    inner_radius=1.2,
-    outer_radius=1.8,
+    inner_radius=0.6,
+    outer_radius=2.4,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -176,7 +193,7 @@ dataset = dataset.apply_mask(mask=mask)
 """
 __Model + Search + Analysis + Model-Fit (Search 2)__
 
-In search 2 we fit a lens model where:
+Search 2 fits a lens model where:
 
  - The lens galaxy's light is a linear `Sersic` bulge [Parameters fixed to results of search 1].
  
@@ -186,7 +203,7 @@ In search 2 we fit a lens model where:
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=13.
 
-In search 2, we fit the source-`galaxy's light and fix the lens light model to the model inferred in search 1, 
+Search 2, we fit the source-`galaxy's light and fix the lens light model to the model inferred in search 1, 
 ensuring the image we has the foreground lens subtracted. We do this below by passing the lens light as an `instance` 
 object.
 
@@ -212,7 +229,7 @@ model_2 = af.Collection(
             mass=mass,
             shear=al.mp.ExternalShear,
         ),
-        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.Sersic),
+        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.Sersic),
     )
 )
 
@@ -223,7 +240,7 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=100,
-    f_live=5.0,
+    number_of_cores=4,
 )
 
 """
@@ -258,7 +275,7 @@ print(result_2.info)
 """
 __Masking (Search 3)__
 
-In search 3 we fit the lens and source, therefore we will use a large circular mask.
+Search 3 we fit the lens and source, therefore we will use a large circular mask.
 """
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
@@ -269,7 +286,7 @@ dataset = dataset.apply_mask(mask=mask)
 """
 __Model + Search + Analysis + Model-Fit (Search 3)__
 
-In search 3 we fit a lens model where:
+Search 3 fits a lens model where:
 
  - The lens galaxy's light is a linear `Sersic` bulge [6 Parameters: priors initialized from search 1].
  
@@ -305,6 +322,7 @@ search_3 = af.Nautilus(
     name="search[3]_light[bulge]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=150,
+    number_of_cores=4,
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)
@@ -335,4 +353,20 @@ some of the source is still there, who cares? The fit to the lens galaxy will be
 However, the template pipelines provided on the `autolens_workspace` simply use circular masks for every search and do
 not attempt to use different masks for the lens light fit and source fit. This is to keep things simple (at the expense
 of slower run times). It is up to you if you want to adapt these scripts to try and use more specific masking strategies.
+
+__Dated Tutorial__
+
+In fact, we now strongly recommend that you do not change masks between each search when using search chaining. 
+This is because it is very fiddly, and can waste a lot of your time refining masks to ensure they are suitable for
+each lens. We recommend you always just use a large circular mask which is big enough to include the entire lens and 
+source of all lenses in your sample. This will save you a lot of time and means lens modeling can be automated much
+easier.
+
+Building on the discussion above, a known limitation of using a pipeline which fits the lens light first, then the
+source, is that it will do a poor job deblending the lens and source light if the Einstein radius is low. This often
+leads the mass model to infer incorrect solutions which fit residuals from the lens light subtraction.
+
+This is why, given all the improvements to autolens, we now recommend that you do not use this pipeline and instead
+always begin by fitting the lens and source simultaneously. This can use linear light profiles of a Multi-Gaussian
+Expansion. 
 """

@@ -239,7 +239,7 @@ __Discussion__
 
 Okay, so what did we learn? The more compact our source, the worse the fit. This happens even though we are using the 
 *correct* lens mass model, telling us that something is going fundamentally wrong with our source reconstruction and 
-inversion. Both the pixelization and regularization are to blame!
+inversion. Both the mesh and regularization are to blame!
 
 *Pixelization*:
 

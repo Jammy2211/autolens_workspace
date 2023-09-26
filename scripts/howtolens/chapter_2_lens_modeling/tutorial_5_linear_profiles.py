@@ -128,7 +128,7 @@ search = af.Nautilus(
     name="tutorial_5_linear_light_profile",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
+    number_of_cores=4,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -180,49 +180,29 @@ The `info` attribute shows the resulting model, which does not display the `inte
 print(result_linear_light_profile.info)
 
 """
-The intensities of linear light profiles are not a part of the model parameterization. They therefore cannot be
-accessed in the resulting galaxies, as seen in previous tutorials, for example:
+__Intensities__
 
-`tracer = result.max_log_likelihood_tracer`
-`intensity = tracer.galaxies[0].bulge.intensity`
+The intensities of linear light profiles are not a part of the model parameterization and therefore are not displayed
+in the `model.results` file.
 
-The intensities are also only computed once a fit is performed, as they must first be solved for via linear algebra. 
-They are therefore accessible via the `Fit` and `Inversion` objects, for example as a dictionary mapping every
-linear light profile (defined above) to the intensity values:
+To extract the `intensity` values of a specific component in the model, we use the `max_log_likelihood_tracer`,
+which has already performed the inversion and therefore the galaxy light profiles have their solved for
+`intensity`'s associated with them.
+"""
+tracer = result_linear_light_profile.max_log_likelihood_tracer
+
+lens_bulge = print(tracer.galaxies[0].bulge.intensity)
+source_bulge = print(tracer.galaxies[1].bulge.intensity)
+
+"""
+The `Tracer` contained in the `max_log_likelihood_fit` also has the solved for `intensity` values:
 """
 fit = result_linear_light_profile.max_log_likelihood_fit
 
-print(fit.linear_light_profile_intensity_dict)
-
-"""
-To extract the `intensity` values of a specific component in the model, we use that component as defined in the
-`max_log_likelihood_tracer`.
-"""
 tracer = fit.tracer
 
-lens_bulge = tracer.galaxies[0].bulge
-source_bulge = tracer.galaxies[1].bulge
-
-print(
-    f"\n Intensity of lens bulge (lp_linear.Sersic) = {fit.linear_light_profile_intensity_dict[lens_bulge]}"
-)
-print(
-    f"\n Intensity of source bulge (lp_linear.Exponential) = {fit.linear_light_profile_intensity_dict[source_bulge]}"
-)
-
-"""
-A `Tracer` where all linear light profile objects are replaced with ordinary light profiles using the solved 
-for `intensity` values is also accessible.
-
-For example, the linear light profile `Sersic` of the `bulge` component above has a solved for `intensity` of ~0.75. 
-
-The `Tracer` created below instead has an ordinary light profile with an `intensity` of ~0.75.
-"""
-tracer = fit.model_obj_linear_light_profiles_to_light_profiles
-
-print(
-    f"Intensity via Tracer With Ordinary Light Profiles = {tracer.galaxies[0].bulge.intensity}"
-)
+lens_bulge = print(tracer.galaxies[0].bulge.intensity)
+source_bulge = print(tracer.galaxies[1].bulge.intensity)
 
 """
 __Visualization__
@@ -258,42 +238,28 @@ The equation below has therefore been chosen to provide intuition on the scale o
 total_gaussians = 30
 
 # The sigma values of the Gaussians will be fixed to values spanning 0.01 to the mask radius, 3.0".
+
 mask_radius = 3.0
 log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
 
-# By defining the centre here, it creates two free parameters that are assigned below to all Gaussians.
-
-centre_0 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
-centre_1 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
+# A list of linear light profile `Gaussians` will be input here, which will then be used to fit the data.
 
 bulge_gaussian_list = []
 
-# A list of Gaussian model components whose parameters are customized belows.
+# Iterate over every Gaussian and create it, with it centered at (0.0", 0.0") and assuming spherical symmetry.
 
-gaussian_list = af.Collection(
-    af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
-)
+for i in range(total_gaussians):
+    gaussian = al.lp_linear.Gaussian(
+        centre=(0.0, 0.0),
+        ell_comps=(0.0, 0.0),
+        sigma=10 ** log10_sigma_list[i],
+    )
 
-# Iterate over every Gaussian and customize its parameters.
+    bulge_gaussian_list.append(gaussian)
 
-for i, gaussian in enumerate(gaussian_list):
-    gaussian.centre.centre_0 = centre_0  # All Gaussians have same y centre.
-    gaussian.centre.centre_1 = centre_1  # All Gaussians have same x centre.
-    gaussian.ell_comps = gaussian_list[
-        0
-    ].ell_comps  # All Gaussians have same elliptical components.
-    gaussian.sigma = (
-        10 ** log10_sigma_list[i]
-    )  # All Gaussian sigmas are fixed to values above.
+# The Basis object groups many light profiles together into a single model component and is used to fit the data.
 
-bulge_gaussian_list += gaussian_list
-
-# The Basis object groups many light profiles together into a single model component.
-
-bulge = af.Model(
-    al.lp_basis.Basis,
-    light_profile_list=bulge_gaussian_list,
-)
+bulge = al.lp_basis.Basis(light_profile_list=bulge_gaussian_list)
 
 """
 Once we have a `Basis`, we can treat it like any other light profile in order to create a `Galaxy` and `Tracer` and 
@@ -392,9 +358,18 @@ lens galaxy.
 """
 total_gaussians = 15
 
+# The sigma values of the Gaussians will be fixed to values spanning 0.01" to 1.0".
+
 log10_sigma_list = np.linspace(-2, np.log10(1.0), total_gaussians)
 
 bulge_gaussian_list = []
+
+# By defining a new the centre here, it creates two free parameters that are assigned below to all Gaussians. These
+# new centre priors must be defined again in order for the source MGE not to use the same centre as the lens light
+# MGE
+
+centre_0 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
+centre_1 = af.UniformPrior(lower_limit=-0.1, upper_limit=0.1)
 
 gaussian_list = af.Collection(
     af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
@@ -438,7 +413,7 @@ search = af.Nautilus(
     name="tutorial_5_basis",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
+    number_of_cores=4,
 )
 
 print(

@@ -142,7 +142,7 @@ print("Evidence using constant regularization. ", 4216)
 print("Evidence using adaptive regularization. ", fit.log_evidence)
 
 """
-Yep! Of course, combining the adaptive pixelization and regularization will only further benefit lens modeling!
+Yep! Of course, combining the adaptive mesh and regularization will only further benefit lens modeling!
 
 However, as shown below, we don't fit the source as well as the morphology based pixelization did in the last chapter. 
 This is because although the adaptive regularization scheme improves the fit, the magnification based 

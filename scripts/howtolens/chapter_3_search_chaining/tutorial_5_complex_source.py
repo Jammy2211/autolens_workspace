@@ -109,8 +109,8 @@ search_1 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[1]__mass[sie]__source_x1[bulge]",
     unique_tag=dataset_name,
-    n_live=80,
-    f_live=5.0,
+    n_live=120,
+    number_of_cores=1,
 )
 
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
@@ -144,8 +144,8 @@ search_2 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[2]_mass[sie]_source_x2[bulge]",
     unique_tag=dataset_name,
-    n_live=80,
-    f_live=5.0,
+    n_live=120,
+    number_of_cores=1,
 )
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
@@ -180,8 +180,8 @@ search_3 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[3]_mass[sie]_source_x3[bulge]",
     unique_tag=dataset_name,
-    n_live=100,
-    f_live=5.0,
+    n_live=140,
+    number_of_cores=1,
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)
@@ -217,8 +217,8 @@ search_4 = af.Nautilus(
     path_prefix=path_prefix,
     name="search[4]_mass[sie]_source_x4[bulge]",
     unique_tag=dataset_name,
-    n_live=100,
-    f_live=0.3,
+    n_live=160,
+    number_of_cores=1,
 )
 
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)

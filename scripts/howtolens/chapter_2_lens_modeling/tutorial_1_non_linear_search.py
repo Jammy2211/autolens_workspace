@@ -156,6 +156,10 @@ lens = af.Model(al.Galaxy, redshift=0.5, mass=mass)
 
 """
 Lets model the source galaxy with a spherical exponential light profile (again, what it was simulated with).
+
+
+NOTE: The `Exponential` light profile corresponds to the `Sersic` light profile with a fixed value of `sersic_index=1`.
+In later tutorials we'll fit the `Sersic`, so its worth noting the `Exponential` is a specific case of the `Sersic`.
 """
 bulge = af.Model(al.lp.ExponentialSph)
 
