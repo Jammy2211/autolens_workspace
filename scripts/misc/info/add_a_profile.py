@@ -64,6 +64,7 @@ import autoarray as aa
 from autogalaxy.profiles.mass.total.isothermal import psi_from
 from autogalaxy.profiles.mass.abstract.abstract import MassProfile
 
+
 class Isothermal(MassProfile):
     def __init__(
         self,
@@ -131,6 +132,7 @@ class Isothermal(MassProfile):
         return self.rotated_grid_from_reference_frame_from(
             grid=np.multiply(factor, np.vstack((deflection_y, deflection_x)).T)
         )
+
 
 """
 Lets first consider the inheritance structure of the `Isothermal` profile, defined by the first line of the 
@@ -230,6 +232,8 @@ The `transform` decorator is used to transform the input grid of (y,x) coordinat
 coordinate system. It does this by calling the function `transform_grid_2d_to_reference_frame`, which I have
 provided below for convenience:
 """
+
+
 def transform_grid_2d_to_reference_frame(
     grid_2d: np.ndarray, centre: Tuple[float, float], angle: float
 ) -> np.ndarray:
@@ -256,6 +260,7 @@ def transform_grid_2d_to_reference_frame(
         * (np.sin(theta_coordinate_to_profile), np.cos(theta_coordinate_to_profile))
     ).T
 
+
 """
 A simple example of this function is shifting a grid to a mass profile's centre (which simply subtracts the centre
 coordinates from every coordinate on the grid):
@@ -277,6 +282,8 @@ The `angle` input is the rotation angle of the mass profile's ellipse counter-cl
 It is computed from the `ell_comps` of the mass profile, which are the elliptical components of the mass profile's
 ellipse.
 """
+
+
 def axis_ratio_and_angle_from(ell_comps):
     """
     Convert the ellipitical components e1 and e2 to an axis ratio (0.0 > q > 1.0) and rotation position angle
@@ -295,6 +302,7 @@ def axis_ratio_and_angle_from(ell_comps):
     # if fac > 1: print('unphysical e1,e2')
     axis_ratio = (1 - fac) / (1 + fac)
     return axis_ratio, angle
+
 
 mass_profile_ell_comps = (0.5, 0.5)
 mass_profile_angle = axis_ratio_and_angle_from(ell_comps=mass_profile_ell_comps)[1]
@@ -317,28 +325,24 @@ The class below demonstrates this.
 
 from autogalaxy.profiles.geometry_profiles import EllProfile
 
-class ExampleMass(EllProfile):
 
+class ExampleMass(EllProfile):
     def __init__(
         self,
         centre: Tuple[float, float] = (0.0, 0.0),
         ell_comps: Tuple[float, float] = (0.0, 0.0),
     ):
-
         super().__init__(centre=centre, ell_comps=ell_comps)
 
     @aa.grid_dec.transform
     def deflections_2d_from(self, grid: aa.Grid2D):
-
         print(
             f"\n Grid In Deflections After Transform "
             f"Which is Same As Transformed Grid Above: {grid}"
         )
 
-mass = ExampleMass(
-    centre=(0.5, 0.5),
-    ell_comps=(0.5, 0.5)
-)
+
+mass = ExampleMass(centre=(0.5, 0.5), ell_comps=(0.5, 0.5))
 mass.deflections_2d_from(grid=grid)
 
 """
@@ -365,15 +369,23 @@ those in its `__init__` constructor:
 """
 import autofit as af
 
+
 class LensModelExample:
     def __init__(
-        self,                                         # <-- PyAutoLens Assumes these input parameters are free.
-        centre: Tuple[float, float] = (0.0, 0.0),     # <-- The `centre` has two free parameters because its a tuple.
-        ell_comps: Tuple[float, float] = (0.0, 0.0),  # <-- The `ell_comps` also has two free parameters.
-        einstein_radius: float = 1.0,                 # <-- The `einstein_radius` just one because its a float.
-        your_parameter_here : float = 2.0             # <-- Add whatever parameters you need!
+        self,  # <-- PyAutoLens Assumes these input parameters are free.
+        centre: Tuple[float, float] = (
+            0.0,
+            0.0,
+        ),  # <-- The `centre` has two free parameters because its a tuple.
+        ell_comps: Tuple[float, float] = (
+            0.0,
+            0.0,
+        ),  # <-- The `ell_comps` also has two free parameters.
+        einstein_radius: float = 1.0,  # <-- The `einstein_radius` just one because its a float.
+        your_parameter_here: float = 2.0,  # <-- Add whatever parameters you need!
     ):
         pass
+
 
 """
 The `Isothermal` class was shown above and had 3 `__init__` parameters, its `centre`, `ell_comps` and `einstein_radius`.
@@ -426,15 +438,15 @@ They are often used for separate calculations outside of lens modeling and are c
 The template below is a good starting point for your mass profile and explains what functions you need to implement
 and what are optional.
 """
-class TemplateMass(EllProfile):
 
+
+class TemplateMass(EllProfile):
     def __init__(
         self,
         centre: Tuple[float, float] = (0.0, 0.0),
         ell_comps: Tuple[float, float] = (0.0, 0.0),
         # Your parameters here.
     ):
-
         super().__init__(centre=centre, ell_comps=ell_comps)
 
     @aa.grid_dec.grid_2d_to_vector_yx
@@ -494,6 +506,7 @@ class TemplateMass(EllProfile):
         analytic calculation here can speed this up and provide more accurate results.
         """
         pass
+
 
 """
 __Physical Profiles__
