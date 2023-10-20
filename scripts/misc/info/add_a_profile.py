@@ -447,13 +447,19 @@ class TemplateMass(EllProfile):
         ell_comps: Tuple[float, float] = (0.0, 0.0),
         # Your parameters here.
     ):
+
         super().__init__(centre=centre, ell_comps=ell_comps)
+
+        # Note that for a Spherical profile, which does not have an `ell_comps` parameter,
+        # you can remove it from the __init__ constructor and pass (0.0, 0.0) below, e.g.
+
+        # super().__init__(centre=centre, ell_comps=(0.0, 0.0))
 
     @aa.grid_dec.grid_2d_to_vector_yx
     @aa.grid_dec.grid_2d_to_structure
     @aa.grid_dec.transform
     @aa.grid_dec.relocate_to_radial_minimum
-    def deflections_2d_from(self, grid: aa.Grid2D):
+    def deflections_yx_2d_from(self, grid: aa.type.Grid2DLike):
         """
         REQUIRED: The function is key for all lensing calculations and must be implemented.
         """
@@ -509,6 +515,11 @@ class TemplateMass(EllProfile):
 
 
 """
+__Spherical Template__
+
+radiaul_grid
+removal of ell_comps
+
 __Physical Profiles__
 
 Show how to wrap existing profiles with physical units?
