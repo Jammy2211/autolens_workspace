@@ -447,7 +447,6 @@ class TemplateMass(EllProfile):
         ell_comps: Tuple[float, float] = (0.0, 0.0),
         # Your parameters here.
     ):
-
         super().__init__(centre=centre, ell_comps=ell_comps)
 
         # Note that for a Spherical profile, which does not have an `ell_comps` parameter,
