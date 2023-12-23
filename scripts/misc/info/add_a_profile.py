@@ -503,7 +503,7 @@ class TemplateMass(EllProfile):
     @aa.grid_dec.grid_2d_to_structure
     @aa.grid_dec.transform
     @aa.grid_dec.relocate_to_radial_minimum
-    def shear_2d_from(self, grid: aa.type.Grid2DLike):
+    def shear_yx_2d_from(self, grid: aa.type.Grid2DLike):
         """
         OPTIONAL: Shears are used for weak lensing calculations and inspection properties of the mass profile.
 

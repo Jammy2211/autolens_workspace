@@ -76,7 +76,8 @@ def fit_imaging_with_source_galaxy(dataset, source_galaxy):
 Next, we'll use the magnification based source to fit this data.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayMagnification(shape=(30, 30)),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -112,7 +113,8 @@ regularization scheme. This introduces additional hyper-parameters, that I'll ex
 hyper_image_2d = fit.model_image.binned.slim
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayMagnification(shape=(30, 30)),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.005, outer_coefficient=1.9, signal_scale=3.0
     ),
@@ -200,7 +202,8 @@ linear algebra calculation was ill-defined, and could not be inverted. These sol
 during lens modeling.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayMagnification(shape=(30, 30)),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.001, outer_coefficient=0.2, signal_scale=2.0
     ),

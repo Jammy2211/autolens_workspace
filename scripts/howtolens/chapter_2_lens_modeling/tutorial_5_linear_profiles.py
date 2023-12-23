@@ -89,8 +89,8 @@ dimensionality of non-linear parameter space by the number of light profiles (in
 
 This also removes the degeneracies that occur between the `intensity` and other light profile parameters
 (e.g. `effective_radius`, `sersic_index`), which are difficult degeneracies for the non-linear search to map out
-accurately. This produces more reliable lens model results and converge in fewer iterations, speeding up the overall
-analysis.
+accurately. This produces more reliable lens model results and the fit converges in fewer iterations, speeding up the
+overall analysis.
 
 This is a rare example where we are able to reduce the complexity of parameter space without making the model itself 
 any simpler. There is really no downside to using linear light profiles, so I would recommend you adopt them as 
@@ -464,7 +464,7 @@ An MGE fully captures these features and can therefore much better represent the
 
 As seen above, the MGE model can be composed in a way that has fewer non-linear parameters than an elliptical Sersic. 
 In this example, 30 Gaussians were used to represent the `bulge` of the lens, which in total correspond to just N=4 
-non-linear parameters (a `bulge` and `disk` comprising two linear Sersics would give N=10). The source dimensionality
+non-linear parameters (a `bulge` and `disk` comprising two linear Sersics has N=10 parameters). The source dimensionality
 was also just N=4.
 
 The MGE model parameterization is also composed such that neither the `intensity` parameters or any of the

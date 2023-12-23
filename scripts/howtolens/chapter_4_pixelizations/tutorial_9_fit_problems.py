@@ -5,7 +5,7 @@ Tutorial 1: Fit Problems
 To begin, make sure you have read the `introduction` file carefully, as a clear understanding of how the Bayesian
 evidence works is key to understanding this chapter!
 
-In the previous chapter we investigated two pixelization's: `Rectangular` and `DelaunayMagnification`. We argued that the
+In the previous chapter we investigated two pixelization's: `Rectangular` and `Delaunay`. We argued that the
 latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where we
 had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
 which improved computational efficiency and increased the Bayesian evidence.
@@ -150,8 +150,8 @@ dataset_source_super_compact = simulate_for_source_galaxy(
 """
 __Fitting__
 
-we'll make one more convenience function which fits the simulated imaging data with a `DelaunayMagniication` 
-pixelization and `Constant` regularization scheme.
+we'll make one more convenience function which fits the simulated imaging data with an `Overlay` image-mesh, 
+`Delaunay` mesh  and `Constant` regularization scheme pixelization.
 
 We'll input the `coefficient` of each fit, so that for each simulated source we regularize it at an appropriate level. 
 There is nothing new in this function you haven't seen before.
@@ -169,7 +169,8 @@ def fit_data_with_delaunay_magnification_pixelization(dataset, mask, coefficient
     )
 
     pixelization = al.Pixelization(
-        mesh=al.mesh.DelaunayMagnification(shape=(30, 30)),
+        image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+        mesh=al.mesh.Delaunay(),
         regularization=al.reg.Constant(coefficient=coefficient),
     )
 
@@ -243,7 +244,7 @@ inversion. Both the mesh and regularization are to blame!
 
 *Pixelization*:
 
-The problem is the same one we found when we compared the `Rectangular` and `DelaunayMagnification` meshs in 
+The problem is the same one we found when we compared the `Rectangular` and `Delaunay` meshes in 
 chapter 4. We are simply not dedicating enough source-pixels to the central regions of the source reconstruction, 
 e.g. where it`s brightest. As the source becomes more compact, the source reconstruction no longer has enough 
 resolution to resolve its fine-detailed central structure, causing the fit to the image to degrade.

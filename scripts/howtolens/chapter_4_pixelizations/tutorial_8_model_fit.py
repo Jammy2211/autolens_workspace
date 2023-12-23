@@ -104,8 +104,10 @@ We use the results of search 1 to create the lens model fitted in search 2, wher
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [Parameters fixed to 
  results of search 1].
+ 
+ - The source galaxy's pixelization uses an `Overlay` image-mesh [2 parameters]
 
- - The source-galaxy's light uses a `DelaunayMagnification` mesh [2 parameters].
+ - The source-galaxy's pixelization uses a `Delaunay` mesh [0 parameters].
 
  - This pixelization is regularized using a `ConstantSplit` scheme [1 parameter]. 
 
@@ -114,7 +116,7 @@ The number of free parameters and therefore the dimensionality of non-linear par
 This search allows us to very efficiently set up the resolution of the mesh and regularization coefficient 
 of the regularization scheme, before using these models to refit the lens mass model.
 
-Also, note how we can pass the `SettingsPixelization` object to an analysis class to customize if the border relocation
+Also, note how we can pass the `al.SettingsInversion` object to an analysis class to customize if the border relocation
 is used.
 """
 model_2 = af.Collection(
@@ -130,7 +132,8 @@ model_2 = af.Collection(
             redshift=1.0,
             pixelization=af.Model(
                 al.Pixelization,
-                mesh=al.mesh.DelaunayMagnification,
+                image_mesh=al.image_mesh.Overlay,
+                mesh=al.mesh.Delaunay,
                 regularization=al.reg.Constant,
             ),
         ),
@@ -149,7 +152,7 @@ analysis_2 = al.AnalysisImaging(
     positions_likelihood=result_1.positions_likelihood_from(
         factor=3.0, minimum_threshold=0.2
     ),
-    settings_pixelization=al.SettingsPixelization(use_border=True),
+    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
 )
 
 """
@@ -194,8 +197,10 @@ We use the results of searches 1 and 2 to create the lens model fitted in search
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters: priors 
  initialized from search 1].
+ 
+ - The source galaxy's pixelization uses an `Overlay` image-mesh [parameters fixed to results of search 2].
 
- - The source-galaxy's light uses a `DelaunayMagnification` mesh [parameters fixed to results of search 2].
+ - The source-galaxy's pixelization uses a `Delaunay` mesh [parameters fixed to results of search 2].
 
  - This pixelization is regularized using a `ConstantSplit` scheme [parameters fixed to results of search 2]. 
 

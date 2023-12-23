@@ -2,7 +2,8 @@
 Tutorial 7: Adaptive Pixelization
 =================================
 
-In this tutorial we will introduce a new `Pixelization` object, called the `DelaunayMagnification` `Pixelization`.
+In this tutorial we will introduce a new `Pixelization` object, which uses an `Overlay` image-mesh and a `Delaunay`
+mesh.
 
 This pixelization does not use a uniform grid of rectangular pixels, but instead uses an irregular grid of `Delaunay`
 pixels. So, why would we want to do that? Lets take another quick look at the rectangular grid..
@@ -120,17 +121,15 @@ To achieve this, we first compute an `image-plane sparse grid`, which is a set o
 that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute this grid
 directly from a pixelization, by passing it a grid.
 """
-adaptive = al.mesh.DelaunayMagnification(shape=(20, 20))
+image_mesh = al.image_mesh.Overlay(shape=(20, 20))
 
-image_plane_sparse_grid = adaptive.image_plane_mesh_grid_from(
-    image_plane_data_grid=dataset.grid
-)
+image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(grid=dataset.grid)
 
 """
 We can plot this grid over the image, to see that it is a coarse grid of $(y,x)$ coordinates that over-lay the image 
 itself.
 """
-visuals = aplt.Visuals2D(grid=image_plane_sparse_grid, mask=mask)
+visuals = aplt.Visuals2D(grid=image_plane_mesh_grid, mask=mask)
 
 dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.figures_2d(data=True)
@@ -140,7 +139,9 @@ When we pass a `Tracer` a source galaxy with this `Pixelization` object it autom
 source-plane Delaunay pixelization using the grid above. Thus, our Delaunay pixelization is used by the tracer`s fit.
 """
 pixelization = al.Pixelization(
-    mesh=adaptive, regularization=al.reg.Constant(coefficient=1.0)
+    image_mesh=image_mesh,
+    mesh=al.mesh.Delaunay(),
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
 source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
@@ -178,13 +179,13 @@ now comparing each source-pixel with all other source-pixels with which it share
 different source-pixels may be regularized with different numbers of source-pixels, depending on how many neighbors 
 are formed.
 
-However, the `DelaunayMagnification` mesh is still far from optimal. There are lots of source-pixels 
+However, the `Overlay` image-mesh and `Delaunay` mesh is still far from optimal. There are lots of source-pixels 
 effectively fitting just noise. We may achieve even better solutions if the central regions of the source were 
 reconstructed using more pixels, whilst even less source pixels are dedicated to the outskirts of the source plane. 
 
 So, how do we improve on this? Well, you'll have to wait until chapter 5, when we introduce **PyAutoLens**`s adaptive 
 functionality, called 'hyper-mode'.
 
-In the mean time, you may wish to experiment with using both Rectangular and DelaunayMagnification grids to fit 
+In the mean time, you may wish to experiment with using both Rectangular and Delaunay grids to fit 
 lenses which can be easily achieve by changing the input pixelization given to a pipeline.
 """

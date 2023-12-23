@@ -68,7 +68,8 @@ lens_galaxy = al.Galaxy(
 )
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayMagnification(shape=(30, 30)),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -105,15 +106,14 @@ hyper_image_2d = fit.model_image.binned.slim
 __Adaption__
 
 Now lets take a look at brightness based adaption in action! Below, we define a source-galaxy using our new 
-`DelaunayBrightnessImage` pixelization and use this to fit the lens-data. 
+`KMeans` image-mesh, and`Delaunay` mesh and use this to fit the lens-data. 
 
 We also attach the hyper_image to the source galaxy, via the inputs `adapt_model_image` and `adapt_galaxy_image`. In
 tutorial 4, we will explain why the hyper image is input twice as two seperate inputs, for now just ignore this!
 """
 pixelizaiton = al.Pixelization(
-    mesh=al.mesh.DelaunayBrightnessImage(
-        pixels=500, weight_floor=0.0, weight_power=10.0
-    ),
+    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=10.0),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=0.5),
 )
 
@@ -136,7 +136,7 @@ fit_plotter.subplot_of_planes(plane_index=1)
 Would you look at that! Our reconstruction of the image no longer has residuals! By congregating more source 
 pixels in the brightest regions of the source reconstruction we get a better fit. Furthermore, we can check that 
 this provides an increase in Bayesian log evidence, noting that the log evidence of the compact source when using a 
-`DelaunayMagnification` mesh was 4216:
+`Overlay` image-mesh was 4216:
 """
 print("Evidence using magnification based pixelization. ", 4216)
 print("Evidence using brightness based pixelization. ", fit.log_evidence)
@@ -177,11 +177,11 @@ in-depth view:
 
 __Weight Map__
 
-We now have a sense of how our `DelaunayBrightnessImage` pixelization is computed. Now, lets look at how we create the 
+We now have a sense of how our `KMeans` image-mesh, and`Delaunay` mesh is computed. Now, lets look at how we create the 
 weighted data the KMeans algorithm uses.
 
 This image, called the `cluster_weight_map` is generated using the `weight_floor` and `weight_power` parameters of 
-the `DelaunayBrightnessImage` object. The cluster weight map is generated following 4 steps:
+the `KMeans` object. The cluster weight map is generated following 4 steps:
 
  1) Increase all values of the hyper-image that are < 0.02 to 0.02. This is necessary because negative values and 
  zeros break the KMeans clustering algorithm.
@@ -198,9 +198,8 @@ Lets look at this in action. we'll inspect 3 cluster_weight_maps, using a weight
 setting the `weight_floor` to 0.0 such that it does not change the cluster weight map.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayBrightnessImage(
-        pixels=500, weight_floor=0.0, weight_power=0.0
-    ),
+    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=0.0),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -222,9 +221,8 @@ array_plotter.figure_2d()
 
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayBrightnessImage(
-        pixels=500, weight_floor=0.0, weight_power=5.0
-    ),
+    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=5.0),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -245,10 +243,9 @@ array_plotter = aplt.Array2DPlotter(
 array_plotter.figure_2d()
 
 
-ixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayBrightnessImage(
-        pixels=500, weight_floor=0.0, weight_power=10.0
-    ),
+pixelization = al.Pixelization(
+    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=10.0),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -304,10 +301,9 @@ that the pixelization can fully adapt to the source's brightest and faintest reg
 
 Lets look at once example:
 """
-ixelization = al.Pixelization(
-    mesh=al.mesh.DelaunayBrightnessImage(
-        pixels=500, weight_floor=0.5, weight_power=10.0
-    ),
+pixelization = al.Pixelization(
+    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.5, weight_power=10.0),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 

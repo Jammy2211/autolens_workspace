@@ -195,7 +195,7 @@ dataset = al.Imaging.from_fits(
 """
 __Mask__
 
-We define a 3.0" circular mask, which includes the emission of the lens and source galaxies.
+Define a 3.0" circular mask, which includes the emission of the lens and source galaxies.
 """
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
