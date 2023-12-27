@@ -315,7 +315,7 @@ __Model Fit__
 The standard API for choosing a non-linear search and performing a model-fit can now be used with this `Analysis`
 class.
 """
-dataset_name = "simple_no_lens_light"
+dataset_name = "simple__no_lens_light"
 dataset_path = path.join("dataset", "imaging", dataset_name)
 
 dataset = al.Imaging.from_fits(

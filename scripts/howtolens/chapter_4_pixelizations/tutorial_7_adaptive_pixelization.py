@@ -5,8 +5,9 @@ Tutorial 7: Adaptive Pixelization
 In this tutorial we will introduce a new `Pixelization` object, which uses an `Overlay` image-mesh and a `Delaunay`
 mesh.
 
-This pixelization does not use a uniform grid of rectangular pixels, but instead uses an irregular grid of `Delaunay`
-pixels. So, why would we want to do that? Lets take another quick look at the rectangular grid..
+This pixelization does not use a uniform grid of rectangular pixels, but instead uses a `Delaunay` triangulation.
+
+So, why would we want to do that? Lets take another quick look at the rectangular grid.
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -85,12 +86,11 @@ fit_plotter.subplot_of_planes(plane_index=1)
 """
 __Advantages and Disadvatanges__
 
-Okay, so lets think about the rectangular pixelization. Is this the optimal way to reconstruct our source? Are there 
-features in the source-plane that arn`t ideal? How do you think we could do a better job?
+Lets think about the rectangular pixelization. Is this the optimal way to reconstruct our source? Are there features 
+in the source-plane that arn`t ideal? How do you think we could do a better job?
 
-Well, given we are doing a whole tutorial on using a different pixelization, you have probably guessed that the 
-rectangular pixelization is not optimal. Infact, its pretty rubbish, and not a pixelization we should actually want to 
-model any lenses with!
+There are a number of reasons the rectangular pixelization is not optimal, and is infact a pretty poor method to 
+model strong lenses!
 
 So what is wrong with the grid? Well, lets think about the source reconstruction.
 """
@@ -102,32 +102,37 @@ fit_plotter.subplot_of_planes(plane_index=1)
 """
 There is one clear problem, we are using only a small number of the total source pixels to reconstruct the source. The 
 majority of source pixels are located away from the source. By my estimate, we are using just 16 pixels (the central 
-4x4 grid) out of the 1600 pixels to actually fit the data! The remaining ~1500 pixels are doing *nothing* but fitting 
-noise.
+4x4 grid) out of the 1600 pixels to actually fit the data! The remaining ~1500 pixels are doing nothing but fitting 
+noise. 
 
-This is wasteful and the analysis takes longer to run because of it. However, more importantly, it also means that
-regularization is sub-optimal. In tutorial 4, we discussed how the Bayesian evidence of the regularization wants to 
-obtain the *simplest* source solution possible. That is, the solution which fits the data using the fewest source 
-pixels. Clearly, if we are dedicating a huge number of source pixels to doing *nothing*, our source reconstruction is 
-unecessarily complex (and therefore is lower `log_evidence` solution).
+This means that regularization is sub-optimal. In tutorial 4, we discussed how the Bayesian evidence of the 
+regularization favours the simplest source solution. That is, the solution which fits the data using the fewest source 
+pixels. If we are dedicating a large number of source pixels to fitting *nothing*, the source reconstruction is 
+unnecessarily complex (and therefore is lower `log_evidence` solution).
 
 If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions of 
-the source-plane, we could reconstruct the source using fewer pixels. That`d be great both for computational efficiency 
-and increasing the Bayesian log evidence. This is what the Delaunay pixelization does.
+the source-plane, we could reconstruct the source using fewer pixels. This would significantly increase the Bayesian
+evidence. It'd also be benefitial computationally, as using fewer source pixels means faster run times.
 
-__Delaunay Grid__
+This is what the Delaunay mesh enables.
 
-To achieve this, we first compute an `image-plane sparse grid`, which is a set of sparse coordinates in the image-plane 
-that will be ray-traced to the source-plane and define the centres of our source-pixel grid. We compute this grid
-directly from a pixelization, by passing it a grid.
+__Image Mesh__
+
+The Delaunay mesh is an irregular grid of pixels (or triangles) in the source-plane. We must first therefore determine
+a set of (y,x) source-plane coordinates defining this grid, specifically where each triangle vertex is loated.
+
+We do this using an `image_mesh`, which defines a method to determine a set of coordinates in the image-plane 
+which are ray-traced to the source-plane. These traced coordinates are the triangle vertexes of our source-pixel mesh. 
+
+Below, we use the `Overlay` image-mesh to do this, which overlays a grid of (y,x) coordinates over the image-plane
+mask and retains all (Y,x) coordinates which fall within this mask.
 """
 image_mesh = al.image_mesh.Overlay(shape=(20, 20))
 
 image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(grid=dataset.grid)
 
 """
-We can plot this grid over the image, to see that it is a coarse grid of $(y,x)$ coordinates that over-lay the image 
-itself.
+We can plot this grid over the image, to see that it is a coarse grid of (y,x) coordinates laid ove the image.
 """
 visuals = aplt.Visuals2D(grid=image_plane_mesh_grid, mask=mask)
 
@@ -135,8 +140,8 @@ dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.figures_2d(data=True)
 
 """
-When we pass a `Tracer` a source galaxy with this `Pixelization` object it automatically computes the ray-traced 
-source-plane Delaunay pixelization using the grid above. Thus, our Delaunay pixelization is used by the tracer`s fit.
+By passing a `Tracer` a source galaxy with the image-mesh and a `Delaunay` mesh object, contained in 
+a `Pixelization` object, it automatically computes this source-plane Delaunay mesh.
 """
 pixelization = al.Pixelization(
     image_mesh=image_mesh,
@@ -149,7 +154,7 @@ source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
 
 """
-If we look at the lens fit, we'll see that our source-plane no longer uses rectangular pixels, but Delaunay pixels!
+By using this tracer in a fit, we see that our source-plane no longer uses rectangular pixels, but a Delaunay mesh!
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
@@ -162,29 +167,31 @@ fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
 """
-And we can take a closer inspection of the inversion itself.
+A closer inspection of the pixelization shows the improvement. 
 
-Clearly, this is an improvement. we are using fewer pixels than the rectangular grid (400, instead of 1600) and
-reconstructing the source is far greater detail. A win all around!
+We are using fewer pixels than the rectangular grid (400, instead of 1600) and reconstructing the source is far 
+greater detail!
 """
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
 fit_plotter.subplot_of_planes(plane_index=1)
 
 """
+__Regularization__
+
+On the rectangular grid, we regularized each source pixel with its 4 neighbors. We compared their fluxes, summed 
+the differences, and penalized solutions where the differences were large. 
+
+For a Delaunay grid, we do a similar calculation, instead comparing each source-pixel with the 3 Delaunay triangles 
+it shares a direct vertex with.
+
 __Wrap Up__
 
-On our rectangular grid, we regularized each source pixel with its 4 neighbors. We compared their fluxes, summed 
-the differences, and penalized solutions where the differences were large. For a Delaunay grid, we do the same thing, 
-now comparing each source-pixel with all other source-pixels with which it shares a direct vertex. This means that 
-different source-pixels may be regularized with different numbers of source-pixels, depending on how many neighbors 
-are formed.
+The `Overlay` image-mesh and `Delaunay` mesh is still far from optimal. There are lots of source-pixels effectively f
+itting just noise. We can achieve even better solutions if the central regions of the source were reconstructed using 
+more pixels and fewer source pixels are used in the outskirts of the source plane. 
 
-However, the `Overlay` image-mesh and `Delaunay` mesh is still far from optimal. There are lots of source-pixels 
-effectively fitting just noise. We may achieve even better solutions if the central regions of the source were 
-reconstructed using more pixels, whilst even less source pixels are dedicated to the outskirts of the source plane. 
-
-So, how do we improve on this? Well, you'll have to wait until chapter 5, when we introduce **PyAutoLens**`s adaptive 
-functionality, called 'hyper-mode'.
+Tutorials 9, 10 and 11 show even more advanced and adaptive pixelizations which do just this, by adapting to the
+source galaxy's morphology rather than the mass model magnification.
 
 In the mean time, you may wish to experiment with using both Rectangular and Delaunay grids to fit 
 lenses which can be easily achieve by changing the input pixelization given to a pipeline.

@@ -1,5 +1,5 @@
 """
-Tutorial 1: Fit Problems
+Tutorial 9: Fit Problems
 ========================
 
 To begin, make sure you have read the `introduction` file carefully, as a clear understanding of how the Bayesian
@@ -33,14 +33,13 @@ maximize the log likelihood, it can do this by fitting *everything* accurately, 
 
 ----------------------------------------------
 
-When using a `ConstantSplit` regularization scheme, we regularize the source by adding up the difference in fluxes between
-all source-pixels multiplied by one single value of the regularization coefficient. This means that every
+When using a `ConstantSplit` regularization scheme, we regularize the source by adding up the difference in fluxes 
+between all source-pixels multiplied by one single value of the regularization coefficient. This means that every
 single source pixel receives the same `level` of regularization, regardless of whether it is reconstructing the
 bright central regions of the source or its faint exterior regions.
 
-
 In this tutorial, we'll learn why our magnification-based pixelization and constant regularization schemes are not
-optimal. We'll inspect fits to three strong lenses, simulated using the same mass p[rofile but with different
+optimal. We'll inspect fits to three strong lenses, simulated using the same mass profile but with different
 sources whose light profiles become gradually more compact. For all 3 fits, we'll use the same source-plane resolution
 and a regularization_coefficient that maximize the Bayesian evidence. Thus, these are the `best` source reconstructions
 we can hope to achieve when adapting to the magnification.
@@ -158,7 +157,7 @@ There is nothing new in this function you haven't seen before.
 """
 
 
-def fit_data_with_delaunay_magnification_pixelization(dataset, mask, coefficient):
+def fit_with_delaunay_from(dataset, mask, coefficient):
     dataset = dataset.apply_mask(mask=mask)
 
     lens_galaxy = al.Galaxy(
@@ -187,7 +186,7 @@ __Fit Problems__
 Lets fit our first source which was simulated using the flattest light profile. One should note that this uses the 
 highest regularization coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
-fit_flat = fit_data_with_delaunay_magnification_pixelization(
+fit_flat = fit_with_delaunay_from(
     dataset=dataset_source_flat, mask=mask, coefficient=9.2
 )
 
@@ -206,7 +205,7 @@ lots of pixels! Nice!
 
 Now, lets fit the next source, which is more compact.
 """
-fit_compact = fit_data_with_delaunay_magnification_pixelization(
+fit_compact = fit_with_delaunay_from(
     dataset=dataset_source_compact, mask=mask, coefficient=3.3
 )
 
@@ -217,15 +216,17 @@ fit_plotter.subplot_of_planes(plane_index=1)
 print(fit_compact.log_evidence)
 
 """
-Oh no! The fit does not look so good! Sure, we reconstruct *most* of the lensed source's structure, but there are two 
-clear `blobs` in the residual-map where we are failing to reconstruct the central regions of the source galaxy.
+The fit does not look so good! 
 
-Take a second to think about why this might be. Is it the pixelization or how the regularization is applying smoothing?
+It reconstructs most of the lensed source's structure, but there are two  clear blobs in the residual map where 
+the fit is failing to reconstruct the central regions of the source galaxy.
 
-Finally, lets fit the very compact source. Given that the results for the compact source didn`t look so good, you`d 
-be right in assuming this is just going to make things even worse. Again, think about why this might be.
+Take a second to think about why this might be. Is it the mesh or how the regularization is applying smoothing?
+
+Finally, lets fit the very compact source. Given that the results for the compact source did not look good, you are 
+right in thinking this is going to make things even worse. Again, think about why this might be.
 """
-fit_super_compact = fit_data_with_delaunay_magnification_pixelization(
+fit_super_compact = fit_with_delaunay_from(
     dataset=dataset_source_super_compact, mask=mask, coefficient=3.1
 )
 
@@ -239,25 +240,27 @@ print(fit_super_compact.log_evidence)
 __Discussion__
 
 Okay, so what did we learn? The more compact our source, the worse the fit. This happens even though we are using the 
-*correct* lens mass model, telling us that something is going fundamentally wrong with our source reconstruction and 
-inversion. Both the mesh and regularization are to blame!
+correct lens mass model, telling us that something is going fundamentally wrong with our source reconstruction and 
+pixelization. Both the mesh and regularization are to blame!
 
-*Pixelization*:
+*Image-Mesh / Mesh*:
 
-The problem is the same one we found when we compared the `Rectangular` and `Delaunay` meshes in 
-chapter 4. We are simply not dedicating enough source-pixels to the central regions of the source reconstruction, 
+The problem is the same one we discussed when we compared the `Rectangular` and `Delaunay` meshes in tutorial 7. 
+
+We are simply not dedicating enough source-pixels to the central regions of the source reconstruction, 
 e.g. where it`s brightest. As the source becomes more compact, the source reconstruction no longer has enough 
 resolution to resolve its fine-detailed central structure, causing the fit to the image to degrade.
 
-Think about it, as we made our sources more compact we go from reconstructing them using ~100 source pixels, to ~20 
-source pixels to ~ 10 source pixels. This is why we advocated not using the `Rectangular` meshin the previous 
-chapter!
+As we made our sources more compact we go from reconstructing them using ~100 source pixels, to ~20  source pixels 
+to ~ 10 source pixels. This is why we advocated not using the `Rectangular` mesh previously!
 
-It turns out that adapting to the magnification wasn`t the best idea all along. As we simulated more compact sources 
-the magnification (which is determined via the mass model) did not change. So, we foolishly reconstructed each source
-using fewer and fewer pixels, leading to a worse and worse fit! Furthermore, these source's happened to be located in 
-the highest magnification regions of the source plane! If the source's were further away from the centre of the 
-caustic, the pixelization would use *even less* pixels to reconstruct it. That is NOT what we want!
+Adapting to the mass model magnification is not the best approach. As we simulated more compact sources the 
+magnification (which is determined via the mass model) does not change. We therefore reconstructed each source
+using fewer and fewer pixels, leading to a worse and worse fit. 
+
+Furthermore, the source galaxies above are located in the highest magnification regions of the source plane! If the 
+source's were further away from the caustic, the pixelization would use *even less* pixels to reconstruct them. 
+Clearly, we want to adapt to something else. 
 
 **Regularization**:
 
@@ -266,11 +269,12 @@ adding up the difference in fluxes between all source-pixels multiplied by one s
 coefficient. This means that, every single source pixel receives the same `level` of regularization, regardless of 
 whether it is reconstructing the bright central regions of the source or its faint exterior regions. 
 
-To visualize this, we are going to plot the `regularization_weights`. The `FitImagingPlotter` does not have a
-method that is able to plot this attribute of the `Inversion`. However, the `FitImagingPlotter` has its own 
-`InversionPlotter` which we can use to make this plot. The benefit of using this is that it inherits from the
-`FitImagingPlotter` properties like the caustics, so they appear on the figure (this would not happen if we manually 
-set up an `InversionPlotter` as we did in previous tutorials.
+To visualize this, we are going to plot the `regularization_weights`. 
+
+The `FitImagingPlotter` does not have a method that is able to plot this attribute of the `Inversion`. However, 
+the `FitImagingPlotter` has its own  `InversionPlotter` which we can use to make this plot. The benefit of using this 
+is that it inherits from the `FitImagingPlotter` properties like the caustics, so they appear on the figure (this 
+would not happen if we manually set up an `InversionPlotter` as we did in previous tutorials.
 """
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
 inversion_plotter.figures_2d_of_pixelization(
@@ -280,49 +284,33 @@ inversion_plotter.figures_2d_of_pixelization(
 """
 As you can see, all pixels are regularized with our input regularization_coefficient value of 3.6.
 
-Is this the best way to regularize the source? Well, it isn't. But why not? Its 
-because different regions of the source demand different levels of regularization:
+This is not the best approach to regularizing the source. In fact, different regions of the source prefer different 
+levels of regularization:
 
  1) In the source's central regions its flux gradient is steepest; the change in flux between two source pixels is 
  much larger than in the exterior regions where the gradient is flatter (or there is no source flux at all). To 
  reconstruct the detailed structure of the source's cuspy inner regions, the regularization coefficient needs to 
  be much lower to avoid over-smoothing.
 
- 2) On the flip side, the source reconstruction wants to assume a high regularization coefficient further out 
+ 2) On the other hand, the source reconstruction wants to assume a high regularization coefficient further out 
  because the source's flux gradient is flat (or there is no source signal at all). Higher regularization coefficients 
  will increase the Bayesian evidence because by smoothing more source-pixels it makes the solution `simpler`, given 
  that correlating the flux in these source pixels the solution effectively uses fewer source-pixels (e.g. degrees of 
  freedom).
 
-So, herein lies the pitfall of a constant regularization scheme. Some parts of the reconstructed source demand a 
-low regularization coefficient whereas other parts want a high value. Unfortunately, we end up with an intermediate 
-regularization coefficient that over-smooths the source's central regions whilst failing to fully correlate exterior 
-pixels. Thus, by using an adaptive regularization scheme, new solutions that further increase the Bayesian evidence 
-become accessible.
+This outlines the problem using a constant regularization scheme. Some parts of the reconstructed source demand a 
+low regularization coefficient whereas other parts want a high value. 
 
-**Noise Map**:
+By using a single regularization coefficient, we infer an intermediate regularization coefficient that over-smooths 
+the source's central regions whilst failing to fully correlate exterior pixels. 
 
-Before we wrap up this tutorial, I want us to also consider the role of our noise-map and get you thinking about 
-why we might want to scale its variances. Lets look at the super-compact fit again;
-"""
-fit_plotter.subplot_fit()
+An adaptive regularization scheme, where the regularization coefficient varies from the outskirts to the centrel 
+regions, will produce solutions that further increase the Bayesian evidence.
 
-"""
-So, whats the problem? Look closely at the `chi-squared image`. Here, you'll note that a small subset of our data 
-have extremely large chi-squared values. This means our non-linear search (which is trying minimize chi-squared) is 
-going to seek solutions which primarily only reduce these chi-squared values. For the image above a small subset of 
-the data (e.g. < 5% of pixels) contributes to the majority of the log likelihood (e.g. > 95% of the overall chi-squared). 
-This is *not* what we want, as instead of using the entire surface brightness profile of the lensed source galaxy to 
-fit our lens model, we end up using only a small subset of its brightest pixels.
+__Wrap Up__
 
-In the context of the Bayesian log evidence things become even more problematic. The Bayesian log evidence is trying to 
-achieve a well-defined solution; a solution that provides a reduced chi-squared of 1. This solution is poorly defined 
-when the chi-squared image looks like the one above. When a subset of pixels have chi-squareds > 300, the only way 
-to achieve a reduced chi-squared 1 is to reduce the chi-squareds of other pixels to 0, e.g. by over-fitting their 
-noise. Thus, we quickly end up in a regime where the choice of regularization_coefficient is ill defined.
+We have motivated an even more adaptive pixelization, where the mesh and regularization scheme adapt to the source's 
+unlensed morphology. 
 
-With that, we have motivated hyper-mode. To put it simply, if we don't adapt our pixelization, regularization and 
-noise-map, we will get solutions which reconstruct the source poorly, regularize the source sub-optimally and 
-over-fit a small sub-set of image pixels. Clearly, we want adaptive pixelizations, regularization and noise-maps, which 
-what we'll cover in this chapter!
+The next two tutorials will show **PyAutoLens**'s adapt-model which enables this.
 """
