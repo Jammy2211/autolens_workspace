@@ -111,7 +111,11 @@ linear one and showed a convenience method to plot the image in log10 space.
 When plotting multiple galaxies, plotting in log10 space makes it easier to see by how much the galaxy images
 overlap and blend with one another. 
 """
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy_with_3_light_profiles, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+galaxy_plotter = aplt.GalaxyPlotter(
+    galaxy=galaxy_with_3_light_profiles,
+    grid=grid,
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
+)
 galaxy_plotter.figures_2d(image=True)
 
 """
@@ -164,7 +168,11 @@ galaxy_plotter.figures_1d(convergence=True, potential=True)
 """
 The mass distributions of galaxies are also easier to see separated in log10 space.
 """
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy_with_3_mass_profile_list, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+galaxy_plotter = aplt.GalaxyPlotter(
+    galaxy=galaxy_with_3_mass_profile_list,
+    grid=grid,
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
+)
 galaxy_plotter.figures_2d(convergence=True, potential=True)
 
 """

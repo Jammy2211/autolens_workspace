@@ -253,7 +253,9 @@ The same API can be used to make these plots for a `TracerPLotter` as used previ
 
 This works for any quantity that can be plotted, below we just use a `plane_image` as an example.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=image_plane_grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+tracer_plotter = aplt.TracerPlotter(
+    tracer=tracer, grid=image_plane_grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+)
 tracer_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """

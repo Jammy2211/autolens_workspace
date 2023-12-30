@@ -107,7 +107,7 @@ Below, we can see that the image plotted now appears more clearly, with the outs
 light_profile_plotter = aplt.LightProfilePlotter(
     light_profile=sersic_light_profile,
     grid=grid,
-    mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
 )
 light_profile_plotter.figures_2d(image=True)
 
@@ -200,9 +200,7 @@ mass_profile_plottter.figures_1d(convergence=True, potential=True)
 The convergence and potential are also quantities that are better plotted in log10 space.
 """
 mass_profile_plottter = aplt.MassProfilePlotter(
-    mass_profile=sis_mass_profile,
-    grid=grid,
-    mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    mass_profile=sis_mass_profile, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
 )
 mass_profile_plottter.figures_2d(convergence=True, potential=True)
 

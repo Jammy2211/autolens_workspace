@@ -110,7 +110,7 @@ __Adaption__
 
 Now lets take a look at brightness based adaption in action. 
 
-Below, we define a source-galaxy using the `KMeans` image-mesh (we discuss below how this adapts to the source light) 
+Below, we define a source-galaxy using the `Hilbert` image-mesh (we discuss below how this adapts to the source light) 
 and `Delaunay` mesh and use this to fit the lens-data. 
 """
 pixelizaiton = al.Pixelization(
@@ -158,48 +158,47 @@ print("Evidence using brightness based pixelization. ", fit.log_evidence)
 """
 It increases by over 1000, which for a Bayesian evidence is pretty large! 
 
-By any measure, this pixelization is a huge success. It turns out that we should have been adapting to the source's 
-brightness all along! In doing so, we will *always* reconstruct the detailed structure of the source's brightest regions 
-with a sufficiently high resolution!
+This pixelization is a huge success, we should have been adapting to the source's brightness all along! 
+
+In doing so, we will *always* reconstruct the detailed structure of the source's brightest regions with a 
+sufficiently high resolution!
 
 We are now able to adapt the pixelization's mesh to the morphology of the lensed source galaxy. To my knowledge, this
 is the *best* approach one can take in lens modeling. Its more tricky to implement and introduces additional non-linear 
 parameters. But the pay-off is worth it, as we fit our data better and use fewer source pixels to reconstruct
 the source.
 
-__KMeans__
+__Hilbert__
 
-So how does the `adapt_image` adapt the pixelization to the source's brightness? It uses a 'weighted KMeans clustering 
-algorithm', which is a standard algorithm for partioning data in statistics.
+So how does the `adapt_image` adapt the pixelization to the source's brightness? It uses a standard algorithm for 
+partitioning data in statistics called a Hilbert curve:
+
+https://en.wikipedia.org/wiki/Hilbert_curve
 
 In simple terms, this algorithm works as follows:
 
- 1) Give the KMeans algorithm a set of weighted data (e.g. these weight_list are determined from the adapt-image).
+ 1) Input an image of weight values to the Hilbert algorithm which determines the "hilbert space filling curve" 
+ (e.g. this `weight_map` is determined from the adapt-image). The Hilbert space-filling curve fills more space there
+ the weight values are highest, and less space where they are lowest. It therefore closely traces the brightest
+ regions of the image.
     
- 2) For a given number of K-clusters, this algorithm finds a set of $(y,x)$ coordinates that equally partition the 
- weighted data-set. Wherever the data has higher weighting, more clusters congregate and visa versa.
+ 2) Probabilistically draw N $(y,x)$ points from this Hilbert curve, where the majority of points will therefore be 
+ drawn from high weighted regions. 
     
- 3) The returned $(y,x)$ 'clusters' then make up our source-pixel centres, where the brightest (e.g. higher weighted 
- regions of the adapt-image) will have more clusters! We can then trace these coordinates to the source-plane to define 
- our source-pixel pixelization.
-
-This is a fairly simplistic description of a KMeans algorithm. Feel free to check out the chains below for a more 
-in-depth view:
-
- https://en.wikipedia.org/wiki/K-means_clustering
- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Hilbert.html
-
-
+ 3) These N $(y,x)$ are our source-pixel centres, albeit we have drawn them in the image-plane so we first map them
+ to the source-plane, via the mass model, in order to set up the source pixel centres of the mesh. Because points are
+ drawn from high weighted regions (e.g. the brightest image pixels in the lensed source adapt image), we will trace 
+ more source-pixels to the brightest regions of where the source is actually reconstructed.
+ 
 __Weight Map__
 
-We now have a sense of how our `KMeans` image-mesh, and`Delaunay` mesh is computed. Now, lets look at how we create the 
-weighted data the KMeans algorithm uses.
+We now have a sense of how our `Hilbert` image-mesh is computed, so lets look at how we create the weighted data the 
+Hilbert space filling curve uses.
 
 This image, called the `weight_map` is generated using the `weight_floor` and `weight_power` parameters of 
-the `KMeans` object. The weight map is generated following 4 steps:
+the `Hilbert` object. The weight map is generated following 4 steps:
 
- 1) Increase all values of the adapt-image that are < 0.02 to 0.02. This is necessary because negative values and 
- zeros break the KMeans clustering algorithm.
+ 1) Take an absolute value of all pixels in the adapt image, because negative values break the Hilbert algorithm.
     
  2) Divide all values of this image by its maximum value, such that the adapt-image now only contains values between 
  0.0 and 1.0 (where the values of 1.0 are the maximum values of the adapt-image).
@@ -208,52 +207,53 @@ the `KMeans` object. The weight map is generated following 4 steps:
     
  4) Raise all values to the power of weight_power (a weight_power of 1.0 therefore does not change the
  weight map, whereas a value of 0.0 means all values 1.0 and therefore weighted equally).
+ 
+The idea is that using high values of `weight_power` will make the highest weight values much higher than the lowest
+values, such that the Hilbert curve will trace these values much more than the lower values. The weight_floor gives
+the algorithm some balance, by introducing a floor to the weight map that prevents the lowest values from being
+weighted to near zero.
 
-Lets look at this in action. we'll inspect 3 weight_maps, using a weight_power of 0.0, 5.0 and 10.0, 
-setting the `weight_floor` to 0.0 such that it does not change the weight map.
+Lets look at this in action. we'll inspect 3 weight_maps, using a weight_power of 0.0, 5.0 and 10.0 and
+setting the `weight_floor` to 0.0 for now.
 """
-pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=0.0),
-    mesh=al.mesh.Delaunay(),
-    regularization=al.reg.Constant(coefficient=1.0),
-)
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=0.0)
 
-source_weight_power_0 = al.Galaxy(
-    redshift=1.0,
-    pixelization=pixelization,
-)
-
-weight_power_0 = source_weight_power_0.pixelization.image_mesh.weight_map_from(
-    adapt_data=adapt_image
-)
+image_weight_power_0 = image_mesh.weight_map_from(adapt_data=adapt_image)
 
 array_plotter = aplt.Array2DPlotter(
-    array=weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
+    array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
 )
 array_plotter.figure_2d()
 
 
-pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.0),
-    mesh=al.mesh.Delaunay(),
-    regularization=al.reg.Constant(coefficient=1.0),
-)
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.0)
 
-source_weight_power_5 = al.Galaxy(
-    redshift=1.0,
-    pixelization=pixelization,
-)
-
-weight_power_5 = source_weight_power_5.pixelization.image_mesh.weight_map_from(
-    adapt_data=adapt_image
-)
+image_weight_power_5 = image_mesh.weight_map_from(adapt_data=adapt_image)
 
 array_plotter = aplt.Array2DPlotter(
-    array=weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
+    array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
 )
 array_plotter.figure_2d()
 
 
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0)
+
+image_weight_power_10 = image_mesh.weight_map_from(adapt_data=adapt_image)
+
+array_plotter = aplt.Array2DPlotter(
+    array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
+)
+array_plotter.figure_2d()
+
+"""
+When we increase the weight-power the brightest regions of the adapt-image become weighted higher relative to the 
+fainter regions. 
+
+This means that the Hilbert algorithm will adapt more pixels to the brightest regions of the source.
+
+Lets use the method to perform a fit with a weight power of 10, showing that we now get a significantly higher
+log_evidence.
+"""
 pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.Delaunay(),
@@ -264,39 +264,6 @@ source_weight_power_10 = al.Galaxy(
     redshift=1.0,
     pixelization=pixelization,
 )
-
-weight_power_10 = source_weight_power_10.pixelization.image_mesh.weight_map_from(
-    adapt_data=adapt_image
-)
-
-array_plotter = aplt.Array2DPlotter(
-    array=weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-array_plotter.figure_2d()
-
-"""
-When we increase the weight-power the brightest regions of the adapt-image become weighted higher relative to the 
-fainter regions. 
-
-This means that the KMeans algorithm will adapt its pixelization to the brightest regions of the source.
-"""
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_0])
-
-adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_power_0: adapt_image})
-
-fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
-
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_5])
-
-adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_power_5: adapt_image})
-
-fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
 
@@ -332,7 +299,7 @@ weight_floor = source_weight_floor.pixelization.image_mesh.weight_map_from(
 )
 
 array_plotter = aplt.Array2DPlotter(
-    array=weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
+    array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
 )
 array_plotter.figure_2d()
 

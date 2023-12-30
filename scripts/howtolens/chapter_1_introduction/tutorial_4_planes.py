@@ -252,7 +252,9 @@ The same API can be used to make these plots for a `PlanePLotter` as used previo
 This works for any quantity that can be plotted, below we just use a `plane_image` as an example.
 """
 plane_plotter = aplt.PlanePlotter(
-    plane=source_plane, grid=source_plane_grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    plane=source_plane,
+    grid=source_plane_grid,
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
 )
 plane_plotter.figures_2d(plane_image=True)
 

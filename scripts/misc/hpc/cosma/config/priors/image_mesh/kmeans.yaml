@@ -1,4 +1,4 @@
-KMeans:
+Hilbert:
   pixels:
     type: Uniform
     lower_limit: 50.0
