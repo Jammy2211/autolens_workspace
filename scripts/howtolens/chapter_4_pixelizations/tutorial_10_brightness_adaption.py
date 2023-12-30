@@ -114,7 +114,7 @@ Below, we define a source-galaxy using the `KMeans` image-mesh (we discuss below
 and `Delaunay` mesh and use this to fit the lens-data. 
 """
 pixelizaiton = al.Pixelization(
-    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=10.0),
+    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=0.5),
 )
@@ -187,7 +187,7 @@ This is a fairly simplistic description of a KMeans algorithm. Feel free to chec
 in-depth view:
 
  https://en.wikipedia.org/wiki/K-means_clustering
- https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+ https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Hilbert.html
 
 
 __Weight Map__
@@ -213,7 +213,7 @@ Lets look at this in action. we'll inspect 3 weight_maps, using a weight_power o
 setting the `weight_floor` to 0.0 such that it does not change the weight map.
 """
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=0.0),
+    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=0.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
@@ -234,7 +234,7 @@ array_plotter.figure_2d()
 
 
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=5.0),
+    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
@@ -255,7 +255,7 @@ array_plotter.figure_2d()
 
 
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.0, weight_power=10.0),
+    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
@@ -318,7 +318,7 @@ that the mesh can fully adapt to the source's brightest and faintest regions sim
 Lets look at once example:
 """
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.KMeans(pixels=500, weight_floor=0.5, weight_power=10.0),
+    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.5, weight_power=10.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )

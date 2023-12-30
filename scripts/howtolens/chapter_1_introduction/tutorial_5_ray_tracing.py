@@ -245,6 +245,18 @@ tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=image_plane_grid)
 tracer_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
+__Log10 Space__
+
+As discussed in previous tutorials, the light and mass profiles of galaxies are often better described in log10 space.
+
+The same API can be used to make these plots for a `TracerPLotter` as used previously.
+
+This works for any quantity that can be plotted, below we just use a `plane_image` as an example.
+"""
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=image_plane_grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+tracer_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+
+"""
 __Wrap Up__
 
 You might be wondering why do both the tracer and its image-plane have the attributes convergence / potential / 

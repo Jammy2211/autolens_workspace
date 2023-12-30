@@ -96,6 +96,22 @@ light_profile_plotter = aplt.LightProfilePlotter(
 light_profile_plotter.figures_2d(image=True)
 
 """
+The light distributions of galaxies are closer to a log10 distribution than a linear one. 
+
+This means that when we plot an image of a light profile, its appearance is better highlighted when we take the
+logarithm of its values and plot it in log10 space.
+
+The `MatPlot2D` object has an input `use_log10`, which will do this automatically when we call the `figures_2d` method.
+Below, we can see that the image plotted now appears more clearly, with the outskirts of the light profile more visible.
+"""
+light_profile_plotter = aplt.LightProfilePlotter(
+    light_profile=sersic_light_profile,
+    grid=grid,
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+)
+light_profile_plotter.figures_2d(image=True)
+
+"""
 We can also compute and plot 1D quantities of the light profile, which show how the image intensity varies as a 
 function of radius.
 
@@ -179,6 +195,16 @@ Plotting them is equally straight forward, in both 1D and 2D.
 """
 mass_profile_plottter.figures_2d(convergence=True, potential=True, magnification=True)
 mass_profile_plottter.figures_1d(convergence=True, potential=True)
+
+"""
+The convergence and potential are also quantities that are better plotted in log10 space.
+"""
+mass_profile_plottter = aplt.MassProfilePlotter(
+    mass_profile=sis_mass_profile,
+    grid=grid,
+    mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+)
+mass_profile_plottter.figures_2d(convergence=True, potential=True)
 
 """
 __Wrap Up__

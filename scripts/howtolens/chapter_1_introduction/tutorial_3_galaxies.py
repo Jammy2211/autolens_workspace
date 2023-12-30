@@ -105,6 +105,16 @@ galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy_with_3_light_profiles, grid=gr
 galaxy_plotter.figures_2d(image=True)
 
 """
+The previous tutorial discussed how the light distributions of galaxies are closer to a log10 distribution than a 
+linear one and showed a convenience method to plot the image in log10 space.
+
+When plotting multiple galaxies, plotting in log10 space makes it easier to see by how much the galaxy images
+overlap and blend with one another. 
+"""
+galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy_with_3_light_profiles, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+galaxy_plotter.figures_2d(image=True)
+
+"""
 We can also plot each individual `LightProfile` using the plotter's `subplot_of_light_profiles` method.
 """
 galaxy_plotter.subplot_of_light_profiles(image=True)
@@ -150,6 +160,12 @@ I wonder what 3 summed convergence maps or potential`s look like ;).
 """
 galaxy_plotter.figures_2d(convergence=True, potential=True)
 galaxy_plotter.figures_1d(convergence=True, potential=True)
+
+"""
+The mass distributions of galaxies are also easier to see separated in log10 space.
+"""
+galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy_with_3_mass_profile_list, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True))
+galaxy_plotter.figures_2d(convergence=True, potential=True)
 
 """
 Finally, a `Galaxy` can take both light and mass profiles, and there is no limit to how many we pass it!
