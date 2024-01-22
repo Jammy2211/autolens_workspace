@@ -253,6 +253,12 @@ fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
 fit_plotter.subplot_fit()
 
 """
+The plotter also contains a log10 subplot, which shows identical figures on a log10 colormap in order to highlight
+the fainter regions of the data.
+"""
+fit_plotter.subplot_fit_log10()
+
+"""
 We can print the fit`s attributes. As usual, we can choose whether to return the fits in slim or native format, with
 the native data's edge values all zeros, as the edges were masked:
 """

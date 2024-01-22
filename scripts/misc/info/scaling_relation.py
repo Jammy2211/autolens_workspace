@@ -32,9 +32,9 @@ $r_cut = r_cut^* (L/L^*)^{0.5}$
 
 $r_core = r_core^* (L/L^*)^{0.5}$
 
-$sigma = sigma^* (L/L^*)^{0.25}$
+$\sigma = \sigma^* (L/L^*)^{0.25}$
 
-The free parameters are therefore L^*, r_cut^*, r_core^* and sigma^*.
+The free parameters are therefore L^*, r_cut^*, r_core^* and \sigma^*.
 
 This mass model differs from the `Isothermal` profile used commonly throughout the **PyAutoLens** examples. The dPIE
 is more commonly used in strong lens cluster studies where scaling relations are used to model the lensing contribution
