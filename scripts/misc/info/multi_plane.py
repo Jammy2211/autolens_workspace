@@ -33,7 +33,7 @@ for each galaxy's mass profile.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from typing import List
+from typing import List, Optional, Union
 
 import autoarray as aa
 import autolens as al
@@ -49,16 +49,16 @@ redshifts of the galaxies.
 These two things are equivalent, but it means we need to set up the above galaxies as planes in order to perform
 multi-plane ray-tracing.
 """
-plane_0 = al.Plane(galaxies=[lens_0])
-plane_1 = al.Plane(galaxies=[lens_1])
-plane_2 = al.Plane(galaxies=[lens_2])
+galaxies_0 = al.Galaxies(galaxies=[lens_0])
+galaxies_1 = al.Galaxies(galaxies=[lens_1])
+galaxies_2 = al.Galaxies(galaxies=[lens_2])
 
 """
 __Ray Tracing__
 
-Multi-plane ray tracing is implemented in the `ray_tracing_util.py` module of the following package:
+Multi-plane ray tracing is implemented in the `tracer_util.py` module of the following package:
 
-https://github.com/Jammy2211/PyAutoLens/blob/main/autolens/lens/ray_tracing_util.py
+https://github.com/Jammy2211/PyAutoLens/blob/main/autolens/lens/tracer_util.py
 
 It uses the function `traced_grid_2d_list_from`.
 
@@ -132,36 +132,42 @@ def scaling_factor_between_redshifts_from(
 
 
 def traced_grid_2d_list_from(
-    planes: List[al.Plane],
+    planes: Union[List[List[al.Galaxy]], List[al.Galaxies]],
     grid: aa.type.Grid2DLike,
     cosmology: al.cosmo.LensingCosmology = al.cosmo.Planck15(),
-    plane_index_limit: int = None,
+    plane_index_limit: int = Optional[None],
 ):
     """
-    Performs multi-plane ray tracing on a 2D grid of Cartesian (y,x) coordinates using the mass profiles of galaxies
-    contained within an input list of `Plane` objects.
+    Returns a ray-traced grid of 2D Cartesian (y,x) coordinates which accounts for multi-plane ray-tracing.
 
-    This function returns a list of 2D (y,x) grids, corresponding to each redshift in the input list of `Planes`. For
-    example, if the `planes` list contains three `Plane` objects with `redshift`'s z0.5, z=1.0 and z=2.0, the returned
-    list of traced grids will contain three entries corresponding to the input grid after ray-tracing to
+    This uses the redshifts and mass profiles of the galaxies contained within the tracer to perform the multi-plane
+    ray-tracing calculation.
+
+    This function returns a list of 2D (y,x) grids, corresponding to each redshift in the input list of planes. The
+    plane redshifts are determined from the redshifts of the galaxies in each plane, whereby there is a unique plane
+    at each redshift containing all galaxies at the same redshift.
+
+    For example, if the `planes` list contains three lists of galaxies with `redshift`'s z0.5, z=1.0 and z=2.0, the
+    returned list of traced grids will contain three entries corresponding to the input grid after ray-tracing to
     redshifts 0.5, 1.0 and 2.0.
 
     An input `AstroPy` cosmology object can change the cosmological model, which is used to compute the scaling
     factors between planes (which are derived from their redshifts and angular diameter distances). It is these
     scaling factors that account for multi-plane ray tracing effects.
 
-    The calculation can be terminated early by inputting a `plane_index_limit`, whereby all planes whose integer
-    indexes are above this value are omitted from the calculation and not included in the returned list of grids (the
-    size of this list is reduced accordingly).
+    The calculation can be terminated early by inputting a `plane_index_limit`. All planes whose integer indexes are
+    above this value are omitted from the calculation and not included in the returned list of grids (the size of
+    this list is reduced accordingly).
 
-    For example, if `planes` has 3 `Plane` objects but `plane_index_limit=1`, the third plane (corresponding to
-    index 2) will not be calculated. The `plane_index_limit` is often used to avoid uncessary ray tracing calculations
+    For example, if `planes` has 3 lists of galaxies, but `plane_index_limit=1`, the third plane (corresponding to
+    index 2) will not be calculated. The `plane_index_limit` is used to avoid uncessary ray tracing calculations
     of higher redshift planes whose galaxies do not have mass profile (and only have light profiles).
 
     Parameters
     ----------
-    planes
-        The list of planes whose galaxies and mass profiles are used to perform multi-plane ray-tracing.
+    galaxies
+        The galaxies whose mass profiles are used to perform multi-plane ray-tracing, where the list of galaxies
+        has an index for each plane, correspond to each unique redshift in the multi-plane system.
     grid
         The 2D (y, x) coordinates on which multi-plane ray-tracing calculations are performed.
     cosmology
@@ -179,35 +185,17 @@ def traced_grid_2d_list_from(
     traced_grid_list = []
     traced_deflection_list = []
 
-    plane_redshifts = [plane.redshift for plane in planes]
+    redshift_list = [galaxies[0].redshift for galaxies in planes]
 
-    for plane_index, plane in enumerate(planes):
-        print()
-        print(f"Performing Ray-Tracing For Plane {plane_index}")
-
+    for plane_index, galaxies in enumerate(planes):
         scaled_grid = grid.copy()
 
-        print(f"Starting grid: {grid}")
-
         if plane_index > 0:
-            print(
-                "This is a multi-plane system: recursive lensing calculations being used"
-            )
-
             for previous_plane_index in range(plane_index):
-                print(
-                    f"Previous plane index being used for recursive ray-tracing: {previous_plane_index}"
-                )
-
-                scaling_factor = scaling_factor_between_redshifts_from(
-                    cosmology=cosmology,
-                    redshift_0=plane_redshifts[previous_plane_index],
-                    redshift_1=plane.redshift,
-                    redshift_final=plane_redshifts[-1],
-                )
-
-                print(
-                    f"Scaling factor for [plane indexes = {plane_index} and {previous_plane_index} : {scaling_factor}"
+                scaling_factor = cosmology.scaling_factor_between_redshifts_from(
+                    redshift_0=redshift_list[previous_plane_index],
+                    redshift_1=galaxies[0].redshift,
+                    redshift_final=redshift_list[-1],
                 )
 
                 scaled_deflections = (
@@ -216,17 +204,17 @@ def traced_grid_2d_list_from(
 
                 scaled_grid -= scaled_deflections
 
-                print(f"Updated grid after applying scaled deflections: {scaled_grid}")
-
-        print(f"Final grid: {scaled_grid}")
-
         traced_grid_list.append(scaled_grid)
 
         if plane_index_limit is not None:
             if plane_index == plane_index_limit:
                 return traced_grid_list
 
-        traced_deflection_list.append(plane.deflections_yx_2d_from(grid=scaled_grid))
+        deflections_yx_2d = sum(
+            map(lambda g: g.deflections_yx_2d_from(grid=scaled_grid), galaxies)
+        )
+
+        traced_deflection_list.append(deflections_yx_2d)
 
     return traced_grid_list
 
@@ -243,7 +231,7 @@ therefore how the multi-plane ray-tracing algorithm works.
 grid = al.Grid2DIrregular(values=[(1.0, 0.0)])
 
 traced_grid_2d_list_from(
-    planes=[plane_0, plane_1, plane_2],
+    planes=[[galaxies_0], [galaxies_1], [galaxies_2]],
     grid=grid,
 )
 

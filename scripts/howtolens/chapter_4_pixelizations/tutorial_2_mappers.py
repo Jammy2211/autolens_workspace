@@ -57,7 +57,7 @@ lens_galaxy = al.Galaxy(
     shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=grid)[1]
 
@@ -157,7 +157,7 @@ dataset_plotter.figures_2d(data=True)
 """
 To create the mapper, we need to set up the masked imaging's grid as the source-plane gird via the tracer.
 """
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
 

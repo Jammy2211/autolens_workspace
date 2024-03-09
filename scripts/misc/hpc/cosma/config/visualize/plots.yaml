@@ -17,7 +17,7 @@ positions:
 fit:
   subplot_fit: true
   subplot_of_planes: false
-  subplot_plane_images: false
+  subplot_galaxies_images: false
   subtracted_images_of_planes: false
   chi_squared_map: false
   data: false
@@ -40,7 +40,7 @@ fit_interferometer:
   dirty_signal_to_noise_map: false
   phases_vs_uv_distances: false
   uv_wavelengths: false
-ray_tracing:
+tracer:
   all_at_end_fits: false
   all_at_end_png: false
   convergence: false
@@ -49,8 +49,8 @@ ray_tracing:
   magnification: false
   potential: false
   source_plane_image: false
-  subplot_plane_images: false
-  subplot_ray_tracing: true
+  subplot_galaxies_images: false
+  subplot_tracer: true
 inversion:
   subplot_inversion: true
   errors: false                            # Plot image of the errors of every mesh-pixel reconstructed value?
@@ -78,12 +78,11 @@ fit_quantity:
   all_at_end_pdf: false                    # Plot all individual plots listed below as publication-quality .pdf (even if False)?
 adapt:
   images_of_planes: true
-  contribution_map_list: true
   model_image: true
 other:
   stochastic_histogram: false
 plane:
-  subplot_plane: true
+  subplot_galaxies: true
   subplot_galaxy_images: false
   convergence: false
   deflections: false

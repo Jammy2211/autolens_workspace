@@ -191,8 +191,17 @@ which has already performed the inversion and therefore the galaxy light profile
 """
 tracer = result_linear_light_profile.max_log_likelihood_tracer
 
-lens_bulge = print(tracer.galaxies[0].bulge.intensity)
-source_bulge = print(tracer.galaxies[1].bulge.intensity)
+print(tracer.galaxies[0].bulge.intensity)
+print(tracer.galaxies[1].bulge.intensity)
+
+"""
+Above, we access these values using the list index entry of each galaxy in the tracer. However, we may not be certain
+of the order of the galaxies in the tracer, and therefore which galaxy index corresponds to the lens and source.
+
+We can therefore use the model composition API to access these values.
+"""
+print(tracer.galaxies.lens.bulge.intensity)
+print(tracer.galaxies.source.bulge.intensity)
 
 """
 The `Tracer` contained in the `max_log_likelihood_fit` also has the solved for `intensity` values:
@@ -201,8 +210,8 @@ fit = result_linear_light_profile.max_log_likelihood_fit
 
 tracer = fit.tracer
 
-lens_bulge = print(tracer.galaxies[0].bulge.intensity)
-source_bulge = print(tracer.galaxies[1].bulge.intensity)
+print(tracer.galaxies.lens.bulge.intensity)
+print(tracer.galaxies.source.bulge.intensity)
 
 """
 __Visualization__
@@ -229,11 +238,6 @@ For example, below, we make a `Basis` out of 30 elliptical Gaussian linear light
 
  - All share the same centre and elliptical components.
  - The `sigma` size of the Gaussians increases in log10 increments.
-
-Because `log10(1.0) = 0.0` the first Gaussian `sigma` value is therefore , whereas because `log10(10) = 1.0`
-the size of the final Gaussian is a + b. This provides intuition on the scale of the Gaussians.
-
-The equation below has therefore been chosen to provide intuition on the scale of the Gaussians.
 """
 total_gaussians = 30
 
@@ -275,7 +279,7 @@ lens = al.Galaxy(
 
 source = result_linear_light_profile.instance.galaxies.source
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens, source])
+tracer = al.Tracer(galaxies=[lens, source])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 

@@ -2,10 +2,10 @@
 Tutorial 2: Profiles
 ====================
 
-This tutorial introduces `Profile` objects, specifically:
+This tutorial introduces light profile and mass objects, wherre:
 
- - `LightProfile`'s: which represent analytic forms for the light distribution of galaxies.
- - `MassProfile`'s: which represent analytic forms for the mass distributions of galaxies.
+ - `LightProfile` represents analytic forms for the light distribution of galaxies.
+ - `MassProfile`: represents analytic forms for the mass distributions of galaxies.
 
 By passing these objects 2D grids of $(y,x)$ coordinates we can create images from a light profile and deflection
 angle maps from a mass profile, the latter of which will ultimately describe how light is ray-traced throughout the
@@ -23,19 +23,19 @@ import autolens.plot as aplt
 """
 __Initial Setup__
 
-We first setup a `Grid2D`, which uses the same resolution and arc-second to pixel conversion as the previous tutorial.
+We setup a 2D grid with the same resolution and arc-second to pixel conversion as the previous tutorial.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
 """
 __Light Profiles__
 
-We now create a `LightProfile` using the `light_profile` module, which is access via `lp` for  conciseness. 
+We now create a light profile using the `light_profile` module, which is accessible via `al.lp`.
 
-We'll use the elliptical Sersic light profile (using the `Sersic` object), which is an analytic function used 
+We'll use the elliptical Sersic light profile, using the `Sersic` object, which is an analytic function used 
 throughout studies of galaxy morphology to represent their light. 
 
-You'll note that we use `Ell` to concisely describe that this profile is elliptical. If you are unsure what 
+This profile is elliptical and we'll use the `ell_comps` to describe its elliptical geometry. If you are unsure what 
 the `ell_comps` are, I'll give a description of them at the end of the tutorial.
 """
 sersic_light_profile = al.lp.Sersic(
@@ -54,19 +54,21 @@ print(sersic_light_profile)
 """
 __Images__
 
-We next pass the `Grid2D` to the `sersic_light_profile`, to compute the intensity of the Sersic at every (y,x) 
-coordinate on our two dimension grid. This uses the `image_2d_from` method, and you'll see throughout this tutorial 
-that **PyAutoLens** has numerous `_from` methods for computing quantities from a grid.
+We next pass the grid to the `sersic_light_profile`, to compute the intensity of the Sersic at every (y,x) 
+coordinate on our two dimension grid. 
+
+This uses the `image_2d_from` method, one of many `_from` methods that **PyAutoLens** uses to compute quantities from 
+a grid.
 """
 image = sersic_light_profile.image_2d_from(grid=grid)
 
 """
-Much like the `Grid2D` objects discussed in the previous tutorial, this returns an `Array2D` object:
+Similar to the `Grid2D` objects discussed in the previous tutorial, this returns an `Array2D` object:
 """
 print(type(image))
 
 """
-Just like a grid, the `Array2D` object has both `native` and `slim` attributes:
+Like the grid, the `Array2D` object has both `native` and `slim` attributes:
 """
 print("Intensity of pixel 0:")
 print(image.native[0, 0])
@@ -87,8 +89,9 @@ print(image.shape_native)
 print(image.shape_slim)
 
 """
-We can use a `LightProfilePlotter` to plot the image of a light profile. We pass this plotter the light profile and
-a grid, which are used to create the image that is plotted.
+We can use a `LightProfilePlotter` to plot the image of a light profile. 
+
+We pass this plotter the light profile and a grid, which are used to create the image that is plotted.
 """
 light_profile_plotter = aplt.LightProfilePlotter(
     light_profile=sersic_light_profile, grid=grid
@@ -102,6 +105,7 @@ This means that when we plot an image of a light profile, its appearance is bett
 logarithm of its values and plot it in log10 space.
 
 The `MatPlot2D` object has an input `use_log10`, which will do this automatically when we call the `figures_2d` method.
+
 Below, we can see that the image plotted now appears more clearly, with the outskirts of the light profile more visible.
 """
 light_profile_plotter = aplt.LightProfilePlotter(
@@ -112,8 +116,7 @@ light_profile_plotter = aplt.LightProfilePlotter(
 light_profile_plotter.figures_2d(image=True)
 
 """
-We can also compute and plot 1D quantities of the light profile, which show how the image intensity varies as a 
-function of radius.
+We can also compute and plot 1D quantities of the light profile, which show how the image intensity varies radially.
 
 1D plots use a radial grid which is aligned with the profile centre and major-axis.
 """
@@ -124,15 +127,14 @@ light_profile_plotter.figures_1d(image=True)
 """
 __Mass Profiles__
 
-To perform ray-tracing, we require `MassProfile`'s, which are created via the `mass_profile_list` module and which is 
-accessed via `mp` for conciseness. 
+To perform lensing calculations we use mass profiles using the `mass_profile` module, which is accessible via `al.mp`.
 
-A `MassProfile` is an analytic function that describes the distribution of mass in a galaxy, and therefore 
-can be used to derive its surface-density, gravitational potential and, most importantly, its deflection angles. In
-gravitational lensing, the deflection angles describe how light is deflected by the `MassProfile` due to the curvature 
-of space-time.
+A mass profile is an analytic function that describes the distribution of mass in a galaxy. It can therefore be used 
+to derive its surface-density, gravitational potential and, most importantly, its deflection angles. 
 
-You'll note that we use `Sph` to concisely describe that this profile is spherical.
+In gravitational lensing, the deflection angles describe how mass deflections light due to how it curves space-time.
+
+We use `Sph` to concisely describe that this profile is spherical.
 """
 sis_mass_profile = al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=1.6)
 
@@ -143,11 +145,11 @@ __Deflection Angles__
 
 We can again use a `from_grid_` method to compute the deflection angles of a mass profile from a grid. 
 
-The deflection angles are returned as the arc-second deflections of the grid's $(y,x)$ Cartesian components. This again 
-uses the `Grid2D``s object meaning that we can access the deflection angles via the `native` and `slim` attributes. 
+The deflection angles are returned as the arc-second deflections of the grid's $(y,x)$ Cartesian components. As seen
+for grids and arrays, we can access the deflection angles via the `native` and `slim` attributes. 
 
-(If you are still unclear what exactly a deflection angle means or how it will help us with gravitational lensing,
-things should become a lot clearer in tutorial 4 of this chapter. For now, just look at the pretty pictures they make!).
+In anything is unclear, in tutorial 4 it will become clear how these deflection angles are used to perform strong 
+gravitational lensing calculations.
 """
 mass_profile_deflections_yx_2d = sis_mass_profile.deflections_yx_2d_from(grid=grid)
 
@@ -158,9 +160,12 @@ print(mass_profile_deflections_yx_2d.slim[1])
 print()
 
 """
-A `MassProfilePlotter` can plot the deflection angles.
+A `MassProfilePlotter` can plot the deflection angles, which are plotted separately for the y and x components.
 
-(The black and white lines are called the `critical curve` and `caustic`. we'll cover what these are in a later tutorial.)
+Overlaid on this figure and many other mass profile figures are yellow and white lines, which are called 
+the "critical curves".  
+
+These are an important concept in lensing, and we will explain what they are in tutorial 5.
 """
 mass_profile_plottter = aplt.MassProfilePlotter(
     mass_profile=sis_mass_profile, grid=grid
@@ -170,28 +175,27 @@ mass_profile_plottter.figures_2d(deflections_y=True, deflections_x=True)
 """
 __Other Properties__
 
-`MassProfile`'s have a range of other properties that are used for lensing calculations, a couple of which we've plotted 
-images of below:
+Mass profiles have a range of other properties that are used for lensing calculations:
 
  - `convergence`: The surface mass density of the mass profile in dimensionless units.
- - `potential`: The gravitational of the mass profile again in convenient dimensionless units.
- - `agnification`: Describes how much brighter each image-pixel appears due to focusing of light rays.
+ - `potential`: The "lensing potential" of the mass profile in dimensionless units.
+ - `magnification`: How much brighter light ray appear due to magnification and the focusing of light rays.
 
-Extracting `Array2D`'s of these quantities from **PyAutoLens** is exactly the same as for the image and deflection 
-angles above.
+These can all be calculated using the `*_from` methods and are returned as `Array2D`'s.
 """
 convergence_2d = sis_mass_profile.convergence_2d_from(grid=grid)
 potential_2d = sis_mass_profile.potential_2d_from(grid=grid)
 magnification_2d = sis_mass_profile.magnification_2d_from(grid=grid)
 
 """
-There are also one dimensional versions of these quantities, which are computed on an annular radial grid.
+One dimensional versions of these quantities can also be computed showing how they vary radially from the centre of the
+profile.
 """
 convergence_1d = sis_mass_profile.convergence_1d_from(grid=grid)
 potential_1d = sis_mass_profile.potential_1d_from(grid=grid)
 
 """
-Plotting them is equally straight forward, in both 1D and 2D.
+The same plotter API used previous can be used to plot these quantities.
 """
 mass_profile_plottter.figures_2d(convergence=True, potential=True, magnification=True)
 mass_profile_plottter.figures_1d(convergence=True, potential=True)
@@ -205,6 +209,14 @@ mass_profile_plottter = aplt.MassProfilePlotter(
 mass_profile_plottter.figures_2d(convergence=True, potential=True)
 
 """
+This tutorial has introduced a number of lensing quantities and you may be unsure what they and what their use is,
+for example the critical curves, convergence, potential and magnification.
+
+These will be described in detail at the end of chapter 1 of the **HowToLens** lectures. 
+
+Before we get there, the tutorials will first focus on using just the deflection angles of mass profiles to illustrate 
+how gravitational lensing ray-tracing works.
+
 __Wrap Up__
 
 Congratulations, you`ve completed your second **PyAutoLens** tutorial! 

@@ -111,7 +111,7 @@ def simulate_for_source_galaxy(source_galaxy):
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
     simulator = al.SimulatorImaging(
         exposure_time=300.0,
@@ -175,7 +175,7 @@ def fit_with_delaunay_from(dataset, mask, coefficient):
 
     source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
     return al.FitImaging(dataset=dataset, tracer=tracer)
 

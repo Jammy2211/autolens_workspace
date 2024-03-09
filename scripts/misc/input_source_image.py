@@ -63,7 +63,7 @@ lens = al.Galaxy(
 )
 source = al.Galaxy(redshift=1.0)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens, source])
+tracer = al.Tracer(galaxies=[lens, source])
 
 """
 Ray-trace the image-plane grid to the source-plane.

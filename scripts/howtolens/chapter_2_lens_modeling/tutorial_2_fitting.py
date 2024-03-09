@@ -202,7 +202,7 @@ source_galaxy = al.Galaxy(
 )
 
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=dataset.grid)
 tracer_plotter.figures_2d(image=True)
@@ -326,7 +326,7 @@ source_galaxy = al.Galaxy(
 )
 
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
 By plotting the fit, we see that residuals now appear at the location of the galaxy, increasing the chi-squared values 
@@ -370,7 +370,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit_very_bad = al.FitImaging(dataset=dataset, tracer=tracer)
 
@@ -430,6 +430,16 @@ print(-0.5 * (fit.chi_squared + fit.noise_normalization))
 print(fit.log_likelihood)
 
 """
+__Likelihood Function__
+
+When performing a fit we compute a value of `log_likelihood`, which is computed by calling the **PyAutoLens**
+likelihood function -- a term used in statistics to describe how one fits a model to data.
+
+This tutorial has likely given you a clear idea of how the likelihood is evaluated, however a more detailed 
+step-by-step visual guide is provided at `autolens_workspace/*/imaging/log_likelihood_function/parametric.ipynb`.
+
+I recommend you give this notebook a read through, in order to further clarify how a galaxy model is fitted to data.
+
 __Wrap Up__
 
 Congratulations, you`ve fitted your first strong lens! Perform the following exercises:

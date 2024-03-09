@@ -58,11 +58,12 @@ print("etc.")
 """
 __Data Structure__
 
-Above, you may have noted that we use the `native` attribute of the grid to print its $(y,x)$ coordinates. Every 
-`Grid2D` object is accessible via two attributes, `native` and `slim`, which store the grid as NumPy ndarrays of two 
-different shapes:
+Above we use the `native` attribute of the grid to print its $(y,x)$ coordinates. 
+
+Every `Grid2D` object is accessible via two attributes, `native` and `slim`, which store the grid as NumPy ndarrays 
+of two different shapes:
  
- - `native`: an ndarray of shape [total_y_image_pixels, total_x_image_pixels, 2], which is the native shape of the 
+ - `native`: an ndarray of shape [total_y_image_pixels, total_x_image_pixels, 2] which is the native shape of the 
  2D grid and corresponds to the resolution of the image datasets we pair with a grid.
  
  - `slim`: an ndarray of shape [total_y_image_pixels*total_x_image_pixels, 2] which is a slimmed-down representation 
@@ -74,9 +75,11 @@ print("(y,x) pixel 0 (accessed via slim 1D):")
 print(grid.slim[0])
 
 """
-Currently, it is unclear why there is a need for a `slim` representation of the grid (as the native representation 
-contains all the information about the grid in a structure that is more representative of the grid itself). This will 
-become apparent throughout the **HowToLens** lectures, so for now don't worry about it! 
+It may be unclear why there is a need for a `slim` representation of the grid (as the native representation 
+contains all the information about the grid in a more representative format. 
+
+The reason for the `slim` representation will become apparent later in the **HowToLens** lectures, so for now don't 
+worry about it! 
 
 The shapes of the `Grid2D` in its `native` and `slim` formats are also available, confirming that this grid has a 
 `native` resolution of (100 x 100) and a `slim` resolution of 10000 coordinates.
@@ -85,12 +88,14 @@ print(grid.shape_native)
 print(grid.shape_slim)
 
 """
-Note that neither of the shapes above include the third index of the `Grid` which has dimensions 2 (corresponding to 
-the y and x coordinates). This is accessible by using the standard numpy `shape` method on each grid.
+Neither shape above include the third index of the `Grid` which has dimensions 2 (corresponding to the y and x 
+coordinates). 
 
-This is worth noting, as we will introduce addition data structures throughout the tutorials which use the same
-`native` and `slim` notation but may not include this final dimension of size 2. This means that the `shape_native`
-and `shape_slim` attributes can be used to compare the shapes of different data structures in a common format.
+This is accessible by using the standard numpy `shape` method on each grid.
+
+The next tutorial will introduce addition data structures which use the same `native` and `slim` notation but do not 
+include this final dimension of size 2. The `shape_native` and `shape_slim` attributes therefore mean different 
+data structures share a common format.
 """
 print(grid.native.shape)
 print(grid.slim.shape)
@@ -104,8 +109,9 @@ print(grid.slim)
 """
 __Wrap Up__
 
-Congratulations, you`ve completed your first **PyAutoLens** tutorial! Before moving on to the next one, experiment with 
-**PyAutoLens** by doing the following:
+Congratulations, you`ve completed your first **PyAutoLens** tutorial! 
+
+Before moving on to the next one, experiment with **PyAutoLens** by doing the following:
 
 1) Change the pixel-scale of the `Grid2D`'s: what happens to the arc-second's grid of coordinates?
 2) Change the resolution of the `Grid2D`'s: what happens to the arc-second's grid of coordinates?

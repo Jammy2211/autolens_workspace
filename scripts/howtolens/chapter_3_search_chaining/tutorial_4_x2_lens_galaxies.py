@@ -176,7 +176,7 @@ right_lens.bulge.centre_1 = 1.0
 model_2 = af.Collection(
     galaxies=af.Collection(
         left_lens=result_1.instance.galaxies.left_lens, right_lens=right_lens
-    )
+    ),
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
@@ -251,7 +251,7 @@ model_3 = af.Collection(
         left_lens=left_lens,
         right_lens=right_lens,
         source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.Exponential),
-    )
+    ),
 )
 
 analysis_3 = al.AnalysisImaging(dataset=dataset)
@@ -331,7 +331,7 @@ model_4 = af.Collection(
         left_lens=left_lens,
         right_lens=right_lens,
         source=af.Model(al.Galaxy, redshift=1.0, bulge=source_bulge),
-    )
+    ),
 )
 
 analysis_4 = al.AnalysisImaging(dataset=dataset)

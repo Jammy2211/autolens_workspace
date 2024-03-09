@@ -27,40 +27,23 @@ import autolens as al
 import autolens.plot as aplt
 
 """
-__Initial Setup__
+__Start__
 
-The `dataset_path` specifies where we load the dataset from, which is the directory 
-`autolens_workspace/dataset/imaging/howtolens/`.
-"""
-dataset_path = path.join("dataset", "imaging", "howtolens")
-
-"""
-Below, we do all the steps we have learned this chapter, making profiles, galaxies, a tracer, fitting dat, etc. 
+Below, we do all the steps we have learned this chapter, making profiles, galaxies, a tracer, etc. 
 
 Note that in this tutorial, we omit the lens galaxy's light and include two light profiles in the source representing a
 `bulge` and `disk`.
 """
-dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    pixel_scales=0.1,
-)
+grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
-)
-
-dataset = dataset.apply_mask(mask=mask)
-
-lens_galaxy = al.Galaxy(
+lens = al.Galaxy(
     redshift=0.5,
     mass=al.mp.Isothermal(
         centre=(0.0, 0.0), einstein_radius=1.6, ell_comps=(0.17647, 0.0)
     ),
 )
 
-source_galaxy = al.Galaxy(
+source = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.Sersic(
         centre=(0.1, 0.1),
@@ -78,55 +61,50 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
-
-fit = al.FitImaging(dataset=dataset, tracer=tracer)
+tracer = al.Tracer(galaxies=[lens, source])
 
 """
 __Object Composition__
 
 Lets now consider how all of the objects we've covered throughout this chapter (`LightProfile`'s, `MassProfile`'s,
-`Galaxy`'s, `Plane`'s, `Tracer`'s) come together in a `FitImaging` object.
+`Galaxy`'s, `Plane`'s, `Tracer`'s) come together.
 
-The fit contains the `Tracer`, which contains the `Planes`, which contains the `Galaxy`'s which contains 
-the `Profile`'s:
+The `Tracer`, which contains planes of `Galaxies`, which contains the `Galaxy`'s which contains the `Profile`'s:
 """
-print(fit)
+print(tracer)
 print()
-print(fit.tracer)
+print(tracer.planes[0])
 print()
-print(fit.tracer.image_plane)
+print(tracer.planes[1])
 print()
-print(fit.tracer.source_plane)
+print(tracer.planes[0])
 print()
-print(fit.tracer.image_plane.galaxies[0])
+print(tracer.planes[1])
 print()
-print(fit.tracer.source_plane.galaxies[0])
+print(tracer.planes[0][0].mass)
 print()
-print(fit.tracer.image_plane.galaxies[0].mass)
+print(tracer.planes[1][0].bulge)
 print()
-print(fit.tracer.source_plane.galaxies[0].bulge)
-print()
-print(fit.tracer.source_plane.galaxies[0].disk)
+print(tracer.planes[1][0].disk)
 print()
 
 """
-Once we have a `FitImaging` object, we can therefore use any of the `Plotter` objects throughout this chapter to plot
-any specific aspect of the fit, whether it be a profile, galaxy, plane or tracer. 
+Once we have a tracer we can therefore use any of the `Plotter` objects throughout this chapter to plot
+any specific aspect, whether it be a profile, galaxy, galaxies or tracer. 
 
 For example, if we want to plot the image of the source galaxy's bulge and disk, we can do this in a variety of 
 different ways.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=fit.tracer, grid=dataset.grid)
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
 tracer_plotter.figures_2d(image=True)
 
-source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
-plane_plotter = aplt.PlanePlotter(plane=tracer.source_plane, grid=source_plane_grid)
-plane_plotter.figures_2d(image=True)
-
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=fit.tracer.source_plane.galaxies[0], grid=source_plane_grid
+source_plane_grid = tracer.traced_grid_2d_list_from(grid=grid)[1]
+galaxies_plotter = aplt.GalaxiesPlotter(
+    galaxies=tracer.planes[1], grid=source_plane_grid
 )
+galaxies_plotter.figures_2d(image=True)
+
+galaxy_plotter = aplt.GalaxyPlotter(galaxy=tracer.planes[1], grid=source_plane_grid)
 galaxy_plotter.figures_2d(image=True)
 
 """
@@ -136,16 +114,16 @@ Understanding how these objects decompose into the different components of a str
 As the strong lens systems that we analyse become more complex, it is useful to know how to decompose their light 
 profiles, mass profiles, galaxies and planes to extract different pieces of information about the strong lens. For 
 example, we made our source-galaxy above with two light profiles, a `bulge` and `disk`. We can plot the lensed image of 
-each component individually, now that we know how to break-up the different components of the fit and tracer.
+each component individually, now that we know how to break-up the different components of the tracer.
 """
 light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=fit.tracer.source_plane.galaxies[0].bulge, grid=source_plane_grid
+    light_profile=tracer.planes[1][0].bulge, grid=source_plane_grid
 )
 light_profile_plotter.set_title("Bulge Image")
 light_profile_plotter.figures_2d(image=True)
 
 light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=fit.tracer.source_plane.galaxies[0].disk, grid=source_plane_grid
+    light_profile=tracer.planes[1][0].disk, grid=source_plane_grid
 )
 light_profile_plotter.set_title("Disk Image")
 light_profile_plotter.figures_2d(image=True)
@@ -153,7 +131,7 @@ light_profile_plotter.figures_2d(image=True)
 """
 __Visualization__
 
-Furthermore, using the `MatPLot2D`, `Visuals2D` and `Include2D` objects visualize any aspect of a fit we're interested 
+Furthermore, using the `MatPLot2D`, `Visuals2D` and `Include2D` objects visualize any aspect we're interested 
 in and fully customize the figure. 
 
 Before beginning chapter 2 of **HowToLens**, you should checkout the package `autolens_workspace/plot`. This provides a 
@@ -171,10 +149,8 @@ include = aplt.Include2D(
     origin=True, mask=True, border=True, light_profile_centres=True
 )
 
-tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(
-    grid=fit.grid
-)
-radial_critical_curve_list = tracer.radial_critical_curve_list_from(grid=fit.grid)
+tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
+radial_critical_curve_list = tracer.radial_critical_curve_list_from(grid=grid)
 
 visuals = aplt.Visuals2D(
     tangential_critical_curves=tangential_critical_curve_list,
@@ -182,7 +158,7 @@ visuals = aplt.Visuals2D(
 )
 
 light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=fit.tracer.source_plane.galaxies[0].bulge,
+    light_profile=tracer.planes[1][0].bulge,
     grid=source_plane_grid,
     mat_plot_2d=mat_plot,
     include_2d=include,
@@ -227,16 +203,6 @@ https://pyautolens.readthedocs.io/en/latest/installation/source.html
 
 We take a lot of pride in our source code, so I can promise you its well written, well documented and thoroughly 
 tested (check out the `test` directory if you're curious how to test code well!).
-
-__Likelihood Function__
-
-When performing a fit we compute a value of `log_likelihood`, which is computed by calling the **PyAutoGalax**
-likelihood function -- a term used in statistics to describe how one fits a model to data.
-
-This tutorial has likely given you a clear idea of how the likelihood is evaluated, however a more detailed 
-step-by-step visual guide is provided at `autolens_workspace/*/imaging/log_likelihood_function/parametric.ipynb`.
-
-I recommend you give this notebook a read through, in order to further clarify how a galaxy model is fitted to data.
 
 __Wrap Up__
 

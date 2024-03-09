@@ -54,7 +54,7 @@ lens_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy])
 
 """
 __Dataset__

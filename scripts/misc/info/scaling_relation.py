@@ -301,8 +301,7 @@ function correctly).
 However, to ensure results are easier to interpret we keep them separate.
 """
 model = af.Collection(
-    galaxies=af.Collection(lens=lens, source=source),
-    clumps=af.Collection(clump_galaxy_list),
+    galaxies=af.Collection(lens=lens, source=source) + af.Collection(clump_galaxy_list),
 )
 
 """

@@ -1,6 +1,6 @@
 {
     "type": "instance",
-    "class_path": "autolens.lens.ray_tracing.Tracer",
+    "class_path": "autolens.lens.tracer.Tracer",
     "arguments": {
         "planes": {
             "type": "list",

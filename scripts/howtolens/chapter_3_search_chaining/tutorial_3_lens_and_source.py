@@ -124,7 +124,7 @@ We use linear light profiles througout this script, given that the model is quit
 simplify it.
 """
 model_1 = af.Collection(
-    galaxies=af.Collection(lens=af.Model(al.Galaxy, redshift=0.5, bulge=al.lp.Sersic))
+    galaxies=af.Collection(lens=af.Model(al.Galaxy, redshift=0.5, bulge=al.lp.Sersic)),
 )
 
 """
@@ -230,7 +230,7 @@ model_2 = af.Collection(
             shear=al.mp.ExternalShear,
         ),
         source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.Sersic),
-    )
+    ),
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
@@ -312,7 +312,7 @@ model_3 = af.Collection(
         source=af.Model(
             al.Galaxy, redshift=1.0, bulge=result_2.model.galaxies.source.bulge
         ),
-    )
+    ),
 )
 
 analysis_3 = al.AnalysisImaging(dataset=dataset)

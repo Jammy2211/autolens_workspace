@@ -67,10 +67,13 @@ The number of free parameters and therefore the dimensionality of non-linear par
 model_1 = af.Collection(
     galaxies=af.Collection(
         lens=af.Model(
-            al.Galaxy, redshift=0.5, mass=al.mp.Isothermal, shear=al.mp.ExternalShear
+            al.Galaxy,
+            redshift=0.5,
+            mass=al.mp.Isothermal,
+            shear=al.mp.ExternalShear,
         ),
         source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.Sersic),
-    )
+    ),
 )
 
 search_1 = af.Nautilus(
@@ -137,7 +140,7 @@ model_2 = af.Collection(
                 regularization=al.reg.Constant,
             ),
         ),
-    )
+    ),
 )
 
 search_2 = af.Nautilus(
@@ -221,7 +224,7 @@ model_3 = af.Collection(
             redshift=1.0,
             pixelization=result_2.instance.galaxies.source.pixelization,
         ),
-    )
+    ),
 )
 
 search_3 = af.Nautilus(

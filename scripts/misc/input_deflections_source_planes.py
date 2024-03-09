@@ -137,14 +137,16 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
 tracer_plotter.figures_2d(image=True)
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=grid)[-1]
 
-plane_plotter = aplt.PlanePlotter(plane=tracer.source_plane, grid=source_plane_grid)
-plane_plotter.figures_2d(plane_image=True)
+galaxies_plotter = aplt.GalaxiesPlotter(
+    plane=tracer.source_plane, grid=source_plane_grid
+)
+galaxies_plotter.figures_2d(plane_image=True)
 
 """
 We also apply this mask to our `Imaging` data and fit it using the standard PyAutoLens fitting API.

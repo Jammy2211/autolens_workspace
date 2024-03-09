@@ -69,7 +69,7 @@ lens_galaxy = al.Galaxy(
     shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
 
@@ -164,7 +164,7 @@ lens_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
+tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
 
@@ -237,7 +237,7 @@ pixelization = al.Pixelization(
 
 source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
 Then, like before, we pass the imaging and tracer `FitImaging` object. 

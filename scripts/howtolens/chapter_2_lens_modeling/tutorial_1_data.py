@@ -50,7 +50,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
 Lets look at the tracer's image, which is the image we'll be simulating.

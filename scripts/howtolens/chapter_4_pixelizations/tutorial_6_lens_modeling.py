@@ -71,7 +71,7 @@ def perform_fit_with_lens__source_galaxy(dataset, lens_galaxy, source_galaxy):
 
     dataset = dataset.apply_mask(mask=mask)
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
     return al.FitImaging(dataset=dataset, tracer=tracer)
 
@@ -251,7 +251,7 @@ pixelization = al.Pixelization(
 
 source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
 This fit will now subtract the lens galaxy's light from the image and fits the resulting source-only image with the 
@@ -282,7 +282,7 @@ lens_galaxy = al.Galaxy(
     mass=al.mp.Isothermal(centre=(0.0, 0.0), ell_comps=(0.1, 0.0), einstein_radius=1.6),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 

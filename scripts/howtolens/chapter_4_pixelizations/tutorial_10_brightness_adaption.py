@@ -77,7 +77,7 @@ pixelization = al.Pixelization(
 
 source_galaxy_magnification = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy_magnification])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy_magnification])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
@@ -137,7 +137,7 @@ We now fit using this adapt image and mesh using the normal API.
 Note however that the `FitImaging` object receives the `adapt_images` as an input and they are used when
 setting up the image-mesh and mesh.
 """
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, galaxy_adapt])
+tracer = al.Tracer(galaxies=[lens_galaxy, galaxy_adapt])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
@@ -265,7 +265,7 @@ source_weight_power_10 = al.Galaxy(
     pixelization=pixelization,
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_power_10])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_weight_power_10])
 
 adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_power_10: adapt_image})
 
@@ -303,7 +303,7 @@ array_plotter = aplt.Array2DPlotter(
 )
 array_plotter.figure_2d()
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_weight_floor])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_weight_floor])
 
 adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_floor: adapt_image})
 

@@ -279,16 +279,12 @@ parameters do not use the default priors we saw in search 1 (which are typically
 they use GaussianPrior`s where:
 
  - The mean values are the median PDF results of every parameter in search 1.
- - Some sigma values are the errors computed at 3.0 sigma confidence of every parameter in search 1.
- - Other sigma values are higher than the errors computed at 3.0 sigma confidence. These instead use the value 
- specified in the `width_modifier` field of the `Profile`'s entry in the `priors` '.json' config files (we will discuss
- why this is used in a moment).
+ - The sigma values are specified in the `width_modifier` field of the profile's entry in the `priors.yaml' config 
+   file (we will discuss why this is used in a moment).
 
-Thus, like the manual `GaussianPrior`'s that were used in tutorial 1, the prior passing API sets up the prior on each 
+Like the manual `GaussianPrior`'s that were used in tutorial 1, the prior passing API sets up the prior on each 
 parameter with a `GaussianPrior` centred on the high likelihood regions of parameter space!
-"""
 
-"""
 __Detailed Explanation Of Prior Passing__
 
 To end, I provide a detailed overview of how prior passing works and illustrate tools that can be used to customize
@@ -296,46 +292,34 @@ its behaviour. It is up to you whether you want read this, or go ahead to the ne
 
 Lets say I chain two parameters as follows:
  
- ```
- mass.einstein_radius = result_1.model.galaxies.lens.mass.einstein_radius
-```
+ `mass.einstein_radius = result_1.model.galaxies.lens.mass.einstein_radius`
 
 By invoking the `model` attribute, the prior is passed following 3 rules:
 
- 1) The new parameter, in this case the einstein radius, uses a `GaussianPrior`. A `GaussianPrior` is ideal, as the 1D 
- pdf results we compute at the end of a search are easily summarized as a Gaussian.
+ 1) The new parameter, in this case the einstein radius, uses a `GaussianPrior`.This is ideal, as the 1D pdf results 
+ we compute at the end of a search are easily summarized as a Gaussian.
 
  2) The mean of the `GaussianPrior` is the median PDF value of the parameter estimated in search 1.
     
  This ensures that the initial sampling of the new search's non-linear starts by searching the region of non-linear 
- parameter space that correspond to highest log likelihood solutions in the previous search. Thus, we're setting 
- our priors to look in the `correct` regions of parameter space.
+ parameter space that correspond to highest log likelihood solutions in the previous search. Our priors therefore 
+ correspond to the `correct` regions of parameter space.
 
- 3) The sigma of the Gaussian will use the maximum of two values: 
-   
- (i) the 1D error of the parameter computed at an input sigma value (default sigma=3.0).
- 
- (ii) The value specified for the profile in the `config/priors/*.json` config file's `width_modifer` 
- field (check these files out now).
+ 3) The sigma of the Gaussian uses the value specified for the profile in the `config/priors/*.yaml` config file's 
+ `width_modifer` field (check these files out now).
 
 The idea here is simple. We want a value of sigma that gives a `GaussianPrior` wide enough to search a broad 
 region of parameter space, so that the lens model can change if a better solution is nearby. However, we want it 
 to be narrow enough that we don't search too much of parameter space, as this will be slow or risk leading us 
-into an incorrect solution! A natural choice is the errors of the parameter from the previous search.
-       
-Unfortunately, this doesn't always work. Lens modeling is prone to an effect called `over-fitting` where the errors on 
-the lens model parameters is underestimated. This is especially true when we take the shortcuts in early searches, e.g. 
-fast non-linear search settings, fitting simplified lens models, etc.
-    
-Therefore, the `width_modifier` in the `priors/*.json` config files are our fallback. If the error on a parameter is 
-suspiciously small, we instead use the value specified in the widths file. These values are chosen based on our 
-experience as being a good balance broadly sampling parameter space but not being so narrow important solutions 
-are missed. 
+into an incorrect solution! 
+
+The `width_modifier` values in the priors config file have been chosen based on our experience as being a good
+balance broadly sampling parameter space but not being so narrow important solutions are missed.
        
 There are two ways a value is specified using the priors/width file:
 
  1) Absolute: In this case, the error assumed on the parameter is the value given in the config file. 
- For example, if for the width on centre_0 of a `LightProfile`, the width modifier reads "Absolute" with a value 
+ For example, if for the width on centre_0 of a light profile, the width modifier reads "Absolute" with a value 
  0.05. This means if the error on the parameter centre_0 was less than 0.05 in the previous search, the sigma of 
  its `GaussianPrior` in this search will be 0.05.
     
@@ -360,25 +344,20 @@ We can customize how priors are passed from the results of a search and non-line
 __EXAMPLE__
 
 Lets go through an example using a real parameter. Lets say in search 1 we fit the lens galaxy's light with an 
-elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0 ± 2.0 where the error value of 2.0 
-was computed at 3.0 sigma confidence. To pass this as a prior to search 2, we would write:
+elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0.
+ 
+To pass this as a prior to search 2 we write:
 
  lens.bulge.sersic_index = result_1.model.lens.bulge.sersic_index
 
-The prior on the lens galaxy's sersic `LightProfile` in search 2 would thus be a `GaussianPrior`, with mean=4.0 and 
-sigma=2.0. If we had used a sigma value of 1.0 to compute the error, which reduced the estimate from 4.0 ± 2.0 to 
-4.0 ± 1.0, the sigma of the Gaussian prior would instead be 1.0. 
+The prior on the lens galaxy's bulge sersic index in search 2 would thus be a `GaussianPrior` with mean=4.0. 
 
-If the error on the Sersic index in search 1 had been really small, lets say, 0.01, we would instead use the value of 
-the Sersic index width in the priors config file to set sigma instead. In this case, the prior config file specifies 
+The value of the Sersic index `width_modifier` in the priors config file sets sigma. The prior config file specifies 
 that we use an "Absolute" value of 0.8 to chain this prior. Thus, the `GaussianPrior` in search 2 would have a 
 mean=4.0 and sigma=0.8.
 
 If the prior config file had specified that we use an relative value of 0.8, the GaussianPrior in search 2 would have a 
-mean=4.0 and sigma=3.2.
+mean=4.0 and sigma = 4.0 * 0.8 = 3.2.
 
-And with that, we're done. Chaining priors is a bit of an art form, but one that works really well. Its true to say 
-that things can go wrong, maybe we `trim` out the solution we're looking for, or underestimate our errors due to making 
-our priors too narrow. However, in general, things are okay, and the example pipelines in `autolens_workspace/pipelines` 
-have been thoroughly tested to ensure search chaining works effectively.
+And with that, we're done. Chaining priors is a bit of an art form, but one that works really well. 
 """

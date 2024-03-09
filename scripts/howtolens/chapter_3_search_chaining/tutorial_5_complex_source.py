@@ -92,7 +92,7 @@ model_1 = af.Collection(
     galaxies=af.Collection(
         lens=af.Model(al.Galaxy, redshift=0.5, mass=al.mp.Isothermal),
         source=af.Model(al.Galaxy, redshift=1.0, bulge_0=al.lp_linear.Sersic),
-    )
+    ),
 )
 
 """
@@ -135,7 +135,7 @@ model_2 = af.Collection(
             bulge_0=result_1.model.galaxies.source.bulge_0,
             bulge_1=al.lp_linear.Sersic,
         ),
-    )
+    ),
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
@@ -171,7 +171,7 @@ model_3 = af.Collection(
             bulge_1=result_2.model.galaxies.source.bulge_1,
             bulge_2=al.lp_linear.Sersic,
         ),
-    )
+    ),
 )
 
 analysis_3 = al.AnalysisImaging(dataset=dataset)
@@ -208,7 +208,7 @@ model_4 = af.Collection(
             bulge_2=result_3.model.galaxies.source.bulge_2,
             bulge_3=al.lp_linear.Sersic,
         ),
-    )
+    ),
 )
 
 analysis_4 = al.AnalysisImaging(dataset=dataset)
@@ -279,7 +279,7 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 true_fit = al.FitImaging(dataset=dataset, tracer=tracer)
 

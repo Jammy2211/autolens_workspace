@@ -357,14 +357,6 @@ The `output` folder includes:
  - `search_internal`: Internal files of the non-linear search (in this case Nautilus) used for resuming the fit and
   visualizing the search.
 
-NOTE: `Nautilus` does not currently support `iterations_per_update` and therefore on-the-fly output of results
-is disabled. However, you can output the best-fit results by cancelling the job (Ctrl + C for Python script,
-kill cell for Jupyter notebook) and restarting. 
-
-Nautilus produces a significant improvement to lens modeling over other libraries (e.g. Dynesty, MultiNest, Emcee) 
-therefore although on-the-fly output is not natively supported, we switched it to the default fitter given the 
-significantly improved model-fits. 
-
 __Result Info__
 
 A concise readable summary of the results is given by printing its `info` attribute.

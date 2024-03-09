@@ -68,7 +68,7 @@ def fit_via_source_galaxy_from(dataset, source_galaxy, adapt_images=None):
         shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
     return al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 

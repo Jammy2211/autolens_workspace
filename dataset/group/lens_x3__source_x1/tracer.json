@@ -1,5 +1,5 @@
 {
-    "type": "autolens.lens.ray_tracing.Tracer",
+    "type": "autolens.lens.tracer.Tracer",
     "planes": [
         {
             "type": "autogalaxy.plane.plane.Plane",

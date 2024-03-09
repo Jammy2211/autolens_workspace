@@ -234,7 +234,7 @@ class AnalysisImaging(af.Analysis):
         like this.        
         """
 
-        tracer = al.Tracer.from_galaxies(
+        tracer = al.Tracer(
             galaxies=instance.galaxies,
             cosmology=self.cosmology,
         )
@@ -456,7 +456,7 @@ class AnalysisShearCatalogue(af.Analysis):
         For this example, its very easy to compute the model shear field as the `Tracer` object already has this
         functionality built in.   
         """
-        tracer = al.Tracer.from_galaxies(
+        tracer = al.Tracer(
             galaxies=instance.galaxies,
             cosmology=self.cosmology,
         )

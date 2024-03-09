@@ -104,7 +104,7 @@ def perform_fit_with_source_galaxy_mask_and_border(
         shear=al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05),
     )
 
-    tracer = al.Tracer.from_galaxies(galaxies=[lens_galaxy, source_galaxy])
+    tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
     return al.FitImaging(
         dataset=dataset, tracer=tracer, settings_inversion=settings_inversion
@@ -329,9 +329,7 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
         ),
     )
 
-    tracer = al.Tracer.from_galaxies(
-        galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy]
-    )
+    tracer = al.Tracer(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
 
     return al.FitImaging(
         dataset=dataset, tracer=tracer, settings_inversion=settings_inversion
