@@ -391,8 +391,8 @@ fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
 fit_plotter.subplot_fit()
 
 """
-The Probability Density Functions (PDF's) of the results can be plotted using Nautilus's in-built visualization 
-library, which is wrapped via the `NautilusPlotter` object.
+The Probability Density Functions (PDF's) of the results can be plotted using an in-built visualization 
+library, which is wrapped via the `NestPlotter` object.
 
 The PDF shows the 1D and 2D probabilities estimated for every parameter after the model-fit. The two dimensional 
 figures can show the degeneracies between different parameters, for example how increasing the intensity $I$ of the
@@ -406,7 +406,7 @@ parameter `n`). These mappings ate specified in the `config/notation.yaml` file 
 The superscripts of labels correspond to the name each component was given in the model (e.g. for the `Isothermal`
 mass its name `mass` defined when making the `Model` above is used).
 """
-search_plotter = aplt.NautilusPlotter(samples=result.samples)
+search_plotter = aplt.NestPlotter(samples=result.samples)
 search_plotter.cornerplot()
 
 """

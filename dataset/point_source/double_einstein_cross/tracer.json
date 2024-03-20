@@ -1,90 +1,103 @@
 {
-    "type": "autolens.lens.tracer.Tracer",
-    "planes": [
-        {
-            "type": "autogalaxy.plane.plane.Plane",
-            "galaxies": [
+    "type": "instance",
+    "class_path": "autolens.lens.tracer.Tracer",
+    "arguments": {
+        "galaxies": {
+            "type": "list",
+            "values": [
                 {
-                    "mass": {
-                        "type": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
-                        "centre": [
-                            0.0,
-                            0.0
-                        ],
-                        "ell_comps": [
-                            0.05263157894736841,
-                            3.2227547345982974e-18
-                        ],
-                        "einstein_radius": 1.6
-                    },
-                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
-                    "redshift": 0.5
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                            "arguments": {
+                                "einstein_radius": 1.6,
+                                "ell_comps": [
+                                    0.05263157894736841,
+                                    3.2227547345982974e-18
+                                ],
+                                "centre": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 1.0,
+                        "label": null,
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                            "arguments": {
+                                "einstein_radius": 0.2,
+                                "ell_comps": [
+                                    0.0962250448649376,
+                                    -0.05555555555555551
+                                ],
+                                "centre": [
+                                    0.02,
+                                    0.03
+                                ]
+                            }
+                        },
+                        "light": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.exponential.Exponential",
+                            "arguments": {
+                                "ell_comps": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "intensity": 0.1,
+                                "centre": [
+                                    0.02,
+                                    0.03
+                                ],
+                                "effective_radius": 0.02
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 2.0,
+                        "label": null,
+                        "light": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.exponential.Exponential",
+                            "arguments": {
+                                "ell_comps": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "intensity": 0.1,
+                                "centre": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "effective_radius": 0.02
+                            }
+                        }
+                    }
                 }
-            ],
-            "redshift": 0.5,
-            "profiling_dict": null
+            ]
         },
-        {
-            "type": "autogalaxy.plane.plane.Plane",
-            "galaxies": [
-                {
-                    "mass": {
-                        "type": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
-                        "centre": [
-                            0.02,
-                            0.03
-                        ],
-                        "ell_comps": [
-                            0.0962250448649376,
-                            -0.05555555555555551
-                        ],
-                        "einstein_radius": 0.2
-                    },
-                    "light": {
-                        "type": "autogalaxy.profiles.light.standard.exponential.Exponential",
-                        "centre": [
-                            0.02,
-                            0.03
-                        ],
-                        "ell_comps": [
-                            0.0,
-                            0.0
-                        ],
-                        "intensity": 0.1,
-                        "effective_radius": 0.02
-                    },
-                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
-                    "redshift": 1.0
-                }
-            ],
-            "redshift": 1.0,
-            "profiling_dict": null
+        "cosmology": {
+            "type": "instance",
+            "class_path": "autogalaxy.cosmology.wrap.Planck15",
+            "arguments": {}
         },
-        {
-            "type": "autogalaxy.plane.plane.Plane",
-            "galaxies": [
-                {
-                    "light": {
-                        "type": "autogalaxy.profiles.light.standard.exponential.Exponential",
-                        "centre": [
-                            0.0,
-                            0.0
-                        ],
-                        "ell_comps": [
-                            0.0,
-                            0.0
-                        ],
-                        "intensity": 0.1,
-                        "effective_radius": 0.02
-                    },
-                    "type": "autogalaxy.galaxy.galaxy.Galaxy",
-                    "redshift": 2.0
-                }
-            ],
-            "redshift": 2.0,
-            "profiling_dict": null
-        }
-    ],
-    "cosmology": "Planck15",
-    "profiling_dict": null
+        "run_time_dict": null
+    }
 }

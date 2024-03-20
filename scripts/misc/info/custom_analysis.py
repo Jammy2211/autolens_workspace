@@ -546,7 +546,7 @@ It also contains information on the posterior as estimated by the non-linear sea
 
 Below, we make a corner plot of the "Probability Density Function" of every parameter in the model-fit.
 """
-search_plotter = aplt.NautilusPlotter(samples=result.samples)
+search_plotter = aplt.NestPlotter(samples=result.samples)
 search_plotter.cornerplot()
 
 """
