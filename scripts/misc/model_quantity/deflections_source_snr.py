@@ -217,8 +217,8 @@ tracer_plotter.subplot_tracer()
 fit_quantity_plotter = aplt.FitQuantityPlotter(fit=result.max_log_likelihood_fit)
 fit_quantity_plotter.subplot_fit()
 
-search_plotter = aplt.NestPlotter(samples=result.samples)
-search_plotter.cornerplot()
+plotter = aplt.NestPlotter(samples=result.samples)
+plotter.cornerplot()
 
 """
 Checkout `autolens_workspace/*/imaging/modeling/results.py` for a full description of the result object.
