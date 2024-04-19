@@ -5,6 +5,15 @@ import astropy.cosmology as cosmology
 
 """
 Author: Kaihao Wang
+
+This guide is in development and not written with extensive text and descrptions (yet!).
+
+In a nutshell, it shows how to conver the units of a Sersic mass profile from PyAutoLens's internal units ot physical
+units like solar masses. The code therefore also includes conversion of a Sersic light profile from internal units
+(e.g. counts/s/arcsec^2) to physical units (e.g. solar luminosity).
+
+If you read this and anything is unclear please join the SLACK channel and ask a quesiton in the #generla channel,
+we can then work on making this script more clear :).
 """
 
 

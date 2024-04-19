@@ -1,4 +1,46 @@
 """
+Written soon.
+"""
+print("hi")
+
+# """
+# __Sub Gridding__
+#
+# A grid can also have a sub-grid, defined via its `sub_size`, which defines how each pixel on the 2D grid is split
+# into sub-pixels of size (`sub_size` x `sub_size`).
+#
+# These additional sub-pixels are used to perform calculations more accurately. For example, for the 2D image the
+# values can be computed at every sub-pixel coordinate and binned-up, as opposed to computing the image only at the
+# centre of each image pixel.
+#
+# This approximates more closely how light is observed on a telescope, where it is the full surface brightness
+# distribution of the source over the pixel that is observed.
+#
+# The `sub_shape_native` and `sub_shape_slim` properties of the grid show that it has many additional coordinates
+# corresponding to the 4x4 grid of sub-pixels in each image pixel.
+# """
+# grid_sub = al.Grid2D.uniform(shape_native=(3, 3), pixel_scales=0.1, sub_size=2)
+#
+# print(grid_sub.sub_shape_native)
+# print(grid_sub.sub_shape_slim)
+#
+# """
+# The image computed using this grid does not have a `native` shape (5,5), but instead shape (20, 20). This is because
+# each image pixel has been split into a 4x4 sub pixel (e.g. 4 * 5 = 20):
+# """
+# image = tracer.image_2d_from(grid=grid_sub)
+#
+# print(image.native.shape)
+# print(image.shape)
+#
+# """
+# To estimate the image on our original 5x5 grid, we can use the `binned` property which bins up every 4x4 grid
+# of sub-pixels in each image pixel.
+# """
+# print(image.binned.slim)
+# print(image.binned.native)
+
+"""
 Tutorial: Sub-Grids (Optional)
 ==============================
 
@@ -169,11 +211,11 @@ There are two circumstances where sub-gridding because important:
 
  - When an image pixel is near the centre of a light profile, because the intensity of the light profile may now 
  rapidly change over the area of the image-pixel.
- 
+
  - When a mass profile ray-traces many light rays near the centre of a light profile in the source plane, creating a
  region of high magnification. The intensity values in the image pixel will again trace over regions of the source
 where the evaluated intensity rapidly changes. 
- 
+
 **PyAutoLens** also provides a `OverSamplingIterate` input to a grid, which uses iteratively higher and higher levels 
 of sub gridding to evaluate a `from_grid_` method until a threshold level of accuracy is met. This is used in many of 
 the example `simulator` scripts to ensure that the images of simulated lenses are evaluated accurately. 
