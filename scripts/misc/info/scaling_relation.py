@@ -196,7 +196,7 @@ class dPIESph(MassProfile):
         self.rs = rs
         self.sigma_scale = sigma_scale
 
-    @aa.grid_dec.grid_2d_to_vector_yx
+    @aa.grid_dec.to_vector_yx
     @aa.grid_dec.grid_2d_to_structure
     @aa.grid_dec.relocate_to_radial_minimum
     def deflections_yx_2d_from(self, grid: aa.type.Grid2DLike):

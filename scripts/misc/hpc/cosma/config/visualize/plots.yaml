@@ -54,7 +54,8 @@ tracer:
 inversion:
   subplot_inversion: true
   errors: false                            # Plot image of the errors of every mesh-pixel reconstructed value?
-  mesh_pixels_per_image_pixels : false     # Plot the number of image-plane mesh pixels per masked data pixels?
+  sub_pixels_per_image_pixels: false      # Plot the number of sub pixels per masked data pixels?
+  mesh_pixels_per_image_pixels: false     # Plot the number of image-plane mesh pixels per masked data pixels?
   reconstructed_image: false               # Plot image of the reconstructed data (e.g. in the image-plane)?
   reconstruction: false                    # Plot the reconstructed inversion (e.g. the pixelization's mesh in the source-plane)?
   regularization_weights: false            # Plot the effective regularization weight of every inversion mesh pixel?

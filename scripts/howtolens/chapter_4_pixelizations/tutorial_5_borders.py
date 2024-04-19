@@ -128,7 +128,7 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_annular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=False),
+    settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
 include = aplt.Include2D(mapper_source_plane_data_grid=True)
@@ -144,7 +144,7 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=False),
+    settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
 inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion, include_2d=include)
@@ -211,7 +211,7 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=False),
+    settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -229,7 +229,7 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -344,7 +344,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=False),
+    settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
 include = aplt.Include2D(mapper_source_plane_data_grid=True, border=True)
@@ -360,7 +360,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -390,7 +390,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -406,7 +406,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -423,7 +423,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
@@ -440,7 +440,7 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)

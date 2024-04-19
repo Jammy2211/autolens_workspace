@@ -94,7 +94,7 @@ class Isothermal(MassProfile):
         self.einstein_radius = einstein_radius
         self.slope = 2.0
 
-    @aa.grid_dec.grid_2d_to_vector_yx
+    @aa.grid_dec.to_vector_yx
     @aa.grid_dec.grid_2d_to_structure
     @aa.grid_dec.transform
     @aa.grid_dec.relocate_to_radial_minimum
@@ -202,7 +202,7 @@ For example, a `Grid2D` objected in defined on a natively uniform grid, meaning 
 also be irregular (e.g. `ArrayIrregular`). This decorator simply ensures the output structure matches the input.
 
  
-`@aa.grid_dec.grid_2d_to_vector_yx`: 
+`@aa.grid_dec.to_vector_yx`: 
 
 The decorator above handles all structure conversions for scalar quantities (e.g. `convergence`, `potential`). The 
 deflection angles are a 2D vector and this decorator simple handles  structure conversions for vector quantities (
@@ -454,7 +454,7 @@ class TemplateMass(EllProfile):
 
         # super().__init__(centre=centre, ell_comps=(0.0, 0.0))
 
-    @aa.grid_dec.grid_2d_to_vector_yx
+    @aa.grid_dec.to_vector_yx
     @aa.grid_dec.grid_2d_to_structure
     @aa.grid_dec.transform
     @aa.grid_dec.relocate_to_radial_minimum

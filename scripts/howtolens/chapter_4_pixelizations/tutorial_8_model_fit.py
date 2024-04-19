@@ -155,7 +155,7 @@ analysis_2 = al.AnalysisImaging(
     positions_likelihood=result_1.positions_likelihood_from(
         factor=3.0, minimum_threshold=0.2
     ),
-    settings_inversion=al.SettingsInversion(relocate_pix_border=True),
+    settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
 """

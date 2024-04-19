@@ -196,7 +196,7 @@ fit_quantity_plotter = aplt.FitQuantityPlotter(fit=result.max_log_likelihood_fit
 fit_quantity_plotter.subplot_fit()
 
 plotter = aplt.NestPlotter(samples=result.samples)
-plotter.cornerplot()
+plotter.corner_anesthetic()
 
 """
 Checkout `autolens_workspace/*/imaging/modeling/results.py` for a full description of the result object.

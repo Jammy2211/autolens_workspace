@@ -407,7 +407,7 @@ The superscripts of labels correspond to the name each component was given in th
 mass its name `mass` defined when making the `Model` above is used).
 """
 plotter = aplt.NestPlotter(samples=result.samples)
-plotter.cornerplot()
+plotter.corner_anesthetic()
 
 """
 The fit looks good and we've therefore found a model close to the one I used to simulate the image with (you can 
