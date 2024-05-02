@@ -64,7 +64,7 @@ a fast way to visualize the result.
 It also contains the maximum log likelihood tracer.
 """
 tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false_sub_1
+    tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false
 )
 tracer_plotter.subplot_tracer()
 

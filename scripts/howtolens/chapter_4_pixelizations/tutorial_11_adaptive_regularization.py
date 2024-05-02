@@ -113,7 +113,7 @@ regularization scheme.
 
 This introduces additional parameters, that are explained below.
 """
-adapt_image = fit.model_image.binned.slim
+adapt_image = fit.model_image.slim
 
 pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Overlay(shape=(30, 30)),

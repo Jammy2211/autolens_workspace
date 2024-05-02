@@ -48,7 +48,6 @@ dataset = al.Imaging.from_fits(
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=3.0,
 )
 
@@ -99,11 +98,8 @@ We can use this fit to set up our adapt image.
 
 This adapt-image is not perfect, because there are residuals in the central regions of the reconstructed source. 
 However, it is good enough for us to adapt our pixelization to the lensed source.
-
-(The `binned` attribute below ensures the adapt-image is at the native resolution of the imaging data, as opposed to a 
-higher resolution sub-grid).
 """
-adapt_image = fit.model_image.binned.slim
+adapt_image = fit.model_image.slim
 
 """
 __Adaption__
@@ -113,7 +109,7 @@ Now lets take a look at brightness based adaption in action.
 Below, we define a source-galaxy using the `Hilbert` image-mesh (we discuss below how this adapts to the source light) 
 and `Delaunay` mesh and use this to fit the lens-data. 
 """
-pixelizaiton = al.Pixelization(
+pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=0.5),
@@ -144,6 +140,7 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
+
 
 """
 Our reconstruction of the image no longer has residuals! 
