@@ -51,7 +51,6 @@ Lets plot the image with a circular circular and tell our `ImagingPlotter` to pl
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.5,
 )
 dataset = dataset.apply_mask(mask=mask_circular)
@@ -70,7 +69,6 @@ For an annular mask, pixels on its inner edge are not a part of the border, wher
 mask_annular = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     inner_radius=0.8,
     outer_radius=2.5,
 )
@@ -115,7 +113,7 @@ def perform_fit_with_source_galaxy_mask_and_border(
 Okay, so lets first look at the mapper without using a border and using annular mask.
 
 First, note how we set up the border, using a `al.SettingsInversion` object. This behaves analogously to the 
-`SettingsImaging` and `SettingsLens` objects we have used in previous tutorials.
+`SettingsLens` objects we have used in previous tutorials.
 """
 pixelization = al.Pixelization(
     mesh=al.mesh.Rectangular(shape=(40, 40)),
@@ -280,7 +278,6 @@ effects of the border in a moment.
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.8,
 )
 
@@ -383,7 +380,6 @@ is provided).
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.5,
 )
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -399,7 +395,6 @@ fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.7,
 )
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -416,7 +411,6 @@ fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.9,
 )
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
@@ -433,7 +427,6 @@ fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=3.1,
 )
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(

@@ -98,7 +98,7 @@ seeing (make the PSF, galaxies, tracer, etc.).
 
 
 def simulate_for_source_galaxy(source_galaxy):
-    grid = al.Grid2D.uniform(shape_native=(150, 150), pixel_scales=0.05, sub_size=2)
+    grid = al.Grid2D.uniform(shape_native=(150, 150), pixel_scales=0.05)
 
     psf = al.Kernel2D.from_gaussian(
         shape_native=(11, 11), sigma=0.05, pixel_scales=0.05
@@ -129,9 +129,7 @@ __Mask__
 
 we'll use a 3.0" mask to fit all three of our sources.
 """
-mask = al.Mask2D.circular(
-    shape_native=(150, 150), pixel_scales=0.05, sub_size=2, radius=3.0
-)
+mask = al.Mask2D.circular(shape_native=(150, 150), pixel_scales=0.05, radius=3.0)
 
 """
 __Simulator__

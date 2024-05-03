@@ -46,7 +46,6 @@ dataset = al.Imaging.from_fits(
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.5,
 )
 
@@ -64,7 +63,6 @@ def perform_fit_with_lens__source_galaxy(dataset, lens_galaxy, source_galaxy):
     mask = al.Mask2D.circular_annular(
         shape_native=dataset.shape_native,
         pixel_scales=dataset.pixel_scales,
-        sub_size=1,
         inner_radius=0.5,
         outer_radius=2.2,
     )
@@ -204,7 +202,6 @@ dataset = al.Imaging.from_fits(
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.5,
 )
 
@@ -223,7 +220,6 @@ circular so that it includes the central regions of the image and lens galaxy.
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
-    sub_size=2,
     radius=2.5,
 )
 
