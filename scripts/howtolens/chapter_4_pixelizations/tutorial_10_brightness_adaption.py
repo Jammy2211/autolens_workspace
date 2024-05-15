@@ -216,6 +216,7 @@ setting the `weight_floor` to 0.0 for now.
 image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=0.0)
 
 image_weight_power_0 = image_mesh.weight_map_from(adapt_data=adapt_image)
+image_weight_power_0 = al.Array2D(values=image_weight_power_0, mask=mask)
 
 array_plotter = aplt.Array2DPlotter(
     array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
@@ -226,6 +227,7 @@ array_plotter.figure_2d()
 image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.0)
 
 image_weight_power_5 = image_mesh.weight_map_from(adapt_data=adapt_image)
+image_weight_power_5 = al.Array2D(values=image_weight_power_5, mask=mask)
 
 array_plotter = aplt.Array2DPlotter(
     array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
@@ -236,6 +238,7 @@ array_plotter.figure_2d()
 image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0)
 
 image_weight_power_10 = image_mesh.weight_map_from(adapt_data=adapt_image)
+image_weight_power_10 = al.Array2D(values=image_weight_power_10, mask=mask)
 
 array_plotter = aplt.Array2DPlotter(
     array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
@@ -294,6 +297,7 @@ source_weight_floor = al.Galaxy(
 weight_floor = source_weight_floor.pixelization.image_mesh.weight_map_from(
     adapt_data=adapt_image
 )
+weight_floor = al.Array2D(values=weight_floor, mask=mask)
 
 array_plotter = aplt.Array2DPlotter(
     array=image_weight_power_0, visuals_2d=aplt.Visuals2D(mask=mask)
