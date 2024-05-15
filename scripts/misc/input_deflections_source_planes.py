@@ -144,7 +144,7 @@ tracer_plotter.figures_2d(image=True)
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=grid)[-1]
 
 galaxies_plotter = aplt.GalaxiesPlotter(
-    plane=tracer.source_plane, grid=source_plane_grid
+    galaxies=tracer.planes[-1], grid=source_plane_grid
 )
 galaxies_plotter.figures_2d(plane_image=True)
 
@@ -174,7 +174,7 @@ mesh = al.mesh.Rectangular(shape=(30, 30))
 A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below. These mappings are used when 
 reconstructing the source galaxy's light.
 """
-mapper_grids = mesh.mapper_grids_from(source_plane_data_grid=dataset.grid)
+mapper_grids = mesh.mapper_grids_from(source_plane_data_grid=dataset.grid, mask=dataset.mask)
 
 mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
 
