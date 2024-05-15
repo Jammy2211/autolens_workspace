@@ -71,9 +71,15 @@ mesh = al.mesh.Rectangular(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
-mapper_grids = pixelization.mapper_grids_from(source_plane_data_grid=dataset.grid)
+mapper_grids = pixelization.mapper_grids_from(
+    mask=grid.mask, source_plane_data_grid=dataset.grid
+)
 
-mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
+mapper = al.Mapper(
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=None,
+)
 
 """
 We now plot the `Mapper` alongside the image we used to generate the source-plane grid.
@@ -165,9 +171,15 @@ source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
 We can now use the masked source-plane grid to create a new `Mapper` (using the same rectangular 25 x 25 pixelization 
 as before).
 """
-mapper_grids = mesh.mapper_grids_from(source_plane_data_grid=source_plane_grid)
+mapper_grids = mesh.mapper_grids_from(
+    mask=grid.mask, source_plane_data_grid=source_plane_grid
+)
 
-mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
+mapper = al.Mapper(
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=None,
+)
 
 """
 Lets plot it.

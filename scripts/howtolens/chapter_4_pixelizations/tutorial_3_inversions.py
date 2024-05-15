@@ -86,7 +86,9 @@ mapper_grids = pixelization.mapper_grids_from(
     mask=mask, source_plane_data_grid=source_plane_grid
 )
 mapper = al.Mapper(
-    mapper_grids=mapper_grids, regularization=al.reg.Constant(coefficient=1.0)
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
 include = aplt.Include2D(mask=True, mapper_source_plane_data_grid=True)
@@ -170,9 +172,13 @@ tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
 
-mapper_grids = mesh.mapper_grids_from(source_plane_data_grid=source_plane_grid)
+mapper_grids = mesh.mapper_grids_from(
+    mask=mask, source_plane_data_grid=source_plane_grid
+)
 mapper = al.Mapper(
-    mapper_grids=mapper_grids, regularization=al.reg.Constant(coefficient=1.0)
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
 

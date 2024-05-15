@@ -174,9 +174,15 @@ mesh = al.mesh.Rectangular(shape=(30, 30))
 A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below. These mappings are used when 
 reconstructing the source galaxy's light.
 """
-mapper_grids = mesh.mapper_grids_from(source_plane_data_grid=dataset.grid, mask=dataset.mask)
+mapper_grids = mesh.mapper_grids_from(
+    source_plane_data_grid=dataset.grid, mask=dataset.mask
+)
 
-mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
+mapper = al.Mapper(
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=None,
+)
 
 visuals = aplt.Visuals2D(pix_indexes=[[312], [314], [350], [370]])
 include = aplt.Include2D(grid=True)
@@ -195,7 +201,11 @@ source galaxy's light. Try increasing / decreasing the coefficient value to see 
 """
 regularization = al.reg.Constant(coefficient=1.0)
 
-mapper = al.Mapper(mapper_grids=mapper_grids, regularization=regularization)
+mapper = al.Mapper(
+    mapper_grids=mapper_grids,
+    over_sampler=dataset.over_sampler_pixelization,
+    regularization=regularization,
+)
 
 inversion = al.Inversion(
     dataset=dataset,
