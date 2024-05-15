@@ -263,7 +263,7 @@ We can print the fit`s attributes. As usual, we can choose whether to return the
 the native data's edge values all zeros, as the edges were masked:
 """
 print("Model-Data:")
-print(fit.model_image.slim)
+print(fit.model_data.slim)
 print(fit.model_data.native)
 print()
 print("Residual Maps:")

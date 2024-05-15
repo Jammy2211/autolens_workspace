@@ -99,7 +99,7 @@ We can use this fit to set up our adapt image.
 This adapt-image is not perfect, because there are residuals in the central regions of the reconstructed source. 
 However, it is good enough for us to adapt our pixelization to the lensed source.
 """
-adapt_image = fit.model_image.slim
+adapt_image = fit.model_data.slim
 
 """
 __Adaption__
