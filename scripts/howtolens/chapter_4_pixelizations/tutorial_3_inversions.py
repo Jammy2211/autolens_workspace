@@ -82,7 +82,9 @@ mesh = al.mesh.Rectangular(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
-mapper_grids = pixelization.mapper_grids_from(source_plane_data_grid=source_plane_grid)
+mapper_grids = pixelization.mapper_grids_from(
+    mask=mask, source_plane_data_grid=source_plane_grid
+)
 mapper = al.Mapper(
     mapper_grids=mapper_grids, regularization=al.reg.Constant(coefficient=1.0)
 )

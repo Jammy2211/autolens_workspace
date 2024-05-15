@@ -65,7 +65,9 @@ about the lens we are fitting.
 This information comes when we use the pixelization to create up a `Mapper`, which we
 perform below using the (traced) source-plane grid that we created above.
 """
-mapper_grids = pixelization.mapper_grids_from(source_plane_data_grid=source_plane_grid)
+mapper_grids = pixelization.mapper_grids_from(
+    mask=grid.mask, source_plane_data_grid=source_plane_grid
+)
 
 mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
 
