@@ -128,7 +128,7 @@ mask and retains all (Y,x) coordinates which fall within this mask.
 """
 image_mesh = al.image_mesh.Overlay(shape=(20, 20))
 
-image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(grid=dataset.grid)
+image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(mask=dataset.mask)
 
 """
 We can plot this grid over the image, to see that it is a coarse grid of (y,x) coordinates laid ove the image.
