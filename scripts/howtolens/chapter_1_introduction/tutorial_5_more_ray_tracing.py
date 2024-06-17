@@ -63,8 +63,12 @@ lens = al.Galaxy(
 
 source = al.Galaxy(
     redshift=1.0,
-    light=al.lp.SersicSph(
-        centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
+    light=al.lp.SersicCoreSph(
+        centre=(0.0, 0.0),
+        intensity=1.0,
+        effective_radius=1.0,
+        sersic_index=1.0,
+        radius_break=0.025,
     ),
 )
 
@@ -145,7 +149,7 @@ centre of the source-plane galaxy's light profile!
 """
 source = al.Galaxy(
     redshift=1.0,
-    light=al.lp.SersicSph(
+    light=al.lp.SersicCoreSph(
         centre=(0.0, 0.0),
         intensity=1.0,
         effective_radius=1.0,
@@ -297,7 +301,7 @@ source_0 = al.Galaxy(
     bulge=al.lp.DevVaucouleursSph(
         centre=(0.1, 0.2), intensity=0.3, effective_radius=0.3
     ),
-    disk=al.lp.Exponential(
+    disk=al.lp.ExponentialCore(
         centre=(0.1, 0.2),
         ell_comps=(0.111111, 0.0),
         intensity=3.0,
@@ -307,7 +311,7 @@ source_0 = al.Galaxy(
 
 source_1 = al.Galaxy(
     redshift=1.0,
-    disk=al.lp.Exponential(
+    disk=al.lp.ExponentialCore(
         centre=(-0.3, -0.5),
         ell_comps=(0.1, 0.0),
         intensity=8.0,

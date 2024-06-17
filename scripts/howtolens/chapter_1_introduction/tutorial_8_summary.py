@@ -45,14 +45,14 @@ lens = al.Galaxy(
 
 source = al.Galaxy(
     redshift=1.0,
-    bulge=al.lp.Sersic(
+    bulge=al.lp.SersicCore(
         centre=(0.1, 0.1),
         ell_comps=(0.0, 0.111111),
         intensity=1.0,
         effective_radius=1.0,
         sersic_index=4.0,
     ),
-    disk=al.lp.Sersic(
+    disk=al.lp.SersicCore(
         centre=(0.1, 0.1),
         ell_comps=(0.0, 0.111111),
         intensity=1.0,

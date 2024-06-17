@@ -90,7 +90,7 @@ we also use a linear light profile, simplifying the model as discussed in the pr
 model = af.Collection(
     galaxies=af.Collection(
         lens=af.Model(al.Galaxy, redshift=0.5, mass=al.mp.IsothermalSph),
-        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.ExponentialSph),
+        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.ExponentialCoreSph),
     ),
 )
 

@@ -60,7 +60,7 @@ lens_galaxy = al.Galaxy(redshift=0.5, mass=sis_mass_profile)
 
 print(lens_galaxy)
 
-sersic_light_profile = al.lp.SersicSph(
+sersic_light_profile = al.lp.SersiclCoreSph(
     centre=(0.0, 0.0), intensity=1.0, effective_radius=1.0, sersic_index=1.0
 )
 

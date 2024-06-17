@@ -99,6 +99,25 @@ light_profile_plotter = aplt.LightProfilePlotter(
 light_profile_plotter.figures_2d(image=True)
 
 """
+__Over Sampling__
+
+Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated 
+on a higher resolution grid than the image data to ensure the calculation is accurate. 
+
+For lensing calculations, the high magnification regions of a lensed source galaxy require especially high levels of 
+over sampling to ensure the lensed images are evaluated accurately.
+
+For a new user, the details of over-sampling are not important, therefore just be aware that calculations either:
+ 
+ (i) use adaptive over sampling for the foregorund lens's light, which ensures high accuracy across. 
+ (ii) use cored light profiles for the background source galaxy, where the core ensures low levels of over-sampling 
+ produce numerically accurate but fast to compute results.
+
+Once you are more experienced, you should read up on over-sampling in more detail via 
+the `autolens_workspace/*/guides/over_sampling.ipynb` notebook.
+
+__Log 10__
+
 The light distributions of galaxies are closer to a log10 distribution than a linear one. 
 
 This means that when we plot an image of a light profile, its appearance is better highlighted when we take the

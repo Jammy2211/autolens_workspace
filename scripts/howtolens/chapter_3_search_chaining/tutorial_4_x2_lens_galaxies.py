@@ -250,7 +250,7 @@ model_3 = af.Collection(
     galaxies=af.Collection(
         left_lens=left_lens,
         right_lens=right_lens,
-        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.Exponential),
+        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.ExponentialCore),
     ),
 )
 

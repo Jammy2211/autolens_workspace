@@ -150,7 +150,7 @@ lens = af.Model(al.Galaxy, redshift=0.5, mass=mass)
 
 # Source:
 
-bulge = af.Model(al.lp.ExponentialSph)
+bulge = af.Model(al.lp.ExponentialCoreSph)
 
 source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
