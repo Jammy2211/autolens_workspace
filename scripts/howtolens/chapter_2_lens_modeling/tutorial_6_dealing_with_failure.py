@@ -69,16 +69,16 @@ dataset_plotter = aplt.ImagingPlotter(
 dataset_plotter.subplot_dataset()
 
 """
-__Approach 1: Prior Tuning__
+__Prior Tuning__
 
-First, we are going to try giving our non-linear search a helping hand. Our priors tell  the non-linear search where 
-to look in parameter space. If we tell it to look in the right place (that is, 'tune' our priors), this might mean 
-the search finds the global solution when it previously found a local maxima.
+First, we will try to assist our non-linear search by tuning our priors. Priors guide the non-linear search on where 
+to look in the parameter space. By setting our priors more accurately ('tuning' them), we can help the search find the 
+global solution instead of getting stuck at a local maxima.
 
-We saw in a previous tutorial that we can fully customize priors in **PyAutoLens**, so lets give it a go. I've set up 
-a custom search below and specified priors that give the non-linear search a better chance of inferring the global 
-maxima solution, alongside discussing how I have changed each prior from the default values specified by the 
-`config/priors/default` config files.
+In a previous tutorial, we learned how to fully customize priors in **PyAutoLens**. Let's apply this knowledge 
+now. I've set up a custom search below with priors adjusted to give the non-linear search a better chance of finding 
+the global maxima solution. I'll also explain how each prior has been changed from the default values specified in
+ the `config/priors/default` configuration files.
 
 We will call our lens and source galaxies `lens` and `source` this time, for shorter more readable code.
 
@@ -253,29 +253,33 @@ fit_plotter.subplot_fit()
 """
 __Discussion__
 
-By tuning our priors to the lens we fit we increase the chance of inferring the global maxima lens model. The search
-may also fit the lens model a lot faster, given it spends less time searches regions of parameter space that do not
-correspond to good solutions. 
+By tuning our priors to the specific lens model we are fitting, we increase the chances of finding the global maxima. 
+This approach can also speed up the search, as it spends less time in regions of parameter space that do not 
+correspond to good solutions.
 
-Before moving onto the next approach, lets think about the advantages and disadvantages of prior tuning:
+Before moving on to the next approach, let’s consider the pros and cons of prior tuning:
 
-Advantages: 
+**Advantages:**
 
- - We have a higher chance of finding the globally maximum log likelihood solutions in parameter space.
- - The search took less time to run because the non-linear search explored less of parameter space.
+- Higher likelihood of finding the global maximum log likelihood solutions in parameter space.
 
-Disadvantages: 
+- Faster search times, as the non-linear search explores less of the parameter space.
 
- - If we specified a prior incorrectly the non-linear search will infer an incorrect solution.
- - The priors for the search were tailored to the specific strong lens we fitted. If we are fitting multiple lenses, 
- we would have customize the priors for every single fit, for large samples of lenses this would take a lot of time!
+**Disadvantages:**
+
+- Incorrectly specified priors could lead the non-linear search to an incorrect solution.
+
+- It is not always clear how the priors should be tuned, especially for complex lens models.
+
+- Priors tailored to a specific lens need customization for each fit. For large samples of lenses, 
+this process would be very time-consuming.
 
 __Approach 2: Reducing Complexity__
 
 The non-linear search may fail because the lens model is too complex, making its parameter space too difficult to 
-sample accurately. Can we can make the lens model less complex, whilst keeping it realistic enough to perform our 
-scientific study? What assumptions can we make to reduce the number of a model parameters and therefore 
-dimensionality of non-linear parameter space?
+sample accurately. To address this, we can simplify the lens model while ensuring it remains realistic enough for 
+our scientific study. By making certain assumptions, we can reduce the number of model parameters, thereby lowering 
+the dimensionality of the parameter space and improving the search's performance.
 """
 bulge = af.Model(al.lp.Sersic)
 mass = af.Model(al.mp.Isothermal)
@@ -372,32 +376,35 @@ Herein lies the pitfalls of making assumptions, they may make your model less re
 
 __Discussion__
 
-Again, lets consider the advantages and disadvantages of this approach:
+Let’s consider the advantages and disadvantages of simplifying the model:
 
 Advantages:
 
- - By reducing parameter space`s complexity we again had a higher chance of inferring the global maximum log 
- likelihood and the time required by the search to do this is reducing.
- - Unlike tuned priors, the search was not specific to one lens and we could run it on many strong lens images.
-    
+- By reducing the complexity of the parameter space, we increase the chances of finding the global maximum log 
+likelihood, and the search requires less time to do so.
+
+- Unlike with tuned priors, this approach is not specific to a single lens, allowing us to use it on many strong lens 
+images.
+
 Disadvantages:
 
- - Our model was less realistic and our fit suffered as a result.
+- Our model is less realistic, which may negatively impact the accuracy of our fit and the scientific results we
+derive from it.
 
 __Approach 3: Look Harder__
 
-In approaches 1 and 2 we extended our non-linear search an olive branch and helped it find the highest log likelihood 
-regions of parameter space. In approach 3 ,we're going to tell it to just `look harder`.
+In approaches 1 and 2, we assisted our non-linear search to find the highest log likelihood regions of parameter 
+space. In approach 3, we're simply going to tell it to "look harder."
 
-Every non-linear search has settings which govern how thoroughly it searches parameter space, with the number of live
-points that was passed to `Nautilus` an example of such a setting. The more thoroughly the search looks, the more likely 
-it is that it`ll find the global maximum lens model. However,  the search will also take longer!
+Every non-linear search has settings that control how thoroughly it explores parameter space. One such setting is the 
+number of live points used by `Nautilus`. The more thoroughly the search examines the space, the more likely it is to 
+find the global maximum lens model. However, this also means the search will take longer!
 
-Below, we create a more thorough Nautilus search, that uses `n_live=200`. What these settings
-are actually changing is discussed in the optional tutorial `howtolens/chapter_optional/tutorial_searches.ipynb`.
+Below, we configure a more thorough Nautilus search with `n_live=200`. These settings and what they change are 
+discussed in the optional tutorial `howtolens/chapter_optional/tutorial_searches.ipynb`.
 
-Due to the long run times of this search, we comment it output below so it does not run. Feel free to undo these
-comments so the script runs faster.
+Due to the long run times of this search, the output is commented out below. Feel free to uncomment it to run the 
+script faster.
 """
 lens = af.Model(
     al.Galaxy,
@@ -456,23 +463,22 @@ fit_plotter = aplt.FitImagingPlotter(fit=result_look_harder.max_log_likelihood_f
 fit_plotter.subplot_fit()
 
 """
-lets list the advantages and disadvantages of simply adjusting the non-linear search:
+Let's list the advantages and disadvantages of simply adjusting the non-linear search:
 
-Advantages:
+**Advantages:**
 
- - Its easy to setup, we simply change settings of the non-linear search.
-    
- - It generalizes to any strong lens.
- 
- - We can make our lens model as complex as we want.
+- It’s easy to set up; just change the settings of the non-linear search.
 
-Disadvantage:
- 
- - Its potentially expensive. Very expensive. For very complex models, the run times can hours, days, weeks or, dare 
- I say it, months!
+- It generalizes to any strong lens.
 
-So, we can now fit strong lenses. And when it fails, we know how to get it to work. 
+- We can retain a more complex lens model.
 
+**Disadvantage:**
+
+- It can be very expensive in terms of time. For very complex models, the run times can extend to hours, days, 
+weeks, or even months!
+
+In conclusion, we can now fit strong lenses effectively. When the process fails, we know how to make it work.
 In chapter 3 of **HowToLens**, we will introduce a technique called 'non-linear search chaining', which performs a model 
 fit by chaining together multiple searches back-to-back . This allows us to combine the 3 different approaches 
 discussed and exploit the advantages of each, whilst not being hindered by their disadvantages.

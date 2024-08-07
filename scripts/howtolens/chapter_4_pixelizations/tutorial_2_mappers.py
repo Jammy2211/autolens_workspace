@@ -77,7 +77,7 @@ mapper_grids = pixelization.mapper_grids_from(
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.over_sampler_pixelization,
+    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 
@@ -177,7 +177,7 @@ mapper_grids = mesh.mapper_grids_from(
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.over_sampler_pixelization,
+    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 

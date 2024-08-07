@@ -158,29 +158,25 @@ fit_plotter.subplot_fit()
 """
 __Global and Local Maxima__
 
-Up to now, all of our non-linear searches have been successes. They find a lens model that provides a visibly good fit
-to the data, minimizing the residuals and inferring a high log likelihood value. 
+Up to now, all our non-linear searches have successfully found lens models that provide visibly good fits to the data, 
+minimizing residuals and inferring high log likelihood values. These optimal solutions, known as 'global maxima,' 
+correspond to the highest likelihood regions across the entire parameter space. In other words, no other lens model 
+in the parameter space would yield a higher likelihood. This is the ideal model we always aim to infer.
 
-These solutions are called 'global maxima', they correspond to the highest likelihood regions over all of parameter 
-space. There are no other lens models in parameter space that would give higher likelihoods, this is the model we want 
-to always infer!
+However, non-linear searches do not always locate these global maxima. They may instead infer 'local maxima' 
+solutions, which have high log likelihood values relative to nearby models in the parameter space, but 
+significantly lower log likelihoods compared to the true global maxima situated elsewhere. 
 
-However, non-linear searches may not always successfully locate the global maxima lens models. They may instead infer 
-a 'local maxima', a solution which has a high log likelihood value relative to the lens models near it in parameter 
-space, but where the log likelihood is significantly below the global maxima solution located somewhere else in 
-parameter space. 
+Why might a non-linear search end up at these local maxima? As previously discussed, the search iterates through 
+many models, focusing more on regions of the parameter space where previous guesses yielded higher likelihoods. 
+The search gradually 'converges' around any solution with a higher likelihood than surrounding models. If the 
+search is not thorough enough, it may settle on a local maxima, appearing to offer a high likelihood 
+relative to nearby models but failing to reach the global maxima.
 
-Why does a non-linear search infer these local maxima solutions? As discussed previously, the search guesses many 
-models over and over, guessing more models in regions of parameter space where previous guesses gave the highest 
-likelihood solutions. The search gradually 'converges' around any solution that gives a higher likelihood than the 
-models nearby it in parameter space. If the search is not thorough enough, it may converge around a solution that 
-appears to give a high likelihood (compared to the models around it) but, as discussed, is only a local maxima over 
-all of parameter space.
-
-Inferring such solutions is essentially a failure of our non-linear search and it is something we do not want to
-happen! Lets infer a local maxima, by reducing the number of live points, `n_live`, Nautilus uses to map out 
-parameter space. We are going to use so few that the initial search over parameter space has an extremely low 
-probability of getting close the global maxima, meaning it converges on a local maxima. 
+Inferring local maxima is a failure of our non-linear search, and it's something we want to avoid. To illustrate 
+this, we can intentionally infer a local maxima by reducing the number of live points (`n_live`) Nautilus uses to 
+map out the parameter space. By using very few live points, the initial search over the parameter space has a low 
+probability of approaching the global maxima, thus it converges on a local maxima.
 """
 search = af.Nautilus(
     path_prefix=path.join("howtolens", "chapter_2"),
