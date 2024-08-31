@@ -175,7 +175,8 @@ A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below.
 reconstructing the source galaxy's light.
 """
 mapper_grids = mesh.mapper_grids_from(
-    source_plane_data_grid=dataset.grid, mask=dataset.mask
+    source_plane_data_grid=dataset.grids.pixelization.over_sampler.over_sampled_grid,
+    mask=dataset.mask,
 )
 
 mapper = al.Mapper(
@@ -218,8 +219,8 @@ Finally, lets plot:
  - The reconstruction of the source _Galaxy- in the source-plane.
  - The corresponding reconstructed image-plane image of the lensed source `Galaxy` (which accounts for PSF blurring).
  - The residuals of the fit to the `Imaging`.
+"""
 
-CURRENTLY RAISES BUG SO NOT INCLUDED:
 
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
@@ -229,6 +230,7 @@ residual_map = dataset.data - inversion.mapped_reconstructed_image
 array_plotter = aplt.Array2DPlotter(array=residual_map)
 array_plotter.figure_2d()
 
+"""
 In this example, we assumed the source galaxy's true `LightProfile` or guessed a value for the `Regularization` 
 coefficient. In a realistic settings we may not know this, so checkout the script `input_deflections_model.py` in 
 this folder to see how we can use the `InputDeflections` to perform lens modeling whereby we infer the source 

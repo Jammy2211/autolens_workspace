@@ -71,7 +71,9 @@ lens_galaxy = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
+source_plane_grid = tracer.traced_grid_2d_list_from(
+    grid=dataset.grids.pixelization.over_sampler.over_sampled_grid
+)[1]
 
 """
 we again use the rectangular pixelization to create the mapper.
@@ -170,7 +172,9 @@ lens_galaxy = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
+source_plane_grid = tracer.traced_grid_2d_list_from(
+    grid=dataset.grids.pixelization.over_sampler.over_sampled_grid
+)[1]
 
 mapper_grids = mesh.mapper_grids_from(
     mask=mask, source_plane_data_grid=source_plane_grid

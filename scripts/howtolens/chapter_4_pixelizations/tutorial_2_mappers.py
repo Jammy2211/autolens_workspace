@@ -72,7 +72,8 @@ mesh = al.mesh.Rectangular(shape=(25, 25))
 pixelization = al.Pixelization(mesh=mesh)
 
 mapper_grids = pixelization.mapper_grids_from(
-    mask=grid.mask, source_plane_data_grid=dataset.grid
+    mask=grid.mask,
+    source_plane_data_grid=dataset.grids.pixelization.over_sampler.over_sampled_grid,
 )
 
 mapper = al.Mapper(
@@ -165,7 +166,9 @@ To create the mapper, we need to set up the masked imaging's grid as the source-
 """
 tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[1]
+source_plane_grid = tracer.traced_grid_2d_list_from(
+    grid=dataset.grids.pixelization.over_sampler.over_sampled_grid
+)[1]
 
 """
 We can now use the masked source-plane grid to create a new `Mapper` (using the same rectangular 25 x 25 pixelization 
