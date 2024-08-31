@@ -218,7 +218,9 @@ Finally, lets plot:
  - The reconstruction of the source _Galaxy- in the source-plane.
  - The corresponding reconstructed image-plane image of the lensed source `Galaxy` (which accounts for PSF blurring).
  - The residuals of the fit to the `Imaging`.
-"""
+
+CURRENTLY RAISES BUG SO NOT INCLUDED:
+
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
@@ -227,7 +229,6 @@ residual_map = dataset.data - inversion.mapped_reconstructed_image
 array_plotter = aplt.Array2DPlotter(array=residual_map)
 array_plotter.figure_2d()
 
-"""
 In this example, we assumed the source galaxy's true `LightProfile` or guessed a value for the `Regularization` 
 coefficient. In a realistic settings we may not know this, so checkout the script `input_deflections_model.py` in 
 this folder to see how we can use the `InputDeflections` to perform lens modeling whereby we infer the source 
