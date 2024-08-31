@@ -265,7 +265,7 @@ The elliptical components are related to the axis-ratio and position angle as fo
     elliptical_comp[0] = elliptical_comp_y = fac * np.sin(2 * angle)
     elliptical_comp[1] = elliptical_comp_x = fac * np.cos(2 * angle)
 
-We can use the **PyAutoLens** `convert` module to determine the elliptical components from an `axis_ratio` and `angle`,
+We can use the `convert` module to determine the elliptical components from an `axis_ratio` and `angle`,
 noting that the position angle is defined counter-clockwise from the positive x-axis.
 """
 ell_comps = al.convert.ell_comps_from(axis_ratio=0.5, angle=45.0)
