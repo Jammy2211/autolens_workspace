@@ -186,7 +186,7 @@ it isn't massively important for using **PyAutoLens**).
 
 We will use a flat lambda CDM cosmology, which is the standard cosmological model often assumed in scientific studies.
 """
-cosmology = al.cosmo.FlatLambdaCDM(H0=70, Om0=0.3)
+cosmology = al.cosmo.FlatLambdaCDMWrap(H0=70, Om0=0.3)
 
 print("Image-plane arcsec-per-kpc:")
 print(cosmology.arcsec_per_kpc_from(redshift=0.5))
