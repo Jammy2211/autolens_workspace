@@ -175,7 +175,7 @@ Towards the centre of th elliptical isothermal mass profile, the density begins 
 extremely steep or 'cuspy'. This cuspy behaviour towards its centre can cause extremely large deflection angles to be 
 calculated:
 """
-tracer_plotter = aplt.TracerPlotter(tracer=fit.tracer, grid=fit.grid)
+tracer_plotter = aplt.TracerPlotter(tracer=fit.tracer, grid=fit.grids.pixelization)
 tracer_plotter.figures_2d(deflections_y=True, deflections_x=True)
 
 """
