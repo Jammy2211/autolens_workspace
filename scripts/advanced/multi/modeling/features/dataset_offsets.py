@@ -179,7 +179,8 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
 dataset_model = af.Model(al.DatasetModel)
 
 model = af.Collection(
-    dataset_model=dataset_model, galaxies=af.Collection(lens=lens, source=source)
+    dataset_model=dataset_model,
+    galaxies=af.Collection(lens=lens, source=source)
 )
 
 """
@@ -194,7 +195,12 @@ We must therefore manually overwrite the prior on the offsets of datasets we wis
 
 We updated the priors on the offsets of the second dataset to be GaussianPrior's with mean 0.0" and sigma 0.1".
 """
-pass
+analysis[1][model.dataset_model.grid_offset.grid_offset_0] = af.UniformPrior(
+    lower_limit=-0.1, upper_limit=0.1
+)
+analysis[1][model.dataset_model.grid_offset.grid_offset_1] = af.UniformPrior(
+    lower_limit=-0.1, upper_limit=0.1
+)
 
 """
 __Search__
@@ -204,7 +210,7 @@ search = af.Nautilus(
     name="dataset_offsets",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
+    number_of_cores=4,
 )
 
 """

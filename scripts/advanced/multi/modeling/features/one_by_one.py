@@ -82,7 +82,7 @@ the second image.
 """
 dataset_type = "multi"
 dataset_label = "imaging"
-dataset_name = "lens_sersic"
+dataset_name = "dataset_offsets"
 
 dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
@@ -166,7 +166,7 @@ search = af.Nautilus(
     name="one_by_one__main_dataset",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
+    number_of_cores=4,
 )
 
 """
@@ -207,30 +207,30 @@ is what we expect for a strong lens system.
 The code below uses the search chaining API to link the priors between model parameters, if you are not
 familiar with this feature, checkout the `imaging/advanced/chaining` package.
 """
-model = af.Collection(
-    galaxies=af.Collection(
-        lens=af.Model(
-            al.Galaxy,
-            redshift=result.instance.galaxies.lens.redshift,
-            bulge=result.model.galaxies.lens.bulge,
-            mass=result.instance.galaxies.lens.mass,
-            shear=result.instance.galaxies.lens.shear,
-        ),
-        source=result.model.galaxies.source,
-    ),
-)
-
-print(model.info)
-
-search = af.Nautilus(
-    path_prefix=path.join("multi", "modeling"),
-    name="one_by_one__second_mass_model_fixed",
-    unique_tag=dataset_name,
-    n_live=100,
-    number_of_cores=1,
-)
-
-result_mass_model_fixed = search.fit(model=model, analysis=analysis_list[0])
+# model = af.Collection(
+#     galaxies=af.Collection(
+#         lens=af.Model(
+#             al.Galaxy,
+#             redshift=result.instance.galaxies.lens.redshift,
+#             bulge=result.model.galaxies.lens.bulge,
+#             mass=result.instance.galaxies.lens.mass,
+#             shear=result.instance.galaxies.lens.shear,
+#         ),
+#         source=result.model.galaxies.source,
+#     ),
+# )
+#
+# print(model.info)
+#
+# search = af.Nautilus(
+#     path_prefix=path.join("multi", "modeling"),
+#     name="one_by_one__second_mass_model_fixed",
+#     unique_tag=dataset_name,
+#     n_live=100,
+#     number_of_cores=4,
+# )
+#
+# result_mass_model_fixed = search.fit(model=model, analysis=analysis_list[0])
 
 """
 __Second Dataset Offset__

@@ -183,8 +183,9 @@ search = af.Nautilus(
     path_prefix=path.join("multi", "modeling"),
     name="start_here",
     unique_tag=dataset_name,
-    n_live=100,
-    number_of_cores=1,
+    n_live=150,
+    number_of_cores=4,
+    iterations_per_update=1000
 )
 
 """
