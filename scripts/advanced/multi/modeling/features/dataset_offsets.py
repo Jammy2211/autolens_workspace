@@ -179,8 +179,7 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
 dataset_model = af.Model(al.DatasetModel)
 
 model = af.Collection(
-    dataset_model=dataset_model,
-    galaxies=af.Collection(lens=lens, source=source)
+    dataset_model=dataset_model, galaxies=af.Collection(lens=lens, source=source)
 )
 
 """

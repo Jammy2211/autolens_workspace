@@ -6,7 +6,7 @@ include_1d:
 include_2d:
   mask: true
   origin: false
-  border: true
+  border: false
   grid: false
   positions: true
   tangential_critical_curves: true
