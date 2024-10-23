@@ -103,10 +103,10 @@ source_galaxy = al.Galaxy(
         effective_radius=0.5,
         sersic_index=2.0,
     ),
-    clump_0=al.lp.SersicSph(
+    extra_galaxy_0=al.lp.SersicSph(
         centre=(0.3, 0.4), intensity=0.1, effective_radius=0.3, sersic_index=2.5
     ),
-    clump_1=al.lp.SersicSph(
+    extra_galaxy_1=al.lp.SersicSph(
         centre=(0.0, 0.05), intensity=0.15, effective_radius=0.2, sersic_index=3.0
     ),
 )

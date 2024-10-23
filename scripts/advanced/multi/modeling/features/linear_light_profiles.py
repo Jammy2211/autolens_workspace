@@ -8,7 +8,7 @@ always computes the `intensity` values that give the best fit to the data (e.g. 
 given the light profile's other parameters.
 
 Linear light profiles are described in
-the `autolens_workspace/notebooks/imaging/modeling/features/light_light_profiles.ipynb` example, and if you have
+the `autolens_workspace/notebooks/modeling/imaging/features/light_light_profiles.ipynb` example, and if you have
 not read this you should go through this example first.
 
 This script illustrates their application in the context of multi-wavelength lens modeling.

@@ -237,15 +237,15 @@ full description).
 
 The folders: 
 
- - `autolens_workspace/*/imaging/modeling/searches`.
- - `autolens_workspace/*/imaging/modeling/customize`
+ - `autolens_workspace/*/modeling/imaging/searches`.
+ - `autolens_workspace/*/modeling/imaging/customize`
   
 Give overviews of the non-linear searches **PyAutoLens** supports and more details on how to customize the
 model-fit, including the priors on the model.
 
 The `name` and `path_prefix` below specify the path where results ae stored in the output folder:  
 
- `/autolens_workspace/output/imaging/modeling/simple__no_lens_light/mass[sie]_source[bulge]/unique_identifier`.
+ `/autolens_workspace/output/modeling/imaging/simple__no_lens_light/mass[sie]_source[bulge]/unique_identifier`.
 """
 search = af.Nautilus(
     path_prefix=path.join("cosma_example"),

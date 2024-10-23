@@ -47,7 +47,7 @@
                         "effective_radius": 0.5,
                         "sersic_index": 2.0
                     },
-                    "clump_0": {
+                    "extra_galaxy_0": {
                         "type": "autogalaxy.profiles.light.standard.sersic.SersicSph",
                         "centre": [
                             0.3,
@@ -57,7 +57,7 @@
                         "effective_radius": 0.3,
                         "sersic_index": 2.5
                     },
-                    "clump_1": {
+                    "extra_galaxy_1": {
                         "type": "autogalaxy.profiles.light.standard.sersic.SersicSph",
                         "centre": [
                             0.0,

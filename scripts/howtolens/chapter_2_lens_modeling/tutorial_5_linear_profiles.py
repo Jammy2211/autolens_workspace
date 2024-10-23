@@ -480,7 +480,7 @@ Therefore, not only does an MGE fit more complex galaxy morphologies, it does so
 in a much simpler non-linear parameter space which has far less significant parameter degeneracies!
 
 We strongly recommend that you adopt an MGE in your own lens modeling pipelines from here on. The script 
-`autolens_workspace/*/imaging/modeling/features/multi_gaussian_expansion.py` gives examples on fitting even more complex
+`autolens_workspace/*/modeling/imaging/features/multi_gaussian_expansion.py` gives examples on fitting even more complex
 MGE models, where for example the Gaussians have different axis-ratios and position angles.
 
 __Disadvantage of Basis Functions__
@@ -512,7 +512,7 @@ Shapelets are basis functions with analytic properties that are appropriate for 
 features of a galaxy. They do so over a wide range of scales, and can often represent  features in source galaxies 
 that a single Sersic function or MGE cannot.
 
-An example using shapelets is given at `autolens_workspace/scripts/imaging/modeling/features/shapelets.py`.
+An example using shapelets is given at `autolens_workspace/scripts/modeling/imaging/features/shapelets.py`.
  
 Feel free to experiment with using shapelets as the source galaxy by yourself. However they incur higher computational 
 overheads than the MGE and include a free parameter which governs the size of the basis functions and therefore source,
