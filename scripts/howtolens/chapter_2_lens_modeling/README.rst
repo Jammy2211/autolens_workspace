@@ -6,10 +6,10 @@ Files
 -----
 
 `Tutorial 1: Non-linear Search <https://mybinder.org/v2/gh/Jammy2211/autolens_workspace/release?filepath=notebooks/howtolens/chapter_2_lens_modeling/tutorial_1_non_linear_search.ipynb>`_
-- How a non-linear search is used to fit a lens model.
+- How a non-linear search is used to fit a lens model and the concepts of a parameter space and priors.
 
-`Tutorial 2: Parameter Space And Priors <https://mybinder.org/v2/gh/Jammy2211/autolens_workspace/release?filepath=notebooks/howtolens/chapter_2_lens_modeling/tutorial_2_parameter_space_and_priors.ipynb>`_
-- The Concepts of a parameter space and priors.
+`Tutorial 2: Practicalities <https://mybinder.org/v2/gh/Jammy2211/autolens_workspace/release?filepath=notebooks/howtolens/chapter_2_lens_modeling/tutorial_2_practicalities.ipynb>`_
+- Practicalities of performing model-fitting, like how to inspect the results on your hard-disk.
 
 `Tutorial 3: Realism and Complexity <https://mybinder.org/v2/gh/Jammy2211/autolens_workspace/release?filepath=notebooks/howtolens/chapter_2_lens_modeling/tutorial_3_realism_and_complexity.ipynb>`_
 - Finding a balance between realism and complexity when composing and fitting a lens model.

@@ -21,14 +21,14 @@ concepts and show how they are applied in practice to analyze astronomical data.
 
 Here is an overview of what we'll cover in this tutorial:
 
-- **Dataset**: We'll load the imaging dataset that we previously simulated, consisting of the image, noise map, and PSF.
-- **Mask**: We'll apply a mask to the data, excluding regions with low signal-to-noise ratios from the analysis.
-- **Masked Grid**: We'll create a masked grid, which contains only the coordinates of unmasked pixels, to evaluate the
-  lens's light profile in only unmasked regions.
-- **Fitting**: We'll fit the data with a lens model, computing key quantities like the model image, residuals,
+- **Dataset**: Load the imaging dataset that we previously simulated, consisting of the image, noise map, and PSF.
+- **Mask**: Apply a mask to the data, excluding regions with low signal-to-noise ratios from the analysis.
+- **Masked Grid**: Create a masked grid, which contains only the coordinates of unmasked pixels, to evaluate the
+  galaxy's light profile in only unmasked regions.
+- **Fitting**: Fit the data with a galaxy model, computing key quantities like the model image, residuals,
   chi-squared, and log likelihood to assess the quality of the fit.
-- **Bad Fits**: We'll demonstrate how even small deviations from the true parameters can significantly impact the fit.
-- **Model Fitting**: We'll perform a basic model fit on a simple dataset, adjusting the model parameters to improve the
+- **Bad Fits**: Demonstrate how even small deviations from the true parameters can significantly impact the fit.
+- **Model Fitting**: Perform a basic model fit on a simple dataset, adjusting the model parameters to improve the
   fit quality.
 """
 import numpy as np

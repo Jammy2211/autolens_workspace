@@ -33,6 +33,7 @@ If any code in this script is unclear, refer to the `slam/start_here.ipynb` note
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import numpy as np
 import os
 import sys
 from os import path
@@ -92,18 +93,40 @@ redshift_source = 1.0
 """
 __SOURCE LP PIPELINE__
 
-The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in
-this example:
-
- - Uses a linear parametric `Sersic` bulge for the source's light.
- - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
- 
-__Settings__:
- 
- - Mass Centre: Fix the mass profile centre to (0.0, 0.0) (this assumption will be relaxed in the SOURCE INVERSION 
- PIPELINE).
+The SOURCE LP PIPELINE is identical to the `start_here.ipynb` example, except the `lens_bulge` component is set
+to `None` therefore omitting the lens light from the model.
 """
 analysis = al.AnalysisImaging(dataset=dataset)
+
+# Source Light
+
+centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
+centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
+
+total_gaussians = 30
+gaussian_per_basis = 1
+
+log10_sigma_list = np.linspace(-3, np.log10(1.0), total_gaussians)
+
+bulge_gaussian_list = []
+
+for j in range(gaussian_per_basis):
+    gaussian_list = af.Collection(
+        af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
+    )
+
+    for i, gaussian in enumerate(gaussian_list):
+        gaussian.centre.centre_0 = centre_0
+        gaussian.centre.centre_1 = centre_1
+        gaussian.ell_comps = gaussian_list[0].ell_comps
+        gaussian.sigma = 10 ** log10_sigma_list[i]
+
+    bulge_gaussian_list += gaussian_list
+
+source_bulge = af.Model(
+    al.lp_basis.Basis,
+    profile_list=bulge_gaussian_list,
+)
 
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
@@ -112,7 +135,7 @@ source_lp_result = slam.source_lp.run(
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=0.5,
     redshift_source=1.0,
@@ -122,29 +145,10 @@ source_lp_result = slam.source_lp.run(
 """
 __SOURCE PIX PIPELINE__
 
-The SOURCE PIX PIPELINE uses two searches to initialize a robust model for the `Pixelization` that
-reconstructs the source galaxy's light. 
+The SOURCE PIX PIPELINE (and every pipeline that follows) are identical to the `start_here.ipynb` example.
 
-This pixelization adapts its source pixels to the morphology of the source, placing more pixels in its 
-brightest regions. To do this, an "adapt image" is required, which is the lens light subtracted image meaning
-only the lensed source emission is present.
-
-The SOURCE LP Pipeline result is not good enough quality to set up this adapt image (e.g. the source
-may be more complex than a simple light profile). The first step of the SOURCE PIX PIPELINE therefore fits a new
-model using a pixelization to create this adapt image.
-
-The first search, which is an initialization search, fits an `Overlay` image-mesh, `Delaunay` mesh 
-and `AdaptiveBrightnessSplit` regularization.
-
-__Adapt Images / Image Mesh Settings__
-
-If you are unclear what the `adapt_images` and `SettingsInversion` inputs are doing below, refer to the 
-`autolens_workspace/*/imaging/advanced/chaining/pix_adapt/start_here.py` example script.
-
-__Settings__:
-
- - Positions: We update the positions and positions threshold using the previous model-fitting result (as described 
- in `chaining/examples/parametric_to_pixelization.py`) to remove unphysical solutions from the `Inversion` model-fitting.
+The model components for the lens light (e.g. `lens_bulge` and `lens_disk`) were set to None in the SOURCE LP PIPELINE,
+and therefore are also None in the SOURCE PIX PIPELINE meaning the lens light is omitted from the model.
 """
 analysis = al.AnalysisImaging(
     dataset=dataset,
@@ -164,37 +168,11 @@ source_pix_result_1 = slam.source_pix.run_1(
 """
 __SOURCE PIX PIPELINE 2 (with lens light)__
 
-The second search, which uses the mesh and regularization used throughout the remainder of the SLaM pipelines,
-fits the following model:
+As above, this pipeline also has the same API as the `start_here.ipynb` example.
 
-- Uses a `Hilbert` image-mesh. 
-
-- Uses a `Delaunay` mesh.
-
- - Uses an `AdaptiveBrightness` regularization.
-
- - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE LP PIPELINE through to the
- SOURCE PIX PIPELINE.
-
-The `Hilbert` image-mesh and `AdaptiveBrightness` regularization adapt the source pixels and regularization weights
-to the source's morphology.
-
-Below, we therefore set up the adapt image using this result.
+Note that the LENS LIGHT PIPELINE follows the SOURCE PIX PIPELINE in the `start_here.ipynb` example is not included
+in this script, given the lens light is not present in the data.
 """
-adapt_image_maker = al.AdaptImageMaker(result=source_pix_result_1)
-adapt_image = adapt_image_maker.adapt_images.galaxy_name_image_dict[
-    "('galaxies', 'source')"
-]
-
-over_sampling = al.OverSamplingUniform.from_adapt(
-    data=adapt_image,
-    noise_map=dataset.noise_map,
-)
-
-dataset = dataset.apply_over_sampling(
-    over_sampling=al.OverSamplingDataset(pixelization=over_sampling)
-)
-
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
@@ -219,23 +197,8 @@ source_pix_result_2 = slam.source_pix.run_2(
 """
 __MASS TOTAL PIPELINE__
 
-The MASS TOTAL PIPELINE uses one search to fits a complex lens mass model to a high level of accuracy, 
-using the lens mass model and source model of the SOURCE PIX PIPELINE to initialize the model priors. 
-
-In this example it:
-
- - Uses an `PowerLaw` model for the lens's total mass distribution [The centre if unfixed from (0.0, 0.0)].
- - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
- - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINES through to the MASS 
- PIPELINE.
- 
-__Settings__:
-
- - adapt: We may be using adapt features and therefore pass the result of the SOURCE PIX PIPELINE to use as the
- hyper dataset if required.
-
- - Positions: We update the positions and positions threshold using the previous model-fitting result (as described 
- in `chaining/examples/parametric_to_pixelization.py`) to remove unphysical solutions from the `Inversion` model-fitting.
+The MASS TOTAL PIPELINE is again identical to the `start_here.ipynb` example, noting that the `light_result` is
+now passed in as None to omit the lens light from the model.
 """
 analysis = al.AnalysisImaging(
     dataset=dataset,
@@ -252,5 +215,8 @@ mass_result = slam.mass_total.run(
 )
 
 """
-Finish.
+__Output__
+
+The `start_hre.ipynb` example describes how results can be output to hard-disk after the SLaM pipelines have been run.
+Checkout that script for a complete description of the output of this script.
 """

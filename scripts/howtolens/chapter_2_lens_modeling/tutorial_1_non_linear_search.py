@@ -331,6 +331,11 @@ model.galaxies.source.bulge.effective_radius = af.UniformPrior(
 )
 
 """
+By reprinting the `model.info`, we can see that the priors have been updated to the values we specified.
+"""
+print(model.info)
+
+"""
 __Analysis__
 
 The `AnalysisImaging` object defines how an instance of a model, consisting of a set of parameters values for the 

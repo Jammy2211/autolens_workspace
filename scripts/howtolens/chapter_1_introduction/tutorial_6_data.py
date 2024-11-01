@@ -115,6 +115,17 @@ array_plotter.set_title("PSF 2D Kernel")
 array_plotter.figure_2d()
 
 """
+The PSF is often more informative when plotted on a log10 scale. This approach allows us to clearly observe values 
+in its tail, which are much smaller than the central peak yet critical for many scientific analyses. The tail 
+values may significantly affect the spread and detail captured in the data.
+"""
+array_plotter = aplt.Array2DPlotter(
+    array=psf, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+)
+array_plotter.set_title("PSF 2D Kernel")
+array_plotter.figure_2d()
+
+"""
 Next, we'll manually perform a 2D convolution of the PSF with the image of the galaxy. This convolution simulates the 
 blurring that occurs when the telescope optics spread out the galaxy's light.
 
@@ -298,7 +309,9 @@ For actual telescope data, the PSF is determined during data processing and is p
 It's crucial for accurately deconvolving the PSF from the strong lens image, allowing us to recover the true properties 
 of the strong lens. We'll explore this further in the next tutorial.
 """
-array_plotter = aplt.Array2DPlotter(array=dataset.psf)
+array_plotter = aplt.Array2DPlotter(
+    array=dataset.psf, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+)
 array_plotter.set_title("Simulated PSF")
 array_plotter.figure_2d()
 
@@ -391,4 +404,6 @@ the entire image.
 
 - **Simulator**: The `SimulatorImaging` object enables us to simulate realistic imaging data by including all of 
 these effects together and contains the `data`, `psf`, and `noise_map` components.
+
+- **Output**: We saved the simulated data to `.fits` files, the standard format used by astronomers for storing images.
 """

@@ -5,37 +5,50 @@ SLaM (Source, Light and Mass): Start Here
 This scripts gives an introduce to the Source, (lens) Light and Mass (SLaM) pipelines. These are advanced modeling
 pipelines which use many aspects of core PyAutoLens functionality to automate the modeling of strong lenses.
 
-__Prequisites__
+__Preqrequisites__
 
-Before reading this script, you should be familiar with non-linear search chaining, illustrated in the
-`imaging/advanced/chaining` package, and have experience using have looked at multiple examples explaining why its
-a powerful tool to chain models together (e.g. going from a light profile source to pixelixed source).
+Before reading this script, you should have familiarity with the following key concepts:
 
-You should also be familiar with adaptive pixelization features, which are described in the
-`imaging/advanced/chaining/pix_adapt/start_here.py` script. These features adapt the source pixelization to the source's
-unlensed morphology, and is used throughout the SLaM pipelines.
+- **Non-linear Search Chaining:** This approach, demonstrated in `imaging/advanced/chaining`, shows the power of
+  linking models together in a sequence, such as transitioning from a light profile source to a pixelized source.
+
+- **Pixelizations:** These structures, explained in `features/pixelization.ipynb`, allow for the reconstruction of the
+  source galaxy on a pixel grid.
+
+- **Adaptive Pixelizations:** Described in `imaging/advanced/chaining/pix_adapt/start_here.ipynb`, these pixelizations
+  adapt to the unlensed morphology of the source.
+
+- **Multi Gaussian Expansions (MGE):** Introduced in `features/multi_gaussian_expansion.ipynb`, MGEs are employed to
+  model the lens's light and can serve as an initialization for source galaxy light prior to using pixelization.
+
+If any of these concepts are unfamiliar, you may still proceed with the script, but reviewing the referenced examples
+later can deepen your understanding of how and why SLaM pipelines are structured as they are.
+
+Additionally, this script allows for flexibility with model components, such as swapping out MGE models for other
+light profiles (e.g., linear `Sersic` profiles). For an example, see `examples/source_light_profile.ipynb`.
 
 __Overview__
 
-The Source, (lens) Light and Mass pipelines (SLaM) chain together between 3-6 searches in a carefully crafted way
-which fully exploit the different benefits of search chaining. They provide a fully automated framework for fitting
-large samples of strong lenses with complex strong lens models. They are the default pipelines used by many PyAutoLens
-scientific publications.
+The Source, (Lens) Light, and Mass (SLaM) pipelines strategically chain together up to five sequential searches,
+carefully designed to maximize the advantages of search chaining. This setup provides a fully automated framework for
+fitting large samples of strong lenses with complex models, making SLaM the default choice for many **PyAutoLens**
+research publications.
 
 __Pipeline Structure__
 
-Each pipeline that makes up the overall SLaM pipelines focuses on a specific aspect of the strong lens model: 
+Each pipeline in the SLaM sequence targets a specific aspect of the strong lens model:
 
- - Source: The first pipeline(s) infer a robust source model. For pixelized sources, this means robust values for the
-   mesh and regularization. For light profile sources, this means estimates of its initial parameters.
-   
- - Light: The next pipeline infers the lens light, using fixed source and mass models from the previous pipeline(s).
-   
- - Mass: The final pipeline infers a mass model of any complexity, using source and lens light models initialized
-   from the previous pipeline(s).
+- **Source Pipeline**: The first step focuses on establishing a robust source model. For pixelized sources,
+  this includes obtaining accurate values for mesh and regularization parameters. For sources modeled with light
+  profiles, the focus is on determining initial parameter estimates.
 
-The models fitted in earlier pipelines determine the models used in later pipelines. For example, if the SOURCE
-PIPELINE uses a pixelized `Voronoi` mesh for the source, this will be used in the subsequent MASS TOTAL PIPELINE.
+- **Light Pipeline**: This stage focuses on modeling the lens light, using source and mass models fixed from previous pipelines.
+
+- **Mass Pipeline**: The final stage develops a detailed mass model, potentially of high complexity, leveraging source
+  and lens light models initialized from earlier stages.
+
+Models set up in earlier pipelines guide those used in later ones. For instance, if the Source Pipeline uses a
+pixelized `Delaunay` mesh for the source, that mesh type will carry through to the Mass Total Pipeline that follows.
 
 __Design Choices__
 
@@ -48,37 +61,39 @@ light profile sources, and using the SLaM pipelines in this way will still provi
 We now list the design considerations which dictate the ordering of the SLaM pipelines, which were driven by the use
 of pixelized source modeling:
 
- - Starting With the Source: The SLaM pipelines begin with the Source Pipeline because complex mass models (w.g. a
-   `PowerLaw` or stars plus dark matter model) cannot be fitted accurately using a light profiles for the source. A
-   robust pixelized source model (e.g. the mesh and regularization) can be set up using a simpler mass
-   model (e.g. `Isothermal` plus `Shear`).
+The SLaM pipelines involve several design choices to support the complexities of pixelized source modeling, which is
+crucial for robustly fitting complex mass models. Here’s an overview of these key considerations and their influence
+on the pipeline sequence:
 
- - Positions: Pixelized source modeling requires the positions of the multiple images of the lensed source(s) to be
-   input into the analysis, to prevent unphysical pixelized source reconstructions. The SLaM pipelines can determine
-   these positions automatically, using the mass and source model of the results of the SOURCE LP PIPELINE. However,
-   WE RECOMMEND users still input positions manually, as this provides a more robust analysis.
+- **Source First**: The pipeline starts with the Source Pipeline, as complex mass models (e.g., `PowerLaw` or
+composite models with stars and dark matter) require pixelized source modeling rather than simple light profiles.
+This step establishes a robust pixelized source model using a simpler mass model (like `Isothermal` with `Shear`).
 
- - Adapt Images: Advanced pixelized source models use "adapt images" to adapt the mesh and regularization weights to
-   the source's morphology. This functionality is discussed in `advanced/chaining/pix_adapt`. The SLaM pipelines
-   gradually improve the lens model and therefore gradually improve these adapt images, ensuring this adaptive
-   functionality can produce the best adaptation to the source's properties.
-   
- - Lens Light Before Mass: Fitting complex lens light models requires clean deblending of the lens and lensed source
-   emission. This requires a robust pixelized source model, which simultaneously reconstructs the source light when
-   fitting the lens light. This deblending can be performed accurate using a simpler mass model. Therefore, the SLaM
-   pipelines refine the lens light before fitting a complex mass model. Certain mass models fit stars plus dark
-   models and therefore require this very accurate lens light model to be inferred first.
-   
- - Mass Last: The SLaM pipelines fit the most complex mass models last. This is because they require the most accurate
-   pixelized source model possible, and the most accurate lens light model possible.
+- **Image Positions**: For pixelized source modeling, specifying the positions of the multiple images of the
+lensed source(s) is crucial to prevent unphysical reconstructions. The SLaM pipelines can estimate these positions
+automatically from the SOURCE LP PIPELINE's mass and source results.
+
+- **Adapt Images**: Advanced pixelized source models use "adapt images" to optimize the mesh and regularization
+  weights according to the source's morphology. The SLaM pipelines set the adapt-images once a good model for the source is
+  available, enabling the best adaptation to the source structure.
+
+- **Lens Light Before Mass**: Modeling the lens light accurately requires deblending the lens and source emissions,
+  which a robust pixelized source model facilitates. This deblending, essential for certain mass models with both
+  stellar and dark matter components, benefits from a simpler mass model during the lens light fitting stage.
+
+- **Mass Model Last**: The most complex mass model fitting is saved for last. This final stage benefits from the
+  prior refinement of the source and lens light models, ensuring accurate reconstructions and parameter estimations.
+
+These design choices enable the SLaM pipelines to deliver precise and automated lens modeling while optimizing each
+stage for robustness and efficiency.
 
 __This Script__
 
-Using two source pipelines, a light pipeline and a mass pipeline this SLaM modeling script  fits `Imaging` dataset 
-of a strong lens system where in the final model:
+Using a SOURCE LP PIPELINE, SOURCE PIX PIPELINE, LIGHT LP PIPELINE and TOTAL MASS PIPELINE this SLaM modeling
+script  fits `Imaging` dataset  of a strong lens system where in the final model:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
- - The lens galaxy's total mass distribution is an `PowerLaw`.
+ - The lens galaxy's light is a bulge with Multiple Gaussian Expansion (MGE) light profile.
+ - The lens galaxy's total mass distribution is an `PowerLaw` plus an `ExternalShear`.
  - The source galaxy's light is a `Pixelization`.
 
 This modeling script uses the SLaM pipelines:
@@ -98,6 +113,7 @@ If any code in this script is unclear, refer to the `chaining/start_here.ipynb` 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import numpy as np
 import os
 import sys
 from os import path
@@ -123,8 +139,12 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -141,7 +161,7 @@ settings_search = af.SettingsSearch(
     path_prefix=path.join("imaging", "slam"),
     unique_tag=dataset_name,
     info=None,
-    number_of_cores=1,
+    number_of_cores=4,
     session=None,
 )
 
@@ -160,9 +180,11 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in 
 this example:
 
- - Uses a linear parametric `Sersic` bulge for the lens galaxy's light.
+ - Uses a multi Gaussian expansion with 2 sets of 30 Gaussians for the lens galaxy's light.
 
  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
+ 
+ - Uses a multi Gaussian expansion with 1 set of 30 Gaussians for the source galaxy's light.
 
  __Settings__:
 
@@ -170,16 +192,74 @@ this example:
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 
-bulge = af.Model(al.lp_linear.Sersic)
+# Lens Light
+
+centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
+centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
+
+total_gaussians = 30
+gaussian_per_basis = 2
+
+log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
+
+bulge_gaussian_list = []
+
+for j in range(gaussian_per_basis):
+    gaussian_list = af.Collection(
+        af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
+    )
+
+    for i, gaussian in enumerate(gaussian_list):
+        gaussian.centre.centre_0 = centre_0
+        gaussian.centre.centre_1 = centre_1
+        gaussian.ell_comps = gaussian_list[0].ell_comps
+        gaussian.sigma = 10 ** log10_sigma_list[i]
+
+    bulge_gaussian_list += gaussian_list
+
+lens_bulge = af.Model(
+    al.lp_basis.Basis,
+    profile_list=bulge_gaussian_list,
+)
+
+# Source Light
+
+centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
+centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
+
+total_gaussians = 30
+gaussian_per_basis = 1
+
+log10_sigma_list = np.linspace(-3, np.log10(1.0), total_gaussians)
+
+bulge_gaussian_list = []
+
+for j in range(gaussian_per_basis):
+    gaussian_list = af.Collection(
+        af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
+    )
+
+    for i, gaussian in enumerate(gaussian_list):
+        gaussian.centre.centre_0 = centre_0
+        gaussian.centre.centre_1 = centre_1
+        gaussian.ell_comps = gaussian_list[0].ell_comps
+        gaussian.sigma = 10 ** log10_sigma_list[i]
+
+    bulge_gaussian_list += gaussian_list
+
+source_bulge = af.Model(
+    al.lp_basis.Basis,
+    profile_list=bulge_gaussian_list,
+)
 
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
-    lens_bulge=bulge,
+    lens_bulge=lens_bulge,
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
@@ -247,20 +327,6 @@ to the source's morphology.
 
 Below, we therefore set up the adapt image using this result.
 """
-adapt_image_maker = al.AdaptImageMaker(result=source_pix_result_1)
-adapt_image = adapt_image_maker.adapt_images.galaxy_name_image_dict[
-    "('galaxies', 'source')"
-]
-
-over_sampling = al.OverSamplingUniform.from_adapt(
-    data=adapt_image,
-    noise_map=dataset.noise_map,
-)
-
-dataset = dataset.apply_over_sampling(
-    over_sampling=al.OverSamplingDataset(pixelization=over_sampling)
-)
-
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
@@ -289,20 +355,41 @@ The LIGHT LP PIPELINE uses one search to fit a complex lens light model to a hig
 lens mass model and source light model fixed to the maximum log likelihood result of the SOURCE LP PIPELINE.
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge [Fixed from SOURCE LP PIPELINE].
+ - Uses a multi Gaussian expansion with 2 sets of 30 Gaussians for the lens galaxy's light. [6 Free Parameters].
 
- - Uses an `Isothermal` model for the lens's total mass distribution [fixed from SOURCE LP PIPELINE].
+ - Uses an `Isothermal` mass model with `ExternalShear` for the lens's total mass distribution [fixed from SOURCE PIX PIPELINE].
 
  - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
 
- - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS 
- PIPELINE [fixed values].   
+ - Carries the lens redshift and source redshift of the SOURCE PIPELINE through to the MASS PIPELINE [fixed values].   
 """
-bulge = af.Model(al.lp_linear.Sersic)
-
 analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
+    dataset=dataset, adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1)
+)
+
+total_gaussians = 30
+gaussian_per_basis = 2
+
+log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
+
+bulge_gaussian_list = []
+
+for j in range(gaussian_per_basis):
+    gaussian_list = af.Collection(
+        af.Model(al.lp_linear.Gaussian) for _ in range(total_gaussians)
+    )
+
+    for i, gaussian in enumerate(gaussian_list):
+        gaussian.centre.centre_0 = gaussian_list[0].centre.centre_0
+        gaussian.centre.centre_1 = gaussian_list[0].centre.centre_1
+        gaussian.ell_comps = gaussian_list[0].ell_comps
+        gaussian.sigma = 10 ** log10_sigma_list[i]
+
+    bulge_gaussian_list += gaussian_list
+
+lens_bulge = af.Model(
+    al.lp_basis.Basis,
+    profile_list=bulge_gaussian_list,
 )
 
 light_result = slam.light_lp.run(
@@ -310,7 +397,7 @@ light_result = slam.light_lp.run(
     analysis=analysis,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
-    lens_bulge=bulge,
+    lens_bulge=lens_bulge,
     lens_disk=None,
 )
 
@@ -323,15 +410,14 @@ light model of the LIGHT LP PIPELINE.
 
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge [fixed from LIGHT LP PIPELINE].
+ - Uses a linear Multi Gaussian Expansion bulge [fixed from LIGHT LP PIPELINE].
 
  - Uses an `PowerLaw` model for the lens's total mass distribution [priors initialized from SOURCE 
  PARAMETRIC PIPELINE + centre unfixed from (0.0, 0.0)].
 
  - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
 
- - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS TOTAL 
- PIPELINE.
+ - Carries the lens redshift and source redshift of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.
 
 __Settings__:
 
@@ -356,6 +442,54 @@ mass_result = slam.mass_total.run(
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
     mass=af.Model(al.mp.PowerLaw),
+)
+
+"""
+__Output__
+
+The SLaM pipeline above outputs the model-fitting results to the `output` folder of the workspace, which includes
+the usual model results, visualization, and .json files.
+
+As described in the `autolens_workspace/*/results` package there is an API for loading these results from hard disk
+to Python, for example so they can be manipulated in a Juypter notebook.
+
+However, it is also often useful to output the results to the dataset folder of each lens in standard formats, for
+example images of the lens and lensed source in .fits or visualization outputs like .png files. This makes transferring
+the results more portable, especially if they are to be used by other people.
+
+The `slam_util` module provides convenience methods for outputting many results to the dataset folder, we
+use it below to output the following results:
+
+ - Images of the model lens light, lensed source light and source reconstruction to .fits files.
+ - A text `model.results` file containing the lens model parameter estimates.
+ - A subplot containing the fit in one row, which is output to .png.
+ - A subplot of the source reconstruction in the source plane in one row, which is output to .png.
+
+"""
+slam.slam_util.output_model_to_fits(
+    output_path=path.join(dataset_path, "model"),
+    result=mass_result,
+    model_lens_light=True,
+    model_source_light=True,
+    source_reconstruction=True,
+)
+
+slam.slam_util.output_model_results(
+    output_path=path.join(dataset_path, "model"),
+    result=mass_result,
+    filename="model.results",
+)
+
+slam.slam_util.output_fit_multi_png(
+    output_path=dataset_path,
+    result_list=[mass_result],
+    filename="sie_fit",
+)
+
+slam.slam_util.output_source_multi_png(
+    output_path=dataset_path,
+    result_list=[mass_result],
+    filename="source_reconstruction",
 )
 
 """

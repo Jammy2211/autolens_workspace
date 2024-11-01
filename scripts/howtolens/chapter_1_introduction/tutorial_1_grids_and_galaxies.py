@@ -147,6 +147,8 @@ grid_shifted = grid
 grid_shifted[:, 0] = grid_shifted[:, 0] - centre[0]  # Shift in y-direction.
 grid_shifted[:, 1] = grid_shifted[:, 1] - centre[1]  # Shift in x-direction.
 
+print("(y,x) pixel 0 After Shift:")
+print(grid_shifted.native[0, 0])  # The coordinate of the first pixel after shifting.
 
 """
 The grid is now centered around (0.3", 0.5"). We can plot the shifted grid to see this change.
@@ -178,6 +180,9 @@ theta = np.arctan2(y, x) - np.radians(angle_degrees)
 grid_rotated = grid_shifted
 grid_rotated[:, 0] = radius * np.sin(theta)
 grid_rotated[:, 1] = radius * np.cos(theta)
+
+print("(y,x) pixel 0 After Rotation:")
+print(grid_rotated.native[0, 0])  # The coordinate of the first pixel after rotation.
 
 """
 The grid has now been rotated 60 degrees counter-clockwise. We can plot it to see the change.
