@@ -219,6 +219,8 @@ for extra_galaxy_centre in extra_galaxies_centres:
 
     ### FUTURE IMPROVEMENT: Use elliptical Gaussians for the extra galaxies where the ellipticity is estimated beforehand.
 
+    extra_galaxy_gaussian_list = []
+
     gaussian_list = af.Collection(
         af.Model(al.lp_linear.GaussianSph) for _ in range(total_gaussians)
     )
@@ -228,11 +230,10 @@ for extra_galaxy_centre in extra_galaxies_centres:
         gaussian.centre.centre_1 = extra_galaxy_centre[1]
         gaussian.sigma = 10 ** log10_sigma_list[i]
 
-    gaussian_list += gaussian_list
+    extra_galaxy_gaussian_list += gaussian_list
 
     extra_galaxy_bulge = af.Model(
-        al.lp_basis.Basis,
-        profile_list=bulge_gaussian_list,
+        al.lp_basis.Basis, profile_list=extra_galaxy_gaussian_list
     )
 
     # Extra Galaxy Mass
@@ -246,7 +247,6 @@ for extra_galaxy_centre in extra_galaxies_centres:
         al.Galaxy, redshift=0.5, bulge=extra_galaxy_bulge, mass=mass
     )
 
-    extra_galaxy.bulge.centre = extra_galaxy_centre
     extra_galaxy.mass.centre = extra_galaxy_centre
 
     extra_galaxies_list.append(extra_galaxy)
