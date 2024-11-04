@@ -613,6 +613,14 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask = al.Mask2D.circular(
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=3.0,
+)
+
+dataset = dataset.apply_mask(mask=mask)
+
 dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
 dataset_plotter.subplot_dataset()
 

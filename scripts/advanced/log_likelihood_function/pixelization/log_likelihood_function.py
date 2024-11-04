@@ -1,5 +1,5 @@
 """
-__Log Likelihood Function: Inversion (image_mesh.Overlay + mesh.Voronoi + reg.Constant)__
+__Log Likelihood Function: Inversion (image_mesh.Overlay + mesh.Delaunay + reg.Constant)__
 
 This script provides a step-by-step guide of the **PyAutoLens** `log_likelihood_function` which is used to fit
 `Imaging` data with an inversion (specifically an `Overlay` image-mesh, `Voronoi` mesh and `Constant`
