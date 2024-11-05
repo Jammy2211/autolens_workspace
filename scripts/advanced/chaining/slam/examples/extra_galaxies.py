@@ -261,10 +261,10 @@ source_lp_result = slam.source_lp.run(
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
     source_bulge=source_bulge,
-    extra_galaxies=extra_galaxies,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
+    extra_galaxies=extra_galaxies,
 )
 
 """
