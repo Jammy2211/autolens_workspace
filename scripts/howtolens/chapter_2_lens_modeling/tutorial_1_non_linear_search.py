@@ -320,12 +320,6 @@ model.galaxies.lens.mass.einstein_radius = af.UniformPrior(
 
 model.galaxies.source.bulge.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
 model.galaxies.source.bulge.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-model.galaxies.source.bulge.ell_comps.ell_comps_0 = af.UniformPrior(
-    lower_limit=-1.0, upper_limit=1.0
-)
-model.galaxies.source.bulge.ell_comps.ell_comps_1 = af.UniformPrior(
-    lower_limit=-1.0, upper_limit=1.0
-)
 model.galaxies.source.bulge.effective_radius = af.UniformPrior(
     lower_limit=0.0, upper_limit=1.0
 )
@@ -450,11 +444,9 @@ initializer = af.InitializerParamStartPoints(
     {
         model.galaxies.lens.mass.centre.centre_0: 0.0,
         model.galaxies.lens.mass.centre.centre_1: 0.0,
-        model.galaxies.lens.mass.einstein_radiuss: 1.55,
+        model.galaxies.lens.mass.einstein_radius: 1.55,
         model.galaxies.source.bulge.centre.centre_0: 0.0,
         model.galaxies.source.bulge.centre.centre_1: 0.0,
-        model.galaxies.source.bulge.ell_comps.ell_comps_0: 0.05,
-        model.galaxies.source.bulge.ell_comps.ell_comps_1: 0.05,
         model.galaxies.source.bulge.effective_radius: 0.1,
     }
 )
@@ -566,11 +558,8 @@ initializer = af.InitializerParamBounds(
     {
         model.galaxies.lens.mass.centre.centre_0: (-0.01, 0.01),
         model.galaxies.lens.mass.centre.centre_1: (-0.01, 0.01),
-        model.galaxies.lens.mass.einstein_radiuss: (1.5, 1.6),
         model.galaxies.source.bulge.centre.centre_0: (-0.01, 0.01),
         model.galaxies.source.bulge.centre.centre_1: (-0.01, 0.01),
-        model.galaxies.source.bulge.ell_comps.ell_comps_0: (-0.1, 0.1),
-        model.galaxies.source.bulge.ell_comps.ell_comps_1: (-0.1, 0.1),
         model.galaxies.source.bulge.effective_radius: (0.05, 0.15),
     }
 )
