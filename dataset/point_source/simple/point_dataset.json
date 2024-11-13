@@ -2,29 +2,34 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "positions": {
+        "fluxes": {
             "type": "instance",
-            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
             "arguments": {
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        [
-                            -1.1484475455572676,
-                            1.149218749999987
-                        ],
-                        [
-                            1.1483239940627235,
-                            -1.1492187500000048
-                        ],
-                        [
-                            -1.109205769448285,
-                            -1.109375000000005
-                        ],
-                        [
-                            1.109082217953741,
-                            1.109374999999987
-                        ]
+                        14.997318793000257,
+                        13.513375520849404,
+                        13.513375520849404,
+                        14.997318793004084
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "name": "point_0",
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.05
                     ],
                     "dtype": "float64"
                 }
@@ -46,34 +51,29 @@
                 }
             }
         },
-        "name": "point_0",
-        "fluxes": {
+        "positions": {
             "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
             "arguments": {
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        14.920680943704152,
-                        14.931855574896053,
-                        13.588305803965062,
-                        13.57727630033967
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "positions_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05
+                        [
+                            -1.1484375,
+                            1.1483857698099902
+                        ],
+                        [
+                            -1.10859375,
+                            -1.1091439937010075
+                        ],
+                        [
+                            1.10859375,
+                            1.1091439937010075
+                        ],
+                        [
+                            1.1484375,
+                            -1.14838576980999
+                        ]
                     ],
                     "dtype": "float64"
                 }

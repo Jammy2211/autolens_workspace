@@ -273,6 +273,9 @@ analysis = al.AnalysisImaging(
     dataset=dataset, adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1)
 )
 
+centre_0 = af.UniformPrior(lower_limit=-0.2, upper_limit=0.2)
+centre_1 = af.UniformPrior(lower_limit=-0.2, upper_limit=0.2)
+
 total_gaussians = 30
 gaussian_per_basis = 2
 
@@ -286,8 +289,8 @@ for j in range(gaussian_per_basis):
     )
 
     for i, gaussian in enumerate(gaussian_list):
-        gaussian.centre.centre_0 = gaussian_list[0].centre.centre_0
-        gaussian.centre.centre_1 = gaussian_list[0].centre.centre_1
+        gaussian.centre.centre_0 = centre_0
+        gaussian.centre.centre_1 = centre_1
         gaussian.ell_comps = gaussian_list[0].ell_comps
         gaussian.sigma = 10 ** log10_sigma_list[i]
 
