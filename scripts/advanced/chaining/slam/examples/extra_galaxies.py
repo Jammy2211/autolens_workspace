@@ -215,8 +215,6 @@ for extra_galaxy_centre in extra_galaxies_centres:
 
     log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
 
-    gaussian_list = []
-
     ### FUTURE IMPROVEMENT: Use elliptical Gaussians for the extra galaxies where the ellipticity is estimated beforehand.
 
     extra_galaxy_gaussian_list = []
@@ -270,11 +268,23 @@ source_lp_result = slam.source_lp.run(
 """
 __SOURCE PIX PIPELINE__
 
-The SOURCE PIX PIPELINE (and every pipeline that follows) are identical to the `start_here.ipynb` example.
+The SOURCE PIX PIPELINE (and every pipeline that follows) are identical to the `start_here.ipynb` example,
+except the additional galaxies are passed to the pipeline.
 
-The model components for the extra galaxies (e.g. `lens_bulge` and `lens_disk`) are passed from the SOURCE LP PIPELINE,
-via the `source_lp_result` object, therefore you do not need to manually pass them below.
+The model components for the extra galaxies are set up using a trick with the model composition whereby all
+extra galaxies used in the SOURCE LP PIPELINE are set up as a model, and the result is then used to fix their
+light parameters to the results of the SOURCE LP PIPELINE.
+
+This means that the extra galaxies model parameterization is identical to SOURCE LP PIPELINE, but the mass profile
+priors are set using the results of the SOURCE LP PIPELINE.
 """
+extra_galaxies = source_lp_result.model.extra_galaxies
+
+for galaxy, result_galaxy in zip(
+    extra_galaxies, source_lp_result.instance.extra_galaxies
+):
+    galaxy.bulge = result_galaxy.bulge
+
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
@@ -288,6 +298,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     analysis=analysis,
     source_lp_result=source_lp_result,
     mesh_init=al.mesh.Delaunay,
+    extra_galaxies=extra_galaxies,
 )
 
 """
@@ -295,8 +306,8 @@ __SOURCE PIX PIPELINE 2 (with lens light)__
 
 As above, this pipeline also has the same API as the `start_here.ipynb` example.
 
-The extra galaxies are passed from the SOURCE PIX PIPELINE, via the `source_pix_result_1` object, therefore you do not
-need to manually pass them below.
+The extra galaxies are passed from the SOURCE PIX PIPELINE, via the `source_pix_result_1` object, therefore there is 
+no need to manually pass them below.
 """
 analysis = al.AnalysisImaging(
     dataset=dataset,
@@ -322,10 +333,10 @@ source_pix_result_2 = slam.source_pix.run_2(
 """
 __LIGHT LP PIPELINE__
 
-As above, this pipeline also has the same API as the `start_here.ipynb` example.
+As above, this pipeline also has the same API as the `start_here.ipynb` example, except for the extra galaxies.
 
-The extra galaxies are passed from the SOURCE PIX PIPELINE, via the `source_pix_result_1` object, therefore you do not
-need to manually pass them below.
+The extra galaxies use the same for loop trick used before the SOURCE PIX PIPELINE, however this now makes
+the light profiles free parameters in the model and fixes their mass profiles to the results of the SOURCE PIX PIPELINE.
 """
 analysis = al.AnalysisImaging(
     dataset=dataset, adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1)
@@ -359,6 +370,15 @@ lens_bulge = af.Model(
     profile_list=bulge_gaussian_list,
 )
 
+# EXTRA GALAXIES
+
+extra_galaxies = source_lp_result.model.extra_galaxies
+
+for galaxy, result_galaxy in zip(
+    extra_galaxies, source_pix_result_1.instance.extra_galaxies
+):
+    galaxy.mass = result_galaxy.mass
+
 light_result = slam.light_lp.run(
     settings_search=settings_search,
     analysis=analysis,
@@ -366,16 +386,25 @@ light_result = slam.light_lp.run(
     source_result_for_source=source_pix_result_2,
     lens_bulge=lens_bulge,
     lens_disk=None,
+    extra_galaxies=extra_galaxies,
 )
 
 """
 __MASS TOTAL PIPELINE__
 
-As above, this pipeline also has the same API as the `start_here.ipynb` example.
+As above, this pipeline also has the same API as the `start_here.ipynb` example except for the extra galaxies.
 
-The extra galaxies are passed from the SOURCE PIX PIPELINE, via the `source_pix_result_1` object, therefore you do not
-need to manually pass them below.
+The extra galaxies are set up using the same trick as the SOURCE PIX PIPELINE, .
+
+The light profiles of the extra galaxies are fixed to the results of the LIGHT LP PIPELINE, meaning that the mass
+profiles of the extra galaxies are free parameters in the model with their priors set using the results of the 
+SOURCE PIPELINE.
 """
+extra_galaxies = source_lp_result.model.extra_galaxies
+
+for galaxy, result_galaxy in zip(extra_galaxies, light_result.instance.extra_galaxies):
+    galaxy.bulge = result_galaxy.bulge
+
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
@@ -391,6 +420,7 @@ mass_result = slam.mass_total.run(
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
     mass=af.Model(al.mp.PowerLaw),
+    extra_galaxies=extra_galaxies,
 )
 
 """

@@ -543,12 +543,13 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
         raise_inversion_positions_likelihood_exception=False,
     )
 
-    source_pix_result_1 = slam.source_pix.run_1__mass_fixed(
+    source_pix_result_1 = slam.source_pix.run_1(
         settings_search=settings_search,
         analysis=analysis,
         source_lp_result=source_lp_result,
         mesh_init=al.mesh.Delaunay,
         dataset_model=dataset_model,
+        fixed_mass_model=True,
     )
 
     source_pix_result_1.max_log_likelihood_fit.inversion.cls_list_from(
