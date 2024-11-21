@@ -53,7 +53,7 @@ tracer:
   subplot_tracer: true
 inversion:
   subplot_inversion: true
-  errors: false                            # Plot image of the errors of every mesh-pixel reconstructed value?
+  errors: false                            # Plot image of the noise-map of every mesh-pixel reconstructed value?
   sub_pixels_per_image_pixels: false      # Plot the number of sub pixels per masked data pixels?
   mesh_pixels_per_image_pixels: false     # Plot the number of image-plane mesh pixels per masked data pixels?
   reconstructed_image: false               # Plot image of the reconstructed data (e.g. in the image-plane)?

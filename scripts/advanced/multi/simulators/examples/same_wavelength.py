@@ -84,7 +84,7 @@ simulator_list = [
         exposure_time=exposure_time,
         psf=psf,
         background_sky_level=background_sky_level,
-        add_poisson_noise=True,
+        add_poisson_noise_to_data=True,
     )
     for psf, exposure_time, background_sky_level in zip(
         psf_list, exposure_time_list, background_sky_level_list

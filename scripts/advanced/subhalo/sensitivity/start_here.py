@@ -353,7 +353,7 @@ class SimulateImaging:
             exposure_time=300.0,
             psf=self.psf,
             background_sky_level=0.1,
-            add_poisson_noise=True,
+            add_poisson_noise_to_data=True,
         )
 
         dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)

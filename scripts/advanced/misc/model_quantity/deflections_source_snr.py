@@ -78,7 +78,7 @@ Because the simulation includes adding noise, the output `Imaging` dataset has a
 use to set the S/N of the defleciton angles that we fit. 
 """
 simulator = al.SimulatorImaging(
-    exposure_time=300.0, background_sky_level=0.1, add_poisson_noise=False
+    exposure_time=300.0, background_sky_level=0.1, add_poisson_noise_to_data=False
 )
 
 dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)

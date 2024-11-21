@@ -400,7 +400,7 @@ The light profiles of the extra galaxies are fixed to the results of the LIGHT L
 profiles of the extra galaxies are free parameters in the model with their priors set using the results of the 
 SOURCE PIPELINE.
 """
-extra_galaxies = source_lp_result.model.extra_galaxies
+extra_galaxies = source_pix_result_1.model.extra_galaxies
 
 for galaxy, result_galaxy in zip(extra_galaxies, light_result.instance.extra_galaxies):
     galaxy.bulge = result_galaxy.bulge

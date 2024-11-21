@@ -117,7 +117,7 @@ def simulate_for_source_galaxy(source_galaxy):
         exposure_time=300.0,
         psf=psf,
         background_sky_level=100.0,
-        add_poisson_noise=True,
+        add_poisson_noise_to_data=True,
         noise_seed=1,
     )
 
