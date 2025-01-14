@@ -592,7 +592,7 @@ Lets summarize what we've learnt:
 - **Grids**: We've learnt that a grid is a set of 2D coordinates that represent the positions where we measure the
 light of a galaxy. 
 
-- ** Geometry**: We've learnt how to shift, rotate, and convert grids to elliptical coordinates.
+- **Geometry**: We've learnt how to shift, rotate, and convert grids to elliptical coordinates.
 
 - **Light Profiles**: We've learnt that light profiles are mathematical functions that describe how a galaxy's light is
 distributed in space. We've used the `Sersic` profile to create images of galaxies.

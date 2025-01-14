@@ -81,7 +81,7 @@ For simplicity, we disable over sampling in this guide by setting `sub_size=1`.
 a full description of over sampling and how to use it is given in `autolens_workspace/*/guides/over_sampling.py`.
 """
 masked_dataset = masked_dataset.apply_over_sampling(
-    over_sampling=al.OverSamplingDataset(uniform=al.OverSamplingUniform(sub_size=1))
+    over_sampling=al.OverSamplingDataset(over_sample_size_lp=1)
 )
 
 """
@@ -89,14 +89,14 @@ __Masked Image Grid__
 
 To perform galaxy calculations we define a 2D image-plane grid of (y,x) coordinates.
 
-These are given by `masked_dataset.grids.uniform`, which we can plot and see is a uniform grid of (y,x) Cartesian 
+These are given by `masked_dataset.grids.lp`, which we can plot and see is a uniform grid of (y,x) Cartesian 
 coordinates which have had the 3.0" circular mask applied.
 
 Each (y,x) coordinate coordinates to the centre of each image-pixel in the dataset, meaning that when this grid is
 used to perform ray-tracing and evaluate a light profile the intensity of the profile at the centre of each 
 image-pixel is computed, making it straight forward to compute the light profile's image to the image data.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.uniform)
+grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.lp)
 grid_plotter.figure_2d()
 
 print(
@@ -110,7 +110,7 @@ To perform lensing calculations we convert this 2D (y,x) grid of coordinates to 
 
 Where:
 
- - $y$ and $x$ are the (y,x) arc-second coordinates of each unmasked image-pixel, given by `masked_dataset.grids.uniform`.
+ - $y$ and $x$ are the (y,x) arc-second coordinates of each unmasked image-pixel, given by `masked_dataset.grids.lp`.
  - $y_c$ and $x_c$ are the (y,x) arc-second `centre` of the light or mass profile used to perform lensing calculations.
  - $q$ is the axis-ratio of the elliptical light or mass profile (`axis_ratio=1.0` for spherical profiles).
  - The elliptical coordinates is rotated by position angle $\phi$, defined counter-clockwise from the positive 
@@ -127,10 +127,10 @@ Note that `Ell` is used as shorthand for elliptical and `Sph` for spherical.
 profile = al.EllProfile(centre=(0.1, 0.2), ell_comps=(0.1, 0.2))
 
 """
-First we transform `masked_dataset.grids.uniform` to the centre of profile and rotate it using its angle `phi`.
+First we transform `masked_dataset.grids.lp` to the centre of profile and rotate it using its angle `phi`.
 """
 transformed_grid = profile.transformed_to_reference_frame_grid_from(
-    grid=masked_dataset.grids.uniform
+    grid=masked_dataset.grids.lp
 )
 
 grid_plotter = aplt.Grid2DPlotter(grid=transformed_grid)
@@ -445,9 +445,7 @@ model we infer.
 noise_normalization = float(np.sum(np.log(2 * np.pi * masked_dataset.noise_map**2.0)))
 
 """
-__Likelihood Step 8: Calculate The Log Likelihood!__
-
-We made it!
+__Likelihood Step 8: Calculate The Log Likelihood__
 
 We can now, finally, compute the `log_likelihood` of the lens model, by combining the two terms computed above using
 the likelihood function defined above.

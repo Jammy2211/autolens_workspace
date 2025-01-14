@@ -168,8 +168,6 @@ for i, dataset in enumerate(dataset_list):
 __Visualize__
 
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
-
-For a faster run time, the tracer visualization uses the binned grid instead of the iterative grid.
 """
 for i, dataset in enumerate(dataset_list):
     mat_plot = aplt.MatPlot2D(

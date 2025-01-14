@@ -469,8 +469,8 @@ use it below to output the following results:
  - A subplot of the source reconstruction in the source plane in one row, which is output to .png.
 
 """
-slam.slam_util.output_model_to_fits(
-    output_path=path.join(dataset_path, "model"),
+slam.slam_util.output_result_to_fits(
+    output_path=path.join(dataset_path, "result"),
     result=mass_result,
     model_lens_light=True,
     model_source_light=True,
@@ -478,7 +478,7 @@ slam.slam_util.output_model_to_fits(
 )
 
 slam.slam_util.output_model_results(
-    output_path=path.join(dataset_path, "model"),
+    output_path=path.join(dataset_path, "result"),
     result=mass_result,
     filename="model.results",
 )

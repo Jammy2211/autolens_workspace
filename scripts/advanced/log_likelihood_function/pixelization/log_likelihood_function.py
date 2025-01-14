@@ -86,8 +86,8 @@ a full description of over sampling and how to use it is given in `autolens_work
 """
 masked_dataset = masked_dataset.apply_over_sampling(
     over_sampling=al.OverSamplingDataset(
-        uniform=al.OverSamplingUniform(sub_size=1),
-        pixelization=al.OverSamplingUniform(sub_size=1),
+        over_sample_size_lp=1,
+        over_sample_size_pixelization=1,
     )
 )
 
@@ -448,7 +448,6 @@ mapper_grids = al.MapperGrids(
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=masked_dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 
@@ -470,7 +469,6 @@ There are two steps in this calculation, which we show individually below.
 """
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=masked_dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 
@@ -980,9 +978,7 @@ model we infer.
 noise_normalization = float(np.sum(np.log(2 * np.pi * masked_dataset.noise_map**2.0)))
 
 """
-__Likelihood Step 21: Calculate The Log Likelihood!__
-
-We made it!
+__Likelihood Step 21: Calculate The Log Likelihood__
 
 We can now, finally, compute the `log_likelihood` of the lens model, by combining the five terms computed above using
 the likelihood function defined above.
@@ -1003,7 +999,7 @@ print(log_evidence)
 """
 __Fit__
 
-This 21 step process to perform a likelihood function evaluation is what is performed in the `FitImaging` object.
+This process to perform a likelihood function evaluation is what is performed in the `FitImaging` object.
 """
 fit = al.FitImaging(
     dataset=masked_dataset,

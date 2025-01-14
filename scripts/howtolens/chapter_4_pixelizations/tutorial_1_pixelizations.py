@@ -24,7 +24,7 @@ Lets setup a lensed source-plane grid, using a lens galaxy and tracer.
 Note how our source galaxy no longer uses a light profile, as we will instead reconstruct its light using a 
 pixelization.
 """
-grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
+grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05, over_sample_size=1)
 
 lens_galaxy = al.Galaxy(
     redshift=0.5,
@@ -69,7 +69,7 @@ mapper_grids = pixelization.mapper_grids_from(
     mask=grid.mask, source_plane_data_grid=source_plane_grid
 )
 
-mapper = al.Mapper(mapper_grids=mapper_grids, over_sampler=None, regularization=None)
+mapper = al.Mapper(mapper_grids=mapper_grids, regularization=None)
 
 """
 This `Mapper` is a `RectangularMapper`, every `Pixelization` generates it owns mapper.

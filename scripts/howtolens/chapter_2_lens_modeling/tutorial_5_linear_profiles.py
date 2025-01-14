@@ -448,7 +448,7 @@ This means we can use them directly to perform the visualization below.
 print(result_basis.max_log_likelihood_instance)
 
 tracer_plotter = aplt.TracerPlotter(
-    tracer=result_basis.max_log_likelihood_tracer, grid=result_basis.grids.uniform
+    tracer=result_basis.max_log_likelihood_tracer, grid=result_basis.grids.lp
 )
 tracer_plotter.subplot()
 

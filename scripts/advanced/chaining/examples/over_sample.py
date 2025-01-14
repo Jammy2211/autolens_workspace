@@ -165,7 +165,7 @@ source_centre = tracer.galaxies[1].bulge.centre
 
 dataset = dataset.apply_over_sampling(
     over_sampling=al.OverSamplingDataset(
-        non_uniform=al.OverSamplingUniform.from_radial_bins(
+        non_uniform=al.OverSampling.over_sample_size_via_radial_bins_from(
             grid=traced_grid,
             sub_size_list=[32, 8, 2],
             radial_list=[0.1, 0.3],

@@ -6,6 +6,8 @@ In the previous tutorial, we used a pixelization to create made a `Mapper`. Howe
 does, why it was called a mapper and whether it was mapping anything at all!
 
 Therefore, in this tutorial, we'll cover mappers in more detail.
+
+WARNING: THHIS TUTORIAL VISUALS ARE SLIGHTLY BUGGY CURRENTLY AND WILL BE FIXED IN THE FUTURE.
 """
 # %matplotlib inline
 # from pyprojroot import here
@@ -34,13 +36,16 @@ dataset = al.Imaging.from_fits(
     noise_map_path=path.join(dataset_path, "noise_map.fits"),
     psf_path=path.join(dataset_path, "psf.fits"),
     pixel_scales=0.1,
+    over_sampling=al.OverSamplingDataset(pixelization=1),
 )
 
 """
 Now, lets set up our `Grid2D` (using the image above).
 """
 grid = al.Grid2D.uniform(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    over_sample_size=1,
 )
 
 """
@@ -73,12 +78,11 @@ pixelization = al.Pixelization(mesh=mesh)
 
 mapper_grids = pixelization.mapper_grids_from(
     mask=grid.mask,
-    source_plane_data_grid=dataset.grids.pixelization.over_sampler.over_sampled_grid,
+    source_plane_data_grid=dataset.grids.pixelization,
 )
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 
@@ -166,9 +170,7 @@ To create the mapper, we need to set up the masked imaging's grid as the source-
 """
 tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
-source_plane_grid = tracer.traced_grid_2d_list_from(
-    grid=dataset.grids.pixelization.over_sampler.over_sampled_grid
-)[1]
+source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grids.pixelization)[1]
 
 """
 We can now use the masked source-plane grid to create a new `Mapper` (using the same rectangular 25 x 25 pixelization 
@@ -180,7 +182,6 @@ mapper_grids = mesh.mapper_grids_from(
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 

@@ -148,7 +148,7 @@ adapt_image = adapt_image_maker.adapt_images.galaxy_name_image_dict[
     "('galaxies', 'source')"
 ]
 
-over_sampling = al.OverSamplingUniform.from_adapt(
+over_sampling = al.OverSampling.over_sample_size_via_adapt_from(
     data=adapt_image,
     noise_map=dataset.noise_map,
 )

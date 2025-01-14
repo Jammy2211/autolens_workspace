@@ -175,13 +175,12 @@ A `Mapper` maps the source-pixels to image-pixels, as shown in the figure below.
 reconstructing the source galaxy's light.
 """
 mapper_grids = mesh.mapper_grids_from(
-    source_plane_data_grid=dataset.grids.pixelization.over_sampler.over_sampled_grid,
+    source_plane_data_grid=dataset.grids.pixelization,
     mask=dataset.mask,
 )
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=None,
 )
 
@@ -204,7 +203,6 @@ regularization = al.reg.Constant(coefficient=1.0)
 
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
-    over_sampler=dataset.grids.over_sampler_pixelization,
     regularization=regularization,
 )
 
