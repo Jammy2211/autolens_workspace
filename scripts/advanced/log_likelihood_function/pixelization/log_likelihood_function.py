@@ -85,10 +85,8 @@ For simplicity, we disable over sampling in this guide by setting `sub_size=1`.
 a full description of over sampling and how to use it is given in `autolens_workspace/*/guides/over_sampling.py`.
 """
 masked_dataset = masked_dataset.apply_over_sampling(
-    over_sampling=al.OverSamplingDataset(
-        over_sample_size_lp=1,
-        over_sample_size_pixelization=1,
-    )
+    over_sample_size_lp=1,
+    over_sample_size_pixelization=1,
 )
 
 """

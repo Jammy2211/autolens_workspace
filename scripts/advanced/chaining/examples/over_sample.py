@@ -32,6 +32,7 @@ If any code in this script is unclear, refer to the `chaining/start_here.ipynb` 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import numpy as np
 import os
 import sys
 from os import path
@@ -149,10 +150,7 @@ This uses the result of the first lens model in the following way:
     
  3) For all pixels with a distance below a threshold value of 0.1", we set the over sampling factor to a high value of 
     32, which will ensure accuracy in the evaluated of the source's light profile, even after lensing. Pixels 0.1" to
-    0.3" from the centre use an over sampling factor of 4, and all other pixels use an over sampling factor of 2.
- 
- 4) Pass this adaptive over sampling grid to the dataset so it is used in the second model-fit.   
-    
+    0.3" from the centre use an over sampling factor of 4, and all other pixels use an over sampling factor of 2.  
 """
 
 tracer = result_1.max_log_likelihood_tracer
@@ -163,16 +161,35 @@ traced_grid = tracer.traced_grid_2d_list_from(
 
 source_centre = tracer.galaxies[1].bulge.centre
 
-dataset = dataset.apply_over_sampling(
-    over_sampling=al.OverSamplingDataset(
-        non_uniform=al.OverSampling.over_sample_size_via_radial_bins_from(
-            grid=traced_grid,
-            sub_size_list=[32, 8, 2],
-            radial_list=[0.1, 0.3],
-            centre_list=[source_centre],
-        )
-    )
+over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+    grid=traced_grid,
+    sub_size_list=[32, 8, 2],
+    radial_list=[0.1, 0.3],
+    centre_list=[source_centre],
 )
+
+"""
+One thing to note is this over sampling grid, although specific to the lensed source, is also applied to the lens
+galaxy's light. Other than slower computation times, this is not a problem, as the lens galaxy's light in these
+pixels will still be evaluated accurately.
+
+The data fitted in this example omits the lens light for simplicity, however if it were present we would want
+the lens galaxy's light to be over sampled in the same way as the source galaxy's light because we still require high 
+levels of over sampling in the lens galaxy's light to evaluate it correctly. 
+
+We therefore create an over sampling grid which is centred on the lens galaxy's light and combine these values with 
+those found for the source galaxy's light, to ensure over sampling is centred on the brightest regions of both galaxies.
+"""
+over_sample_size_lens = al.util.over_sample.over_sample_size_via_radial_bins_from(
+    grid=dataset.grid,
+    sub_size_list=[32, 8, 2],
+    radial_list=[0.1, 0.3],
+    centre_list=[(0.0, 0.0)],
+)
+
+over_sample_size = np.maximum(over_sample_size, over_sample_size_lens)
+
+dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
 """
 __Model (Search 1)__

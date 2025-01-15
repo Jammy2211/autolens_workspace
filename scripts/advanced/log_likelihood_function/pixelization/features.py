@@ -8,17 +8,7 @@ evaluate the light profile flux at every image pixel.
 adaptively increases depending on a required fractional accuracy of the light profile.
 
  https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/grids/two_d/grid_iterate.py
-"""
-# masked_imaging_iterate = dataset.apply_mask(mask=mask)
-# masked_imaging_iterate = masked_imaging_iterate.apply_over_sampling(
-#     over_sampling=al.OverSamplingDataset(uniform=al.OverSamplingIterate())
-# )
-#
-# image_iterate = lens_galaxy.image_2d_from(grid=masked_imaging_iterate.grid)
-# blurring_image_iterate = lens_galaxy.image_2d_from(grid=masked_dataset.grids.blurring)
 
-
-"""
 __Sourrce Plane Interpolation__
 
 For the `VoronoiNoInterp` pixelization used in this example, every image-sub pixel maps to a single source Voronoi
@@ -31,10 +21,7 @@ https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/inversion/mappers/v
 
 `pixelization_index_for_voronoi_sub_slim_index_from`: 
  https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/util/mapper_util.py 
-"""
 
-
-"""
 The number of pixels that each sub-pixel maps too is also stored and extracted. This is used for speeding up 
 the calculation of the `mapping_matrix` described next.
 

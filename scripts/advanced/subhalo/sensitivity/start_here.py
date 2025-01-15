@@ -344,10 +344,16 @@ class SimulateImaging:
         grid = al.Grid2D.uniform(
             shape_native=self.mask.shape_native,
             pixel_scales=self.mask.pixel_scales,
-            over_sampling=al.OverSamplingIterate(
-                fractional_accuracy=0.9999, sub_steps=[2, 4, 8, 16]
-            ),
         )
+
+        over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+            grid=grid,
+            sub_size_list=[32, 8, 2],
+            radial_list=[0.3, 0.6],
+            centre_list=[(0.0, 0.0)],
+        )
+
+        grid = grid.apply_over_sampling(over_sample_size=over_sample_size)
 
         simulator = al.SimulatorImaging(
             exposure_time=300.0,

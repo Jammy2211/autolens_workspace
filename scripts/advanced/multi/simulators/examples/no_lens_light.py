@@ -47,17 +47,24 @@ The pixel-scale of each color image is different meaning we make a list of grids
 """
 pixel_scales_list = [0.08, 0.12]
 
-grid_list = [
-    al.Grid2D.uniform(
+grid_list = []
+
+for pixel_scales in pixel_scales_list:
+    grid = al.Grid2D.uniform(
         shape_native=(150, 150),
         pixel_scales=pixel_scales,
-        over_sampling=al.OverSamplingIterate(
-            fractional_accuracy=0.9999,
-            sub_steps=[2, 4, 8, 16],
-        ),
     )
-    for pixel_scales in pixel_scales_list
-]
+
+    over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+        grid=grid,
+        sub_size_list=[32, 8, 2],
+        radial_list=[0.3, 0.6],
+        centre_list=[(0.0, 0.0)],
+    )
+
+    grid = grid.apply_over_sampling(over_sample_size=over_sample_size)
+
+    grid_list.append(grid)
 
 """
 Simulate simple Gaussian PSFs for the images in the r and g bands.
