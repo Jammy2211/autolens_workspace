@@ -36,7 +36,7 @@ dataset = al.Imaging.from_fits(
     noise_map_path=path.join(dataset_path, "noise_map.fits"),
     psf_path=path.join(dataset_path, "psf.fits"),
     pixel_scales=0.1,
-    over_sample_size_pixelization=1
+    over_sample_size_pixelization=1,
 )
 
 """

@@ -113,6 +113,15 @@ extra_galaxies_centres = al.Grid2DIrregular(
 
 print(extra_galaxies_centres)
 
+over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+    grid=dataset.grid,
+    sub_size_list=[8, 4, 1],
+    radial_list=[0.3, 0.6],
+    centre_list=[(0.0, 0.0)] + extra_galaxies_centres,
+)
+
+dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
+
 """
 __Settings AutoFit__
 

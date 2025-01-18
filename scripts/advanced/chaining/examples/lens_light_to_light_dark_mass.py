@@ -78,6 +78,15 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
+over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+    grid=dataset.grid,
+    sub_size_list=[8, 4, 1],
+    radial_list=[0.3, 0.6],
+    centre_list=[(0.0, 0.0)],
+)
+
+dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
+
 dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
 dataset_plotter.subplot_dataset()
 

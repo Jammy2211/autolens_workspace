@@ -74,7 +74,18 @@ for dataset in dataset_list:
         shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
     )
 
-    masked_imaging_list.append(dataset.apply_mask(mask=mask))
+    dataset = dataset.apply_mask(mask=mask)
+
+    over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+        grid=dataset.grid,
+        sub_size_list=[8, 4, 1],
+        radial_list=[0.3, 0.6],
+        centre_list=[(0.0, 0.0)],
+    )
+
+    dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
+
+    masked_imaging_list.append(dataset)
 
 """
 __Paths__
