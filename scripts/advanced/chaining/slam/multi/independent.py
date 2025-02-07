@@ -550,6 +550,13 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
         raise_inversion_positions_likelihood_exception=False,
     )
 
+    dataset_model.grid_offset.grid_offset_0 = (
+        source_lp_result.instance.dataset_model.grid_offset[0]
+    )
+    dataset_model.grid_offset.grid_offset_1 = (
+        source_lp_result.instance.dataset_model.grid_offset[1]
+    )
+
     source_pix_result_1 = slam.source_pix.run_1(
         settings_search=settings_search,
         analysis=analysis,
@@ -572,6 +579,13 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
             image_mesh_adapt_background_percent_threshold=0.1,
             image_mesh_adapt_background_percent_check=0.8,
         ),
+    )
+
+    dataset_model.grid_offset.grid_offset_0 = (
+        source_lp_result.instance.dataset_model.grid_offset[0]
+    )
+    dataset_model.grid_offset.grid_offset_1 = (
+        source_lp_result.instance.dataset_model.grid_offset[1]
     )
 
     multi_result = slam.source_pix.run_2(
