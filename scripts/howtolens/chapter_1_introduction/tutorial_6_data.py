@@ -394,7 +394,7 @@ __Wrap Up__
 In this tutorial, you learned how CCD imaging data of a lens is collected using real telescopes like the 
 Hubble Space Telescope, and how to simulate this data using the `SimulatorImaging` object.
 
-Let's summarize what we've covered:
+Let's summarise what we've covered:
 
 - **Optics Blurring**: The optics of a telescope blur the light from tracer, reducing the clarity and sharpness of 
 the images.

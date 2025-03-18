@@ -587,7 +587,7 @@ __Wrap Up__
 
 You've learnt the basic quantities used to study galaxy morphology. 
 
-Lets summarize what we've learnt:
+Lets summarise what we've learnt:
 
 - **Grids**: We've learnt that a grid is a set of 2D coordinates that represent the positions where we measure the
 light of a galaxy. 

@@ -184,7 +184,7 @@ print("Search has finished run - you may now continue the notebook.")
 """
 __Result__
 
-The results are summarized in the `info` attribute.
+The results are summarised in the `info` attribute.
 """
 print(result_1.info)
 

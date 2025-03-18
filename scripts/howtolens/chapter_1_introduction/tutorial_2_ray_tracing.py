@@ -578,7 +578,7 @@ __Wrap Up__
 
 You've learn how strong lens ray-tracing works and how to do it using the `Tracer` object in **PyAutoLens**.
 
-Lets summarize what we've learnt:
+Lets summarise what we've learnt:
 
 - **Grid**: The grid of coordinates that was important for evaluating light profiles is equally important for
   ray-tracing calculations. 

@@ -689,7 +689,7 @@ __Wrap Up__
 In this tutorial, you have learned how to fit a lens model to imaging data, a fundamental process in astronomy
 and statistical inference. 
 
-Let's summarize what we have covered:
+Let's summarise what we have covered:
 
 - **Dataset**: We loaded the imaging dataset that we previously simulated, consisting of the tracer image, noise map,
   and PSF.

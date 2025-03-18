@@ -126,7 +126,7 @@ result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 """
 __Result (Search 1)__
 
-The results which are used for prior passing are summarized in the `info` attribute.
+The results which are used for prior passing are summarised in the `info` attribute.
 """
 print(result_1.info)
 
@@ -297,7 +297,7 @@ Lets say I chain two parameters as follows:
 By invoking the `model` attribute, the prior is passed following 3 rules:
 
  1) The new parameter, in this case the einstein radius, uses a `GaussianPrior`.This is ideal, as the 1D pdf results 
- we compute at the end of a search are easily summarized as a Gaussian.
+ we compute at the end of a search are easily summarised as a Gaussian.
 
  2) The mean of the `GaussianPrior` is the median PDF value of the parameter estimated in search 1.
     
