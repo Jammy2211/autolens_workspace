@@ -59,9 +59,6 @@ inversion:
   reconstructed_image: false               # Plot image of the reconstructed data (e.g. in the image-plane)?
   reconstruction: false                    # Plot the reconstructed inversion (e.g. the pixelization's mesh in the source-plane)?
   regularization_weights: false            # Plot the effective regularization weight of every inversion mesh pixel?
-  all_at_end_png: true                     # Plot all individual plots listed below as .png (even if False)?
-  all_at_end_fits: true                    # Plot all individual plots listed below as .fits (even if False)?
-  all_at_end_pdf: false                    # Plot all individual plots listed below as publication-quality .pdf (even if False)?
 galaxies:
   convergence: false
   image: false
@@ -74,9 +71,6 @@ fit_quantity:
   noise_map: false
   residual_map: false
   normalized_residual_map: false
-  all_at_end_png: true                     # Plot all individual plots listed below as .png (even if False)?
-  all_at_end_fits: true                    # Plot all individual plots listed below as .fits (even if False)?
-  all_at_end_pdf: false                    # Plot all individual plots listed below as publication-quality .pdf (even if False)?
 adapt:
   images_of_planes: true
   model_image: true

@@ -6,7 +6,7 @@ Welcome to a cosma modeling script Python script, which illustrates how to load 
 
 This example shows how to set off many single CPU jobs in a single COSMA submission script, where each job
 fits a different imaging dataset using the same lens model analysis. This form of parallelization is therefore
-benefitial when we have many datasets we wish to fit simultaneously.
+beneficial when we have many datasets we wish to fit simultaneously.
 
 The script `example_1.py` describes how to fit a single dataset with a parallelized Nautilus model-fit. You should
 only read this example after reading and understanding this example.

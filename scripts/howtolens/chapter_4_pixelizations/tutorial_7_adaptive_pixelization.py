@@ -111,7 +111,7 @@ unnecessarily complex (and therefore is lower `log_evidence` solution).
 
 If our pixelization could 'focus' its pixels where we actually have more data, e.g. the highly magnified regions of 
 the source-plane, we could reconstruct the source using fewer pixels. This would significantly increase the Bayesian
-evidence. It'd also be benefitial computationally, as using fewer source pixels means faster run times.
+evidence. It'd also be beneficial computationally, as using fewer source pixels means faster run times.
 
 This is what the Delaunay mesh enables.
 

@@ -58,7 +58,7 @@ off multiply jobs we now simply set off a single `python3` command in the batch 
 `example_1` has no corresponding `example_1.conf` file.
     
 We still pass the integer on the right which is used  to load a specific dataset. This is somewhat optional, but it is
-benefitial for scripts which perform single-CPU fits or multi-CPU Nautilus fits to use the same code to load
+beneficial for scripts which perform single-CPU fits or multi-CPU Nautilus fits to use the same code to load
 data.
 """
 import sys
