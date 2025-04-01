@@ -167,6 +167,14 @@ __Masking (Search 2)__
 
 We apply a larger circular mask, which includes the second source galaxy now that it is included in the model.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
+
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
 )
@@ -279,9 +287,7 @@ mass model.
 
 The SLaM pipelines begin with a linear parametric Source pipeline, which then switches to an inversion Source pipeline, 
 exploiting the chaining technique demonstrated in this example.
-"""
 
-"""
 Pipeline: Double Einstein Ring
 ==============================
 
@@ -447,6 +453,13 @@ __Masking (Search 3)__
 
 We apply a larger circular mask, which includes the second source galaxy now that it is included in the model.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
 )
