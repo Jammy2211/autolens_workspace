@@ -1,6 +1,6 @@
 # %%
 """
-__WELCOME__ 
+__WELCOME__
 
 Welcome to a cosma modeling script Python script, which illustrates how to load a strong lens dataset and analyse it on cosma.
 

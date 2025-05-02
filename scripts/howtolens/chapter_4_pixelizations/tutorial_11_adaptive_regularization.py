@@ -10,6 +10,7 @@ This raises the same question as before, how do we adapt our regularization sche
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 model that we've begun calling the `adapt-image`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

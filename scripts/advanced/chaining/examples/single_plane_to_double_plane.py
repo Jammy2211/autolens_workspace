@@ -34,6 +34,7 @@ calculations are performed when fitting the model.
 The benefit of perform two searches is therefore clear, as the second search will benefit from the efficient and
 accurate initialization of the lens galaxy mass and first source galaxy's from the first search.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

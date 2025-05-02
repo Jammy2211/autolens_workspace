@@ -16,18 +16,19 @@ pixel. Therefore, the plural use of `pix_indexes` is not required. However, for 
 can map to multiple source pixels with an interpolation weight (e.g. `Delaunay` triangulation or a `Voronoi` mesh
 which uses natural neighbor interpolation).
 
-`MapperVoronoiNoInterp.pix_index_for_sub_slim_index`: 
+`MapperVoronoiNoInterp.pix_index_for_sub_slim_index`:
 https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/inversion/mappers/voronoi.py
 
-`pixelization_index_for_voronoi_sub_slim_index_from`: 
- https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/util/mapper_util.py 
+`pixelization_index_for_voronoi_sub_slim_index_from`:
+ https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/util/mapper_util.py
 
-The number of pixels that each sub-pixel maps too is also stored and extracted. This is used for speeding up 
+The number of pixels that each sub-pixel maps too is also stored and extracted. This is used for speeding up
 the calculation of the `mapping_matrix` described next.
 
 As discussed above, because for the `VoronoiNoInterp` pixelization where every sub-pixel maps to one source pixel,
 every entry of this array will be equal to 1.
 """
+
 # pix_sizes_for_sub_slim_index = mapper.pix_sizes_for_sub_slim_index
 
 """

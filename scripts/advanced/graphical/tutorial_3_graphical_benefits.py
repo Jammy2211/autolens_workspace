@@ -28,6 +28,7 @@ The dataset fitted in this example script is simulated imaging data of a sample 
 This data is not automatically provided with the autogalaxy workspace, and must be first simulated by running the
 script `autolens_workspace/scripts/simulators/imaging/samples/advanced/mass_bpl.py`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

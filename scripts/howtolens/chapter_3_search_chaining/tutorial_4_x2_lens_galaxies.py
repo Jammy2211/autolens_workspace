@@ -15,6 +15,7 @@ Up to now, I've put a focus on an analysis being general. The script we write in
 opposite, specific to the image we're modeling. Fitting multiple lens galaxies is really difficult and writing a
 pipeline that we can generalize to many lenses isn't currently possible.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

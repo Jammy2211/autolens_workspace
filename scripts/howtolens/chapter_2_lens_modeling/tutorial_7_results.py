@@ -5,6 +5,7 @@ Tutorial 7: Results
 In the previous tutorials, each search returned a `Result` object, which we used to plot the maximum log likelihood
 fit each model-fit. In this tutorial, we'll take a look at the result object in a little more detail.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

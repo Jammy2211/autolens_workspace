@@ -5,7 +5,7 @@ Tutorial 3: Lens and Source
 In this tutorial, we demonstrate search chaining using three searches to fit strong lens `Imaging` which includes the
 lens galaxy's light.
 
-The crucial point to note is that for many lenses the lens galaxy's light can be fitted and subtracted reasonably 
+The crucial point to note is that for many lenses the lens galaxy's light can be fitted and subtracted reasonably
 well before we attempt to fit the source galaxy. This makes sense, as fitting the lens's light (which is an elliptical
 blob of light in the centre of the imaging) looks nothing like the source's light (which is a ring of light)! Formally,
 we would say that these two model components (the lens's light and source's light) are not covariate.
@@ -41,6 +41,7 @@ for fitting complex lens model. Therefore, we recommend you still read through t
 understanding of how search chaining works, but bear in mind that the example is a little dated and we now recommend
 you fit the lens and source simultaneously!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

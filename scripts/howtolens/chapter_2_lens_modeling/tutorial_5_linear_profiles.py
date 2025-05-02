@@ -2,27 +2,28 @@
 Tutorial 5: Linear Profiles
 ===========================
 
-In the previous tutorial we learned how to balance model complexity with our non-linear search in order to infer 
+In the previous tutorial we learned how to balance model complexity with our non-linear search in order to infer
 accurate lens model solutions and avoid failure. We saw how in order to fit a model accurately one may have to
-parameterize and fit a simpler model with fewer non-linear parameters, at the expense of fitting the data less 
+parameterize and fit a simpler model with fewer non-linear parameters, at the expense of fitting the data less
 accurately.
 
 It would be desirable if we could make our model have more flexibility enabling it to fit more complex galaxy
 structures, but in a way that does not increase (or perhaps even decreases) the number of non-linear parameters.
 This would keep the `Nautilus` model-fit efficient and accurate.
 
-This is possible using linear light profiles, which solve for their `intensity` parameter via efficient linear 
-algebra, using a process called an inversion. The inversion always computes `intensity` values that give the best 
-fit to the data (e.g. they minimize the chi-squared and therefore maximize the likelihood). 
+This is possible using linear light profiles, which solve for their `intensity` parameter via efficient linear
+algebra, using a process called an inversion. The inversion always computes `intensity` values that give the best
+fit to the data (e.g. they minimize the chi-squared and therefore maximize the likelihood).
 
-This tutorial will first fit a model using two linear light profiles. Because their `intensity` values are solved for 
-implicitly, this means they are not a dimension of the non-linear parameter space fitted by `Nautilus`, therefore 
+This tutorial will first fit a model using two linear light profiles. Because their `intensity` values are solved for
+implicitly, this means they are not a dimension of the non-linear parameter space fitted by `Nautilus`, therefore
 reducing the complexity of parameter space and making the fit faster and more accurate.
 
 This tutorial will then show how many linear light profiles can be combined into a `Basis`, which comes from the term
-'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy 
+'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy
 structures (e.g. asymmetries, twists) with just N=6-8 non-linear parameters.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

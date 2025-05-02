@@ -3,13 +3,13 @@ Tutorial 1: Non-linear Search
 =============================
 
 The starting point for most scientific analysis conducted by an Astronomer is that they have observations of a strong lens
-using a telescope like the Hubble Space Telescope, and seek to learn about the lens galaxy, source galaxy and the 
+using a telescope like the Hubble Space Telescope, and seek to learn about the lens galaxy, source galaxy and the
 Universe from these observations. With **PyAutoLen**, we seek to learn about the lenses may and ray-tracing, asking questions like
 how big is the lens galaxy and what does the unlensed source galaxy look like?
 
 To answer these questions, we must therefore fit the dataset with a lens model, where the lens model defines the
-light and mass profiles that make up the lens and source galaxies we fit. Our goal is the find the combination of 
-light and mass profile parameters that best-fit the data, such that the model represents the strong lens, and therefore 
+light and mass profiles that make up the lens and source galaxies we fit. Our goal is the find the combination of
+light and mass profile parameters that best-fit the data, such that the model represents the strong lens, and therefore
 the Universe, as well as possible.
 
 This process is called model-fitting, or "modeling" for short, and we actually did our first example of this in the
@@ -161,6 +161,7 @@ If you're interested in learning more about these principles, you can explore re
 - [Nested Sampling](https://www.imperial.ac.uk/media/imperial-college/research-centres-and-groups/astrophysics/public/icic/data-analysis-workshop/2016/NestedSampling_JRP.pdf)
 - [A Zero-Math Introduction to MCMC Methods](https://towardsdatascience.com/a-zero-math-introduction-to-markov-chain-monte-carlo-methods-dcba889e0c50)
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

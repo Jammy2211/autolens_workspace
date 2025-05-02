@@ -3,8 +3,8 @@ Subhalo Detection: Start Here
 =============================
 
 Strong gravitational lenses can be used to detect the presence of small-scale dark matter (DM) subhalos. This occurs
-when the DM subhalo overlaps the lensed source emission, and therefore gravitationally perturbs the observed image of 
-the lensed source galaxy. 
+when the DM subhalo overlaps the lensed source emission, and therefore gravitationally perturbs the observed image of
+the lensed source galaxy.
 
 When a DM subhalo is not included in the lens model, residuals will be present in the fit to the data in the lensed
 source regions near the subhalo. By adding a DM subhalo to the lens model, these residuals can be reduced. Bayesian
@@ -18,7 +18,7 @@ __SLaM Pipelines__
 The Source, (lens) Light and Mass (SLaM) pipelines are advanced lens modeling pipelines which automate the fitting
 of complex lens models. The SLaM pipelines are used for all DM subhalo detection analyses in **PyAutoLens**. Therefore
 you should be familiar with the SLaM pipelines before performing DM subhalo detection yourself. If you are unfamiliar
-with the SLaM pipelines, checkout the 
+with the SLaM pipelines, checkout the
 example `autolens_workspace/notebooks/imaging/advanced/chaining/slam/start_here.ipynb`.
 
 Dark matter subhalo detection runs the standard SLaM pipelines, and then extends them with a SUBHALO PIPELINE which
@@ -27,9 +27,9 @@ performs the following three chained non-linear searches:
  1) Fits the lens model fitted in the MASS PIPELINE again, without a DM subhalo, to estimate the Bayesian evidence
     of the model without a DM subhalo.
 
- 2) Performs a grid-search of non-linear searches, where each grid cell includes a DM subhalo whose (y,x) centre is 
+ 2) Performs a grid-search of non-linear searches, where each grid cell includes a DM subhalo whose (y,x) centre is
     confined to a small 2D section of the image plane via uniform priors (we explain this in more detail below).
-    
+
  3) Fit the lens model again, including a DM subhalo whose (y,x) centre is initialized from the highest log evidence
     grid cell of the grid-search. The Bayesian evidence estimated in this model-fit is compared to the model-fit
     which did not include a DM subhalo, to determine whether or not a DM subhalo was detected.
@@ -40,10 +40,10 @@ The second stage of the SUBHALO PIPELINE uses a grid-search of non-linear search
 evidence model with a DM subhalo. This grid search confines each DM subhalo in the lens model to a small 2D section
 of the image plane via priors on its (y,x) centre. The reasons for this are as follows:
 
- - Lens models including a DM subhalo often have a multi-model parameter space. This means there are multiple lens 
-   models with high likelihood solutions, each of which place the DM subhalo in different (y,x) image-plane location. 
-   Multi-modal parameter spaces are synonomously difficult for non-linear searches to fit, and often produce 
-   incorrect or inefficient fitting. The grid search breaks the multi-modal parameter space into many single-peaked 
+ - Lens models including a DM subhalo often have a multi-model parameter space. This means there are multiple lens
+   models with high likelihood solutions, each of which place the DM subhalo in different (y,x) image-plane location.
+   Multi-modal parameter spaces are synonomously difficult for non-linear searches to fit, and often produce
+   incorrect or inefficient fitting. The grid search breaks the multi-modal parameter space into many single-peaked
    parameter spaces, making the model-fitting faster and more reliable.
 
  - By inferring how placing a DM subhalo at different locations in the image-plane changes the Bayesian evidence, we
@@ -53,9 +53,9 @@ of the image plane via priors on its (y,x) centre. The reasons for this are as f
 __Pixelized Source__
 
 Detecting a DM subhalo requires the lens model to be sufficiently accurate that the residuals of the source's light
-are at a level where the subhalo's perturbing lensing effects can be detected. 
+are at a level where the subhalo's perturbing lensing effects can be detected.
 
-This requires the source reconstruction to be performed using a pixelized source, as this provides a more detailed 
+This requires the source reconstruction to be performed using a pixelized source, as this provides a more detailed
 reconstruction of the source's light than fits using light profiles.
 
 This example therefore using a pixelized source and the corresponding SLaM pipelines.
@@ -83,6 +83,7 @@ This uses the SLaM pipelines:
 
 Check them out for a full description of the analysis!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

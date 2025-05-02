@@ -9,6 +9,7 @@ Therefore, in this tutorial, we'll cover mappers in more detail.
 
 WARNING: THHIS TUTORIAL VISUALS ARE SLIGHTLY BUGGY CURRENTLY AND WILL BE FIXED IN THE FUTURE.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

@@ -29,6 +29,7 @@ There are a number of benefits of chaining a point source fit to an imaging fit,
 This script therefore initializes the lens model efficiently using a point-source fit and then switches to a full
 fit on the imaging data.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

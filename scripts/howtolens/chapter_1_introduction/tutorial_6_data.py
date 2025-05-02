@@ -5,7 +5,7 @@ Tutorial 6: Data
 In the last tutorials, we use tracers to create images of strong lenses. However, those images don't accurately
 represent what we would observe through a telescope.
 
-Real telescope images, like those taken with the Charge Coupled Device (CCD) imaging detectors on the Hubble Space 
+Real telescope images, like those taken with the Charge Coupled Device (CCD) imaging detectors on the Hubble Space
 Telescope, include several factors that affect what we see:
 
 **Telescope Optics:** The optical components of the telescope can blur the light, influencing the image's sharpness.
@@ -16,7 +16,7 @@ gather more light, improving the signal-to-noise ratio and creating a clearer im
 **Background Sky:** Light from the sky itself, such as distant stars or zodiacal light, adds noise to the image.
 adds additional noise to the image.
 
-In this tutorial, we'll simulate a strong lens image by applying these real-world effects to the light and mass 
+In this tutorial, we'll simulate a strong lens image by applying these real-world effects to the light and mass
 profiles and images we created earlier.
 
 Here is an overview of what we'll cover in this tutorial:
@@ -26,6 +26,7 @@ Here is an overview of what we'll cover in this tutorial:
 - **Background Sky:** We'll add a background sky to the image, simulating the light from the sky that adds noise to the image.
 - **Simulator:** We'll use the `SimulatorImaging` object to simulate imaging data that includes all these effects.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

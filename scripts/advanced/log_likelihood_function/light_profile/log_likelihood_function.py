@@ -1,12 +1,12 @@
 """
 __Log Likelihood Function: Inversion (Parametric)__
 
-This script provides a step-by-step guide of the `log_likelihood_function` which is used to fit `Imaging` data with 
+This script provides a step-by-step guide of the `log_likelihood_function` which is used to fit `Imaging` data with
 a parametric lens light profile and source light profile (e.g. an elliptical Sersic lens and source).
 
 This script has the following aims:
 
- - To provide a resource that authors can include in papers using, so that readers can understand the likelihood 
+ - To provide a resource that authors can include in papers using, so that readers can understand the likelihood
  function (including references to the previous literature from which it is defined) without having to
  write large quantities of text and equations.
 
@@ -14,6 +14,7 @@ Accompanying this script is the `contributor_guide.py` which provides URL's to e
 is illustrated in this guide. This gives contributors a sequential run through of what source-code functions, modules and
 packages are called when the likelihood is evaluated.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

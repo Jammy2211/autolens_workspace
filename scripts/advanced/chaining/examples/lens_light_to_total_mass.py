@@ -12,7 +12,7 @@ The two searches break down as follows:
 
  1) Model the lens galaxy's light using an `Sersic` bulge. The source is present in the image, but modeling it is
     omitted.
-      
+
  2) Models the lens galaxy's mass using an `Isothermal` and source galaxy's light using
     an `Sersic`. The lens light model is fixed to the result of search 1.
 
@@ -46,6 +46,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `chaining/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

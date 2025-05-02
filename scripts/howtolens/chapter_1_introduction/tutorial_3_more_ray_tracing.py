@@ -23,6 +23,7 @@ ray tracing.
 
 The `Tracer` fully accounts for this.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

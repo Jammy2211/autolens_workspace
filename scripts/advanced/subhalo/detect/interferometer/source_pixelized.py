@@ -49,6 +49,7 @@ The script `autolens_workspace/*/interferometer/run_times.py` allows you to comp
 for your interferometer dataset. It does this for all possible combinations of settings and therefore can tell you
 which settings give the fastest run times for your dataset.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

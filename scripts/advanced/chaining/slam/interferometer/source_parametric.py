@@ -28,6 +28,7 @@ __Start Here Notebook__
 If any code in this script is unclear, refer to the `autolens_workspace/imaging/advanced/chaining/slam/start_here.ipynb`
 notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

@@ -84,6 +84,7 @@ light profile source parameters are used to simulate each sensitivity mapping da
 used, the source reconstruction on the mesh is used, such that the simulations capture the irregular morphologies
 of real source galaxies.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

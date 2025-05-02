@@ -3,15 +3,15 @@ Tutorial 1: Individual Models
 =============================
 
 The example scripts throughout the workspace have focused on fitting a lens model to one dataset. You will have
-inspected the results of those individual model-fits and used them to estimate properties of the lens (e.g. the 
+inspected the results of those individual model-fits and used them to estimate properties of the lens (e.g. the
 Einstein radius) and source (e.g. the magnification).
 
 You may even have analysed a sample consisting of tens of objects and combined the results to make more general
 statements about galaxy formation, cosmology or another scientific topic. In doing so, you would have inferred
 the "global" trends of many models fits to a lens sample.
 
-These tutorials show you how to compose and fit hierarchical models to a large datasets, which fit many individual 
-models to each dataset in a sample in a way that links the parameters in these models together to enable global 
+These tutorials show you how to compose and fit hierarchical models to a large datasets, which fit many individual
+models to each dataset in a sample in a way that links the parameters in these models together to enable global
 inference on the model over the full dataset. This can extract a significant amount of extra information from large
 samples of data, which fitting each dataset individually cannot.
 
@@ -28,11 +28,11 @@ this approach can be used to improve cosmological inferences, but averaging over
 lens sample.
 
 The first two tutorials simplify the problem, fitting a sample of 3 lenses whose mass profiles are spherical power-laws
-with the same `slope` values. The `slope` is therefore the global parameter we seek to estimate. The data 
+with the same `slope` values. The `slope` is therefore the global parameter we seek to estimate. The data
 fitted is low resolution, meaning that our estimate of each `slope` has large errors.
 
-To estimate the global slope of the sample, this tutorial instead estimates the `slope` in each lens by fitting 
-each dataset one-by-one and combining the results post model-fitting. This will act as a point of comparison to 
+To estimate the global slope of the sample, this tutorial instead estimates the `slope` in each lens by fitting
+each dataset one-by-one and combining the results post model-fitting. This will act as a point of comparison to
 tutorial 2, where we will fit for the slope using a graphical model, the basis of hierarchical models.
 
 __Sample Simulation__
@@ -45,7 +45,7 @@ script `autolens_workspace/scripts/simulators/imaging/samples/simple__no_lens_li
 __Realism__
 
 For a realistic lens sample, one would not expect that each lens galaxy has the same value of `slope`, as is
-assumed in tutorials 1, 2 and 3. We make this assumption to simplify the problem and make it easier to illustrate 
+assumed in tutorials 1, 2 and 3. We make this assumption to simplify the problem and make it easier to illustrate
 hierarchical models. Later tutorials fit more realistic graphical models where each lens galaxy has its own
 value of slope!
 
@@ -53,6 +53,7 @@ One can easily imagine datasets where the shared parameter is the same across th
 where cosmological parameters (e.g. the Hubble constant, H0) are included in the graphical mode. The tools introduced
 in tutorials 1 and 2 could therefore be used for many science cases!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

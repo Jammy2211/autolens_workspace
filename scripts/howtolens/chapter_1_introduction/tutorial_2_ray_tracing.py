@@ -56,6 +56,7 @@ construct realistic lens and source galaxies.
 
 - **Mappings**: Visualize how image pixels map to the source plane and vice versa using the `Visuals2D` object.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

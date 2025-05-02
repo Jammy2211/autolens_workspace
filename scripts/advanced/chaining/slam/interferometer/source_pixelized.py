@@ -9,7 +9,7 @@ pipelines has it own inputs which customize the model and analysis in that pipel
 The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
 uses a linear parametric `Sersic` profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
 
-Using a SOURCE LP PIPELINE, SOURCE PIX PIPELINE and a MASS TOTAL PIPELINE this SLaM script fits `Interferometer` 
+Using a SOURCE LP PIPELINE, SOURCE PIX PIPELINE and a MASS TOTAL PIPELINE this SLaM script fits `Interferometer`
 of a strong lens system, where in the final model:
 
  - The lens galaxy's light is omitted from the data and model.
@@ -51,6 +51,7 @@ __Start Here Notebook__
 If any code in this script is unclear, refer to the `autolens_workspace/imaging/advanced/chaining/slam/start_here.ipynb`
 notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

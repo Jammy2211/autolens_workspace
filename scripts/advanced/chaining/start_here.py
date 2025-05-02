@@ -40,11 +40,12 @@ chunks of the linear algebra calculation can typically be preloaded beforehand.
 __This Example__
 
 This script gives an overview of the API for search chaining, a description of how the priors on parameters are used
-to pass information between searches as well as tools for customizing prior passing. The examples in the 
+to pass information between searches as well as tools for customizing prior passing. The examples in the
 `chaining/examples` show specific examples where for lens modeling search chaining can improve the model-fit.
 
 More details on search chaining can be found in Chapter 3 of the HowToLens lectures.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

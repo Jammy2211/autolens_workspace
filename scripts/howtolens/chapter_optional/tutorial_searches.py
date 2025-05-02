@@ -11,6 +11,7 @@ modeling. So far, we have no found any of these alternatives to give anywhere ne
 Nautilus, and we recommend users use Nautilus unless they are particularly interested in investigating different
 model-fitting techniques.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

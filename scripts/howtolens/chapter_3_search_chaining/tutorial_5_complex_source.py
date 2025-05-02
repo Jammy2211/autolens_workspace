@@ -12,6 +12,7 @@ an exercise in diminishing returns. Each light profile we add to our source mode
 parameters. If there are 4 components, or multiple galaxies, we are quickly entering the somewhat nasty regime of
 30-40+ parameters in our non-linear search. Even with a pipeline, that is a lot of parameters to fit!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

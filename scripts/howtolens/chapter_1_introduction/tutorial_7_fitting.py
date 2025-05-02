@@ -9,9 +9,9 @@ However, this simulation process is the reverse of what astronomers typically do
 astronomers start with an observation—an actual image of a strong lens - and aim to infer detailed information about the
 lens’s properties, such as its mass and unlensed source properties.
 
-To achieve this, we must fit the observed image data with a model, identifying the combination of light and mass 
-profiles that best matches the lens's appearance in the image. In this tutorial, we'll illustrate this process using 
-the imaging data simulated in the previous tutorial. Our goal is to demonstrate how we can recover the parameters of 
+To achieve this, we must fit the observed image data with a model, identifying the combination of light and mass
+profiles that best matches the lens's appearance in the image. In this tutorial, we'll illustrate this process using
+the imaging data simulated in the previous tutorial. Our goal is to demonstrate how we can recover the parameters of
 the light profiles that we used to create the original simulation, as a proof of concept for the fitting procedure.
 
 The process of fitting data introduces essential statistical concepts like the `model`, `residual_map`, `chi-squared`,
@@ -31,6 +31,7 @@ Here is an overview of what we'll cover in this tutorial:
 - **Model Fitting**: Perform a basic model fit on a simple dataset, adjusting the model parameters to improve the
   fit quality.
 """
+
 import numpy as np
 from os import path
 import autolens as al

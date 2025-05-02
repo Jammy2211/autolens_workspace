@@ -20,6 +20,7 @@ deflection angle map of a `NFW` mass model which is fitted by a lens model where
  - The lens galaxy's total mass distribution is an `PowerLaw`.
  - There is no source galaxy.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

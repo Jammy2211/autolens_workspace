@@ -20,6 +20,7 @@ certain parts of code are not documented to ensure the script is concise.
 
 TODO: NEED TO INCLUDE DIFFERENT POINTING / CENTERINGS.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

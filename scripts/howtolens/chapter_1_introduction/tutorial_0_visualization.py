@@ -5,6 +5,7 @@ Tutorial 0: Visualization
 In this tutorial, we quickly cover visualization in **PyAutoLens** and make sure images display clealry in your
 Jupyter notebook and on your computer screen.
 """
+
 # %matplotlib inline
 
 from os import path

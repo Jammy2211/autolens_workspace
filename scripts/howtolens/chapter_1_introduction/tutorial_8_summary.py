@@ -16,6 +16,7 @@ In this chapter, we have learnt that:
 In this summary, we'll go over all the different Python objects introduced throughout this chapter and consider how
 they come together as one.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
