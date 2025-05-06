@@ -118,7 +118,6 @@ mask_list = [
     for dataset in dataset_list
 ]
 
-
 dataset_list = [
     dataset.apply_mask(mask=mask) for imaging, mask in zip(dataset_list, mask_list)
 ]
@@ -133,18 +132,6 @@ __Analysis__
 We create an `Analysis` object for every dataset.
 """
 analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
-
-"""
-Sum the analyses to create an overall analysis object, which sums the `log_likelihood_function` of each dataset
-and returns the overall likelihood of the model fit to the dataset.
-"""
-analysis = sum(analysis_list)
-
-"""
-We can parallelize the likelihood function of these analysis classes, whereby each evaluation is performed on a 
-different CPU.
-"""
-analysis.n_cores = 1
 
 """
 __Model__
@@ -176,6 +163,25 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 """
+We now combine them using the factor analysis class, which allows us to fit the two datasets simultaneously.
+"""
+analysis_factor_list = []
+
+for analysis in analysis_list:
+
+    model_analysis = model.copy()
+    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
+
+    analysis_factor_list.append(analysis_factor)
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+"""
+The `info` of the model shows us there are two models each with linear light profiles.
+"""
+print(factor_graph.global_prior_model.info)
+
+"""
 __Search__
 """
 search = af.Nautilus(
@@ -183,14 +189,13 @@ search = af.Nautilus(
     name="linear_light_profiles",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
-    iterations_per_update=3000,
+    number_of_cores=1,
 )
 
 """
 __Model-Fit__
 """
-result_list = search.fit(model=model, analysis=analysis)
+result_list = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__

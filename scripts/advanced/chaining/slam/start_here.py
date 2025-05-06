@@ -458,53 +458,5 @@ mass_result = slam.mass_total.run(
 )
 
 """
-__Output__
-
-The SLaM pipeline above outputs the model-fitting results to the `output` folder of the workspace, which includes
-the usual model results, visualization, and .json files.
-
-As described in the `autolens_workspace/*/results` package there is an API for loading these results from hard disk
-to Python, for example so they can be manipulated in a Juypter notebook.
-
-However, it is also often useful to output the results to the dataset folder of each lens in standard formats, for
-example images of the lens and lensed source in .fits or visualization outputs like .png files. This makes transferring
-the results more portable, especially if they are to be used by other people.
-
-The `slam_util` module provides convenience methods for outputting many results to the dataset folder, we
-use it below to output the following results:
-
- - Images of the model lens light, lensed source light and source reconstruction to .fits files.
- - A text `model.results` file containing the lens model parameter estimates.
- - A subplot containing the fit in one row, which is output to .png.
- - A subplot of the source reconstruction in the source plane in one row, which is output to .png.
-
-"""
-slam.slam_util.output_result_to_fits(
-    output_path=path.join(dataset_path, "result"),
-    result=mass_result,
-    model_lens_light=True,
-    model_source_light=True,
-    source_reconstruction=True,
-)
-
-slam.slam_util.output_model_results(
-    output_path=path.join(dataset_path, "result"),
-    result=mass_result,
-    filename="model.results",
-)
-
-slam.slam_util.output_fit_multi_png(
-    output_path=dataset_path,
-    result_list=[mass_result],
-    filename="sie_fit",
-)
-
-slam.slam_util.output_source_multi_png(
-    output_path=dataset_path,
-    result_list=[mass_result],
-    filename="source_reconstruction",
-)
-
-"""
 Finish.
 """

@@ -114,6 +114,13 @@ for dataset in dataset_list:
     dataset_plotter.subplot_dataset()
 
 """
+__Analysis__
+
+We create an `Analysis` object for every dataset.
+"""
+analysis_list = [ag.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
+
+"""
 __Model__
 
 We compose a lens model where:
@@ -178,35 +185,29 @@ The free parameters of our model there are no longer `effective_radius` values, 
 above. 
 
 The model complexity therefore does not increase as we add more parameters to the model.
-
-__Analysis__
-
-We create an `Analysis` object for every dataset and sum it to combine the analysis of all images.
 """
 
-analysis_list = []
+analysis_factor_list = []
 
-for wavelength, dataset in zip(wavelength_list, dataset_list):
+for wavelength, analysis in zip(wavelength_list, analysis_list):
     lens_effective_radius = (wavelength * lens_m) + lens_c
     source_effective_radius = (wavelength * source_m) + source_c
 
-    # Currently buggy, need to fix
+    model_analysis = model.copy()
 
-    # analysis_list.append(
-    #     al.AnalysisImaging(dataset=dataset).with_model(
-    #         model.replacing(
-    #             {
-    #                 model.galaxies.lens.bulge.effective_radius: lens_effective_radius,
-    #                 model.galaxies.source.bulge.effective_radius: source_effective_radius,
-    #             }
-    #         )
-    #     )
-    # )
+    model_analysis.galaxies.lens.bulge.effective_radius = lens_effective_radius
+    model_analysis.galaxies.source.bulge.effective_radius = source_effective_radius
 
-    analysis_list.append(al.AnalysisImaging(dataset=dataset))
+    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
 
-analysis = sum(analysis_list)
-analysis.n_cores = 1
+    analysis_factor_list.append(analysis_factor)
+
+"""
+The factor graph is created and its info can be printed after the relational model has been defined.
+"""
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+print(factor_graph.global_prior_model.info)
 
 """
 __Search__
@@ -225,7 +226,7 @@ search = af.Nautilus(
 """
 __Model-Fit__
 """
-result_list = search.fit(model=model, analysis=analysis)
+result_list = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__

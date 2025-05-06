@@ -1,6 +1,6 @@
 """
-Modeling: Mass Total + Source Parametric
-========================================
+Modeling: Pixelized
+===================
 
 This script fits a multi-wavelength `Imaging` dataset of a 'galaxy-scale' strong lens with a model where:
 
@@ -108,18 +108,6 @@ We create an `Analysis` object for every dataset.
 analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
 
 """
-Sum the analyses to create an overall analysis object, which sums the `log_likelihood_function` of each dataset
-and returns the overall likelihood of the model fit to the dataset.
-"""
-analysis = sum(analysis_list)
-
-"""
-We can parallelize the likelihood function of these analysis classes, whereby each evaluation is performed on a 
-different CPU.
-"""
-analysis.n_cores = 1
-
-"""
 __Model__
 
 We compose a lens model where:
@@ -147,11 +135,30 @@ source = af.Model(al.Galaxy, redshift=1.0, pixelization=pixelization)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 """
-We now make the regularization coefficient a free parameter across every analysis object.
+We now combine them using the factor analysis class, which allows us to fit the two datasets simultaneously.
+
+We make the regularization coefficient a free parameter across every analysis object, ensuring different levels
+of regularization are applied to each wavelength of data.
 """
-analysis = analysis.with_free_parameters(
-    model.galaxies.source.pixelization.regularization.coefficient
-)
+analysis_factor_list = []
+
+for analysis in analysis_list:
+
+    model_analysis = model.copy()
+    model_analysis.galaxies.galaxy.pixelization.regularization.coefficient = (
+        af.LogUniformPrior(lower_limit=1e-4, upper_limit=1e4)
+    )
+
+    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
+
+    analysis_factor_list.append(analysis_factor)
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+"""
+The `info` of the model shows us there are two models each with their own regularization coefficient as a free parameter.
+"""
+print(factor_graph.global_prior_model.info)
 
 """
 __Search__
@@ -161,7 +168,7 @@ full description).
 """
 search = af.Nautilus(
     path_prefix=path.join("multi", "modeling"),
-    name="pixelization",
+    name="pixelized",
     unique_tag=dataset_name,
     n_live=100,
     number_of_cores=1,
@@ -170,7 +177,7 @@ search = af.Nautilus(
 """
 __Model-Fit__
 """
-result_list = search.fit(model=model, analysis=analysis)
+result_list = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__
