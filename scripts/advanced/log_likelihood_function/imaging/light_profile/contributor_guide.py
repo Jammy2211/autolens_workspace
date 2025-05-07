@@ -91,7 +91,7 @@ __LH Step 3: Source Image__
 This uses the same `image_2d_from` method as the lens galaxy light profile, but for the source galaxy.
 
 
-__Likelihood Step 4: Lens + Source Light Addition__
+__Lens + Source Light Addition__
 
 This step is just a simple addition of the lens and source light images.
 

@@ -128,7 +128,7 @@ Note that `Ell` is used as shorthand for elliptical and `Sph` for spherical.
 profile = al.EllProfile(centre=(0.1, 0.2), ell_comps=(0.1, 0.2))
 
 """
-First we transform `masked_dataset.grid ` to the centre of profile and rotate it using its angle `phi`.
+Transform `masked_dataset.grid ` to the centre of profile and rotate it using its angle `phi`.
 """
 transformed_grid = profile.transformed_to_reference_frame_grid_from(
     grid=masked_dataset.grid
@@ -278,7 +278,7 @@ pixelization = al.Pixelization(
 source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 """
-__Likelihood Step 1: Lens Light__
+__Lens Light__
 
 Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the `Sersic` 
 bulge). 
@@ -305,7 +305,7 @@ galaxy_plotter = aplt.GalaxyPlotter(
 galaxy_plotter.figures_2d(image=True)
 
 """
-__Likelihood Step 2: Lens Light Convolution + Subtraction__
+__Lens Light Convolution + Subtraction__
 
 Convolve the 2D lens light images above with the PSF in real-space (as opposed to via an FFT) using a `Convolver`.
 """
@@ -325,7 +325,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=lens_subtracted_image_2d)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 3: Source Pixel Centre Calculation__
+__Source Pixel Centre Calculation__
 
 In order to reconstruct the source galaxy using a Voronoi mesh, we need to determine the centres of the Voronoi 
 source pixels.
@@ -350,7 +350,7 @@ dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset, visuals_2d=visuals
 dataset_plotter.figures_2d(data=True)
 
 """
-__Likelihood Step 4: Ray Tracing__
+__Ray Tracing__
 
 To perform lensing calculations we ray-trace every 2d (y,x) coordinate $\theta$ from the image-plane to its (y,x) 
 source-plane coordinate $\beta$ using the summed deflection angles $\alpha$ of the mass profiles:
@@ -395,7 +395,7 @@ grid_plotter = aplt.Grid2DPlotter(grid=traced_mesh_grid, mat_plot_2d=mat_plot)
 grid_plotter.figure_2d()
 
 """
-__Likelihood Step 5: Border Relocation__
+__Border Relocation__
 
 Coordinates that are ray-traced near the mass profile centres are heavily demagnified and may trace to far outskirts of
 the source-plane. 
@@ -422,7 +422,7 @@ grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot
 grid_plotter.figure_2d()
 
 """
-__Likelihood Step 6: Voronoi Mesh__
+__Voronoi Mesh__
 
 The relocated pixelization grid is used to create the `Pixelization`'s Voronoi mesh using the `scipy.spatial` library.
 """
@@ -459,7 +459,7 @@ mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
 mapper_plotter.figure_2d(interpolate_to_uniform=False)
 
 """
-__Likelihood Step 7: Image-Source Mapping__
+__Image-Source Mapping__
 
 We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
 every source-plane Voronoi pixel. 
@@ -526,7 +526,7 @@ mapper_plotter.subplot_image_and_mapper(
 )
 
 """
-__Likelihood Step 8: Mapping Matrix__
+__Mapping Matrix__
 
 The `mapping_matrix` represents the image-pixel to source-pixel mappings above in a 2D matrix. 
 
@@ -573,7 +573,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 9: Blurred Mapping Matrix ($f$)__
+__Blurred Mapping Matrix ($f$)__
 
 Each source-pixel can therefore be thought of as an image (where all entries of this image are zeros and ones). 
 
@@ -629,7 +629,7 @@ are the first entry of `mapping_matrix` whereas for $f$ they are the second inde
 print(f"Mapping between image pixel 0 and source pixel 2 = {mapping_matrix[0, 2]}")
 
 """
-__Likelihood Step 10: Data Vector (D)__
+__Data Vector (D)__
 
 To solve for the source pixel fluxes we now pose the problem as a linear inversion.
 
@@ -673,7 +673,7 @@ plt.show()
 plt.close()
 
 """
-__Likelihood Step 11: Curvature Matrix (F)__
+__Curvature Matrix (F)__
 
 The `curvature_matrix` $F$ is the second matrix and it has dimensions `(total_source_pixels, total_source_pixels)`.
 
@@ -760,7 +760,7 @@ mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d(solution_vector=reconstruction, interpolate_to_uniform=False)
 
 """
-__Likelihood Step 12: Regularization Matrix (H)__
+__Regularization Matrix (H)__
 
 Regularization adds a linear regularization term $G_{\rm L}$ to the $\chi^2$ we solve for giving us a new merit 
 function $G$ (equation 11 WD03):
@@ -814,7 +814,7 @@ plt.show()
 plt.close()
 
 """
-__Likelihood Step 13: F + Lamdba H__
+__F + Lamdba H__
 
 $H$ enters the linear algebra system we solve for as follows (WD03 equation (12)):
 
@@ -823,7 +823,7 @@ $H$ enters the linear algebra system we solve for as follows (WD03 equation (12)
 curvature_reg_matrix = np.add(curvature_matrix, regularization_matrix)
 
 """
-__Likelihood Step 14: Source Reconstruction (s)__
+__Source Reconstruction (s)__
 
 We can now solve the linear system above using NumPy linear algebra. 
 
@@ -840,7 +840,7 @@ mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d(solution_vector=reconstruction, interpolate_to_uniform=False)
 
 """
-__Likelihood Step 15: Image Reconstruction__
+__Image Reconstruction__
 
 Using the reconstructed source pixel fluxes we can map the source reconstruction back to the image plane (via
 the `blurred mapping_matrix`) and produce a reconstruction of the image data.
@@ -859,7 +859,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=mapped_reconstructed_image_2d)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 16: Likelihood Function__
+__Likelihood Function__
 
 We now quantify the goodness-of-fit of our lens model and source reconstruction. 
 
@@ -874,7 +874,7 @@ It was derived into **PyAutoLens** notation in Dye 2008 (https://arxiv.org/abs/0
 
 We now explain what each of these terms mean.
 
-__Likelihood Step 17: Chi Squared__
+__Chi Squared__
 
 The first term is a $\chi^2$ statistic, which is defined above in our merit function as and is computed as follows:
 
@@ -909,7 +909,7 @@ array_2d_plotter.figure_2d()
 
 
 """
-__Likelihood Step 18: Regularization Term__
+__Regularization Term__
 
 The second term, $s^{T} H s$, corresponds to the $\lambda $G_{\rm L}$ regularization term we added to our merit 
 function above.
@@ -928,7 +928,7 @@ regularization_term = np.matmul(
 print(regularization_term)
 
 """
-__Likelihood Step 19: Complexity Terms__
+__Complexity Terms__
 
 Up to this point, it is unclear why we chose a value of `regularization_coefficient=1.0`. 
 
@@ -964,7 +964,7 @@ print(log_curvature_reg_matrix_term)
 print(log_regularization_matrix_term)
 
 """
-__Likelihood Step 20: Noise Normalization Term__
+__Noise Normalization Term__
 
 Our likelihood function assumes the imaging data consists of independent Gaussian noise in every image pixel.
 
@@ -977,7 +977,7 @@ model we infer.
 noise_normalization = float(np.sum(np.log(2 * np.pi * masked_dataset.noise_map**2.0)))
 
 """
-__Likelihood Step 21: Calculate The Log Likelihood__
+__Calculate The Log Likelihood__
 
 We can now, finally, compute the `log_likelihood` of the lens model, by combining the five terms computed above using
 the likelihood function defined above.

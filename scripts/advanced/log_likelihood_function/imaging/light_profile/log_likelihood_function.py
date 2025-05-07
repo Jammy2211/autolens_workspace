@@ -126,7 +126,7 @@ Note that `Ell` is used as shorthand for elliptical and `Sph` for spherical.
 profile = al.EllProfile(centre=(0.1, 0.2), ell_comps=(0.1, 0.2))
 
 """
-First we transform `masked_dataset.grids.lp` to the centre of profile and rotate it using its angle `phi`.
+Transform `masked_dataset.grids.lp` to the centre of profile and rotate it using its angle `phi`.
 """
 transformed_grid = profile.transformed_to_reference_frame_grid_from(
     grid=masked_dataset.grids.lp
@@ -277,7 +277,7 @@ source_galaxy = al.Galaxy(
 )
 
 """
-__Likelihood Step 1: Lens Light__
+__Lens Light__
 
 Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the `Sersic` 
 bulge). 
@@ -304,7 +304,7 @@ galaxy_plotter = aplt.GalaxyPlotter(
 galaxy_plotter.figures_2d(image=True)
 
 """
-__Likelihood Step 2: Ray Tracing__
+__Ray Tracing__
 
 To perform lensing calculations we ray-trace every 2d (y,x) coordinate $\theta$ from the image-plane to its (y,x) 
 source-plane coordinate $\beta$ using the summed deflection angles $\alpha$ of the mass profiles:
@@ -342,7 +342,7 @@ grid_plotter = aplt.Grid2DPlotter(grid=traced_blurring_grid, mat_plot_2d=mat_plo
 grid_plotter.figure_2d()
 
 """
-__Likelihood Step 3: Source Image__
+__Source Image__
 
 We pass the traced grid and blurring grid of coordinates to the source galaxy to evaluate its 2D image.
 """
@@ -357,7 +357,7 @@ galaxy_plotter = aplt.GalaxyPlotter(galaxy=source_galaxy, grid=traced_blurring_g
 galaxy_plotter.figures_2d(image=True)
 
 """
-__Likelihood Step 4: Lens + Source Light Addition__
+__Lens + Source Light Addition__
 
 We add the lens and source galaxy images and blurring together, to create an overall image of the strong lens.
 """
@@ -372,7 +372,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=blurring_image_2d)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 5: Convolution__
+__Convolution__
 
 Convolve the 2D image of the lens and source above with the PSF in real-space (as opposed to via an FFT) using 
 a `Convolver`.
@@ -385,7 +385,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=convolved_image_2d)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 6: Likelihood Function__
+__Likelihood Function__
 
 We now quantify the goodness-of-fit of our lens and source model.
 
@@ -397,7 +397,7 @@ The likelihood function for parametric lens modeling consists of two terms:
 
 We now explain what each of these terms mean.
 
-__Likelihood Step 8: Chi Squared__
+__Chi Squared__
 
 The first term is a $\chi^2$ statistic, which is defined above in our merit function as and is computed as follows:
 
@@ -431,7 +431,7 @@ array_2d_plotter = aplt.Array2DPlotter(array=chi_squared_map)
 array_2d_plotter.figure_2d()
 
 """
-__Likelihood Step 7: Noise Normalization Term__
+__Noise Normalization Term__
 
 Our likelihood function assumes the imaging data consists of independent Gaussian noise in every image pixel.
 
@@ -444,7 +444,7 @@ model we infer.
 noise_normalization = float(np.sum(np.log(2 * np.pi * masked_dataset.noise_map**2.0)))
 
 """
-__Likelihood Step 8: Calculate The Log Likelihood__
+__Calculate The Log Likelihood__
 
 We can now, finally, compute the `log_likelihood` of the lens model, by combining the two terms computed above using
 the likelihood function defined above.
