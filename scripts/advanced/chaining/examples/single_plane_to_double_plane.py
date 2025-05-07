@@ -190,7 +190,6 @@ source_0 = af.Model(
 
 source_1 = af.Model(al.Galaxy, redshift=2.0, point_1=al.ps.Point)
 
-
 model_2 = af.Collection(
     galaxies=af.Collection(lens=lens, source_0=source_0, source_1=source_1),
 )
@@ -225,13 +224,6 @@ analysis_factor_list = []
 for analysis in analysis_list:
 
     model_analysis = model_2.copy()
-    model_analysis.galaxies.lens.bulge.effective_radius = af.UniformPrior(
-        lower_limit=0.0, upper_limit=10.0
-    )
-    model_analysis.galaxies.source.bulge.effective_radius = af.UniformPrior(
-        lower_limit=0.0, upper_limit=10.0
-    )
-
     analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
 
     analysis_factor_list.append(analysis_factor)
