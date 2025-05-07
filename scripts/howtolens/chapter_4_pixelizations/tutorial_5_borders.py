@@ -378,6 +378,12 @@ edges of the grid, where one can see the relocations of these coordinates.
 By setting `aplt.Include2D(mapper_source_plane_data_grid=False)` a cleaner figure without this swarm of points
 is provided).
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -409,6 +415,12 @@ fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -424,6 +436,13 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
+
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
 
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,

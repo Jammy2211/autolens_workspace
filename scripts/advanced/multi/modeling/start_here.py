@@ -198,8 +198,6 @@ factor_graph = af.FactorGraphModel(*analysis_factor_list)
 To inspect this new model, with extra parameters for each dataset created, we 
 print `factor_graph.global_prior_model.info`.
 """
-factor_graph = af.FactorGraphModel(*analysis_factor_list)
-
 print(factor_graph.global_prior_model.info)
 
 """

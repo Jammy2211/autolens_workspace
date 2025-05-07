@@ -218,16 +218,36 @@ search_2 = af.Nautilus(
 analysis_2_0 = al.AnalysisPoint(dataset=dataset_0, solver=solver)
 analysis_2_1 = al.AnalysisPoint(dataset=dataset_1, solver=solver)
 
-analysis = sum([analysis_2_0, analysis_2_1])
+analysis_list = [analysis_2_0, analysis_2_1]
 
-result_2 = search_2.fit(model=model_2, analysis=analysis)
+analysis_factor_list = []
+
+for analysis in analysis_list:
+
+    model_analysis = model_2.copy()
+    model_analysis.galaxies.lens.bulge.effective_radius = af.UniformPrior(
+        lower_limit=0.0, upper_limit=10.0
+    )
+    model_analysis.galaxies.source.bulge.effective_radius = af.UniformPrior(
+        lower_limit=0.0, upper_limit=10.0
+    )
+
+    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
+
+    analysis_factor_list.append(analysis_factor)
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+result_list_2 = search_2.fit(
+    model=factor_graph.global_prior_model, analysis=factor_graph
+)
 
 """
 __Result (Search 2)__
 
 The final results can be summarised via printing `info`.
 """
-print(result_2.info)
+print(result_list_2.info)
 
 """
 __Wrap Up__
