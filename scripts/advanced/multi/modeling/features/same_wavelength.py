@@ -131,10 +131,10 @@ analysis_factor_list = []
 
 for analysis in analysis_list:
 
-    bulge = af.Model(ag.lp_linear.Sersic)
-    disk = af.Model(ag.lp_linear.Exponential)
+    bulge = af.Model(al.lp_linear.Sersic)
+    disk = af.Model(al.lp_linear.Exponential)
 
-    galaxy = af.Model(ag.Galaxy, redshift=0.5, bulge=bulge, disk=disk)
+    galaxy = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, disk=disk)
 
     model_analysis = af.Collection(galaxies=af.Collection(galaxy=galaxy))
 

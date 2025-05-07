@@ -118,7 +118,7 @@ __Analysis__
 
 We create an `Analysis` object for every dataset.
 """
-analysis_list = [ag.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
+analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
 
 """
 __Model__

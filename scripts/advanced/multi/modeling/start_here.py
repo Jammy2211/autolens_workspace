@@ -140,7 +140,7 @@ __Analysis List__
 
 Set up two instances of the `Analysis` class object, one for each dataset.
 """
-analysis_list = [ag.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
+analysis_list = [al.AnalysisImaging(dataset=dataset) for dataset in dataset_list]
 
 """
 __Analysis Factor__

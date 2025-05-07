@@ -182,6 +182,13 @@ __Masking (Search 2)__
 Search 2 we are only fitting the source's light, thus we can apply an annular mask that removes regions of the
 image that contained only the lens's light.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
 mask = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -278,6 +285,13 @@ __Masking (Search 3)__
 
 Search 3 we fit the lens and source, therefore we will use a large circular mask.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
 )
