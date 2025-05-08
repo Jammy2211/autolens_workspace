@@ -2,7 +2,7 @@
 __Log Likelihood Function: Pixelization__
 
 This script provides a step-by-step guide of the **PyAutoLens** `log_likelihood_function` which is used to fit
-`Interferometer` data with an inversion (specifically a `Rectangular` mesh and `Constant` regularization scheme`).
+`Interferometer` data with an inversion (specifically a `Delaunay` mesh and `Constant` regularization scheme`).
 
 This script has the following aims:
 
@@ -129,48 +129,156 @@ grid_plotter = aplt.Grid2DPlotter(grid=dataset.grids.pixelization)
 grid_plotter.figure_2d()
 
 """
-__Likelihood Setup: Galaxy__
+__Lens Galaxy__
+
+We set up a lens galaxy with the lens light and mass, which we will use to demonstrate a pixelized source
+reconstruction.
+"""
+mass = al.mp.Isothermal(
+    centre=(0.0, 0.0),
+    einstein_radius=1.6,
+    ell_comps=al.convert.ell_comps_from(axis_ratio=0.9, angle=45.0),
+)
+
+shear = al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05)
+
+lens_galaxy = al.Galaxy(redshift=0.5, mass=mass, shear=shear)
+
+"""
+__Source Galaxy Pixelization and Regularization__
 
 We combine the pixelization into a single `Galaxy` object.
 
-The galaxy includes the rectangular mesh and constant regularization scheme, which will ultimately be used
+The galaxy includes the delaunay mesh and constant regularization scheme, which will ultimately be used
 to reconstruct its star forming clumps.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.Rectangular(shape=(30, 30)),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-galaxy = al.Galaxy(redshift=0.5, pixelization=pixelization)
+source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 """
-__Rectangular Mesh__
+__Source Pixel Centre Calculation__
 
-The pixelization is used to create the rectangular mesh which is used to reconstruct the galaxy.
+In order to reconstruct the source galaxy using a Delaunay mesh, we need to determine the centres of the Delaunay 
+source pixels.
 
-The function below does this by overlaying the rectangular mesh over the masked image grid, such that the edges of
-the rectangular mesh touch the ask grid's edges.
+The image-mesh `Overlay` object computes the source-pixel centres in the image-plane (which are ray-traced to the 
+source-plane below). The source pixelization therefore adapts to the lens model magnification, because more
+source pixels will congregate in higher magnification regions.
+
+This calculation is performed by overlaying a uniform regular grid with an `pixelization_shape_2d` over the image
+mask and retaining all pixels that fall within the mask. This uses a `Grid2DSparse` object.
+
 """
-grid_rectangular = al.Mesh2DRectangular.overlay_grid(
-    shape_native=galaxy.pixelization.mesh.shape, grid=dataset.grids.pixelization
+image_plane_mesh_grid = pixelization.image_mesh.image_plane_mesh_grid_from(
+    mask=dataset.mask,
 )
 
 """
-The rectangular mesh will now be referred to interchangeably as the `source-plane`, to represent that it is a 
-pixelization which will reconstruct a source of light,
+Plotting this grid shows a sparse grid of (y,x) coordinates within the mask, which will form our source pixel centres.
+"""
+visuals = aplt.Visuals2D(grid=image_plane_mesh_grid)
+dataset_plotter = aplt.InterferometerPlotter(dataset=dataset, visuals_2d=visuals)
+dataset_plotter.figures_2d(dirty_image=True)
 
-Plotting the rectangular mesh shows that the source-plane has been discretized into a grid of rectangular pixels.
+"""
+__Ray Tracing__
 
-(To plot the rectangular mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood 
-step).
+To perform lensing calculations we ray-trace every 2d (y,x) coordinate $\theta$ from the image-plane to its (y,x) 
+source-plane coordinate $\beta$ using the summed deflection angles $\alpha$ of the mass profiles:
 
-Below, we plot the rectangular mesh without the image-grid pixels (for clarity) and with them as black dots in order
-to show how each set of image-pixels fall within a rectangular pixel.
+ $\beta = \theta - \alpha(\theta)$
+
+The likelihood function of a pixelized source reconstruction ray-traces two grids from the image-plane to the source-plane:
+
+ 1) A 2D grid of (y,x) coordinates aligned with the imaging data's image-pixels.
+
+ 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Delaunay pixels.
+
+The function below computes the 2D deflection angles of the tracer's lens galaxies and subtracts them from the 
+image-plane 2D (y,x) coordinates $\theta$ of each grid, thus ray-tracing their coordinates to the source plane to 
+compute their $\beta$ values.
+"""
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
+
+"""
+The source code gets quite complex when handling grids for a pixelization, but it is all handled in
+the `TracerToInversion` objects.
+
+The plots at the bottom of this cell show the traced grids used by the source pixelization, showing
+how the Delaunay mesh and traced image pixels are constructed.
+"""
+tracer_to_inversion = al.TracerToInversion(tracer=tracer, dataset=dataset)
+
+# A list of every grid (e.g. image-plane, source-plane) however we only need the source plane grid with index -1.
+traced_grid_pixelization = tracer.traced_grid_2d_list_from(
+    grid=dataset.grids.pixelization
+)[-1]
+
+# This functions a bit weird - it returns a list of lists of ndarrays. Best not to worry about it for now!
+traced_mesh_grid = tracer_to_inversion.traced_mesh_grid_pg_list[-1][-1]
+
+mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
+
+grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_pixelization, mat_plot_2d=mat_plot)
+grid_plotter.figure_2d()
+
+grid_plotter = aplt.Grid2DPlotter(grid=traced_mesh_grid, mat_plot_2d=mat_plot)
+grid_plotter.figure_2d()
+
+"""
+__Border Relocation__
+
+Coordinates that are ray-traced near the mass profile centres are heavily demagnified and may trace to far outskirts of
+the source-plane. 
+
+We relocate these pixels (for both grids above) to the edge of the source-plane border (defined via the border of the 
+image-plane mask). This is detailed in **HowToLens chapter 4 tutorial 5** and figure 2 of https://arxiv.org/abs/1708.07377.
+"""
+from autoarray.inversion.pixelization.border_relocator import BorderRelocator
+
+border_relocator = BorderRelocator(mask=dataset.mask, sub_size=1)
+
+relocated_grid = border_relocator.relocated_grid_from(grid=traced_grid_pixelization)
+
+relocated_mesh_grid = border_relocator.relocated_mesh_grid_from(
+    grid=traced_mesh_grid, mesh_grid=traced_mesh_grid
+)
+
+mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
+
+grid_plotter = aplt.Grid2DPlotter(grid=relocated_grid, mat_plot_2d=mat_plot)
+grid_plotter.figure_2d()
+
+grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot)
+grid_plotter.figure_2d()
+
+"""
+__Delaunay Mesh__
+
+The relocated pixelization grid is used to create the `Pixelization`'s Delaunay mesh using the `scipy.spatial` library.
+"""
+grid_delaunay = al.Mesh2DDelaunay(
+    values=relocated_mesh_grid,
+)
+
+"""
+Plotting the Delaunay mesh shows that the source-plane and been discretized into a grid of irregular Delaunay pixels.
+
+(To plot the Delaunay mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
+
+Below, we plot the Delaunay mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
+to show how each set of image-pixels fall within a Delaunay pixel.
 """
 mapper_grids = al.MapperGrids(
     mask=real_space_mask,
-    source_plane_data_grid=dataset.grids.pixelization,
-    source_plane_mesh_grid=grid_rectangular,
+    source_plane_data_grid=relocated_grid,
+    source_plane_mesh_grid=grid_delaunay,
+    image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
 mapper = al.Mapper(
@@ -180,26 +288,34 @@ mapper = al.Mapper(
 
 include = aplt.Include2D(mapper_source_plane_data_grid=False)
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
-mapper_plotter.figure_2d()
+mapper_plotter.figure_2d(interpolate_to_uniform=False)
 
 include = aplt.Include2D(mapper_source_plane_data_grid=True)
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
-mapper_plotter.figure_2d()
+mapper_plotter.figure_2d(interpolate_to_uniform=False)
 
 """
 __Image-Source Mapping__
 
-We now combine grids computed above to create a `Mapper`, which describes how every masked image grid pixel maps to
-every rectangular pixelization pixel. 
+We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
+every source-plane Delaunay pixel. 
 
 There are two steps in this calculation, which we show individually below.
 """
-mapper_grids = al.MapperGrids(
-    mask=real_space_mask,
-    source_plane_data_grid=dataset.grids.pixelization,
-    source_plane_mesh_grid=grid_rectangular,
+mapper = al.Mapper(
+    mapper_grids=mapper_grids,
+    regularization=None,
 )
 
+
+"""
+__Image-Source Mapping__
+
+We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
+every source-plane Delaunay pixel. 
+
+There are two steps in this calculation, which we show individually below.
+"""
 mapper = al.Mapper(
     mapper_grids=mapper_grids,
     regularization=None,
@@ -208,27 +324,27 @@ mapper = al.Mapper(
 """
 The `Mapper` contains:
 
- 1) `source_plane_data_grid`: the grid of masked (y,x) image-pixel coordinate centres (`dataset.grids.pixelization`).
- 2) `source_plane_mesh_grid`: The rectangular mesh of (y,x) pixelization pixel coordinates (`grid_rectangular`).
+ 1) `source_plane_data_grid`: the traced grid of (y,x) image-pixel coordinate centres (`relocated_grid`).
+ 2) `source_plane_mesh_grid`: The Delaunay mesh of traced (y,x) source-pixel coordinates (`grid_delaunay`).
 
-We have therefore discretized the source-plane into a rectangular mesh, and can pair every image-pixel coordinate
-with the corresponding rectangular pixel it lands in.
+We have therefore discretized the source-plane into a Delaunay mesh, and can pair every traced image-pixel coordinate
+with the corresponding Delaunay source pixel it lands in.
 
 This pairing is contained in the ndarray `pix_indexes_for_sub_slim_index` which maps every image-pixel index to 
-every pixelization pixel index.
+every source-pixel index.
 
-In the API, the `pix_indexes` refers to the pixelization pixel indexes (e.g. rectangular pixel 0, 1, 2 etc.) 
-and `sub_slim_index`  refers to the index of an image pixel (e.g. image-pixel 0, 1, 2 etc.). 
+In the API, the `pix_indexes` refers to the source pixel indexes (e.g. source pixel 0, 1, 2 etc.) and `sub_slim_index` 
+refers to the index of an image pixel (e.g. image-pixel 0, 1, 2 etc.). 
 
-For example, printing the first ten entries of `pix_indexes_for_sub_slim_index` shows the first ten rectanfgular 
-pixelization pixel indexes these image sub-pixels map too.
+For example, printing the first ten entries of `pix_indexes_for_sub_slim_index` shows the first ten source-pixel
+indexes these image sub-pixels map too.
 """
 pix_indexes_for_sub_slim_index = mapper.pix_indexes_for_sub_slim_index
 
 print(pix_indexes_for_sub_slim_index[0:9])
 
 """
-This array can be used to visualize how an input list of image-pixel indexes map to the rectangular pixelization.
+This array can be used to visualize how an input list of image-pixel indexes map to the source-plane.
 
 It also shows that image-pixel indexing begins from the top-left and goes rightwards and downwards, accounting for 
 all image-pixels which are not masked.
@@ -245,7 +361,10 @@ mapper_plotter.subplot_image_and_mapper(
 )
 
 """
-The reverse mappings of pixelization pixels to image-pixels can also be used.
+The reverse mappings of source-pixels to image-pixels can also be used.
+
+If we choose the right source-pixel index, we can see that multiple imaging occur whereby image-pixels in different
+regions of the image-plane are grouped into the same source-pixel.
 """
 visuals = aplt.Visuals2D(pix_indexes=[[200]])
 mapper_plotter = aplt.MapperPlotter(
@@ -259,17 +378,18 @@ mapper_plotter.subplot_image_and_mapper(
 """
 __Mapping Matrix__
 
-The `mapping_matrix` represents the image-pixel to pixelization-pixel mappings above in a 2D matrix. 
+The `mapping_matrix` represents the image-pixel to source-pixel mappings above in a 2D matrix. 
 
-It has dimensions `(total_image_pixels, total_rectangular_pixels)`.
+It has dimensions `(total_image_pixels, total_source_pixels)`.
 
-(A number of inputs are not used for the `Rectangular` mesh and are expanded upon in the `with_interpolation.ipynb`
+(A number of inputs are not used for the `Delaunay` pixelization and are expanded upon in the `features.ipynb`
 log likelihood guide notebook).
 """
+
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
-    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for rectangular
-    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for rectangular
+    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Delaunay
+    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Delaunay
     pixels=mapper.pixels,
     total_mask_pixels=mapper.source_plane_data_grid.mask.pixels_in_mask,
     slim_index_for_sub_slim_index=mapper.slim_index_for_sub_slim_index,
@@ -277,10 +397,10 @@ mapping_matrix = al.util.mapper.mapping_matrix_from(
 )
 
 """
-A 2D plot of the `mapping_matrix` shows of all image-pixelization pixel mappings.
+A 2D plot of the `mapping_matrix` shows of all image-source pixel mappings.
 
-No row of pixels has more than one non-zero entry. It is not possible for two image pixels to map to the same 
-pixelization pixel (meaning that there are no correlated pixels in the mapping matrix).
+No row of pixels has more than one non-zero entry. It is not possible for two image pixels to map to the same source 
+pixel (meaning that there are no correlated pixels in the mapping matrix).
 """
 plt.imshow(mapping_matrix, aspect=(mapping_matrix.shape[1] / mapping_matrix.shape[0]))
 plt.show()
@@ -289,18 +409,18 @@ plt.close()
 """
 Each column of the `mapping_matrix` can therefore be used to show all image-pixels it maps too. 
 
-For example, above, we plotted all image-pixels of pixelization pixel 200 (as well as 202 and 204). We can extract all
-image-pixel indexes of pixelization pixels 200 using the `mapping_matrix` and use them to plot the image of this
-pixelization pixel (which corresponds to only values of zeros or ones).
+For example, above, we plotted all image-pixels of source-pixel 200 (as well as 202 and 204). We can extract all
+image-pixel indexes of source pixels 200 using the `mapping_matrix` and use them to plot the image of this
+source-pixel (which corresponds to only values of zeros or ones).
 """
-indexes_pix_200 = np.nonzero(mapping_matrix[:, 200])
+indexes_source_pix_200 = np.nonzero(mapping_matrix[:, 200])
 
-print(indexes_pix_200[0])
+print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=mapping_matrix[:, 200], mask=dataset.mask)
 
 array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-grid_plotter.figure_2d()
+array_2d_plotter.figure_2d()
 
 """
 __Transformed Mapping Matrix ($f$)__
@@ -372,16 +492,16 @@ For example:
 The indexing of the `mapping_matrix` is reversed compared to the notation of WD03 (e.g. visibilities
 are the first entry of `mapping_matrix` whereas for $f$ they are the second index).
 """
-print(f"Mapping between visibility 0 and rectangular pixel 2 = {mapping_matrix[0, 2]}")
+print(f"Mapping between visibility 0 and delaunay pixel 2 = {mapping_matrix[0, 2]}")
 
 """
 __Data Vector (D)__
 
-To solve for the rectangular pixel fluxes we now pose the problem as a linear inversion.
+To solve for the delaunay pixel fluxes we now pose the problem as a linear inversion.
 
 This requires us to convert the `transformed_mapping_matrix` and our `data` and `noise map` into matrices of certain dimensions. 
 
-The `data_vector`, $D$, is the first matrix and it has dimensions `(total_rectangular_pixels,)`.
+The `data_vector`, $D$, is the first matrix and it has dimensions `(total_delaunay_pixels,)`.
 
 In WD03 (https://arxiv.org/abs/astro-ph/0302587) and N15 (https://arxiv.org/abs/1412.7436) the data vector 
 is give by: 
@@ -404,7 +524,7 @@ data_vector = (
 )
 
 """
-$D$ describes which rectangular pixels trace to which visibilities, with associated weights, after the NUFFT. This 
+$D$ describes which delaunay pixels trace to which visibilities, with associated weights, after the NUFFT. This 
 ensures the reconstruction fully accounts for the NUFFT when fitting the data.
 
 We can plot $D$ as a column vector:
@@ -427,7 +547,7 @@ print(data_vector.shape)
 __Curvature Matrix (F)__
 
 The `curvature_matrix` $F$ is the second matrix and it has 
-dimensions `(total_rectangular_pixels, total_rectangular_pixels)`.
+dimensions `(total_delaunay_pixels, total_delaunay_pixels)`.
 
 In WD03 / N15 (https://arxiv.org/abs/astro-ph/0302587) the curvature matrix is a 2D matrix given by:
 
@@ -462,7 +582,7 @@ plt.show()
 plt.close()
 
 """
-For $F_{ik}$ to be non-zero, this requires that the images of rectangular pixels $i$ and $k$ share at least one
+For $F_{ik}$ to be non-zero, this requires that the images of delaunay pixels $i$ and $k$ share at least one
 image-pixel, which for visibilities after the NUFFT is always true for all $i$ and $k$.
 
 For example, we can see a non-zero entry for $F_{100,101}$ and plotting their images
@@ -488,11 +608,11 @@ grid_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
 grid_plotter.figure_2d()
 
 """
-The following chi-squared is minimized when we perform the inversion and reconstruct the galaxy:
+The following chi-squared is minimized when we perform the inversion and reconstruct the source_galaxy:
 
 $\chi^2 = \sum_{\rm  j=1}^{J} \bigg[ \frac{(\sum_{\rm  i=1}^{I} s_{i} f_{ij}) - d_{j}}{\sigma_{j}} \bigg]$
 
-Where $s$ is the reconstructed pixel fluxes in all $I$ rectangular pixels.
+Where $s$ is the reconstructed pixel fluxes in all $I$ delaunay pixels.
 
 The solution for $s$ is therefore given by (equation 5 WD03):
 
@@ -513,7 +633,7 @@ reconstruction = np.linalg.solve(curvature_matrix, data_vector)
 """
 We can plot this reconstruction -- it looks like a mess.
 
-The pixelization pixels have noisy and unsmooth values, and it is hard to make out if a galaxy is even being 
+The pixelization pixels have noisy and unsmooth values, and it is hard to make out if a source galaxy is even being 
 reconstructed. 
 
 In fact, the linear inversion is (over-)fitting noise in the image data, meaning this system of equations is 
@@ -532,22 +652,22 @@ function $G$ (equation 11 WD03):
  $G = \chi^2 + \lambda \, G_{\rm L}$
 
 where $\lambda$ is the `regularization_coefficient` which describes the magnitude of smoothness that is applied. A 
-higher $\lambda$ will regularize the source more, leading to a smoother galaxy reconstruction.
+higher $\lambda$ will regularize the source more, leading to a smoother source galaxy reconstruction.
 
 Different forms for $G_{\rm L}$ can be defined which regularize the reconstruction in different ways. The 
 `Constant` regularization scheme used in this example applies gradient regularization (equation 14 WD03):
 
  $G_{\rm L} = \sum_{\rm  i}^{I} \sum_{\rm  n=1}^{N}  [s_{i} - s_{i, v}]$
 
-This regularization scheme is easier to express in words -- the summation goes to each rectangular pixelization pixel,
-determines all rectangular pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
+This regularization scheme is easier to express in words -- the summation goes to each delaunay pixelization pixel,
+determines all delaunay pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
 where the difference in reconstructed flux of these two neighboring pixels is large.
 
-The summation does this for all rectangular pixels, thus it favours solutions where neighboring rectangular 
-pixels reconstruct similar values to one another (e.g. it favours a smooth galaxy reconstruction).
+The summation does this for all delaunay pixels, thus it favours solutions where neighboring delaunay 
+pixels reconstruct similar values to one another (e.g. it favours a smooth source galaxy reconstruction).
 
 We now define the `regularization matrix`, $H$, which allows us to include this smoothing when we solve for $s$. $H$
-has dimensions `(total_rectangular_pixels, total_rectangular_pixels)`.
+has dimensions `(total_delaunay_pixels, total_delaunay_pixels)`.
 
 This relates to $G_{\rm L}$ as (equation 13 WD03):
 
@@ -557,7 +677,7 @@ $H$ has the `regularization_coefficient` $\lambda$ folded into it such $\lambda$
 is accounted for.
 """
 regularization_matrix = al.util.regularization.constant_regularization_matrix_from(
-    coefficient=galaxy.pixelization.regularization.coefficient,
+    coefficient=source_galaxy.pixelization.regularization.coefficient,
     neighbors=mapper.source_plane_mesh_grid.neighbors,
     neighbors_sizes=mapper.source_plane_mesh_grid.neighbors.sizes,
 )
@@ -565,12 +685,12 @@ regularization_matrix = al.util.regularization.constant_regularization_matrix_fr
 """
 We can plot the regularization matrix and note that:
 
- - non-zero entries indicate that two rectangular pixelization pixels are neighbors and therefore are regularized 
+ - non-zero entries indicate that two delaunay pixelization pixels are neighbors and therefore are regularized 
  with one another.
 
- - Zeros indicate the two rectangular pixels do not neighbor one another.
+ - Zeros indicate the two delaunay pixels do not neighbor one another.
 
-The majority of entries are zero, because the majority of rectangular pixels are not neighbors with one another.
+The majority of entries are zero, because the majority of delaunay pixels are not neighbors with one another.
 """
 plt.imshow(regularization_matrix)
 plt.colorbar()
@@ -596,8 +716,8 @@ Note that the for loop used above to prevent a LinAlgException is no longer requ
 reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 
 """
-By plotting this galaxy reconstruction we can see that regularization has lead us to reconstruct a smoother galaxy,
-which actually looks like the star forming clumps in the galaxy imaging data! 
+By plotting this source galaxy reconstruction we can see that regularization has lead us to reconstruct a smoother 
+source galaxy, which actually looks like the star forming clumps in the imaging data! 
 
 This also implies we are not over-fitting the noise.
 """
@@ -629,11 +749,11 @@ grid_plotter.figure_2d()
 """
 __Likelihood Function__
 
-We now quantify the goodness-of-fit of our pixelization galaxy reconstruction. 
+We now quantify the goodness-of-fit of our pixelization source galaxy reconstruction. 
 
 We compute the `log_likelihood` of the fit, which is the value returned by the `log_likelihood_function`.
 
-The likelihood function for galaxy modeling consists of five terms:
+The likelihood function for source galaxy modeling consists of five terms:
 
  $-2 \mathrm{ln} \, \epsilon = \chi^2 + s^{T} H s + \mathrm{ln} \, \left[ \mathrm{det} (F + H) \right] - { \mathrm{ln}} \, \left[ \mathrm{det} (H) \right] + \sum_{\rm  j=1}^{J} { \mathrm{ln}} \left [2 \pi (\sigma_j)^2 \right]  \, .$
 
@@ -698,9 +818,9 @@ __Regularization Term__
 The second term, $s^{T} H s$, corresponds to the $\lambda $G_{\rm L}$ regularization term we added to our merit 
 function above.
 
-This is the term which sums up the difference in flux of all reconstructed rectangular pixels, and reduces the 
-likelihood of solutions where there are large differences in flux (e.g. the galaxy is less smooth and more likely to be 
-overfitting noise).
+This is the term which sums up the difference in flux of all reconstructed delaunay pixels, and reduces the 
+likelihood of solutions where there are large differences in flux (e.g. the source galaxy is less smooth and more 
+likely to be overfitting noise).
 
 We compute it below via matrix multiplication, noting that the `regularization_coefficient`, $\lambda$, is built into 
 the `regularization_matrix` already.
@@ -731,7 +851,7 @@ The terms $\left[ \mathrm{det} (F + H) \right]$ and $ - { \mathrm{ln}} \, \left[
 this problem. 
 
 They quantify how complex the reconstruction is, and penalize solutions where *it is more complex*. Reducing 
-the `regularization_coefficient` makes the galaxy reconstruction more complex (because a galaxy that is 
+the `regularization_coefficient` makes the source galaxy reconstruction more complex (because a galaxy that is 
 smoothed less uses more flexibility to fit the data better).
 
 These two terms therefore counteract the `chi_squared` and `regularization_term`, so as to attribute a higher
@@ -755,7 +875,7 @@ Our likelihood function assumes the imaging data consists of independent Gaussia
 The final term ins the likelihood function is therefore a `noise_normalization` term, which consists of the sum
 of the log of every noise-map value squared. 
 
-Given the `noise_map` is fixed, this term does not change during the galaxy modeling process and has no impact on the 
+Given the `noise_map` is fixed, this term does not change during the lens modeling process and has no impact on the 
 model we infer.
 """
 noise_normalization_real = np.sum(np.log(2 * np.pi * dataset.noise_map.real**2.0))
@@ -765,7 +885,7 @@ noise_normalization = noise_normalization_real + noise_normalization_imag
 """
 __Calculate The Log Likelihood__
 
-We can now, finally, compute the `log_likelihood` of the galaxy model, by combining the five terms computed above using
+We can now, finally, compute the `log_likelihood` of the model, by combining the five terms computed above using
 the likelihood function defined above.
 """
 log_evidence = float(
@@ -786,11 +906,11 @@ __Fit__
 
 This process to perform a likelihood function evaluation performed via the `FitInterferometer` object.
 """
-galaxies = al.Galaxies(galaxies=[galaxy])
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitInterferometer(
     dataset=dataset,
-    galaxies=galaxies,
+    tracer=tracer,
     settings_inversion=al.SettingsInversion(
         use_w_tilde=False, use_border_relocator=True
     ),
@@ -798,10 +918,13 @@ fit = al.FitInterferometer(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
-"""
-__Galaxy Modeling__
+fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
+fit_plotter.subplot_fit()
 
-To fit a galaxy model to data, the likelihood function illustrated in this tutorial is sampled using a
+"""
+__Lens Modeling__
+
+To fit a lens model to data, the likelihood function illustrated in this tutorial is sampled using a
 non-linear search algorithm.
 
 The default sampler is the nested sampling algorithm `nautilus` (https://github.com/joshspeagle/nautilus)
@@ -815,11 +938,11 @@ There are a number of other inputs features which slightly change the behaviour 
 are described in additional notebooks found in this package. In brief, these describe:
 
  - **Over Sampling**: Oversampling the image grid into a finer grid of sub-pixels, which are all individually 
- paired fractionally with each rectangular pixel.
+ paired fractionally with each delaunay pixel.
 
- - **Source-plane Interpolation**: Using bilinear interpolation on the rectangular pixelization to pair each 
- image (sub-)pixel to multiple rectangular pixels with interpolation weights.
+ - **Source-plane Interpolation**: Using bilinear interpolation on the delaunay pixelization to pair each 
+ image (sub-)pixel to multiple delaunay pixels with interpolation weights.
 
  - **Luminosity Weighted Regularization**: Using an adaptive regularization coefficient which adapts the level of 
- regularization applied to the galaxy based on its luminosity.
+ regularization applied to the source galaxy based on its luminosity.
 """

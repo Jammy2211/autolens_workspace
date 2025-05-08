@@ -2,7 +2,7 @@
 __Log Likelihood Function: Inversion (image_mesh.Overlay + mesh.Delaunay + reg.Constant)__
 
 This script provides a step-by-step guide of the **PyAutoLens** `log_likelihood_function` which is used to fit
-`Imaging` data with an inversion (specifically an `Overlay` image-mesh, `Voronoi` mesh and `Constant`
+`Imaging` data with an inversion (specifically an `Overlay` image-mesh, `Delaunay` mesh and `Constant`
 regularization scheme`).
 
 This script has the following aims:
@@ -16,6 +16,14 @@ This script has the following aims:
 Accompanying this script is the `contributor_guide.py` which provides URL's to every part of the source-code that
 is illustrated in this guide. This gives contributors a sequential run through of what source-code functions, modules and
 packages are called when the likelihood is evaluated.
+
+__Prerequisites__
+
+The likelihood function of a pixelization builds on that used for standard parametric light profiles and
+linear light profiles, therefore you must read the following notebooks before this script:
+
+- `light_profile/log_likelihood_function.ipynb`.
+- `linear_light_profile/log_likelihood_function.ipynb`.
 """
 
 # %matplotlib inline
@@ -98,78 +106,14 @@ To perform lensing calculations we first must define the 2D image-plane (y,x) co
 These are given by `masked_dataset.grid`, which we can plot and see is a uniform grid of (y,x) Cartesian coordinates
 which have had the 3.0" circular mask applied.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grid)
+grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.pixelization)
 grid_plotter.figure_2d()
 
-print(
-    f"(y,x) coordinates of first ten unmasked image-pixels {masked_dataset.grid[0:9]}"
-)
-
 """
-To perform lensing calculations we convert this 2D (y,x) grid of coordinates to elliptical coordinates:
+__Lens Galaxy__
 
- $\eta = \sqrt{(x - x_c)^2 + (y - y_c)^2/q^2}$
-
-Where:
-
- - $y$ and $x$ are the (y,x) arc-second coordinates of each unmasked image-pixel, given by `masked_dataset.grid`.
- - $y_c$ and $x_c$ are the (y,x) arc-second `centre` of the light or mass profile used to perform lensing calculations.
- - $q$ is the axis-ratio of the elliptical light or mass profile (`axis_ratio=1.0` for spherical profiles).
- - The elliptical coordinates is rotated by position angle $\phi$, defined counter-clockwise from the positive 
- x-axis.
-
-**PyAutoLens** does not use $q$ and $\phi$ to parameterize the lens model but expresses these as `elliptical_components`:
-
-$\epsilon_{1} =\frac{1-q}{1+q} \sin 2\phi, \,\,$
-$\epsilon_{2} =\frac{1-q}{1+q} \cos 2\phi.$
-
-Note that `Ell` is used as shorthand for elliptical and `Sph` for spherical.
-"""
-profile = al.EllProfile(centre=(0.1, 0.2), ell_comps=(0.1, 0.2))
-
-"""
-Transform `masked_dataset.grid ` to the centre of profile and rotate it using its angle `phi`.
-"""
-transformed_grid = profile.transformed_to_reference_frame_grid_from(
-    grid=masked_dataset.grid
-)
-
-grid_plotter = aplt.Grid2DPlotter(grid=transformed_grid)
-grid_plotter.figure_2d()
-print(
-    f"transformed coordinates of first ten unmasked image-pixels {transformed_grid[0:9]}"
-)
-
-"""
-Using these transformed (y',x') values we compute the elliptical coordinates $\eta = \sqrt{(x')^2 + (y')^2/q^2}$
-"""
-elliptical_radii = profile.elliptical_radii_grid_from(grid=transformed_grid)
-
-print(
-    f"elliptical coordinates of first ten unmasked image-pixels {elliptical_radii[0:9]}"
-)
-
-"""
-__Likelihood Setup: Lens Galaxy Light (Setup)__
-
-To perform a likelihood evaluation we now compose our lens model.
-
-We first define the light profiles which represents the lens galaxy's light, which will be used to subtract the lens 
-light from the data before performing the source reconstruction.
-
-A light profile is defined by its intensity $I (\eta_{\rm l})$, for example the Sersic profile:
-
-$I_{\rm  Ser} (\eta_{\rm l}) = I \exp \bigg\{ -k \bigg[ \bigg( \frac{\eta}{R} \bigg)^{\frac{1}{n}} - 1 \bigg] \bigg\}$
-
-Where:
-
- - $\eta$ are the elliptical coordinates (see above) or the masked image-grid.
- - $I$ is the `intensity`, which controls the overall brightness of the Sersic profile.
- - $n$ is the ``sersic_index``, which via $k$ controls the steepness of the inner profile.
- - $R$ is the `effective_radius`, which defines the arc-second radius of a circle containing half the light.
-
-In this example, we assume our lens is composed of two light profiles, an elliptical Sersic (a Sersic
-where `sersic_index=4`) which represent the bulge of the lens. 
+We set up a lens galaxy with the lens light and mass, which we will use to demonstrate a pixelized source
+reconstruction.
 """
 bulge = al.lp.Sersic(
     centre=(0.0, 0.0),
@@ -179,51 +123,6 @@ bulge = al.lp.Sersic(
     sersic_index=3.0,
 )
 
-"""
-Using the masked 2D grid defined above, we can calculate and plot images of each light profile component.
-
-(The transformation to elliptical coordinates above are built into the `image_2d_from` function and performed implicitly).
-"""
-image_2d_bulge = bulge.image_2d_from(grid=masked_dataset.grid)
-
-bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=masked_dataset.grid)
-bulge_plotter.figures_2d(image=True)
-
-"""
-__Likelihood Setup: Lens Galaxy Mass__
-
-We next define the mass profiles which represents the lens galaxy's mass, which will be used to ray-trace the 
-image-plane 2D grid of (y,x) coordinates to the source-plane so that the source reconstruction can be performed.
-
-In this example, we assume our lens is composed of an elliptical isothermal mass distribution and external shear.
-
-A mass profile is defined by its convergence $\kappa (\eta)$, which is related to
-the surface density of the mass distribution as
-
-$\kappa(\eta)=\frac{\Sigma(\eta)}{\Sigma_\mathrm{crit}},$
-
-where
-
-$\Sigma_\mathrm{crit}=\frac{{\rm c}^2}{4{\rm \pi} {\rm G}}\frac{D_{\rm s}}{D_{\rm l} D_{\rm ls}},$
-
-and
-
- - `c` is the speed of light.
- - $D_{\rm l}$, $D_{\rm s}$, and $D_{\rm ls}$ are respectively the angular diameter distances to the lens, to the 
- source, and from the lens to the source.
-
-For readers less familiar with lensing, we can think of $\kappa(\eta)$ as a convenient and
-dimensionless way to describe how light is gravitationally lensed after assuming a cosmology.
-
-For the for the isothermal profile:
-
-$\kappa(\eta) = \frac{1.0}{1 + q} \bigg( \frac{\theta_{\rm E}}{\eta} \bigg)$
-
-Where:
-
- - $\theta_{\rm E}$ is the `einstein_radius` (which is rescaled compared to other einstein radius
- definitions).
-"""
 mass = al.mp.Isothermal(
     centre=(0.0, 0.0),
     einstein_radius=1.6,
@@ -232,39 +131,12 @@ mass = al.mp.Isothermal(
 
 shear = al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05)
 
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=masked_dataset.grid)
-mass_plotter.figures_2d(convergence=True)
-
-"""
-From each mass profile we can compute its deflection angles, which describe how due to gravitational lensing
-image-pixels are ray-traced to the source plane.
-
-The deflection angles are computed by integrating $\kappa$: 
-
-$\vec{{\alpha}}_{\rm x,y} (\vec{x}) = \frac{1}{\pi} \int \frac{\vec{x} - \vec{x'}}{\left | \vec{x} - \vec{x'} \right |^2} \kappa(\vec{x'}) d\vec{x'} \, ,$
-"""
-deflections_yx_2d = mass.deflections_yx_2d_from(grid=masked_dataset.grid)
-
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=masked_dataset.grid)
-mass_plotter.figures_2d(deflections_y=True, deflections_x=True)
-
-"""
-__Likelihood Setup: Lens Galaxy__
-
-We now combine the light and mass profiles into a single `Galaxy` object for the lens galaxy.
-
-When computing quantities for the light and mass profiles from this object, it computes each individual quantity and 
-adds them together. 
-
-For example, for the `bulge`, when it computes their 2D images it computes each individually and then adds
-them together.
-"""
 lens_galaxy = al.Galaxy(redshift=0.5, bulge=bulge, mass=mass, shear=shear)
 
 """
-__Likelihood Setup: Source Galaxy Pixelization and Regularization__
+__Source Galaxy Pixelization and Regularization__
 
-The source galaxy is reconstructed using a pixel-grid, in this example a Voronoi mesh, which accounts for 
+The source galaxy is reconstructed using a pixel-grid, in this example a Delaunay mesh, which accounts for 
 irregularities and asymmetries in the source's surface brightness. 
 
 A constant regularization scheme is applied which applies a smoothness prior on the reconstruction. 
@@ -327,7 +199,7 @@ array_2d_plotter.figure_2d()
 """
 __Source Pixel Centre Calculation__
 
-In order to reconstruct the source galaxy using a Voronoi mesh, we need to determine the centres of the Voronoi 
+In order to reconstruct the source galaxy using a Delaunay mesh, we need to determine the centres of the Delaunay 
 source pixels.
 
 The image-mesh `Overlay` object computes the source-pixel centres in the image-plane (which are ray-traced to the 
@@ -361,7 +233,7 @@ The likelihood function of a pixelized source reconstruction ray-traces two grid
 
  1) A 2D grid of (y,x) coordinates aligned with the imaging data's image-pixels.
  
- 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Voronoi pixels.
+ 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Delaunay pixels.
 
 The function below computes the 2D deflection angles of the tracer's lens galaxies and subtracts them from the 
 image-plane 2D (y,x) coordinates $\theta$ of each grid, thus ray-tracing their coordinates to the source plane to 
@@ -384,7 +256,7 @@ traced_grid_pixelization = tracer.traced_grid_2d_list_from(
 )[-1]
 
 # This functions a bit weird - it returns a list of lists of ndarrays. Best not to worry about it for now!
-traced_mesh_grid = tracer_to_inversion.traced_mesh_grid_pg_list[0][-1][0]
+traced_mesh_grid = tracer_to_inversion.traced_mesh_grid_pg_list[-1][-1]
 
 mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
@@ -422,26 +294,26 @@ grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot
 grid_plotter.figure_2d()
 
 """
-__Voronoi Mesh__
+__Delaunay Mesh__
 
-The relocated pixelization grid is used to create the `Pixelization`'s Voronoi mesh using the `scipy.spatial` library.
+The relocated pixelization grid is used to create the `Pixelization`'s Delaunay mesh using the `scipy.spatial` library.
 """
-grid_voronoi = al.Mesh2DVoronoi(
+grid_delaunay = al.Mesh2DDelaunay(
     values=relocated_mesh_grid,
 )
 
 """
-Plotting the Voronoi mesh shows that the source-plane and been discretized into a grid of irregular Voronoi pixels.
+Plotting the Delaunay mesh shows that the source-plane and been discretized into a grid of irregular Delaunay pixels.
 
-(To plot the Voronoi mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
+(To plot the Delaunay mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
 
-Below, we plot the Voronoi mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
-to show how each set of image-pixels fall within a Voronoi pixel.
+Below, we plot the Delaunay mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
+to show how each set of image-pixels fall within a Delaunay pixel.
 """
 mapper_grids = al.MapperGrids(
     mask=mask,
     source_plane_data_grid=relocated_grid,
-    source_plane_mesh_grid=grid_voronoi,
+    source_plane_mesh_grid=grid_delaunay,
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
@@ -462,7 +334,7 @@ mapper_plotter.figure_2d(interpolate_to_uniform=False)
 __Image-Source Mapping__
 
 We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
-every source-plane Voronoi pixel. 
+every source-plane Delaunay pixel. 
 
 There are two steps in this calculation, which we show individually below.
 """
@@ -475,10 +347,10 @@ mapper = al.Mapper(
 The `Mapper` contains:
 
  1) `source_plane_data_grid`: the traced grid of (y,x) image-pixel coordinate centres (`relocated_grid`).
- 2) `source_plane_mesh_grid`: The Voronoi mesh of traced (y,x) source-pixel coordinates (`grid_voronoi`).
+ 2) `source_plane_mesh_grid`: The Delaunay mesh of traced (y,x) source-pixel coordinates (`grid_delaunay`).
 
-We have therefore discretized the source-plane into a Voronoi mesh, and can pair every traced image-pixel coordinate
-with the corresponding Voronoi source pixel it lands in.
+We have therefore discretized the source-plane into a Delaunay mesh, and can pair every traced image-pixel coordinate
+with the corresponding Delaunay source pixel it lands in.
 
 This pairing is contained in the ndarray `pix_indexes_for_sub_slim_index` which maps every image-pixel index to 
 every source-pixel index.
@@ -532,14 +404,14 @@ The `mapping_matrix` represents the image-pixel to source-pixel mappings above i
 
 It has dimensions `(total_image_pixels, total_source_pixels)`.
 
-(A number of inputs are not used for the `Voronoi` pixelization and are expanded upon in the `features.ipynb`
+(A number of inputs are not used for the `Delaunay` pixelization and are expanded upon in the `features.ipynb`
 log likelihood guide notebook).
 """
 
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
-    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Voronoi
-    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Voronoi
+    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Delaunay
+    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Delaunay
     pixels=mapper.pixels,
     total_mask_pixels=mapper.source_plane_data_grid.mask.pixels_in_mask,
     slim_index_for_sub_slim_index=mapper.slim_index_for_sub_slim_index,
@@ -775,11 +647,11 @@ Different forms for $G_{\rm L}$ can be defined which regularize the source recon
 
  $G_{\rm L} = \sum_{\rm  i}^{I} \sum_{\rm  n=1}^{N}  [s_{i} - s_{i, v}]$
 
-This regularization scheme is easier to express in words -- the summation goes to each Voronoi source pixel,
-determines all Voronoi source pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
+This regularization scheme is easier to express in words -- the summation goes to each Delaunay source pixel,
+determines all Delaunay source pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
 where the difference in reconstructed flux of these two neighboring source pixels is large.
 
-The summation does this for all Voronoi pixels, thus it favours solutions where neighboring Voronoi source
+The summation does this for all Delaunay pixels, thus it favours solutions where neighboring Delaunay source
 pixels reconstruct similar values to one another (e.g. it favours a smooth source reconstruction).
 
 We now define the `regularization matrix`, $H$, which allows us to include this smoothing when we solve for $s$. $H$
@@ -801,12 +673,12 @@ regularization_matrix = al.util.regularization.constant_regularization_matrix_fr
 """
 We can plot the regularization matrix and note that:
 
- - non-zero entries indicate that two Voronoi source-pixels are neighbors and therefore are regularized with one 
+ - non-zero entries indicate that two Delaunay source-pixels are neighbors and therefore are regularized with one 
  another.
  
- - Zeros indicate the two Voronoi source pixels do not neighbor one another.
+ - Zeros indicate the two Delaunay source pixels do not neighbor one another.
  
-The majority of entries are zero, because the majority of Voronoi source pixels are not neighbors with one another.
+The majority of entries are zero, because the majority of Delaunay source pixels are not neighbors with one another.
 """
 plt.imshow(regularization_matrix)
 plt.colorbar()
@@ -1010,6 +882,9 @@ fit = al.FitImaging(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
+fit_plotter.subplot_fit()
+
 
 """
 __Lens Modeling__
@@ -1031,7 +906,7 @@ are described in additional notebooks found in this package. In brief, these des
  - **Sub-gridding**: Oversampling the image grid into a finer grid of sub-pixels, which are all individually 
  ray-traced to the source-plane and paired fractionally with each source pixel.
  
- - **Source-plane Interpolation**: Using a Delaunay triangulation or Voronoi mesh with natural neighbor interpolation
+ - **Source-plane Interpolation**: Using a Delaunay triangulation or Delaunay mesh with natural neighbor interpolation
  to pair each image (sub-)pixel to multiple source-plane pixels with interpolation weights.
  
  - **Source Morphology Pixelization Adaption**: Adapting the pixelization such that is congregates source pixels around

@@ -2,7 +2,7 @@
 __Log Likelihood Function: Parametric__
 
 This script provides a step-by-step guide of the `log_likelihood_function` which is used to fit `Interferometer` data
-with parametric light profiles (e.g. a Sersic bulge and Exponential disk).
+with a parametric lens light profile and source light profile (e.g. an elliptical Sersic lens and source).
 
 This script has the following aims:
 
@@ -150,7 +150,7 @@ print(
 )
 
 """
-__Likelihood Setup: Light Profiles (Setup)__
+__Light Profiles (Setup)__
 
 To perform a likelihood evaluation we now compose our lens model.
 
@@ -194,7 +194,7 @@ bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=dataset.grid)
 bulge_plotter.figures_2d(image=True)
 
 """
-__Likelihood Setup: Lens Galaxy Mass__
+__Lens Galaxy Mass__
 
 We next define the mass profiles which represents the lens galaxy's mass, which will be used to ray-trace the 
 image-plane 2D grid of (y,x) coordinates to the source-plane so that the source model can be evaluated.
@@ -253,7 +253,7 @@ mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=dataset.grid)
 mass_plotter.figures_2d(deflections_y=True, deflections_x=True)
 
 """
-__Likelihood Setup: Lens Galaxy__
+__Lens Galaxy__
 
 We now combine the light and mass profiles into a single `Galaxy` object for the lens galaxy.
 
@@ -266,7 +266,7 @@ them together.
 lens_galaxy = al.Galaxy(redshift=0.5, bulge=bulge, mass=mass, shear=shear)
 
 """
-__Likelihood Setup: Source Galaxy Light Profile__
+__Source Galaxy Light Profile__
 
 The source galaxy is fitted using another analytic light profile, in this example another elliptical Sersic.
 """
@@ -281,32 +281,67 @@ source_galaxy = al.Galaxy(
     ),
 )
 
-
 """
-__Likelihood Setup: Galaxies__
+__Lens Light__
 
-We now combine the `Galaxy` objects into a single `Galaxies` object.
+Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the `Sersic` 
+bulge). 
 
-When computing quantities for each galaxy from this object, it computes each individual quantity and 
-adds them together. 
-
-For example, for the `lens` and `source`, when it computes their 2D images it computes each individually and then adds
-them together.
+This computes the `lens_image_2d` of each `LightProfile` and adds them together. 
 """
-galaxy = al.Galaxy(redshift=0.5, bulge=bulge)
+lens_image_2d = lens_galaxy.image_2d_from(grid=dataset.grid)
 
-"""
-__Galaxy Image__
-
-Compute a 2D image of the galaxy's light as the sum of its individual light profiles (the `Sersic` 
-bulge and `Exponential` disk). 
-
-This computes the `image` of each light profile and adds them together. 
-"""
-galaxy_image_2d = galaxy.image_2d_from(grid=dataset.grid)
-
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy, grid=dataset.grid)
+galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=dataset.grid)
 galaxy_plotter.figures_2d(image=True)
+
+"""
+__Ray Tracing__
+
+To perform lensing calculations we ray-trace every 2d (y,x) coordinate $\theta$ from the image-plane to its (y,x) 
+source-plane coordinate $\beta$ using the summed deflection angles $\alpha$ of the mass profiles:
+
+ $\beta = \theta - \alpha(\theta)$
+
+The likelihood function of a source light profile ray-traces two grids from the image-plane to the source-plane:
+
+ 1) A 2D grid of (y,x) coordinates aligned with the imaging data's image-pixels.
+ 
+ 2) The 2D blurring grid (used for the lens light above) which accounts for pixels at the edge of the mask whose
+ light blurs into the mask.
+ 
+The function below computes the 2D deflection angles of the tracer's lens galaxies and subtracts them from the 
+image-plane 2D (y,x) coordinates $\theta$ of each grid, thus ray-tracing their coordinates to the source plane to 
+compute their $\beta$ values.
+"""
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
+
+# A list of every grid (e.g. image-plane, source-plane) however we only need the source plane grid with index -1.
+traced_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[-1]
+
+mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
+
+grid_plotter = aplt.Grid2DPlotter(grid=traced_grid, mat_plot_2d=mat_plot)
+grid_plotter.figure_2d()
+
+"""
+__Source Image__
+
+We pass the traced grid of coordinates to the source galaxy to evaluate its 2D image.
+"""
+source_image_2d = source_galaxy.image_2d_from(grid=traced_grid)
+
+galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=traced_grid)
+galaxy_plotter.figures_2d(image=True)
+
+"""
+__Lens + Source Light Addition__
+
+We add the lens and source galaxy images together, to create an overall image of the strong lens.
+"""
+image = lens_image_2d + source_image_2d
+
+array_2d_plotter = aplt.Array2DPlotter(array=image)
+array_2d_plotter.figure_2d()
 
 """
 If you are familiar with imaging data, you may have seen that a `blurring_image` of pixels surrounding the mask,
@@ -320,7 +355,7 @@ __Fourier Transform__
 Fourier Transform the 2D image of the galaxy above using the Non Uniform Fast Fourier Transform (NUFFT).
 """
 visibilities = dataset.transformer.visibilities_from(
-    image=galaxy_image_2d,
+    image=image,
 )
 
 """
@@ -411,11 +446,12 @@ __Fit__
 
 This process to perform a likelihood function evaluation performed via the `FitInterferometer` object.
 """
-galaxies = al.Galaxies(galaxies=[galaxy])
-
-fit = al.FitInterferometer(dataset=dataset, galaxies=galaxies)
+fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 fit_figure_of_merit = fit.figure_of_merit
 print(fit_figure_of_merit)
+
+fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
+fit_plotter.subplot_fit()
 
 
 """

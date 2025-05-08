@@ -32,8 +32,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from os import path
 
-import autogalaxy as ag
-import autogalaxy.plot as aplt
+import autolens as al
+import autolens.plot as aplt
 
 """
 __Dataset__
@@ -41,17 +41,17 @@ __Dataset__
 Following the `pixelization/log_likelihood_function.py` script, we load and mask an `Imaging` dataset and
 set oversampling to 1.
 """
-real_space_mask = ag.Mask2D.circular(shape_native=(8, 8), pixel_scales=0.05, radius=4.0)
+real_space_mask = al.Mask2D.circular(shape_native=(8, 8), pixel_scales=0.05, radius=4.0)
 
 dataset_name = "simple"
 dataset_path = path.join("dataset", "interferometer", dataset_name)
 
-dataset = ag.Interferometer.from_fits(
+dataset = al.Interferometer.from_fits(
     data_path=path.join(dataset_path, "data.fits"),
     noise_map_path=path.join(dataset_path, "noise_map.fits"),
     uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
     real_space_mask=real_space_mask,
-    transformer_class=ag.TransformerDFT,
+    transformer_class=al.TransformerDFT,
 )
 
 """
@@ -147,29 +147,29 @@ The `w_tilde` matrix is applied directly to the `mapping_matrix` to compute the 
 Below, we perform the likelihood function steps described in the `pixelization/log_likelihood_function.py` script,
 to create the `mapping_matrix` we will apply the `w_tilde` matrix to.
 """
-pixelization = ag.Pixelization(
-    mesh=ag.mesh.Rectangular(shape=(30, 30)),
-    regularization=ag.reg.Constant(coefficient=1.0),
+pixelization = al.Pixelization(
+    mesh=al.mesh.Rectangular(shape=(30, 30)),
+    regularization=al.reg.Constant(coefficient=1.0),
 )
 
-galaxy = ag.Galaxy(redshift=0.5, pixelization=pixelization)
+galaxy = al.Galaxy(redshift=0.5, pixelization=pixelization)
 
-grid_rectangular = ag.Mesh2DRectangular.overlay_grid(
+grid_rectangular = al.Mesh2DRectangular.overlay_grid(
     shape_native=galaxy.pixelization.mesh.shape, grid=dataset.grids.pixelization
 )
 
-mapper_grids = ag.MapperGrids(
+mapper_grids = al.MapperGrids(
     mask=real_space_mask,
     source_plane_data_grid=dataset.grids.pixelization,
     source_plane_mesh_grid=grid_rectangular,
 )
 
-mapper = ag.Mapper(
+mapper = al.Mapper(
     mapper_grids=mapper_grids,
     regularization=None,
 )
 
-mapping_matrix = ag.util.mapper.mapping_matrix_from(
+mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=mapper.pix_indexes_for_sub_slim_index,
     pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for rectangular
     pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for rectangular
@@ -238,7 +238,7 @@ __Reconstruction__
 
 The `reconstruction` is computed using the `curvature_matrix` and `data_vector` as per usual.
 """
-regularization_matrix = ag.util.regularization.constant_regularization_matrix_from(
+regularization_matrix = al.util.regularization.constant_regularization_matrix_from(
     coefficient=galaxy.pixelization.regularization.coefficient,
     neighbors=mapper.source_plane_mesh_grid.neighbors,
     neighbors_sizes=mapper.source_plane_mesh_grid.neighbors.sizes,

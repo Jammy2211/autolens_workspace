@@ -62,7 +62,7 @@ anticipated that any user performing sensitivity mapping on real data will use t
 `subhalo` package have dedicated extensions for performing sensitivity mapping to both imaging and interferometer data.
 
 Therefore you should be familiar with the SLaM pipelines before performing DM subhalo sensitivity mapping on real
-data. If you are unfamiliarwith the SLaM pipelines, checkout the
+data. If you are unfamiliar with the SLaM pipelines, checkout the
 example `autolens_workspace/notebooks/imaging/advanced/chaining/slam/start_here.ipynb`.
 
 __Pixelized Source__

@@ -148,7 +148,7 @@ print(
 )
 
 """
-__Likelihood Setup: Lens Galaxy Light (Setup)__
+__Lens Galaxy Light (Setup)__
 
 To perform a likelihood evaluation we now compose our lens model.
 
@@ -189,7 +189,7 @@ bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=masked_datase
 bulge_plotter.figures_2d(image=True)
 
 """
-__Likelihood Setup: Lens Galaxy Mass__
+__Lens Galaxy Mass__
 
 We next define the mass profiles which represents the lens galaxy's mass, which will be used to ray-trace the 
 image-plane 2D grid of (y,x) coordinates to the source-plane so that the source model can be evaluated.
@@ -248,7 +248,7 @@ mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=masked_dataset.gr
 mass_plotter.figures_2d(deflections_y=True, deflections_x=True)
 
 """
-__Likelihood Setup: Lens Galaxy__
+__Lens Galaxy__
 
 We now combine the light and mass profiles into a single `Galaxy` object for the lens galaxy.
 
@@ -261,7 +261,7 @@ them together.
 lens_galaxy = al.Galaxy(redshift=0.5, bulge=bulge, mass=mass, shear=shear)
 
 """
-__Likelihood Setup: Source Galaxy Light Profile__
+__Source Galaxy Light Profile__
 
 The source galaxy is fitted using another analytic light profile, in this example another elliptical Sersic.
 """
@@ -462,6 +462,9 @@ fit = al.FitImaging(dataset=masked_dataset, tracer=tracer)
 fit_figure_of_merit = fit.figure_of_merit
 print(fit_figure_of_merit)
 
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
+fit_plotter.subplot_fit()
+
 
 """
 __Lens Modeling__
@@ -474,7 +477,7 @@ but **PyAutoLens** supports multiple MCMC and optimization algorithms.
 
 __Wrap Up__
 
-We have presented a visual step-by-step guide to the **PyAutoLens** parametric likelihood function, which uses analytic
+We have presented a visual step-by-step guide to the parametric likelihood function, which uses analytic
 light profiles to fit the lens and source light.
 
 There are a number of other inputs features which slightly change the behaviour of this likelihood function, which
