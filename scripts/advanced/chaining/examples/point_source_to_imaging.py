@@ -46,7 +46,7 @@ __Dataset__
 
 Load the strong lens dataset `group` point source dataset and imaging, and plot them.
 """
-dataset_name = "lens_x3__source_x1"
+dataset_name = "simple"
 dataset_path = path.join("dataset", "group", dataset_name)
 
 imaging = al.Imaging.from_fits(
@@ -89,7 +89,7 @@ solver = al.PointSolver.for_grid(
 """
 __Model (Search 1)__
 
-Compose the lens model by loading it from a .json file made in the file `group/model_maker/lens_x3__source_x1.py`:
+Compose the lens model by loading it from a .json file made in the file `group/model_maker/simple.py`:
 
  - There are three lens galaxy's with `IsothermalSph` total mass distributions, with the prior on the centre of each 
  profile informed by its observed centre of light [9 parameters].

@@ -7,7 +7,7 @@ The ``multi`` package extends the ``imaging`` package and readers should refer t
 descriptions of how to customize the non-linear search, the fit settings, etc.
 
 These scripts show how to perform lens modeling but only give a brief overview of how to analyse
-and interpret the results a lens model fit. A full guide to result analysis is given at ``autolens_workspace/*/imaging/results``.
+and interpret the results a lens model fit. A full guide to result analysis is given at ``autolens_workspace/*/results``.
 
 Files (Advanced)
 ----------------
