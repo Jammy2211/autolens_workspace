@@ -241,7 +241,7 @@ trace to one another in the source-plane (using the best-fit mass model again). 
 a `factor` to ensure it is not too small (and thus does not remove plausible mass  models). If, after this 
 multiplication, the threshold is below the `minimum_threshold`, it is rounded up to this minimum value.
 """
-positions_likelihood = al.PositionsLHPenalty(threshold=1.0, positions=dataset.positions)
+positions_likelihood = al.PositionsLH(threshold=1.0, positions=dataset.positions)
 
 """
 __Analysis + Positions__
@@ -255,7 +255,7 @@ Below, we use the point source dictionary positions and a threshold double the r
 sufficient for this analysis.
 """
 analysis_2 = al.AnalysisImaging(
-    dataset=imaging, positions_likelihood=positions_likelihood
+    dataset=imaging, positions_likelihood_list=[positions_likelihood]
 )
 
 """

@@ -185,9 +185,9 @@ This is the standard SOURCE PIX PIPELINE described in the `slam/start_here.ipynb
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
-    positions_likelihood=source_lp_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
     settings_inversion=al.SettingsInversion(
         image_mesh_min_mesh_pixels_per_pixel=3,
         image_mesh_min_mesh_number=5,
@@ -266,9 +266,9 @@ This is the standard MASS TOTAL PIPELINE described in the `slam/start_here.ipynb
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    positions_likelihood=source_pix_result_2.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 mass_result = slam.mass_total.run(
@@ -301,9 +301,12 @@ A full description of the SUBHALO PIPELINE can be found in the SLaM pipeline its
 """
 analysis = al.AnalysisImaging(
     dataset=dataset,
-    positions_likelihood=mass_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2, use_resample=True
-    ),
+    positions_likelihood_list=[
+        mass_result.positions_likelihood_from(
+            factor=3.0,
+            minimum_threshold=0.2,
+        )
+    ],
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
 )
 

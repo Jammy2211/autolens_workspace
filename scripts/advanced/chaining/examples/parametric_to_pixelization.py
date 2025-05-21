@@ -216,9 +216,9 @@ multiplication, the threshold is below the `minimum_threshold`, it is rounded up
 """
 analysis_2 = al.AnalysisImaging(
     dataset=dataset,
-    positions_likelihood=result_1.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 """

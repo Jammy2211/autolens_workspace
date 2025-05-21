@@ -197,10 +197,10 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE is identical to the `start_here.ipynb` example, except the `extra_galaxies` are included in the
 model.
 """
-positions_likelihood = al.PositionsLHPenalty(positions=positions, threshold=0.1)
+positions_likelihood = al.PositionsLH(positions=positions, threshold=0.1)
 
 analysis = al.AnalysisImaging(
-    dataset=dataset, positions_likelihood=positions_likelihood
+    dataset=dataset, positions_likelihood_list=[positions_likelihood]
 )
 
 # Lens Light
@@ -374,7 +374,7 @@ for i, extra_galaxy_centre in enumerate(extra_galaxies_centres):
 extra_galaxies_free_centres = af.Collection(extra_galaxies_list)
 
 analysis = al.AnalysisImaging(
-    dataset=dataset_larger, positions_likelihood=positions_likelihood
+    dataset=dataset_larger, positions_likelihood_list=[positions_likelihood]
 )
 
 source_lp_result_2 = slam.source_lp.run_2(
@@ -396,10 +396,10 @@ via the `source_lp_result` object, therefore you do not need to manually pass th
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result_1),
-    # positions_likelihood=source_lp_result_2.positions_likelihood_from(
+    # positions_likelihood_list=[source_lp_result_2.positions_likelihood_from(
     #   factor=3.0, minimum_threshold=0.2
-    # ),
-    positions_likelihood=positions_likelihood,
+    # )],
+    positions_likelihood_list=[positions_likelihood],
 )
 
 extra_galaxies_fixed_list = []
@@ -455,9 +455,9 @@ need to manually pass them below.
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    # positions_likelihood=source_pix_result_1.positions_likelihood_from(
+    # positions_likelihood_list=[source_pix_result_1.positions_likelihood_from(
     #    factor=3.0, minimum_threshold=0.2),
-    positions_likelihood=positions_likelihood,
+    positions_likelihood_list=[positions_likelihood],
     settings_inversion=al.SettingsInversion(
         image_mesh_min_mesh_pixels_per_pixel=3,
         image_mesh_min_mesh_number=5,
@@ -609,10 +609,10 @@ need to manually pass them below.
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    # positions_likelihood=source_pix_result_2.positions_likelihood_from(
+    # positions_likelihood_list=[source_pix_result_2.positions_likelihood_from(
     #    factor=3.0, minimum_threshold=0.2
-    # ),
-    positions_likelihood=positions_likelihood,
+    # )],
+    positions_likelihood_list=[positions_likelihood],
 )
 
 # Extra galaxies
