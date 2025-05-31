@@ -2,17 +2,17 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "positions_noise_map": {
+        "time_delays_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
             "arguments": {
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05
+                        -34.24640425671294,
+                        -44.212617776098305,
+                        -44.255010891947805,
+                        -44.185067225570236
                     ],
                     "dtype": "float64"
                 }
@@ -25,10 +25,10 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        5.537201817790563,
-                        2.381444763782709,
-                        5.878760110323269,
-                        5.541474766706675
+                        6.823205734311987,
+                        55.16034562707473,
+                        53.63384543098487,
+                        100.62451932006542
                     ],
                     "dtype": "float64"
                 }
@@ -42,20 +42,20 @@
                     "type": "ndarray",
                     "array": [
                         [
-                            -0.59609375,
-                            1.5728284286439258
+                            -1.0390625,
+                            -1.0383283747457177
                         ],
                         [
-                            -0.9375,
-                            -0.9372920776375331
+                            0.4421875,
+                            1.608461765570473
                         ],
                         [
-                            1.1375,
-                            1.1375604522626845
+                            1.609375,
+                            0.4420337998483072
                         ],
                         [
-                            1.5726562499999999,
-                            -0.5958435199996059
+                            1.17890625,
+                            1.1795085577584932
                         ]
                     ],
                     "dtype": "float64"
@@ -63,6 +63,22 @@
             }
         },
         "name": "point_0",
+        "time_delays": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -136.98561702685177,
+                        -176.85047110439322,
+                        -177.02004356779122,
+                        -176.74026890228095
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
         "fluxes_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -74,6 +90,22 @@
                         1.0,
                         1.0,
                         1.0
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.05
                     ],
                     "dtype": "float64"
                 }
