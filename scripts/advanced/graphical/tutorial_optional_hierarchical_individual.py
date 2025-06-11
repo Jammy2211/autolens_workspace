@@ -140,7 +140,7 @@ for dataset_index, analysis in enumerate(analysis_list):
     """
     Create the `Nautilus` non-linear search and use it to fit the data.
     """
-    Nautilus = af.Nautilus(
+    search = af.Nautilus(
         name="",
         path_prefix=path.join("tutorial_optional_hierarchical_individual"),
         unique_tag=dataset_name,
@@ -148,7 +148,7 @@ for dataset_index, analysis in enumerate(analysis_list):
         f_live=1e-4,
     )
 
-    result_list.append(Nautilus.fit(model=model, analysis=analysis))
+    result_list.append(search.fit(model=model, analysis=analysis))
 
 """
 __Results__

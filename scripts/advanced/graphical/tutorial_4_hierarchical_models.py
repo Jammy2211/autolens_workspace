@@ -203,13 +203,13 @@ __Search__
 
 We can now create a non-linear search and used it to the fit the factor graph, using its `global_prior_model` property.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path.join("imaging", "hierarchical"),
     name="tutorial_4_hierarchical_models",
     n_live=150,
 )
 
-result = Nautilus.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
+result = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__

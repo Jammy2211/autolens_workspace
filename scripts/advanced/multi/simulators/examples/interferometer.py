@@ -38,8 +38,7 @@ dataset_name = "simple__no_lens_light"
 dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 
 """
-The path where the dataset will be output, which in this case is
-`/autolens_workspace/dataset/interferometer/simple__no_lens_light`
+The path where the dataset will be output.
 """
 dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
 

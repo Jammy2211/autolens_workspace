@@ -172,7 +172,7 @@ requires its own non-linear search.
 For complex graphs consisting of many  nodes, one could easily use different searches for different nodes on the factor 
 graph.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path.join("imaging", "hierarchical"),
     name="tutorial_5_expectation_propagation",
     n_live=150,

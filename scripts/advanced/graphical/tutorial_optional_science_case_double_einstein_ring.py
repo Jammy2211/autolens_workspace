@@ -1,16 +1,14 @@
 """
-Tutorial 6: Science Case
-========================
+Tutorial Optional: Science Case Double Einstein Rings
+=====================================================
 
-This tutorial shows two realistic science cases:
+This tutorial shows a realistic science case.
 
-1) Fitting a sample of time-delay lensed quasars using a graphical model, where time delays allow us include the
-   Cosmological parameter the Hubble constant H0 as a shared free parameter in an graphical model.
+We have a dataset containing 10 double Einstein ring lenses, which allow one to measure certain Cosmological
+parameters.
 
-2) Fitting a sample of 10 double Einstein ring lenses using a graphical model, where the double Einstein rings
-   allow us include the Cosmological parameter Omega_m as a shared free parameter in an graphical model.
-
-In this example we fit via a graphical model and Expectation Propagation (EP).
+In this example we include the Cosmological parameter Omega_m as a shared free parameter in an graphical model fit
+via Expectation Propagation (EP).
 
 __Sample Simulation__
 
@@ -194,7 +192,7 @@ requires its own non-linear search.
 For complex graphs consisting of many  nodes, one could easily use different searches for different nodes on the factor 
 graph.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path.join("imaging", "hierarchical"),
     name="tutorial_6_science_case",
     n_live=150,
