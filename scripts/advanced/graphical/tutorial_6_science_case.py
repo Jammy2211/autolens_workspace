@@ -152,10 +152,10 @@ For complex graphs consisting of many  nodes, one could easily use different sea
 graph.
 """
 search = af.Nautilus(
-    path_prefix=Path("point_source") /  "hierarchical",
+    path_prefix=Path("point_source") / "hierarchical",
     name="tutorial_6_science_case_graphical",
     n_live=150,
-    number_of_cores=4
+    number_of_cores=4,
 )
 
 analysis_factor_list = []
@@ -193,13 +193,15 @@ __Expectation Propagation__
 
 We now perform the fit using EP as we did in tutorial 5.
 """
-paths = af.DirectoryPaths(name=Path("point_source") /  "hierarchical" / "tutorial_6_science_case_ep")
+paths = af.DirectoryPaths(
+    name=Path("point_source") / "hierarchical" / "tutorial_6_science_case_ep"
+)
 
 search = af.Nautilus(
     path_prefix=Path("point_source") / "hierarchical",
     name="tutorial_6_science_case_ep",
     n_live=150,
-    number_of_cores=4
+    number_of_cores=4,
 )
 
 analysis_factor_list = []
