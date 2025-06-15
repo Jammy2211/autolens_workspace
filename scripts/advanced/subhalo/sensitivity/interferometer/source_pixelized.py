@@ -197,9 +197,9 @@
 # """
 # analysis = al.AnalysisInterferometer(
 #     dataset=dataset,
-#     positions_likelihood=source_lp_result.positions_likelihood_from(
+#     positions_likelihood_list=[source_lp_result.positions_likelihood_from(
 #         factor=3.0, minimum_threshold=0.2
-#     ),
+#     )],
 #     settings_inversion=settings_inversion,
 # )
 #
@@ -225,9 +225,9 @@
 # analysis = al.AnalysisInterferometer(
 #     dataset=dataset,
 #     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-#     positions_likelihood=source_pix_results.last.positions_likelihood_from(
-#         factor=3.0, minimum_threshold=0.2, use_resample=True
-#     ),
+#     positions_likelihood_list=[source_pix_results.last.positions_likelihood_from(
+#         factor=3.0, minimum_threshold=0.2,
+#     )],
 #     settings_inversion=settings_inversion,
 # )
 #

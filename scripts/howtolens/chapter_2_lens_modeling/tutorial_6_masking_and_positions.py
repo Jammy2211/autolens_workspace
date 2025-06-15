@@ -6,6 +6,7 @@ We have learnt everything we need to know about non-linear searches to model a s
 model solution. Now, lets consider masking in more detail, something we have not given much consideration previously.
 We'll also learn a neat trick to improve the speed and accuracy of a non-linear search.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -208,11 +209,11 @@ dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.subplot_dataset()
 
 """
-For the positions to be used in a model-fit, we create a `PositionsLHPenalty` object which we pass to 
+For the positions to be used in a model-fit, we create a `PositionsLH` object which we pass to 
 the `AnalysisImaging` class. 
 
-This object includes the `threshold` that the positions must trace within during model-fit for a lens model 
-to be accepted and not resampled. 
+This object includes the `threshold` that the positions must trace within during model-fit for a lens model to not
+receive a likelihood penalty.
 
 The threshold of 1.0" is large. For an accurate lens model we would anticipate the positions trace within < 0.01" of
 one another. However, we only want the threshold to aid the non-linear with the choice of mass model in the intiial 
@@ -226,10 +227,10 @@ We choose an excessively large threshold for two reasons:
  2) If we set the threshold too low, there is a risk we may apply the penalty to physically plausible solutions. 
  A conservative value of 1.0" therefore a wise choice.
 """
-positions_likelihood = al.PositionsLHPenalty(positions=positions, threshold=1.0)
+positions_likelihood = al.PositionsLH(positions=positions, threshold=1.0)
 
 analysis = al.AnalysisImaging(
-    dataset=dataset, positions_likelihood=positions_likelihood
+    dataset=dataset, positions_likelihood_list=[positions_likelihood]
 )
 
 """

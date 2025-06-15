@@ -31,6 +31,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `slam/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -164,9 +165,9 @@ __Settings__:
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
-    positions_likelihood=source_lp_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 source_pix_result_1 = slam.source_pix.run_1(
@@ -296,9 +297,9 @@ __Settings__:
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    positions_likelihood=source_pix_result_2.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 lp_chain_tracer = al.util.chaining.lp_chain_tracer_from(

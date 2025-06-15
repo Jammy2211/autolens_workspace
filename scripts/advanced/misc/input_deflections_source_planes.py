@@ -9,6 +9,7 @@ for example:
    strongly lensed clusters.
  - Deflection angles of a galaxy simulated in a cosmological galaxy formation simulation.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

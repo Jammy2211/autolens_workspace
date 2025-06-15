@@ -20,6 +20,7 @@ infrared I-band (wavelength=806nm) observations.
 This is an advanced script and assumes previous knowledge of the core **PyAutoLens** API for simulating images. Thus,
 certain parts of code are not documented to ensure the script is concise.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

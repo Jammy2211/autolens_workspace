@@ -2,27 +2,28 @@
 Tutorial 5: Linear Profiles
 ===========================
 
-In the previous tutorial we learned how to balance model complexity with our non-linear search in order to infer 
+In the previous tutorial we learned how to balance model complexity with our non-linear search in order to infer
 accurate lens model solutions and avoid failure. We saw how in order to fit a model accurately one may have to
-parameterize and fit a simpler model with fewer non-linear parameters, at the expense of fitting the data less 
+parameterize and fit a simpler model with fewer non-linear parameters, at the expense of fitting the data less
 accurately.
 
 It would be desirable if we could make our model have more flexibility enabling it to fit more complex galaxy
 structures, but in a way that does not increase (or perhaps even decreases) the number of non-linear parameters.
 This would keep the `Nautilus` model-fit efficient and accurate.
 
-This is possible using linear light profiles, which solve for their `intensity` parameter via efficient linear 
-algebra, using a process called an inversion. The inversion always computes `intensity` values that give the best 
-fit to the data (e.g. they minimize the chi-squared and therefore maximize the likelihood). 
+This is possible using linear light profiles, which solve for their `intensity` parameter via efficient linear
+algebra, using a process called an inversion. The inversion always computes `intensity` values that give the best
+fit to the data (e.g. they minimize the chi-squared and therefore maximize the likelihood).
 
-This tutorial will first fit a model using two linear light profiles. Because their `intensity` values are solved for 
-implicitly, this means they are not a dimension of the non-linear parameter space fitted by `Nautilus`, therefore 
+This tutorial will first fit a model using two linear light profiles. Because their `intensity` values are solved for
+implicitly, this means they are not a dimension of the non-linear parameter space fitted by `Nautilus`, therefore
 reducing the complexity of parameter space and making the fit faster and more accurate.
 
 This tutorial will then show how many linear light profiles can be combined into a `Basis`, which comes from the term
-'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy 
+'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy
 structures (e.g. asymmetries, twists) with just N=6-8 non-linear parameters.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -480,7 +481,7 @@ Therefore, not only does an MGE fit more complex galaxy morphologies, it does so
 in a much simpler non-linear parameter space which has far less significant parameter degeneracies!
 
 We strongly recommend that you adopt an MGE in your own lens modeling pipelines from here on. The script 
-`autolens_workspace/*/modeling/imaging/features/multi_gaussian_expansion.py` gives examples on fitting even more complex
+`autolens_workspace/*/modeling/features/multi_gaussian_expansion.py` gives examples on fitting even more complex
 MGE models, where for example the Gaussians have different axis-ratios and position angles.
 
 __Disadvantage of Basis Functions__
@@ -512,7 +513,7 @@ Shapelets are basis functions with analytic properties that are appropriate for 
 features of a galaxy. They do so over a wide range of scales, and can often represent  features in source galaxies 
 that a single Sersic function or MGE cannot.
 
-An example using shapelets is given at `autolens_workspace/scripts/modeling/imaging/features/shapelets.py`.
+An example using shapelets is given at `autolens_workspace/scripts/modeling/features/shapelets.py`.
  
 Feel free to experiment with using shapelets as the source galaxy by yourself. However they incur higher computational 
 overheads than the MGE and include a free parameter which governs the size of the basis functions and therefore source,

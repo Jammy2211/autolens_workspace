@@ -9,6 +9,7 @@ written yet!
 
 Tutorial 8 summary is written and you should check that out instead!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

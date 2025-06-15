@@ -49,6 +49,7 @@ The script `autolens_workspace/*/interferometer/run_times.py` allows you to comp
 for your interferometer dataset. It does this for all possible combinations of settings and therefore can tell you
 which settings give the fastest run times for your dataset.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -196,9 +197,9 @@ __Settings__:
 """
 analysis = al.AnalysisInterferometer(
     dataset=dataset,
-    positions_likelihood=source_lp_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
     settings_inversion=settings_inversion,
 )
@@ -254,9 +255,9 @@ In this example it:
 analysis = al.AnalysisInterferometer(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    positions_likelihood=source_pix_result_1.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_pix_result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
     settings_inversion=settings_inversion,
 )
 
@@ -287,9 +288,12 @@ For this modeling script the SUBHALO PIPELINE customizes:
 """
 analysis = al.AnalysisInterferometer(
     dataset=dataset,
-    positions_likelihood=mass_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2, use_resample=True
-    ),
+    positions_likelihood_list=[
+        mass_result.positions_likelihood_from(
+            factor=3.0,
+            minimum_threshold=0.2,
+        )
+    ],
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
 )
 

@@ -8,6 +8,7 @@ script if you have not done so already before covering this script.
 As we discussed, we can now use an input deflection angle map from an external source to create lensed images of
 source galaxies. In this example, we assume the source is not known and something we fit for via lens modeling.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

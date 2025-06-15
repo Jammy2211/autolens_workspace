@@ -153,9 +153,9 @@
 # analysis_list = [
 #     al.AnalysisImaging(
 #         dataset=dataset,
-#         positions_likelihood=result_1_list[0].positions_likelihood_from(
+#         positions_likelihood_list=[result_1_list[0].positions_likelihood_from(
 #             factor=3.0, minimum_threshold=0.2
-#         ),
+#         )],
 #     )
 #     for dataset in dataset_list
 # ]

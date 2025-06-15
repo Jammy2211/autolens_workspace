@@ -22,6 +22,7 @@ previous tutorials and in future exercises, we will fit even more complex models
 Therefore, take note, as we make our lens model more realistic, we also make its parameter space more complex, this is
 an important concept to keep in mind for the remainder of this chapter!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

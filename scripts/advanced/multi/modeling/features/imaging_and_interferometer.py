@@ -18,6 +18,7 @@ __Benefits__
  - The source galaxy appears completely different in the g-band and at sub-millimeter wavelengths, providing a lot
  more information with which to constrain the lens galaxy mass model.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -97,6 +98,14 @@ imaging_plotter = aplt.ImagingPlotter(dataset=imaging)
 imaging_plotter.subplot_dataset()
 
 """
+__Analysis__
+
+We create analysis objects for both datasets.
+"""
+analysis_imaging = al.AnalysisImaging(dataset=imaging)
+analysis_interferometer = al.AnalysisInterferometer(dataset=interferometer)
+
+"""
 __Model__
 
 We compose our lens model using `Model` objects, which represent the galaxies we fit to our data. In this 
@@ -120,38 +129,37 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 """
-__Analysis__
+We now combine them using the factor analysis class, which allows us to fit the two datasets simultaneously.
 
-We create analysis objects for both datasets.
+Imaging and interferometer datasets observe completely different properties of the, such that the galaxy appears 
+completely different in the imaging data (e.g. optical emission) and sub-millimeter wavelengths, meaning a completely 
+different source model should be used for each dataset.
+
+For this reason, we move lens light and source model composition to the `AnalysisFactor` class, which allows us to fit 
+the two datasets simultaneously but with different models.
+
+The benefit of fitting them simultaneously is that the mass model is inferred from both datasets.
 """
-analysis_imaging = al.AnalysisImaging(dataset=imaging)
-analysis_interferometer = al.AnalysisInterferometer(dataset=interferometer)
+analysis_factor_list = []
+
+for analysis in [analysis_imaging, analysis_interferometer]:
+
+    model_analysis = model.copy()
+
+    model_analysis.galaxies.lens.bulge = af.Model(al.lp_linear.Sersic)
+    model_analysis.galaxies.source.bulge = af.Model(al.lp_linear.SersicCore)
+
+    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
+
+    analysis_factor_list.append(analysis_factor)
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
 
 """
-Sum the analyses to create an overall analysis object, which sums the `log_likelihood_function` of each dataset
-and returns the overall likelihood of the model fit to the dataset.
+The `info` of the model shows us there are two models, one for the imaging dataset and one for the interferometer
+dataset. 
 """
-analysis = analysis_imaging + analysis_interferometer
-
-"""
-We can parallelize the likelihood function of these analysis classes, whereby each evaluation is performed on a 
-different CPU.
-"""
-analysis.n_cores = 1
-
-"""
-Imaging and interferometer datasets observe completely different properties of the lens and source galaxy, where:
-
- - The lens galaxy is invisible at sub-mm wavelengths, meaning the lens light model should have zero `intensity`
- for the interferometer data fit.
- 
- - The source galaxy appears completely different in the imaging data (e.g. optical emission) and sub-millimeter 
- wavelengths, meaning a completely different source model should be used for each dataset.
-
-We therefore fix the lens galaxy intensity in the interferometer fit to zero and make every source parameter a free 
-parameter across the two analysis objects.
-"""
-analysis = analysis.with_free_parameters(model.galaxies.source)
+print(factor_graph.global_prior_model.info)
 
 """
 __Search__
@@ -173,7 +181,7 @@ __Model-Fit__
 We begin the model-fit by passing the model and analysis object to the non-linear search (checkout the output folder
 for on-the-fly visualization and results).
 """
-result_list = search.fit(model=model, analysis=analysis)
+result_list = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__
@@ -203,5 +211,5 @@ plotter = aplt.NestPlotter(samples=result_list.samples)
 plotter.corner_anesthetic()
 
 """
-Checkout `autolens_workspace/*/imaging/results` for a full description of analysing results in **PyAutoLens**.
+Checkout `autolens_workspace/*/results` for a full description of analysing results in **PyAutoLens**.
 """

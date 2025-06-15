@@ -2,30 +2,29 @@
 Tutorial 6: Science Case
 ========================
 
-This tutorial shows a realistic science case.
+This tutorial shows using a graphical model and EP for a realistic science case, fitting a sample of time-delay lensed
+quasars using a graphical model, where time delays allow us include the Cosmological parameter the Hubble constant H0
+as a shared free parameter in an graphical model.
 
-We have a dataset containing 10 double Einstein ring lenses, which allow one to measure certain Cosmological
-parameters.
-
-In this example we include the Cosmological parameter Omega_m as a shared free parameter in an graphical model fit
-via Expectation Propagation (EP).
+In this example we fit via a graphical model and Expectation Propagation (EP).
 
 __Sample Simulation__
 
 The dataset fitted in this example script is simulated imaging data of a sample of 3 galaxies.
 
 This data is not automatically provided with the autogalaxy workspace, and must be first simulated by running the
-script `autolens_workspace/scripts/simulators/imaging/samples/advanced/double_einstein_ring.py`.
+script `autolens_workspace/scripts/simulators/imaging/samples/advanced/hubble_constant_time_delays.py`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+from pathlib import Path
 import autolens as al
 import autofit as af
-from os import path
 
 """
 __Initialization__
@@ -36,133 +35,93 @@ This data is not automatically provided with the autogalaxy workspace, and must 
 script `autolens_workspace/scripts/simulators/imaging/samples/advanced/mass_power_law.py`. 
 """
 dataset_label = "samples"
-dataset_type = "imaging"
-dataset_sample_name = "double_einstein_ring"
+dataset_type = "point_source"
+dataset_sample_name = "hubble_constant_time_delays"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_sample_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_sample_name
 
-total_datasets = 10
+total_datasets = 3
 
 dataset_list = []
 
 for dataset_index in range(total_datasets):
-    dataset_sample_path = path.join(dataset_path, f"dataset_{dataset_index}")
+    dataset_sample_path = dataset_path / f"dataset_{dataset_index}"
 
-    dataset_list.append(
-        al.Imaging.from_fits(
-            data_path=path.join(dataset_sample_path, "data.fits"),
-            psf_path=path.join(dataset_sample_path, "psf.fits"),
-            noise_map_path=path.join(dataset_sample_path, "noise_map.fits"),
-            pixel_scales=0.1,
-        )
+    dataset = al.from_json(
+        file_path=dataset_sample_path / "point_dataset_with_time_delays.json",
     )
+
+    dataset_list.append(dataset)
 
 """
-__Mask__
+__Point Solver__
+
+We set up the `PointSolver`, which is used to compute the multiple images of the point source in the image-plane.
+
+There are no special settings or inputs for the fitting of time_delays, therefore the `PointSolver` is set up in the same way
+as in the `modeling/start_here.ipynb` notebook.
 """
-masked_imaging_list = []
+grid = al.Grid2D.uniform(
+    shape_native=(100, 100),
+    pixel_scales=0.2,  # <- The pixel-scale describes the conversion from pixel units to arc-seconds.
+)
 
-for dataset in dataset_list:
-    mask = al.Mask2D.circular(
-        shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
-    )
-
-    dataset = dataset.apply_mask(mask=mask)
-
-    over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
-        grid=dataset.grid,
-        sub_size_list=[8, 4, 1],
-        radial_list=[0.3, 0.6],
-        centre_list=[(0.0, 0.0)],
-    )
-
-    dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
-
-    masked_imaging_list.append(dataset)
+solver = al.PointSolver.for_grid(
+    grid=grid, pixel_scale_precision=0.001, magnification_threshold=0.1
+)
 
 """
 __Paths__
 """
-path_prefix = path.join("imaging", "hierarchical")
+path_prefix = Path("point_source") / "hierarchical"
 
 """
 __Model__
 
 We compose our model using `Model` objects, which represent the lenses we fit to our data.
 
-This graphical model creates a non-linear parameter space that has parameters for every lens and source galaxy in our 
-sample. In this example, there are 3 lenses each with their own model, therefore:
+This graphical model creates a non-linear parameter space that has parameters for every lens mass and source galaxy point
+source in our sample. In this example, there are 3 lenses each with their own model, therefore:
 
- - The first lens galaxy's total mass distribution is an `Isothermal` [5 parameters].
+ - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters].
  
- - The second lens / first source galaxy's light is a linear parametric `ExponentialSph` and its mass 
- a `IsothermalSph` [6 parameters].
- 
- - The second source galaxy's light is a linear parametric `ExponentialSph` [3 parameters].
+ - The source galaxy's light is a point `Point` [2 parameters].
 
- - There is a single cosmological shared free parameter, Omage_m [1 parameter]
+ - There is a single cosmological shared free parameter, `H0` [1 parameter]
 
- - There are ten strong lenses in our graphical model [(10 x 16) + 1 = 161 parameters]. 
+ - There are 3 strong lenses in our graphical model [(3 x 7) + 1 = 22 parameters]. 
 
-The overall dimensionality of each parameter space fitted separately via EP is therefore N=17.
+The overall dimensionality of each parameter space fitted separately via EP is therefore N=7.
 
-In total, the graph has N = 10 x 16 + 1 = 161 free parameters, albeit EP knows the `Omage_k` is shared and fits it 
+In total, the graph has N = 3 x 7 + 1 = 2 free parameters, albeit EP knows the `H0` is shared and fits it 
 using EP.
-
-__CHEATING__
-
-Initializing a double Einstein ring lens model is extremely difficult, due to the complexity of parameter space. It is
-common to infer local maxima, which this script typically does if default priors on every model parameter are 
-assumed.
-
-To ensure we infer the correct model, we therefore cheat and overwrite all of the priors of the model parameters to 
-start centred on their true values.
-
-To model a double Einstein ring system without cheating (which is the only feasible strategy on real data), it is 
-advised that **PyAutoLens**'s advanced feature of non-linear search chaining is used. The 
-scripts `imaging/chaining/double_einstein_ring.py`  and `imaging/pipelines/double_einstein_ring.py` describe how to 
-do this.
 """
-shared_cosmology_parameter = af.GaussianPrior(
-    mean=0.3, sigma=0.3, lower_limit=0.0, upper_limit=1.0
-)
+cosmology = af.Model(al.cosmo.FlatwCDMWrap)
+
+cosmology.H0 = af.UniformPrior(lower_limit=0.0, upper_limit=150.0)
 
 model_list = []
 
 for model_index in range(total_datasets):
-    lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.Isothermal)
-    source_0 = af.Model(
-        al.Galaxy,
-        redshift=1.0,
-        mass=al.mp.IsothermalSph,
-        bulge=al.lp_linear.ExponentialCoreSph,
-    )
-    source_1 = af.Model(al.Galaxy, redshift=2.0, bulge=al.lp_linear.ExponentialCoreSph)
 
-    lens.mass.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-    lens.mass.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-    lens.mass.ell_comps.ell_comps_0 = af.GaussianPrior(mean=0.052, sigma=0.1)
-    lens.mass.ell_comps.ell_comps_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-    lens.mass.einstein_radius = af.GaussianPrior(mean=1.5, sigma=0.2)
+    # Lens:
 
-    source_0.mass.centre_0 = af.GaussianPrior(mean=-0.15, sigma=0.2)
-    source_0.mass.centre_1 = af.GaussianPrior(mean=-0.15, sigma=0.2)
-    source_0.mass.einstein_radius = af.GaussianPrior(mean=0.4, sigma=0.1)
-    source_0.bulge.centre_0 = af.GaussianPrior(mean=-0.15, sigma=0.2)
-    source_0.bulge.centre_1 = af.GaussianPrior(mean=-0.15, sigma=0.2)
-    source_0.bulge.intensity = af.GaussianPrior(mean=1.2, sigma=0.5)
-    source_0.bulge.effective_radius = af.GaussianPrior(mean=0.1, sigma=0.1)
+    mass = af.Model(al.mp.Isothermal)
+    mass.centre.centre_0 = 0.0
+    mass.centre.centre_1 = 0.0
 
-    source_1.bulge.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.2)
-    source_1.bulge.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.2)
-    source_1.bulge.intensity = af.GaussianPrior(mean=0.6, sigma=0.3)
-    source_1.bulge.effective_radius = af.GaussianPrior(mean=0.07, sigma=0.07)
+    lens = af.Model(al.Galaxy, redshift=0.5, mass=mass)
 
-    cosmology = af.Model(al.cosmo.FlatLambdaCDMWrap)
-    cosmology.Om0 = af.GaussianPrior(mean=0.3, sigma=0.1)
+    # Source:
+
+    point_0 = af.Model(al.ps.Point)
+
+    source = af.Model(al.Galaxy, redshift=1.0, point_0=point_0)
+
+    # Overall Lens Model:
 
     model = af.Collection(
-        galaxies=af.Collection(lens=lens, source_0=source_0, source_1=source_1),
+        galaxies=af.Collection(lens=lens, source=source),
         cosmology=cosmology,
     )
 
@@ -173,8 +132,9 @@ __Analysis__
 """
 analysis_list = []
 
-for masked_dataset in masked_imaging_list:
-    analysis = al.AnalysisImaging(dataset=masked_dataset)
+for dataset in dataset_list:
+
+    analysis = al.AnalysisPoint(dataset=dataset, solver=solver)
 
     analysis_list.append(analysis)
 
@@ -191,10 +151,11 @@ requires its own non-linear search.
 For complex graphs consisting of many  nodes, one could easily use different searches for different nodes on the factor 
 graph.
 """
-Nautilus = af.Nautilus(
-    path_prefix=path.join("imaging", "hierarchical"),
-    name="tutorial_6_science_case",
+search = af.Nautilus(
+    path_prefix=Path("point_source") / "hierarchical",
+    name="tutorial_6_science_case_graphical",
     n_live=150,
+    number_of_cores=4,
 )
 
 analysis_factor_list = []
@@ -205,7 +166,7 @@ for model, analysis in zip(model_list, analysis_list):
     dataset_index += 1
 
     analysis_factor = af.AnalysisFactor(
-        prior_model=model, analysis=analysis, optimiser=Nautilus, name=dataset_name
+        prior_model=model, analysis=analysis, optimiser=search, name=dataset_name
     )
 
     analysis_factor_list.append(analysis_factor)
@@ -221,13 +182,45 @@ The factor graph model `info` attribute shows the complex model we are fitting, 
 print(factor_graph.global_prior_model.info)
 
 """
+__Search__
+
+We can now use the search to fit factor graph, using its `global_prior_model` property.
+"""
+result = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
+
+"""
 __Expectation Propagation__
 
-We perform the fit using EP as we did in tutorial 5.
+We now perform the fit using EP as we did in tutorial 5.
 """
-laplace = af.LaplaceOptimiser()
+paths = af.DirectoryPaths(
+    name=Path("point_source") / "hierarchical" / "tutorial_6_science_case_ep"
+)
 
-paths = af.DirectoryPaths(name=path.join(path_prefix, "tutorial_6_science_case"))
+search = af.Nautilus(
+    path_prefix=Path("point_source") / "hierarchical",
+    name="tutorial_6_science_case_ep",
+    n_live=150,
+    number_of_cores=4,
+)
+
+analysis_factor_list = []
+
+dataset_index = 0
+
+for model, analysis in zip(model_list, analysis_list):
+    dataset_name = f"dataset_{dataset_index}"
+    dataset_index += 1
+
+    analysis_factor = af.AnalysisFactor(
+        prior_model=model, analysis=analysis, optimiser=search, name=dataset_name
+    )
+
+    analysis_factor_list.append(analysis_factor)
+
+factor_graph = af.FactorGraphModel(*analysis_factor_list)
+
+laplace = af.LaplaceOptimiser()
 
 factor_graph_result = factor_graph.optimise(
     optimiser=laplace, paths=paths, ep_history=af.EPHistory(kl_tol=0.05), max_steps=5

@@ -23,6 +23,7 @@ You should be familiar with dark matter subhalo detection, by reading the exampl
 
 You should also be familiar with the database, by reading the example `imaging/advanced/database/start_here.ipynb`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

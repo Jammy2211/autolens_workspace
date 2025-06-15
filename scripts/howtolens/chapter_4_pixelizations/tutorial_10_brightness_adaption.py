@@ -3,12 +3,12 @@ Tutorial 10: Brightness Adaption
 ================================
 
 In the previous tutorial we motivated our need to adapt the pixelization to the source's morphology, such that source
-pixels congregates in the source's brightest regions regardless of where the source is located in the source-plane. 
+pixels congregates in the source's brightest regions regardless of where the source is located in the source-plane.
 
 This poses a challenge; how do we adapt our pixelization to the reconstructed source's light, before we've
 actually reconstructed the source and therefore know what to adapt it too?
 
-To do this, we define 'adapt_images' of the lensed source galaxy, which are model images of the source computed using 
+To do this, we define 'adapt_images' of the lensed source galaxy, which are model images of the source computed using
 a previous lens model that has been fit to the image (e.g. in the earlier search of a pipeline). This image tells
 us where in the image our source is located, thus informing us of where we need to adapt our source pixelization!
 
@@ -16,6 +16,7 @@ This tutorial goes into the details of how this works. We'll use the same compac
 tutorial and begin by fitting it with a magnification based pixelization. This will produce a model image which can
 then be used an adapt image.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

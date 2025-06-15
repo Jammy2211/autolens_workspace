@@ -5,7 +5,7 @@ Tutorial 3: Lens and Source
 In this tutorial, we demonstrate search chaining using three searches to fit strong lens `Imaging` which includes the
 lens galaxy's light.
 
-The crucial point to note is that for many lenses the lens galaxy's light can be fitted and subtracted reasonably 
+The crucial point to note is that for many lenses the lens galaxy's light can be fitted and subtracted reasonably
 well before we attempt to fit the source galaxy. This makes sense, as fitting the lens's light (which is an elliptical
 blob of light in the centre of the imaging) looks nothing like the source's light (which is a ring of light)! Formally,
 we would say that these two model components (the lens's light and source's light) are not covariate.
@@ -41,6 +41,7 @@ for fitting complex lens model. Therefore, we recommend you still read through t
 understanding of how search chaining works, but bear in mind that the example is a little dated and we now recommend
 you fit the lens and source simultaneously!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -181,6 +182,13 @@ __Masking (Search 2)__
 Search 2 we are only fitting the source's light, thus we can apply an annular mask that removes regions of the
 image that contained only the lens's light.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
 mask = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -277,6 +285,13 @@ __Masking (Search 3)__
 
 Search 3 we fit the lens and source, therefore we will use a large circular mask.
 """
+dataset = al.Imaging.from_fits(
+    data_path=path.join(dataset_path, "data.fits"),
+    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    psf_path=path.join(dataset_path, "psf.fits"),
+    pixel_scales=0.1,
+)
+
 mask = al.Mask2D.circular(
     shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
 )

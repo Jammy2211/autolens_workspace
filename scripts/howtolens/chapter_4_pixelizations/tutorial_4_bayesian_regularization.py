@@ -12,6 +12,7 @@ The explanation of *how* an inversion works has so far been overly simplified. Y
 inputs which we have not so far discussed. This will be the topic of this tutorial, and where inversions become more
 conceptually challenging!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

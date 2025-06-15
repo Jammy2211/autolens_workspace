@@ -3,7 +3,7 @@ Tutorial 2: Graphical Models
 ============================
 
 In the previous tutorial we fitted individual lens models to individual lens datasets. We knew that every lens in
-the dataset had same value of `slope`, which we estimated using the weighted average of the slopes inferred for each 
+the dataset had same value of `slope`, which we estimated using the weighted average of the slopes inferred for each
 lens fit.
 
 Graphical modeling follows a different approach. It composes a single model that is fitted to the entire lens dataset.
@@ -12,14 +12,14 @@ model also has shared parameters between these individual lens models.
 
 This example fits a graphical model using the same sample fitted in the previous tutorial, consisting of
 imaging data of three lenses. We fit the `PowerLawSph` plus `SphExpoenntial` model to each lens and source galaxy.
-However, whereas previously the `slope` of each lens model component was a free parameter in each fit, in the 
-graphical model there is only a single value of `slope` shared by all three lenses (which is how the galaxy data was 
+However, whereas previously the `slope` of each lens model component was a free parameter in each fit, in the
+graphical model there is only a single value of `slope` shared by all three lenses (which is how the galaxy data was
 simulated).
 
 This graphical model creates a non-linear parameter space that has parameters for every lens in our sample. In this
 example, there are 3 lenses each with their own lens model, therefore:
 
- - Each lens has 1 free parameter from the components of its `SphIsoterhaml` that are not 
+ - Each lens has 1 free parameter from the components of its `SphIsoterhaml` that are not
  shared (the `einstein_radius` paramrters).
 
  - Each source has 4 free parameters for their `ExponentialSph` components.
@@ -44,6 +44,7 @@ assumed in tutorials 1, 2 and 3. We make this assumption here to simplify the pr
 illustrate graphical models. Later tutorials fit more realistic graphical models where each lens has its own value of
 slope!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -239,13 +240,13 @@ __Search__
 
 We can now create a non-linear search and used it to the fit the factor graph, using its `global_prior_model` property.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path_prefix,
     name="tutorial_2_graphical_models",
     n_live=150,
 )
 
-result = Nautilus.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
+result = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__

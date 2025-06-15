@@ -29,6 +29,7 @@ There are a number of benefits of chaining a point source fit to an imaging fit,
 This script therefore initializes the lens model efficiently using a point-source fit and then switches to a full
 fit on the imaging data.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -45,7 +46,7 @@ __Dataset__
 
 Load the strong lens dataset `group` point source dataset and imaging, and plot them.
 """
-dataset_name = "lens_x3__source_x1"
+dataset_name = "simple"
 dataset_path = path.join("dataset", "group", dataset_name)
 
 imaging = al.Imaging.from_fits(
@@ -88,7 +89,7 @@ solver = al.PointSolver.for_grid(
 """
 __Model (Search 1)__
 
-Compose the lens model by loading it from a .json file made in the file `group/model_maker/lens_x3__source_x1.py`:
+Compose the lens model by loading it from a .json file made in the file `group/model_maker/simple.py`:
 
  - There are three lens galaxy's with `IsothermalSph` total mass distributions, with the prior on the centre of each 
  profile informed by its observed centre of light [9 parameters].
@@ -240,7 +241,7 @@ trace to one another in the source-plane (using the best-fit mass model again). 
 a `factor` to ensure it is not too small (and thus does not remove plausible mass  models). If, after this 
 multiplication, the threshold is below the `minimum_threshold`, it is rounded up to this minimum value.
 """
-positions_likelihood = al.PositionsLHPenalty(threshold=1.0, positions=dataset.positions)
+positions_likelihood = al.PositionsLH(threshold=1.0, positions=dataset.positions)
 
 """
 __Analysis + Positions__
@@ -254,7 +255,7 @@ Below, we use the point source dictionary positions and a threshold double the r
 sufficient for this analysis.
 """
 analysis_2 = al.AnalysisImaging(
-    dataset=imaging, positions_likelihood=positions_likelihood
+    dataset=imaging, positions_likelihood_list=[positions_likelihood]
 )
 
 """

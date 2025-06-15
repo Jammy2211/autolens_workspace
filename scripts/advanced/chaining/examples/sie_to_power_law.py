@@ -19,7 +19,7 @@ The `EllPower` is a general form of the `Isothermal` which has one additional pa
 which controls the inner mass distribution as follows:
 
  - A higher slope concentrates more mass in the central regions of the mass profile relative to the outskirts.
- - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts. 
+ - A lower slope shallows the inner mass distribution reducing its density relative to the outskirts.
 
 By allowing the lens model to vary the mass profile's inner distribution, its non-linear parameter space becomes
 significantly more complex and a notable degeneracy appears between the mass model`s mass normalization, elliptical
@@ -48,6 +48,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `chaining/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

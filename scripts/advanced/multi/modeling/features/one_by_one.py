@@ -45,6 +45,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `modeling/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -276,5 +277,5 @@ search = af.Nautilus(
 result = search.fit(model=model, analysis=analysis_list[0])
 
 """
-Checkout `autolens_workspace/*/imaging/results` for a full description of analysing results in **PyAutoLens**.
+Checkout `autolens_workspace/*/results` for a full description of analysing results in **PyAutoLens**.
 """

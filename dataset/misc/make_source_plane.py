@@ -5,6 +5,7 @@ image-plane grid.
 This is so the `source_planes.py` script can be used to analysis the system in a setting where the deflection angle
 map is `known`.
 """
+
 from os import path
 import autolens as al
 

@@ -17,6 +17,7 @@ The dataset fitted in this example script is simulated imaging data of a sample 
 This data is not automatically provided with the autogalaxy workspace, and must be first simulated by running the
 script `autolens_workspace/scripts/simulators/imaging/samples/advanced/mass_power_law.py`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -139,7 +140,7 @@ for dataset_index, analysis in enumerate(analysis_list):
     """
     Create the `Nautilus` non-linear search and use it to fit the data.
     """
-    Nautilus = af.Nautilus(
+    search = af.Nautilus(
         name="",
         path_prefix=path.join("tutorial_optional_hierarchical_individual"),
         unique_tag=dataset_name,
@@ -147,7 +148,7 @@ for dataset_index, analysis in enumerate(analysis_list):
         f_live=1e-4,
     )
 
-    result_list.append(Nautilus.fit(model=model, analysis=analysis))
+    result_list.append(search.fit(model=model, analysis=analysis))
 
 """
 __Results__

@@ -21,19 +21,19 @@ A second set of template pipelines, called the **SLaM** (Source, Light and Mass)
 `autolens_workspace/slam`. These are similar in design to the pipelines, but are composed of a specific sequence of
 pipelines:
 
- - `Source`: A pipeline that focuses on producing a robust model for the source's light, using simpler models for the 
+ - `Source`: A pipeline that focuses on producing a robust model for the source's light, using simpler models for the
  lens's light and mass.
-   
- - `Light`: A pipeline that fits a complex lens light model (e.g. one with many components), using the initialized 
+
+ - `Light`: A pipeline that fits a complex lens light model (e.g. one with many components), using the initialized
  source model to cleanly deblend the lens and source light.
-   
- - `Mass`: A pipeline that fits a complex lens mass model, benefitting from the good models for the lens's light and 
+
+ - `Mass`: A pipeline that fits a complex lens mass model, benefitting from the good models for the lens's light and
  source.
 
 For fitting very complex lens models, for example ones which decompose its mass into its stellar and dark components,
 the **SLaM** pipelines have been carefully crafted to do this in a reliable and automated way that is still efficient.
 The **SLaM** pipelines also make fitting many different models to a single dataset efficient, as they reuse the results
-of earlier searches (e.g. in the Source pipeline) to fit different models in the `Light` and `Mass` pipelines for the 
+of earlier searches (e.g. in the Source pipeline) to fit different models in the `Light` and `Mass` pipelines for the
 lens's  light and mass.
 
 Whether you should use individual searches, pipelines, The SLaM pipelines or write your own model-fitting script

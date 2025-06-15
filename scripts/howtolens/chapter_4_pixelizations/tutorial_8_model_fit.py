@@ -10,6 +10,7 @@ We will use search chaining to do this, first fitting the source with a light pr
 model priors and avoiding the unphysical solutions discussed in tutorial 6. In the later searches we will switch to
 an `Inversion`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -152,9 +153,9 @@ search_2 = af.Nautilus(
 
 analysis_2 = al.AnalysisImaging(
     dataset=dataset,
-    positions_likelihood=result_1.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
@@ -237,7 +238,7 @@ search_3 = af.Nautilus(
 """
 __Positions + Analysis + Model-Fit (Search 3)__
 
-The unphysical solutions that can occur in an `Inversion` can be mitigated by using a positions threshold to resample
+The unphysical solutions that can occur in an `Inversion` can be mitigated by using a positions threshold to penalize
 mass models where the source's brightest lensed pixels do not trace close to one another. With search chaining, we can
 in fact use the model-fit of a previous search (in this example, search 1) to compute the positions that we use in a 
 later search.
@@ -253,9 +254,9 @@ multiplication, the threshold is below the `minimum_threshold`, it is rounded up
 """
 analysis_3 = al.AnalysisImaging(
     dataset=dataset,
-    positions_likelihood=result_2.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)

@@ -14,7 +14,7 @@ So far, we've used just one regularization scheme; `Constant`. As the name sugge
 regularization coefficient when comparing source pixel fluxes to apply smoothing. Here is a recap of our discussion
 about regularization from chapter 4:
 
--------------------------------------------- 
+--------------------------------------------
 
 When the inversion reconstructs the source, it does not *only* compute the set of source-pixel fluxes that best-fit
 the image. It also regularizes this solution, whereby it goes to every pixel on the rectangular source-plane grid
@@ -33,7 +33,7 @@ maximize the log likelihood, it can do this by fitting *everything* accurately, 
 
 ----------------------------------------------
 
-When using a `ConstantSplit` regularization scheme, we regularize the source by adding up the difference in fluxes 
+When using a `ConstantSplit` regularization scheme, we regularize the source by adding up the difference in fluxes
 between all source-pixels multiplied by one single value of the regularization coefficient. This means that every
 single source pixel receives the same `level` of regularization, regardless of whether it is reconstructing the
 bright central regions of the source or its faint exterior regions.
@@ -44,6 +44,7 @@ sources whose light profiles become gradually more compact. For all 3 fits, we'l
 and a regularization_coefficient that maximize the Bayesian evidence. Thus, these are the `best` source reconstructions
 we can hope to achieve when adapting to the magnification.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

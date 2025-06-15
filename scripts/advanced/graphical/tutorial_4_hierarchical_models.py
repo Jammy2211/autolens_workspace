@@ -26,6 +26,7 @@ The dataset fitted in this example script is simulated imaging data of a sample 
 This data is not automatically provided with the autogalaxy workspace, and must be first simulated by running the
 script `autolens_workspace/scripts/simulators/imaging/samples/advanced/mass_power_law.py`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -202,13 +203,13 @@ __Search__
 
 We can now create a non-linear search and used it to the fit the factor graph, using its `global_prior_model` property.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path.join("imaging", "hierarchical"),
     name="tutorial_4_hierarchical_models",
     n_live=150,
 )
 
-result = Nautilus.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
+result = search.fit(model=factor_graph.global_prior_model, analysis=factor_graph)
 
 """
 __Result__

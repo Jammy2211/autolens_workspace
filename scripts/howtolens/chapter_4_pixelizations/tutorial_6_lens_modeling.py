@@ -14,6 +14,7 @@ interesting scientific questions!
 However, inversion do have some short comings that we need to be aware of before we use them for lens modeling. That`s
 what we cover in this tutorial.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

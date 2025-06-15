@@ -8,6 +8,7 @@ In this script, we fit `Imaging` with a strong lens model where:
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
  - The source galaxy's light is a parametric `Sersic`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

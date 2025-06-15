@@ -12,7 +12,7 @@ of a strong lens system, where in the final model:
 
  - The lens galaxy's light is omitted from the data and model.
  - The lens galaxy's total mass distribution is an `PowerLaw`.
- - The source galaxy is reconstructed using a `Hilbert` image-mesh, `Delaunay` mesh and `ConstantSplit` 
+ - The source galaxy is reconstructed using a `Hilbert` image-mesh, `Delaunay` mesh and `ConstantSplit`
    regularization scheme.
 
 This uses the SLaM pipelines:
@@ -27,6 +27,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `slam/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -153,9 +154,9 @@ and therefore are also None in the SOURCE PIX PIPELINE meaning the lens light is
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
-    positions_likelihood=source_lp_result.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 source_pix_result_1 = slam.source_pix.run_1(

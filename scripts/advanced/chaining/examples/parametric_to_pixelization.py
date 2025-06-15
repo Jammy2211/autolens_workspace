@@ -25,7 +25,7 @@ There are a number of benefits of chaining a linear parametric source model and 
  is reconstructed as a demagnified version of the image. (see Chapter 4, tutorial 6 for a complete description of
  this effect). This does not occur for a linear parametric source, therefore the mass model can be initialized using a
  parametric source, which sets up the search which fits an `Inversion` so as to not sample these unphysical solutions.
-      
+
  - The positions and positions threshold can be updated to further ensure these unphysical solutions do not bias the
  model-fit. The updated positions use the maximum log likelihood mass model of the first search to determine the
  image-plane position of the lensed source. In the second search, we then require that a mass model must trace these
@@ -46,6 +46,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `chaining/start_here.ipynb` notebook.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -215,9 +216,9 @@ multiplication, the threshold is below the `minimum_threshold`, it is rounded up
 """
 analysis_2 = al.AnalysisImaging(
     dataset=dataset,
-    positions_likelihood=result_1.positions_likelihood_from(
-        factor=3.0, minimum_threshold=0.2
-    ),
+    positions_likelihood_list=[
+        result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+    ],
 )
 
 """

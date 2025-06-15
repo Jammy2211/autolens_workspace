@@ -31,6 +31,7 @@ The dataset fitted in this example script is simulated imaging data of a sample 
 This data is not automatically provided with the autogalaxy workspace, and must be first simulated by running the
 script `autolens_workspace/scripts/simulators/imaging/samples/simple__no_lens_light.py`.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -171,7 +172,7 @@ requires its own non-linear search.
 For complex graphs consisting of many  nodes, one could easily use different searches for different nodes on the factor 
 graph.
 """
-Nautilus = af.Nautilus(
+search = af.Nautilus(
     path_prefix=path.join("imaging", "hierarchical"),
     name="tutorial_5_expectation_propagation",
     n_live=150,

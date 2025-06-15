@@ -10,6 +10,7 @@ with realistic source emission.
 
 However, it could be an image of anything, so you could make a lensed image of your dog if you really wanted!
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
