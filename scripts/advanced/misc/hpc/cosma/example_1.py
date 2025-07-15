@@ -19,20 +19,20 @@ __COSMA PATHS SETUP__
 All of the code below is a repeat of `example_0.py`
 """
 
-from os import path
+from pathlib import Path
 
-cosma_path = path.join(path.sep, "cosma7", "data", "dp004", "cosma_username")
+cosma_path = Path(path.sep, "cosma7", "data", "dp004", "cosma_username")
 
 dataset_folder = "example"
 dataset_name = "simple__no_lens_light"
 
-cosma_dataset_path = path.join(cosma_path, "dataset", dataset_folder, dataset_name)
+cosma_dataset_path = Path(cosma_path) / "dataset" / dataset_folder / dataset_name
 
-cosma_output_path = path.join(cosma_path, "output")
+cosma_output_path = Path(cosma_path) / "output"
 
 workspace_path = "/cosma/home/dp004/cosma_username/autolens_workspace/"
 
-config_path = path.join(workspace_path, "cosma", "config")
+config_path = Path(workspace_path) / "cosma" / "config"
 
 from autoconf import conf
 
@@ -87,15 +87,15 @@ dataset_name.append("example_image_8")  # Index 7
 
 dataset_name = dataset_name[cosma_id]
 
-dataset_path = path.join(cosma_dataset_path, dataset_type, dataset_name)
+dataset_path = Path(cosma_dataset_path) / dataset_type / dataset_name
 
 import autofit as af
 import autolens as al
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 
@@ -130,11 +130,10 @@ The only change is that the `number_of_cores` input into `Nautilus` is now 16.
 
 """
 search = af.Nautilus(
-    path_prefix=path.join("cosma_example"),
+    path_prefix="cosma_example",
     name="mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=16,
 )
 
 """

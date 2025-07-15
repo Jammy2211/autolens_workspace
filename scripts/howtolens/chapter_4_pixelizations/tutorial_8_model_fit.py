@@ -17,7 +17,7 @@ an `Inversion`.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -32,12 +32,12 @@ we'll use strong lensing data, where:
  - The source galaxy's light is four `Sersic`.
 """
 dataset_name = "source_complex"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -78,7 +78,7 @@ model_1 = af.Collection(
 )
 
 search_1 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_4"),
+    path_prefix=Path("howtolens", "chapter_4"),
     name="search[1]_mass[sie]_source[lp]",
     unique_tag=dataset_name,
     n_live=100,
@@ -145,7 +145,7 @@ model_2 = af.Collection(
 )
 
 search_2 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_4"),
+    path_prefix=Path("howtolens", "chapter_4"),
     name="search[2]_mass[sie]_source[pix_init]",
     unique_tag=dataset_name,
     n_live=50,
@@ -229,7 +229,7 @@ model_3 = af.Collection(
 )
 
 search_3 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_4"),
+    path_prefix=Path("howtolens", "chapter_4"),
     name="search[3]_mass[sie]_source[pix]",
     unique_tag=dataset_name,
     n_live=100,

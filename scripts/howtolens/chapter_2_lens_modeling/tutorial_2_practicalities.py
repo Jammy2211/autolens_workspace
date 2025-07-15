@@ -43,7 +43,7 @@ This tutorial is split into the following sections:
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -68,12 +68,12 @@ This is the same dataset we fitted in the previous tutorial, and we'll repeat th
 to illustrate the practicalities of model-fitting in this tutorial.
 """
 dataset_name = "simple__no_lens_light__mass_sis"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -206,7 +206,7 @@ output results and visualization frequently to hard-disk. If your fit is consist
 is outputting results, try increasing this value to ensure the model-fit runs efficiently.**
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_2_practicalities",
     unique_tag=dataset_name,
     n_live=100,
@@ -237,25 +237,12 @@ Run times are dictated by two factors:
    models require more iterations to converge to a solution (and as discussed above, settings like the number of live
    points also control this).
 
-The log likelihood evaluation time can be estimated before a fit using the `profile_log_likelihood_function` method,
-which returns two dictionaries containing the run-times and information about the fit.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
-
-"""
-The overall log likelihood evaluation time is given by the `fit_time` key.
-
-For this example, it is ~0.05 seconds, which is extremely fast for lens modeling. 
+For this analysis, the log likelihood evaluation time is ~0.05 seconds, which is extremely fast for lens modeling. 
 
 The more advanced fitting techniques discussed at the end of chapter 1 (e.g. shapelets, multi Gaussian expansions, 
 pixelizations) have longer log likelihood evaluation times (1-3 seconds) and therefore may require more efficient 
 search settings to keep the overall run-time feasible.
-"""
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
 
-"""
 To estimate the expected overall run time of the model-fit we multiply the log likelihood evaluation time by an 
 estimate of the number of iterations the non-linear search will perform. 
 

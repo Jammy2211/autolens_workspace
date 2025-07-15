@@ -25,7 +25,7 @@ certain parts of code are not documented to ensure the script is concise.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -48,13 +48,13 @@ dataset_type = "multi"
 dataset_label = "imaging"
 dataset_name = "same_wavelength"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 
 dataset_list = [
     al.Imaging.from_fits(
-        data_path=path.join(dataset_path, f"image_{i}.fits"),
-        psf_path=path.join(dataset_path, f"psf_{i}.fits"),
-        noise_map_path=path.join(dataset_path, f"noise_map_{i}.fits"),
+        data_path=Path(dataset_path, f"image_{i}.fits"),
+        psf_path=Path(dataset_path, f"psf_{i}.fits"),
+        noise_map_path=Path(dataset_path, f"noise_map_{i}.fits"),
         pixel_scales=pixel_scales,
     )
     for i, pixel_scales in enumerate(pixel_scales_list)
@@ -157,11 +157,10 @@ The model is fitted to the data using the nested sampling algorithm Nautilus (se
 full description).
 """
 search = af.Nautilus(
-    path_prefix=path.join("multi", "modeling"),
+    path_prefix=Path("multi", "modeling"),
     name="same_wavelength",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 """

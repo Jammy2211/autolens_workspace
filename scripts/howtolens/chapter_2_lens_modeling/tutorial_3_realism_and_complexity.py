@@ -29,7 +29,7 @@ an important concept to keep in mind for the remainder of this chapter!
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -44,12 +44,12 @@ we'll use new strong lensing data, where:
  - The source galaxy's light is an `Exponential`.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -103,11 +103,10 @@ We set up `Nautilus` as we did in the previous tutorial, however given the incre
 a higher `n_live` value of 150 to ensure we sample the complex parameter space efficiently.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_3_realism_and_complexity",
     unique_tag=dataset_name,
     n_live=200,
-    number_of_cores=1,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -118,19 +117,7 @@ __Run Time__
 The run time of the `log_likelihood_function` is a little bit more than previous tutorials, because we added more
 light and mass profiles to the model. It is the increased number of parameters that increases the expected run time 
 more.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 print(
@@ -180,11 +167,10 @@ map out the parameter space. By using very few live points, the initial search o
 probability of approaching the global maxima, thus it converges on a local maxima.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_3_realism_and_complexity__local_maxima",
     unique_tag=dataset_name,
     n_live=75,
-    number_of_cores=1,
 )
 
 print(
@@ -198,19 +184,7 @@ __Run Time__
 
 Due to the decreased number of live points, the estimate of 10000 iterations per free parameter is now a significant
 overestimate. The actual run time of the model-fit will be much less than this.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 result_local_maxima = search.fit(model=model, analysis=analysis)

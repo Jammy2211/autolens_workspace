@@ -35,7 +35,7 @@ linear light profiles, therefore you must read the following notebooks before th
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import nnls
-from os import path
+from pathlib import Path
 
 import autolens as al
 import autolens.plot as aplt
@@ -50,12 +50,12 @@ This example fits a simulated galaxy where galaxy has an asymmetric light distri
 fitted with `Sersic` profile and therefore requires a multi-Gaussian expansion to fit accurately.
 """
 dataset_name = "lens_light_asymmetric"
-dataset_path = path.join("dataset", "imaging", "simple")
+dataset_path = Path("dataset", "imaging", "simple")
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 

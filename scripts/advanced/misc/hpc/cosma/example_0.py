@@ -24,10 +24,10 @@ This exmaple assumes you are using cosma7 and outputting results to the cosma7 o
 
  `/cosma7/data/dp004/cosma_username`.
 """
-
 from os import path
+from pathlib import Path
 
-cosma_path = path.join(path.sep, "cosma7", "data", "dp004", "cosma_username")
+cosma_path = Path(path.sep) / "cosma7" / "data" / "dp004" / "cosma_username"
 
 """
 Use this path to set the path to the dataset directory on COSMA, as well as the folders within this directory the .fits
@@ -38,13 +38,13 @@ Below, we set `cosma_dataset_path=/cosma7/data/dp004/cosma_username/dataset/exam
 dataset_folder = "example"
 dataset_name = "simple__no_lens_light"
 
-cosma_dataset_path = path.join(cosma_path, "dataset", dataset_folder, dataset_name)
+cosma_dataset_path = Path(cosma_path) / "dataset" / dataset_folder / dataset_name
 
 """
 We also set the output path on COSMA to `cosma_output_path=/cosma7/data/dp004/cosma_username/output`.
 """
 
-cosma_output_path = path.join(cosma_path, "output")
+cosma_output_path = Path(cosma_path, "output")
 
 """
 In contrast to the dataset and output folders, our workspace path is in your COSMA home directory.
@@ -55,7 +55,7 @@ workspace_path = "/cosma/home/dp004/cosma_username/autolens_workspace/"
 Use this to set the path to the config files that are used in this analysis, which are contained within the `cosma` 
 directory of the example project in your COSMA home directory.
 """
-config_path = path.join(workspace_path, "cosma", "config")
+config_path = Path(workspace_path, "cosma", "config")
 
 """
 Set the config and output paths using autoconf, as you would for a laptop run.
@@ -164,7 +164,7 @@ We now create the overall path to the dataset this specific call of the script f
 
  `/cosma7/data/dp004/cosma_username/dataset/imaging/example_image_1`
 """
-dataset_path = path.join(cosma_dataset_path, dataset_type, dataset_name)
+dataset_path = Path(cosma_dataset_path, dataset_type, dataset_name)
 
 """
 COMPLETE
@@ -186,9 +186,9 @@ __Dataset__
 Load and plot the strong lens dataset `example_image_1` via .fits files, which we will fit with the lens model.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 
@@ -248,11 +248,10 @@ The `name` and `path_prefix` below specify the path where results ae stored in t
  `/autolens_workspace/output/modeling/imaging/simple__no_lens_light/mass[sie]_source[bulge]/unique_identifier`.
 """
 search = af.Nautilus(
-    path_prefix=path.join("cosma_example"),
+    path_prefix="cosma_example",
     name="mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 """

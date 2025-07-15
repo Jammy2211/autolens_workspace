@@ -35,7 +35,7 @@
 # # print(f"Working Directory has been set to `{workspace_path}`")
 #
 # import numpy as np
-# from os import path
+# from pathlib import Path
 # import autofit as af
 # import autolens as al
 # import autolens.plot as aplt
@@ -50,12 +50,12 @@
 # )
 #
 # dataset_name = "simple"
-# dataset_path = path.join("dataset", "interferometer", dataset_name)
+# dataset_path = Path("dataset") / "interferometer" / dataset_name
 #
 # dataset = al.Interferometer.from_fits(
-#     data_path=path.join(dataset_path, "data.fits"),
-#     noise_map_path=path.join(dataset_path, "noise_map.fits"),
-#     uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
+#     data_path=dataset_path / "data.fits",
+#     noise_map_path=dataset_path / "noise_map.fits",
+#     uv_wavelengths_path=Path(dataset_path, "uv_wavelengths.fits"),
 #     real_space_mask=real_space_mask,
 # )
 # dataset = dataset.apply_settings(
@@ -82,7 +82,7 @@
 # )
 #
 # search_base = af.Nautilus(
-#     path_prefix=path.join("interferometer", "misc"),
+#     path_prefix=Path("interferometer", "misc"),
 #     name="sensitivity_mapping_base",
 #     unique_tag=dataset_name,
 #     n_live=100,
@@ -218,7 +218,7 @@
 # We next specify the search used to perform each model fit by the sensitivity mapper.
 # """
 # search = af.Nautilus(
-#     path_prefix=path.join("interferometer", "misc"),
+#     path_prefix=Path("interferometer", "misc"),
 #     name="sensitivity_mapping",
 #     unique_tag=dataset_name,
 #     n_live=100,

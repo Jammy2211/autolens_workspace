@@ -155,7 +155,6 @@ search = af.Nautilus(
     path_prefix=Path("point_source") / "hierarchical",
     name="tutorial_6_science_case_graphical",
     n_live=150,
-    number_of_cores=4,
 )
 
 analysis_factor_list = []
@@ -201,7 +200,6 @@ search = af.Nautilus(
     path_prefix=Path("point_source") / "hierarchical",
     name="tutorial_6_science_case_ep",
     n_live=150,
-    number_of_cores=4,
 )
 
 analysis_factor_list = []

@@ -25,7 +25,7 @@ TODO: NEED TO INCLUDE DIFFERENT POINTING / CENTERINGS.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -37,7 +37,7 @@ dataset_type = "multi"
 dataset_label = "imaging"
 dataset_name = "same_wavelength"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 
 """
 __Simulate__
@@ -167,9 +167,9 @@ Output each simulated dataset to the dataset path as .fits files, with a tag des
 """
 for i, dataset in enumerate(dataset_list):
     dataset.output_to_fits(
-        data_path=path.join(dataset_path, f"image_{i}.fits"),
-        psf_path=path.join(dataset_path, f"psf_{i}.fits"),
-        noise_map_path=path.join(dataset_path, f"noise_map_{i}.fits"),
+        data_path=Path(dataset_path, f"image_{i}.fits"),
+        psf_path=Path(dataset_path, f"psf_{i}.fits"),
+        noise_map_path=Path(dataset_path, f"noise_map_{i}.fits"),
         overwrite=True,
     )
 
@@ -206,7 +206,7 @@ This can be loaded via the method `tracer = al.from_json()`.
 """
 al.output_to_json(
     obj=tracer,
-    file_path=path.join(dataset_path, "tracer.json"),
+    file_path=Path(dataset_path, "tracer.json"),
 )
 
 """

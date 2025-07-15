@@ -34,7 +34,7 @@ linear light profiles, therefore you must read the following notebooks before th
 
 import matplotlib.pyplot as plt
 import numpy as np
-from os import path
+from pathlib import Path
 
 import autolens as al
 import autolens.plot as aplt
@@ -47,12 +47,12 @@ In order to perform a likelihood evaluation, we first load a dataset.
 This example fits a simulated strong lens which is simulated using a 0.1 arcsecond-per-pixel resolution (this is lower
 resolution than the best quality Hubble Space Telescope imaging and close to that of the Euclid space satellite).
 """
-dataset_path = path.join("dataset", "imaging", "simple")
+dataset_path = Path("dataset", "imaging", "simple")
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 

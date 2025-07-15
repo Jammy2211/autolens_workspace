@@ -8,7 +8,7 @@ Jupyter notebook and on your computer screen.
 
 # %matplotlib inline
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -48,15 +48,15 @@ directory `autolens_workspace/dataset/imaging/simple__no_lens_light`.
 There are many example simulated images of strong lenses in this directory that will be used throughout the 
 **HowToLens** lectures.
 """
-dataset_path = path.join("dataset", "imaging", "simple__no_lens_light")
+dataset_path = Path("dataset") / "imaging" / "simple__no_lens_light"
 
 """
 We now load this dataset from .fits files and create an instance of an `imaging` object.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 

@@ -311,7 +311,7 @@ def run_3_subhalo(
     subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
     subhalo.mass.centre = (
         subhalo_grid_search_result_2[0]
-        .model_absolute(a=1.0)
+        .model_centred_absolute(a=1.0)
         .galaxies.subhalo.mass.centre
     )
 

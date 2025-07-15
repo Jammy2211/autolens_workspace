@@ -17,7 +17,7 @@ However, it could be an image of anything, so you could make a lensed image of y
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 from scipy.interpolate import griddata
 import autolens as al
 import autolens.plot as aplt
@@ -29,7 +29,7 @@ We first load the image of the galaxy (from a .fits file) which will be lensed.
 
 This image is typically a real galaxy image that is not gravitationally lensed. 
 """
-data_path = path.join("scripts", "misc", "galaxy_image.fits")
+data_path = Path("scripts") / "misc" / "galaxy_image.fits"
 
 galaxy_image = al.Array2D.from_fits(file_path=data_path, pixel_scales=0.02)
 

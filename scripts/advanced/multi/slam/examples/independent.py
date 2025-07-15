@@ -76,7 +76,7 @@ Everything below is identical to `start_here.py` and thus not commented, as it i
 import numpy as np
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -92,14 +92,14 @@ Load, plot and mask the `Imaging` data.
 We load a dataset with the waveband "g", which is the highest resolution data in this multi-wavelength example. 
 """
 dataset_name = "lens_sersic"
-dataset_main_path = path.join("dataset", "multi", "imaging", dataset_name)
+dataset_main_path = Path("dataset", "multi", "imaging", dataset_name)
 
 dataset_waveband = "g"
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_main_path, f"{dataset_waveband}_data.fits"),
-    noise_map_path=path.join(dataset_main_path, f"{dataset_waveband}_noise_map.fits"),
-    psf_path=path.join(dataset_main_path, f"{dataset_waveband}_psf.fits"),
+    data_path=Path(dataset_main_path, f"{dataset_waveband}_data.fits"),
+    noise_map_path=Path(dataset_main_path, f"{dataset_waveband}_noise_map.fits"),
+    psf_path=Path(dataset_main_path, f"{dataset_waveband}_psf.fits"),
     pixel_scales=0.08,
 )
 
@@ -131,10 +131,9 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=path.join("slam", "multi", "independent"),
+    path_prefix=Path("slam", "multi", "independent"),
     unique_tag=f"{dataset_name}_data_{dataset_waveband}",
     info=None,
-    number_of_cores=4,
     session=None,
 )
 
@@ -353,7 +352,7 @@ includded (see full description above).
 Its the usual API to set up dataset paths, but include its "main` path which is before the waveband folders.
 """
 dataset_name = "lens_sersic"
-dataset_main_path = path.join("dataset", "multi", "imaging", dataset_name)
+dataset_main_path = Path("dataset", "multi", "imaging", dataset_name)
 
 """
 __Dataset Wavebands__
@@ -400,11 +399,11 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
     dataset_path = dataset_main_path
 
     dataset = al.Imaging.from_fits(
-        data_path=path.join(dataset_main_path, f"{dataset_waveband}_data.fits"),
-        noise_map_path=path.join(
+        data_path=Path(dataset_main_path, f"{dataset_waveband}_data.fits"),
+        noise_map_path=Path(
             dataset_main_path, f"{dataset_waveband}_noise_map.fits"
         ),
-        psf_path=path.join(dataset_main_path, f"{dataset_waveband}_psf.fits"),
+        psf_path=Path(dataset_main_path, f"{dataset_waveband}_psf.fits"),
         pixel_scales=pixel_scale,
     )
 
@@ -432,7 +431,7 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
     __Settings AutoFit__
     """
     settings_search = af.SettingsSearch(
-        path_prefix=path.join("slam", "multi", "independent"),
+        path_prefix=Path("slam", "multi", "independent"),
         unique_tag=f"{dataset_name}_data_{dataset_waveband}",
         info=None,
     )

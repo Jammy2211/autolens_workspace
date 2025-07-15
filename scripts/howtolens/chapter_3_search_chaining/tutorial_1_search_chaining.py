@@ -46,7 +46,7 @@ search, we can use its results to tune the priors of our second search. For exam
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -61,12 +61,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Exponential`.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -142,11 +142,10 @@ __Search + Analysis__
 Now lets create the search and analysis.
 """
 search_1 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_3"),
+    path_prefix=Path("howtolens", "chapter_3"),
     name="tutorial_1_search_chaining_1",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -298,11 +297,10 @@ Lets setup and run the search. As expected, it gives us the correct lens model. 
 faster than we are used to!
 """
 search_2 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_3"),
+    path_prefix=Path("howtolens", "chapter_3"),
     name="tutorial_1_search_chaining_2",
     unique_tag=dataset_name,
     n_live=150,
-    number_of_cores=1,
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)

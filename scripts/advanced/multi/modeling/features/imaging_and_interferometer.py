@@ -25,7 +25,7 @@ __Benefits__
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -49,12 +49,12 @@ with the lens model.
 dataset_type = "multi"
 dataset_label = "interferometer"
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 
 interferometer = al.Interferometer.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    uv_wavelengths_path=Path(dataset_path, "uv_wavelengths.fits"),
     real_space_mask=real_space_mask,
     transformer_class=al.TransformerNUFFT,
 )
@@ -71,12 +71,12 @@ Load and plot the strong lens dataset `simple__no_lens_light` via .fits files, w
 dataset_type = "multi"
 dataset_label = "imaging"
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 
 imaging = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "g_data.fits"),
-    psf_path=path.join(dataset_path, "g_psf.fits"),
-    noise_map_path=path.join(dataset_path, "g_noise_map.fits"),
+    data_path=Path(dataset_path, "g_data.fits"),
+    psf_path=Path(dataset_path, "g_psf.fits"),
+    noise_map_path=Path(dataset_path, "g_noise_map.fits"),
     pixel_scales=0.08,
 )
 
@@ -168,11 +168,10 @@ The model is fitted to the data using the nested sampling algorithm Nautilus (se
 full description).
 """
 search = af.Nautilus(
-    path_prefix=path.join("multi", "modeling"),
+    path_prefix=Path("multi", "modeling"),
     name="imaging_and_interferometer",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 """

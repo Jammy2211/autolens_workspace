@@ -18,7 +18,7 @@ model-fitting techniques.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -31,12 +31,12 @@ we'll use new strong lensing data, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -111,7 +111,7 @@ model = af.Collection(
 )
 
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_optional"),
+    path_prefix=Path("howtolens", "chapter_optional"),
     name="tutorial_searches_slow",
     unique_tag=dataset_name,
     n_live=400,
@@ -143,7 +143,7 @@ print(result_slow.samples.total_samples)
 Now lets run the search with fast settings, so we can compare the total number of iterations required.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_searches_fast",
     unique_tag=dataset_name,
     n_live=75,
@@ -243,7 +243,7 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 search = af.PySwarmsLocal(
-    path_prefix=path.join("howtolens", "chapter_optional"),
+    path_prefix=Path("howtolens", "chapter_optional"),
     name="tutorial_searches_pso",
     unique_tag=dataset_name,
     n_particles=50,
@@ -312,7 +312,7 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 search = af.Zeus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_searches_zeus",
     unique_tag=dataset_name,
     nwalkers=50,
@@ -334,7 +334,7 @@ fit_plotter.subplot_fit()
 
 
 search = af.Emcee(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_searches_emcee",
     unique_tag=dataset_name,
     nwalkers=50,

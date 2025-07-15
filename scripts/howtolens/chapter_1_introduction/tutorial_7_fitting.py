@@ -33,7 +33,7 @@ Here is an overview of what we'll cover in this tutorial:
 """
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -49,12 +49,12 @@ standard for CCD imaging.
 
 The `dataset_path` below specifies where these files are located: `autolens_workspace/dataset/imaging/howtolens/`.
 """
-dataset_path = path.join("dataset", "imaging", "howtolens")
+dataset_path = Path("dataset") / "imaging" / "howtolens"
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -605,12 +605,12 @@ an `IsothermalSph` lens  mass profile and `ExponentialCoreSph` source light prof
 profiles are unknown.
 """
 dataset_name = "simple__no_lens_light__mass_sis"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 

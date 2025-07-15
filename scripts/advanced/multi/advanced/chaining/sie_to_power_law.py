@@ -25,7 +25,7 @@
 # # %cd $workspace_path
 # # print(f"Working Directory has been set to `{workspace_path}`")
 #
-# from os import path
+# from pathlib import Path
 # import autofit as af
 # import autolens as al
 # import autolens.plot as aplt
@@ -51,13 +51,13 @@
 # dataset_label = "imaging"
 # dataset_name = "simple__no_lens_light"
 #
-# dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+# dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 #
 # dataset_list = [
 #     al.Imaging.from_fits(
-#         data_path=path.join(dataset_path, f"{color}_data.fits"),
-#         psf_path=path.join(dataset_path, f"{color}_psf.fits"),
-#         noise_map_path=path.join(dataset_path, f"{color}_noise_map.fits"),
+#         data_path=Path(dataset_path) / f"{color}_data.fits",
+#         psf_path=Path(dataset_path) / f"{color}_psf.fits",
+#         noise_map_path=Path(dataset_path) / f"{color}_noise_map.fits",
 #         pixel_scales=pixel_scales,
 #     )
 #     for color, pixel_scales in zip(color_list, pixel_scales_list)
@@ -96,8 +96,9 @@
 #
 # The path the results of all chained searches are output:
 # """
-# path_prefix = path.join("multi", "chaining", "sie_to_power_law")
-#
+# path_prefix = Path("multi") / "chaining" / "sie_to_power_law"
+
+# #
 # """
 # __Analysis (Search 1)__
 #

@@ -13,7 +13,7 @@ We'll also learn a neat trick to improve the speed and accuracy of a non-linear 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -27,12 +27,12 @@ we'll use the same strong lensing data as tutorials 1 & 2, where:
  - The source galaxy's light is a `ExponentialSph`.
 """
 dataset_name = "simple__no_lens_light__mass_sis"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -65,9 +65,9 @@ dataset_plotter.subplot_dataset()
 We can decrease the `inner_radius` to correct for this.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -103,11 +103,10 @@ model = af.Collection(
 )
 
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_6_with_custom_mask",
     unique_tag=dataset_name,
     n_live=80,
-    number_of_cores=1,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -120,19 +119,7 @@ required to evaluate the model image's fit to the data.
 
 This includes computing fewer deflection angles from the mass profiles and performing fewer 2D convolutions of the PSF
 to account for blurring.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 __Search__
 
 Run the non-linear search.
@@ -258,11 +245,10 @@ __Search__
 Run the non-linear search.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_6_with_positions",
     unique_tag=dataset_name,
     n_live=80,
-    number_of_cores=1,
 )
 
 print(

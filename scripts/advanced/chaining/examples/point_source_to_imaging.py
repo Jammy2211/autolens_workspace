@@ -36,7 +36,7 @@ fit on the imaging data.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -47,17 +47,17 @@ __Dataset__
 Load the strong lens dataset `group` point source dataset and imaging, and plot them.
 """
 dataset_name = "simple"
-dataset_path = path.join("dataset", "group", dataset_name)
+dataset_path = Path("dataset", "group", dataset_name)
 
 imaging = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
 dataset = al.from_json(
-    file_path=path.join(dataset_path, "point_dataset.json"),
+    file_path=Path(dataset_path, "point_dataset.json"),
 )
 
 visuals = aplt.Visuals2D(positions=dataset.positions)
@@ -70,7 +70,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("group", "chaining", "point_to_imaging")
+path_prefix = Path("group") / "chaining" / "point_to_imaging"
 
 """
 __PointSolver__
@@ -97,12 +97,12 @@ Compose the lens model by loading it from a .json file made in the file `group/m
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 """
-model_path = path.join("dataset", "group", dataset_name)
+model_path = Path("dataset", "group", dataset_name)
 
-lenses_file = path.join(model_path, "lenses.json")
+lenses_file = Path(model_path, "lenses.json")
 lenses = af.Collection.from_json(file=lenses_file)
 
-sources_file = path.join(model_path, "sources.json")
+sources_file = Path(model_path, "sources.json")
 sources = af.Collection.from_json(file=sources_file)
 
 galaxies = lenses + sources
@@ -127,7 +127,6 @@ search_1 = af.Nautilus(
     name="search[1]_point_source",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 analysis_1 = al.AnalysisPoint(dataset=dataset, solver=solver)
@@ -268,7 +267,6 @@ search_2 = af.Nautilus(
     name="search[2]__imaging",
     unique_tag=dataset_name,
     n_live=150,
-    number_of_cores=4,
 )
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)

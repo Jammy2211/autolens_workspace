@@ -37,7 +37,7 @@ you should read the `light_profile/log_likelihood_function.py` script before thi
 
 # import matplotlib.pyplot as plt
 # import numpy as np
-# from os import path
+# from pathlib import Path
 #
 # import autogalaxy as ag
 # import autogalaxy.plot as aplt

@@ -23,7 +23,7 @@ they come together as one.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -146,10 +146,6 @@ mat_plot = aplt.MatPlot2D(
     cmap=aplt.Cmap(cmap="cool", norm="linear"),
 )
 
-include = aplt.Include2D(
-    origin=True, mask=True, border=True, light_profile_centres=True
-)
-
 tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
 radial_critical_curve_list = tracer.radial_critical_curve_list_from(grid=grid)
 
@@ -162,7 +158,6 @@ light_profile_plotter = aplt.LightProfilePlotter(
     light_profile=tracer.planes[1][0].bulge,
     grid=source_plane_grid,
     mat_plot_2d=mat_plot,
-    include_2d=include,
     visuals_2d=visuals,
 )
 light_profile_plotter.set_title("Bulge Image")

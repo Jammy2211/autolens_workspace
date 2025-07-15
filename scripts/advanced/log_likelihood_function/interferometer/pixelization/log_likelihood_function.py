@@ -39,7 +39,7 @@ learn about the linear light profile likelihood function without reading other l
 
 import matplotlib.pyplot as plt
 import numpy as np
-from os import path
+from pathlib import Path
 
 import autolens as al
 import autolens.plot as aplt
@@ -65,12 +65,12 @@ interferometer datasets containing ~1-10 million visibilities. We will discuss h
 function changes for different methods of Fourier transforming in this guide.
 """
 dataset_name = "simple"
-dataset_path = path.join("dataset", "interferometer", dataset_name)
+dataset_path = Path("dataset") / "interferometer" / dataset_name
 
 dataset = al.Interferometer.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    uv_wavelengths_path=Path(dataset_path, "uv_wavelengths.fits"),
     real_space_mask=real_space_mask,
     transformer_class=al.TransformerDFT,
 )

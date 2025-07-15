@@ -22,7 +22,7 @@ pipeline that we can generalize to many lenses isn't currently possible.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -37,12 +37,12 @@ we'll use new strong lensing data, where:
  - The source galaxy's light is an `Exponential`.
 """
 dataset_name = "x2_lens_galaxies"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -71,7 +71,7 @@ __Paths__
 
 All four searches will use the same `path_prefix`, so we write it here to avoid repetition.
 """
-path_prefix = path.join("howtolens", "chapter_3", "tutorial_4_x2_lens_galaxies")
+path_prefix = Path("howtolens") / "chapter_3" / "tutorial_4_x2_lens_galaxies"
 
 """
 __Search Chaining Approach__
@@ -126,7 +126,6 @@ search_1 = af.Nautilus(
     name="search[1]__left_lens_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    number_of_cores=1,
 )
 
 """
@@ -187,7 +186,6 @@ search_2 = af.Nautilus(
     name="search[2]__right_lens_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    number_of_cores=1,
 )
 
 """
@@ -262,7 +260,6 @@ search_3 = af.Nautilus(
     name="search[3]__mass_x2[sie]__source[exp]",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 """
@@ -342,7 +339,6 @@ search_4 = af.Nautilus(
     name="search[4]_light_x2[bulge]_mass_x2[sie]_source[exp]",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)
