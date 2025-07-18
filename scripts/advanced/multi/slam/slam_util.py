@@ -202,10 +202,10 @@ def plot_fit_png_row(
 
     tracer_plotter = plotter.tracer_plotter
     tracer_plotter.mat_plot_2d.cmap = aplt.Cmap(vmin=0.0, vmax=vmax_lens_light)
-#    tracer_plotter.include_2d._light_profile_centres = False
-#    tracer_plotter.include_2d._mass_profile_centres = False
-#    tracer_plotter.include_2d._tangential_critical_curves = False
-#    tracer_plotter.include_2d._radial_critical_curves = False
+    #    tracer_plotter.include_2d._light_profile_centres = False
+    #    tracer_plotter.include_2d._mass_profile_centres = False
+    #    tracer_plotter.include_2d._tangential_critical_curves = False
+    #    tracer_plotter.include_2d._radial_critical_curves = False
 
     try:
         tracer_plotter.figures_2d_of_planes(
@@ -221,10 +221,10 @@ def plot_fit_png_row(
     tracer_plotter.set_title(label=f"{tag} Convergence")
     tracer_plotter.figures_2d(convergence=True)
 
-#    tracer_plotter.include_2d._light_profile_centres = True
-#    tracer_plotter.include_2d._mass_profile_centres = True
-#    tracer_plotter.include_2d._tangential_critical_curves = True
-#    tracer_plotter.include_2d._radial_critical_curves = True
+    #    tracer_plotter.include_2d._light_profile_centres = True
+    #    tracer_plotter.include_2d._mass_profile_centres = True
+    #    tracer_plotter.include_2d._tangential_critical_curves = True
+    #    tracer_plotter.include_2d._radial_critical_curves = True
 
     plotter.mat_plot_2d.use_log10 = False
 
@@ -357,9 +357,6 @@ def plot_source_png_row(
     """
     plotter = aplt.FitImagingPlotter(
         fit=fit,
-        include_2d=aplt.Include2D(
-            light_profile_centres=False, mass_profile_centres=False
-        ),
     )
 
     plotter.mat_plot_2d = plotter_main.mat_plot_2d

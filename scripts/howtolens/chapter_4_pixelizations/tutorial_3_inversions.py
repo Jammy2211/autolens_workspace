@@ -91,9 +91,11 @@ mapper = al.Mapper(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-include = aplt.Include2D(mask=True, mapper_source_plane_data_grid=True)
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
 """
@@ -118,9 +120,7 @@ Both of these can be plotted using an `InversionPlotter`.
 It is possible for an inversion to have multiple `Mapper`'s, therefore for certain figures we specify the index 
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
-include = aplt.Include2D(mask=True)
-
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, include_2d=include)
+inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
@@ -180,13 +180,12 @@ mapper = al.Mapper(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-
 inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 
 """
 Now lets plot the complex source reconstruction.
 """
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, include_2d=include)
+inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
@@ -254,9 +253,7 @@ We see some pretty good looking residuals, we must be fitting the lensed source 
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 

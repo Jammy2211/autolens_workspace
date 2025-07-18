@@ -99,10 +99,18 @@ mass_profile = al.mp.PowerLawSph(centre=(0.0, 0.0), einstein_radius=1.6, slope=1
 
 lens = al.Galaxy(redshift=0.5, mass=mass_profile)
 
-include = aplt.Include2D(tangential_critical_curves=True, radial_critical_curves=True)
+tangential_critical_curve_list = mass_profile.tangential_critical_curve_list_from(
+    grid=grid
+)
+radial_critical_curves_list = mass_profile.radial_critical_curve_list_from(grid=grid)
+
+visuals = aplt.Visuals2D(
+    tangential_critical_curves=tangential_critical_curve_list,
+    radial_critical_curves=radial_critical_curves_list,
+)
 
 galaxies_plotter = aplt.GalaxiesPlotter(
-    galaxies=al.Galaxies(galaxies=[lens]), grid=grid, include_2d=include
+    galaxies=al.Galaxies(galaxies=[lens]), grid=grid, visuals_2d=visuals
 )
 galaxies_plotter.figures_2d(convergence=True)
 
@@ -120,23 +128,35 @@ appears near a caustic in the source plane it will appear significantly brighter
 We again have to use a mass profile with a slope below 2.0 to ensure a radial critical curve and therefore radial
 caustic is formed.
 
-We can plot both the tangential and radial critical curves and caustics using an `Include2D` object. Note how the 
-critical curves appear only for the image-plane grid, whereas the caustic only appears in the source plane.
+We can plot both the tangential and radial critical curves and caustics using the `Visuals2D` object. The 
+critical curves are plotted only for the image-plane grid, whereas the caustic in the source plane.
 """
 sis_mass_profile = al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=1.6)
 
 tracer = al.Tracer(galaxies=[lens, source])
 
-include = aplt.Include2D(
-    tangential_critical_curves=True,
-    tangential_caustics=True,
-    radial_critical_curves=True,
-    radial_caustics=True,
+tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
+radial_critical_curves_list = tracer.radial_critical_curve_list_from(grid=grid)
+
+visuals = aplt.Visuals2D(
+    tangential_critical_curves=tangential_critical_curve_list,
+    radial_critical_curves=radial_critical_curves_list,
 )
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
+
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, visuals_2d=visuals)
 
 tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=0)
 tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=1)
+
+tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
+radial_caustics_list = tracer.radial_caustic_list_from(grid=grid)
+
+visuals = aplt.Visuals2D(
+    tangential_caustics=tangential_caustic_list,
+    radial_caustics=radial_caustics_list,
+)
+
+tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, visuals_2d=visuals)
 
 """
 We can also plot the caustic on the source-plane image.

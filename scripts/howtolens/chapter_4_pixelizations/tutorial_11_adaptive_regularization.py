@@ -86,11 +86,16 @@ source_magnification = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 fit = fit_via_source_galaxy_from(dataset=dataset, source_galaxy=source_magnification)
 
-include = aplt.Include2D(
-    mask=True, mapper_image_plane_mesh_grid=True, mapper_source_plane_mesh_grid=True
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_mesh_grid,
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.subplot_fit()
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
@@ -237,7 +242,16 @@ fit = fit_via_source_galaxy_from(
     adapt_images=adapt_images,
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_mesh_grid,
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.subplot_fit()
 
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)

@@ -114,9 +114,7 @@ no_regularization_fit = perform_fit_with_source_galaxy(
     dataset=dataset, source_galaxy=source_galaxy
 )
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=no_regularization_fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=no_regularization_fit)
 fit_plotter.subplot_fit()
 
 """
@@ -259,9 +257,7 @@ print(3988.0716851250163)
 print("New Bayesian Evidence:")
 print(fit.log_evidence)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 
 """

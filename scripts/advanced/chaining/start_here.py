@@ -42,6 +42,7 @@ to pass information between searches as well as tools for customizing prior pass
 The examples in the `chaining/examples` show specific examples where for lens modeling search chaining can improve the
 model-fit.
 """
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())
@@ -180,7 +181,8 @@ for by the non-linear search. In other chaining examples, we'll see other ways t
 """
 model_2 = af.Collection(
     galaxies=af.Collection(
-        lens=result_1.model_centred.galaxies.lens, source=result_1.model_centred.galaxies.source
+        lens=result_1.model_centred.galaxies.lens,
+        source=result_1.model_centred.galaxies.source,
     ),
 )
 

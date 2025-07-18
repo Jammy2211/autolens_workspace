@@ -84,11 +84,15 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 """
 Lets have a quick look to make sure it has the same residuals we saw in tutorial 1.
 """
-include = aplt.Include2D(
-    mask=True, mapper_image_plane_mesh_grid=True, mapper_source_plane_mesh_grid=True
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_mesh_grid,
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 

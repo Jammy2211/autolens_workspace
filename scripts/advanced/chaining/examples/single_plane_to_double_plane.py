@@ -54,9 +54,7 @@ Load and plot the `Imaging` of the point-source dataset, purely for visualizatio
 dataset_name = "double_einstein_cross"
 dataset_path = Path("dataset") / "point_source" / dataset_name
 
-data = al.Array2D.from_fits(
-    file_path=dataset_path / "data.fits", pixel_scales=0.05
-)
+data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.05)
 
 """
 __Dataset__

@@ -99,10 +99,10 @@ visuals = aplt.Visuals2D(
         [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
     ]
 )
-include = aplt.Include2D(mapper_source_plane_data_grid=True)
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
@@ -114,7 +114,8 @@ Lets map source pixel 313, the central source-pixel, to the image.
 """
 visuals = aplt.Visuals2D(pix_indexes=[[312]])
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
@@ -125,7 +126,8 @@ will give you a feel for how different regions of the source-plane map to the im
 """
 visuals = aplt.Visuals2D(pix_indexes=[[312, 318], [412]])
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
@@ -147,7 +149,8 @@ visuals = aplt.Visuals2D(
     pix_indexes=[[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]]
 )
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
@@ -189,9 +192,9 @@ mapper = al.Mapper(
 """
 Lets plot it.
 """
-include = aplt.Include2D(mask=True, mapper_source_plane_data_grid=True)
+visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
 """
@@ -199,9 +202,12 @@ First, look how much closer we are to the source-plane (The axis sizes have decr
 ~ -0.6" to 0.6"). We can more clearly see the diamond of points in the centre of the source-plane (for those who have 
 been reading up, this diamond is called the `caustic`).
 """
-visuals = aplt.Visuals2D(pix_indexes=[[312], [314], [316], [318]])
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid, pix_indexes=[[312], [314], [316], [318]]
+)
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)

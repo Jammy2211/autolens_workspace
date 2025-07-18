@@ -78,14 +78,10 @@ This `Mapper` is a `RectangularMapper`, every `Pixelization` generates it owns m
 print(type(mapper))
 
 """
-By plotting our mapper, we now see our `Pixelization`. Its a fairly boring grid of rectangular pixels.
+By plotting our mapper, we now see our `Pixelization`. 
 """
-include = aplt.Include2D(
-    mapper_source_plane_data_grid=False, mapper_source_plane_mesh_grid=False
-)
-
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
-mapper_plotter.set_title("Fairly Boring Grid2D of Rectangular Pixels")
+mapper_plotter = aplt.MapperPlotter(mapper=mapper)
+mapper_plotter.set_title("Rectangular Pixels")
 mapper_plotter.figure_2d()
 
 """
@@ -103,12 +99,10 @@ print("etc.")
 """
 We can plot these centre on our grid, to make it look slightly less boring!
 """
-include = aplt.Include2D(
-    mapper_source_plane_data_grid=False, mapper_source_plane_mesh_grid=False
-)
+visuals_2d = aplt.Visuals2D(mesh_grid=mapper.source_plane_mesh_grid)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
-mapper_plotter.set_title("Slightly less Boring Grid2D of Rectangular Pixels")
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
+mapper_plotter.set_title("Recntagular Grid With Pixel Cenres")
 mapper_plotter.figure_2d()
 
 """
@@ -125,18 +119,16 @@ print("etc.")
 """
 We can over-lay this grid on the figure, which is starting to look a bit less boring now!
 """
-include = aplt.Include2D(
-    mapper_source_plane_data_grid=True, mapper_source_plane_mesh_grid=True
-)
+visuals_2d = aplt.Visuals2D(mesh_grid=mapper.source_plane_data_grid)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
 mapper_plotter.set_title("Even less Boring Grid2D of Rectangular Pixels")
 mapper_plotter.figure_2d()
 
 mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-0.3, 0.3, -0.3, 0.3]))
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, mat_plot_2d=mat_plot, include_2d=include
+    mapper=mapper, mat_plot_2d=mat_plot, visuals_2d=visuals_2d
 )
 mapper_plotter.set_title("Zoomed Grid2D of Rectangular Pixels")
 mapper_plotter.figure_2d()

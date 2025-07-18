@@ -1,5 +1,5 @@
 """
-Tutorial 6: Point Sources
+Tutorial 4: Point Sources
 =========================
 
 This tutorial is not wrriten yet, but will explain how point source lensing works.

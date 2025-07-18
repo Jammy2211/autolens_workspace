@@ -114,9 +114,7 @@ fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -256,9 +254,7 @@ inversion. When we plot the image, a new panel on the sub-plot appears showing t
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -283,9 +279,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 

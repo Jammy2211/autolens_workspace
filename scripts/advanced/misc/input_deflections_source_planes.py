@@ -52,7 +52,7 @@ deflections_y = al.Array2D.from_fits(
     pixel_scales=dataset.pixel_scales,
 )
 deflections_x = al.Array2D.from_fits(
-    file_path=Path("dataset" ) / "misc" / "deflections_x.fits",
+    file_path=Path("dataset") / "misc" / "deflections_x.fits",
     pixel_scales=dataset.pixel_scales,
 )
 
@@ -185,11 +185,13 @@ mapper = al.Mapper(
     regularization=None,
 )
 
-visuals = aplt.Visuals2D(pix_indexes=[[312], [314], [350], [370]])
-include = aplt.Include2D(grid=True)
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_data_grid, pix_indexes=[[312], [314], [350], [370]]
+)
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)

@@ -400,9 +400,7 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
 
     dataset = al.Imaging.from_fits(
         data_path=Path(dataset_main_path, f"{dataset_waveband}_data.fits"),
-        noise_map_path=Path(
-            dataset_main_path, f"{dataset_waveband}_noise_map.fits"
-        ),
+        noise_map_path=Path(dataset_main_path, f"{dataset_waveband}_noise_map.fits"),
         psf_path=Path(dataset_main_path, f"{dataset_waveband}_psf.fits"),
         pixel_scales=pixel_scale,
     )

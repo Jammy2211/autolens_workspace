@@ -132,7 +132,7 @@ light_profile_plotter.figures_2d(image=True)
 """
 __Visualization__
 
-Furthermore, using the `MatPLot2D`, `Visuals2D` and `Include2D` objects visualize any aspect we're interested 
+Furthermore, using the `MatPLot2D` and `Visuals2D` objects we can visualize any aspect we're interested 
 in and fully customize the figure. 
 
 Before beginning chapter 2 of **HowToLens**, you should checkout the package `autolens_workspace/plot`. This provides a 

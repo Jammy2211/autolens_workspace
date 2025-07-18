@@ -189,9 +189,14 @@ fit_flat = fit_with_delaunay_from(
     dataset=dataset_source_flat, mask=mask, coefficient=9.2
 )
 
-include = aplt.Include2D(mapper_image_plane_mesh_grid=True, mask=True)
+mapper = fit_flat.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_flat, include_2d=include)
+visuals = aplt.Visuals2D(
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit_flat, visuals_2d=visuals)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -208,7 +213,14 @@ fit_compact = fit_with_delaunay_from(
     dataset=dataset_source_compact, mask=mask, coefficient=3.3
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_compact, include_2d=include)
+mapper = fit_compact.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit_compact, visuals_2d=visuals)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -229,7 +241,14 @@ fit_super_compact = fit_with_delaunay_from(
     dataset=dataset_source_super_compact, mask=mask, coefficient=3.1
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_super_compact, include_2d=include)
+mapper = fit_super_compact.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit_super_compact, visuals_2d=visuals)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
