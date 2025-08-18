@@ -142,7 +142,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, galaxy_adapt])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -276,7 +276,7 @@ adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_power_10: adapt_i
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
@@ -315,7 +315,7 @@ adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_floor: adapt_imag
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """

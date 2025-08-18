@@ -96,7 +96,7 @@ visuals = aplt.Visuals2D(
 )
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+mapper_plotter.figure_2d()
 
 """
 __Pixelization__
@@ -200,10 +200,15 @@ simply need to be able to use an inversion to model a strong lens.
 
 To begin, lets consider some random mappings between our mapper`s source-pixels and the image.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[445], [285], [313], [132], [11]])
+pix_indexes = [[445], [285], [313], [132], [11]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 

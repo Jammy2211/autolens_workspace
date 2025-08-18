@@ -551,7 +551,7 @@ several other specific indexes.
 
 """
 visuals = aplt.Visuals2D(
-    indexes=[
+    image_plane_data_indexes=[
         range(0, 50),
         range(500, 550),
         [1350, 1450, 1550, 1650, 1750, 1850, 1950, 2050, 2150, 2250],

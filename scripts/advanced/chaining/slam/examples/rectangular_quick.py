@@ -130,7 +130,7 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "simple__source_x2"
+dataset_name = "simple"
 dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
@@ -139,6 +139,8 @@ dataset = al.Imaging.from_fits(
     psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
+
+positions = al.Grid2DIrregular(al.from_json(file_path=dataset_path / "positions.json"))
 
 mask_radius = 3.0
 
@@ -150,14 +152,18 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
-    grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
-    radial_list=[0.3, 0.6],
-    centre_list=[(0.0, 0.0)],
-)
+# over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
+#     grid=dataset.grid,
+#     sub_size_list=[8, 4, 1],
+#     radial_list=[0.3, 0.6],
+#     centre_list=[(0.0, 0.0)],
+# )
+#
+# dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
+dataset = dataset.apply_over_sampling(
+    over_sample_size_lp=1, over_sample_size_pixelization=1
+)
 
 dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
 dataset_plotter.subplot_dataset()
@@ -168,7 +174,7 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=Path("imaging") / "slam",
+    path_prefix=Path("imaging") / "slam" / "rectangular",
     unique_tag=dataset_name,
     info=None,
     session=None,
@@ -199,15 +205,18 @@ this example:
 
  - Mass Centre: Fix the mass profile centre to (0.0, 0.0) (this assumption will be relaxed in the MASS TOTAL PIPELINE).
 """
-analysis = al.AnalysisImaging(dataset=dataset)
+analysis = al.AnalysisImaging(
+    dataset=dataset,
+    positions_likelihood_list=[al.PositionsLH(threshold=0.4, positions=positions)],
+)
 
 # Lens Light
 
 centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
 centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
 
-total_gaussians = 30
-gaussian_per_basis = 2
+total_gaussians = 5
+gaussian_per_basis = 1
 
 log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
 
@@ -236,7 +245,7 @@ lens_bulge = af.Model(
 centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
 centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
 
-total_gaussians = 30
+total_gaussians = 5
 gaussian_per_basis = 1
 
 log10_sigma_list = np.linspace(-3, np.log10(1.0), total_gaussians)
@@ -301,19 +310,37 @@ __Settings__:
  - Positions: We update the positions and positions threshold using the previous model-fitting result (as described 
  in `chaining/examples/parametric_to_pixelization.py`) to remove unphysical solutions from the `Inversion` model-fitting.
 """
+mesh_shape = (5, 5)
+total_mapper_pixels = mesh_shape[0] * mesh_shape[1]
+
+preloads = al.Preloads(
+    mapper_indices=al.mapper_indices_from(
+        total_linear_light_profiles=5, total_mapper_pixels=total_mapper_pixels
+    ),
+    source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
+        shape_native=mesh_shape
+    ),
+)
+
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_lp_result),
     positions_likelihood_list=[
         source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
     ],
+    preloads=preloads,
 )
+
+mesh_init = af.Model(al.mesh.Rectangular)
+mesh_init.shape = mesh_shape
 
 source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    image_mesh_init=None,
+    mesh_init=mesh_init,
+    regularization_init=af.Model(al.reg.AdaptiveBrightness),
 )
 
 """
@@ -339,12 +366,7 @@ Below, we therefore set up the adapt image using this result.
 analysis = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
-    settings_inversion=al.SettingsInversion(
-        image_mesh_min_mesh_pixels_per_pixel=3,
-        image_mesh_min_mesh_number=5,
-        image_mesh_adapt_background_percent_threshold=0.1,
-        image_mesh_adapt_background_percent_check=0.8,
-    ),
+    preloads=preloads,
 )
 
 source_pix_result_2 = slam.source_pix.run_2(
@@ -352,9 +374,9 @@ source_pix_result_2 = slam.source_pix.run_2(
     analysis=analysis,
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
-    image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
-    regularization=al.reg.AdaptiveBrightnessSplit,
+    image_mesh=None,
+    mesh_init=mesh_init,
+    regularization=af.Model(al.reg.AdaptiveBrightness),
 )
 
 """
@@ -373,14 +395,16 @@ In this example it:
  - Carries the lens redshift and source redshift of the SOURCE PIPELINE through to the MASS PIPELINE [fixed values].   
 """
 analysis = al.AnalysisImaging(
-    dataset=dataset, adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1)
+    dataset=dataset,
+    adapt_image_maker=al.AdaptImageMaker(result=source_pix_result_1),
+    preloads=preloads,
 )
 
 centre_0 = af.UniformPrior(lower_limit=-0.2, upper_limit=0.2)
 centre_1 = af.UniformPrior(lower_limit=-0.2, upper_limit=0.2)
 
-total_gaussians = 30
-gaussian_per_basis = 2
+total_gaussians = 5
+gaussian_per_basis = 1
 
 log10_sigma_list = np.linspace(-2, np.log10(mask_radius), total_gaussians)
 
@@ -445,6 +469,7 @@ analysis = al.AnalysisImaging(
     positions_likelihood_list=[
         source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
     ],
+    preloads=preloads,
 )
 
 mass_result = slam.mass_total.run(

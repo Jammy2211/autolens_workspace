@@ -389,7 +389,12 @@ The reverse mappings of source-pixels to image-pixels can also be used.
 If we choose the right source-pixel index, we can see that multiple imaging occur whereby image-pixels in different
 regions of the image-plane are grouped into the same source-pixel.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[200]])
+pix_indexes = [[200]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,

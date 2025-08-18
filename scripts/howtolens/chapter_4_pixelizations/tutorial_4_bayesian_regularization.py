@@ -164,7 +164,7 @@ high_regularization_fit = perform_fit_with_source_galaxy(
     dataset=dataset, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=high_regularization_fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=high_regularization_fit)
 fit_plotter.subplot_fit()
 
 inversion_plotter = aplt.InversionPlotter(

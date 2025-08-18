@@ -89,7 +89,7 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=Path("imaging", "slam"),
+    path_prefix=Path("imaging") / "slam",
     unique_tag=dataset_name,
     info=None,
     session=None,

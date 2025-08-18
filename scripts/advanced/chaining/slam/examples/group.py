@@ -176,7 +176,7 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=Path("imaging", "slam"),
+    path_prefix=Path("imaging") / "slam",
     unique_tag="A_Obvious_COSJ095953+023319_scal_rel",
     info=None,
     session=None,

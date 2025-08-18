@@ -152,7 +152,7 @@ correct_fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=correct_fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=correct_fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -209,7 +209,7 @@ dataset_plotter = aplt.ImagingPlotter(
 )
 dataset_plotter.subplot_dataset()
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_of_planes(plane_index=1)
 
 """

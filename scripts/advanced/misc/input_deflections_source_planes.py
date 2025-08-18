@@ -186,7 +186,8 @@ mapper = al.Mapper(
 )
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_data_grid, pix_indexes=[[312], [314], [350], [370]]
+    grid=mapper_grids.image_plane_data_grid,
+    source_plane_mesh_indexes=[[312], [314], [350], [370]],
 )
 
 mapper_plotter = aplt.MapperPlotter(

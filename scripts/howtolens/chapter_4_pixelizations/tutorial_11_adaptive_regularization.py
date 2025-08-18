@@ -167,7 +167,7 @@ However, as shown below, we don't fit the source as well as the morphology based
 This is because although the adaptive regularization scheme improves the fit, the magnification based 
 mesh simply does not have sufficient resolution to resolve the source's cuspy central light.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 
 """

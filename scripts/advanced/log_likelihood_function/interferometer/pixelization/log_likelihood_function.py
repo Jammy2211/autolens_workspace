@@ -108,9 +108,6 @@ over sampling factor, called `over_sample_size_pixelization`.
 However, for interferometer datasets, over sampling is not used in the pixelization (or for light profiles)
 therefore it is implicitly set to 1 and can be ignored hereafter.
 
-The notebook `log_likelihood_function/imaging/pixelization/with_over_sampling.ipynb` describes how the likelihood
-function of a pixelization changes when over sampling is used.
-
 __Masked Image Grid__
 
 To perform galaxy calculations we define a 2D image-plane grid of (y,x) coordinates.
@@ -366,7 +363,12 @@ The reverse mappings of source-pixels to image-pixels can also be used.
 If we choose the right source-pixel index, we can see that multiple imaging occur whereby image-pixels in different
 regions of the image-plane are grouped into the same source-pixel.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[200]])
+pix_indexes = [[200]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,

@@ -79,7 +79,7 @@ pixelization = al.Pixelization(mesh=mesh)
 
 mapper_grids = pixelization.mapper_grids_from(
     mask=grid.mask,
-    source_plane_data_grid=dataset.grids.pixelization,
+    source_plane_data_grid=source_plane_grid,
 )
 
 mapper = al.Mapper(
@@ -88,31 +88,92 @@ mapper = al.Mapper(
 )
 
 """
-We now plot the `Mapper` alongside the image we used to generate the source-plane grid.
+We first plot the mapper's pixelization, which is a grid of rectangular pixels in the source-plane.
 
+We plot this next to the image using the `subplot_image_and_mapper` method.
+"""
+mapper_plotter = aplt.MapperPlotter(
+    mapper=mapper,
+)
+mapper_plotter.subplot_image_and_mapper(
+    image=dataset.data,
+)
+
+"""
 Using the `Visuals2D` object we are also going to highlight specific grid coordinates certain colors, such that we
 can see how they map from the image-plane to source-plane and visa versa.
+
+We do this by specifying their integer indexes, corresponding to the index of each data point in the image and source
+plane grids. These indexes are used to highlight the grid coordinates in the image and source-plane grids that map
+directly to one another.
+"""
+indexes = [
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+]
+
+visuals = aplt.Visuals2D(
+    indexes=indexes,
+)
+
+mapper_plotter = aplt.MapperPlotter(
+    mapper=mapper,
+    visuals_2d=visuals,
+)
+mapper_plotter.subplot_image_and_mapper(
+    image=dataset.data,
+)
+
+"""
+It can help to plot the image-plane grid and source-plane grid over each image, in order to see how the
+mapped pixels relate to the image and source-plane grids overall.
+
+This requires us to plot each image individually (e.g. not using `subplot_image_and_mapper`), so we can plot each
+grid via the visuals object and have them displayed clearly.
 """
 visuals = aplt.Visuals2D(
-    indexes=[
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
-    ]
+    grid=mapper_grids.image_plane_data_grid,
+    indexes=indexes,
 )
 
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,
 )
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+
+mapper_plotter.figure_2d_image(image=dataset.data)
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+    indexes=indexes,
+)
+
+mapper_plotter = aplt.MapperPlotter(
+    mapper=mapper,
+    visuals_2d=visuals,
+)
+
+mapper_plotter.figure_2d()
 
 """
-Using a mapper, we can now make these mappings appear the other way round. That is, we can input a source-pixel
-index (of our rectangular grid) and highlight how all of the image-pixels that it contains map to the image-plane. 
+We can now make these mappings appear the other way round. That is, we can input a source-pixel index (of our 
+rectangular grid) and highlight how all of the (sub-)image-pixels that it contains map to the image-plane. 
 
-Lets map source pixel 313, the central source-pixel, to the image.
+To make the indexes appear in the image-plane, we have to convert them from their source-plane pixel indexes
+to image plane image-pixel indexes using the mapper.
+
+Lets map source pixel 312, the central source-pixel, to the image sub-grid and then plot it via the visuals object.
+
+The pixels, plotted in red, extended beyond the central square pixel of the source-plane grid. This is because
+the pairing of data pixels to source pixels is not one-to-one, as an interpolation scheme is used to map pixels
+which land near the edges of the source-pixel, but outside them, to that source pixel with a weight.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[312]])
+pix_indexes = [[312]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,
@@ -121,10 +182,19 @@ mapper_plotter = aplt.MapperPlotter(
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
 """
-There we have it, multiple imaging in all its glory. Try changing the source-pixel indexes of the line below. This 
-will give you a feel for how different regions of the source-plane map to the image.
+There we have it, multiple imaging in all its glory. 
+
+Try changing the source-pixel indexes of the line below. This will give you a feel for how different regions of the 
+source-plane map to the image.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[312, 318], [412]])
+pix_indexes = [[312, 318], [412]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(
+    indexes=indexes,
+)
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,
@@ -145,9 +215,14 @@ source-plane reduces in size.
 
 Lets just have a quick look at these edges pixels:
 """
+pix_indexes = [[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
 visuals = aplt.Visuals2D(
-    pix_indexes=[[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]]
+    indexes=indexes,
 )
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,
@@ -181,7 +256,7 @@ We can now use the masked source-plane grid to create a new `Mapper` (using the 
 as before).
 """
 mapper_grids = mesh.mapper_grids_from(
-    mask=grid.mask, source_plane_data_grid=source_plane_grid
+    mask=mask, source_plane_data_grid=source_plane_grid
 )
 
 mapper = al.Mapper(
@@ -190,21 +265,49 @@ mapper = al.Mapper(
 )
 
 """
-Lets plot it.
+Lets plot it, including the image-plane grid and source-plane grid, which are now much smaller than before because
+the mask has removed the many image pixels at the edge of the image.
 """
-visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_data_grid,
+)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+mapper_plotter = aplt.MapperPlotter(
+    mapper=mapper,
+    visuals_2d=visuals,
+)
+
+mapper_plotter.figure_2d_image(image=dataset.data)
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+mapper_plotter = aplt.MapperPlotter(
+    mapper=mapper,
+    visuals_2d=visuals,
+)
+
+mapper_plotter.figure_2d()
 
 """
 First, look how much closer we are to the source-plane (The axis sizes have decreased from ~ -2.5" -> 2.5" to 
-~ -0.6" to 0.6"). We can more clearly see the diamond of points in the centre of the source-plane (for those who have 
-been reading up, this diamond is called the `caustic`).
+~ -0.6" to 0.6"). 
+
+We can more clearly see the diamond of points in the centre of the source-plane (for those who have been reading up, 
+this diamond is called the `caustic`).
+
+Now lets plot some indexes mapping from the source-plane to the image-plane, which will highlight how the
+source-pixels map to the image pixels.
 """
+pix_indexes = [[312], [314], [316], [318]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid, pix_indexes=[[312], [314], [316], [318]]
+    indexes=indexes,
 )
+
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper,
     visuals_2d=visuals,
