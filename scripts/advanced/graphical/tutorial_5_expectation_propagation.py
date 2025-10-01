@@ -186,7 +186,7 @@ for model, analysis in zip(model_list, analysis_list):
     dataset_index += 1
 
     analysis_factor = af.AnalysisFactor(
-        prior_model=model, analysis=analysis, optimiser=Nautilus, name=dataset_name
+        prior_model=model, analysis=analysis, optimiser=search, name=dataset_name
     )
 
     analysis_factor_list.append(analysis_factor)

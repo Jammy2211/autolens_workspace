@@ -85,8 +85,8 @@ These lines are called the 'critical curves', and they define line of infinite m
 They therefore mark where in the image-plane a mass profile perfectly `focuses` light rays such that if a source is 
 located there, it will appear very bright: potentially 10-100x as brighter than its intrinsic luminosity.
 
-The black line is a `tangential_critical_curve`, because it describes how the image of the source galaxy is stretched
-tangentially. There is also a `radial_critical_curve` which appears in white on figures, which describes how the 
+The outer white line is a `tangential_critical_curve`, because it describes how the image of the source galaxy is stretched
+tangentially. There is also an inner `radial_critical_curve` which appears in yellow on figures, which describes how the 
 image of the source galaxy is stretched radially. 
 
 However, a radial critical curve only appears when the lens galaxy's mass profile is shallower than isothermal (e.g. 
@@ -126,7 +126,8 @@ As discussed in the previous tutorial, critical curves mark regions of infinite 
 appears near a caustic in the source plane it will appear significantly brighter than its true luminosity. 
 
 We again have to use a mass profile with a slope below 2.0 to ensure a radial critical curve and therefore radial
-caustic is formed.
+caustic is formed. As above, the tangential critical curve is white and maps to the tangential caustic in the source-plane,
+which is also white. The radial critical curve is yellow and maps to the radial caustic, which is also yellow.
 
 We can plot both the tangential and radial critical curves and caustics using the `Visuals2D` object. The 
 critical curves are plotted only for the image-plane grid, whereas the caustic in the source plane.
