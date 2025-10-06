@@ -35,7 +35,7 @@ script `autolens_workspace/scripts/simulators/imaging/samples/advanced/mass_powe
 
 import autolens as al
 import autofit as af
-from os import path
+from pathlib import Path
 
 """
 __Dataset__
@@ -53,20 +53,20 @@ dataset_label = "samples"
 dataset_type = "imaging"
 dataset_sample_name = "mass_power_law"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_sample_name)
+dataset_path = Path("dataset", dataset_type, dataset_label, dataset_sample_name)
 
 total_datasets = 3
 
 dataset_list = []
 
 for dataset_index in range(total_datasets):
-    dataset_sample_path = path.join(dataset_path, f"dataset_{dataset_index}")
+    dataset_sample_path = Path(dataset_path, f"dataset_{dataset_index}")
 
     dataset_list.append(
         al.Imaging.from_fits(
-            data_path=path.join(dataset_sample_path, "data.fits"),
-            psf_path=path.join(dataset_sample_path, "psf.fits"),
-            noise_map_path=path.join(dataset_sample_path, "noise_map.fits"),
+            data_path=Path(dataset_sample_path, "data.fits"),
+            psf_path=Path(dataset_sample_path, "psf.fits"),
+            noise_map_path=Path(dataset_sample_path, "noise_map.fits"),
             pixel_scales=0.1,
         )
     )
@@ -103,7 +103,7 @@ __Paths__
 
 The path the results of all model-fits are output:
 """
-path_prefix = path.join("imaging", "hierarchical")
+path_prefix = Path("imaging") / "hierarchical"
 
 """
 __Analysis__
@@ -204,7 +204,7 @@ __Search__
 We can now create a non-linear search and used it to the fit the factor graph, using its `global_prior_model` property.
 """
 search = af.Nautilus(
-    path_prefix=path.join("imaging", "hierarchical"),
+    path_prefix=Path("imaging") / "hierarchical",
     name="tutorial_4_hierarchical_models",
     n_live=150,
 )

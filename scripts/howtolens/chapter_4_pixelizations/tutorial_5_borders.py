@@ -16,7 +16,7 @@ border.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -30,12 +30,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -56,9 +56,11 @@ mask_circular = al.Mask2D.circular(
 )
 dataset = dataset.apply_mask(mask=mask_circular)
 
-include = aplt.Include2D(border=True)
+border = mask_circular.derive_grid.border
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, include_2d=include)
+visuals = aplt.Visuals2D(border=border)
+
+dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.subplot_dataset()
 
 """
@@ -76,7 +78,12 @@ mask_annular = al.Mask2D.circular_annular(
 
 dataset = dataset.apply_mask(mask=mask_circular)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, include_2d=include)
+border = mask_annular.derive_grid.border
+
+visuals = aplt.Visuals2D(border=border)
+
+dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
+
 dataset_plotter.subplot_dataset()
 
 """
@@ -130,9 +137,11 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
-include = aplt.Include2D(mapper_source_plane_data_grid=True)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
@@ -146,7 +155,11 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
-inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+
+inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion, visuals_2d=visuals)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
 """
@@ -157,16 +170,20 @@ centre).
 
 Lets quickly check this by plotting the indexes of these image-pixels.
 """
-visuals = aplt.Visuals2D(indexes=[986, 987, 988, 989, 990, 991])
-include = aplt.Include2D(mapper_source_plane_data_grid=True)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    indexes=[986, 987, 988, 989, 990, 991],
+    grid=mapper_grids.source_plane_data_grid,
+)
 
 mapper_plotter = aplt.MapperPlotter(
     mapper=fit.inversion.linear_obj_list[0],
     visuals_2d=visuals,
-    include_2d=include,
 )
 
-mapper_plotter.subplot_image_and_mapper(image=fit.dataset.data)
+mapper_plotter.figure_2d()
 
 """
 So, why is this happening? What is the mass profile physically doing to create these source plane coordinates at 
@@ -213,7 +230,12 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
@@ -231,17 +253,23 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
-visuals = aplt.Visuals2D(indexes=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+    indexes=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
+)
 
 mapper_plotter = aplt.MapperPlotter(
     mapper=fit.inversion.linear_obj_list[0],
     visuals_2d=visuals,
-    include_2d=include,
 )
-mapper_plotter.subplot_image_and_mapper(image=fit.dataset.data)
+mapper_plotter.figure_2d()
 
 """
 This successfully addresses both of the issues above! However, you might be thinking, isn't that a bit of a hack? Its 
@@ -263,12 +291,12 @@ we'll use new strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "x2_lens_galaxies"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -284,9 +312,11 @@ mask_circular = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask_circular)
 
-include = aplt.Include2D(border=True)
+border = mask_circular.derive_grid.border
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, include_2d=include)
+visuals = aplt.Visuals2D(border=border)
+
+dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.subplot_dataset()
 
 """
@@ -345,9 +375,19 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=False),
 )
 
-include = aplt.Include2D(mapper_source_plane_data_grid=True, border=True)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
@@ -361,7 +401,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
@@ -374,14 +425,11 @@ be able to relocate all of the demanigified image pixels to the border edge.
 (The figures below look pretty horrible, because every ray-traced image coordinate is being plotted in the 
 source plane. Therefore, there are many black dots which overwhelm the figure. The point to focus on are the
 edges of the grid, where one can see the relocations of these coordinates.
-
-By setting `aplt.Include2D(mapper_source_plane_data_grid=False)` a cleaner figure without this swarm of points
-is provided).
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 mask_circular = al.Mask2D.circular(
@@ -396,7 +444,20 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 mask_circular = al.Mask2D.circular(
@@ -411,14 +472,27 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 mask_circular = al.Mask2D.circular(
@@ -433,14 +507,27 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -456,14 +543,27 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+border = mapper_grids.source_plane_data_grid.over_sampled[
+    dataset.grids.border_relocator.sub_border_slim
+]
+
+visuals = aplt.Visuals2D(
+    border=border,
+    grid=mapper_grids.source_plane_data_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 """
 __Wrap Up__
 
-When using **PyAutoLens** to perform inversions, you probably won't think about borders all that often. Borders should 
-pretty much take care of themselves.
+To perform inversions, you probably won't think about borders all that often. Borders should  pretty much take care of 
+themselves.
 
 However, as I showed above, if you don't choose a large enough mask things can go wrong and its important you know what 
 borders are, so you can diagnose this potential source of systematics!

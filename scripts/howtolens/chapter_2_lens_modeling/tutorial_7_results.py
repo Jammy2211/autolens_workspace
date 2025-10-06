@@ -12,7 +12,7 @@ fit each model-fit. In this tutorial, we'll take a look at the result object in 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -23,12 +23,12 @@ __Initial Setup__
 Lets use the model-fit performed in tutorial 1 to get a `Result` object.
 """
 dataset_name = "simple__no_lens_light__mass_sis"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -46,7 +46,7 @@ model = af.Collection(
 )
 
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_1_non_linear_search",
     unique_tag=dataset_name,
     n_live=80,

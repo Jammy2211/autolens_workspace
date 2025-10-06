@@ -34,7 +34,7 @@ linear light profiles, therefore you must read the following notebooks before th
 
 import matplotlib.pyplot as plt
 import numpy as np
-from os import path
+from pathlib import Path
 
 import autolens as al
 import autolens.plot as aplt
@@ -47,12 +47,12 @@ In order to perform a likelihood evaluation, we first load a dataset.
 This example fits a simulated strong lens which is simulated using a 0.1 arcsecond-per-pixel resolution (this is lower
 resolution than the best quality Hubble Space Telescope imaging and close to that of the Euclid space satellite).
 """
-dataset_path = path.join("dataset", "imaging", "simple")
+dataset_path = Path("dataset", "imaging", "simple")
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 
@@ -322,12 +322,14 @@ mapper = al.Mapper(
     regularization=None,
 )
 
-include = aplt.Include2D(mapper_source_plane_data_grid=False)
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d(interpolate_to_uniform=False)
 
-include = aplt.Include2D(mapper_source_plane_data_grid=True)
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.figure_2d(interpolate_to_uniform=False)
 
 """
@@ -371,12 +373,11 @@ This array can be used to visualize how an input list of image-pixel indexes map
 It also shows that image-pixel indexing begins from the top-left and goes rightwards and downwards, accounting for 
 all image-pixels which are not masked.
 """
-include = aplt.Include2D(mapper_source_plane_data_grid=False)
-
 visuals = aplt.Visuals2D(indexes=[list(range(2050, 2090))])
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 mapper_plotter.subplot_image_and_mapper(
     image=lens_subtracted_image_2d, interpolate_to_uniform=False
@@ -388,9 +389,15 @@ The reverse mappings of source-pixels to image-pixels can also be used.
 If we choose the right source-pixel index, we can see that multiple imaging occur whereby image-pixels in different
 regions of the image-plane are grouped into the same source-pixel.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[200]])
+pix_indexes = [[200]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
+
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(

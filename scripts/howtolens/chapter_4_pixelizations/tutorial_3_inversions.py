@@ -17,7 +17,7 @@ of this tutorial, where the process of reconstructing the source's light on the 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -31,12 +31,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -91,10 +91,12 @@ mapper = al.Mapper(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-include = aplt.Include2D(mask=True, mapper_source_plane_data_grid=True)
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.source_plane_data_grid,
+)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, include_2d=include)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
+mapper_plotter.figure_2d()
 
 """
 __Pixelization__
@@ -118,9 +120,7 @@ Both of these can be plotted using an `InversionPlotter`.
 It is possible for an inversion to have multiple `Mapper`'s, therefore for certain figures we specify the index 
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
-include = aplt.Include2D(mask=True)
-
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, include_2d=include)
+inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
@@ -132,12 +132,12 @@ with complex morphologies.
 Lets use an inversion to reconstruct a complex source!
 """
 dataset_name = "source_complex"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -180,13 +180,12 @@ mapper = al.Mapper(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-
 inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 
 """
 Now lets plot the complex source reconstruction.
 """
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, include_2d=include)
+inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.figures_2d(reconstructed_image=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
@@ -201,10 +200,15 @@ simply need to be able to use an inversion to model a strong lens.
 
 To begin, lets consider some random mappings between our mapper`s source-pixels and the image.
 """
-visuals = aplt.Visuals2D(pix_indexes=[[445], [285], [313], [132], [11]])
+pix_indexes = [[445], [285], [313], [132], [11]]
+
+indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
+
+visuals = aplt.Visuals2D(indexes=indexes)
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
@@ -254,9 +258,7 @@ We see some pretty good looking residuals, we must be fitting the lensed source 
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 

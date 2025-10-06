@@ -28,22 +28,19 @@ profile is passed to a `Collection` object.
 __Preloading__
 
 When certain components of a model are fixed its associated quantities do not change during a model-fit. For
-example, for a lens model where all light profiles are fixed, the PSF blurred model-image of those light profiles
-is also fixed.
+pixelized sources, this can offer huge speed up, as large matrices which perform expensive computations do not change
+and can therefore be preloaded in memory.
 
-**PyAutoLens** uses _implicit preloading_ to inspect the model and determine what quantities are fixed. It then stores
-these in memory before the non-linear search begins such that they are not recomputed for every likelihood evaluation.
-
-This offers huge speed ups for model-fits using an inversion (e.g. pixelized source reconstructions) because large
-chunks of the linear algebra calculation can typically be preloaded beforehand.
+Preloading is performed explictly in the scripts and you will therefore see it show up in examples which use pixelized
+sources.
 
 __This Example__
 
 This script gives an overview of the API for search chaining, a description of how the priors on parameters are used
-to pass information between searches as well as tools for customizing prior passing. The examples in the
-`chaining/examples` show specific examples where for lens modeling search chaining can improve the model-fit.
+to pass information between searches as well as tools for customizing prior passing.
 
-More details on search chaining can be found in Chapter 3 of the HowToLens lectures.
+The examples in the `chaining/examples` show specific examples where for lens modeling search chaining can improve the
+model-fit.
 """
 
 # %matplotlib inline
@@ -52,7 +49,7 @@ More details on search chaining can be found in Chapter 3 of the HowToLens lectu
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -63,12 +60,12 @@ __Dataset + Masking__
 Load, plot and mask the `Imaging` data.
 """
 dataset_name = "mass_power_law"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -95,7 +92,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("imaging", "chaining", "start_here")
+path_prefix = Path("imaging") / "chaining" / "start_here"
 
 """
 __Model (Search 1)__
@@ -151,7 +148,7 @@ __Model Chaining__
 We use the results of search 1 to create the `Model` components that we fit in search 2.
 
 The term `model` below passes the lens and source models as model-components that are to be fitted
-for by the non-linear search. In other chaining examples, we'll see other ways to pass prior results.
+for by the non-linear search. 
 """
 model_2 = af.Collection(
     galaxies=af.Collection(
@@ -161,6 +158,38 @@ model_2 = af.Collection(
 
 """
 The `info` attribute shows the model, including how parameters and priors were passed from `result_1`.
+"""
+print(model_2.info)
+
+"""
+The priors on the model components are the same as their original priors in `model_1`, that is the priors loaded
+from the default configuration files. 
+
+This makes model and search chaining pointless, as the second fit will basically have the same initialization to
+sample parameter space as the first.
+
+We instead want the model to be passed in a way where the priors refelect the inferred high likelihood regions
+of the first in the first model. To do this we use the `model_centred` attribute of the result, which passes the
+model components with priors that are centered on the maximum likelihood parameter values of the first search.
+
+__Model Centred Chaining__
+
+We use the results of search 1 to create the `Model` components that we fit in search 2.
+
+The term `model_centred` below passes the lens and source models as model-components that are to be fitted
+for by the non-linear search. In other chaining examples, we'll see other ways to pass prior results.
+"""
+model_2 = af.Collection(
+    galaxies=af.Collection(
+        lens=result_1.model_centred.galaxies.lens,
+        source=result_1.model_centred.galaxies.source,
+    ),
+)
+
+"""
+The `info` attribute shows the model, including how parameters and priors were passed from `result_1`.
+
+This now contains `GaussianPrior`'s that are centered on the maximum likelihood parameter values of the first search.
 """
 print(model_2.info)
 
@@ -195,11 +224,11 @@ We will expand on this API in the following tutorials. The main thing to note is
 galaxies using prior passing, if their model does not change (which for the bulge, mass and source_bulge above, was not
 true). The API to pass a whole profile or galaxy is as follows:
  
- bulge = result_1.model.galaxies.lens.bulge
- lens = result_1.model.galaxies.lens
- source = result_1.model.galaxies.source
+ bulge = result_1.model_centred.galaxies.lens.bulge
+ lens = result_1.model_centred.galaxies.lens
+ source = result_1.model_centred.galaxies.source
  
-We can also pass priors using an `instance` instead of a `model`. When an `instance` is used, the maximum likelihood
+We can also pass priors using an `instance` instead of a `model_centred`. When an `instance` is used, the maximum likelihood
 parameter values are passed as fixed values that are therefore not fitted for nby the non-linear search (reducing its
 dimensionality). We will use this in the other examples  to fit the lens light, fix it to the best-fit model in a second
 search, and then go on to fit it as a model in the final search.
@@ -223,9 +252,9 @@ its behaviour. It is up to you whether you want read this, or go ahead to the ne
 
 Lets say I chain two parameters as follows:
 
- `mass.einstein_radius = result_1.model.galaxies.lens.mass.einstein_radius`
+ `mass.einstein_radius = result_1.model_centred.galaxies.lens.mass.einstein_radius`
 
-By invoking the `model` attribute, the prior is passed following 3 rules:
+By invoking the `model_centred` attribute, the prior is passed following 3 rules:
 
  1) The new parameter, in this case the einstein radius, uses a `GaussianPrior`.This is ideal, as the 1D pdf results 
  we compute at the end of a search are easily summarised as a Gaussian.
@@ -266,7 +295,7 @@ absolute errors on the centre.
 
 However, there are parameters where using an absolute value does not make sense. Intensity is a good example of this. 
 The intensity of an image depends on its units, S/N, galaxy brightness, etc. There is no single absolute value that 
-one can use to generically chain the intensity of any two proflies. Thus, it makes more sense to chain them using 
+one can use to generically chain the intensity of any two profiles. Thus, it makes more sense to chain them using 
 the relative value from a previous search.
 
 We can customize how priors are passed from the results of a search and non-linear search by editing the
@@ -279,7 +308,7 @@ elliptical Sersic profile, and we estimate that its sersic index is equal to 4.0
 
 To pass this as a prior to search 2 we write:
 
- lens.bulge.sersic_index = result_1.model.lens.bulge.sersic_index
+ lens.bulge.sersic_index = result_1.model_centred.lens.bulge.sersic_index
 
 The prior on the lens galaxy's bulge sersic index in search 2 would thus be a `GaussianPrior` with mean=4.0. 
 

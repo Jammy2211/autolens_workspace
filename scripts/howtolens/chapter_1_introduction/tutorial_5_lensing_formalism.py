@@ -1,5 +1,5 @@
 """
-Tutorial 7: Lensing Formalism
+Tutorial 5: Lensing Formalism
 =============================
 
 This tutorial is not wrriten yet, but will explain what all the different lens quantities are and give a more

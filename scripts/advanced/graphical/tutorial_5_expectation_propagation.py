@@ -40,7 +40,7 @@ script `autolens_workspace/scripts/simulators/imaging/samples/simple__no_lens_li
 
 import autolens as al
 import autofit as af
-from os import path
+from pathlib import Path
 
 """
 __Dataset__
@@ -54,20 +54,20 @@ dataset_label = "samples"
 dataset_type = "imaging"
 dataset_sample_name = "simple__no_lens_light__mass_sis"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_sample_name)
+dataset_path = Path("dataset", dataset_type, dataset_label, dataset_sample_name)
 
 total_datasets = 3
 
 dataset_list = []
 
 for dataset_index in range(total_datasets):
-    dataset_sample_path = path.join(dataset_path, f"dataset_{dataset_index}")
+    dataset_sample_path = Path(dataset_path, f"dataset_{dataset_index}")
 
     dataset_list.append(
         al.Imaging.from_fits(
-            data_path=path.join(dataset_sample_path, "data.fits"),
-            psf_path=path.join(dataset_sample_path, "psf.fits"),
-            noise_map_path=path.join(dataset_sample_path, "noise_map.fits"),
+            data_path=Path(dataset_sample_path, "data.fits"),
+            psf_path=Path(dataset_sample_path, "psf.fits"),
+            noise_map_path=Path(dataset_sample_path, "noise_map.fits"),
             pixel_scales=0.1,
         )
     )
@@ -98,7 +98,7 @@ for dataset in dataset_list:
 """
 __Paths__
 """
-path_prefix = path.join("imaging", "hierarchical")
+path_prefix = Path("imaging") / "hierarchical"
 
 """
 __Model__
@@ -173,7 +173,7 @@ For complex graphs consisting of many  nodes, one could easily use different sea
 graph.
 """
 search = af.Nautilus(
-    path_prefix=path.join("imaging", "hierarchical"),
+    path_prefix=Path("imaging") / "hierarchical",
     name="tutorial_5_expectation_propagation",
     n_live=150,
 )
@@ -186,7 +186,7 @@ for model, analysis in zip(model_list, analysis_list):
     dataset_index += 1
 
     analysis_factor = af.AnalysisFactor(
-        prior_model=model, analysis=analysis, optimiser=Nautilus, name=dataset_name
+        prior_model=model, analysis=analysis, optimiser=search, name=dataset_name
     )
 
     analysis_factor_list.append(analysis_factor)
@@ -243,7 +243,7 @@ stored in.
 laplace = af.LaplaceOptimiser()
 
 paths = af.DirectoryPaths(
-    name=path.join(path_prefix, "tutorial_5_expectation_propagation_2")
+    name=Path(path_prefix, "tutorial_5_expectation_propagation_2")
 )
 
 factor_graph_result = factor_graph.optimise(

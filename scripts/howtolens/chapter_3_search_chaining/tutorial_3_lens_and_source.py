@@ -48,7 +48,7 @@ you fit the lens and source simultaneously!
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -65,12 +65,12 @@ we'll use strong lensing data, where:
 This image was fitted throughout chapter 2.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -79,7 +79,7 @@ __Paths__
 
 All three searches will use the same `path_prefix`, so we write it here to avoid repetition.
 """
-path_prefix = path.join("howtolens", "chapter_3", "tutorial_3_lens_and_source")
+path_prefix = Path("howtolens") / "chapter_3" / "tutorial_3_lens_and_source"
 
 """
 __Masking (Search 1)__
@@ -143,7 +143,6 @@ search_1 = af.Nautilus(
     name="search[1]_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
-    number_of_cores=4,
 )
 
 """
@@ -183,9 +182,9 @@ Search 2 we are only fitting the source's light, thus we can apply an annular ma
 image that contained only the lens's light.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -248,7 +247,6 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
 )
 
 """
@@ -286,9 +284,9 @@ __Masking (Search 3)__
 Search 3 we fit the lens and source, therefore we will use a large circular mask.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -337,7 +335,6 @@ search_3 = af.Nautilus(
     name="search[3]_light[bulge]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=150,
-    number_of_cores=4,
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)

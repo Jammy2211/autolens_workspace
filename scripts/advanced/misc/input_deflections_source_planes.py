@@ -16,7 +16,7 @@ for example:
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -28,12 +28,12 @@ to your own dataset and deflection maps.
 Load and plot this dataset.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
     pixel_scales=0.1,
 )
 
@@ -48,11 +48,11 @@ image-plane  `Grid2D` and deflection angles we use in this example (which are id
 Load the input deflection angle map from a .fits files (which is created in the code mentioned above).
 """
 deflections_y = al.Array2D.from_fits(
-    file_path=path.join("dataset", "misc", "deflections_y.fits"),
+    file_path=Path("dataset") / "misc" / "deflections_y.fits",
     pixel_scales=dataset.pixel_scales,
 )
 deflections_x = al.Array2D.from_fits(
-    file_path=path.join("dataset", "misc", "deflections_x.fits"),
+    file_path=Path("dataset") / "misc" / "deflections_x.fits",
     pixel_scales=dataset.pixel_scales,
 )
 
@@ -66,7 +66,7 @@ aplt.Array2DPlotter(array=deflections_x)
 Lets next load and plot the image-plane grid.
 """
 grid = al.Grid2D.from_fits(
-    file_path=path.join("dataset", "misc", "grid.fits"),
+    file_path=Path("dataset") / "misc" / "grid.fits",
     pixel_scales=dataset.pixel_scales,
 )
 grid_plotter = aplt.Grid2DPlotter(grid=grid)
@@ -185,11 +185,14 @@ mapper = al.Mapper(
     regularization=None,
 )
 
-visuals = aplt.Visuals2D(pix_indexes=[[312], [314], [350], [370]])
-include = aplt.Include2D(grid=True)
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_data_grid,
+    source_plane_mesh_indexes=[[312], [314], [350], [370]],
+)
 
 mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper, visuals_2d=visuals, include_2d=include
+    mapper=mapper,
+    visuals_2d=visuals,
 )
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)

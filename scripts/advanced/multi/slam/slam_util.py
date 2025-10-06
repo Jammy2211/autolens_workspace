@@ -1,6 +1,6 @@
 import copy
 import numpy as np
-from os import path
+from pathlib import Path
 from typing import List, Union
 
 import autofit as af
@@ -44,13 +44,13 @@ def output_result_to_fits(
     if model_lens_light:
         lens_subtracted_image_2d = fit.model_images_of_planes_list[0]
         lens_subtracted_image_2d.output_to_fits(
-            file_path=path.join(output_path, "lens_light.fits"), overwrite=True
+            file_path=Path(output_path, "lens_light.fits"), overwrite=True
         )
 
     if model_source_light:
         source_subtracted_image_2d = fit.model_images_of_planes_list[-1]
         source_subtracted_image_2d.output_to_fits(
-            file_path=path.join(output_path, "source_light.fits"), overwrite=True
+            file_path=Path(output_path, "source_light.fits"), overwrite=True
         )
 
     if source_reconstruction:
@@ -65,7 +65,7 @@ def output_result_to_fits(
         )
 
         interpolated_reconstruction.output_to_fits(
-            file_path=path.join(output_path, "source_reconstruction.fits"),
+            file_path=Path(output_path, "source_reconstruction.fits"),
             overwrite=True,
         )
 
@@ -82,7 +82,7 @@ def output_result_to_fits(
         )
 
         interpolated_reconstruction_noise_map.output_to_fits(
-            file_path=path.join(output_path, "source_reconstruction_noise_map.fits"),
+            file_path=Path(output_path, "source_reconstruction_noise_map.fits"),
             overwrite=True,
         )
 
@@ -113,7 +113,7 @@ def output_model_results(
         samples=result.samples,
     )
 
-    with open_(path.join(output_path, filename), "w") as f:
+    with open_(Path(output_path, filename), "w") as f:
         f.write(result_info)
         f.close()
 
@@ -159,9 +159,6 @@ def plot_fit_png_row(
 
     plotter = aplt.FitImagingPlotter(
         fit=fit,
-        include_2d=aplt.Include2D(
-            light_profile_centres=False, mass_profile_centres=False
-        ),
     )
 
     plotter_main.mat_plot_2d.axis = aplt.Axis(extent=image_plane_extent)
@@ -205,10 +202,10 @@ def plot_fit_png_row(
 
     tracer_plotter = plotter.tracer_plotter
     tracer_plotter.mat_plot_2d.cmap = aplt.Cmap(vmin=0.0, vmax=vmax_lens_light)
-    tracer_plotter.include_2d._light_profile_centres = False
-    tracer_plotter.include_2d._mass_profile_centres = False
-    tracer_plotter.include_2d._tangential_critical_curves = False
-    tracer_plotter.include_2d._radial_critical_curves = False
+    #    tracer_plotter.include_2d._light_profile_centres = False
+    #    tracer_plotter.include_2d._mass_profile_centres = False
+    #    tracer_plotter.include_2d._tangential_critical_curves = False
+    #    tracer_plotter.include_2d._radial_critical_curves = False
 
     try:
         tracer_plotter.figures_2d_of_planes(
@@ -224,10 +221,10 @@ def plot_fit_png_row(
     tracer_plotter.set_title(label=f"{tag} Convergence")
     tracer_plotter.figures_2d(convergence=True)
 
-    tracer_plotter.include_2d._light_profile_centres = True
-    tracer_plotter.include_2d._mass_profile_centres = True
-    tracer_plotter.include_2d._tangential_critical_curves = True
-    tracer_plotter.include_2d._radial_critical_curves = True
+    #    tracer_plotter.include_2d._light_profile_centres = True
+    #    tracer_plotter.include_2d._mass_profile_centres = True
+    #    tracer_plotter.include_2d._tangential_critical_curves = True
+    #    tracer_plotter.include_2d._radial_critical_curves = True
 
     plotter.mat_plot_2d.use_log10 = False
 
@@ -360,9 +357,6 @@ def plot_source_png_row(
     """
     plotter = aplt.FitImagingPlotter(
         fit=fit,
-        include_2d=aplt.Include2D(
-            light_profile_centres=False, mass_profile_centres=False
-        ),
     )
 
     plotter.mat_plot_2d = plotter_main.mat_plot_2d

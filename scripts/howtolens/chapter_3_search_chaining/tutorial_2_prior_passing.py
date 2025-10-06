@@ -18,7 +18,7 @@ way, which is the topic of this tutorial.
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -35,12 +35,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
 All the usual steps for setting up a model fit (masking, analysis, etc.) are included below.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -93,11 +93,10 @@ We also create the same search as the previous tutorial, using the same name to 
 run it.
 """
 search_1 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_3"),
+    path_prefix=Path("howtolens", "chapter_3"),
     name="tutorial_1_search_chaining_1",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -204,11 +203,10 @@ Lets setup and run the search. I have given it a different name to the previous 
 that were passed.
 """
 search_2 = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_3"),
+    path_prefix=Path("howtolens", "chapter_3"),
     name="tutorial_2_search_chaining_2",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=1,
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)

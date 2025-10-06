@@ -8,7 +8,7 @@ Jupyter notebook and on your computer screen.
 
 # %matplotlib inline
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -48,15 +48,15 @@ directory `autolens_workspace/dataset/imaging/simple__no_lens_light`.
 There are many example simulated images of strong lenses in this directory that will be used throughout the 
 **HowToLens** lectures.
 """
-dataset_path = path.join("dataset", "imaging", "simple__no_lens_light")
+dataset_path = Path("dataset") / "imaging" / "simple__no_lens_light"
 
 """
 We now load this dataset from .fits files and create an instance of an `imaging` object.
 """
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -145,31 +145,30 @@ dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
 dataset_plotter.subplot_dataset()
 
 """
-Again, you can customize the default appearance of subplots by editing the config files above, but now editing the
-corresponding entries under the subplot: headers.
+__Visuals__
 
-We can also customize what is included in a plot. for example whether the origin of the coordinate system appears on 
-the image:
+Visuals can be added to any figure, using standard quantities.
+
+For example, we can plot a mask on the image above using a `Visuals2D` object.
+
+The `visuals` example illustrates every `Visuals` object, for example `MaskScatter`, `LightProfileCentreScatter`, etc.
 """
-include = aplt.Include2D(origin=True)
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, mat_plot_2d=mat_plot, include_2d=include
+mask = al.Mask2D.circular_annular(
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    inner_radius=0.3,
+    outer_radius=3.0,
 )
-dataset_plotter.figures_2d(data=True)
 
-include = aplt.Include2D(origin=False)
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, mat_plot_2d=mat_plot, include_2d=include
-)
-dataset_plotter.figures_2d(data=True)
+visuals = aplt.Visuals2D(mask=mask)
+
+array_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
+array_plotter.figures_2d(image=True)
 
 """
 __Wrap Up__
 
-Throughout the **HowToLens** lectures you'll see lots more objects that can be included on figures and subplots.
-
-Just like the matplotlib setup, you can customize what does and does not appear on figures by default using the 
-config file `autolens_workspace/config/visualize/include.yaml`
+Throughout lectures you'll see lots more visuals that are ploted on figures and subplots.
 
 Great! Hopefully, visualization in **PyAutoLens** is displaying nicely for us to get on with the **HowToLens** 
 lecture series.

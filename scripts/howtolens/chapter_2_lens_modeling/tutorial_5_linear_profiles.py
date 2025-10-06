@@ -31,7 +31,7 @@ structures (e.g. asymmetries, twists) with just N=6-8 non-linear parameters.
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -46,12 +46,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Exponential`.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -125,11 +125,10 @@ This is possible because the linear light profiles make the parameter space much
 reliable model with fewer live points. This means the overall run-time of the search will be faster.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_5_linear_light_profile",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -150,19 +149,7 @@ by the reduction in `n_live` to 100.
 Fits using standard light profiles and linear light profiles therefore take roughly the same time to run. However,
 the simpler parameter space of linear light profiles means that the model-fit is more reliable, less susceptible to
 converging to an incorrect solution and scales better if even more light profiles are included in the model.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 print(
@@ -414,11 +401,10 @@ print(model.info)
 We now fit the model.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_5_basis",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
 )
 
 print(

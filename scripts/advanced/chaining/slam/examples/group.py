@@ -69,7 +69,7 @@ If any code in this script is unclear, refer to the `chaining/start_here.ipynb` 
 import numpy as np
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -89,7 +89,7 @@ __Dataset__
 Load, plot and mask the `Imaging` data.
 """
 dataset_name = "A_Obvious_COSJ095953+023319"
-dataset_path = path.join(
+dataset_path = Path(
     "/mnt",
     "ral",
     "c4072114",
@@ -103,9 +103,9 @@ dataset_path = path.join(
 )  # , "F444W"
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.06,
 )
 
@@ -113,10 +113,10 @@ dataset = al.Imaging.from_fits(
 __Extra Galaxies Centres and positions__
 """
 inner_extra_galaxies_centres = al.Grid2DIrregular(
-    al.from_json(file_path=path.join(dataset_path, "inner_extra_galaxies_centres.json"))
+    al.from_json(file_path=Path(dataset_path, "inner_extra_galaxies_centres.json"))
 )
 outer_extra_galaxies_centres = al.Grid2DIrregular(
-    al.from_json(file_path=path.join(dataset_path, "outer_extra_galaxies_centres.json"))
+    al.from_json(file_path=Path(dataset_path, "outer_extra_galaxies_centres.json"))
 )
 extra_galaxies_centres = np.vstack(
     (inner_extra_galaxies_centres, outer_extra_galaxies_centres)
@@ -124,7 +124,7 @@ extra_galaxies_centres = np.vstack(
 
 positions = al.Grid2DIrregular(
     al.from_json(
-        file_path=path.join(dataset_path, "..", "positions.json")
+        file_path=Path(dataset_path, "..", "positions.json")
     )  #'..' in between for A_obvious
 )
 
@@ -176,10 +176,9 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=path.join("imaging", "slam"),
+    path_prefix=Path("imaging") / "slam",
     unique_tag="A_Obvious_COSJ095953+023319_scal_rel",
     info=None,
-    number_of_cores=28,
     session=None,
 )
 

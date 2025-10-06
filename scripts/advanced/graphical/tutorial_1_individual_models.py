@@ -61,7 +61,7 @@ in tutorials 1 and 2 could therefore be used for many science cases!
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -78,20 +78,20 @@ dataset_label = "samples"
 dataset_type = "imaging"
 dataset_sample_name = "simple__no_lens_light__mass_sis"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_sample_name)
+dataset_path = Path("dataset", dataset_type, dataset_label, dataset_sample_name)
 
 total_datasets = 3
 
 dataset_list = []
 
 for dataset_index in range(total_datasets):
-    dataset_sample_path = path.join(dataset_path, f"dataset_{dataset_index}")
+    dataset_sample_path = Path(dataset_path, f"dataset_{dataset_index}")
 
     dataset_list.append(
         al.Imaging.from_fits(
-            data_path=path.join(dataset_sample_path, "data.fits"),
-            psf_path=path.join(dataset_sample_path, "psf.fits"),
-            noise_map_path=path.join(dataset_sample_path, "noise_map.fits"),
+            data_path=Path(dataset_sample_path, "data.fits"),
+            psf_path=Path(dataset_sample_path, "psf.fits"),
+            noise_map_path=Path(dataset_sample_path, "noise_map.fits"),
             pixel_scales=0.1,
         )
     )
@@ -128,7 +128,7 @@ __Paths__
 
 The path the results of all model-fits are output:
 """
-path_prefix = path.join("imaging", "hierarchical", "tutorial_1_individual_models")
+path_prefix = Path("imaging") / "hierarchical" / "tutorial_1_individual_models"
 
 """
 __Model__
@@ -163,7 +163,7 @@ result_list = []
 
 for dataset_index, masked_dataset in enumerate(masked_imaging_list):
     dataset_name_with_index = f"dataset_{dataset_index}"
-    path_prefix_with_index = path.join(path_prefix, dataset_name_with_index)
+    path_prefix_with_index = Path(path_prefix, dataset_name_with_index)
 
     search = af.Nautilus(
         path_prefix=path_prefix,

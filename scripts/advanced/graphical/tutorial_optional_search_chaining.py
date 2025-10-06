@@ -25,7 +25,7 @@ script `autolens_workspace/scripts/simulators/imaging/samples/simple__no_lens_li
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import json
-from os import path
+from pathlib import Path
 import os
 import autofit as af
 import autolens as al
@@ -43,20 +43,20 @@ dataset_label = "samples"
 dataset_type = "imaging"
 dataset_sample_name = "simple__no_lens_light"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_sample_name)
+dataset_path = Path("dataset", dataset_type, dataset_label, dataset_sample_name)
 
 total_datasets = 3
 
 dataset_list = []
 
 for dataset_index in range(total_datasets):
-    dataset_sample_path = path.join(dataset_path, f"dataset_{dataset_index}")
+    dataset_sample_path = Path(dataset_path, f"dataset_{dataset_index}")
 
     dataset_list.append(
         al.Imaging.from_fits(
-            data_path=path.join(dataset_sample_path, "data.fits"),
-            psf_path=path.join(dataset_sample_path, "psf.fits"),
-            noise_map_path=path.join(dataset_sample_path, "noise_map.fits"),
+            data_path=Path(dataset_sample_path, "data.fits"),
+            psf_path=Path(dataset_sample_path, "psf.fits"),
+            noise_map_path=Path(dataset_sample_path, "noise_map.fits"),
             pixel_scales=0.1,
         )
     )
@@ -93,7 +93,7 @@ __Paths__
 
 The path the results of all model-fits are output:
 """
-path_prefix = path.join("imaging", "hierarchical", "tutorial_optional_search_chaining")
+path_prefix = Path("imaging") / "hierarchical" / "tutorial_optional_search_chaining"
 
 """
 __Model__
@@ -124,7 +124,7 @@ result_1_list = []
 
 for dataset_index, masked_dataset in enumerate(masked_imaging_list):
     dataset_name_with_index = f"dataset_{dataset_index}"
-    path_prefix_with_index = path.join(path_prefix, dataset_name_with_index)
+    path_prefix_with_index = Path(path_prefix, dataset_name_with_index)
 
     search_1 = af.Nautilus(
         path_prefix=path_prefix,
@@ -174,7 +174,7 @@ result_2_list = []
 
 for dataset_index, masked_dataset in enumerate(masked_imaging_list):
     dataset_name_with_index = f"dataset_{dataset_index}"
-    path_prefix_with_index = path.join(path_prefix, dataset_name_with_index)
+    path_prefix_with_index = Path(path_prefix, dataset_name_with_index)
 
     search_2 = af.Nautilus(
         path_prefix=path_prefix,
@@ -196,14 +196,14 @@ The model can also be output to a .`json` file and loaded in another Python scri
 This is not necessary for combining search chaining and graphical models, but can help make scripts shorter if the
 search chaining takes up a lot of lines of Python.
 """
-model_path = path.join("imaging", "hierarchical", "models", "initial")
+model_path = Path("imaging") / "hierarchical" / "models" / "initial"
 
 for dataset_index, model in enumerate(model_2_list):
-    model_dataset_path = path.join(model_path, f"dataset_{dataset_index}")
+    model_dataset_path = Path(model_path, f"dataset_{dataset_index}")
 
     os.makedirs(model_dataset_path, exist_ok=True)
 
-    model_file = path.join(model_dataset_path, "model.json")
+    model_file = Path(model_dataset_path, "model.json")
 
     with open(model_file, "w") as f:
         json.dump(model.dict(), f, indent=4)
@@ -214,12 +214,12 @@ __Model Loading__
 
 We can load the model above as follows.
 """
-model_path = path.join("imaging", "hierarchical", "models", "initial")
+model_path = Path("imaging") / "hierarchical" / "models" / "initial"
 
 model_list = []
 
 for dataset_index in range(total_datasets):
-    model_file = path.join(model_path, f"dataset_{dataset_index}", "model.json")
+    model_file = model_path / f"dataset_{dataset_index}" / "model.json"
 
     model = af.Collection.from_json(file=model_file)
 

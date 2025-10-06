@@ -93,7 +93,7 @@ of real source galaxies.
 
 import numpy as np
 import os
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -104,12 +104,12 @@ __Dataset + Masking__
 Load, plot and mask the `Imaging` data.
 """
 dataset_name = "dark_matter_subhalo"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -149,7 +149,7 @@ base_model = af.Collection(
 )
 
 search_base = af.Nautilus(
-    path_prefix=path.join("imaging", "advanced", "subhalo", "sensitivity"),
+    path_prefix=Path("imaging", "advanced", "subhalo", "sensitivity"),
     name="sensitivity_mapping_base",
     unique_tag=dataset_name,
     n_live=100,
@@ -523,7 +523,7 @@ class SimulateImaging:
 
         al.output_to_json(
             obj=tracer,
-            file_path=os.path.join(simulate_path, "tracer.json"),
+            file_path=os.Path(simulate_path, "tracer.json"),
         )
 
 
@@ -726,7 +726,7 @@ are [(-1.5, -1.5), (-1.5, 1.5), (1.5, -1.5), (1.5, 1.5)].
 if set above 1.
 """
 paths = af.DirectoryPaths(
-    path_prefix=path.join("features"),
+    path_prefix=Path("features"),
     name="sensitivity_mapping",
 )
 

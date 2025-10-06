@@ -62,7 +62,7 @@ If any code in this script is unclear, refer to the `chaining/start_here.ipynb` 
 import numpy as np
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -79,19 +79,17 @@ dataset_waveband_list = ["g", "r"]
 pixel_scale_list = [0.12, 0.08]
 
 dataset_name = "lens_sersic"
-dataset_main_path = path.join("dataset", "multi", "imaging", dataset_name)
-dataset_path = path.join(dataset_main_path, dataset_name)
+dataset_main_path = Path("dataset", "multi", "imaging", dataset_name)
+dataset_path = Path(dataset_main_path, dataset_name)
 
 
 dataset_list = []
 
 for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list):
     dataset = al.Imaging.from_fits(
-        data_path=path.join(dataset_main_path, f"{dataset_waveband}_data.fits"),
-        noise_map_path=path.join(
-            dataset_main_path, f"{dataset_waveband}_noise_map.fits"
-        ),
-        psf_path=path.join(dataset_main_path, f"{dataset_waveband}_psf.fits"),
+        data_path=Path(dataset_main_path, f"{dataset_waveband}_data.fits"),
+        noise_map_path=Path(dataset_main_path, f"{dataset_waveband}_noise_map.fits"),
+        psf_path=Path(dataset_main_path, f"{dataset_waveband}_psf.fits"),
         pixel_scales=pixel_scale,
     )
 
@@ -122,10 +120,9 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=path.join("slam", "multi", "simultaneous"),
+    path_prefix=Path("slam", "multi", "simultaneous"),
     unique_tag=dataset_name,
     info=None,
-    number_of_cores=4,
     session=None,
 )
 

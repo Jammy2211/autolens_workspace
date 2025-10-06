@@ -19,7 +19,7 @@ parameters. If there are 4 components, or multiple galaxies, we are quickly ente
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -34,12 +34,12 @@ we'll use new strong lensing data, where:
  - The source galaxy's light is four linear `Sersic`.
 """
 dataset_name = "source_complex"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -59,7 +59,7 @@ __Paths__
 
 All four searches will use the same `path_prefix`, so we write it here to avoid repetition.
 """
-path_prefix = path.join("howtolens", "chapter_3", "tutorial_4_complex_source")
+path_prefix = Path("howtolens") / "chapter_3" / "tutorial_4_complex_source"
 
 """
 __Search Chaining Approach__
@@ -111,7 +111,6 @@ search_1 = af.Nautilus(
     name="search[1]__mass[sie]__source_x1[bulge]",
     unique_tag=dataset_name,
     n_live=120,
-    number_of_cores=1,
 )
 
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
@@ -146,7 +145,6 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source_x2[bulge]",
     unique_tag=dataset_name,
     n_live=120,
-    number_of_cores=1,
 )
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
@@ -182,7 +180,6 @@ search_3 = af.Nautilus(
     name="search[3]_mass[sie]_source_x3[bulge]",
     unique_tag=dataset_name,
     n_live=140,
-    number_of_cores=1,
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)
@@ -219,7 +216,6 @@ search_4 = af.Nautilus(
     name="search[4]_mass[sie]_source_x4[bulge]",
     unique_tag=dataset_name,
     n_live=160,
-    number_of_cores=1,
 )
 
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)

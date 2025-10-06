@@ -21,7 +21,7 @@ what we cover in this tutorial.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -35,12 +35,12 @@ We'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -114,9 +114,7 @@ fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -154,7 +152,7 @@ correct_fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=correct_fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=correct_fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -191,12 +189,12 @@ To do this, all we have to do is give the lens galaxy a light profile and use th
 too:.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -211,7 +209,7 @@ dataset_plotter = aplt.ImagingPlotter(
 )
 dataset_plotter.subplot_dataset()
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_of_planes(plane_index=1)
 
 """
@@ -256,9 +254,7 @@ inversion. When we plot the image, a new panel on the sub-plot appears showing t
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 
@@ -283,9 +279,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-include = aplt.Include2D(mask=True)
-
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 fit_plotter.subplot_of_planes(plane_index=1)
 

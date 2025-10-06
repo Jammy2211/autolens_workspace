@@ -32,7 +32,7 @@ You should also be familiar with the database, by reading the example `imaging/a
 
 import json
 import os
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -52,7 +52,7 @@ This ensures we don't double up on results if we run the script multiple times, 
 output folder (e.g. download from a super computer) they are added to the database.
 """
 try:
-    os.remove(path.join("output", f"{database_name}.sqlite"))
+    os.remove(Path("output", f"{database_name}.sqlite"))
 except FileNotFoundError:
     pass
 
@@ -66,7 +66,7 @@ agg = af.Aggregator.from_database(
 """
 Add all results in the directory "output" to the database, which we manipulate below via the aggregator.
 """
-agg.add_directory(directory=path.join("output", database_name))
+agg.add_directory(directory=Path("output", database_name))
 
 """
 __Agg No / With Subhalo__

@@ -52,7 +52,7 @@ If any code in this script is unclear, refer to the `modeling/start_here.ipynb` 
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -85,13 +85,13 @@ dataset_type = "multi"
 dataset_label = "imaging"
 dataset_name = "dataset_offsets"
 
-dataset_path = path.join("dataset", dataset_type, dataset_label, dataset_name)
+dataset_path = Path("dataset") / dataset_type / dataset_label / dataset_name
 
 dataset_list = [
     al.Imaging.from_fits(
-        data_path=path.join(dataset_path, f"{color}_data.fits"),
-        psf_path=path.join(dataset_path, f"{color}_psf.fits"),
-        noise_map_path=path.join(dataset_path, f"{color}_noise_map.fits"),
+        data_path=Path(dataset_path) / f"{color}_data.fits",
+        psf_path=Path(dataset_path) / f"{color}_psf.fits",
+        noise_map_path=Path(dataset_path) / f"{color}_noise_map.fits",
         pixel_scales=pixel_scales,
     )
     for color, pixel_scales in zip(color_list, pixel_scales_list)
@@ -163,11 +163,10 @@ model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 __Search__
 """
 search = af.Nautilus(
-    path_prefix=path.join("multi", "modeling"),
+    path_prefix=Path("multi", "modeling"),
     name="one_by_one__main_dataset",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
 )
 
 """
@@ -224,7 +223,7 @@ familiar with this feature, checkout the `imaging/advanced/chaining` package.
 # print(model.info)
 #
 # search = af.Nautilus(
-#     path_prefix=path.join("multi", "modeling"),
+#     path_prefix=Path("multi", "modeling"),
 #     name="one_by_one__second_mass_model_fixed",
 #     unique_tag=dataset_name,
 #     n_live=100,
@@ -267,11 +266,10 @@ model = af.Collection(
 print(model.info)
 
 search = af.Nautilus(
-    path_prefix=path.join("multi", "modeling"),
+    path_prefix=Path("multi", "modeling"),
     name="one_by_one__dataset_offset",
     unique_tag=dataset_name,
     n_live=100,
-    number_of_cores=4,
 )
 
 result = search.fit(model=model, analysis=analysis_list[0])

@@ -58,7 +58,7 @@ which settings give the fastest run times for your dataset.
 
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -76,12 +76,12 @@ real_space_mask = al.Mask2D.circular(
 )
 
 dataset_name = "dark_matter_subhalo"
-dataset_path = path.join("dataset", "interferometer", dataset_name)
+dataset_path = Path("dataset") / "interferometer" / dataset_name
 
 dataset = al.Interferometer.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    uv_wavelengths_path=path.join(dataset_path, "uv_wavelengths.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    uv_wavelengths_path=Path(dataset_path, "uv_wavelengths.fits"),
     real_space_mask=real_space_mask,
     transformer_class=al.TransformerDFT,
 )
@@ -125,10 +125,9 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=path.join("interferometer", "slam"),
+    path_prefix=Path("interferometer", "slam"),
     unique_tag=dataset_name,
     info=None,
-    number_of_cores=1,
     session=None,
 )
 

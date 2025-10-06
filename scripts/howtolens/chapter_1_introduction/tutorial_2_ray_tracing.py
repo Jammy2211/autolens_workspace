@@ -155,10 +155,10 @@ We can use a `MassProfilePlotter` to visualize the deflection angles, which disp
 On this plot, you’ll see yellow and white lines called **critical curves**. These curves are important in lensing 
 and will be explained in detail in the next tutorial.
 """
-mass_profile_plottter = aplt.MassProfilePlotter(
+mass_profile_plotter = aplt.MassProfilePlotter(
     mass_profile=sis_mass_profile, grid=image_plane_grid
 )
-mass_profile_plottter.figures_2d(deflections_y=True, deflections_x=True)
+mass_profile_plotter.figures_2d(deflections_y=True, deflections_x=True)
 
 """
 Mass profiles also have additional properties used in lensing calculations:
@@ -176,22 +176,22 @@ magnification_2d = sis_mass_profile.magnification_2d_from(grid=image_plane_grid)
 """
 The same plotter API can be used to visualize these properties:
 """
-mass_profile_plottter.figures_2d(convergence=True, potential=True, magnification=True)
+mass_profile_plotter.figures_2d(convergence=True, potential=True, magnification=True)
 
 """
 One-dimensional plots are also available, showing how these quantities change radially from the center of the mass profile:
 """
-mass_profile_plottter.figures_1d(convergence=True, potential=True)
+mass_profile_plotter.figures_1d(convergence=True, potential=True)
 
 """
 The **convergence** and **potential** can be better understood when plotted in logarithmic space:
 """
-mass_profile_plottter = aplt.MassProfilePlotter(
+mass_profile_plotter = aplt.MassProfilePlotter(
     mass_profile=sis_mass_profile,
     grid=image_plane_grid,
     mat_plot_2d=aplt.MatPlot2D(use_log10=True),
 )
-mass_profile_plottter.figures_2d(convergence=True, potential=True)
+mass_profile_plotter.figures_2d(convergence=True, potential=True)
 
 """
 While the **convergence** and **potential** are fundamental to lensing, their detailed physical meaning is not 
@@ -485,11 +485,17 @@ print(traced_grid_list[1].native[0, 0])
 """
 These planes and grids can be visualized using the `TracerPlotter`:
 """
-include = aplt.Include2D(grid=True)
+visuals = aplt.Visuals2D(grid=image_plane_grid)
+
 tracer_plotter = aplt.TracerPlotter(
-    tracer=tracer, grid=image_plane_grid, include_2d=include
+    tracer=tracer, grid=image_plane_grid, visuals_2d=visuals
 )
 tracer_plotter.figures_2d_of_planes(plane_image=True, plane_grid=True, plane_index=0)
+
+visuals = aplt.Visuals2D(grid=source_plane_grid)
+tracer_plotter = aplt.TracerPlotter(
+    tracer=tracer, grid=image_plane_grid, visuals_2d=visuals
+)
 tracer_plotter.figures_2d_of_planes(plane_image=True, plane_grid=True, plane_index=1)
 
 """
@@ -545,7 +551,7 @@ several other specific indexes.
 
 """
 visuals = aplt.Visuals2D(
-    indexes=[
+    image_plane_data_indexes=[
         range(0, 50),
         range(500, 550),
         [1350, 1450, 1550, 1650, 1750, 1850, 1950, 2050, 2150, 2250],

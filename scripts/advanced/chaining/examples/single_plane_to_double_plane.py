@@ -41,7 +41,7 @@ accurate initialization of the lens galaxy mass and first source galaxy's from t
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -52,11 +52,9 @@ __Dataset__
 Load and plot the `Imaging` of the point-source dataset, purely for visualization of the strong lens.
 """
 dataset_name = "double_einstein_cross"
-dataset_path = path.join("dataset", "point_source", dataset_name)
+dataset_path = Path("dataset") / "point_source" / dataset_name
 
-data = al.Array2D.from_fits(
-    file_path=path.join(dataset_path, "data.fits"), pixel_scales=0.05
-)
+data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.05)
 
 """
 __Dataset__
@@ -64,7 +62,7 @@ __Dataset__
 Load and plot the `PointDataset` dataset, which is the dataset used to perform lens modeling.
 """
 dataset_0 = al.from_json(
-    file_path=path.join(dataset_path, "point_dataset_0.json"),
+    file_path=Path(dataset_path, "point_dataset_0.json"),
 )
 
 print("Point Dataset Info:")
@@ -79,7 +77,7 @@ array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
 array_plotter.figure_2d()
 
 dataset_1 = al.from_json(
-    file_path=path.join(dataset_path, "point_dataset_1.json"),
+    file_path=Path(dataset_path, "point_dataset_1.json"),
 )
 
 print("Point Dataset Info:")
@@ -98,7 +96,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("point_source", "chaining", "single_plane_to_double_plane")
+path_prefix = Path("point_source") / "chaining" / "single_plane_to_double_plane"
 
 """
 __PointSolver__

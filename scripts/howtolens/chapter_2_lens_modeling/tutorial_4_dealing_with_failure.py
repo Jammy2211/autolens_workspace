@@ -26,7 +26,7 @@ global maxima solution is in indeed the global maxima.
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 import autofit as af
@@ -41,12 +41,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Exponential`.
 """
 dataset_name = "lens_sersic"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -200,11 +200,10 @@ We can now create this custom search and run it. Our non-linear search will now 
 regions of parameter space, given our improved and more informed priors.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_4_custom_priors",
     unique_tag=dataset_name,
     n_live=150,
-    number_of_cores=1,
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -215,19 +214,7 @@ __Run Time__
 The run time of the `log_likelihood_function` is around the usual value. 
 
 Due to prior tuning, the model-fit should take less than 10000 iterations per free parameter to converge.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 print(
@@ -319,11 +306,10 @@ print(model.info)
 We now create this search and run it.
 """
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_4_reducing_complexity",
     unique_tag=dataset_name,
     n_live=200,
-    number_of_cores=1,
 )
 
 """
@@ -333,19 +319,7 @@ The run time of the `log_likelihood_function` is around the usual value.
 
 Due to the simplest model parameterization, the model-fit should take less than 10000 iterations per free parameter to 
 converge.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 print(
@@ -420,11 +394,10 @@ source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.ExponentialCore)
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 search = af.Nautilus(
-    path_prefix=path.join("howtolens", "chapter_2"),
+    path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_4_look_harder",
     unique_tag=dataset_name,
     n_live=300,
-    number_of_cores=1,
 )
 """
 __Run Time__
@@ -433,19 +406,7 @@ The run time of the `log_likelihood_function` is around the usual value.
 
 Due to the more thorough Nautilus settings, the the model-fit should take more than 10000 iterations per free parameter 
 to converge and thus take longer than we are used too.
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-"""
 Run the non-linear search.
 """
 print(

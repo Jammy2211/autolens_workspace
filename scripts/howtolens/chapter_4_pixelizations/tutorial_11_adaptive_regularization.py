@@ -17,7 +17,7 @@ model that we've begun calling the `adapt-image`.
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-from os import path
+from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
@@ -31,12 +31,12 @@ we'll use the same strong lensing data as the previous tutorial, where:
  - The source galaxy's light is an `Sersic`.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -86,11 +86,16 @@ source_magnification = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 fit = fit_via_source_galaxy_from(dataset=dataset, source_galaxy=source_magnification)
 
-include = aplt.Include2D(
-    mask=True, mapper_image_plane_mesh_grid=True, mapper_source_plane_mesh_grid=True
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_mesh_grid,
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.subplot_fit()
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
@@ -162,7 +167,7 @@ However, as shown below, we don't fit the source as well as the morphology based
 This is because although the adaptive regularization scheme improves the fit, the magnification based 
 mesh simply does not have sufficient resolution to resolve the source's cuspy central light.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
 
 """
@@ -237,7 +242,16 @@ fit = fit_via_source_galaxy_from(
     adapt_images=adapt_images,
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, include_2d=include)
+mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
+mapper_grids = mapper.mapper_grids
+
+visuals = aplt.Visuals2D(
+    grid=mapper_grids.image_plane_mesh_grid,
+    mesh_grid=mapper_grids.source_plane_mesh_grid,
+)
+
+fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
+
 fit_plotter.subplot_fit()
 
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)

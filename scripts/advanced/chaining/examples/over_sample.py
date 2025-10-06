@@ -36,7 +36,7 @@ If any code in this script is unclear, refer to the `chaining/start_here.ipynb` 
 import numpy as np
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -51,12 +51,12 @@ Load, plot and mask the `Imaging` data.
 The data is simulated using a Sersic without a core, unlike most datasets fitted throughout the workspace.
 """
 dataset_name = "simple__no_lens_light"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.1,
 )
 
@@ -83,7 +83,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = path.join("imaging", "chaining")
+path_prefix = Path("imaging") / "chaining"
 
 """
 __Redshifts__

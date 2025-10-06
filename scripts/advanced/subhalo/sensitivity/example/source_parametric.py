@@ -41,7 +41,7 @@ If any code in this script is unclear, refer to the `subhalo/detect/start_here.i
 
 import os
 import sys
-from os import path
+from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
@@ -55,12 +55,12 @@ __Dataset + Masking__
 Load, plot and mask the `Imaging` data.
 """
 dataset_name = "dark_matter_subhalo"
-dataset_path = path.join("dataset", "imaging", dataset_name)
+dataset_path = Path("dataset") / "imaging" / dataset_name
 
 dataset = al.Imaging.from_fits(
-    data_path=path.join(dataset_path, "data.fits"),
-    noise_map_path=path.join(dataset_path, "noise_map.fits"),
-    psf_path=path.join(dataset_path, "psf.fits"),
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
     pixel_scales=0.05,
 )
 
@@ -88,10 +88,9 @@ __Settings AutoFit__
 The settings of autofit, which controls the output paths, parallelization, database use, etc.
 """
 settings_search = af.SettingsSearch(
-    path_prefix=path.join("imaging", "slam"),
+    path_prefix=Path("imaging") / "slam",
     unique_tag=dataset_name,
     info=None,
-    number_of_cores=2,
     session=None,
 )
 
