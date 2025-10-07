@@ -236,14 +236,14 @@ search, and then go on to fit it as a model in the final search.
 
 Lets now think about how priors are passed. Checkout the `model.info` file of the second search of this tutorial. The 
 parameters do not use the default priors we saw in search 1 (which are typically broad UniformPriors). Instead, 
-they use GaussianPrior`s where:
+they use TruncatedGaussianPrior`s where:
 
  - The mean values are the median PDF results of every parameter in search 1.
  - The sigma values are specified in the `width_modifier` field of the profile's entry in the `priors.yaml' config 
    file (we will discuss why this is used in a moment).
 
-Like the manual `GaussianPrior`'s that were used in tutorial 1, the prior passing API sets up the prior on each 
-parameter with a `GaussianPrior` centred on the high likelihood regions of parameter space!
+Like the manual `TruncatedGaussianPrior`'s that were used in tutorial 1, the prior passing API sets up the prior on each 
+parameter with a `TruncatedGaussianPrior` centred on the high likelihood regions of parameter space!
 
 __Detailed Explanation Of Prior Passing__
 
@@ -256,10 +256,10 @@ Lets say I chain two parameters as follows:
 
 By invoking the `model_centred` attribute, the prior is passed following 3 rules:
 
- 1) The new parameter, in this case the einstein radius, uses a `GaussianPrior`.This is ideal, as the 1D pdf results 
+ 1) The new parameter, in this case the einstein radius, uses a `TruncatedGaussianPrior`.This is ideal, as the 1D pdf results 
  we compute at the end of a search are easily summarised as a Gaussian.
 
- 2) The mean of the `GaussianPrior` is the median PDF value of the parameter estimated in search 1.
+ 2) The mean of the `TruncatedGaussianPrior` is the median PDF value of the parameter estimated in search 1.
 
  This ensures that the initial sampling of the new search's non-linear starts by searching the region of non-linear 
  parameter space that correspond to highest log likelihood solutions in the previous search. Our priors therefore 
@@ -268,7 +268,7 @@ By invoking the `model_centred` attribute, the prior is passed following 3 rules
  3) The sigma of the Gaussian uses the value specified for the profile in the `config/priors/*.yaml` config file's 
  `width_modifer` field (check these files out now).
 
-The idea here is simple. We want a value of sigma that gives a `GaussianPrior` wide enough to search a broad 
+The idea here is simple. We want a value of sigma that gives a `TruncatedGaussianPrior` wide enough to search a broad 
 region of parameter space, so that the lens model can change if a better solution is nearby. However, we want it 
 to be narrow enough that we don't search too much of parameter space, as this will be slow or risk leading us 
 into an incorrect solution! 

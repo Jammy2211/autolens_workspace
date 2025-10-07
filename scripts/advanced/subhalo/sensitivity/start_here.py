@@ -607,7 +607,6 @@ class BaseFit:
         search = af.Nautilus(
             paths=paths,
             n_live=50,
-            number_of_cores=self.number_of_cores,
         )
 
         analysis = al.AnalysisImaging(dataset=dataset)
@@ -685,7 +684,6 @@ class PerturbFit:
         search = af.Nautilus(
             paths=paths,
             n_live=50,
-            number_of_cores=self.number_of_cores,
         )
 
         analysis = al.AnalysisImaging(dataset=dataset)

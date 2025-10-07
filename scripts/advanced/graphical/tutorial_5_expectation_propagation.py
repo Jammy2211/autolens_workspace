@@ -129,7 +129,9 @@ model_list = []
 for model_index in range(total_datasets):
     lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.PowerLawSph)
     lens.mass.centre = (0.0, 0.0)
-    lens.mass.einstein_radius = af.GaussianPrior(mean=1.8, sigma=0.3, lower_limit=0.0)
+    lens.mass.einstein_radius = af.TruncatedGaussianPrior(
+        mean=1.8, sigma=0.3, lower_limit=0.0
+    )
 
     # This slope is shared across all lens galaxies
     lens.mass.slope = slope_shared_prior
@@ -141,7 +143,7 @@ for model_index in range(total_datasets):
 
     source.bulge.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
     source.bulge.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-    source.bulge.effective_radius = af.GaussianPrior(
+    source.bulge.effective_radius = af.TruncatedGaussianPrior(
         mean=1.0, sigma=1.0, lower_limit=0.01, upper_limit=3.0
     )
 

@@ -226,20 +226,7 @@ __Run Time__
 The likelihood evaluation time of the position threshold is below 0.001 seconds, meaning that the initial parameter 
 space sampling is extremely efficient leading to a significant speed up of the model-fit (not accounted for in
 the run-time estimate below).
-"""
-run_time_dict, info_dict = analysis.profile_log_likelihood_function(
-    instance=model.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 10000)
-    / search.number_of_cores,
-)
-
-
-"""
 __Search__
 
 Run the non-linear search.

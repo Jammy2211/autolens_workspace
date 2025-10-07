@@ -167,8 +167,12 @@ model we are ultimately fitting for.
 
 hierarchical_factor = af.HierarchicalFactor(
     af.GaussianPrior,
-    mean=af.GaussianPrior(mean=2.0, sigma=1.0, lower_limit=0.0, upper_limit=100.0),
-    sigma=af.GaussianPrior(mean=0.5, sigma=0.5, lower_limit=0.0, upper_limit=100.0),
+    mean=af.TruncatedGaussianPrior(
+        mean=2.0, sigma=1.0, lower_limit=0.0, upper_limit=100.0
+    ),
+    sigma=af.TruncatedGaussianPrior(
+        mean=0.5, sigma=0.5, lower_limit=0.0, upper_limit=100.0
+    ),
 )
 
 """

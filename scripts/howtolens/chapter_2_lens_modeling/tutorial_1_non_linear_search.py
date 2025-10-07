@@ -292,7 +292,7 @@ profiles of a real galaxy.
 
 For instance, consider the `centre` parameter of our `IsothermalSph` light profile. In theory, it could take on any value from 
 negative to positive infinity. However, imaging datasets are typically reduced such that the galaxy centre is close 
-to (0.0", 0.0"). Therefore, a `GaussianPrior` with `mean=0.0` and `sigma=0.1` is a good description of where the
+to (0.0", 0.0"). Therefore, a `TruncatedGaussianPrior` with `mean=0.0` and `sigma=0.1` is a good description of where the
 galaxy `centre` is. 
 
 If the galaxy had a different centre in the dataset, we would change the mean of the prior to reflect this.

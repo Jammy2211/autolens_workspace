@@ -130,22 +130,6 @@ will be generated, ensuring that the model-fit results are output into a separat
 We additionally want the unique identifier to be specific to the dataset fitted, so that if we fit different datasets
 with the same model and search results are output to a different folder. We achieve this below by passing 
 the `dataset_name` to the search's `unique_tag`.
-
-__Number Of Cores__
-
-We include an input `number_of_cores`, which when above 1 means that Nautilus uses parallel processing to sample multiple 
-lens models at once on your CPU. When `number_of_cores=2` the search will run roughly two times as
-fast, for `number_of_cores=3` three times as fast, and so on. The downside is more cores on your CPU will be in-use
-which may hurt the general performance of your computer.
-
-You should experiment to figure out the highest value which does not give a noticeable loss in performance of your 
-computer. If you know that your processor is a quad-core processor you should be able to use `number_of_cores=4`. 
-
-Above `number_of_cores=4` the speed-up from parallelization diminishes greatly. We therefore recommend you do not
-use a value above this.
-
-For users on a Windows Operating system, using `number_of_cores>1` may lead to an error, in which case it should be 
-reduced back to 1 to fix it.
 """
 search = af.Nautilus(
     path_prefix=Path("misc") / "modeling",

@@ -163,7 +163,7 @@ mask = al.Mask2D.circular_annular(
 visuals = aplt.Visuals2D(mask=mask)
 
 array_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-array_plotter.figures_2d(image=True)
+array_plotter.figures_2d(data=True)
 
 """
 __Wrap Up__

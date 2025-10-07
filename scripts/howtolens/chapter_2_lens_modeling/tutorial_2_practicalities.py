@@ -159,22 +159,6 @@ In practice, the optimal number of live points is often found through trial and 
 on how well the search is performing, which we’ll cover below. For this single Sersic model with a linear light 
 profile, 80 live points is sufficient to achieve reliable results.
 
-__Number Of Cores__
-
-We may include an input `number_of_cores`, which when above 1 means that Nautilus uses parallel processing to sample 
-multiple models at once on your CPU. When `number_of_cores=2` the search will run roughly two times as
-fast, for `number_of_cores=3` three times as fast, and so on. The downside is more cores on your CPU will be in-use
-which may hurt the general performance of your computer.
-
-You should experiment to figure out the highest value which does not give a noticeable loss in performance of your 
-computer. If you know that your processor is a quad-core processor you should be able to use `number_of_cores=4`. 
-
-Above `number_of_cores=4` the speed-up from parallelization diminishes greatly. We therefore recommend you do not
-use a value above this.
-
-For users on a Windows Operating system, using `number_of_cores>1` may lead to an error, in which case it should be 
-reduced back to 1 to fix it.
-
 __Parallel Script__
 
 Depending on the operating system (e.g. Linux, Mac, Windows), Python version, if you are running a Jupyter notebook 
@@ -211,7 +195,6 @@ search = af.Nautilus(
     unique_tag=dataset_name,
     n_live=100,
     iterations_per_update=2500,
-    # number_of_cores=1, # Try uncommenting this line to run in parallel but see "Parallel Script" above.
 )
 
 """

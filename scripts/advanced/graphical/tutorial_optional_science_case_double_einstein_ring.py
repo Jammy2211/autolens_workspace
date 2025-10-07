@@ -124,7 +124,7 @@ advised that **PyAutoLens**'s advanced feature of non-linear search chaining is 
 scripts `imaging/chaining/double_einstein_ring.py`  and `imaging/pipelines/double_einstein_ring.py` describe how to 
 do this.
 """
-shared_cosmology_parameter = af.GaussianPrior(
+shared_cosmology_parameter = af.TruncatedGaussianPrior(
     mean=0.3, sigma=0.3, lower_limit=0.0, upper_limit=1.0
 )
 

@@ -101,26 +101,6 @@ search_1 = af.Nautilus(
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
 
-"""
-__Run Time__
-
-It is good practise to always check the `log_likelihood_function` run time before starting the non-linear search.  
-It will be similar to the value we saw in the previous chapter.
-"""
-run_time_dict, info_dict = analysis_1.profile_log_likelihood_function(
-    instance=model_1.random_instance()
-)
-
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_1.total_free_parameters * 10000)
-    / search_1.number_of_cores,
-)
-
-"""
-Run the search.
-"""
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 
 """
@@ -147,13 +127,13 @@ and its `sersic_index` fixed to 4.0. The API for passing priors is shown below a
 
  2) We do not pass the `centre` or `sersic_index` using `model`, because it would be fixed to the values that it was in 
  the first search. By omitting the centre, it uses the default priors on a lens galaxy, whereas we manually tell the 
- Sersic index to use a `GaussianPrior` centred on 4.0. 
+ Sersic index to use a `TruncatedGaussianPrior` centred on 4.0. 
 """
 bulge = af.Model(al.lp_linear.Sersic)
 
 bulge.ell_comps = result_1.model.galaxies.lens.bulge.ell_comps
 bulge.effective_radius = result_1.model.galaxies.lens.bulge.effective_radius
-bulge.sersic_index = af.GaussianPrior(
+bulge.sersic_index = af.TruncatedGaussianPrior(
     mean=4.0, sigma=2.0, lower_limit=0.0, upper_limit=5.0
 )
 
@@ -211,29 +191,6 @@ search_2 = af.Nautilus(
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
 
-"""
-__Run Time__
-
-Whilst the run-time of the log likelihood function is pretty much unchanged from the first search, the overall run-time
-of the search should decrease.
-
-This is because via prior passing we have informed the search of where to look in parameter space, meaning it 
-should spend far fewer than ~10000 iterations per free parameter.
-"""
-run_time_dict, info_dict = analysis_2.profile_log_likelihood_function(
-    instance=model_2.random_instance()
-)
-
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_2.total_free_parameters * 10000)
-    / search_2.number_of_cores,
-)
-
-"""
-Run the search.
-"""
 print(
     "The non-linear search has begun running - checkout the workspace/output/5_chaining_searches"
     " folder for live output of the results, images and lens model."

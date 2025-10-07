@@ -151,23 +151,6 @@ search_1 = af.Nautilus(
 analysis_1 = al.AnalysisImaging(dataset=dataset)
 
 """
-__Run Time__
-
-It is good practise to always check the `log_likelihood_function` run time before starting the non-linear search.  
-It will be similar to the value we saw in the previous chapter.
-"""
-run_time_dict, info_dict = analysis_1.profile_log_likelihood_function(
-    instance=model_1.random_instance()
-)
-
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_1.total_free_parameters * 10000)
-    / search_1.number_of_cores,
-)
-
-"""
 Lets run the search, noting that our liberal approach to reducing the lens model complexity has reduced it to just 
 11 parameters.
 """
@@ -216,19 +199,19 @@ values for now, I've chosen values that I know will ensure reasonable sampling, 
 
 __LENS LIGHT PRIORS:__
 """
-bulge.centre.centre_0 = af.GaussianPrior(
+bulge.centre.centre_0 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
 )
-bulge.centre.centre_1 = af.GaussianPrior(
+bulge.centre.centre_1 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
 )
-bulge.ell_comps.ell_comps_0 = af.GaussianPrior(
+bulge.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.05, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
-bulge.ell_comps.ell_comps_1 = af.GaussianPrior(
+bulge.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
 )
-bulge.effective_radius = af.GaussianPrior(
+bulge.effective_radius = af.TruncatedGaussianPrior(
     mean=0.72, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
 )
 bulge.sersic_index = af.GaussianPrior(
@@ -313,19 +296,9 @@ of the search should decrease.
 
 This is because via prior passing we have informed the search of where to look in parameter space, meaning it 
 should spend far fewer than ~10000 iterations per free parameter.
-"""
-run_time_dict, info_dict = analysis_2.profile_log_likelihood_function(
-    instance=model_2.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_2.total_free_parameters * 10000)
-    / search_2.number_of_cores,
-)
+__Model Fit__
 
-"""
 Run the search.
 """
 print(

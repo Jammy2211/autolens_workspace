@@ -100,7 +100,7 @@ bulge = af.Model(al.lp.Sersic)
 mass = af.Model(al.mp.Isothermal)
 
 """
-By default, the prior on the $(y,x)$ coordinates of a `LightProfile` / `MassProfile` is a GaussianPrior with 
+By default, the prior on the $(y,x)$ coordinates of a `LightProfile` / `MassProfile` is a TruncatedGaussianPrior with 
 `mean=0.0` and `sigma=0.3`. However, visual inspection of our strong lens image tells us that its centre (based on the
 lens galaxy's luminous emission) is at x = 0.0" and y = 0.0", so lets reduce the `sigma` value on this prior so the
 non-linear search looks over a very narrow range of `centre` values in parameter space.
@@ -121,10 +121,10 @@ for this data is clearly 45.0 degrees counter-clockwise from the x-axis. We can 
 components to reflect this. The `lower_limit` and `upper_limit` on a `GaussianPrior` ensure the solutions cannot go
 outside the physically plausible range -1.0 -> 1.0.
 """
-bulge.ell_comps.ell_comps_0 = af.GaussianPrior(
+bulge.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.333333, sigma=0.1, lower_limit=-1.0, upper_limit=1.0
 )
-bulge.ell_comps.ell_comps_1 = af.GaussianPrior(
+bulge.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.1, lower_limit=-1.0, upper_limit=1.0
 )
 
@@ -133,10 +133,10 @@ Lets also assume that the ellipticity of the light profile can be used as a prio
 not be strictly true (e.g. because of dark matter) so we will use a wider prior, such that the non-linear search can 
 change the mass model's ellipticity from that of the light if fitting the data necessitates it.
 """
-mass.ell_comps.ell_comps_0 = af.GaussianPrior(
+mass.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.333333, sigma=0.3, lower_limit=-1.0, upper_limit=1.0
 )
-mass.ell_comps.ell_comps_1 = af.GaussianPrior(
+mass.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.3, lower_limit=-1.0, upper_limit=1.0
 )
 
@@ -148,7 +148,7 @@ observed in the Universe.
 
 However, inspection of this image shows the lens's light does not extend anywhere near 30.0", so lets reduce it.
 """
-bulge.effective_radius = af.GaussianPrior(
+bulge.effective_radius = af.TruncatedGaussianPrior(
     mean=1.0, sigma=0.8, lower_limit=0.0, upper_limit=np.inf
 )
 
@@ -161,7 +161,7 @@ where the lens is of any morphology.
 We often have knowledge of the lens's morphology before we fit it, so in this example we will assume our lens is
 a massive elliptical galaxy with a `sersic_index` near 4.
 """
-bulge.sersic_index = af.GaussianPrior(
+bulge.sersic_index = af.TruncatedGaussianPrior(
     mean=4.0, sigma=1.0, lower_limit=0.0, upper_limit=np.inf
 )
 
@@ -169,7 +169,7 @@ bulge.sersic_index = af.GaussianPrior(
 Finally, the `ring` that the lensed source forms clearly has a radius of about 1.6". This is its Einstein radius, so 
 lets change the prior from a UniformPrior between 0.0" and 4.0".
 """
-mass.einstein_radius = af.GaussianPrior(
+mass.einstein_radius = af.TruncatedGaussianPrior(
     mean=1.6, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
 )
 

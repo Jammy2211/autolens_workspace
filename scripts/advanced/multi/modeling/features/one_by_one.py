@@ -227,7 +227,6 @@ familiar with this feature, checkout the `imaging/advanced/chaining` package.
 #     name="one_by_one__second_mass_model_fixed",
 #     unique_tag=dataset_name,
 #     n_live=100,
-#     number_of_cores=4,
 # )
 #
 # result_mass_model_fixed = search.fit(model=model, analysis=analysis_list[0])

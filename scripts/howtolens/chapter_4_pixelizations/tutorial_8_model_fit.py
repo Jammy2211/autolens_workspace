@@ -177,19 +177,9 @@ the run-time of a a pixelization and can be changed to speed it up (at the expen
 This also serves to highlight why the positions threshold likelihood is so powerful. The likelihood evaluation time
 of this step is below 0.001 seconds, meaning that the initial parameter space sampling is extremely efficient even
 for a pixelization (this is not accounted for in the run-time estimate below)!
-"""
-run_time_dict, info_dict = analysis_2.profile_log_likelihood_function(
-    instance=model_2.random_instance()
-)
 
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_2.total_free_parameters * 10000)
-    / search_2.number_of_cores,
-)
+__Model Fit__
 
-"""
 Run the search.
 """
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)

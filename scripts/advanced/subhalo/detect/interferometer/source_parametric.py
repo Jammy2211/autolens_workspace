@@ -76,7 +76,6 @@
 #     path_prefix=Path("interferometer", "slam"),
 #     unique_tag=dataset_name,
 #     info=None,
-#     number_of_cores=1,
 #     session=None,
 # )
 #

@@ -146,20 +146,4 @@ result = search.fit(model=model, analysis=analysis)
 """
 __Wrap Up__
 
-In this example, we manually coded in the line `number_of_cores=16`.
-
-We could make this a command line input of the `python3` command in the batch script. For example, if the last line
-of the batch script read:
-
-    python3 /cosma/home/dp004/cosma_username/autolens_workspace/cosma/runners/example.py 1 16
-
-We could pass the `number_of_cores` using the command:
-
-    number_of_cores=int(sys.argv[2])
-
-
-It should also be noted that one cannot combine a `.conf` submission script with multi-CPU Nautilus parallelization.
-
-Which this should, in principle, be possible, the Python multi-processing library does not seem to happy about it when
-we do this. So, just don't bother!
 """

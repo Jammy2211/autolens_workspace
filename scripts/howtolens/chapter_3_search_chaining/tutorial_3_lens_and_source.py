@@ -145,27 +145,6 @@ search_1 = af.Nautilus(
     n_live=75,
 )
 
-"""
-__Run Time__
-
-It is good practise to always check the `log_likelihood_function` run time before starting the non-linear search.  
-It will be similar to the value we saw in the previous chapter.
-"""
-run_time_dict, info_dict = analysis_1.profile_log_likelihood_function(
-    instance=model_1.random_instance()
-)
-
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_1.total_free_parameters * 10000)
-    / search_1.number_of_cores,
-)
-
-"""
-Run the search.
-"""
-
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 
 """
@@ -249,26 +228,6 @@ search_2 = af.Nautilus(
     n_live=100,
 )
 
-"""
-__Run Time__
-
-The run-time of the fit should be noticeably faster than the previous search, but because the smaller mask means the
-likelihood function is evaluated faster and because prior passing ensures the search samples parameter space faster.
-"""
-run_time_dict, info_dict = analysis_2.profile_log_likelihood_function(
-    instance=model_2.random_instance()
-)
-
-print(f"Log Likelihood Evaluation Time (second) = {run_time_dict['fit_time']}")
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model_2.total_free_parameters * 10000)
-    / search_2.number_of_cores,
-)
-
-"""
-Run the search.
-"""
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
 
 """
