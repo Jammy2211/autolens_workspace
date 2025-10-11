@@ -74,9 +74,9 @@ which is named `blurring` in the grids.py module above.
 
 __LH Step 2: Galaxy Light Convolution__
 
-Convlution uses the `Convolver` object and its method `convolve_image`
+Convlution uses the `Kern2l2D` object and its method `convolved_image_from`
 
- https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/operators/convolver.py
+https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/arrays/kernel_2d.py
 
 
 __LH Step 7: Image-Source Mapping__
@@ -97,9 +97,9 @@ __LH Step 8: Mapping Matrix__
 
 __LH Step 9: Blurred Mapping Matrix (f)__
 
-This uses the methods in `Convolver.__init__` and `Convolver.convolve_mapping_matrix`:
+This uses the methods in `Kernel2D.__init__` and `Kernel2D.convolved_mapping_matrix_from`:
 
-https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/operators/convolver.py
+https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/arrays/kernel_2d.py
 
 
 __LH Step 10: Data Vector (D)__

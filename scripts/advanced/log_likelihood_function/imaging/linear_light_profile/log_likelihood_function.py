@@ -202,7 +202,6 @@ which uses the image-plane grid and lens galaxy bulge.
 lp_linear_func_lens = al.LightProfileLinearObjFuncList(
     grid=masked_dataset.grids.lp,
     blurring_grid=masked_dataset.grids.blurring,
-    convolver=masked_dataset.convolver,
     light_profile_list=[tracer.galaxies[0].bulge],
     regularization=None,
 )
@@ -255,7 +254,7 @@ traced_blurring_grids_of_planes_list = tracer.traced_grid_2d_list_from(
 lp_linear_func_source = al.LightProfileLinearObjFuncList(
     grid=traced_grids_of_planes_list[-1],
     blurring_grid=traced_blurring_grids_of_planes_list[1],
-    convolver=masked_dataset.convolver,
+    psf=masked_dataset.psf,
     light_profile_list=[tracer.galaxies[1].bulge],
     regularization=None,
 )

@@ -179,9 +179,9 @@ galaxy_plotter.figures_2d(image=True)
 """
 __Lens Light Convolution + Subtraction__
 
-Convolve the 2D lens light images above with the PSF in real-space (as opposed to via an FFT) using a `Convolver`.
+Convolve the 2D lens light images above with the PSF in real-space (as opposed to via an FFT) using a `Kernel2D`.
 """
-convolved_image_2d = masked_dataset.convolver.convolve_image(
+convolved_image_2d = masked_dataset.psf.convolved_image_from(
     image=image, blurring_image=blurring_image_2d
 )
 
@@ -463,7 +463,7 @@ This operation does not change the dimensions of the mapping matrix, meaning the
 dimensions `(total_image_pixels, total_source_pixels)`. It turns the values of zeros and ones into 
 non-integer values which have been blurred by the PSF.
 """
-blurred_mapping_matrix = masked_dataset.convolver.convolve_mapping_matrix(
+blurred_mapping_matrix = masked_dataset.psf.convolved_mapping_matrix_from(
     mapping_matrix=mapping_matrix
 )
 

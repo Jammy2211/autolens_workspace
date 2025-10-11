@@ -78,7 +78,7 @@ dataset = al.DatasetQuantity(
 """
 __Mask__
 
-The model-fit requires a `Mask2D` defining the regions of the convergence we fit, which we define and apply to the 
+The model-fit requires a 2D mask defining the regions of the convergence we fit, which we define and apply to the 
 `DatasetQuantity` object.
 """
 mask = al.Mask2D.circular(

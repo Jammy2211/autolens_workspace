@@ -375,9 +375,9 @@ array_2d_plotter.figure_2d()
 __Convolution__
 
 Convolve the 2D image of the lens and source above with the PSF in real-space (as opposed to via an FFT) using 
-a `Convolver`.
+a `Kernal2D`.
 """
-convolved_image_2d = masked_dataset.convolver.convolve_image(
+convolved_image_2d = masked_dataset.psf.convolved_image_from(
     image=image, blurring_image=blurring_image_2d
 )
 

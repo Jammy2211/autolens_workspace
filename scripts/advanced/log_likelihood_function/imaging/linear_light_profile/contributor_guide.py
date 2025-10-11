@@ -99,9 +99,9 @@ This step is just a simple addition of the lens and source light images.
 
 __LH Step 5: Convolution__
 
-Convlution uses the `Convolver` object and its method `convolve_image`
+Convlution uses the `Kernel2D` object and its method `convolved_image_from`
 
- https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/operators/convolver.py
+https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/arrays/kernel_2d.py
 
 
 __LH Step 6: Likelihood Function__

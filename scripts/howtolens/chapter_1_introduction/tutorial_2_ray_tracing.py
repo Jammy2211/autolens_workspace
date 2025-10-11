@@ -333,7 +333,7 @@ which are then summed to produce the total deflection angle.
 We can also include both light and mass profiles in a single `Galaxy` object, which is crucial for representing the 
 foreground lens galaxy that we observe and whose mass causes the lensing effect.
 
-Below, we create two galaxies: a **lens galaxy** and a **source galaxy**, reflecting their roles in the lensing process.
+We create two galaxies: a **lens galaxy** and a **source galaxy**, reflecting their roles in the lensing process.
 
 The galaxies' redshifts are now more significant, as they determine the sequence of calculations in ray tracing. For 
 instance, the lens galaxy must be at a lower redshift than the source galaxy, as light rays are deflected in the 
@@ -551,7 +551,7 @@ several other specific indexes.
 
 """
 visuals = aplt.Visuals2D(
-    image_plane_data_indexes=[
+    indexes=[
         range(0, 50),
         range(500, 550),
         [1350, 1450, 1550, 1650, 1750, 1850, 1950, 2050, 2150, 2250],

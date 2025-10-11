@@ -76,7 +76,7 @@ describe the apparent size of objects in the sky.
 The `pixel_scales` parameter sets how many arc-seconds each pixel represents. For example, if `pixel_scales=0.1`, 
 then each pixel covers 0.1" of the sky.
 
-Below, we create a uniform 2D grid of 101 x 101 pixels with a pixel scale of 0.1", corresponding to an area 
+We create a uniform 2D grid of 101 x 101 pixels with a pixel scale of 0.1", corresponding to an area 
 of 10.1" x 10.1", spanning from -5.05" to 5.05" in both the y and x directions.
 """
 grid = al.Grid2D.uniform(
@@ -502,7 +502,7 @@ galaxy_plotter.figures_1d_decomposed(image=True)
 We can group multiple galaxies at the same redshift into a `Galaxies` object, which is created from a list of 
 individual galaxies.
 
-Below, we create an additional galaxy and combine it with the original galaxy into a `Galaxies` object. This could
+We create an additional galaxy and combine it with the original galaxy into a `Galaxies` object. This could
 represent two galaxies merging or interacting with each other, which is commonly seen in studies of galaxy evolution.
 """
 extra_galaxy = al.Galaxy(

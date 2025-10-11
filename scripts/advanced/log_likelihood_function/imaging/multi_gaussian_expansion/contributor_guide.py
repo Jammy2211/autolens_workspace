@@ -63,9 +63,9 @@ __LH Step 2: Mapping Matrix__
 
 __LH Step 3: Blurred Mapping Matrix (f)__
 
-This uses the methods in `Convolver.__init__` and `Convolver.convolve_mapping_matrix`:
+This uses the methods in `Kernel2D.__init__` and `Kernel2D.convolved_mapping_matrix_from`:
 
-https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/operators/convolver.py
+https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/arrays/kernel_2d.py
 
 
 __LH Step 4: Data Vector (D)__
