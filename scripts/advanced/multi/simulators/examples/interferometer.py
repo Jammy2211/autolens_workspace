@@ -5,7 +5,7 @@ Simulator: Mutli Interferometer
 This script simulates `Interferometer` data of a 'galaxy-scale' strong lens where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
- - The source galaxy's light is an `Sersic`.
+ - The source galaxy's light is a Sersic.
 
 This dataset is paired with the script `multi/simulators/lens_sersic.py` and therefore
 provides interferometer observations of the same strong lens.

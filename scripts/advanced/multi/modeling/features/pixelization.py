@@ -114,7 +114,7 @@ We compose a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
  
- - This pixelization is regularized using a `ConstantSplit` scheme which smooths every source pixel 
+ - This pixelization is regularized using a `Constant` scheme which smooths every source pixel 
  equally, where its `regularization_coefficient` varies across the datasets [2 parameter]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=9.
@@ -125,9 +125,9 @@ lens = af.Model(
 
 pixelization = af.Model(
     al.Pixelization,
-    image_mesh=al.image_mesh.Overlay,
-    mesh=al.mesh.Delaunay,
-    regularization=al.reg.ConstantSplit,
+    image_mesh=None,
+    mesh=al.mesh.Rectangular,
+    regularization=al.reg.Constant,
 )
 
 source = af.Model(al.Galaxy, redshift=1.0, pixelization=pixelization)

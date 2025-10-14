@@ -7,7 +7,7 @@ model where:
 
  - The lens galaxy's light is omitted (and is not present in the simulated data).
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
- - The source galaxy's light is a linear parametric `SersicCore`.
+ - The source galaxy's light is an MGE.
 
 This script demonstrates how PyAutoLens's multi-dataset modeling tools can also simultaneously analyse datasets
 observed at the same wavelength.
@@ -72,9 +72,13 @@ Define a 3.0" circular mask, which includes the emission of the lens and source 
 For multi-wavelength lens modeling, we use the same mask for every dataset whenever possible. This is not
 absolutely necessary, but provides a more reliable analysis.
 """
+mask_radius = 3.0
+
 mask_list = [
     al.Mask2D.circular(
-        shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+        shape_native=dataset.shape_native,
+        pixel_scales=dataset.pixel_scales,
+        radius=mask_radius,
     )
     for dataset in dataset_list
 ]
@@ -102,7 +106,7 @@ We compose a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
  
- - The source galaxy's light is a linear parametric `SersicCore` [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 """
@@ -115,7 +119,14 @@ lens = af.Model(al.Galaxy, redshift=0.5, mass=mass, shear=shear)
 
 # Source:
 
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 # Overall Lens Model:
 
@@ -131,7 +142,12 @@ analysis_factor_list = []
 
 for analysis in analysis_list:
 
-    bulge = af.Model(al.lp_linear.Sersic)
+    bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=1,
+        centre_prior_is_uniform=True,
+    )
     disk = af.Model(al.lp_linear.Exponential)
 
     galaxy = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, disk=disk)

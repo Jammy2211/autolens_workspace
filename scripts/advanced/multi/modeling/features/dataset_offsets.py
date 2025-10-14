@@ -40,9 +40,9 @@ __Model__
 
 This script fits an `Imaging` dataset of a 'galaxy-scale' strong lens with a model where:
 
- - The lens galaxy's light is a linear parametric linear `Sersic` bulge.
+ - The lens galaxy's light is a an MGE bulge.
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
- - The source galaxy's light is a linear parametric linear `Sersic`.
+ - The source galaxy's light is a an MGE.
 
 __Start Here Notebook__
 
@@ -118,9 +118,13 @@ dataset.
 For this dataset's offset of half a pixel (and anything of order a few pixels) this is fine and wont impact the analysis. 
 However, for larger offsets the mask may need to be adjusted to ensure the same image area is masked out.
 """
+mask_radius = 3.0
+
 mask_list = [
     al.Mask2D.circular(
-        shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+        shape_native=dataset.shape_native,
+        pixel_scales=dataset.pixel_scales,
+        radius=mask_radius,
     )
     for dataset in dataset_list
 ]
@@ -148,22 +152,37 @@ We compose a lens model where:
  - Parameters which shift the second dataset's image (y_offset_0, x_offset_0) relative to the first dataset's image
  are included via the `DatasetModel` object [2 parameters].
 
- - The lens galaxy's light is a linear parametric `Sersic` [6 parameters].
+ - The lens galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters].
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
 
- - The source galaxy's light is a linear parametric `SersicCore` [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=23.
 """
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
+)
+
 lens = af.Model(
     al.Galaxy,
     redshift=0.5,
-    bulge=al.lp_linear.Sersic,
+    bulge=bulge,
     mass=al.mp.Isothermal,
     shear=al.mp.ExternalShear,
 )
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 dataset_model = af.Model(al.DatasetModel)
 

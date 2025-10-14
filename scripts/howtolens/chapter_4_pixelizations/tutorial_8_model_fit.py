@@ -41,8 +41,12 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.05,
 )
 
+mask_radius = 3.6
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.6
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 
@@ -111,9 +115,9 @@ We use the results of search 1 to create the lens model fitted in search 2, wher
  
  - The source galaxy's pixelization uses an `Overlay` image-mesh [2 parameters]
 
- - The source-galaxy's pixelization uses a `Delaunay` mesh [0 parameters].
+ - The source-galaxy's pixelization uses a `Rectangular` mesh [0 parameters].
 
- - This pixelization is regularized using a `ConstantSplit` scheme [1 parameter]. 
+ - This pixelization is regularized using a `Constant` scheme [1 parameter]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=3.
 
@@ -136,8 +140,8 @@ model_2 = af.Collection(
             redshift=1.0,
             pixelization=af.Model(
                 al.Pixelization,
-                image_mesh=al.image_mesh.Overlay,
-                mesh=al.mesh.Delaunay,
+                image_mesh=None,
+                mesh=al.mesh.Rectangular,
                 regularization=al.reg.Constant,
             ),
         ),
@@ -194,9 +198,9 @@ We use the results of searches 1 and 2 to create the lens model fitted in search
  
  - The source galaxy's pixelization uses an `Overlay` image-mesh [parameters fixed to results of search 2].
 
- - The source-galaxy's pixelization uses a `Delaunay` mesh [parameters fixed to results of search 2].
+ - The source-galaxy's pixelization uses a `Rectangular` mesh [parameters fixed to results of search 2].
 
- - This pixelization is regularized using a `ConstantSplit` scheme [parameters fixed to results of search 2]. 
+ - This pixelization is regularized using a `Constant` scheme [parameters fixed to results of search 2]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=7.
 

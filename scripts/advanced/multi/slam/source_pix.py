@@ -11,10 +11,10 @@ def run_1(
     analysis_list: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     source_lp_result: af.Result,
     image_mesh_init: af.Model(al.AbstractImageMesh) = af.Model(al.image_mesh.Overlay),
-    mesh_init: af.Model(al.AbstractMesh) = af.Model(al.mesh.Delaunay),
+    mesh_init: af.Model(al.AbstractMesh) = af.Model(al.mesh.Rectangular),
     image_mesh_init_shape: Tuple[int, int] = (34, 34),
     regularization_init: af.Model(al.AbstractRegularization) = af.Model(
-        al.reg.ConstantSplit
+        al.reg.Constant
     ),
     extra_galaxies: Optional[af.Collection] = None,
     dataset_model: Optional[af.Model] = None,
@@ -122,7 +122,7 @@ def run_1(
                     redshift=source_lp_result[i].instance.galaxies.source.redshift,
                     pixelization=af.Model(
                         al.Pixelization,
-                        image_mesh=image_mesh_init,
+                        image_mesh=None_init,
                         mesh=mesh_init,
                         regularization=regularization_init,
                     ),
@@ -155,7 +155,7 @@ def run_2(
     source_lp_result: af.Result,
     source_pix_result_1: af.Result,
     image_mesh: af.Model(al.AbstractImageMesh) = af.Model(al.image_mesh.Hilbert),
-    mesh: af.Model(al.AbstractMesh) = af.Model(al.mesh.Delaunay),
+    mesh: af.Model(al.AbstractMesh) = af.Model(al.mesh.Rectangular),
     regularization: af.Model(al.AbstractRegularization) = af.Model(
         al.reg.AdaptiveBrightnessSplit
     ),

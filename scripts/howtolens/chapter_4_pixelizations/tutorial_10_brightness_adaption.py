@@ -55,7 +55,7 @@ mask = al.Mask2D.circular(
 dataset = dataset.apply_mask(mask=mask)
 
 """
-Next, we're going to fit the image using the Delaunay magnification based grid. 
+Next, we're going to fit the image using the Rectangular magnification based grid. 
 
 The code below does all the usual steps required to do this.
 """
@@ -70,8 +70,8 @@ lens_galaxy = al.Galaxy(
 )
 
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
-    mesh=al.mesh.Delaunay(),
+    image_mesh=None,
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -112,11 +112,11 @@ __Adaption__
 Now lets take a look at brightness based adaption in action. 
 
 Below, we define a source-galaxy using the `Hilbert` image-mesh (we discuss below how this adapts to the source light) 
-and `Delaunay` mesh and use this to fit the lens-data. 
+and `Rectangular` mesh and use this to fit the lens-data. 
 """
 pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
-    mesh=al.mesh.Delaunay(),
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=0.5),
 )
 
@@ -261,7 +261,7 @@ log_evidence.
 """
 pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
-    mesh=al.mesh.Delaunay(),
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -291,7 +291,7 @@ Lets look at once example:
 """
 pixelization = al.Pixelization(
     image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.5, weight_power=10.0),
-    mesh=al.mesh.Delaunay(),
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 

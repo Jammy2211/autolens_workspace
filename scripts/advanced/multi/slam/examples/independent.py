@@ -17,7 +17,7 @@ signal-to-noise. These datasets are fitted with the following approach:
   to capture changes in the lens light over wavelength, but it does not update the Gaussian parameters (e.g. `centre`,
  `elliptical_comps`, `sigma`) themselves due to the lower resolution of the data.
 
-- The source reconstruction (Delaunay adaptive mesh) is updated using linear algebra to reconstruct the source, but again fixes
+- The source reconstruction (Rectangular adaptive mesh) is updated using linear algebra to reconstruct the source, but again fixes
   the source pixelization parameters themselves.
 
 - Sub-pixel offsets between the datasets are fully modeled as free parameters, because the precision of a lens model
@@ -115,7 +115,7 @@ dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -242,7 +242,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 """
@@ -267,7 +267,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
@@ -440,8 +440,7 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
     The SOURCE LP PIPELINE (with lens light) uses three searches to initialize a robust model for the 
     source galaxy's light, which in this example:
 
-     - Uses a parametric `Sersic` bulge and `Exponential` disk with centres aligned for the lens
-     galaxy's light.
+     - Uses an MGE with 2 x 30 Gaussians for the lens galaxy's light.
 
      - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
 
@@ -524,7 +523,7 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
         settings_search=settings_search,
         analysis=analysis,
         source_lp_result=source_lp_result,
-        mesh_init=al.mesh.Delaunay,
+        mesh_init=al.mesh.Rectangular,
         dataset_model=dataset_model,
         fixed_mass_model=True,
     )
@@ -557,7 +556,7 @@ for dataset_waveband, pixel_scale in zip(dataset_waveband_list, pixel_scale_list
         source_lp_result=source_lp_result,
         source_pix_result_1=source_pix_result_1,
         image_mesh=al.image_mesh.Hilbert,
-        mesh=al.mesh.Delaunay,
+        mesh=al.mesh.Rectangular,
         regularization=al.reg.AdaptiveBrightnessSplit,
         dataset_model=dataset_model,
     )

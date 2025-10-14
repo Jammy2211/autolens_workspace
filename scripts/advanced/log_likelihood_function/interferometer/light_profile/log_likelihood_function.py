@@ -284,7 +284,7 @@ source_galaxy = al.Galaxy(
 """
 __Lens Light__
 
-Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the `Sersic` 
+Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the an MGE 
 bulge). 
 
 This computes the `lens_image_2d` of each `LightProfile` and adds them together. 

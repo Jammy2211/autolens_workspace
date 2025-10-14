@@ -5,7 +5,7 @@ Tutorial 9: Fit Problems
 To begin, make sure you have read the `introduction` file carefully, as a clear understanding of how the Bayesian
 evidence works is key to understanding this chapter!
 
-In the previous chapter we investigated two pixelization's: `Rectangular` and `Delaunay`. We argued that the
+In the previous chapter we investigated two pixelization's: `Rectangular` and `Rectangular`. We argued that the
 latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where we
 had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
 which improved computational efficiency and increased the Bayesian evidence.
@@ -33,7 +33,7 @@ maximize the log likelihood, it can do this by fitting *everything* accurately, 
 
 ----------------------------------------------
 
-When using a `ConstantSplit` regularization scheme, we regularize the source by adding up the difference in fluxes
+When using a `Constant` regularization scheme, we regularize the source by adding up the difference in fluxes
 between all source-pixels multiplied by one single value of the regularization coefficient. This means that every
 single source pixel receives the same `level` of regularization, regardless of whether it is reconstructing the
 bright central regions of the source or its faint exterior regions.
@@ -149,14 +149,14 @@ dataset_source_super_compact = simulate_for_source_galaxy(
 __Fitting__
 
 we'll make one more convenience function which fits the simulated imaging data with an `Overlay` image-mesh, 
-`Delaunay` mesh  and `Constant` regularization scheme pixelization.
+`Rectangular` mesh  and `Constant` regularization scheme pixelization.
 
 We'll input the `coefficient` of each fit, so that for each simulated source we regularize it at an appropriate level. 
 There is nothing new in this function you haven't seen before.
 """
 
 
-def fit_with_delaunay_from(dataset, mask, coefficient):
+def fit_with_Rectangular_from(dataset, mask, coefficient):
     dataset = dataset.apply_mask(mask=mask)
 
     lens_galaxy = al.Galaxy(
@@ -167,8 +167,8 @@ def fit_with_delaunay_from(dataset, mask, coefficient):
     )
 
     pixelization = al.Pixelization(
-        image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
-        mesh=al.mesh.Delaunay(),
+        image_mesh=None,
+        mesh=al.mesh.Rectangular(),
         regularization=al.reg.Constant(coefficient=coefficient),
     )
 
@@ -185,7 +185,7 @@ __Fit Problems__
 Lets fit our first source which was simulated using the flattest light profile. One should note that this uses the 
 highest regularization coefficient of our 3 fits (as determined by maximizing the Bayesian log evidence).
 """
-fit_flat = fit_with_delaunay_from(
+fit_flat = fit_with_Rectangular_from(
     dataset=dataset_source_flat, mask=mask, coefficient=9.2
 )
 
@@ -209,7 +209,7 @@ lots of pixels! Nice!
 
 Now, lets fit the next source, which is more compact.
 """
-fit_compact = fit_with_delaunay_from(
+fit_compact = fit_with_Rectangular_from(
     dataset=dataset_source_compact, mask=mask, coefficient=3.3
 )
 
@@ -237,7 +237,7 @@ Take a second to think about why this might be. Is it the mesh or how the regula
 Finally, lets fit the very compact source. Given that the results for the compact source did not look good, you are 
 right in thinking this is going to make things even worse. Again, think about why this might be.
 """
-fit_super_compact = fit_with_delaunay_from(
+fit_super_compact = fit_with_Rectangular_from(
     dataset=dataset_source_super_compact, mask=mask, coefficient=3.1
 )
 
@@ -263,7 +263,7 @@ pixelization. Both the mesh and regularization are to blame!
 
 *Image-Mesh / Mesh*:
 
-The problem is the same one we discussed when we compared the `Rectangular` and `Delaunay` meshes in tutorial 7. 
+The problem is the same one we discussed when we compared the `Rectangular` and `Rectangular` meshes in tutorial 7. 
 
 We are simply not dedicating enough source-pixels to the central regions of the source reconstruction, 
 e.g. where it`s brightest. As the source becomes more compact, the source reconstruction no longer has enough 
@@ -282,7 +282,7 @@ Clearly, we want to adapt to something else.
 
 **Regularization**:
 
-Regularization also causes problems. When using a `ConstantSplit` regularization scheme, we regularize the source by 
+Regularization also causes problems. When using a `Constant` regularization scheme, we regularize the source by 
 adding up the difference in fluxes between all source-pixels multiplied by one single value, the regularization
 coefficient. This means that, every single source pixel receives the same `level` of regularization, regardless of 
 whether it is reconstructing the bright central regions of the source or its faint exterior regions. 

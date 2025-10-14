@@ -4,9 +4,9 @@ Chaining: Point Source to Imaging
 
 This script chains three searches to fit `Imaging` data of a strong lens with multiple lens galaxies where:
 
- - The group consists of three whose light models are `SersicSph` profiles and total mass distributions
+ - The group consists of three whose light models are MGEs and total mass distributions
  are `IsothermalSph` models.
- - The source galaxy's light is an `Sersic`.
+ - The source galaxy's light is an MGE.
 
 The two searches break down as follows:
 
@@ -147,15 +147,19 @@ The model-fit to imaging data requires a `Mask2D`.
 
 Note how this has a radius of 9.0", much larger than most example lenses!
 """
+mask_radius = 9.0
+
 mask = al.Mask2D.circular(
-    shape_native=imaging.shape_native, pixel_scales=imaging.pixel_scales, radius=9.0
+    shape_native=imaging.shape_native,
+    pixel_scales=imaging.pixel_scales,
+    radius=mask_radius,
 )
 
 imaging = imaging.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -170,9 +174,9 @@ __Model (Search 2)__
 
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
- - There are again three lens galaxy's with `SersicSph` light profiles [15 parameters: centres initialized from model].
+ - There are again three lens galaxy's with MGEs [6 parameters: centres initialized from model].
  - The three lens galaxy's have `IsothermalSph` mass distributions [9 parameters: priors initialized from search 1].
- - The source-galaxy's light uses a `Sersic` light profile [7 parameters: centre initialized from search 1].
+ - The source-galaxy's light uses a MGE with 1 x 20 Gaussians light profile [4 parameters: centre initialized from search 1].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=31.
 
@@ -180,21 +184,36 @@ The term `model` below passes the source model as model-components that are to b
 non-linear search. We pass the `lens` as a `model`, so that we can use the mass model inferred by search 1. The source
 does not use any priors from the result of search 1.
 """
-lens_0 = af.Model(
-    al.Galaxy, redshift=0.5, bulge=al.lp_linear.SersicSph, mass=al.mp.IsothermalSph
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
 )
+
+lens_0 = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=al.mp.IsothermalSph)
 lens_0.bulge.centre = model_1.galaxies.lens_0.mass.centre
 lens_0.mass = result_1.model.galaxies.lens_0.mass
 
-lens_1 = af.Model(
-    al.Galaxy, redshift=0.5, bulge=al.lp_linear.SersicSph, mass=al.mp.IsothermalSph
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
 )
+
+lens_1 = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=al.mp.IsothermalSph)
 lens_1.bulge.centre = model_1.galaxies.lens_1.mass.centre
 lens_1.mass = result_1.model.galaxies.lens_1.mass
 
-lens_2 = af.Model(
-    al.Galaxy, redshift=0.5, bulge=al.lp_linear.SersicSph, mass=al.mp.IsothermalSph
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
 )
+
+lens_2 = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=al.mp.IsothermalSph)
 lens_2.bulge.centre = model_1.galaxies.lens_2.mass.centre
 lens_2.mass = result_1.model.galaxies.lens_2.mass
 

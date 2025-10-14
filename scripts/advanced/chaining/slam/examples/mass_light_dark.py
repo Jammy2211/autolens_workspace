@@ -13,7 +13,7 @@ __Model__
 Using a SOURCE LP PIPELINE, LIGHT PIPELINE and a MASS LIGHT DARK PIPELINE this SLaM script  fits `Imaging` dataset of
 a strong lens system, where in the final model:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
+ - The lens galaxy's light is a bulge with an MGE.
  - The lens galaxy's stellar mass distribution is a bulge tied to the light model above.
  - The lens galaxy's dark matter mass distribution is modeled as a `NFWMCRLudlow`.
  - The source galaxy's light is a `Pixelization`.
@@ -63,15 +63,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -108,7 +112,7 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in 
 this example:
 
- - Uses a linear parametric `Sersic` bulge for the lens galaxy's light.
+ - Uses a MGE bulge with 2 x 30 Gaussians for the lens galaxy's light.
 
  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
 
@@ -121,6 +125,13 @@ analysis = al.AnalysisImaging(dataset=dataset)
 
 bulge = af.Model(al.lp_linear.Sersic)
 
+source_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
@@ -128,7 +139,7 @@ source_lp_result = slam.source_lp.run(
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
@@ -148,7 +159,7 @@ The SOURCE LP Pipeline result is not good enough quality to set up this adapt im
 may be more complex than a simple light profile). The first step of the SOURCE PIX PIPELINE therefore fits a new
 model using a pixelization to create this adapt image.
 
-The first search, which is an initialization search, fits an `Overlay` image-mesh, `Delaunay` mesh 
+The first search, which is an initialization search, fits an `Overlay` image-mesh, `Rectangular` mesh 
 and `AdaptiveBrightnessSplit` regularization.
 
 __Adapt Images / Image Mesh Settings__
@@ -173,7 +184,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 """
@@ -184,7 +195,7 @@ fits the following model:
 
 - Uses a `Hilbert` image-mesh. 
 
-- Uses a `Delaunay` mesh.
+- Uses a `Rectangular` mesh.
 
  - Uses an `AdaptiveBrightnessSplit` regularization.
 
@@ -227,7 +238,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
@@ -240,7 +251,7 @@ lens mass model and source light model fixed to the maximum log likelihood resul
 
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge [Fixed from SOURCE LP PIPELINE].
+ - Uses a MGE bulge with 2 x 30 Gaussians [Fixed from SOURCE LP PIPELINE].
 
  - Uses an `Isothermal` model for the lens's total mass distribution [fixed from SOURCE LP PIPELINE].
 
@@ -274,7 +285,7 @@ initialize the model priors .
 
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge for the lens galaxy's light and its stellar mass [11 parameters: fixed from 
+ - Uses a MGE bulge with 2 x 30 Gaussians for the lens galaxy's light and its stellar mass [1 parameters: fixed from 
  LIGHT LP PIPELINE].
 
  - The lens galaxy's dark matter mass distribution is a `NFWMCRLudlow` whose centre is aligned with bulge of 

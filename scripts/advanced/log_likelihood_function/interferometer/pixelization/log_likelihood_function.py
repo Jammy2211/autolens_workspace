@@ -2,7 +2,7 @@
 __Log Likelihood Function: Pixelization__
 
 This script provides a step-by-step guide of the **PyAutoLens** `log_likelihood_function` which is used to fit
-`Interferometer` data with an inversion (specifically a `Delaunay` mesh and `Constant` regularization scheme`).
+`Interferometer` data with an inversion (specifically a `Rectangular` mesh and `Constant` regularization scheme`).
 
 This script has the following aims:
 
@@ -146,12 +146,12 @@ __Source Galaxy Pixelization and Regularization__
 
 We combine the pixelization into a single `Galaxy` object.
 
-The galaxy includes the delaunay mesh and constant regularization scheme, which will ultimately be used
+The galaxy includes the Rectangular mesh and constant regularization scheme, which will ultimately be used
 to reconstruct its star forming clumps.
 """
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
-    mesh=al.mesh.Delaunay(),
+    image_mesh=None,
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -160,7 +160,7 @@ source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 """
 __Source Pixel Centre Calculation__
 
-In order to reconstruct the source galaxy using a Delaunay mesh, we need to determine the centres of the Delaunay 
+In order to reconstruct the source galaxy using a Rectangular mesh, we need to determine the centres of the Rectangular 
 source pixels.
 
 The image-mesh `Overlay` object computes the source-pixel centres in the image-plane (which are ray-traced to the 
@@ -194,7 +194,7 @@ The likelihood function of a pixelized source reconstruction ray-traces two grid
 
  1) A 2D grid of (y,x) coordinates aligned with the imaging data's image-pixels.
 
- 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Delaunay pixels.
+ 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Rectangular pixels.
 
 The function below computes the 2D deflection angles of the tracer's lens galaxies and subtracts them from the 
 image-plane 2D (y,x) coordinates $\theta$ of each grid, thus ray-tracing their coordinates to the source plane to 
@@ -207,7 +207,7 @@ The source code gets quite complex when handling grids for a pixelization, but i
 the `TracerToInversion` objects.
 
 The plots at the bottom of this cell show the traced grids used by the source pixelization, showing
-how the Delaunay mesh and traced image pixels are constructed.
+how the Rectangular mesh and traced image pixels are constructed.
 """
 tracer_to_inversion = al.TracerToInversion(tracer=tracer, dataset=dataset)
 
@@ -255,26 +255,26 @@ grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot
 grid_plotter.figure_2d()
 
 """
-__Delaunay Mesh__
+__Rectangular Mesh__
 
-The relocated pixelization grid is used to create the `Pixelization`'s Delaunay mesh using the `scipy.spatial` library.
+The relocated pixelization grid is used to create the `Pixelization`'s Rectangular mesh using the `scipy.spatial` library.
 """
-grid_delaunay = al.Mesh2DDelaunay(
+grid_Rectangular = al.Mesh2DRectangular(
     values=relocated_mesh_grid,
 )
 
 """
-Plotting the Delaunay mesh shows that the source-plane and been discretized into a grid of irregular Delaunay pixels.
+Plotting the Rectangular mesh shows that the source-plane and been discretized into a grid of irregular Rectangular pixels.
 
-(To plot the Delaunay mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
+(To plot the Rectangular mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
 
-Below, we plot the Delaunay mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
-to show how each set of image-pixels fall within a Delaunay pixel.
+Below, we plot the Rectangular mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
+to show how each set of image-pixels fall within a Rectangular pixel.
 """
 mapper_grids = al.MapperGrids(
     mask=real_space_mask,
     source_plane_data_grid=relocated_grid,
-    source_plane_mesh_grid=grid_delaunay,
+    source_plane_mesh_grid=grid_Rectangular,
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
@@ -296,7 +296,7 @@ mapper_plotter.figure_2d(interpolate_to_uniform=False)
 __Image-Source Mapping__
 
 We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
-every source-plane Delaunay pixel. 
+every source-plane Rectangular pixel. 
 
 There are two steps in this calculation, which we show individually below.
 """
@@ -310,7 +310,7 @@ mapper = al.Mapper(
 __Image-Source Mapping__
 
 We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
-every source-plane Delaunay pixel. 
+every source-plane Rectangular pixel. 
 
 There are two steps in this calculation, which we show individually below.
 """
@@ -323,10 +323,10 @@ mapper = al.Mapper(
 The `Mapper` contains:
 
  1) `source_plane_data_grid`: the traced grid of (y,x) image-pixel coordinate centres (`relocated_grid`).
- 2) `source_plane_mesh_grid`: The Delaunay mesh of traced (y,x) source-pixel coordinates (`grid_delaunay`).
+ 2) `source_plane_mesh_grid`: The Rectangular mesh of traced (y,x) source-pixel coordinates (`grid_Rectangular`).
 
-We have therefore discretized the source-plane into a Delaunay mesh, and can pair every traced image-pixel coordinate
-with the corresponding Delaunay source pixel it lands in.
+We have therefore discretized the source-plane into a Rectangular mesh, and can pair every traced image-pixel coordinate
+with the corresponding Rectangular source pixel it lands in.
 
 This pairing is contained in the ndarray `pix_indexes_for_sub_slim_index` which maps every image-pixel index to 
 every source-pixel index.
@@ -385,14 +385,14 @@ The `mapping_matrix` represents the image-pixel to source-pixel mappings above i
 
 It has dimensions `(total_image_pixels, total_source_pixels)`.
 
-(A number of inputs are not used for the `Delaunay` pixelization and are expanded upon in the `features.ipynb`
+(A number of inputs are not used for the `Rectangular` pixelization and are expanded upon in the `features.ipynb`
 log likelihood guide notebook).
 """
 
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
-    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Delaunay
-    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Delaunay
+    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Rectangular
+    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Rectangular
     pixels=mapper.pixels,
     total_mask_pixels=mapper.source_plane_data_grid.mask.pixels_in_mask,
     slim_index_for_sub_slim_index=mapper.slim_index_for_sub_slim_index,
@@ -495,16 +495,16 @@ For example:
 The indexing of the `mapping_matrix` is reversed compared to the notation of WD03 (e.g. visibilities
 are the first entry of `mapping_matrix` whereas for $f$ they are the second index).
 """
-print(f"Mapping between visibility 0 and delaunay pixel 2 = {mapping_matrix[0, 2]}")
+print(f"Mapping between visibility 0 and Rectangular pixel 2 = {mapping_matrix[0, 2]}")
 
 """
 __Data Vector (D)__
 
-To solve for the delaunay pixel fluxes we now pose the problem as a linear inversion.
+To solve for the Rectangular pixel fluxes we now pose the problem as a linear inversion.
 
 This requires us to convert the `transformed_mapping_matrix` and our `data` and `noise map` into matrices of certain dimensions. 
 
-The `data_vector`, $D$, is the first matrix and it has dimensions `(total_delaunay_pixels,)`.
+The `data_vector`, $D$, is the first matrix and it has dimensions `(total_Rectangular_pixels,)`.
 
 In WD03 (https://arxiv.org/abs/astro-ph/0302587) and N15 (https://arxiv.org/abs/1412.7436) the data vector 
 is give by: 
@@ -527,7 +527,7 @@ data_vector = (
 )
 
 """
-$D$ describes which delaunay pixels trace to which visibilities, with associated weights, after the NUFFT. This 
+$D$ describes which Rectangular pixels trace to which visibilities, with associated weights, after the NUFFT. This 
 ensures the reconstruction fully accounts for the NUFFT when fitting the data.
 
 We can plot $D$ as a column vector:
@@ -550,7 +550,7 @@ print(data_vector.shape)
 __Curvature Matrix (F)__
 
 The `curvature_matrix` $F$ is the second matrix and it has 
-dimensions `(total_delaunay_pixels, total_delaunay_pixels)`.
+dimensions `(total_Rectangular_pixels, total_Rectangular_pixels)`.
 
 In WD03 / N15 (https://arxiv.org/abs/astro-ph/0302587) the curvature matrix is a 2D matrix given by:
 
@@ -585,7 +585,7 @@ plt.show()
 plt.close()
 
 """
-For $F_{ik}$ to be non-zero, this requires that the images of delaunay pixels $i$ and $k$ share at least one
+For $F_{ik}$ to be non-zero, this requires that the images of Rectangular pixels $i$ and $k$ share at least one
 image-pixel, which for visibilities after the NUFFT is always true for all $i$ and $k$.
 
 For example, we can see a non-zero entry for $F_{100,101}$ and plotting their images
@@ -615,7 +615,7 @@ The following chi-squared is minimized when we perform the inversion and reconst
 
 $\chi^2 = \sum_{\rm  j=1}^{J} \bigg[ \frac{(\sum_{\rm  i=1}^{I} s_{i} f_{ij}) - d_{j}}{\sigma_{j}} \bigg]$
 
-Where $s$ is the reconstructed pixel fluxes in all $I$ delaunay pixels.
+Where $s$ is the reconstructed pixel fluxes in all $I$ Rectangular pixels.
 
 The solution for $s$ is therefore given by (equation 5 WD03):
 
@@ -662,15 +662,15 @@ Different forms for $G_{\rm L}$ can be defined which regularize the reconstructi
 
  $G_{\rm L} = \sum_{\rm  i}^{I} \sum_{\rm  n=1}^{N}  [s_{i} - s_{i, v}]$
 
-This regularization scheme is easier to express in words -- the summation goes to each delaunay pixelization pixel,
-determines all delaunay pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
+This regularization scheme is easier to express in words -- the summation goes to each Rectangular pixelization pixel,
+determines all Rectangular pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
 where the difference in reconstructed flux of these two neighboring pixels is large.
 
-The summation does this for all delaunay pixels, thus it favours solutions where neighboring delaunay 
+The summation does this for all Rectangular pixels, thus it favours solutions where neighboring Rectangular 
 pixels reconstruct similar values to one another (e.g. it favours a smooth source galaxy reconstruction).
 
 We now define the `regularization matrix`, $H$, which allows us to include this smoothing when we solve for $s$. $H$
-has dimensions `(total_delaunay_pixels, total_delaunay_pixels)`.
+has dimensions `(total_Rectangular_pixels, total_Rectangular_pixels)`.
 
 This relates to $G_{\rm L}$ as (equation 13 WD03):
 
@@ -688,12 +688,12 @@ regularization_matrix = al.util.regularization.constant_regularization_matrix_fr
 """
 We can plot the regularization matrix and note that:
 
- - non-zero entries indicate that two delaunay pixelization pixels are neighbors and therefore are regularized 
+ - non-zero entries indicate that two Rectangular pixelization pixels are neighbors and therefore are regularized 
  with one another.
 
- - Zeros indicate the two delaunay pixels do not neighbor one another.
+ - Zeros indicate the two Rectangular pixels do not neighbor one another.
 
-The majority of entries are zero, because the majority of delaunay pixels are not neighbors with one another.
+The majority of entries are zero, because the majority of Rectangular pixels are not neighbors with one another.
 """
 plt.imshow(regularization_matrix)
 plt.colorbar()
@@ -821,7 +821,7 @@ __Regularization Term__
 The second term, $s^{T} H s$, corresponds to the $\lambda $G_{\rm L}$ regularization term we added to our merit 
 function above.
 
-This is the term which sums up the difference in flux of all reconstructed delaunay pixels, and reduces the 
+This is the term which sums up the difference in flux of all reconstructed Rectangular pixels, and reduces the 
 likelihood of solutions where there are large differences in flux (e.g. the source galaxy is less smooth and more 
 likely to be overfitting noise).
 
@@ -941,10 +941,10 @@ There are a number of other inputs features which slightly change the behaviour 
 are described in additional notebooks found in this package. In brief, these describe:
 
  - **Over Sampling**: Oversampling the image grid into a finer grid of sub-pixels, which are all individually 
- paired fractionally with each delaunay pixel.
+ paired fractionally with each Rectangular pixel.
 
- - **Source-plane Interpolation**: Using bilinear interpolation on the delaunay pixelization to pair each 
- image (sub-)pixel to multiple delaunay pixels with interpolation weights.
+ - **Source-plane Interpolation**: Using bilinear interpolation on the Rectangular pixelization to pair each 
+ image (sub-)pixel to multiple Rectangular pixels with interpolation weights.
 
  - **Luminosity Weighted Regularization**: Using an adaptive regularization coefficient which adapts the level of 
  regularization applied to the source galaxy based on its luminosity.

@@ -34,10 +34,10 @@ def output_result_to_fits(
         When to output a 2D image of the source light model to a .fits file.
     source_reconstruction
         When to output a 2D image of the source reconstruction to a .fits file, where this may be interpolated from
-        an irregular pixelization like a Delaunay mesh or Voronoi mesh.
+        an irregular pixelization like a Rectangular mesh or Voronoi mesh.
     source_reconstruction_noise_map
         When to output a 2D image of the source reconstruction noise-map to a .fits file, where this may be
-        interpolated from an irregular pixelization like a Delaunay mesh or Voronoi mesh.
+        interpolated from an irregular pixelization like a Rectangular mesh or Voronoi mesh.
     """
     fit = result.max_log_likelihood_fit
 

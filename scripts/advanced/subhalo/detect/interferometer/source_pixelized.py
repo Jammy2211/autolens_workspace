@@ -7,12 +7,12 @@ a specific aspect of the strong lens, first the Source, then the (lens) Light an
 pipelines has it own inputs which customize the model and analysis in that pipeline.
 
 The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
-uses a linear parametric `Sersic` profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
+uses an MGE profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
 
 Using a SOURCE LP PIPELINE, LIGHT LP PIPELINE, MASS TOTAL PIPELINE and SUBHALO PIPELINE this SLaM script
 fits `Interferometer` of a strong lens system, where in the final model:
 
- - The lens galaxy's light is a bulge+disk `Sersic` and `Exponential`.
+ - The lens galaxy's light is an MGE.
  - The lens galaxy's total mass distribution is an `Isothermal`.
  - A dark matter subhalo near The lens galaxy mass is included as a`NFWMCRLudlowSph`.
  - The source galaxy is an `Inversion`.
@@ -71,8 +71,10 @@ __Dataset + Masking__
 
 Load the `Interferometer` data, define the visibility and real-space masks and plot them.
 """
+mask_radius = 3.0
+
 real_space_mask = al.Mask2D.circular(
-    shape_native=(151, 151), pixel_scales=0.05, radius=3.0
+    shape_native=(151, 151), pixel_scales=0.05, radius=mask_radius
 )
 
 dataset_name = "dark_matter_subhalo"
@@ -147,7 +149,7 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in
 this example:
 
- - Uses a linear parametric `Sersic` bulge and `Exponential` disk with centres aligned for the lens
+ - Uses a MGE bulge with 1 x 10 Gaussians and `Exponential` disk with centres aligned for the lens
  galaxy's light.
 
  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
@@ -158,6 +160,13 @@ this example:
 """
 analysis = al.AnalysisInterferometer(dataset=dataset)
 
+source_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
@@ -165,7 +174,7 @@ source_lp_result = slam.source_lp.run(
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
@@ -177,14 +186,14 @@ __SOURCE PIX PIPELINE__
 The SOURCE PIX PIPELINE uses two searches to initialize a robust model for the `Pixelization` that
 reconstructs the source galaxy's light.
 
-The first search, which is an initialization search, fits an `Overlay` image-mesh, `Delaunay` mesh and `Constant`
+The first search, which is an initialization search, fits an `Overlay` image-mesh, `Rectangular` mesh and `Constant`
 regularization.
 
 The second search, which uses the mesh and regularization used throughout the remainder of the SLaM pipelines,
 fits the following model:
 
 - Uses a `Hilbert` image-mesh.
-- Uses a `Delaunay` mesh.
+- Uses a `Rectangular` mesh.
  - Uses an `AdaptiveBrightness` regularization.
  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE LP PIPELINE through to the
  SOURCE PIX PIPELINE.
@@ -207,7 +216,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 analysis = al.AnalysisInterferometer(
@@ -227,7 +236,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
@@ -240,14 +249,12 @@ model of the LIGHT LP PIPELINE.
 
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge and `Sersic` disk with centres aligned for the lens galaxy's
- light [fixed from LIGHT LP PIPELINE].
+ - Uses a MGE bulge with 2 x 30 Gaussians for the lens galaxy's light [fixed from LIGHT LP PIPELINE].
 
  - Uses an `PowerLaw` model for the lens's total mass distribution [priors initialized from SOURCE
  PARAMETRIC PIPELINE + centre unfixed from (0.0, 0.0)].
 
- - Uses the `Sersic` model representing a bulge for the source's light [priors initialized from SOURCE
- PARAMETRIC PIPELINE].
+ - Uses an MGE representing a bulge for the source's light [priors initialized from SOURCE PARAMETRIC PIPELINE].
 
  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.
 """

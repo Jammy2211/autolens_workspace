@@ -79,8 +79,12 @@ The `Mask2D` our model-fit using the `InputDeflections` will use. This is set up
 not this `Mask2D` now defines the image-plane region we will fit the data (and therefore where our residuals, chi-squared,
 likelihood, etc is calculated.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 grid = al.Grid2D.from_mask(mask=mask)
@@ -115,7 +119,7 @@ input_deflections = al.mp.InputDeflections(
 """
 __Model__
 
-We now compose the lens and source `Model`, where the source is an `Sersic`.
+We now compose the lens and source `Model`, where the source is an MGE.
 """
 lens = af.Model(al.Galaxy, redshift=0.5, mass=input_deflections)
 source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.Sersic)

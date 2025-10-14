@@ -4,17 +4,17 @@ Chaining: Lens Light To Mass
 
 This script chains two searches to fit `Imaging` data of a 'galaxy-scale' strong lens with a model where:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
+ - The lens galaxy's light is a bulge with an MGE.
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
  - The source galaxy's light is an `Exponential`.
 
 The two searches break down as follows:
 
- 1) Model the lens galaxy's light using an `Sersic` bulge. The source is present in the image, but modeling it is
+ 1) Model the lens galaxy's light using an MGE bulge. The source is present in the image, but modeling it is
     omitted.
 
  2) Models the lens galaxy's mass using an `Isothermal` and source galaxy's light using
-    an `Sersic`. The lens light model is fixed to the result of search 1.
+    an MGE. The lens light model is fixed to the result of search 1.
 
 __Why Chain?__
 
@@ -73,15 +73,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -103,12 +107,17 @@ __Model (Search 1)__
 
 Search 1 fits a lens model where:
 
- - The lens galaxy's light is a linear parametric `Sersic` bulge [6 parameters].
+ - The lens galaxy's light is an MGE bulge with 2 x 30 Gaussians [6 parameters].
  - The lens galaxy's mass and source galaxy are omitted.
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
-bulge = af.Model(al.lp_linear.Sersic)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
 
 lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge)
 
@@ -150,9 +159,9 @@ __Model (Search 2)__
 
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
- - The lens galaxy's light is an `Sersic` bulge [Parameters fixed to results of search 1].
+ - The lens galaxy's light is an MGE bulge [Parameters fixed to results of search 1].
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
- - The source galaxy's light is a linear parametric `SersicCore` [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 
@@ -174,7 +183,14 @@ lens = af.Model(
     mass=mass,
 )
 
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model_2 = af.Collection(galaxies=af.Collection(lens=lens))
 

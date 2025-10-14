@@ -4,7 +4,7 @@ Simulator: Wavelength Dependent
 
 This script simulates multi-wavelength `Imaging` of a 'galaxy-scale' strong lens where:
 
- - The lens galaxy's light is a parametric `Sersic` bulge where the `intensity` varies across wavelength.
+ - The lens galaxy's light is a Sersic bulge where the `intensity` varies across wavelength.
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
  - The source galaxy's light is an `Sersic`, which has a different `intensity` at each wavelength.
 

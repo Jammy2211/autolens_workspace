@@ -13,7 +13,7 @@ of a strong lens system, where in the final model:
  - The lens galaxy's light is omitted from the data and model.
  - The lens galaxy's total mass distribution is an `Isothermal`.
  - A dark matter subhalo near The lens galaxy mass is included as a`NFWMCRLudlowSph`.
- - The source galaxy is an `Sersic`.
+ - The source galaxy is an MGE..
 
 This uses the SLaM pipelines:
 
@@ -59,8 +59,12 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.05,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -96,6 +100,13 @@ This is the standard SOURCE LP PIPELINE described in the `slam/start_here.ipynb`
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 
+source_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
@@ -103,7 +114,7 @@ source_lp_result = slam.source_lp.run(
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=0.5,
     redshift_source=1.0,

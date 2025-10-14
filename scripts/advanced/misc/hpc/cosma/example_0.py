@@ -197,8 +197,12 @@ __Mask__
 
 Define a 3.0" circular mask, which includes the emission of the lens and source galaxies.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -210,7 +214,7 @@ We compose a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
  
- - The source galaxy's light is a parametric `SersicCore` [7 parameters].
+ - The source galaxy's light is an MGE [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 """

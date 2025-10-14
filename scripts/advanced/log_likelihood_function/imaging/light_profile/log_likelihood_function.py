@@ -60,8 +60,12 @@ lens modeling.
 
 Below, we define a 2D circular mask with a 3.0" radius.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 masked_dataset = dataset.apply_mask(mask=mask)
@@ -279,7 +283,7 @@ source_galaxy = al.Galaxy(
 """
 __Lens Light__
 
-Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the `Sersic` 
+Compute a 2D image of the lens galaxy's light as the sum of its individual light profiles (the an MGE 
 bulge). 
 
 This computes the `lens_image_2d` of each `LightProfile` and adds them together. 

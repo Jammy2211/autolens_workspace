@@ -25,7 +25,7 @@ If any of these concepts are unfamiliar, you may still proceed with the script, 
 later can deepen your understanding of how and why SLaM pipelines are structured as they are.
 
 Additionally, this script allows for flexibility with model components, such as swapping out MGE models for other
-light profiles (e.g., linear `Sersic` profiles). For an example, see `examples/source_light_profile.ipynb`.
+light profiles (e.g., an MGE). For an example, see `examples/source_light_profile.ipynb`.
 
 __Overview__
 
@@ -48,7 +48,7 @@ Each pipeline in the SLaM sequence targets a specific aspect of the strong lens 
   and lens light models initialized from earlier stages.
 
 Models set up in earlier pipelines guide those used in later ones. For instance, if the Source Pipeline uses a
-pixelized `Delaunay` mesh for the source, that mesh type will carry through to the Mass Total Pipeline that follows.
+pixelized `Rectangular` mesh for the source, that mesh type will carry through to the Mass Total Pipeline that follows.
 
 __Design Choices__
 
@@ -152,7 +152,7 @@ dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -189,11 +189,11 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in 
 this example:
 
- - Uses a multi Gaussian expansion with 2 sets of 30 Gaussians for the lens galaxy's light.
+ - The lens galaxy's light is a MGE with 2 x 30 Gaussian [6 parameters]
 
  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
  
- - Uses a multi Gaussian expansion with 1 set of 30 Gaussians for the source galaxy's light.
+ - The source galaxy's light is a MGE with 1 x 30 Gaussian [4 parameters]
 
  __Settings__:
 
@@ -288,7 +288,7 @@ The SOURCE LP Pipeline result is not good enough quality to set up this adapt im
 may be more complex than a simple light profile). The first step of the SOURCE PIX PIPELINE therefore fits a new
 model using a pixelization to create this adapt image.
 
-The first search, which is an initialization search, fits an `Overlay` image-mesh, `Delaunay` mesh 
+The first search, which is an initialization search, fits an `Overlay` image-mesh, `Rectangular` mesh 
 and `AdaptiveBrightnessSplit` regularization.
 
 __Adapt Images / Image Mesh Settings__
@@ -313,7 +313,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 """
@@ -324,7 +324,7 @@ fits the following model:
 
 - Uses a `Hilbert` image-mesh. 
 
-- Uses a `Delaunay` mesh.
+- Uses a `Rectangular` mesh.
 
  - Uses an `AdaptiveBrightnessSplit` regularization.
  
@@ -353,7 +353,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
@@ -364,7 +364,7 @@ The LIGHT LP PIPELINE uses one search to fit a complex lens light model to a hig
 lens mass model and source light model fixed to the maximum log likelihood result of the SOURCE LP PIPELINE.
 In this example it:
 
- - Uses a multi Gaussian expansion with 2 sets of 30 Gaussians for the lens galaxy's light. [6 Free Parameters].
+ - The lens galaxy's light is a MGE with 2 x 30 Gaussian [6 parameters] [6 Free Parameters].
 
  - Uses an `Isothermal` mass model with `ExternalShear` for the lens's total mass distribution [fixed from SOURCE PIX PIPELINE].
 

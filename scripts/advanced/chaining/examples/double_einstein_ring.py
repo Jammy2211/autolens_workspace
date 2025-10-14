@@ -7,14 +7,14 @@ two different redshifts, forming a double Einstein ring system. This fits a mode
 
  - The lens galaxy's light is omitted.
  - The lens galaxy's total mass distribution is an `Isothermal`.
- - The first source galaxy's mass is a `IsothermalSph` and its light a `Sersic`.
- - The second source galaxy's light is an `Sersic`.
+ - The first source galaxy's mass is a `IsothermalSph` and its light an MGE.
+ - The second source galaxy's light is an MGE.
 
 The two searches break down as follows:
 
- 1) Model the lens galaxy mass as an `Isothermal`  and first source galaxy using an `Sersic` light profiles.
+ 1) Model the lens galaxy mass as an `Isothermal`  and first source galaxy using an MGE.
  2) Model the lens, first and second source galaxies, where the first source's mass is an `IsothermalSph` and second
-  source is an `Sersic`.
+  source is an MGE.
 
 __Why Chain?__
 
@@ -91,15 +91,19 @@ __Masking (Search 1)__
 
 We apply a smaller circular mask, the radius of which is chosen to remove the light of the second source galaxy.
 """
+mask_radius = 2.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=2.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -116,7 +120,7 @@ __Model (Search 1)__
 Search 1 fits a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters].
- - The first source galaxy's light is a linear parametric `Sersic` [6 parameters].
+ - The first source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 
@@ -125,7 +129,15 @@ We therefore omit the second source from the model entirely.
 mass = af.Model(al.mp.Isothermal)
 
 lens = af.Model(al.Galaxy, redshift=0.5, mass=mass)
-source_0 = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source_0 = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 source_1 = af.Model(al.Galaxy, redshift=2.0)
 
 model_1 = af.Collection(
@@ -176,15 +188,19 @@ dataset = al.Imaging.from_fits(
 )
 
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -201,9 +217,9 @@ __Model (Search 2)__
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` [parameters fixed to results of search 1].
- - The first source galaxy's light is a linear parametric `Sersic` [parameters fixed to results of search 1].
+ - The first source galaxy's light is an MGE with 1 x 20 Gaussians [parameters fixed to results of search 1].
  - The first source galaxy's mass is a `IsothermalSph` [3 parameters].
- - The second source galaxy's light is a linear parametric `Sersic` [6 parameters].
+ - The second source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=10.
 
@@ -221,7 +237,15 @@ source_0 = af.Model(
     bulge=result_1.instance.galaxies.source_0.bulge,
     mass=al.mp.IsothermalSph,
 )
-source_1 = af.Model(al.Galaxy, redshift=2.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source_1 = af.Model(al.Galaxy, redshift=2.0, bulge=bulge)
 source_1.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.5)
 source_1.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.5)
 
@@ -295,17 +319,17 @@ Pipeline: Double Einstein Ring
 By chaining together four searches this script fits `Imaging` dataset of a 'galaxy-scale' strong lens, which has two source galaxies
 at two different redshifts, forming a double Einstein ring system. In the final model:
 
- - The lens galaxy's light is an `Sersic`.
+ - The lens galaxy's light is an MGE.
  - The lens galaxy's total mass distribution is an `Isothermal`.
  - The first source galaxy's mass is a `IsothermalSph` and its light is modeled using an `Inversion`.
  - The second source galaxy's light is modeled using an `Inversion`.
 
 The three searches break down as follows:
 
- 1) Model the lens galaxy using a linear parametric `Sersic` to subtract its emission.
- 2) Model the lens galaxy mass as an `Isothermal`  and first source galaxy using an `Sersic` light profiles.
+ 1) Model the lens galaxy using an MGE with 2 x 30 Gaussians to subtract its emission.
+ 2) Model the lens galaxy mass as an `Isothermal`  and first source galaxy using an MGE.
  3) Model the lens, first and second source galaxies, where the first source's mass is an `IsothermalSph` and second
-  source is an `Sersic`.
+  source is an MGE.
  4) Model the first and second source galaxy simultaneously using an `Inversion` and lens galaxy mass as an
  `Isothermal`.
 
@@ -359,15 +383,19 @@ __Masking (Search 1 & 2)__
 
 We apply a smaller circular mask, the radius of which is chosen to remove the light of the second source galaxy.
 """
+mask_radius = 2.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=2.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -382,12 +410,17 @@ __Model (Search 1)__
 
 Search 1 fits a lens model where:
 
- - The lens galaxy's light is a linear parametric `Sersic` bulge [6 parameters].
+ - The lens galaxy's light is an MGE bulge with 2 x 30 Gaussians [6 parameters].
  - The lens galaxy's mass and both source galaxies are omitted.
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=7.
 """
-bulge = af.Model(al.lp_linear.Sersic)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
 
 lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge)
 
@@ -414,9 +447,9 @@ __Model (Search 2)__
 
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
- - The lens galaxy's light is an `Sersic` bulge [Parameters fixed to results of search 1].
+ - The lens galaxy's light is an MGE bulge [Parameters fixed to results of search 1].
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters].
- - The first source galaxy's light is a linear parametric `Sersic` [6 parameters].
+ - The first source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=12.
 
@@ -429,7 +462,15 @@ mass.centre = result_1.model.galaxies.lens.bulge.centre
 lens = af.Model(
     al.Galaxy, redshift=0.5, bulge=result_1.instance.galaxies.lens.bulge, mass=mass
 )
-source_0 = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source_0 = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model_2 = af.Collection(galaxies=af.Collection(lens=lens, source_0=source_0))
 
@@ -461,15 +502,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -485,11 +530,11 @@ __Model (Search 3)__
 
 We use the results of searches 1 & 2 to create the lens model fitted in search 3, where:
 
- - The lens galaxy's light is an `Sersic` bulge [Parameters fixed to results of search 1].
+ - The lens galaxy's light is an MGE bulge [Parameters fixed to results of search 1].
  - The lens galaxy's total mass distribution is an `Isothermal` [Parameters fixed to results of search 2].
- - The first source galaxy's light is a linear parametric `Sersic` [Parameters fixed to results of search 2].
+ - The first source galaxy's light is an MGE with 1 x 20 Gaussians [Parameters fixed to results of search 2].
  - The first source galaxy's mass is a `IsothermalSph` [3 parameters].
- - The second source galaxy's light is a linear parametric `Sersic` [6 parameters].
+ - The second source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=10.
 
@@ -508,7 +553,15 @@ source_0 = af.Model(
     bulge=result_2.model.galaxies.source_0.bulge,
     mass=al.mp.IsothermalSph,
 )
-source_1 = af.Model(al.Galaxy, redshift=2.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source_1 = af.Model(al.Galaxy, redshift=2.0, bulge=bulge)
 
 model_3 = af.Collection(
     galaxies=af.Collection(lens=lens, source_0=source_0, source_1=source_1),
@@ -535,22 +588,29 @@ __Model (Search 4)__
 
 We use the results of searches 1, 2 & 3 to create the lens model fitted in search 4, where:
 
- - The lens galaxy's light is an `Sersic` bulge [7 Parameters: we do not use the results of search 1 to 
+ - The lens galaxy's light is an MGE with 2 x 30 Gaussians bulge [7 Parameters: we do not use the results of search 1 to 
  initialize priors].
  - The lens galaxy's total mass distribution is an `Isothermal` [5 Parameters: priors initialized from search 2].
- - The first source galaxy's light is a linear parametric `Sersic` [6 parameters: priors initialized from search 2].
+ - The first source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters: priors initialized from search 2].
  - The first source galaxy's mass is a `IsothermalSph` [3 parameters: priors initialized from search 3].
- - The second source galaxy's light is a linear parametric `Sersic` [6 parameters: priors initialized from search 3].
+ - The second source galaxy's light is an MGE with 1 x 20 Gaussians [6 parameters: priors initialized from search 3].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=29.
 
 The galaxies are assigned redshifts of 0.5, 1.0 and 2.0. This ensures the multi-plane ray-tracing necessary for the 
 double Einstein ring lens system is performed correctly.
 """
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
+
 lens = af.Model(
     al.Galaxy,
     redshift=0.5,
-    bulge=af.Model(al.lp_linear.Sersic),
+    bulge=bulge,
     mass=result_2.model.galaxies.lens.mass,
 )
 source_0 = af.Model(
@@ -584,16 +644,48 @@ analysis_4 = al.AnalysisImaging(dataset=dataset)
 result_4 = search_4.fit(model=model_4, analysis=analysis_4)
 
 """
+__JAX & Preloads__
+
+In JAX, calculations must use static shaped arrays with known and fixed indexes. For certain calculations in the
+pixelization, this information has to be passed in before the pixelization is performed. Below, we do this for 3
+inputs:
+
+- `total_linear_light_profiles`: The number of linear light profiles in the model. This is 0 because we are not
+  fitting any linear light profiles to the data, primarily because the lens light is omitted.
+
+- `total_mapper_pixels`: The number of source pixels in the rectangular pixelization mesh. This is required to set up 
+  the arrays that perform the linear algebra of the pixelization.
+
+- `source_pixel_zeroed_indices`: The indices of source pixels on its edge, which when the source is reconstructed 
+  are forced to values of zero, a technique tests have shown are required to give accruate lens models.
+
+The `image_mesh` can be ignored, it is legacy API from previous versions which may or may not be reintegrated in future
+versions.
+"""
+image_mesh = None
+mesh_shape = (20, 20)
+total_mapper_pixels = mesh_shape[0] * mesh_shape[1]
+
+preloads = al.Preloads(
+    mapper_indices=al.mapper_indices_from(
+        total_linear_light_profiles=1, total_mapper_pixels=total_mapper_pixels
+    ),
+    source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
+        mesh_shape
+    ),
+)
+
+"""
 __Model (Search 5)__
 
 We use the results of search 4 to create the lens model fitted in search 5, where:
 
- - The lens galaxy's light is an `Sersic` bulge [Parameters fixed to results of search 4].
+ - The lens galaxy's light is an MGE bulge [Parameters fixed to results of search 4].
  - The lens galaxy's total mass distribution is again an `Isothermal` [Parameters fixed to results of search 4].
  - The first source galaxy's mass is a `IsothermalSph` [Parameters fixed to results of search 4].
- - The first source-galaxy's light uses an `Overlay` image-mesh, `Delaunay` mesh and `ConstantSplit` regularization 
+ - The first source-galaxy's light uses an `Overlay` image-mesh, `Rectangular` mesh and `Constant` regularization 
  scheme [3 parameters].
- - The second source-galaxy's light uses an `Overlay` image-mesh, `Delaunay` mesh and `ConstantSplit` regularization  
+ - The second source-galaxy's light uses an `Overlay` image-mesh, `Rectangular` mesh and `Constant` regularization  
  scheme [3 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=6.
@@ -605,9 +697,9 @@ source_0 = af.Model(
     mass=result_4.instance.galaxies.source_0.mass,
     pixelization=af.Model(
         al.Pixelization,
-        image_mesh=al.image_mesh.Overlay,
-        mesh=al.mesh.Delaunay,
-        regularization=al.reg.ConstantSplit,
+        image_mesh=None,
+        mesh=al.mesh.Rectangular,
+        regularization=al.reg.Constant,
     ),
 )
 source_1 = af.Model(
@@ -615,9 +707,9 @@ source_1 = af.Model(
     redshift=2.0,
     pixelization=af.Model(
         al.Pixelization,
-        image_mesh=al.image_mesh.Overlay,
-        mesh=al.mesh.Delaunay,
-        regularization=al.reg.ConstantSplit,
+        image_mesh=None,
+        mesh=al.mesh.Rectangular,
+        regularization=al.reg.Constant,
     ),
 )
 model_5 = af.Collection(
@@ -627,7 +719,6 @@ model_5 = af.Collection(
 """
 __Analysis__
 """
-
 analysis_5 = al.AnalysisImaging(dataset=dataset)
 
 """

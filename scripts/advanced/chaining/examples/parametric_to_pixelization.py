@@ -10,7 +10,7 @@ This script chains two searches to fit `Imaging` data of a 'galaxy-scale' strong
 
 The two searches break down as follows:
 
- 1) Model the source galaxy using a linear parametric `Sersic` and lens galaxy mass as an `Isothermal`.
+ 1) Model the source galaxy using an MGE and lens galaxy mass as an `Isothermal`.
  2) Models the source galaxy using an `Inversion` and lens galaxy mass as an `Isothermal`.
 
 __Why Chain?__
@@ -18,7 +18,7 @@ __Why Chain?__
 There are a number of benefits of chaining a linear parametric source model and `Inversion`, as opposed to fitting the
 `Inversion` in one search:
 
- - Parametric sources are computationally faster to fit. Therefore, even though the `Sersic` has more
+ - Parametric sources are computationally faster to fit. Therefore, even though the MGE has more
  parameters for the search to fit than an `Inversion`, the model-fit is faster overall.
 
  - `Inversion`'s often go to unphysical solutions where the mass model goes to high / low normalization_list and the source
@@ -73,15 +73,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -105,7 +109,7 @@ __Model (Search 1)__
 Search 1 fits a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
- - The source galaxy's light is a linear parametric `SersicCore` [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=13.
 """
@@ -113,7 +117,14 @@ lens = af.Model(
     al.Galaxy, redshift=0.5, mass=al.mp.Isothermal, shear=al.mp.ExternalShear
 )
 
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model_1 = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
@@ -149,6 +160,38 @@ The results which are used for prior passing are summarised in the `info` attrib
 print(result_1.info)
 
 """
+__JAX & Preloads__
+
+In JAX, calculations must use static shaped arrays with known and fixed indexes. For certain calculations in the
+pixelization, this information has to be passed in before the pixelization is performed. Below, we do this for 3
+inputs:
+
+- `total_linear_light_profiles`: The number of linear light profiles in the model. This is 0 because we are not
+  fitting any linear light profiles to the data, primarily because the lens light is omitted.
+
+- `total_mapper_pixels`: The number of source pixels in the rectangular pixelization mesh. This is required to set up 
+  the arrays that perform the linear algebra of the pixelization.
+
+- `source_pixel_zeroed_indices`: The indices of source pixels on its edge, which when the source is reconstructed 
+  are forced to values of zero, a technique tests have shown are required to give accruate lens models.
+
+The `image_mesh` can be ignored, it is legacy API from previous versions which may or may not be reintegrated in future
+versions.
+"""
+image_mesh = None
+mesh_shape = (20, 20)
+total_mapper_pixels = mesh_shape[0] * mesh_shape[1]
+
+preloads = al.Preloads(
+    mapper_indices=al.mapper_indices_from(
+        total_linear_light_profiles=0, total_mapper_pixels=total_mapper_pixels
+    ),
+    source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
+        mesh_shape
+    ),
+)
+
+"""
 __Model (Search 2)__
 
 We use the results of search 1 to create the lens model fitted in search 2, where:
@@ -157,8 +200,8 @@ We use the results of search 1 to create the lens model fitted in search 2, wher
  priors initialized from search 1].
  - The source galaxy's light uses an `Overlay` image-mesh [2 parameters].
  
- - The source-galaxy's light uses a `Delaunay` mesh [0 parameters].
- - This pixelization is regularized using a `ConstantSplit` scheme which smooths every source pixel equally [1 parameter]. 
+ - The source-galaxy's light uses a `Rectangular` mesh [0 parameters].
+ - This pixelization is regularized using a `Constant` scheme which smooths every source pixel equally [1 parameter]. 
  
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=10.
 
@@ -168,14 +211,13 @@ does not use any priors from the result of search 1.
 """
 lens = result_1.model.galaxies.lens
 
-image_mesh = af.Model(al.image_mesh.Overlay)
-image_mesh.shape = (30, 30)
+image_mesh = None
 
 pixelization = af.Model(
     al.Pixelization,
     image_mesh=image_mesh,
-    mesh=al.mesh.Delaunay,
-    regularization=al.reg.ConstantSplit,
+    mesh=al.mesh.Rectangular,
+    regularization=al.reg.Constant,
 )
 
 source = af.Model(al.Galaxy, redshift=1.0, pixelization=pixelization)

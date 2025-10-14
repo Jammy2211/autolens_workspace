@@ -113,15 +113,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.05,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -141,10 +145,17 @@ likelihood model.
 
 We perform this fit using the lens model we will use to perform sensitivity mapping, which we call the `base_model`.
 """
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
 base_model = af.Collection(
     galaxies=af.Collection(
         lens=af.Model(al.Galaxy, redshift=0.5, mass=al.mp.Isothermal),
-        source=af.Model(al.Galaxy, redshift=1.0, bulge=al.lp.SersicCore),
+        source=af.Model(al.Galaxy, redshift=1.0, bulge=bulge),
     ),
 )
 
@@ -381,7 +392,7 @@ class SimulateImaging:
             over_sample_size_lens = (
                 al.util.over_sample.over_sample_size_via_radial_bins_from(
                     grid=dataset.grid,
-                    sub_size_list=[8, 4, 1],
+                    sub_size_list=[4, 2, 1],
                     radial_list=[0.3, 0.6],
                     centre_list=[(0.0, 0.0)],
                 )
@@ -468,7 +479,7 @@ class SimulateImaging:
         over_sample_size_lens = (
             al.util.over_sample.over_sample_size_via_radial_bins_from(
                 grid=dataset.grid,
-                sub_size_list=[8, 4, 1],
+                sub_size_list=[4, 2, 1],
                 radial_list=[0.3, 0.6],
                 centre_list=[(0.0, 0.0)],
             )
@@ -701,7 +712,7 @@ it is a lens model that does not include a subhalo, which was inferred by fittin
 mapping on.
 
 - `base_model`: This is the lens model that is fitted to every simulated dataset, which does not include a subhalo. In 
-this example is composed of an `Isothermal` lens and `Sersic` source.
+this example is composed of an `Isothermal` lens and MGE source.
 
 - `perturb_model`: This is the extra model component that alongside the `base_model` is fitted to every simulated 
 dataset. In this example it is a `NFWMCRLudlowSph` dark matter subhalo.

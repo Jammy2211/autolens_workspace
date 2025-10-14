@@ -13,7 +13,7 @@ __Sourrce Plane Interpolation__
 
 For the `VoronoiNoInterp` pixelization used in this example, every image-sub pixel maps to a single source Voronoi
 pixel. Therefore, the plural use of `pix_indexes` is not required. However, for other pixelizations each sub-pixel
-can map to multiple source pixels with an interpolation weight (e.g. `Delaunay` triangulation or a `Voronoi` mesh
+can map to multiple source pixels with an interpolation weight (e.g. `Rectangular` triangulation or a `Voronoi` mesh
 which uses natural neighbor interpolation).
 
 `MapperVoronoiNoInterp.pix_index_for_sub_slim_index`:
@@ -33,7 +33,7 @@ every entry of this array will be equal to 1.
 
 """
 When each sub-pixel maps to multiple source pixels, the mappings are described via an interpolation weight. For 
-example, for a `Delaunay` triangulation, every sub-pixel maps to 3 Delaunay triangles based on which triangle
+example, for a `Rectangular` triangulation, every sub-pixel maps to 3 Rectangular triangles based on which triangle
 it lands in.
 
 For the `VoronoiNoInterp` pixelization where every sub-pixel maps to a single source pixel without inteprolation,

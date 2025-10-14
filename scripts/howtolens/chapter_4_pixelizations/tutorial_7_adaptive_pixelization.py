@@ -2,10 +2,10 @@
 Tutorial 7: Adaptive Pixelization
 =================================
 
-In this tutorial we will introduce a new `Pixelization` object, which uses an `Overlay` image-mesh and a `Delaunay`
+In this tutorial we will introduce a new `Pixelization` object, which uses an `Overlay` image-mesh and a `Rectangular`
 mesh.
 
-This pixelization does not use a uniform grid of rectangular pixels, but instead uses a `Delaunay` triangulation.
+This pixelization does not use a uniform grid of rectangular pixels, but instead uses a `Rectangular` triangulation.
 
 So, why would we want to do that? Lets take another quick look at the rectangular grid.
 """
@@ -117,11 +117,11 @@ If our pixelization could 'focus' its pixels where we actually have more data, e
 the source-plane, we could reconstruct the source using fewer pixels. This would significantly increase the Bayesian
 evidence. It'd also be beneficial computationally, as using fewer source pixels means faster run times.
 
-This is what the Delaunay mesh enables.
+This is what the Rectangular mesh enables.
 
 __Image Mesh__
 
-The Delaunay mesh is an irregular grid of pixels (or triangles) in the source-plane. We must first therefore determine
+The Rectangular mesh is an irregular grid of pixels (or triangles) in the source-plane. We must first therefore determine
 a set of (y,x) source-plane coordinates defining this grid, specifically where each triangle vertex is loated.
 
 We do this using an `image_mesh`, which defines a method to determine a set of coordinates in the image-plane 
@@ -143,12 +143,12 @@ dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 dataset_plotter.figures_2d(data=True)
 
 """
-By passing a `Tracer` a source galaxy with the image-mesh and a `Delaunay` mesh object, contained in 
-a `Pixelization` object, it automatically computes this source-plane Delaunay mesh.
+By passing a `Tracer` a source galaxy with the image-mesh and a `Rectangular` mesh object, contained in 
+a `Pixelization` object, it automatically computes this source-plane Rectangular mesh.
 """
 pixelization = al.Pixelization(
     image_mesh=image_mesh,
-    mesh=al.mesh.Delaunay(),
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -157,7 +157,7 @@ source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
-By using this tracer in a fit, we see that our source-plane no longer uses rectangular pixels, but a Delaunay mesh!
+By using this tracer in a fit, we see that our source-plane no longer uses rectangular pixels, but a Rectangular mesh!
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
@@ -187,18 +187,18 @@ __Regularization__
 On the rectangular grid, we regularized each source pixel with its 4 neighbors. We compared their fluxes, summed 
 the differences, and penalized solutions where the differences were large. 
 
-For a Delaunay grid, we do a similar calculation, instead comparing each source-pixel with the 3 Delaunay triangles 
+For a Rectangular grid, we do a similar calculation, instead comparing each source-pixel with the 3 Rectangular triangles 
 it shares a direct vertex with.
 
 __Wrap Up__
 
-The `Overlay` image-mesh and `Delaunay` mesh is still far from optimal. There are lots of source-pixels effectively f
+The `Overlay` image-mesh and `Rectangular` mesh is still far from optimal. There are lots of source-pixels effectively f
 itting just noise. We can achieve even better solutions if the central regions of the source were reconstructed using 
 more pixels and fewer source pixels are used in the outskirts of the source plane. 
 
 Tutorials 9, 10 and 11 show even more advanced and adaptive pixelizations which do just this, by adapting to the
 source galaxy's morphology rather than the mass model magnification.
 
-In the mean time, you may wish to experiment with using both Rectangular and Delaunay grids to fit 
+In the mean time, you may wish to experiment with using both Rectangular and Rectangular grids to fit 
 lenses which can be easily achieve by changing the input pixelization given to a pipeline.
 """

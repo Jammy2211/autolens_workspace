@@ -116,7 +116,7 @@ print(extra_galaxies_centres)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)] + extra_galaxies_centres,
 )
@@ -306,7 +306,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
     extra_galaxies=extra_galaxies,
 )
 
@@ -335,7 +335,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 

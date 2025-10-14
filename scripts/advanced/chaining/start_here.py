@@ -69,15 +69,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -101,13 +105,20 @@ We compose our lens model using `Model` objects, which represent the galaxies we
 search our lens model is:
 
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
- - An `Sersic` `LightProfile` for the source galaxy's light [7 parameters].
+ - an MGE with 1 x 20 Gaussians for the source galaxy's light [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 """
 lens = af.Model(al.Galaxy, redshift=0.5, mass=al.mp.Isothermal)
 
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model_1 = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 

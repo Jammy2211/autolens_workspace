@@ -41,9 +41,9 @@ __Model__
 
 This script fits a multi-wavelength `Imaging` dataset of a 'galaxy-scale' strong lens with a model where:
 
- - The lens galaxy's light is a parametric linear `Sersic` bulge where the `intensity` varies across wavelength.
+ - The lens galaxy's light is a an MGE bulge where the `ell_comps` varies across wavelength.
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear`.
- - The source galaxy's light is a parametric linear `Sersic` where the `intensity` varies across wavelength.
+ - The source galaxy's light is a parametric linear MGE where the `ell_comps` varies across wavelength.
 
 Two images are fitted, corresponding to a greener ('g' band) redder image (`r` band).
 
@@ -111,9 +111,13 @@ Define a 3.0" circular mask, which includes the emission of the lens and source 
 For multi-wavelength lens modeling, we use the same mask for every dataset whenever possible. This is not
 absolutely necessary, but provides a more reliable analysis.
 """
+mask_radius = 3.0
+
 mask_list = [
     al.Mask2D.circular(
-        shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+        shape_native=dataset.shape_native,
+        pixel_scales=dataset.pixel_scales,
+        radius=mask_radius,
     )
     for dataset in dataset_list
 ]
@@ -138,27 +142,42 @@ __Model__
 
 We compose a lens model where:
 
- - The lens galaxy's light is a linear parametric `Sersic`, where the `intensity` parameter of the lens galaxy
+ - The lens galaxy's light is an MGE with 2 x 30 Gaussians, where the `intensity` parameter of the lens galaxy
  for each individual waveband is solved for linearly independently in each waveband [6 parameters].
 
  - The lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
  
- - The source galaxy's light is a linear parametric `Sersic`, where the `intensity` parameter of the lens galaxy
- for each individual waveband is solved for linearly independently in each waveband [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians, where the `intensity` parameter of the lens galaxy
+ for each individual waveband is solved for linearly independently in each waveband [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=19.
 
 A dimensionality of N=19 is 4 parameters less than the dimensionality of N=23 we would have if we used standard
 light profiles with the `intensity` of the lens and source galaxies as free parameters in the model-fit.
 """
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
+)
+
 lens = af.Model(
     al.Galaxy,
     redshift=0.5,
-    bulge=al.lp_linear.Sersic,
+    bulge=bulge,
     mass=al.mp.Isothermal,
     shear=al.mp.ExternalShear,
 )
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 

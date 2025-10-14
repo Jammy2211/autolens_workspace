@@ -1,8 +1,8 @@
 """
-__Log Likelihood Function: Inversion (image_mesh.Overlay + mesh.Delaunay + reg.Constant)__
+__Log Likelihood Function: Inversion (image_mesh.Overlay + mesh.Rectangular + reg.Constant)__
 
 This script provides a step-by-step guide of the **PyAutoLens** `log_likelihood_function` which is used to fit
-`Imaging` data with an inversion (specifically an `Overlay` image-mesh, `Delaunay` mesh and `Constant`
+`Imaging` data with an inversion (specifically an `Overlay` image-mesh, `Rectangular` mesh and `Constant`
 regularization scheme`).
 
 This script has the following aims:
@@ -72,8 +72,12 @@ lens modeling.
 
 Below, we define a 2D circular mask with a 3.0" radius.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 masked_dataset = dataset.apply_mask(mask=mask)
@@ -136,14 +140,14 @@ lens_galaxy = al.Galaxy(redshift=0.5, bulge=bulge, mass=mass, shear=shear)
 """
 __Source Galaxy Pixelization and Regularization__
 
-The source galaxy is reconstructed using a pixel-grid, in this example a Delaunay mesh, which accounts for 
+The source galaxy is reconstructed using a pixel-grid, in this example a Rectangular mesh, which accounts for 
 irregularities and asymmetries in the source's surface brightness. 
 
 A constant regularization scheme is applied which applies a smoothness prior on the reconstruction. 
 """
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
-    mesh=al.mesh.Delaunay(),
+    image_mesh=None,
+    mesh=al.mesh.Rectangular(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -199,7 +203,7 @@ array_2d_plotter.figure_2d()
 """
 __Source Pixel Centre Calculation__
 
-In order to reconstruct the source galaxy using a Delaunay mesh, we need to determine the centres of the Delaunay 
+In order to reconstruct the source galaxy using a Rectangular mesh, we need to determine the centres of the Rectangular 
 source pixels.
 
 The image-mesh `Overlay` object computes the source-pixel centres in the image-plane (which are ray-traced to the 
@@ -233,7 +237,7 @@ The likelihood function of a pixelized source reconstruction ray-traces two grid
 
  1) A 2D grid of (y,x) coordinates aligned with the imaging data's image-pixels.
  
- 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Delaunay pixels.
+ 2) The sparse 2D grid of (y,x) coordinates above which form the centres of the Rectangular pixels.
 
 The function below computes the 2D deflection angles of the tracer's lens galaxies and subtracts them from the 
 image-plane 2D (y,x) coordinates $\theta$ of each grid, thus ray-tracing their coordinates to the source plane to 
@@ -246,7 +250,7 @@ The source code gets quite complex when handling grids for a pixelization, but i
 the `TracerToInversion` objects.
 
 The plots at the bottom of this cell show the traced grids used by the source pixelization, showing
-how the Delaunay mesh and traced image pixels are constructed.
+how the Rectangular mesh and traced image pixels are constructed.
 """
 tracer_to_inversion = al.TracerToInversion(tracer=tracer, dataset=masked_dataset)
 
@@ -294,26 +298,26 @@ grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot
 grid_plotter.figure_2d()
 
 """
-__Delaunay Mesh__
+__Rectangular Mesh__
 
-The relocated pixelization grid is used to create the `Pixelization`'s Delaunay mesh using the `scipy.spatial` library.
+The relocated pixelization grid is used to create the `Pixelization`'s Rectangular mesh using the `scipy.spatial` library.
 """
-grid_delaunay = al.Mesh2DDelaunay(
+grid_Rectangular = al.Mesh2DRectangular(
     values=relocated_mesh_grid,
 )
 
 """
-Plotting the Delaunay mesh shows that the source-plane and been discretized into a grid of irregular Delaunay pixels.
+Plotting the Rectangular mesh shows that the source-plane and been discretized into a grid of irregular Rectangular pixels.
 
-(To plot the Delaunay mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
+(To plot the Rectangular mesh, we have to convert it to a `Mapper` object, which is described in the next likelihood step).
 
-Below, we plot the Delaunay mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
-to show how each set of image-pixels fall within a Delaunay pixel.
+Below, we plot the Rectangular mesh without the traced image-grid pixels (for clarity) and with them as black dots in order
+to show how each set of image-pixels fall within a Rectangular pixel.
 """
 mapper_grids = al.MapperGrids(
     mask=mask,
     source_plane_data_grid=relocated_grid,
-    source_plane_mesh_grid=grid_delaunay,
+    source_plane_mesh_grid=grid_Rectangular,
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
@@ -336,7 +340,7 @@ mapper_plotter.figure_2d(interpolate_to_uniform=False)
 __Image-Source Mapping__
 
 We now combine grids computed above to create a `Mapper`, which describes how every image-plane pixel maps to
-every source-plane Delaunay pixel. 
+every source-plane Rectangular pixel. 
 
 There are two steps in this calculation, which we show individually below.
 """
@@ -349,10 +353,10 @@ mapper = al.Mapper(
 The `Mapper` contains:
 
  1) `source_plane_data_grid`: the traced grid of (y,x) image-pixel coordinate centres (`relocated_grid`).
- 2) `source_plane_mesh_grid`: The Delaunay mesh of traced (y,x) source-pixel coordinates (`grid_delaunay`).
+ 2) `source_plane_mesh_grid`: The Rectangular mesh of traced (y,x) source-pixel coordinates (`grid_Rectangular`).
 
-We have therefore discretized the source-plane into a Delaunay mesh, and can pair every traced image-pixel coordinate
-with the corresponding Delaunay source pixel it lands in.
+We have therefore discretized the source-plane into a Rectangular mesh, and can pair every traced image-pixel coordinate
+with the corresponding Rectangular source pixel it lands in.
 
 This pairing is contained in the ndarray `pix_indexes_for_sub_slim_index` which maps every image-pixel index to 
 every source-pixel index.
@@ -411,14 +415,14 @@ The `mapping_matrix` represents the image-pixel to source-pixel mappings above i
 
 It has dimensions `(total_image_pixels, total_source_pixels)`.
 
-(A number of inputs are not used for the `Delaunay` pixelization and are expanded upon in the `features.ipynb`
+(A number of inputs are not used for the `Rectangular` pixelization and are expanded upon in the `features.ipynb`
 log likelihood guide notebook).
 """
 
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
-    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Delaunay
-    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Delaunay
+    pix_size_for_sub_slim_index=mapper.pix_sizes_for_sub_slim_index,  # unused for Rectangular
+    pix_weights_for_sub_slim_index=mapper.pix_weights_for_sub_slim_index,  # unused for Rectangular
     pixels=mapper.pixels,
     total_mask_pixels=mapper.source_plane_data_grid.mask.pixels_in_mask,
     slim_index_for_sub_slim_index=mapper.slim_index_for_sub_slim_index,
@@ -654,11 +658,11 @@ Different forms for $G_{\rm L}$ can be defined which regularize the source recon
 
  $G_{\rm L} = \sum_{\rm  i}^{I} \sum_{\rm  n=1}^{N}  [s_{i} - s_{i, v}]$
 
-This regularization scheme is easier to express in words -- the summation goes to each Delaunay source pixel,
-determines all Delaunay source pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
+This regularization scheme is easier to express in words -- the summation goes to each Rectangular source pixel,
+determines all Rectangular source pixels with which it shares a direct vertex (e.g. its neighbors) and penalizes solutions 
 where the difference in reconstructed flux of these two neighboring source pixels is large.
 
-The summation does this for all Delaunay pixels, thus it favours solutions where neighboring Delaunay source
+The summation does this for all Rectangular pixels, thus it favours solutions where neighboring Rectangular source
 pixels reconstruct similar values to one another (e.g. it favours a smooth source reconstruction).
 
 We now define the `regularization matrix`, $H$, which allows us to include this smoothing when we solve for $s$. $H$
@@ -680,12 +684,12 @@ regularization_matrix = al.util.regularization.constant_regularization_matrix_fr
 """
 We can plot the regularization matrix and note that:
 
- - non-zero entries indicate that two Delaunay source-pixels are neighbors and therefore are regularized with one 
+ - non-zero entries indicate that two Rectangular source-pixels are neighbors and therefore are regularized with one 
  another.
  
- - Zeros indicate the two Delaunay source pixels do not neighbor one another.
+ - Zeros indicate the two Rectangular source pixels do not neighbor one another.
  
-The majority of entries are zero, because the majority of Delaunay source pixels are not neighbors with one another.
+The majority of entries are zero, because the majority of Rectangular source pixels are not neighbors with one another.
 """
 plt.imshow(regularization_matrix)
 plt.colorbar()
@@ -913,7 +917,7 @@ are described in additional notebooks found in this package. In brief, these des
  - **Sub-gridding**: Oversampling the image grid into a finer grid of sub-pixels, which are all individually 
  ray-traced to the source-plane and paired fractionally with each source pixel.
  
- - **Source-plane Interpolation**: Using a Delaunay triangulation or Delaunay mesh with natural neighbor interpolation
+ - **Source-plane Interpolation**: Using a Rectangular triangulation or Rectangular mesh with natural neighbor interpolation
  to pair each image (sub-)pixel to multiple source-plane pixels with interpolation weights.
  
  - **Source Morphology Pixelization Adaption**: Adapting the pixelization such that is congregates source pixels around

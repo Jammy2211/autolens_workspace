@@ -129,16 +129,16 @@ Checkout the following module for a full description of the border relocation:
 https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/inversion/pixelization/border_relocator.py
 
 
-__LH Step 6: Delaunay Mesh__
+__LH Step 6: Rectangular Mesh__
 
-The `structures.mesh` package handles the construction of the Delaunay mesh (and other meshes):
+The `structures.mesh` package handles the construction of the Rectangular mesh (and other meshes):
 
 https://github.com/Jammy2211/PyAutoArray/tree/main/autoarray/structures/mesh
 
-The `Delaunay` mesh is used in the example, and its specific implementation is at:
+The `Rectangular` mesh is used in the example, and its specific implementation is at:
 
 https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/mesh/triangulation_2d.py
-https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/mesh/delaunay_2d.py
+https://github.com/Jammy2211/PyAutoArray/blob/main/autoarray/structures/mesh/Rectangular_2d.py
 
 
 __LH Step 7: Image-Source Mapping__

@@ -15,9 +15,9 @@ __Model__
 Using a SOURCE LP PIPELINE, LIGHT PIPELINE and a MASS TOTAL PIPELINE this SLaM script  fits `Imaging` dataset of a strong
 lens system, where in the final model:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
+ - The lens galaxy's light is a bulge with an MGE.
  - The lens galaxy's total mass distribution is an `PowerLaw`.
- - The source galaxy's light is a linear parametric `SersicCore`.
+ - The source galaxy's light is an MGE.
 
 This modeling script uses the SLaM pipelines:
 
@@ -59,15 +59,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -104,7 +108,7 @@ __SOURCE LP PIPELINE__
 The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in 
 this example:
 
- - Uses a linear parametric `Sersic` bulge for the lens galaxy's light.
+ - Uses a MGE bulge with 2 x 30 Gaussians for the lens galaxy's light.
 
  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
 
@@ -114,16 +118,27 @@ this example:
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 
-bulge = af.Model(al.lp_linear.Sersic)
+lens_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
+)
+source_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
 
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
-    lens_bulge=bulge,
+    lens_bulge=lens_bulge,
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
@@ -136,12 +151,12 @@ The LIGHT LP PIPELINE uses one search to fit a complex lens light model to a hig
 lens mass model and source light model fixed to the maximum log likelihood result of the SOURCE LP PIPELINE.
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge for the lens galaxy's light [Do not use the results of 
+ - Uses a MGE bulge with 2 x 30 Gaussians for the lens galaxy's light [Do not use the results of 
    the SOURCE LP PIPELINE to initialize priors].
 
  - Uses an `Isothermal` model for the lens's total mass distribution [fixed from SOURCE LP PIPELINE].
 
- - Uses the `Sersic` model representing a bulge for the source's light [fixed from SOURCE LP PIPELINE].
+ - Uses the an MGE model representing a bulge for the source's light [fixed from SOURCE LP PIPELINE].
 
  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS 
  PIPELINE [fixed values].
@@ -150,7 +165,12 @@ analysis = al.AnalysisImaging(
     dataset=dataset,
 )
 
-bulge = af.Model(al.lp_linear.Sersic)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=True,
+)
 
 light_results = slam.light_lp.run(
     settings_search=settings_search,
@@ -170,12 +190,12 @@ lens light model of the LIGHT LP PIPELINE.
 
 In this example it:
 
- - Uses a linear parametric `Sersic` bulge [fixed from LIGHT LP PIPELINE].
+ - Uses a MGE bulge with 2 x 30 Gaussians [fixed from LIGHT LP PIPELINE].
 
  - Uses an `PowerLaw` model for the lens's total mass distribution [priors initialized from SOURCE 
  PARAMETRIC PIPELINE + centre unfixed from (0.0, 0.0)].
 
- - Uses the `Sersic` model representing a bulge for the source's light [priors initialized from SOURCE 
+ - Uses the an MGE model representing a bulge for the source's light [priors initialized from SOURCE 
  PARAMETRIC PIPELINE].
 
  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.

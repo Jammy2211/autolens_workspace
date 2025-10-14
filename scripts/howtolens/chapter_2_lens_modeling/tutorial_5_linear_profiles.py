@@ -60,8 +60,12 @@ __Mask__
 
 we'll create and use a smaller 2.6" `Mask2D` again.
 """
+mask_radius = 2.6
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=2.6
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)

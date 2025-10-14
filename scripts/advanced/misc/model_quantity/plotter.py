@@ -66,8 +66,12 @@ __Mask__
 The model-fit requires a 2D mask defining the regions of the convergence we fit, which we define and apply to the 
 `DatasetQuantity` object.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -139,8 +143,12 @@ __Mask__
 The again apply  `Mask2D` defining the regions of the deflections we fit, which despite the change in structure of the
 data to vectors uses the same API.
 """
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)

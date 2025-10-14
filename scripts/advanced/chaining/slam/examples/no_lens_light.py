@@ -12,7 +12,7 @@ of a strong lens system, where in the final model:
 
  - The lens galaxy's light is omitted from the data and model.
  - The lens galaxy's total mass distribution is an `PowerLaw`.
- - The source galaxy is reconstructed using a `Hilbert` image-mesh, `Delaunay` mesh and `ConstantSplit`
+ - The source galaxy is reconstructed using a `Hilbert` image-mesh, `Rectangular` mesh and `Constant`
    regularization scheme.
 
 This uses the SLaM pipelines:
@@ -60,8 +60,12 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
@@ -162,7 +166,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 """
@@ -190,7 +194,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 

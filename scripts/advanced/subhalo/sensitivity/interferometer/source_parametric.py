@@ -7,14 +7,14 @@
 # pipelines has it own inputs which customize the model and analysis in that pipeline.
 #
 # The models fitted in earlier pipelines determine the model used in later pipelines. For example, if the SOURCE PIPELINE
-# uses a linear parametric `Sersic` profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
+# uses an MGE profile for the bulge, this will be used in the subsequent MASS TOTAL PIPELINE.
 #
 # Using a SOURCE LP PIPELINE, MASS TOTAL PIPELINE and SUBHALO PIPELINE this SLaM script fits `Interferometer` of a strong lens
 # system, where in the final model:
 #
 #  - The lens galaxy's light is omitted from the data and model.
 #  - The lens galaxy's total mass distribution is an `Isothermal`.
-#  - The source galaxy is an `Sersic`.
+#  - The source galaxy is an MGE..
 #
 # It ends by performing sensitivity mapping of the data using the above model, so as to determine where in the data
 # subhalos of a given mass could have been detected if present.
@@ -96,7 +96,7 @@
 # The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in
 # this example:
 #
-#  - Uses a linear parametric `Sersic` bulge for the source's light (omitting a disk / envelope).
+#  - Uses a MGE bulge with 1 x 20 Gaussians for the source's light (omitting a disk / envelope).
 #  - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
 #
 #  __Settings__:
@@ -125,7 +125,7 @@
 # using the lens mass model and source model of the SOURCE PIPELINE to initialize the model priors. In this example it:
 #
 #  - Uses an `PowerLaw` model for the lens's total mass distribution [The centre if unfixed from (0.0, 0.0)].
-#  - Uses the `Sersic` model representing a bulge for the source's light.
+#  - Uses the an MGE model representing a bulge for the source's light.
 #  - Carries the lens redshift, source redshift and `ExternalShear` of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.
 # """
 # analysis = al.AnalysisInterferometer(dataset=dataset)

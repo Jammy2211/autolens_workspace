@@ -14,7 +14,7 @@ This script introduces **PyAutoLens**'s pixelization adaption features, which pa
 model-fits performed by earlier searches to searches performed later in the chain, in order to adapt the pixelizaiton's
 mesh and regularization to the source's unlensed properties.
 
-This script illustrates using the `Hilbert` image-mesh, `Delaunay` mesh and `AdaptiveBrightnessSplit` regularization
+This script illustrates using the `Hilbert` image-mesh, `Rectangular` mesh and `AdaptiveBrightnessSplit` regularization
 scheme to adapt the source reconstruction to the source galaxy's morphology (as opposed to schemes introduced
 previously which adapt to the mass model magnification or apply a constant regularization pattern).
 
@@ -52,15 +52,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -98,9 +102,9 @@ search our lens model is:
  
  - The source galaxy's light uses an `Overlay` image-mesh with fixed resolution 30 x 30 pixels [0 parameters].
  
- - The source-galaxy's light uses a `Delaunay` mesh [0 parameters].
+ - The source-galaxy's light uses a `Rectangular` mesh [0 parameters].
 
- - This pixelization is regularized using a `ConstantSplit` scheme [1 parameter]. 
+ - This pixelization is regularized using a `Constant` scheme [1 parameter]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=8.
 """
@@ -110,9 +114,9 @@ lens = af.Model(
 
 pixelization = af.Model(
     al.Pixelization,
-    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
-    mesh=al.mesh.Delaunay(),
-    regularization=al.reg.ConstantSplit,
+    image_mesh=None,
+    mesh=al.mesh.Rectangular(),
+    regularization=al.reg.Constant,
 )
 
 source = af.Model(al.Galaxy, redshift=1.0, pixelization=pixelization)
@@ -176,7 +180,7 @@ the second search our lens model is:
  
  - The source galaxy's light uses a `Hilbert` image-mesh with fixed resolution 1000 pixels [2 parameters].
  
- - The source-galaxy's light uses a `Delaunay` mesh [0 parameters].
+ - The source-galaxy's light uses a `Rectangular` mesh [0 parameters].
 
  - This pixelization is regularized using a `AdaptiveBrightnessSplit` scheme [2 parameter]. 
 
@@ -187,7 +191,7 @@ lens = result_1.instance.galaxies.lens
 pixelization = af.Model(
     al.Pixelization,
     image_mesh=al.image_mesh.Hilbert(pixels=1000),
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 

@@ -4,18 +4,18 @@ Chaining: Chaining Lens Light To Mass
 
 This script chains two searches to fit `Imaging` data of a 'galaxy-scale' strong lens with a model where:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
+ - The lens galaxy's light is a bulge with an MGE.
  - The lens galaxy's stellar mass distribution is a bulge tied to the light model above.
  - The lens galaxy's dark matter mass distribution is a `NFWSph`.
- - The source galaxy's light is an `Sersic`.
+ - The source galaxy's light is an MGE.
 
 The two searches break down as follows:
 
- 1) Models the lens galaxy's light using an `Sersic` bulge. The source is present in the image, but modeling it is
+ 1) Models the lens galaxy's light using an MGE bulge. The source is present in the image, but modeling it is
  omitted.
 
  2) Models the lens galaxy's mass using a stellar mass distriubtion which is initialized using the bulge light
- models inferred by search 1, alongside a dark matter profile. The source is again modeled using an `Sersic`
+ models inferred by search 1, alongside a dark matter profile. The source is again modeled using an MGE
 
 __Why Chain?__
 
@@ -73,15 +73,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -103,12 +107,17 @@ __Model (Search 1)__
 
 Search 1 fits a lens model where:
 
- - The lens galaxy's light is a linear parametric `Sersic` bulge [6 parameters].
+ - The lens galaxy's light is an MGE bulge with 2 x 30 Gaussians [6 parameters].
  - The lens galaxy's mass and source galaxy are omitted.
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
-bulge = af.Model(al.lp_linear.Sersic)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
 
 lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge)
 
@@ -150,12 +159,12 @@ __Model (Search 2)__
 
 We use the results of search 1 to create the lens model fitted in search 2, where:
 
- - The lens galaxy's light and stellar mass is a linear parametric `Sersic` bulge  [6 parameters: priors initialized from 
+ - The lens galaxy's light and stellar mass is a MGE bulge with 2 x 30 Gaussians  [6 parameters: priors initialized from 
    search 1].
  - The lens galaxy's dark matter mass distribution is a `NFW` whose centre is aligned with the 
- `Sersic` bulge and stellar mass model above [5 parameters].
+ MGE bulge and stellar mass model above [5 parameters].
  - The lens mass model also includes an `ExternalShear` [2 parameters].
- - The source galaxy's light is a linear parametric `SersicCore` [6 parameters].
+ - The source galaxy's light is an MGE with 1 x 20 Gaussians [4 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=22.
 
@@ -164,16 +173,23 @@ the bulge above use a `LightProfile` (e.g. via `al.lp`), whereas the model below
 (e.g. via `al.lmp`). 
 
 The `take_attributes` method is used when we pass parameters from two different models. In the example below it finds
-all parameters in the `Sersic` and `Sersic` light models that share the same names
-as parameters in the ``Sersic` and `Sersic` light and mass models and passes their priors 
-(in this case, the `centre`, `ell_comps`, `intensity`, `effective_radius` and `sersic_index`).
+all parameters in the MGE and MGE light models that share the same names
+as parameters in the `MGE and MGE light and mass models and passes their priors 
+(in this case, the `centre`, `ell_comps`).
 """
 bulge = af.Model(al.lmp.Sersic)
 bulge.take_attributes(source=result_1.model)
 
 lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, dark=af.Model(al.mp.NFW))
 
-source = af.Model(al.Galaxy, redshift=1.0, bulge=al.lp_linear.SersicCore)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
+
+source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
 
 model_2 = af.Collection(galaxies=af.Collection(lens=lens))
 

@@ -14,7 +14,7 @@ __Model__
 Using a SOURCE LP PIPELINE, LIGHT LP PIPELINE, MASS TOTAL PIPELINE and SUBHALO PIPELINE this SLaM script
 fits `Imaging` of a strong lens system, where in the final model:
 
- - The lens galaxy's light is a bulge with a linear parametric `Sersic` light profile.
+ - The lens galaxy's light is an MGE bulge.
  - The lens galaxy's total mass distribution is an `Isothermal`.
  - A dark matter subhalo near The lens galaxy mass is included as a`NFWMCRLudlowSph`.
  - The source galaxy is an `Inversion`.
@@ -65,15 +65,19 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.05,
 )
 
+mask_radius = 3.0
+
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=mask_radius,
 )
 
 dataset = dataset.apply_mask(mask=mask)
 
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=dataset.grid,
-    sub_size_list=[8, 4, 1],
+    sub_size_list=[4, 2, 1],
     radial_list=[0.3, 0.6],
     centre_list=[(0.0, 0.0)],
 )
@@ -111,16 +115,28 @@ This is the standard SOURCE LP PIPELINE described in the `slam/start_here.ipynb`
 """
 analysis = al.AnalysisImaging(dataset=dataset)
 
-bulge = af.Model(al.lp_linear.Sersic)
+lens_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
+
+source_bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=20,
+    gaussian_per_basis=1,
+    centre_prior_is_uniform=False,
+)
 
 source_lp_result = slam.source_lp.run(
     settings_search=settings_search,
     analysis=analysis,
-    lens_bulge=bulge,
+    lens_bulge=lens_bulge,
     lens_disk=None,
     mass=af.Model(al.mp.Isothermal),
     shear=af.Model(al.mp.ExternalShear),
-    source_bulge=af.Model(al.lp_linear.SersicCore),
+    source_bulge=source_bulge,
     mass_centre=(0.0, 0.0),
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
@@ -149,7 +165,7 @@ source_pix_result_1 = slam.source_pix.run_1(
     settings_search=settings_search,
     analysis=analysis,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay,
+    mesh_init=al.mesh.Rectangular,
 )
 
 adapt_image_maker = al.AdaptImageMaker(result=source_pix_result_1)
@@ -183,7 +199,7 @@ source_pix_result_2 = slam.source_pix.run_2(
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     image_mesh=al.image_mesh.Hilbert,
-    mesh=al.mesh.Delaunay,
+    mesh=al.mesh.Rectangular,
     regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
@@ -192,8 +208,12 @@ __LIGHT LP PIPELINE__
 
 This is the standard LIGHT LP PIPELINE described in the `slam/start_here.ipynb` example.
 """
-
-bulge = af.Model(al.lp_linear.Sersic)
+bulge = al.model_util.mge_model_from(
+    mask_radius=mask_radius,
+    total_gaussians=30,
+    gaussian_per_basis=2,
+    centre_prior_is_uniform=True,
+)
 
 light_result = slam.light_lp.run(
     settings_search=settings_search,

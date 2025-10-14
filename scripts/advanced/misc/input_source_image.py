@@ -88,7 +88,7 @@ We now use the scipy interpolation function `griddata`, where:
 The interpolation works by pairing every ray-traced (y,x) coordinate in the `traced_image_plane_grid` to its
 closest 4 coordinates in `source_plane_grid`. 
 
-It then uses Delaunay interpolation to compute the intensity from these 4 coordinates.
+It then uses Rectangular interpolation to compute the intensity from these 4 coordinates.
 
 """
 lensed_image = griddata(

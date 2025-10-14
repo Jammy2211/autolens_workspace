@@ -234,7 +234,7 @@
 # mapping on.
 #
 # - `base_model`: This is the lens model that is fitted to every simulated dataset, which does not include a subhalo. In
-# this example is composed of an `Isothermal` lens and `Sersic` source.
+# this example is composed of an `Isothermal` lens and MGE source.
 #
 # - `perturb_model`: This is the extra model component that alongside the `base_model` is fitted to every simulated
 # dataset. In this example it is a `NFWMCRLudlowSph` dark matter subhalo.

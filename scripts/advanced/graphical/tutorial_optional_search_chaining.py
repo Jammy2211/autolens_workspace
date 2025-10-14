@@ -79,7 +79,7 @@ for dataset in dataset_list:
 
     over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
         grid=dataset.grid,
-        sub_size_list=[8, 4, 1],
+        sub_size_list=[4, 2, 1],
         radial_list=[0.3, 0.6],
         centre_list=[(0.0, 0.0)],
     )
@@ -101,7 +101,7 @@ __Model__
 We compose our model using `Model` objects, which represent the lenses we fit to our data. In this 
 example we fit a model where:
 
- - The lens's bulge is a linear parametric `Sersic` bulge with its centre fixed to the input 
+ - The lens's bulge is a MGE bulge with 2 x 30 Gaussians with its centre fixed to the input 
  value of (0.0, 0.0) [4 parameters]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=5.
@@ -143,7 +143,7 @@ __Model (Search 2)__
 
 We use the results of search 1 to create the lens models fitted in search 2, where:
 
- - The lens's bulge is again a linear parametric `Sersic` bulge [6 parameters: priors passed from search 1]. 
+ - The lens's bulge is again a MGE bulge with 2 x 30 Gaussians [6 parameters: priors passed from search 1]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=7.
 
