@@ -14,10 +14,10 @@ see the `start_here_group.ipynb` and `start_here_cluster.ipynb` examples.
 
 PyAutoLens uses JAX under the hood for fast GPU/CPU acceleration. If JAX is installed with GPU
 support, your fits will run much faster (a few minutes instead of an hour). If you don’t have
-a GPU locally, consider Google Colab to get started quickly.
+a GPU locally, consider Google Colab which provides free GPUs, so your modeling runs are much faster.
 
-Finally, we also show how to simulate strong lens imaging. This is useful for practice, for
-building training datasets, or for investigating lensing effects in a controlled way.
+We also show how to simulate strong lens imaging. This is useful for building machine learning training datasets,
+or for investigating lensing effects in a controlled way.
 """
 
 # %matplotlib inline
@@ -101,21 +101,22 @@ dataset_plotter.subplot_dataset()
 """
 __Model__
 
-To perform lens modeling we must define a lens model, describing the light profiles of the lens and source galaxies,
-and the mass profile of the lens galaxy.
+To perform lens modeling we must define a lens model, describing the light profiles of 
+the lens and source galaxies, and the mass profile of the lens galaxy.
 
-A brilliant lens model to start with is one which uses a Multi Gaussian Expansion (MGE) to model the lens and source
-light, and a Singular Isothermal Ellipsoid (SIE) plus shear to model the lens mass. 
+A brilliant lens model to start with is one which uses a Multi Gaussian Expansion (MGE) 
+to model the lens and source light, and a Singular Isothermal Ellipsoid (SIE) plus 
+shear to model the lens mass. 
 
-Full details of why this models is so good are provided in the main workspace docs, but in a nutshell it 
-provides an excellent balance of being fast to fit, flexible enough to capture complex galaxy morphologies and 
-providing accurate fits to the vast majority of strong lenses.
+Full details of why this models is so good are provided in the main workspace docs, 
+but in a nutshell it  provides an excellent balance of being fast to fit, flexible 
+enough to capture complex galaxy morphologies and providing accurate fits to the vast 
+majority of strong lenses.
 
-The MGE model composition API is quite long and technical, so we simply load the MGE models for the lens and source 
-below via a utility function `mge_model_from` which hides the API to make the code in this introduction example ready 
-to read. We then use the PyAutoLens Model API to compose the over lens model.
- 
-and print `model.info` to show the parameters that the model is composed of.
+The MGE model composition API is quite long and technical, so we simply load the MGE 
+models for the lens and source below via a utility function `mge_model_from` which 
+hides the API to make the code in this introduction example ready to read. We then 
+use the PyAutoLens Model API to compose the over lens model.
 """
 # Lens:
 
@@ -153,15 +154,15 @@ __Model Fit__
 We now fit the data with the lens model using the non-linear fitting method and nested sampling algorithm Nautilus.
 
 This requires an `AnalysisImaging` object, which defines the `log_likelihood_function` used by Nautilus to fit
-the model to the imaigng data.
+the model to the imaging data.
 """
 search = af.Nautilus(
-    path_prefix=Path("imaging"),  # The path where results and output
+    path_prefix=Path("imaging"),  # The path where results and output are stored.
     name="start_here",  # The name of the fit and folder results are output to.
     unique_tag=dataset_name,  # A unique tag which also defines the folder.
     n_live=100,  # The number of Nautilus "live" points, increase for more complex models.
     n_batch=50,  # For fast GPU fitting lens model fits are batched and run simultaneously.
-    iterations_per_update=20000,  # Every N iterations the results are written to hard-disk for inspection.
+    iterations_per_update=50000,  # Every N iterations the results are written to hard-disk for inspection.
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -217,9 +218,6 @@ Let’s now switch gears and simulate our own strong lens imaging. This is a gre
 - Practice lens modeling before using real data.
 - Build large training sets (e.g. for machine learning).
 - Test lensing theory in a controlled environment.
-
-We’ll start by simulating “perfect” images without telescope effects. This means no blurring
-from a PSF and no noise — just the raw light from galaxies and deflections from gravity.
 
 To do this we need to define a 2D grid of (y,x) coordinates in the image-plane. This grid is
 where we’ll evaluate the light from the lens and source galaxies.
@@ -286,13 +284,7 @@ tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
 tracer_plotter.figures_2d(image=True)
 
 """
-The tracer’s outputs can also be saved as arrays — for example:
-
-- The image itself.
-- The convergence (κ).
-- The potential (ψ).
-
-This allows you to build datasets for training or for direct comparison with models.
+The image cna be saved to .fits for later use.
 """
 image = tracer.image_2d_from(grid=grid)
 
@@ -406,5 +398,5 @@ The following locations of the workspace are good places to checkout next:
 - `autolens_workspace/*/data_preparation/imaging`: How to load and prepare your own imaging data for lens modeling.
 - `autolens_workspace/results`: How to load and analyze the results of your lens model fits, including tools for large samples.
 - `autolens_workspace/guides`: A complete description of the API and information on lensing calculations and units.
-- `autolens_workspace/feature`: A description of advanced features for lens modeling, for example pixellated source reconstructions, read this once you're confident with the basics!
+- `autolens_workspace/feature`: A description of advanced features for lens modeling, for example pixelized source reconstructions, read this once you're confident with the basics!
 """
