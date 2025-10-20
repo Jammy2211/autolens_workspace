@@ -86,6 +86,7 @@ search_1 = af.Nautilus(
     name="search[1]_mass[sie]_source[lp]",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -153,6 +154,7 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source[pix_init]",
     unique_tag=dataset_name,
     n_live=50,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis_2 = al.AnalysisImaging(
@@ -227,6 +229,7 @@ search_3 = af.Nautilus(
     name="search[3]_mass[sie]_source[pix]",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 """

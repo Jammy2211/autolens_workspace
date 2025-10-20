@@ -186,7 +186,7 @@ which includes producing visualization.
 Depending on how long it takes for the model to be fitted to the data (see discussion about run times below), 
 this can take up a large fraction of the run-time of the non-linear search.
 
-For this fit, the fit is very fast, thus we set a high value of `iterations_per_update=10000` to ensure these updates
+For this fit, the fit is very fast, thus we set a high value of `iterations_per_quick_update=10000` to ensure these updates
 so not slow down the overall speed of the model-fit. 
 
 **If the iteration per update is too low, the model-fit may be significantly slowed down by the time it takes to
@@ -198,7 +198,7 @@ search = af.Nautilus(
     name="tutorial_2_practicalities",
     unique_tag=dataset_name,
     n_live=100,
-    iterations_per_update=2500,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 """

@@ -143,6 +143,7 @@ search_1 = af.Nautilus(
     name="search[1]_light[bulge]",
     unique_tag=dataset_name,
     n_live=75,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
@@ -226,6 +227,7 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
@@ -298,6 +300,7 @@ search_3 = af.Nautilus(
     name="search[3]_light[bulge]_mass[sie]_source[bulge]",
     unique_tag=dataset_name,
     n_live=150,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 result_3 = search_3.fit(model=model_3, analysis=analysis_3)

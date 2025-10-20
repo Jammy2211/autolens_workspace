@@ -231,7 +231,7 @@ result_list = search.fit(model=factor_graph.global_prior_model, analysis=factor_
 """
 __Result__
 
-The result object returned by this model-fit is a list of `Result` objects, because we used a combined analysis.
+The result object returned by this model-fit is a list of `Result` objects, because we used a factor graph.
 Each result corresponds to each analysis, and therefore corresponds to the model-fit at that wavelength.
 
 For example, close inspection of the `max_log_likelihood_instance` of the two results shows that all parameters,
