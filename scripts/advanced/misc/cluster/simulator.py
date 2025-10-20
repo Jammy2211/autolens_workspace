@@ -80,8 +80,8 @@ on, via the inputs:
 Note how for a cluster lens this spans a large arc second region, from -50.0" to 50.0".
 """
 grid = al.Grid2D.uniform(
-    shape_native=(500, 500),
-    pixel_scales=0.05,
+    shape_native=(400, 400),
+    pixel_scales=0.1,
 )
 
 """
@@ -154,9 +154,9 @@ We now compose our mass parameters using the scaling relation models, which work
 We also include a `Sersic` lens light component for each galaxy. This is not used in modeling, but it will mean we
 output an image where the lens's are visible, making the cluster's lensing configuration easier to inspect.
 """
-ra_star = 1e10
-rs_star = 0.1
-b0_star = 1e11
+ra_star = 0.1
+rs_star = 2.0
+b0_star = 1e2 * 0.0
 luminosity_star = 1e9
 
 extra_galaxies_list = []
@@ -174,11 +174,9 @@ for extra_galaxy_centre, extra_galaxy_luminosity in zip(
 
     ra = ra_star * (extra_galaxy_luminosity / luminosity_star) ** 0.5
     rs = rs_star * (extra_galaxy_luminosity / luminosity_star) ** 0.5
-    b0 = b0_star * (extra_galaxy_luminosity / luminosity_star) ** 0.25
+    b0 = b0_star * (extra_galaxy_luminosity / luminosity_star) ** 0.5
 
     mass = al.mp.dPIEMassSph(centre=extra_galaxy_centre, ra=ra, rs=rs, b0=b0)
-
-    print(ra, rs, b0, np.max(mass.deflections_yx_2d_from(grid=grid)))
 
     extra_galaxy = al.Galaxy(redshift=0.5, bulge=bulge, mass=mass)
 
@@ -197,11 +195,11 @@ but it will mean we output an image where the source arcS are visible, making th
 lensing configuration easier to inspect.
 """
 source_galaxy_centre_list = [
-    (0.1, 0.1),
-    (1.15, 0.15),
-    (0.2, 0.2),
-    (-2.0, -3.0),
-    (3.0, 2.0),
+    (0.01, 0.01),
+ #   (1.15, 0.15),
+ #   (0.2, 0.2),
+ #   (-2.0, -3.0),
+ #   (3.0, 2.0),
 ]
 
 source_galaxy_list = []
@@ -217,7 +215,7 @@ for i, source_galaxy_centre in enumerate(source_galaxy_centre_list):
 
     point = al.ps.Point(centre=source_galaxy_centre)
 
-    source_galaxy = al.Galaxy(redshift=0.5, **{f"point_{i}": point})
+    source_galaxy = al.Galaxy(redshift=1.0, **{f"point_{i}": point})
 
     source_galaxy_list.append(source_galaxy)
 
@@ -234,7 +232,17 @@ in degrees and defined counter clockwise from the positive x-axis.
 
 We can use the `convert` module to determine the elliptical components from the axis-ratio and angle.
 """
-tracer = al.Tracer(galaxies=extra_galaxies_list + source_galaxy_list)
+dark = al.mp.NFWMCRLudlow(
+    centre=(0.0, 0.0),
+    ell_comps=(0.1, 0.05),
+    mass_at_200=1e14,
+    redshift_object=0.5,
+    redshift_source=1.0
+)
+
+lens = al.Galaxy(redshift=0.5, dark=dark)
+
+tracer = al.Tracer(galaxies=[lens] + extra_galaxies_list + source_galaxy_list)
 
 """
 __Point Solver__
@@ -283,13 +291,15 @@ for i, source_galaxy_centre in enumerate(source_galaxy_centre_list):
     positions = solver.solve(tracer=tracer, source_plane_coordinate=point.centre)
 
     # remove infinitys from point solver required for JAX
-    positions = positions[~jnp.isinf(positions.array)]
+
+    print(positions)
+
+    mask = jnp.all(jnp.isfinite(positions.array), axis=1)
+    positions = positions[mask]
 
     print(positions)
 
     positions_list.append(positions)
-
-aaa
 
 """
 __Point Datasets__
