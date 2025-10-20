@@ -133,6 +133,7 @@ search = af.Nautilus(
     name="tutorial_5_linear_light_profile",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -409,6 +410,7 @@ search = af.Nautilus(
     name="tutorial_5_basis",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 print(

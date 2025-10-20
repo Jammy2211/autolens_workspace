@@ -111,6 +111,7 @@ search = af.Nautilus(
     name="tutorial_3_realism_and_complexity",
     unique_tag=dataset_name,
     n_live=200,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -175,6 +176,7 @@ search = af.Nautilus(
     name="tutorial_3_realism_and_complexity__local_maxima",
     unique_tag=dataset_name,
     n_live=75,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 print(

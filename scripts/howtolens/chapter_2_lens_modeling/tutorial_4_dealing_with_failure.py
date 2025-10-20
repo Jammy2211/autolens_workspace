@@ -208,6 +208,7 @@ search = af.Nautilus(
     name="tutorial_4_custom_priors",
     unique_tag=dataset_name,
     n_live=150,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)
@@ -314,6 +315,7 @@ search = af.Nautilus(
     name="tutorial_4_reducing_complexity",
     unique_tag=dataset_name,
     n_live=200,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 """
@@ -402,6 +404,7 @@ search = af.Nautilus(
     name="tutorial_4_look_harder",
     unique_tag=dataset_name,
     n_live=300,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 """
 __Run Time__

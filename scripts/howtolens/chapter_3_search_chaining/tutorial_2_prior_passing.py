@@ -101,6 +101,7 @@ search_1 = af.Nautilus(
     name="tutorial_1_search_chaining_1",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis_1 = al.AnalysisImaging(dataset=dataset)
@@ -191,6 +192,7 @@ search_2 = af.Nautilus(
     name="tutorial_2_search_chaining_2",
     unique_tag=dataset_name,
     n_live=100,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)

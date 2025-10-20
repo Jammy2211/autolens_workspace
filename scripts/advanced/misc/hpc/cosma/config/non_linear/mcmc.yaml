@@ -16,9 +16,6 @@ Emcee:
     number_of_cores: 1
   printing:
     silence: false
-  updates:
-    iterations_per_update: 5000
-    remove_state_files_at_end: true
 Zeus:
   run:
     check_walkers: true
@@ -47,6 +44,3 @@ Zeus:
     number_of_cores: 1
   printing:
     silence: false
-  updates:
-    iterations_per_update: 5000
-    remove_state_files_at_end: true

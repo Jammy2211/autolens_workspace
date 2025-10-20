@@ -54,6 +54,7 @@ search = af.Nautilus(
     name="tutorial_1_non_linear_search",
     unique_tag=dataset_name,
     n_live=80,
+    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis = al.AnalysisImaging(dataset=dataset)

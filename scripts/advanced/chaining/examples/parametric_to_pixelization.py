@@ -182,12 +182,16 @@ image_mesh = None
 mesh_shape = (20, 20)
 total_mapper_pixels = mesh_shape[0] * mesh_shape[1]
 
+total_linear_light_profiles = 0
+
 preloads = al.Preloads(
     mapper_indices=al.mapper_indices_from(
-        total_linear_light_profiles=0, total_mapper_pixels=total_mapper_pixels
+        total_linear_light_profiles=total_linear_light_profiles,
+        total_mapper_pixels=total_mapper_pixels,
     ),
     source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
-        mesh_shape
+        total_linear_light_profiles=total_linear_light_profiles,
+        shape_native=mesh_shape,
     ),
 )
 
