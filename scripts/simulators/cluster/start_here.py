@@ -76,7 +76,7 @@ on, via the inputs:
 
  - `shape_native`: The (y_pixels, x_pixels) 2D shape of the grid defining the shape of the data that is simulated.
  - `pixel_scales`: The arc-second to pixel conversion factor of the grid and data.
- 
+
 Note how for a cluster lens this spans a large arc second region, from -50.0" to 50.0".
 """
 grid = al.Grid2D.uniform(
@@ -109,7 +109,6 @@ The 50 values of centres load via a .csv below are drawn from a realisitic stron
 extra_galaxies_centre_list = []
 
 for _, row in df.iterrows():
-
     centre_0 = row["centre_y"]
     centre_1 = row["centre_x"]
 
@@ -130,7 +129,6 @@ This could be other measured properties, like stellar mass or velocity dispersio
 extra_galaxies_luminosity_list = []
 
 for _, row in df.iterrows():
-
     luminosity = row["luminosity"]
 
     extra_galaxies_luminosity_list.append(luminosity)
@@ -150,7 +148,7 @@ We now compose our mass parameters using the scaling relation models, which work
 
 - Make each extra galaxy a galaxy (via `Galaxy`) and associate it with th mass profile, where the
   redshifts of the extra galaxies are set to the same values as the lens galaxy.
-  
+
 We also include a `Sersic` lens light component for each galaxy. This is not used in modeling, but it will mean we
 output an image where the lens's are visible, making the cluster's lensing configuration easier to inspect.
 """
@@ -162,9 +160,8 @@ luminosity_star = 1e9
 extra_galaxies_list = []
 
 for extra_galaxy_centre, extra_galaxy_luminosity in zip(
-    extra_galaxies_centre_list, extra_galaxies_luminosity_list
+        extra_galaxies_centre_list, extra_galaxies_luminosity_list
 ):
-
     bulge = al.lp.SersicSph(
         centre=extra_galaxy_centre,
         intensity=extra_galaxy_luminosity / luminosity_star,
@@ -196,16 +193,15 @@ lensing configuration easier to inspect.
 """
 source_galaxy_centre_list = [
     (0.01, 0.01),
- #   (1.15, 0.15),
- #   (0.2, 0.2),
- #   (-2.0, -3.0),
- #   (3.0, 2.0),
+    #   (1.15, 0.15),
+    #   (0.2, 0.2),
+    #   (-2.0, -3.0),
+    #   (3.0, 2.0),
 ]
 
 source_galaxy_list = []
 
 for i, source_galaxy_centre in enumerate(source_galaxy_centre_list):
-
     bulge = al.lp.SersicSph(
         centre=source_galaxy_centre,
         intensity=1.0,
@@ -237,7 +233,7 @@ dark = al.mp.NFWMCRLudlow(
     ell_comps=(0.1, 0.05),
     mass_at_200=1e14,
     redshift_object=0.5,
-    redshift_source=1.0
+    redshift_source=1.0,
 )
 
 lens = al.Galaxy(redshift=0.5, dark=dark)
@@ -285,7 +281,6 @@ called iteratively for each source centre with the multiple images stored in a l
 positions_list = []
 
 for i, source_galaxy_centre in enumerate(source_galaxy_centre_list):
-
     point = getattr(source_galaxy_list[i], f"point_{i}")
 
     positions = solver.solve(tracer=tracer, source_plane_coordinate=point.centre)
@@ -322,7 +317,6 @@ and are simulated elsewhere in the workspace.
 dataset_list = []
 
 for i, positions in enumerate(positions_list):
-
     dataset = al.PointDataset(
         name=f"point_{i}",
         positions=positions,
@@ -339,7 +333,6 @@ In this example, there is just one point source dataset. However, for group and 
 can be many point source datasets in a single dataset, and separate .json files are output for each.
 """
 for i, dataset in enumerate(dataset_list):
-
     al.output_to_json(
         obj=dataset,
         file_path=dataset_path / f"point_dataset_{i}.json",
