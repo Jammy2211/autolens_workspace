@@ -2,8 +2,6 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "time_delays_noise_map": null,
-        "time_delays": null,
         "fluxes": null,
         "positions_noise_map": {
             "type": "instance",
@@ -12,8 +10,7 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        1.0,
-                        1.0
+                        0.05
                     ],
                     "dtype": "float64"
                 }
@@ -26,13 +23,17 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        0.099609375,
-                        0.10035971476147794
+                        [
+                            -0.24609375,
+                            0.22958694298243715
+                        ]
                     ],
                     "dtype": "float64"
                 }
             }
         },
+        "time_delays_noise_map": null,
+        "time_delays": null,
         "fluxes_noise_map": null,
         "name": "point_0"
     }
