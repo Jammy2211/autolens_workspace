@@ -14,7 +14,7 @@ This script introduces **PyAutoLens**'s pixelization adaption features, which pa
 model-fits performed by earlier searches to searches performed later in the chain, in order to adapt the pixelizaiton's
 mesh and regularization to the source's unlensed properties.
 
-This script illustrates using the `Rectangular` mesh and `AdaptiveBrightness` regularization
+This script illustrates using the `Hilbert` image-mesh, `Delaunay` mesh and `AdaptiveBrightnessSplit` regularization
 scheme to adapt the source reconstruction to the source galaxy's morphology (as opposed to schemes introduced
 previously which adapt to the mass model magnification or apply a constant regularization pattern).
 
@@ -25,6 +25,22 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `chaining/start_here.ipynb` notebook.
 """
+
+# No JAX support for Delaunay
+
+from autoconf import conf
+
+use_jax = conf.instance["general"]["jax"]["use_jax"]
+
+if use_jax:
+    raise RuntimeError(
+        """
+        You have enabled JAX in the config file (general.yaml -> jax -> use_jax = true).
+        
+        For a Delaunay mesh, JAX is not currently supported. Please disable JAX to run this script
+        by changing the setting in the general.yaml file to use_jax = false.
+        """
+    )
 
 # %matplotlib inline
 # from pyprojroot import here
@@ -83,7 +99,7 @@ __Paths__
 
 The path the results of all chained searches are output:
 """
-path_prefix = Path("imaging") / "chaining" / "pix_adapt"
+path_prefix = Path("imaging") / "chaining" / "pix_adapt_delaunay"
 
 """
 __JAX & Preloads__
@@ -136,9 +152,9 @@ search our lens model is:
 
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
  
- - The source galaxy's light uses no image-mesh (only used for Delaunay meshes) [0 parameters].
+ - The source galaxy's light uses an `Overlay` image-mesh with fixed resolution 30 x 30 pixels [0 parameters].
  
- - The source-galaxy's light uses a `Rectangular` mesh [0 parameters].
+ - The source-galaxy's light uses a `Delaunay` mesh [0 parameters].
 
  - This pixelization is regularized using a `Constant` scheme [1 parameter]. 
 
@@ -150,8 +166,8 @@ lens = af.Model(
 
 pixelization = af.Model(
     al.Pixelization,
-    image_mesh=None,
-    mesh=al.mesh.Rectangular(shape=mesh_shape),
+    image_mesh=al.image_mesh.Overlay(shape=(30, 30)),
+    mesh=al.mesh.Delaunay(),
     regularization=al.reg.Constant,
 )
 
@@ -172,9 +188,11 @@ search_1 = af.Nautilus(
     name="search[1]__adapt",
     unique_tag=dataset_name,
     n_live=100,
+    number_of_cores=2,
+    preloads=preloads,
 )
 
-analysis_1 = al.AnalysisImaging(dataset=dataset, preloads=preloads)
+analysis_1 = al.AnalysisImaging(dataset=dataset)
 
 result_1 = search_1.fit(model=model_1, analysis=analysis_1)
 
@@ -183,11 +201,16 @@ __Adaptive Pixelization__
 
 Search 2 is going to use two adaptive pixelization features that have not been used elsewhere in the workspace:
 
+ - The `Hilbert` image-mesh, which adapts the distribution of source-pixels to the source's unlensed morphology. This
+ means that the source's brightest regions are reconstructed using significantly more source pixels than seen for
+ the `Overlay` image mesh. Conversely, the source's faintest regions are reconstructed using significantly fewer
+ source pixels.
+
  - The `AdaptiveBrightness` regularization scheme, which adapts the regularization coefficient to the source's
  unlensed morphology. This means that the source's brightest regions are regularized less than its faintest regions, 
  ensuring that the bright central regions of the source are not over-smoothed.
  
-This regularization produces a significantly better lens analysis and reconstruction of the source galaxy than
+Both of these features produce a significantly better lens analysis and reconstruction of the source galaxy than
 other image-meshs and regularization schemes used throughout the workspace. Now you are familiar with them, you should
 never use anything else!
 
@@ -209,11 +232,11 @@ the second search our lens model is:
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` with fixed parameters from 
    search 1 [0 parameters].
  
- - The source galaxy's light uses no image-mesh (only used for Delaunay meshes) [0 parameters].
+ - The source galaxy's light uses a `Hilbert` image-mesh with fixed resolution 1000 pixels [2 parameters].
  
- - The source-galaxy's light uses a `Rectangular` mesh [0 parameters].
+ - The source-galaxy's light uses a `Delaunay` mesh [0 parameters].
 
- - This pixelization is regularized using a `AdaptiveBrightness` scheme [2 parameter]. 
+ - This pixelization is regularized using a `AdaptiveBrightnessSplit` scheme [2 parameter]. 
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=4.
 """
@@ -221,9 +244,9 @@ lens = result_1.instance.galaxies.lens
 
 pixelization = af.Model(
     al.Pixelization,
-    image_mesh=None,
-    mesh=al.mesh.Rectangular(shape=mesh_shape),
-    regularization=al.reg.AdaptiveBrightness,
+    image_mesh=al.image_mesh.Hilbert(pixels=1000),
+    mesh=al.mesh.Delaunay,
+    regularization=al.reg.AdaptiveBrightnessSplit,
 )
 
 source = af.Model(
@@ -241,18 +264,41 @@ We now create the analysis for the second search.
 
 __Adapt Images__
 
-When we create the analysis, we pass it a `adapt_images`, which contains the lens subtracted image of the source galaxy 
-from the result of search 1. 
+When we create the analysis, we pass it a `adapt_images`, which contains the lens subtracted image of the source galaxy from 
+the result of search 1. 
 
-This is telling the `Analysis` class to use the lens subtracted images of this fit to guide the `AdaptiveBrightness` 
-regularization for the source galaxy. Specifically, it uses the lens subtracted image of the lensed source in order 
-to adapt the location of the source-pixels to the source's brightest regions and lower the regularization coefficient in 
-these regions.
+This is telling the `Analysis` class to use the lens subtracted images of this fit to aid the fitting of the `Hilbert` 
+image-mesh and `AdaptiveBrightness` regularization for the source galaxy. Specifically, it uses the model image 
+of the lensed source in order to adapt the location of the source-pixels to the source's brightest regions and lower
+the regularization coefficient in these regions.
+
+__Image Mesh Settings__
+
+The `Hilbert` image-mesh may not fully adapt to the data in a satisfactory way. Often, it does not place enough
+pixels in the source's brightest regions and it may place too few pixels further out where the source is not observed.
+To address this, we use the `settings_inversion` input of the `Analysis` class to specify that we require the following:
+
+- `image_mesh_min_mesh_pixels_per_pixel=3` and `image_mesh_min_mesh_number=5`: the five brightest source image-pixels
+   must each have at least 3 source-pixels after the adaptive image mesh has been computed. If this is not the case,
+   the model is rejected and the non-linear search samples a new lens model.
+ 
+- `image_mesh_adapt_background_percent_threshold=0.1` and `image_mesh_adapt_background_percent_check=0.8`: the faintest
+   80% of image-pixels must have at least 10% of the total source pixels, to ensure the regions of the image with no
+   source-flux are reconstructed using sufficient pixels. If this is not the case, the model is rejected and the
+   non-linear search samples a new lens model.
+
+These inputs are a bit contrived, but have been tested to ensure they lead to good lens models.
 """
 analysis_2 = al.AnalysisImaging(
     dataset=dataset,
     adapt_image_maker=al.AdaptImageMaker(result=result_1),
     preloads=preloads,
+    settings_inversion=al.SettingsInversion(
+        image_mesh_min_mesh_pixels_per_pixel=3,
+        image_mesh_min_mesh_number=5,
+        image_mesh_adapt_background_percent_threshold=0.1,
+        image_mesh_adapt_background_percent_check=0.8,
+    ),
 )
 
 """
@@ -263,8 +309,6 @@ We now create the non-linear search and perform the model-fit using this model.
 search_2 = af.Nautilus(
     path_prefix=path_prefix, name="search[2]__adapt", unique_tag=dataset_name, n_live=75
 )
-
-analysis_2._adapt_images = analysis_2.adapt_images
 
 result_2 = search_2.fit(model=model_2, analysis=analysis_2)
 
@@ -277,8 +321,8 @@ regions of the source. This indicates that a much better result has been achieve
 
 __Model + Search + Analysis + Model-Fit (Search 3)__
 
-We now perform a final search which uses the `AdaptiveBrightness` regularization with their parameter fixed to the 
-results of search 2.
+We now perform a final search which uses the `Hilbert` image-mesh and `AdaptiveBrightness` regularization with their
+parameter fixed to the results of search 2.
 
 The lens mass model is free to vary.
 

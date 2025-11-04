@@ -457,7 +457,7 @@ We therefore omit the second source from the model entirely.
 """
 mass = af.Model(al.mp.Isothermal)
 
-mass.centre = result_1.model.galaxies.lens.bulge.centre
+mass.centre = result_1.model.galaxies.lens.bulge.profile_list[0].centre
 
 lens = af.Model(
     al.Galaxy, redshift=0.5, bulge=result_1.instance.galaxies.lens.bulge, mass=mass
@@ -702,7 +702,7 @@ source_0 = af.Model(
     pixelization=af.Model(
         al.Pixelization,
         image_mesh=None,
-        mesh=al.mesh.Rectangular,
+        mesh=al.mesh.Rectangular(shape=mesh_shape),
         regularization=al.reg.Constant,
     ),
 )
@@ -712,7 +712,7 @@ source_1 = af.Model(
     pixelization=af.Model(
         al.Pixelization,
         image_mesh=None,
-        mesh=al.mesh.Rectangular,
+        mesh=al.mesh.Rectangular(shape=mesh_shape),
         regularization=al.reg.Constant,
     ),
 )
