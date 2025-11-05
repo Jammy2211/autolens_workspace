@@ -224,34 +224,18 @@ Run times are dictated by two factors:
    models require more iterations to converge to a solution (and as discussed above, settings like the number of live
    points also control this).
 
-For this analysis, the log likelihood evaluation time is ~0.05 seconds, which is extremely fast for lens modeling. 
+For this analysis, the log likelihood evaluation time is < 0.01 seconds on CPU, < 0.001 seconds on GPU, which is 
+extremely fast for lens modeling. 
 
 The more advanced fitting techniques discussed at the end of chapter 1 (e.g. shapelets, multi Gaussian expansions, 
-pixelizations) have longer log likelihood evaluation times (1-3 seconds) and therefore may require more efficient 
-search settings to keep the overall run-time feasible.
+pixelizations) have longer log likelihood evaluation times. However, on GPU, they can be so fast they may not produce
+significantly longer overall run-time feasible.
 
 To estimate the expected overall run time of the model-fit we multiply the log likelihood evaluation time by an 
-estimate of the number of iterations the non-linear search will perform. 
+estimate of the number of iterations the non-linear search will perform, which is around 50000 to 100000 for this model.
 
-Estimating this is tricky, as it depends on the lens model complexity (e.g. number of parameters)
-and the properties of the dataset and model being fitted. With 7 free parameters, this gives an estimate 
-of ~7000 iterations, which at ~0.05 seconds per iteration gives a total run-time of ~180 seconds (or ~3 minutes).
+Tests thus far reveal CPU run times are around 30 minutes, and GPU run times around 10 minutes.
 
-For this example, we conservatively estimate that the non-linear search will perform ~1000 iterations per free 
-parameter in the model. This is an upper limit, with models typically converging in fewer iterations.
-
-If you perform the fit over multiple CPUs, you can divide the run time by the number of cores to get an estimate of
-the time it will take to fit the model. Parallelization with Nautilus scales well, it speeds up the model-fit by the 
-`number_of_cores` for N < 8 CPUs and roughly `0.5*number_of_cores` for N > 8 CPUs. This scaling continues 
-for N> 50 CPUs, meaning that with super computing facilities you can always achieve fast run times!
-"""
-print(
-    "Estimated Run Time Upper Limit (seconds) = ",
-    (run_time_dict["fit_time"] * model.total_free_parameters * 1000)
-    / search.number_of_cores,
-)
-
-"""
 __Model-Fit__
 
 To begin the model-fit, we pass the model and analysis objects to the search, which performs a non-linear search to 
