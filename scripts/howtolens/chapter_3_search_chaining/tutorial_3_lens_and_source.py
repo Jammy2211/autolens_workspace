@@ -113,7 +113,7 @@ __Model + Search + Analysis + Model-Fit (Search 1)__
 
 Search 1 fits a lens model where:
 
- - The lens galaxy's light is a parametric linear `Sersic` bulge [6 parameters].
+ - The lens galaxy's light is a linear `Sersic` bulge [6 parameters].
  
  - The lens galaxy's mass and source galaxy are omitted.
 
@@ -186,7 +186,7 @@ Search 2 fits a lens model where:
  
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
  
- - The source galaxy's light is a parametric linear `Sersic` [6 parameters].
+ - The source galaxy's light is a linear `Sersic` [6 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=13.
 
@@ -271,7 +271,7 @@ Search 3 fits a lens model where:
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters: priors
  initialized from search 2].
  
- - The source galaxy's light is a parametric linear `Sersic` [6 parameters: priors initialized from search 2].
+ - The source galaxy's light is a linear `Sersic` [6 parameters: priors initialized from search 2].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=23.
 

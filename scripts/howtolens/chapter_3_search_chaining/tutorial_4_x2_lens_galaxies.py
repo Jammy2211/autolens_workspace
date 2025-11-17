@@ -101,7 +101,7 @@ __Model + Search + Analysis + Model-Fit (Search 1)__
 
 Search 1 fits a lens model where:
 
- - The left lens galaxy's light is a parametric linear `Sersic` bulge with a fixed centre [4 parameters].
+ - The left lens galaxy's light is a linear `Sersic` bulge with a fixed centre [4 parameters].
 
  - The lens galaxy's mass and source galaxy are omitted.
 
@@ -141,9 +141,9 @@ __Model + Search + Analysis + Model-Fit (Search 2)__
 
 Search 2 fits a lens model where:
 
- - The left lens galaxy's light is a parametric linear `Sersic` bulge [0 parameters: fixed from search 1].
+ - The left lens galaxy's light is a linear `Sersic` bulge [0 parameters: fixed from search 1].
 
- - The right lens galaxy's light is a parametric linear `Sersic` bulge with a fixec centre [4 parameters].
+ - The right lens galaxy's light is a linear `Sersic` bulge with a fixec centre [4 parameters].
 
  - The lens galaxy's mass and source galaxy are omitted.
 
@@ -181,14 +181,14 @@ __Model + Search + Analysis + Model-Fit (Search 3)__
 
 Search 3 fits a lens model where:
 
- - The left lens galaxy's light is a parametric linear `Sersic` bulge [0 parameters: fixed from search 1].
+ - The left lens galaxy's light is a linear `Sersic` bulge [0 parameters: fixed from search 1].
 
- - The right lens galaxy's light is a parametric linear `Sersic` bulge [0 parameters: fixed from search 2].
+ - The right lens galaxy's light is a linear `Sersic` bulge [0 parameters: fixed from search 2].
 
  - The lens galaxy's mass is modeled using two `Isothermal` profiles whose centres are fixed to (0.0, -1.0)
   and (0.0, 1.0) [6 parameters].
   
- - The source galaxy's light is a parametric linear `Exponential` [5 parameters].
+ - The source galaxy's light is a linear `Exponential` [5 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -236,14 +236,14 @@ __Model + Search + Analysis + Model-Fit (Search 4)__
 
 Search 4 fits a lens model where:
 
- - The left lens galaxy's light is a parametric linear `Sersic` bulge [6 parameters: priors initialized from search 1].
+ - The left lens galaxy's light is a linear `Sersic` bulge [6 parameters: priors initialized from search 1].
 
- - The right lens galaxy's light is a parametric linear `Sersic` bulge [6 parameters: priors initialized from search 2].
+ - The right lens galaxy's light is a linear `Sersic` bulge [6 parameters: priors initialized from search 2].
 
  - The lens galaxy's mass is modeled using two `Isothermal` profiles whose centres are fixed to (0.0, -1.0)
   and (0.0, 1.0) [6 parameters: priors initialized from search 3].
 
- - The source galaxy's light is a parametric linear `Sersic` [6 parameters: priors initialized from search 3].
+ - The source galaxy's light is a linear `Sersic` [6 parameters: priors initialized from search 3].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=24.
 

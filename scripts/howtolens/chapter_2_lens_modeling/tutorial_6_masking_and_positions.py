@@ -253,7 +253,7 @@ print("Search has finished run - you may now continue the notebook.")
 """
 __Wrap Up__
 
-You may now wish to checkout the `autolens_workspace/*/data_preparation/imaging` package. This includes tools for 
+You may now wish to checkout the `autolens_workspace/*/imaging/data_preparation` package. This includes tools for 
 creating custom masks and marking the positions on a strong lens (via a GUI) so you can use them in a model-fit.
 
 There are two things you should bare in mind in terms of masking and positions:

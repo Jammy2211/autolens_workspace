@@ -329,6 +329,8 @@ model.galaxies.source.bulge.effective_radius = af.UniformPrior(
     lower_limit=0.0, upper_limit=1.0
 )
 
+model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
+
 """
 By reprinting the `model.info`, we can see that the priors have been updated to the values we specified.
 """
@@ -394,16 +396,20 @@ search = af.LBFGS()
 """
 To begin the model-fit via the non-linear search, we pass it our model and analysis and begin the fit.
 
-The fit will take a minute or so to run.
+The fit will take a few minutes on GPU to run.
+
+**Run Time Error:** On certain operating systems (e.g. Windows, Linux) and Python versions, the code below may produce 
+an error. If this occurs, see the `autolens_workspace/guides/modeling/bug_fix` example for a fix.
 """
 print(
     """
     The non-linear search has begun running.
+    
     This Jupyter notebook cell with progress once the search has completed - this could take a few minutes!
+    
+    On-the-fly updates every iterations_per_quick_update are printed to the notebook.
     """
 )
-
-model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
 
 result = search.fit(model=model, analysis=analysis)
 

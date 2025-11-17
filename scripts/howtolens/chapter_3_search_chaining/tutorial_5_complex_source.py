@@ -89,7 +89,7 @@ __Model + Search + Analysis + Model-Fit (Search 1)__
 
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters].
  
- - The source galaxy's light is a parametric linear `Sersic` [6 parameters].
+ - The source galaxy's light is a linear `Sersic` [6 parameters].
  
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=11.
 """
@@ -126,7 +126,7 @@ __Model + Search + Analysis + Model-Fit (Search 2)__
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters: priors initialized from 
  search 1].
 
- - The source galaxy's light is two parametric linear `Sersic` [12 parameters: first Sersic initialized from 
+ - The source galaxy's light is two linear `Sersic` [12 parameters: first Sersic initialized from 
  search 1].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=17.
@@ -161,7 +161,7 @@ __Model + Search + Analysis + Model-Fit (Search 3)__
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters: priors initialized from 
  search 2].
 
- - The source galaxy's light is three parametric linear `Sersic` [18 parameters: first two Sersic's initialized from 
+ - The source galaxy's light is three linear `Sersic` [18 parameters: first two Sersic's initialized from 
  search 2].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=21.
@@ -197,7 +197,7 @@ __Model + Search + Analysis + Model-Fit (Search 4)__
  - The lens galaxy's total mass distribution is an `Isothermal` [5 parameters: priors initialized from 
  search 4].
 
- - The source galaxy's light is four parametric linear `Sersic` [24 parameters: first three Sersic's initialized from 
+ - The source galaxy's light is four linear `Sersic` [24 parameters: first three Sersic's initialized from 
  search 2].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=29.

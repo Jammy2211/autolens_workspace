@@ -99,7 +99,7 @@ We are not going into any more detail on the result variable in this tutorial, o
 
 A comprehensive description of the results can be found at the following package:
 
- `autolens_workspace/*/results`
+ `autolens_workspace/*/guides/results`
  
 The results API for CCD imaging data is the same as for other data types (e.g. interferometer, point-soures). This
 package can therefore be used to learn the API and then translate to other data types.

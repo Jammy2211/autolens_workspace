@@ -296,7 +296,7 @@ the `af.Model()` and `af.Collection()` objects.
 
 In this example we fit a `Basis` model for the lens galaxy bulge where:
 
- - The bulge is a superposition of 30 parametric linear `Gaussian` profiles [4 parameters]. 
+ - The bulge is a superposition of 30 linear `Gaussian` profiles [4 parameters]. 
  - The centres and elliptical components of each family of Gaussians are all linked together.
  - The `sigma` size of the Gaussians increases in log10 increments.
 

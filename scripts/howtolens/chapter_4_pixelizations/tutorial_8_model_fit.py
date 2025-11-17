@@ -65,7 +65,7 @@ Search 1 fits a lens model where:
 
  - The lens galaxy's total mass distribution is an `Isothermal` with `ExternalShear` [7 parameters].
  
- - The source galaxy's light is a parametric `SersicCore` [7 parameters].
+ - The source galaxy's light is a `SersicCore` [7 parameters].
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=14.
 """
