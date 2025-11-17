@@ -381,10 +381,13 @@ radial grid as follows which has shape [Number_of_1d_coordinates, 2] and where a
 A simple example of such a grid is as follows with 4 1D coordinates is:
 """
 grid_2d_projected = al.Grid2DIrregular(
-       [[1.000000e-06, 1.000000e-06],
-       [1.000000e-06, 1.000001e+00],
-       [1.000000e-06, 2.000001e+00],
-       [1.000000e-06, 3.000001e+00]])
+    [
+        [1.000000e-06, 1.000000e-06],
+        [1.000000e-06, 1.000001e00],
+        [1.000000e-06, 2.000001e00],
+        [1.000000e-06, 3.000001e00],
+    ]
+)
 
 """
 As in this example, we often already have a 2D grid we are using to calculate images of a ligth profile
@@ -400,8 +403,7 @@ grid with the first galaxy. The centres are aligned, but if they were not that w
 issues.
 """
 grid_2d_projected = grid.grid_2d_radial_projected_from(
-    centre=sersic_light_profile.centre,
-    angle=sersic_light_profile.angle()
+    centre=sersic_light_profile.centre, angle=sersic_light_profile.angle()
 )
 
 image_1d = sersic_light_profile.image_2d_from(grid=grid_2d_projected)
@@ -537,14 +539,12 @@ and disk profiles share the same `centre`, meaning that plotting them together s
 would need to remember that the profiles are not aligned in 2D.
 """
 grid_2d_projected = grid.grid_2d_radial_projected_from(
-    centre=galaxy.bulge.centre,
-    angle=galaxy.bulge.angle()
+    centre=galaxy.bulge.centre, angle=galaxy.bulge.angle()
 )
 bulge_image_1d = galaxy.bulge.image_2d_from(grid=grid_2d_projected)
 
 grid_2d_projected = grid.grid_2d_radial_projected_from(
-    centre=galaxy.disk.centre,
-    angle=galaxy.disk.angle()
+    centre=galaxy.disk.centre, angle=galaxy.disk.angle()
 )
 disk_image_1d = galaxy.disk.image_2d_from(grid=grid_2d_projected)
 

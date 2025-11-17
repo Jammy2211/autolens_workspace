@@ -183,8 +183,7 @@ mass_profile_plotter.figures_2d(convergence=True, potential=True, magnification=
 One-dimensional plots can also be made using the same projection technique as in the previous tutorial:
 """
 grid_2d_projected = image_plane_grid.grid_2d_radial_projected_from(
-    centre=sis_mass_profile.centre,
-    angle=sis_mass_profile.angle()
+    centre=sis_mass_profile.centre, angle=sis_mass_profile.angle()
 )
 
 convergence_1d = sis_mass_profile.convergence_2d_from(grid=grid_2d_projected)
