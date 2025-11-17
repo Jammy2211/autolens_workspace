@@ -1,0 +1,456 @@
+{
+    "type": "instance",
+    "class_path": "autolens.lens.tracer.Tracer",
+    "arguments": {
+        "galaxies": {
+            "type": "list",
+            "values": [
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 1000.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -0.6373,
+                                        -0.3317
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 10000000.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -0.6373,
+                                        -0.3317
+                                    ]
+                                },
+                                "b0": 31622.776601683792,
+                                "rs": 0.0001
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 500.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.2498,
+                                        -0.0965
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 7071067.811865475,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.2498,
+                                        -0.0965
+                                    ]
+                                },
+                                "b0": 26591.479484724943,
+                                "rs": 7.071067811865475e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 80.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        17.538,
+                                        -31.6921
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 2828427.1247461904,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        17.538,
+                                        -31.6921
+                                    ]
+                                },
+                                "b0": 16817.928305074292,
+                                "rs": 2.8284271247461902e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 40.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        46.5138,
+                                        -6.2844
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 2000000.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        46.5138,
+                                        -6.2844
+                                    ]
+                                },
+                                "b0": 14142.13562373095,
+                                "rs": 2e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 600.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        41.0637,
+                                        45.0016
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 7745966.692414833,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        41.0637,
+                                        45.0016
+                                    ]
+                                },
+                                "b0": 27831.576837137403,
+                                "rs": 7.745966692414833e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 400.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -15.4372,
+                                        21.4367
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 6324555.320336759,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -15.4372,
+                                        21.4367
+                                    ]
+                                },
+                                "b0": 25148.66859365871,
+                                "rs": 6.324555320336759e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 50.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        43.4163,
+                                        3.0867
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 2236067.9774997896,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        43.4163,
+                                        3.0867
+                                    ]
+                                },
+                                "b0": 14953.487812212205,
+                                "rs": 2.2360679774997898e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 20.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -0.0278,
+                                        10.9678
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 1414213.5623730952,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -0.0278,
+                                        10.9678
+                                    ]
+                                },
+                                "b0": 11892.07115002721,
+                                "rs": 1.4142135623730951e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 200.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -32.8854,
+                                        47.3542
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 4472135.954999579,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        -32.8854,
+                                        47.3542
+                                    ]
+                                },
+                                "b0": 21147.425268811283,
+                                "rs": 4.4721359549995795e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.SersicSph",
+                            "arguments": {
+                                "intensity": 100.0,
+                                "effective_radius": 1.0,
+                                "sersic_index": 2.0,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        5.5791,
+                                        2.8906
+                                    ]
+                                }
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.dual_pseudo_isothermal_mass.dPIEMassSph",
+                            "arguments": {
+                                "ra": 3162277.6601683795,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        5.5791,
+                                        2.8906
+                                    ]
+                                },
+                                "b0": 17782.79410038923,
+                                "rs": 3.1622776601683795e-05
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "redshift": 0.5,
+                        "label": null
+                    }
+                }
+            ]
+        },
+        "cosmology": {
+            "type": "instance",
+            "class_path": "autogalaxy.cosmology.wrap.Planck15",
+            "arguments": {}
+        }
+    }
+}

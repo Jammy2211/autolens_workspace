@@ -1,0 +1,193 @@
+{
+    "type": "instance",
+    "class_path": "autolens.lens.tracer.Tracer",
+    "arguments": {
+        "cosmology": {
+            "type": "instance",
+            "class_path": "autogalaxy.cosmology.wrap.Planck15",
+            "arguments": {}
+        },
+        "run_time_dict": null,
+        "galaxies": {
+            "type": "list",
+            "values": [
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "label": null,
+                        "redshift": 0.5,
+                        "bulge": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.standard.sersic.Sersic",
+                            "arguments": {
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "effective_radius": 0.6,
+                                "intensity": 2.0,
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.05263157894736841,
+                                        3.2227547345982974e-18
+                                    ]
+                                },
+                                "sersic_index": 3.0
+                            }
+                        },
+                        "point_image_0": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.operated.gaussian.Gaussian",
+                            "arguments": {
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "sigma": 0.1,
+                                "centre": {
+                                    "type": "instance",
+                                    "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+                                    "arguments": {
+                                        "values": {
+                                            "type": "ndarray",
+                                            "array": [
+                                                1.1092795164834521,
+                                                1.1085937499999776
+                                            ],
+                                            "dtype": "float64"
+                                        }
+                                    }
+                                },
+                                "intensity": 13.525374381880237
+                            }
+                        },
+                        "point_image_1": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.operated.gaussian.Gaussian",
+                            "arguments": {
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "sigma": 0.1,
+                                "centre": {
+                                    "type": "instance",
+                                    "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+                                    "arguments": {
+                                        "values": {
+                                            "type": "ndarray",
+                                            "array": [
+                                                1.1485212925924344,
+                                                -1.1484375000000142
+                                            ],
+                                            "dtype": "float64"
+                                        }
+                                    }
+                                },
+                                "intensity": 14.984943266475772
+                            }
+                        },
+                        "point_image_2": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.operated.gaussian.Gaussian",
+                            "arguments": {
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "sigma": 0.1,
+                                "centre": {
+                                    "type": "instance",
+                                    "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+                                    "arguments": {
+                                        "values": {
+                                            "type": "ndarray",
+                                            "array": [
+                                                -1.1491523568231419,
+                                                1.1484374999999776
+                                            ],
+                                            "dtype": "float64"
+                                        }
+                                    }
+                                },
+                                "intensity": 14.927595707335582
+                            }
+                        },
+                        "point_image_3": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.light.operated.gaussian.Gaussian",
+                            "arguments": {
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "sigma": 0.1,
+                                "centre": {
+                                    "type": "instance",
+                                    "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+                                    "arguments": {
+                                        "values": {
+                                            "type": "ndarray",
+                                            "array": [
+                                                -1.1094595258163553,
+                                                -1.1093750000000149
+                                            ],
+                                            "dtype": "float64"
+                                        }
+                                    }
+                                },
+                                "intensity": 13.611013573864344
+                            }
+                        },
+                        "mass": {
+                            "type": "instance",
+                            "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                            "arguments": {
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.05263157894736841,
+                                        3.2227547345982974e-18
+                                    ]
+                                },
+                                "einstein_radius": 1.6,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "instance",
+                    "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                    "arguments": {
+                        "label": null,
+                        "redshift": 1.0
+                    }
+                }
+            ]
+        }
+    }
+}

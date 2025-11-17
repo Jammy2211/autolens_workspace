@@ -1,0 +1,39 @@
+{
+    "type": "collection",
+    "arguments": {
+        "source_0": {
+            "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+            "type": "model",
+            "arguments": {
+                "redshift": 1.0,
+                "point_0": {
+                    "class_path": "autogalaxy.profiles.point_sources.Point",
+                    "type": "model",
+                    "arguments": {
+                        "centre": {
+                            "type": "tuple_prior",
+                            "arguments": {
+                                "centre_0": {
+                                    "lower_limit": -Infinity,
+                                    "upper_limit": Infinity,
+                                    "type": "Gaussian",
+                                    "id": 19,
+                                    "mean": 0.0,
+                                    "sigma": 3.0
+                                },
+                                "centre_1": {
+                                    "lower_limit": -Infinity,
+                                    "upper_limit": Infinity,
+                                    "type": "Gaussian",
+                                    "id": 20,
+                                    "mean": 0.0,
+                                    "sigma": 3.0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,169 @@
+{
+    "type": "dict",
+    "arguments": {
+        "type": "instance",
+        "class_path": "autolens.lens.tracer.Tracer",
+        "arguments": {
+            "type": "dict",
+            "arguments": {
+                "cosmology": {
+                    "type": "dict",
+                    "arguments": {
+                        "type": "instance",
+                        "class_path": "autogalaxy.cosmology.wrap.Planck15",
+                        "arguments": {
+                            "type": "dict",
+                            "arguments": {}
+                        }
+                    }
+                },
+                "run_time_dict": null,
+                "planes": {
+                    "type": "dict",
+                    "arguments": {
+                        "type": "list",
+                        "values": {
+                            "type": "list",
+                            "values": [
+                                {
+                                    "type": "dict",
+                                    "arguments": {
+                                        "type": "instance",
+                                        "class_path": "autogalaxy.plane.plane.Plane",
+                                        "arguments": {
+                                            "type": "dict",
+                                            "arguments": {
+                                                "galaxies": {
+                                                    "type": "dict",
+                                                    "arguments": {
+                                                        "type": "list",
+                                                        "values": {
+                                                            "type": "list",
+                                                            "values": [
+                                                                {
+                                                                    "type": "dict",
+                                                                    "arguments": {
+                                                                        "type": "instance",
+                                                                        "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                                                                        "arguments": {
+                                                                            "type": "dict",
+                                                                            "arguments": {
+                                                                                "redshift": 0.5,
+                                                                                "mass": {
+                                                                                    "type": "dict",
+                                                                                    "arguments": {
+                                                                                        "type": "instance",
+                                                                                        "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
+                                                                                        "arguments": {
+                                                                                            "type": "dict",
+                                                                                            "arguments": {
+                                                                                                "ell_comps": [
+                                                                                                    0.05263157894736841,
+                                                                                                    3.2227547345982974e-18
+                                                                                                ],
+                                                                                                "centre": [
+                                                                                                    0.0,
+                                                                                                    0.0
+                                                                                                ],
+                                                                                                "einstein_radius": 1.6
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "shear": {
+                                                                                    "type": "dict",
+                                                                                    "arguments": {
+                                                                                        "type": "instance",
+                                                                                        "class_path": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+                                                                                        "arguments": {
+                                                                                            "type": "dict",
+                                                                                            "arguments": {
+                                                                                                "gamma_1": 0.05,
+                                                                                                "gamma_2": 0.05
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "redshift": 0.5,
+                                                "run_time_dict": null
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "dict",
+                                    "arguments": {
+                                        "type": "instance",
+                                        "class_path": "autogalaxy.plane.plane.Plane",
+                                        "arguments": {
+                                            "type": "dict",
+                                            "arguments": {
+                                                "galaxies": {
+                                                    "type": "dict",
+                                                    "arguments": {
+                                                        "type": "list",
+                                                        "values": {
+                                                            "type": "list",
+                                                            "values": [
+                                                                {
+                                                                    "type": "dict",
+                                                                    "arguments": {
+                                                                        "type": "instance",
+                                                                        "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+                                                                        "arguments": {
+                                                                            "type": "dict",
+                                                                            "arguments": {
+                                                                                "redshift": 1.0,
+                                                                                "bulge": {
+                                                                                    "type": "dict",
+                                                                                    "arguments": {
+                                                                                        "type": "instance",
+                                                                                        "class_path": "autogalaxy.profiles.light.standard.sersic.Sersic",
+                                                                                        "arguments": {
+                                                                                            "type": "dict",
+                                                                                            "arguments": {
+                                                                                                "effective_radius": 0.1,
+                                                                                                "centre": [
+                                                                                                    0.0,
+                                                                                                    0.0
+                                                                                                ],
+                                                                                                "ell_comps": [
+                                                                                                    0.0962250448649376,
+                                                                                                    -0.05555555555555551
+                                                                                                ],
+                                                                                                "sersic_index": 1.0,
+                                                                                                "intensity": 4.0
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "redshift": 1.0,
+                                                "run_time_dict": null
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

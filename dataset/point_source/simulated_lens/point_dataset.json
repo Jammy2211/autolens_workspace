@@ -1,0 +1,214 @@
+{
+    "type": "instance",
+    "class_path": "autolens.point.dataset.PointDataset",
+    "arguments": {
+        "fluxes_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "name": "point_0",
+        "time_delays_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -38.6738077239956,
+                        -42.90094507702164,
+                        NaN,
+                        -42.90094507702164,
+                        -38.6738077239956,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -154.6952308959824,
+                        -171.60378030808656,
+                        NaN,
+                        -171.60378030808656,
+                        -154.6952308959824,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "positions": {
+            "type": "instance",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        [
+                            -1.49921875,
+                            0.19530677074930308
+                        ],
+                        [
+                            -0.27109374999999997,
+                            -1.6729626159565014
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            0.27109374999999997,
+                            1.6729626159565014
+                        ],
+                        [
+                            1.49921875,
+                            -0.19530677074930308
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ],
+                        [
+                            Infinity,
+                            Infinity
+                        ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "fluxes": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        9.211139814683188,
+                        10.067058228918043,
+                        NaN,
+                        10.06705822891996,
+                        9.211139814682356,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN,
+                        NaN
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        }
+    }
+}
