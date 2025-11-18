@@ -10,6 +10,7 @@ We will use search chaining to do this, first fitting the source with a light pr
 model priors and avoiding the unphysical solutions discussed in tutorial 6. In the later searches we will switch to
 an `Inversion`.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

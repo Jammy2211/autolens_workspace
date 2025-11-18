@@ -9,6 +9,7 @@ This pixelization does not use a uniform grid of rectangular pixels, but instead
 
 So, why would we want to do that? Lets take another quick look at the rectangular grid.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

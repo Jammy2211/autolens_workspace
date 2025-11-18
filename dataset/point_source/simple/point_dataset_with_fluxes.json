@@ -2,7 +2,23 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "time_delays_noise_map": null,
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.05
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "name": "point_0",
         "fluxes": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -19,6 +35,24 @@
                 }
             }
         },
+        "fluxes_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays": null,
+        "time_delays_noise_map": null,
         "positions": {
             "type": "instance",
             "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
@@ -42,40 +76,6 @@
                             1.17890625,
                             1.1795085577584932
                         ]
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "name": "point_0",
-        "time_delays": null,
-        "fluxes_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "positions_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05
                     ],
                     "dtype": "float64"
                 }

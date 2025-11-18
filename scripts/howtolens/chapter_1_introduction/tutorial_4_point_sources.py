@@ -9,6 +9,7 @@ written yet!
 
 Tutorial 8 summary is written and you should check that out instead!
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

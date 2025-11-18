@@ -36,6 +36,7 @@ This tutorial is split into the following sections:
  **Output Folder Contents:** What is output to the output folder (model results, visualization, etc.).
  **Result:** Plot the best-fit model to the data.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

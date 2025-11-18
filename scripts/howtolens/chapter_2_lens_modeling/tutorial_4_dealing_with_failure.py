@@ -18,6 +18,7 @@ we do not know the true lens model and it may be unclear if the solution we infe
 methods we learn in this tutorial are therefore equally important for verifying that a solution that looks like a
 global maxima solution is in indeed the global maxima.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

@@ -2,12 +2,6 @@
     "type": "instance",
     "class_path": "autolens.lens.tracer.Tracer",
     "arguments": {
-        "cosmology": {
-            "type": "instance",
-            "class_path": "autogalaxy.cosmology.wrap.Planck15",
-            "arguments": {}
-        },
-        "run_time_dict": null,
         "galaxies": {
             "type": "list",
             "values": [
@@ -21,7 +15,6 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
                             "arguments": {
-                                "einstein_radius": 1.6,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -29,6 +22,7 @@
                                         0.0
                                     ]
                                 },
+                                "einstein_radius": 1.6,
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -50,13 +44,6 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCore",
                             "arguments": {
-                                "centre": {
-                                    "type": "tuple",
-                                    "values": [
-                                        0.07,
-                                        0.07
-                                    ]
-                                },
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -64,16 +51,28 @@
                                         0.0
                                     ]
                                 },
-                                "intensity": 0.1,
-                                "effective_radius": 0.02,
-                                "alpha": 3.0,
                                 "radius_break": 0.025,
-                                "gamma": 0.25
+                                "alpha": 3.0,
+                                "gamma": 0.25,
+                                "effective_radius": 0.02,
+                                "intensity": 0.1,
+                                "centre": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.07,
+                                        0.07
+                                    ]
+                                }
                             }
                         }
                     }
                 }
             ]
+        },
+        "cosmology": {
+            "type": "instance",
+            "class_path": "autogalaxy.cosmology.wrap.Planck15",
+            "arguments": {}
         }
     }
 }

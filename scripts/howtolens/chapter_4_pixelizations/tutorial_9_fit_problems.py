@@ -44,6 +44,7 @@ sources whose light profiles become gradually more compact. For all 3 fits, we'l
 and a regularization_coefficient that maximize the Bayesian evidence. Thus, these are the `best` source reconstructions
 we can hope to achieve when adapting to the magnification.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

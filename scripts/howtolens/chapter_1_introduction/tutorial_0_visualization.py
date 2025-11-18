@@ -5,6 +5,7 @@ Tutorial 0: Visualization
 In this tutorial, we quickly cover visualization in **PyAutoLens** and make sure images display clealry in your
 Jupyter notebook and on your computer screen.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 
@@ -24,6 +25,8 @@ __Directories__
 At the top of every tutorial notebook, you'll see the following cell. This cell uses the project `pyprojroot` to
 locate the path to the workspace on your computer and use it to set the working directory of the notebook.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
+
 # %matplotlib inline
 # from pyprojroot import here
 # workspace_path = str(here())

@@ -6,7 +6,7 @@ This script simulates `Imaging` of a 'galaxy-scale' strong lens where the source
 other examples, being composed of 4 Sersics.
 
 It is used to illustrate features which reconstruct the source galaxy's light using a pixelizaiton, for example
-in the script `autolens_workspace/notebooks/modeling/features/pixelization.ipynb`.
+in the script `autolens_workspace/notebooks/modeling/features/pixelization`.
 
 __Model__
 
@@ -22,6 +22,7 @@ __Start Here Notebook__
 
 If any code in this script is unclear, refer to the `simulators/start_here.ipynb` notebook.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here

@@ -10,25 +10,37 @@
                     "type": "ndarray",
                     "array": [
                         [
-                            -1.1484375,
-                            1.1483857698099902
+                            -2.2109375,
+                            -3.000417180194836
                         ],
                         [
-                            -1.10859375,
-                            -1.1091439937010075
+                            5.10234375,
+                            2.708584661315393
                         ],
                         [
-                            Infinity,
-                            Infinity
+                            -1.6062500000000002,
+                            5.273733865128988
                         ],
                         [
-                            1.10859375,
-                            1.1091439937010075
-                        ],
-                        [
-                            1.1484375,
-                            -1.14838576980999
+                            5.221875000000001,
+                            -0.907522454382443
                         ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "fluxes_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "dtype": "float64"
                 }
@@ -41,17 +53,15 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1
                     ],
                     "dtype": "float64"
                 }
             }
         },
-        "time_delays_noise_map": null,
         "name": "point_0",
         "fluxes": {
             "type": "instance",
@@ -60,29 +70,10 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        14.997318793000257,
-                        13.513375520849404,
-                        NaN,
-                        13.513375520849404,
-                        14.997318793004084
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "time_delays": null,
-        "fluxes_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
+                        2.0215825319290484,
+                        4.677228906850807,
+                        8.094350289265735,
+                        12.030720664150989
                     ],
                     "dtype": "float64"
                 }

@@ -2,28 +2,17 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "fluxes_noise_map": {
+        "time_delays_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
             "arguments": {
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
+                        -42.900945077021646,
+                        -38.67380772399561,
+                        -38.6738077239956,
+                        -42.900945077021646
                     ],
                     "dtype": "float64"
                 }
@@ -39,73 +28,7 @@
                         0.1,
                         0.1,
                         0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
-                        0.1,
                         0.1
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "name": "point_0",
-        "time_delays_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        -38.6738077239956,
-                        -42.90094507702164,
-                        NaN,
-                        -42.90094507702164,
-                        -38.6738077239956,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "time_delays": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        -154.6952308959824,
-                        -171.60378030808656,
-                        NaN,
-                        -171.60378030808656,
-                        -154.6952308959824,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN
                     ],
                     "dtype": "float64"
                 }
@@ -119,65 +42,54 @@
                     "type": "ndarray",
                     "array": [
                         [
-                            -1.49921875,
-                            0.19530677074930308
-                        ],
-                        [
-                            -0.27109374999999997,
-                            -1.6729626159565014
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
                             0.27109374999999997,
-                            1.6729626159565014
+                            1.6729626159565016
+                        ],
+                        [
+                            -1.49921875,
+                            0.1953067707493031
                         ],
                         [
                             1.49921875,
-                            -0.19530677074930308
+                            -0.1953067707493031
                         ],
                         [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
-                        ],
-                        [
-                            Infinity,
-                            Infinity
+                            -0.27109374999999997,
+                            -1.6729626159565016
                         ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "name": "point_0",
+        "time_delays": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -171.60378030808658,
+                        -154.69523089598243,
+                        -154.6952308959824,
+                        -171.60378030808658
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "fluxes_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "dtype": "float64"
                 }
@@ -190,21 +102,10 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
+                        10.067058228918427,
+                        9.211139814679855,
                         9.211139814683188,
-                        10.067058228918043,
-                        NaN,
-                        10.06705822891996,
-                        9.211139814682356,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN,
-                        NaN
+                        10.067058228918592
                     ],
                     "dtype": "float64"
                 }

@@ -23,6 +23,7 @@ ray tracing.
 
 The `Tracer` fully accounts for this.
 """
+from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
 # from pyprojroot import here
