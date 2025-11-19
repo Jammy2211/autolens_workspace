@@ -7,6 +7,7 @@ profile was an analytic description of how the luminosity varies as a function o
 instead going to reconstruct the source's light on a pixel-grid, and in this tutorial we will learn how to create
 a source-plane pixelization in **PyAutoLens**.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

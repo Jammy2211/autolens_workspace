@@ -16,6 +16,7 @@ In this chapter, we have learnt that:
 In this summary, we'll go over all the different Python objects introduced throughout this chapter and consider how
 they come together as one.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

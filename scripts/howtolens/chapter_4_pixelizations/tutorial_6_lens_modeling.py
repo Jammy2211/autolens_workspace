@@ -14,6 +14,7 @@ interesting scientific questions!
 However, inversion do have some short comings that we need to be aware of before we use them for lens modeling. That`s
 what we cover in this tutorial.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

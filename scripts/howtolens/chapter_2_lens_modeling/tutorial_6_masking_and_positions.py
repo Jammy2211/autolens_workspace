@@ -6,6 +6,7 @@ We have learnt everything we need to know about non-linear searches to model a s
 model solution. Now, lets consider masking in more detail, something we have not given much consideration previously.
 We'll also learn a neat trick to improve the speed and accuracy of a non-linear search.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

@@ -26,6 +26,7 @@ Here is an overview of what we'll cover in this tutorial:
 - **Background Sky:** We'll add a background sky to the image, simulating the light from the sky that adds noise to the image.
 - **Simulator:** We'll use the `SimulatorImaging` object to simulate imaging data that includes all these effects.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

@@ -23,6 +23,7 @@ This tutorial will then show how many linear light profiles can be combined into
 'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy
 structures (e.g. asymmetries, twists) with just N=6-8 non-linear parameters.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

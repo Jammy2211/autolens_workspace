@@ -16,6 +16,7 @@ This tutorial goes into the details of how this works. We'll use the same compac
 tutorial and begin by fitting it with a magnification based pixelization. This will produce a model image which can
 then be used an adapt image.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

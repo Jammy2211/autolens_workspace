@@ -38,6 +38,7 @@ search, we can use its results to tune the priors of our second search. For exam
  2) It should also give us a pretty good fit to the lensed source galaxy. This means we'll already know where in
  source-plane its is located and what its intensity and effective are.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

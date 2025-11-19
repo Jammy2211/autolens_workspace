@@ -10,6 +10,7 @@ However, the results were passed between searches were passed manually. I explic
 containing the values inferred in the first search. **PyAutoLens** has an API for passing priors in a more generalized
 way, which is the topic of this tutorial.
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline

@@ -41,6 +41,7 @@ for fitting complex lens model. Therefore, we recommend you still read through t
 understanding of how search chaining works, but bear in mind that the example is a little dated and we now recommend
 you fit the lens and source simultaneously!
 """
+
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 # %matplotlib inline
