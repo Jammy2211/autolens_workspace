@@ -206,11 +206,13 @@ values for now, I've chosen values that I know will ensure reasonable sampling, 
 
 __LENS LIGHT PRIORS:__
 """
-bulge.centre.centre_0 = af.TruncatedGaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+bulge.centre.centre_0 = af.GaussianPrior(
+    mean=0.0,
+    sigma=0.1,
 )
-bulge.centre.centre_1 = af.TruncatedGaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+bulge.centre.centre_1 = af.GaussianPrior(
+    mean=0.0,
+    sigma=0.1,
 )
 bulge.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.05, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
@@ -221,7 +223,7 @@ bulge.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
 bulge.effective_radius = af.TruncatedGaussianPrior(
     mean=0.72, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
 )
-bulge.sersic_index = af.GaussianPrior(
+bulge.sersic_index = af.TruncatedGaussianPrior(
     mean=4.0, sigma=2.0, lower_limit=0.0, upper_limit=np.inf
 )
 
@@ -229,18 +231,20 @@ bulge.sersic_index = af.GaussianPrior(
 __LENS MASS PRIORS:__
 """
 mass.centre.centre_0 = af.GaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+    mean=0.0,
+    sigma=0.1,
 )
 mass.centre.centre_1 = af.GaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+    mean=0.0,
+    sigma=0.1,
 )
-mass.ell_comps.ell_comps_0 = af.GaussianPrior(
+mass.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.05, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
-mass.ell_comps.ell_comps_1 = af.GaussianPrior(
+mass.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
     mean=0.0, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
 )
-mass.einstein_radius = af.GaussianPrior(
+mass.einstein_radius = af.TruncatedGaussianPrior(
     mean=1.6, sigma=0.1, lower_limit=0.0, upper_limit=np.inf
 )
 shear.gamma_1 = af.GaussianPrior(mean=0.05, sigma=0.05)
@@ -250,21 +254,23 @@ shear.gamma_2 = af.GaussianPrior(mean=0.05, sigma=0.05)
 __SOURCE LIGHT PRIORS:__
 """
 source_bulge.centre.centre_0 = af.GaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+    mean=0.0,
+    sigma=0.1,
 )
 source_bulge.centre.centre_1 = af.GaussianPrior(
-    mean=0.0, sigma=0.1, lower_limit=-np.inf, upper_limit=np.inf
+    mean=0.0,
+    sigma=0.1,
 )
-source_bulge.ell_comps.ell_comps_0 = af.GaussianPrior(
+source_bulge.ell_comps.ell_comps_0 = af.TruncatedGaussianPrior(
     mean=0.08, sigma=0.15, lower_limit=-1.0, upper_limit=1.0
 )
-source_bulge.ell_comps.ell_comps_1 = af.GaussianPrior(
+source_bulge.ell_comps.ell_comps_1 = af.TruncatedGaussianPrior(
     mean=-0.06, sigma=0.2, lower_limit=-1.0, upper_limit=1.0
 )
-source_bulge.effective_radius = af.GaussianPrior(
+source_bulge.effective_radius = af.TruncatedGaussianPrior(
     mean=0.1, sigma=0.2, lower_limit=0.0, upper_limit=np.inf
 )
-source_bulge.sersic_index = af.GaussianPrior(
+source_bulge.sersic_index = af.TruncatedGaussianPrior(
     mean=1.0, sigma=1.0, lower_limit=0.0, upper_limit=np.inf
 )
 
@@ -291,7 +297,7 @@ search_2 = af.Nautilus(
     name="tutorial_1_search_chaining_2",
     unique_tag=dataset_name,
     n_live=150,
-    iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
+    iterations_per_quick_update=25000,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
 analysis_2 = al.AnalysisImaging(dataset=dataset)
