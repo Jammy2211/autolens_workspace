@@ -1,0 +1,85 @@
+{
+    "type": "instance",
+    "class_path": "autolens.point.dataset.PointDataset",
+    "arguments": {
+        "name": "point_0",
+        "positions": {
+            "type": "instance",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        [
+                            -0.8890625000000001,
+                            1.0942591820734624
+                        ],
+                        [
+                            0.38046874999999997,
+                            -1.4772047903093941
+                        ],
+                        [
+                            -1.375,
+                            -0.14704389668423282
+                        ],
+                        [
+                            1.0648437499999999,
+                            0.7464958558662739
+                        ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -31.61045041287076,
+                        -37.01762932400875,
+                        -30.405652931049236,
+                        -26.879909781968625
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -126.44180165148305,
+                        -148.070517296035,
+                        -121.62261172419694,
+                        -107.5196391278745
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "fluxes_noise_map": null,
+        "fluxes": null,
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.1,
+                        0.1,
+                        0.1,
+                        0.1
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "type": "instance",
+    "class_path": "autolens.point.dataset.PointDataset",
+    "arguments": {
+        "name": "point_0",
+        "positions": {
+            "type": "instance",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        [
+                            0.46718750000000003,
+                            0.8777528311273528
+                        ],
+                        [
+                            0.4085937500000001,
+                            -1.2038655222399306
+                        ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -15.506617477989218,
+                        -25.51191540489532
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -62.02646991195687,
+                        -102.04766161958128
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "fluxes_noise_map": null,
+        "fluxes": null,
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.1,
+                        0.1
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        }
+    }
+}
