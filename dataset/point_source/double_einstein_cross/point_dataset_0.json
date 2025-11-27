@@ -2,6 +2,53 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
+        "name": "point_0",
+        "time_delays_noise_map": null,
+        "time_delays": null,
+        "positions_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        0.05,
+                        0.05,
+                        0.05,
+                        0.05
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "positions": {
+            "type": "instance",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        [
+                            0.8914062500000001,
+                            0.6310258020283487
+                        ],
+                        [
+                            -0.67578125,
+                            -0.7663422713696674
+                        ],
+                        [
+                            1.07109375,
+                            -0.24131437032535138
+                        ],
+                        [
+                            -0.3687500000000001,
+                            1.046447362906197
+                        ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
         "fluxes_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -18,34 +65,6 @@
                 }
             }
         },
-        "positions": {
-            "type": "instance",
-            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        [
-                            -0.3692784385193469,
-                            1.0460937499999778
-                        ],
-                        [
-                            1.0704887952722746,
-                            -0.2414062500000175
-                        ],
-                        [
-                            -0.6755447141285296,
-                            -0.7656250000000157
-                        ],
-                        [
-                            0.8905178910483218,
-                            0.6312499999999793
-                        ]
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
         "fluxes": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -53,27 +72,10 @@
                 "values": {
                     "type": "ndarray",
                     "array": [
-                        0.012730831393728576,
-                        0.012399510658250294,
-                        0.014028117345421247,
-                        0.056954948470496265
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "name": "point_0",
-        "positions_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        0.05,
-                        0.05,
-                        0.05,
-                        0.05
+                        0.05665219209553158,
+                        0.01404356625727669,
+                        0.011237245044623253,
+                        0.012767593953592199
                     ],
                     "dtype": "float64"
                 }

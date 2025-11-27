@@ -7,7 +7,6 @@
             "class_path": "autogalaxy.cosmology.wrap.Planck15",
             "arguments": {}
         },
-        "run_time_dict": null,
         "galaxies": {
             "type": "list",
             "values": [
@@ -21,7 +20,6 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
                             "arguments": {
-                                "einstein_radius": 1.6,
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -29,6 +27,7 @@
                                         3.2227547345982974e-18
                                     ]
                                 },
+                                "einstein_radius": 1.6,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -50,7 +49,6 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
                             "arguments": {
-                                "einstein_radius": 0.2,
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -58,6 +56,7 @@
                                         -0.05555555555555551
                                     ]
                                 },
+                                "einstein_radius": 0.2,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -71,9 +70,11 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCore",
                             "arguments": {
-                                "alpha": 3.0,
                                 "gamma": 0.25,
+                                "radius_break": 0.01,
+                                "alpha": 3.0,
                                 "effective_radius": 0.02,
+                                "intensity": 0.1,
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -87,9 +88,7 @@
                                         0.02,
                                         0.03
                                     ]
-                                },
-                                "radius_break": 0.01,
-                                "intensity": 0.1
+                                }
                             }
                         }
                     }
@@ -104,9 +103,11 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCore",
                             "arguments": {
-                                "alpha": 3.0,
                                 "gamma": 0.25,
+                                "radius_break": 0.01,
+                                "alpha": 3.0,
                                 "effective_radius": 0.02,
+                                "intensity": 0.1,
                                 "ell_comps": {
                                     "type": "tuple",
                                     "values": [
@@ -120,9 +121,7 @@
                                         0.0,
                                         0.0
                                     ]
-                                },
-                                "radius_break": 0.01,
-                                "intensity": 0.1
+                                }
                             }
                         }
                     }

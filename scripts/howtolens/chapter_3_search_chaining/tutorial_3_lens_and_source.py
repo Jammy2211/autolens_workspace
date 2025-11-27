@@ -86,21 +86,12 @@ path_prefix = Path("howtolens") / "chapter_3" / "tutorial_3_lens_and_source"
 """
 __Masking (Search 1)__
 
-We need to choose our mask for the analysis. Given we are only fitting the lens light we have two options: 
-
- - A circular mask that does not remove the source's light from the fit, assuming the lens light model will still be 
- sufficiently accurate to reveal the source in the second search.
- - An 'anti-annular' mask that removes the source's ring of light.
-
-In this example, we will use the anti-annular mask to demonstrate that we can change the mask used by each search in a 
-chain of non-linear searches.
+We need to choose our mask for the analysis. We use an annular mask that does not remove the source's light 
+from the fit, assuming the lens light model will still be sufficiently accurate to reveal the source in the 
+second search.
 """
-mask = al.Mask2D.circular_anti_annular(
-    shape_native=dataset.shape_native,
-    pixel_scales=dataset.pixel_scales,
-    inner_radius=0.8,
-    outer_radius=2.2,
-    outer_radius_2=3.0,
+mask = al.Mask2D.circular(
+    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=3.0
 )
 
 dataset = dataset.apply_mask(mask=mask)
