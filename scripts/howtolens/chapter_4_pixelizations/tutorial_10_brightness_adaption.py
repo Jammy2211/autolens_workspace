@@ -56,6 +56,8 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
+dataset = dataset.apply_w_tilde()
+
 """
 Next, we're going to fit the image using the RectangularMagnification magnification based grid. 
 
@@ -72,7 +74,6 @@ lens_galaxy = al.Galaxy(
 )
 
 pixelization = al.Pixelization(
-    image_mesh=None,
     mesh=al.mesh.RectangularMagnification(),
     regularization=al.reg.Constant(coefficient=3.3),
 )
@@ -116,8 +117,13 @@ Now lets take a look at brightness based adaption in action.
 Below, we define a source-galaxy using the `Hilbert` image-mesh (we discuss below how this adapts to the source light) 
 and `RectangularMagnification` mesh and use this to fit the lens-data. 
 """
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0)
+
+image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
+    mask=dataset.mask, adapt_data=adapt_image
+)
+
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.RectangularMagnification(),
     regularization=al.reg.Constant(coefficient=0.5),
 )
@@ -132,7 +138,10 @@ The adapt image is paired to the galaxy that it represents and that it is used t
 
 This uses the `AdaptImages` object, which receives a dictionary mapping every galaxy to its adapt image.
 """
-adapt_images = al.AdaptImages(galaxy_image_dict={galaxy_adapt: adapt_image})
+adapt_images = al.AdaptImages(
+    galaxy_image_dict={galaxy_adapt: adapt_image},
+    galaxy_image_plane_mesh_grid_dict={galaxy_adapt: image_plane_mesh_grid},
+)
 
 """
 We now fit using this adapt image and mesh using the normal API.
@@ -261,8 +270,14 @@ This means that the Hilbert algorithm will adapt more pixels to the brightest re
 Lets use the method to perform a fit with a weight power of 10, showing that we now get a significantly higher
 log_evidence.
 """
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0)
+
+image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
+    mask=dataset.mask, adapt_data=adapt_image
+)
+
+
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0),
     mesh=al.mesh.RectangularMagnification(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
@@ -274,7 +289,10 @@ source_weight_power_10 = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_weight_power_10])
 
-adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_power_10: adapt_image})
+adapt_images = al.AdaptImages(
+    galaxy_image_dict={source_weight_power_10: adapt_image},
+    galaxy_image_plane_mesh_grid_dict={source_weight_power_10: image_plane_mesh_grid},
+)
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
@@ -291,8 +309,14 @@ that the mesh can fully adapt to the source's brightest and faintest regions sim
 
 Lets look at once example:
 """
+image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.5, weight_power=10.0)
+
+image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
+    mask=dataset.mask, adapt_data=adapt_image
+)
+
+
 pixelization = al.Pixelization(
-    image_mesh=al.image_mesh.Hilbert(pixels=500, weight_floor=0.5, weight_power=10.0),
     mesh=al.mesh.RectangularMagnification(),
     regularization=al.reg.Constant(coefficient=1.0),
 )
@@ -301,9 +325,7 @@ source_weight_floor = al.Galaxy(
     redshift=1.0, pixelization=pixelization, adapt_galaxy_image=adapt_image
 )
 
-weight_map = source_weight_floor.pixelization.image_mesh.weight_map_from(
-    adapt_data=adapt_image
-)
+weight_map = image_mesh.weight_map_from(adapt_data=adapt_image)
 weight_map = al.Array2D(values=weight_map, mask=mask)
 
 array_plotter = aplt.Array2DPlotter(
@@ -313,7 +335,10 @@ array_plotter.figure_2d()
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_weight_floor])
 
-adapt_images = al.AdaptImages(galaxy_image_dict={source_weight_floor: adapt_image})
+adapt_images = al.AdaptImages(
+    galaxy_image_dict={source_weight_floor: adapt_image},
+    galaxy_image_plane_mesh_grid_dict={source_weight_floor: image_plane_mesh_grid},
+)
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 

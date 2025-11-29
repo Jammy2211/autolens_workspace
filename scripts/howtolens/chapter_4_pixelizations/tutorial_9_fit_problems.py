@@ -169,7 +169,6 @@ def fit_with_Rectangular_from(dataset, mask, coefficient):
     )
 
     pixelization = al.Pixelization(
-        image_mesh=None,
         mesh=al.mesh.RectangularMagnification(),
         regularization=al.reg.Constant(coefficient=coefficient),
     )

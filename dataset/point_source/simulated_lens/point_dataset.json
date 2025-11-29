@@ -2,22 +2,6 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
-        "time_delays_noise_map": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        -42.900945077021646,
-                        -38.67380772399561,
-                        -38.6738077239956,
-                        -42.900945077021646
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
         "positions_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -62,6 +46,38 @@
                 }
             }
         },
+        "fluxes": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        10.067058228918427,
+                        9.211139814679855,
+                        9.211139814683188,
+                        10.067058228918592
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays_noise_map": {
+            "type": "instance",
+            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        -42.900945077021646,
+                        -38.67380772399561,
+                        -38.6738077239956,
+                        -42.900945077021646
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
         "name": "point_0",
         "time_delays": {
             "type": "instance",
@@ -90,22 +106,6 @@
                         1.0,
                         1.0,
                         1.0
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "fluxes": {
-            "type": "instance",
-            "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        10.067058228918427,
-                        9.211139814679855,
-                        9.211139814683188,
-                        10.067058228918592
                     ],
                     "dtype": "float64"
                 }
