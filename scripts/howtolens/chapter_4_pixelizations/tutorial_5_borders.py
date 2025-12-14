@@ -71,6 +71,7 @@ seeing whenever we plot a mask.
 
 For an annular mask, pixels on its inner edge are not a part of the border, whereas those on its outer edge are.
 """
+
 mask_annular = al.Mask2D.circular_annular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -78,7 +79,7 @@ mask_annular = al.Mask2D.circular_annular(
     outer_radius=2.5,
 )
 
-dataset = dataset.apply_mask(mask=mask_circular)
+dataset = dataset.apply_mask(mask=mask_annular)
 
 border = mask_annular.derive_grid.border
 
