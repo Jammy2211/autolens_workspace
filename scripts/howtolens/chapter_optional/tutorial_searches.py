@@ -121,6 +121,7 @@ search = af.Nautilus(
     name="tutorial_searches_slow",
     unique_tag=dataset_name,
     n_live=400,
+    n_batch=50,  # GPU batching and VRAM use explained in chapter 2 tutorial 2.
     iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
@@ -154,6 +155,7 @@ search = af.Nautilus(
     name="tutorial_searches_fast",
     unique_tag=dataset_name,
     n_live=75,
+    n_batch=50,  # GPU batching and VRAM use explained in chapter 2 tutorial 2.
     iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 

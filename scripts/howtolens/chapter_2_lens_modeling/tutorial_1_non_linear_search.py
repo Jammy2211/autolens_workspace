@@ -633,6 +633,7 @@ their uncertainties.
 """
 search = af.Nautilus(
     n_live=100,
+    n_batch=50,  # Explained in next tutorial
     iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 

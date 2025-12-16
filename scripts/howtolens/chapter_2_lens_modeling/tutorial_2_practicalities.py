@@ -185,6 +185,7 @@ search = af.Nautilus(
     name="tutorial_2_practicalities",
     unique_tag=dataset_name,
     n_live=100,
+    n_batch=50,  # GPU batching and VRAM use explained in VRAM section below.
     iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
@@ -195,6 +196,33 @@ We again create the `AnalysisImaging` object which contains the `log_likelihood_
 calls to fit the model to the data.
 """
 analysis = al.AnalysisImaging(dataset=dataset)
+
+"""
+__VRAM Use__
+
+When running AutoLens with JAX on a GPU, the analysis must fit within the GPU’s
+available VRAM. If insufficient VRAM is available, the analysis will fail with an
+out-of-memory error, typically during JIT compilation or the first likelihood call.
+
+Two factors dictate the VRAM usage of an analysis:
+
+- The number of arrays and other data structures JAX must store in VRAM to fit the model
+  to the data in the likelihood function. This is dictated by the model complexity and dataset size.
+
+- The `batch_size` sets how many likelihood evaluations are performed simultaneously.
+  Increasing the batch size increases VRAM usage but can reduce overall run time,
+  while decreasing it lowers VRAM usage at the cost of slower execution.
+
+Before running an analysis, users should check that the estimated VRAM usage for the
+chosen batch size is comfortably below their GPU’s total VRAM.
+
+The method below prints the VRAM usage estimate for the analysis and model with the specified batch size,
+it takes about 20-30 seconds to run so you may want to comment it out once you are familiar with your GPU's VRAM limits.
+
+For a MGE model with the low resolution dataset fitted in this example VRAM use is relatively low (~0.027GB) For other 
+models (e.g. pixelized sources) and higher resolution datasets it can be much higher (> 1GB going beyond 10GB).
+"""
+analysis.print_vram_use(model=model, batch_size=search.batch_size)
 
 """
 __Run Times__

@@ -187,6 +187,7 @@ search_2 = af.Nautilus(
     name="search[2]_mass[sie]_source[pix_init]",
     unique_tag=dataset_name,
     n_live=50,
+    n_batch=20,  # GPU batching and VRAM use explained in chapter 2 tutorial 2.
     iterations_per_quick_update=2500,  # Outpuers Notebook visualization of max likelihood model every N iterations
 )
 
@@ -198,6 +199,24 @@ analysis_2 = al.AnalysisImaging(
     preloads=preloads,
     settings_inversion=al.SettingsInversion(use_border_relocator=True),
 )
+
+"""
+__VRAM__
+
+The `modeling` example explains how VRAM is used during GPU-based fitting and how to print the estimated VRAM 
+required by a model.
+
+Pixelizations use a lot more VRAM than light profile-only models, with the amount required depending on the size of
+dataset and the number of source pixels in the pixelization's mesh. For 400 source pixels, around 0.05 GB per batched
+likelihood of VRAM is used. 
+
+This is why the `batch_size` above is 20, lower than other examples, because reducing the batch size ensures a more 
+modest amount of VRAM is used. If you have a GPU with more VRAM, increasing the batch size will lead to faster run times.
+
+Given VRAM use is an important consideration, we print out the estimated VRAM required for this 
+model-fit and advise you do this for your own pixelization model-fits.
+"""
+analysis_2.print_vram_use(model=model_2, batch_size=search_2.batch_size)
 
 """
 __Run Time__
