@@ -71,19 +71,6 @@ There are ways that we can reduce the number of image-pixels we fit, via masking
 we will fit fewer pixels and **PyAutoLens** will run faster. If you want the best, most perfect lens model possible,
 aggressive masking and cutting the data in this way is a bad idea, as discussed in tutorial 5.
 
-__Preloading__
-
-When certain components of a model are fixed its associated quantities do not change during a model-fit. For
-example, for a lens model where all light profiles are fixed, the PSF blurred model-image of those light profiles
-is also fixed.
-
-In the next chapter we will introduce search chaining, whereby pipelines that fit a chain of different lens models are
-used. In these pipelines, it is common for different components of the model to be fixed, and thus preloading
-can be used to speed up the analysis.
-
-**PyAutoLens** uses _implicit preloading_ to inspect the model and determine what quantities are fixed. It then stores
-these in memory before the non-linear search begins such that they are not recomputed for every likelihood evaluation.
-
 __Wrap Up__
 
 This tutorial simply wanted to get you thinking about *why* a lens model takes as long to fit as it does.

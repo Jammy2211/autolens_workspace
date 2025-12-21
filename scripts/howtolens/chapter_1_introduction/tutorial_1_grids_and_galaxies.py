@@ -448,7 +448,7 @@ light_profile_plotter.figures_2d(image=True)
 """
 __Galaxies__
 
-Now, let's introduce `Galaxy` objects, which are key components in **PyAutoLens**.
+Now, let's introduce `Galaxy` objects.
 
 A light profile represents a single feature of a galaxy, such as its bulge or disk. To model a complete galaxy, 
 we combine multiple `LightProfiles` into a `Galaxy` object. This allows us to create images that include different 

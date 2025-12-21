@@ -82,7 +82,7 @@ First, we will try to assist our non-linear search by tuning our priors. Priors 
 to look in the parameter space. By setting our priors more accurately ('tuning' them), we can help the search find the 
 global solution instead of getting stuck at a local maxima.
 
-In a previous tutorial, we learned how to fully customize priors in **PyAutoLens**. Let's apply this knowledge 
+In a previous tutorial, we learned how to fully customize priors. Let's apply this knowledge 
 now. I've set up a custom search below with priors adjusted to give the non-linear search a better chance of finding 
 the global maxima solution. I'll also explain how each prior has been changed from the default values specified in
  the `config/priors/default` configuration files.

@@ -50,7 +50,7 @@ dataset_path = Path("dataset", dataset_type, dataset_name)
 """
 __Simulate__
 
-Simulate the image using a `Grid2D` with the adaptive over sampling scheme.
+Simulate the image using a (y,x) grid with the adaptive over sampling scheme.
 
 This simulated galaxy has additional galaxies and light profiles which are offset from the main galaxy centre 
 of (0.0", 0.0"). The adaptive over sampling grid has all centres input to account for this.

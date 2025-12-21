@@ -395,7 +395,7 @@ __Tracer__
 The ray-tracing calculations above were performed manually to demonstrate the process. However, in practice, 
 manually computing the deflection angles of each galaxy and managing grids for forming lensed images is cumbersome.
 
-The `Tracer` object simplifies this process and is a central tool in **PyAutoLens**. 
+The `Tracer` object simplifies this process and is a central tool. 
 
 When galaxies are provided to the `Tracer`, it performs the following tasks:
 
@@ -596,7 +596,7 @@ galaxies_plotter.figures_2d(plane_grid=True)
 """
 __Wrap Up__
 
-You've learn how strong lens ray-tracing works and how to do it using the `Tracer` object in **PyAutoLens**.
+You've learn how strong lens ray-tracing works and how to do it using the `Tracer` object.
 
 Lets summarise what we've learnt:
 
