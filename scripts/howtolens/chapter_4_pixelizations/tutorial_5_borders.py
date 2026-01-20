@@ -127,7 +127,7 @@ First, note how we set up the border, using a `al.SettingsInversion` object. Thi
 `SettingsLens` objects we have used in previous tutorials.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularMagnification(shape=(40, 40)),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(40, 40)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 

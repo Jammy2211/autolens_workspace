@@ -54,7 +54,7 @@ to reconstruct the galaxy.
 There are multiple `Mesh`'s available. For now, we'll keep it simple and use a uniform 
 rectangular grid, whose `shape` defines its $(y,x)$ dimensions.
 """
-mesh = al.mesh.RectangularMagnification(shape=(25, 25))
+mesh = al.mesh.RectangularAdaptDensity(shape=(25, 25))
 
 """
 We now pass the mesh to a `Pixelization`.
@@ -83,18 +83,18 @@ print(type(mapper))
 By plotting our mapper, we now see our `Pixelization`. 
 """
 mapper_plotter = aplt.MapperPlotter(mapper=mapper)
-mapper_plotter.set_title("RectangularMagnification Pixels")
+mapper_plotter.set_title("RectangularAdaptDensity Pixels")
 mapper_plotter.figure_2d()
 
 """
 However, the `Mapper` does contain lots of interesting information about our `Pixelization`, for example its 
 pixelization_grid tells us where the pixel centers are located.
 """
-print("RectangularMagnification Grid2D Pixel Centre 1:")
+print("RectangularAdaptDensity Grid2D Pixel Centre 1:")
 print(mapper.source_plane_mesh_grid[0])
-print("RectangularMagnification Grid2D Pixel Centre 2:")
+print("RectangularAdaptDensity Grid2D Pixel Centre 2:")
 print(mapper.source_plane_mesh_grid[1])
-print("RectangularMagnification Grid2D Pixel Centre 3:")
+print("RectangularAdaptDensity Grid2D Pixel Centre 3:")
 print(mapper.source_plane_mesh_grid[2])
 print("etc.")
 
@@ -124,7 +124,7 @@ We can over-lay this grid on the figure, which is starting to look a bit less bo
 visuals_2d = aplt.Visuals2D(mesh_grid=mapper.source_plane_data_grid)
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
-mapper_plotter.set_title("Even less Boring Grid2D of RectangularMagnification Pixels")
+mapper_plotter.set_title("Even less Boring Grid2D of RectangularAdaptDensity Pixels")
 mapper_plotter.figure_2d()
 
 mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-0.3, 0.3, -0.3, 0.3]))
@@ -132,7 +132,7 @@ mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-0.3, 0.3, -0.3, 0.3]))
 mapper_plotter = aplt.MapperPlotter(
     mapper=mapper, mat_plot_2d=mat_plot, visuals_2d=visuals_2d
 )
-mapper_plotter.set_title("Zoomed Grid2D of RectangularMagnification Pixels")
+mapper_plotter.set_title("Zoomed Grid2D of RectangularAdaptDensity Pixels")
 mapper_plotter.figure_2d()
 
 """

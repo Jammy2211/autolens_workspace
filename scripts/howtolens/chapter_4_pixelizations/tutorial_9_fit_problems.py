@@ -5,7 +5,7 @@ Tutorial 9: Fit Problems
 To begin, make sure you have read the `introduction` file carefully, as a clear understanding of how the Bayesian
 evidence works is key to understanding this chapter!
 
-In the previous chapter we investigated two pixelization's: `RectangularMagnification` and `RectangularMagnification`. We argued that the
+In the previous chapter we investigated two pixelization's: `RectangularAdaptDensity` and `RectangularAdaptDensity`. We argued that the
 latter was better than the former, because it dedicated more source-pixels to the regions of the source-plane where we
 had more data, e.g, the high-magnification regions. Therefore, we could fit the data using fewer source pixels,
 which improved computational efficiency and increased the Bayesian evidence.
@@ -151,7 +151,7 @@ dataset_source_super_compact = simulate_for_source_galaxy(
 __Fitting__
 
 we'll make one more convenience function which fits the simulated imaging data with an `Overlay` image-mesh, 
-`RectangularMagnification` mesh  and `Constant` regularization scheme pixelization.
+`RectangularAdaptDensity` mesh  and `Constant` regularization scheme pixelization.
 
 We'll input the `coefficient` of each fit, so that for each simulated source we regularize it at an appropriate level. 
 There is nothing new in this function you haven't seen before.
@@ -169,7 +169,7 @@ def fit_with_Rectangular_from(dataset, mask, coefficient):
     )
 
     pixelization = al.Pixelization(
-        mesh=al.mesh.RectangularMagnification(),
+        mesh=al.mesh.RectangularAdaptDensity(),
         regularization=al.reg.Constant(coefficient=coefficient),
     )
 
@@ -264,14 +264,14 @@ pixelization. Both the mesh and regularization are to blame!
 
 *Image-Mesh / Mesh*:
 
-The problem is the same one we discussed when we compared the `RectangularMagnification` and `RectangularMagnification` meshes in tutorial 7. 
+The problem is the same one we discussed when we compared the `RectangularAdaptDensity` and `RectangularAdaptDensity` meshes in tutorial 7. 
 
 We are simply not dedicating enough source-pixels to the central regions of the source reconstruction, 
 e.g. where it`s brightest. As the source becomes more compact, the source reconstruction no longer has enough 
 resolution to resolve its fine-detailed central structure, causing the fit to the image to degrade.
 
 As we made our sources more compact we go from reconstructing them using ~100 source pixels, to ~20  source pixels 
-to ~ 10 source pixels. This is why we advocated not using the `RectangularMagnification` mesh previously!
+to ~ 10 source pixels. This is why we advocated not using the `RectangularAdaptDensity` mesh previously!
 
 Adapting to the mass model magnification is not the best approach. As we simulated more compact sources the 
 magnification (which is determined via the mass model) does not change. We therefore reconstructed each source

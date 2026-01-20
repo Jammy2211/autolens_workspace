@@ -75,7 +75,7 @@ __Mappers__
 We now setup a `Pixelization` and use it to create a `Mapper` via the tracer`s source-plane grid, just like we did in
 the previous tutorial.
 """
-mesh = al.mesh.RectangularMagnification(shape=(25, 25))
+mesh = al.mesh.RectangularAdaptDensity(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
