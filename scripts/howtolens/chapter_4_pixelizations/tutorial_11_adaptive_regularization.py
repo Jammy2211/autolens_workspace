@@ -79,7 +79,7 @@ def fit_via_source_galaxy_from(dataset, source_galaxy, adapt_images=None):
 Use the magnification based source to fit this data.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularMagnification(),
+    mesh=al.mesh.RectangularAdaptDensity(),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -122,7 +122,7 @@ This introduces additional parameters, that are explained below.
 adapt_image = fit.model_data.slim
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularMagnification(),
+    mesh=al.mesh.RectangularAdaptDensity(),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.005, outer_coefficient=1.9, signal_scale=3.0
     ),
@@ -219,7 +219,7 @@ linear algebra calculation was ill-defined, and could not be inverted. These sol
 during lens modeling.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularMagnification(),
+    mesh=al.mesh.RectangularAdaptDensity(),
     regularization=al.reg.AdaptiveBrightness(
         inner_coefficient=0.001, outer_coefficient=0.2, signal_scale=2.0
     ),
