@@ -149,7 +149,7 @@ which are ray-traced to the source-plane. These traced coordinates are the trian
 Below, we use the `Overlay` image-mesh to do this, which overlays a grid of (y,x) coordinates over the image-plane
 mask and retains all (Y,x) coordinates which fall within this mask.
 """
-dataset = dataset.apply_w_tilde()
+dataset = dataset.apply_sparse_operator()
 
 image_mesh = al.image_mesh.Overlay(shape=(20, 20))
 

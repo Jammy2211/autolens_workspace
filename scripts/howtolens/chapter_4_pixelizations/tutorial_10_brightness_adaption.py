@@ -56,7 +56,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset = dataset.apply_w_tilde()
+dataset = dataset.apply_sparse_operator()
 
 """
 Next, we're going to fit the image using the RectangularAdaptDensity magnification based grid. 
