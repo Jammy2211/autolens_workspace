@@ -111,10 +111,10 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 """
 The inversion has reconstructed the source's light on the rectangular pixel grid, which is called the 
 `reconstruction`. This source-plane reconstruction can be mapped back to the image-plane to produce the 
-`mapped_reconstructed_image`.
+`mapped_reconstructed_operated_data`.
 """
 print(inversion.reconstruction)
-print(inversion.mapped_reconstructed_image)
+print(inversion.mapped_reconstructed_operated_data)
 
 """
 Both of these can be plotted using an `InversionPlotter`.
@@ -123,7 +123,7 @@ It is possible for an inversion to have multiple `Mapper`'s, therefore for certa
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_image=True)
+inversion_plotter.figures_2d(reconstructed_operated_data=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
 """
@@ -188,7 +188,7 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 Now lets plot the complex source reconstruction.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_image=True)
+inversion_plotter.figures_2d(reconstructed_operated_data=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
 """
