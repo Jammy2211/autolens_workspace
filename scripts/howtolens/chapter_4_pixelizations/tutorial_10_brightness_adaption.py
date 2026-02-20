@@ -87,12 +87,11 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 """
 Lets have a quick look to make sure it has the same residuals we saw in tutorial 1.
 """
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_mesh_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.image_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)

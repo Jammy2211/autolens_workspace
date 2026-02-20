@@ -78,7 +78,7 @@ preloads = al.Preloads(
         total_linear_light_profiles=total_linear_light_profiles,
         total_mapper_pixels=total_mapper_pixels,
     ),
-    source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
+    source_pixel_zeroed_indices=al.rectangular_edge_pixel_list_from(
         total_linear_light_profiles=total_linear_light_profiles,
         shape_native=mesh_shape,
     ),
@@ -111,11 +111,10 @@ model strong lenses!
 
 So what is wrong with the grid? Well, lets think about the source reconstruction.
 """
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -185,12 +184,11 @@ adapt_images = al.AdaptImages(
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.source_plane_data_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit)

@@ -87,12 +87,11 @@ source_magnification = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 fit = fit_via_source_galaxy_from(dataset=dataset, source_galaxy=source_magnification)
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_mesh_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.image_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -114,7 +113,7 @@ inversion_plotter.figures_2d_of_pixelization(
 """
 __Adaptive Regularization__
 
-Lets now look at adaptive regularization in action, by setting up a adapt-image and using the `AdaptiveBrightness` 
+Lets now look at adaptive regularization in action, by setting up a adapt-image and using the `Adapt` 
 regularization scheme. 
 
 This introduces additional parameters, that are explained below.
@@ -123,24 +122,24 @@ adapt_image = fit.model_data.slim
 
 pixelization = al.Pixelization(
     mesh=al.mesh.RectangularAdaptDensity(),
-    regularization=al.reg.AdaptiveBrightness(
+    regularization=al.reg.Adapt(
         inner_coefficient=0.005, outer_coefficient=1.9, signal_scale=3.0
     ),
 )
 
-source_adaptive_regularization = al.Galaxy(
+source_adapt_regularization = al.Galaxy(
     redshift=1.0,
     pixelization=pixelization,
     adapt_galaxy_image=adapt_image,
 )
 
 adapt_images = al.AdaptImages(
-    galaxy_image_dict={source_adaptive_regularization: adapt_image}
+    galaxy_image_dict={source_adapt_regularization: adapt_image}
 )
 
 fit = fit_via_source_galaxy_from(
     dataset=dataset,
-    source_galaxy=source_adaptive_regularization,
+    source_galaxy=source_adapt_regularization,
     adapt_images=adapt_images,
 )
 
@@ -220,33 +219,32 @@ during lens modeling.
 """
 pixelization = al.Pixelization(
     mesh=al.mesh.RectangularAdaptDensity(),
-    regularization=al.reg.AdaptiveBrightness(
+    regularization=al.reg.Adapt(
         inner_coefficient=0.001, outer_coefficient=0.2, signal_scale=2.0
     ),
 )
 
-source_adaptive_regularization = al.Galaxy(
+source_adapt_regularization = al.Galaxy(
     redshift=1.0,
     pixelization=pixelization,
     adapt_galaxy_image=adapt_image,
 )
 
 adapt_images = al.AdaptImages(
-    galaxy_image_dict={source_adaptive_regularization: adapt_image}
+    galaxy_image_dict={source_adapt_regularization: adapt_image}
 )
 
 fit = fit_via_source_galaxy_from(
     dataset=dataset,
-    source_galaxy=source_adaptive_regularization,
+    source_galaxy=source_adapt_regularization,
     adapt_images=adapt_images,
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_mesh_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.image_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)

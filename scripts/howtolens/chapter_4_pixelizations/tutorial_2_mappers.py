@@ -79,15 +79,12 @@ mesh = al.mesh.RectangularAdaptDensity(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
-mapper_grids = pixelization.mapper_grids_from(
-    mask=grid.mask,
-    source_plane_data_grid=source_plane_grid,
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid, source_plane_mesh_grid=None
 )
 
-mapper = al.Mapper(
-    mapper_grids=mapper_grids,
-    regularization=None,
-)
+mapper = al.Mapper(interpolator=interpolator)
+
 
 """
 We first plot the mapper's pixelization, which is a grid of rectangular pixels in the source-plane.
@@ -134,7 +131,7 @@ This requires us to plot each image individually (e.g. not using `subplot_image_
 grid via the visuals object and have them displayed clearly.
 """
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_data_grid,
+    grid=mapper.image_plane_data_grid,
     indexes=indexes,
 )
 
@@ -146,7 +143,7 @@ mapper_plotter = aplt.MapperPlotter(
 mapper_plotter.figure_2d_image(image=dataset.data)
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
     indexes=indexes,
 )
 
@@ -257,21 +254,17 @@ source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grids.pixelizat
 We can now use the masked source-plane grid to create a new `Mapper` (using the same rectangular 25 x 25 pixelization 
 as before).
 """
-mapper_grids = mesh.mapper_grids_from(
-    mask=mask, source_plane_data_grid=source_plane_grid
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid, source_plane_mesh_grid=None
 )
-
-mapper = al.Mapper(
-    mapper_grids=mapper_grids,
-    regularization=None,
-)
+mapper = al.Mapper(interpolator=interpolator)
 
 """
 Lets plot it, including the image-plane grid and source-plane grid, which are now much smaller than before because
 the mask has removed the many image pixels at the edge of the image.
 """
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_data_grid,
+    grid=mapper.image_plane_data_grid,
 )
 
 mapper_plotter = aplt.MapperPlotter(
@@ -282,7 +275,7 @@ mapper_plotter = aplt.MapperPlotter(
 mapper_plotter.figure_2d_image(image=dataset.data)
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 mapper_plotter = aplt.MapperPlotter(

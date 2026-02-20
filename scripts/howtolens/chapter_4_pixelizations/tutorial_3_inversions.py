@@ -85,16 +85,18 @@ mesh = al.mesh.RectangularAdaptDensity(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
-mapper_grids = pixelization.mapper_grids_from(
-    mask=mask, source_plane_data_grid=source_plane_grid
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid,
+    source_plane_mesh_grid=None,
 )
+
 mapper = al.Mapper(
-    mapper_grids=mapper_grids,
+    interpolator=interpolator,
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
@@ -174,11 +176,13 @@ tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grids.pixelization)[1]
 
-mapper_grids = mesh.mapper_grids_from(
-    mask=mask, source_plane_data_grid=source_plane_grid
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid,
+    source_plane_mesh_grid=None,
 )
+
 mapper = al.Mapper(
-    mapper_grids=mapper_grids,
+    interpolator=interpolator,
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
