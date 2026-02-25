@@ -113,7 +113,7 @@ We can visualize the PSF to better understand how it will blur the galaxy's imag
 image that represents the spreading out of light from a single point source. This kernel will be used to blur the 
 entire tracer image when we perform the convolution.
 """
-array_plotter = aplt.Array2DPlotter(array=psf)
+array_plotter = aplt.Array2DPlotter(array=psf.kernel)
 array_plotter.set_title("PSF 2D Kernel")
 array_plotter.figure_2d()
 

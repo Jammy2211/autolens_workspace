@@ -74,7 +74,7 @@ lens_galaxy = al.Galaxy(
 )
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -123,7 +123,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 )
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=0.5),
 )
 
@@ -277,7 +277,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -316,7 +316,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
