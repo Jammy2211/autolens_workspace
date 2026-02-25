@@ -103,7 +103,7 @@ seeing (make the PSF, galaxies, tracer, etc.).
 def simulate_for_source_galaxy(source_galaxy):
     grid = al.Grid2D.uniform(shape_native=(150, 150), pixel_scales=0.05)
 
-    psf = al.Kernel2D.from_gaussian(
+    psf = al.Convolver.from_gaussian(
         shape_native=(11, 11), sigma=0.05, pixel_scales=0.05
     )
 
