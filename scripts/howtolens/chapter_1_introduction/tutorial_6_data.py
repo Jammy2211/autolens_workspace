@@ -123,7 +123,7 @@ in its tail, which are much smaller than the central peak yet critical for many 
 values may significantly affect the spread and detail captured in the data.
 """
 array_plotter = aplt.Array2DPlotter(
-    array=psf, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    array=psf.kernel, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
 )
 array_plotter.set_title("PSF 2D Kernel")
 array_plotter.figure_2d()
