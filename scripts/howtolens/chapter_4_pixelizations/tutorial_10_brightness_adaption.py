@@ -56,7 +56,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset = dataset.apply_w_tilde()
+dataset = dataset.apply_sparse_operator()
 
 """
 Next, we're going to fit the image using the RectangularAdaptDensity magnification based grid. 
@@ -74,7 +74,7 @@ lens_galaxy = al.Galaxy(
 )
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=3.3),
 )
 
@@ -87,12 +87,11 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 """
 Lets have a quick look to make sure it has the same residuals we saw in tutorial 1.
 """
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.image_plane_mesh_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.image_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -124,7 +123,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 )
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=0.5),
 )
 
@@ -278,7 +277,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -317,7 +316,7 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
 
 
 pixelization = al.Pixelization(
-    mesh=al.mesh.RectangularAdaptDensity(),
+    mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 

@@ -85,16 +85,18 @@ mesh = al.mesh.RectangularAdaptDensity(shape=(25, 25))
 
 pixelization = al.Pixelization(mesh=mesh)
 
-mapper_grids = pixelization.mapper_grids_from(
-    mask=mask, source_plane_data_grid=source_plane_grid
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid,
+    source_plane_mesh_grid=None,
 )
+
 mapper = al.Mapper(
-    mapper_grids=mapper_grids,
+    interpolator=interpolator,
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
@@ -111,10 +113,10 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 """
 The inversion has reconstructed the source's light on the rectangular pixel grid, which is called the 
 `reconstruction`. This source-plane reconstruction can be mapped back to the image-plane to produce the 
-`mapped_reconstructed_image`.
+`mapped_reconstructed_operated_data`.
 """
 print(inversion.reconstruction)
-print(inversion.mapped_reconstructed_image)
+print(inversion.mapped_reconstructed_operated_data)
 
 """
 Both of these can be plotted using an `InversionPlotter`.
@@ -123,7 +125,7 @@ It is possible for an inversion to have multiple `Mapper`'s, therefore for certa
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_image=True)
+inversion_plotter.figures_2d(reconstructed_operated_data=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
 """
@@ -174,11 +176,13 @@ tracer = al.Tracer(galaxies=[lens_galaxy, al.Galaxy(redshift=1.0)])
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=dataset.grids.pixelization)[1]
 
-mapper_grids = mesh.mapper_grids_from(
-    mask=mask, source_plane_data_grid=source_plane_grid
+interpolator = mesh.interpolator_from(
+    source_plane_data_grid=source_plane_grid,
+    source_plane_mesh_grid=None,
 )
+
 mapper = al.Mapper(
-    mapper_grids=mapper_grids,
+    interpolator=interpolator,
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -188,7 +192,7 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 Now lets plot the complex source reconstruction.
 """
 inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_image=True)
+inversion_plotter.figures_2d(reconstructed_operated_data=True)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
 
 """

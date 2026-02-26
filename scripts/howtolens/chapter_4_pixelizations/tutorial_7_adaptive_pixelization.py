@@ -68,21 +68,8 @@ lens_galaxy = al.Galaxy(
 
 dataset = dataset.apply_mask(mask=mask)
 
-mesh_shape = (20, 20)
-total_mapper_pixels = mesh_shape[0] * mesh_shape[1]
-
-total_linear_light_profiles = 0
-
-preloads = al.Preloads(
-    mapper_indices=al.mapper_indices_from(
-        total_linear_light_profiles=total_linear_light_profiles,
-        total_mapper_pixels=total_mapper_pixels,
-    ),
-    source_pixel_zeroed_indices=al.util.mesh.rectangular_edge_pixel_list_from(
-        total_linear_light_profiles=total_linear_light_profiles,
-        shape_native=mesh_shape,
-    ),
-)
+mesh_pixels_yx = 28
+mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
 
 pixelization = al.Pixelization(
@@ -94,7 +81,7 @@ source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-fit = al.FitImaging(dataset=dataset, tracer=tracer, preloads=preloads)
+fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit)
 fit_plotter.subplot_fit()
@@ -111,11 +98,10 @@ model strong lenses!
 
 So what is wrong with the grid? Well, lets think about the source reconstruction.
 """
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -149,7 +135,7 @@ which are ray-traced to the source-plane. These traced coordinates are the trian
 Below, we use the `Overlay` image-mesh to do this, which overlays a grid of (y,x) coordinates over the image-plane
 mask and retains all (Y,x) coordinates which fall within this mask.
 """
-dataset = dataset.apply_w_tilde()
+dataset = dataset.apply_sparse_operator()
 
 image_mesh = al.image_mesh.Overlay(shape=(20, 20))
 
@@ -168,7 +154,9 @@ By passing a `Tracer` a source galaxy with the image-mesh and a `Delaunay` mesh 
 a `Pixelization` object, it automatically computes this source-plane Delaunay mesh.
 """
 pixelization = al.Pixelization(
-    mesh=al.mesh.Delaunay(),
+    mesh=al.mesh.Delaunay(
+        pixels=image_plane_mesh_grid.shape[0],
+    ),
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
@@ -185,12 +173,11 @@ adapt_images = al.AdaptImages(
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    grid=mapper.source_plane_data_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit)

@@ -99,7 +99,7 @@ options to input a mask and use a border.
 
 
 def perform_fit_with_source_galaxy_mask_and_border(
-    dataset, source_galaxy, mask, settings_inversion
+    dataset, source_galaxy, mask, settings
 ):
     dataset = dataset.apply_mask(mask=mask)
 
@@ -115,15 +115,13 @@ def perform_fit_with_source_galaxy_mask_and_border(
 
     tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-    return al.FitImaging(
-        dataset=dataset, tracer=tracer, settings_inversion=settings_inversion
-    )
+    return al.FitImaging(dataset=dataset, tracer=tracer, settings=settings)
 
 
 """
 Okay, so lets first look at the mapper without using a border and using annular mask.
 
-First, note how we set up the border, using a `al.SettingsInversion` object. This behaves analogously to the 
+First, note how we set up the border, using a `al.Settings` object. This behaves analogously to the 
 `SettingsLens` objects we have used in previous tutorials.
 """
 pixelization = al.Pixelization(
@@ -137,12 +135,11 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_annular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=False),
+    settings=al.Settings(use_border_relocator=False),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
-visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
+visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
@@ -155,12 +152,11 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=False),
+    settings=al.Settings(use_border_relocator=False),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
-visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
+visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
 inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion, visuals_2d=visuals)
 inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
@@ -173,12 +169,11 @@ centre).
 
 Lets quickly check this by plotting the indexes of these image-pixels.
 """
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
     indexes=[986, 987, 988, 989, 990, 991],
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 mapper_plotter = aplt.MapperPlotter(
@@ -230,12 +225,11 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=False),
+    settings=al.Settings(use_border_relocator=False),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
-visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
+visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -253,18 +247,17 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
-visuals = aplt.Visuals2D(grid=mapper_grids.source_plane_data_grid)
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
+visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
 
 visuals = aplt.Visuals2D(
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
     indexes=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
 )
 
@@ -328,7 +321,7 @@ We need to redefine our perform fit function, to use the x2 lens galaxy model.
 
 
 def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
-    dataset, source_galaxy, mask, settings_inversion
+    dataset, source_galaxy, mask, settings
 ):
     dataset = dataset.apply_mask(mask=mask)
 
@@ -362,9 +355,7 @@ def perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 
     tracer = al.Tracer(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
 
-    return al.FitImaging(
-        dataset=dataset, tracer=tracer, settings_inversion=settings_inversion
-    )
+    return al.FitImaging(dataset=dataset, tracer=tracer, settings=settings)
 
 
 """
@@ -375,19 +366,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=False),
+    settings=al.Settings(use_border_relocator=False),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -401,19 +391,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
@@ -444,19 +433,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -472,19 +460,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -507,19 +494,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
@@ -543,19 +529,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
     dataset=dataset,
     source_galaxy=source_galaxy,
     mask=mask_circular,
-    settings_inversion=al.SettingsInversion(use_border_relocator=True),
+    settings=al.Settings(use_border_relocator=True),
 )
 
-mapper = fit.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-border = mapper_grids.source_plane_data_grid.over_sampled[
+border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
 visuals = aplt.Visuals2D(
     border=border,
-    grid=mapper_grids.source_plane_data_grid,
+    grid=mapper.source_plane_data_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)

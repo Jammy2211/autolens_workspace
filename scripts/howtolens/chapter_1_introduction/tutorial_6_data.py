@@ -101,7 +101,7 @@ The Point Spread Function (PSF) describes how the telescope blurs the image. It 
 of how a single point of light would appear in the image, spread out by the optics. In practice, the PSF is a 2D 
 convolution kernel that we apply to the image to simulate this blurring effect.
 """
-psf = al.Kernel2D.from_gaussian(
+psf = al.Convolver.from_gaussian(
     shape_native=(11, 11),  # The size of the PSF kernel, represented as an 11x11 grid.
     sigma=0.1,  # Controls the width of the Gaussian PSF, which determines the level of blurring.
     pixel_scales=grid.pixel_scales,  # Maintains consistency with the scale of the image grid.
@@ -113,7 +113,7 @@ We can visualize the PSF to better understand how it will blur the galaxy's imag
 image that represents the spreading out of light from a single point source. This kernel will be used to blur the 
 entire tracer image when we perform the convolution.
 """
-array_plotter = aplt.Array2DPlotter(array=psf)
+array_plotter = aplt.Array2DPlotter(array=psf.kernel)
 array_plotter.set_title("PSF 2D Kernel")
 array_plotter.figure_2d()
 
@@ -123,7 +123,7 @@ in its tail, which are much smaller than the central peak yet critical for many 
 values may significantly affect the spread and detail captured in the data.
 """
 array_plotter = aplt.Array2DPlotter(
-    array=psf, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    array=psf.kernel, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
 )
 array_plotter.set_title("PSF 2D Kernel")
 array_plotter.figure_2d()
@@ -136,7 +136,7 @@ blurring that occurs when the telescope optics spread out the galaxy's light.
    image. This prevents unwanted edge effects when we perform the convolution, ensuring that the image's edges don't 
    become artificially altered by the process.
 
-2. **Convolution**: Using the `Kernel2D` object's `convolve` method, we apply the 2D PSF convolution to the padded 
+2. **Convolution**: Using the `Convolver` object's `convolve` method, we apply the 2D PSF convolution to the padded 
    image. This step combines the PSF with the galaxy's light, simulating how the telescope spreads out the light.
 
 3. **Trimming the Image**: After convolution, we trim the padded areas back to their original size, obtaining a 
@@ -144,13 +144,14 @@ blurring that occurs when the telescope optics spread out the galaxy's light.
 """
 image = tracer.image_2d_from(grid=grid)  # The original unblurred image of the galaxy.
 padded_image = tracer.padded_image_2d_from(
-    grid=grid, psf_shape_2d=psf.shape_native  # Adding padding based on the PSF size.
+    grid=grid,
+    psf_shape_2d=psf.kernel.shape_native,  # Adding padding based on the PSF size.
 )
 convolved_image = psf.convolved_image_from(
     image=padded_image, blurring_image=None
 )  # Applying the PSF convolution.
 blurred_image = convolved_image.trimmed_after_convolution_from(
-    kernel_shape=psf.shape_native
+    kernel_shape=psf.kernel.shape_native
 )  # Trimming back to the original size.
 
 """
@@ -316,7 +317,7 @@ It's crucial for accurately deconvolving the PSF from the strong lens image, all
 of the strong lens. We'll explore this further in the next tutorial.
 """
 array_plotter = aplt.Array2DPlotter(
-    array=dataset.psf, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
+    array=dataset.psf.kernel, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
 )
 array_plotter.set_title("Simulated PSF")
 array_plotter.figure_2d()

@@ -103,7 +103,7 @@ seeing (make the PSF, galaxies, tracer, etc.).
 def simulate_for_source_galaxy(source_galaxy):
     grid = al.Grid2D.uniform(shape_native=(150, 150), pixel_scales=0.05)
 
-    psf = al.Kernel2D.from_gaussian(
+    psf = al.Convolver.from_gaussian(
         shape_native=(11, 11), sigma=0.05, pixel_scales=0.05
     )
 
@@ -169,7 +169,7 @@ def fit_with_Rectangular_from(dataset, mask, coefficient):
     )
 
     pixelization = al.Pixelization(
-        mesh=al.mesh.RectangularAdaptDensity(),
+        mesh=al.mesh.RectangularAdaptDensity(shape=(24, 24)),
         regularization=al.reg.Constant(coefficient=coefficient),
     )
 
@@ -190,11 +190,10 @@ fit_flat = fit_with_Rectangular_from(
     dataset=dataset_source_flat, mask=mask, coefficient=9.2
 )
 
-mapper = fit_flat.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit_flat.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit_flat, visuals_2d=visuals)
@@ -214,11 +213,10 @@ fit_compact = fit_with_Rectangular_from(
     dataset=dataset_source_compact, mask=mask, coefficient=3.3
 )
 
-mapper = fit_compact.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit_compact.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit_compact, visuals_2d=visuals)
@@ -242,11 +240,10 @@ fit_super_compact = fit_with_Rectangular_from(
     dataset=dataset_source_super_compact, mask=mask, coefficient=3.1
 )
 
-mapper = fit_super_compact.inversion.cls_list_from(al.AbstractMapper)[0]
-mapper_grids = mapper.mapper_grids
+mapper = fit_super_compact.inversion.cls_list_from(al.Mapper)[0]
 
 visuals = aplt.Visuals2D(
-    mesh_grid=mapper_grids.source_plane_mesh_grid,
+    mesh_grid=mapper.source_plane_mesh_grid,
 )
 
 fit_plotter = aplt.FitImagingPlotter(fit=fit_super_compact, visuals_2d=visuals)
