@@ -98,8 +98,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -116,8 +115,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -134,8 +132,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Fit__
@@ -182,8 +179,7 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 By plotting the fit, we see that the linear light profiles have solved for `intensity` values that give a good fit
 to the image. 
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Intensities__
@@ -233,11 +229,8 @@ have an `intensity` value.
 Therefore, the objects created above which replaces all linear light profiles with ordinary light profiles must be
 used for visualization:
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=dataset.grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=dataset.grid), title="Image")
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=tracer.galaxies[0], grid=dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Wrap Up__

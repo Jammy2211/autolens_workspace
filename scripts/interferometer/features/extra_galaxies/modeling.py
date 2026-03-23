@@ -77,8 +77,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()
 
 
@@ -256,8 +255,7 @@ __Result__
 
 By plotting the maximum log likelihood `FitInterferometer` object we can confirm the extra galaxies contribute to the fit.
 """
-fit_plotter = aplt.FitInterferometerPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=result.max_log_likelihood_fit)
 
 """
 Checkout `autolens_workspace/*/guides/results` for a full description of analysing results.

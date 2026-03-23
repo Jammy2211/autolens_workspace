@@ -58,8 +58,7 @@ noise_map = al.Array2D.from_fits(
     file_path=dataset_path / "noise_map.fits", pixel_scales=0.1
 )
 
-array_plotter = aplt.Array2DPlotter(array=noise_map)
-array_plotter.figure_2d()
+aplt.plot_array(array=noise_map, title="")
 
 """
 This noise-map conforms to **PyAutoLens** standards for the following reasons:

@@ -9,7 +9,7 @@ References
 
 This example uses functionality described fully in other examples in the `guides` package:
 
-- `guides/plot`: Using Plotter objects to plot and customize figures.
+- `guides/plot`: Using the plotting API (`aplt.plot_array`, `aplt.subplot_fit_interferometer`, etc.) to visualize figures.
 - `guides/units`: The source code unit conventions (e.g. arc seconds for distances and how to convert to physical units).
 - `guides/data_structures`: The bespoke data structures used to store 1D and 2d arrays.
 """
@@ -66,12 +66,11 @@ dataset = al.Interferometer.from_fits(
 )
 
 """
-The `InterferometerPlotter` contains a subplot which plots all the key properties of the dataset simultaneously.
+The `aplt.subplot_interferometer_dataset` contains a subplot which plots all the key properties of the dataset simultaneously.
 
 This includes the observed visibility data, RMS noise map and other information.
 """
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 
 """
 Visibility data is in uv space, making it hard to interpret by eye.
@@ -122,9 +121,7 @@ observed image.
 We can plot the image of the tracer to confirm this, noting that for a tracer its images are always in real space
 (not Fourier space like the interferometer dataset) and therefore they can be directly visualized.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=dataset.grid)
-tracer_plotter.set_title("Tracer  Image")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=dataset.grid), title="Tracer  Image")
 
 """
 However, the tracer's image is not what we observe in the interferometer dataset, because we observe the image as
@@ -140,8 +137,6 @@ on the tracer image above and plots the result visibilities in uv-space.
 """
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.figures_2d(model_data=True)
 
 """
 The visibilities are again hard to interpret by eye, so we can plot the dirty image of the fit's model data. This 
@@ -151,8 +146,6 @@ convolved with it).
 """
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.figures_2d(dirty_image=True)
 
 """
 The fit does a lot more than just Fourier transform the tracer's image it also creates the following:
@@ -164,21 +157,13 @@ The fit does a lot more than just Fourier transform the tracer's image it also c
 For a good lens model where the model and tracer are representative of the strong lens system the
 residuals, normalized residuals and chi-squareds are minimized:
 """
-fit_plotter.figures_2d(
-    residual_map_real=True,
-    residual_map_imag=True,
-    normalized_residual_map_real=True,
-    normalized_residual_map_imag=True,
-    chi_squared_map_real=True,
-    chi_squared_map_imag=True,
-)
 
 """
 A subplot can be plotted which contains all of the above quantities, as well as other information contained in the
 tracer such as the source-plane image, a zoom in of the source-plane and a normalized residual map where the colorbar
 goes from 1.0 sigma to -1.0 sigma, to highlight regions where the fit is poor.
 """
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 
 """
 Once again, dirty images are often easier to interpret, so we can plot a subplot of the dirty images of the data, model
@@ -230,8 +215,7 @@ A new fit using this plane shows residuals, normalized residuals and chi-squared
 """
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 fit_plotter.subplot_fit_dirty_images()
 
 """

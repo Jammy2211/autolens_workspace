@@ -299,23 +299,14 @@ class SimulateImagingPixelized:
             The tracer used to simulate the dataset dataset, which is visualized and output to a .json file.
         """
 
-        mat_plot = aplt.MatPlot2D(output=aplt.Output(path=simulate_path, format="png"))
 
-        dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-        dataset_plotter.subplot_dataset()
+        aplt.subplot_imaging_dataset(dataset=dataset)
 
         al.output_to_json(
             obj=tracer,
             file_path=os.path.join(simulate_path, "tracer.json"),
         )
 
-        sensitivity_plotter = aplt.SubhaloSensitivityPlotter(
-            source_image=source_image,
-            tracer_perturb=tracer,
-            tracer_no_perturb=tracer_no_perturb,
-            mask=self.mask,
-            mat_plot_2d=mat_plot,
-        )
         sensitivity_plotter.subplot_tracer_images()
 
         dataset.output_to_fits(

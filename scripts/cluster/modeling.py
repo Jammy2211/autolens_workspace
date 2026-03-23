@@ -32,10 +32,10 @@ The point-source dataset used in this example consists of the positions of every
 
 __Plotters__
 
-To produce images of the data `Plotter` objects are used, which are high-level wrappers of matplotlib
+To produce images of the data plotting function objects are used, which are high-level wrappers of matplotlib
 code which produce high quality visualization of strong lenses.
 
-The `PLotter` API is described in the script `autolens_workspace/*/guides/plot`.
+The plotting function API is described in the script `autolens_workspace/*/guides/plot`.
 
 __Simulation__
 
@@ -120,16 +120,13 @@ for dataset in dataset_list:
 
     positions_list.append(dataset.positions)
 
-visuals = aplt.Visuals2D(positions=positions_list)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 We can also just plot the positions, omitting the image.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=positions_list)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=positions_list, title="")
 
 """
 __Centres__
@@ -144,10 +141,8 @@ extra_galaxies_centre_list = al.Grid2DIrregular(
     al.from_json(file_path=Path(dataset_path, "extra_galaxies_centre_list.json"))
 )
 
-visuals = aplt.Visuals2D(light_profile_centres=extra_galaxies_centre_list)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 __Luminosities__
@@ -584,10 +579,7 @@ Checkout `autolens_workspace/*/guides/results` for a full description of analysi
 """
 print(result_list[0].max_log_likelihood_instance)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result_list[0].max_log_likelihood_tracer, grid=result_list[0].grids.lp
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result_list[0].max_log_likelihood_tracer, grid=result_list[0].grids.lp)
 
 """
 It also contains information on the posterior as estimated by the non-linear search (in this example `Nautilus`). 

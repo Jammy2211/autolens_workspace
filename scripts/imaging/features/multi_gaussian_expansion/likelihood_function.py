@@ -73,8 +73,7 @@ masked_dataset = dataset.apply_mask(mask=mask)
 
 masked_dataset = masked_dataset.apply_over_sampling(over_sample_size_lp=1)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=masked_dataset)
 
 """
 __Masked Image Grid__
@@ -227,7 +226,6 @@ the basis light profiles and not the intensity of the light profiles.
 """
 print("This will raise an exception")
 
-# basis_plotter = aplt.LightProfilePlotter(light_profile=basis, grid=masked_dataset.grid)
 
 """
 We now set up a `Tracer` using the MGE for the lens galaxy.
@@ -646,8 +644,7 @@ mapped_reconstructed_operated_data = al.Array2D(
     values=mapped_reconstructed_operated_data, mask=mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=mapped_reconstructed_operated_data)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=mapped_reconstructed_operated_data, title="")
 
 
 """
@@ -693,8 +690,7 @@ The `chi_squared_map` indicates which regions of the image we did and did not fi
 """
 chi_squared_map = al.Array2D(values=chi_squared_map, mask=mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=chi_squared_map)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=chi_squared_map, title="")
 
 
 """
@@ -741,8 +737,7 @@ fit = al.FitImaging(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 The fit contains an `Inversion` object, which handles all the linear algebra we have covered in this script.

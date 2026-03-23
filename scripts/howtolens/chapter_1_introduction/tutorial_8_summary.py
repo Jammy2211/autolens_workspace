@@ -92,23 +92,16 @@ print(tracer.planes[1][0].disk)
 print()
 
 """
-Once we have a tracer we can therefore use any of the `Plotter` objects throughout this chapter to plot
+Once we have a tracer we can therefore use any of the plotting function objects throughout this chapter to plot
 any specific aspect, whether it be a profile, galaxy, galaxies or tracer. 
 
 For example, if we want to plot the image of the source galaxy's bulge and disk, we can do this in a variety of 
 different ways.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 source_plane_grid = tracer.traced_grid_2d_list_from(grid=grid)[1]
-galaxies_plotter = aplt.GalaxiesPlotter(
-    galaxies=tracer.planes[1], grid=source_plane_grid
-)
-galaxies_plotter.figures_2d(image=True)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=tracer.planes[1], grid=source_plane_grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 Understanding how these objects decompose into the different components of a strong lens is important for general 
@@ -119,51 +112,26 @@ profiles, mass profiles, galaxies and planes to extract different pieces of info
 example, we made our source-galaxy above with two light profiles, a `bulge` and `disk`. We can plot the lensed image of 
 each component individually, now that we know how to break-up the different components of the tracer.
 """
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=tracer.planes[1][0].bulge, grid=source_plane_grid
-)
-light_profile_plotter.set_title("Bulge Image")
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.planes.image_2d_from(grid=source_plane_grid), title="Bulge Image")
 
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=tracer.planes[1][0].disk, grid=source_plane_grid
-)
-light_profile_plotter.set_title("Disk Image")
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.planes.image_2d_from(grid=source_plane_grid), title="Disk Image")
 
 """
 __Visualization__
 
-Furthermore, using the `MatPLot2D` and `Visuals2D` objects we can visualize any aspect we're interested 
+Furthermore, using the `MatPLot2D` and `lines=`/`positions=` overlays objects we can visualize any aspect we're interested 
 in and fully customize the figure. 
 
 Before beginning chapter 2 of **HowToLens**, you should checkout the package `autolens_workspace/plot`. This provides a 
 full API reference of every plotting option in **PyAutoLens**, allowing you to create your own fully customized 
 figures of strong lenses with minimal effort!
 """
-mat_plot = aplt.MatPlot2D(
-    title=aplt.Title(label="This is the title", color="r", fontsize=20),
-    ylabel=aplt.YLabel(ylabel="Label of Y", color="b", fontsize=5, position=(0.2, 0.5)),
-    xlabel=aplt.XLabel(xlabel="Label of X", color="g", fontsize=10),
-    cmap=aplt.Cmap(cmap="cool", norm="linear"),
-)
 
 tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
 radial_critical_curve_list = tracer.radial_critical_curve_list_from(grid=grid)
 
-visuals = aplt.Visuals2D(
-    tangential_critical_curves=tangential_critical_curve_list,
-    radial_critical_curves=radial_critical_curve_list,
-)
 
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=tracer.planes[1][0].bulge,
-    grid=source_plane_grid,
-    mat_plot_2d=mat_plot,
-    visuals_2d=visuals,
-)
-light_profile_plotter.set_title("Bulge Image")
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.planes.image_2d_from(grid=source_plane_grid), title="Bulge Image")
 
 """
 And, we're done, not just with the tutorial, but the chapter!

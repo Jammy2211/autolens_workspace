@@ -17,10 +17,10 @@ This script simulates `Imaging` of a 'galaxy-scale' strong lens where:
 
 __Plotters__
 
-To output images of the simulated data, `Plotter` objects are used, which are high-level wrappers of matplotlib
+To output images of the simulated data, plotting function objects are used, which are high-level wrappers of matplotlib
 code which produce high quality visualization of strong lenses.
 
-The `PLotter` API is described in the `autolens_workspace/*/guides/plot` script.
+The plotting function API is described in the `autolens_workspace/*/guides/plot` script.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -187,8 +187,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 """
 We can plot the `Tracer``s image, which is the image we'll next simulate as CCD imaging data.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 By passing the `Tracer` and grid to the simulator, we create the simulated CCD imaging dataset.
@@ -201,8 +200,7 @@ We now plot the simulated `Imaging` dataset before outputting it to fits.
 Note how unlike the `Tracer` image above, the simulated `Imaging` dataset includes the blurring effects of the 
 telescope's PSF and also has noise.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Output__
@@ -229,15 +227,12 @@ Having .png files like this is useful, as they can be opened quickly and easily 
 
 For a faster run time, this visualization uses a regular grid which does not perferm the iterative ray-tracing.
 """
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.subplot_dataset()
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 __Tracer json__

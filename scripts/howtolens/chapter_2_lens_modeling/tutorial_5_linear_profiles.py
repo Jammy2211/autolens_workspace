@@ -75,10 +75,7 @@ dataset = dataset.apply_mask(mask=mask)
 """
 When plotted, the lens light`s is clearly visible in the centre of the image.
 """
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Linear Light Profiles__
@@ -219,11 +216,8 @@ Therefore, the object created above which replaces all linear light profiles wit
 used for visualization:
 """
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=dataset.grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=dataset.grid), title="Image")
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=tracer.galaxies[0], grid=dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Basis__
@@ -288,8 +282,7 @@ lens galaxy is elliptical.
 
 We rectify this below, where we use a non-linear search to determine the optimal values of the Gaussians!
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Model Fit__
@@ -444,13 +437,9 @@ This means we can use them directly to perform the visualization below.
 """
 print(result_basis.max_log_likelihood_instance)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result_basis.max_log_likelihood_tracer, grid=result_basis.grids.lp
-)
 tracer_plotter.subplot()
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_basis.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_basis.max_log_likelihood_fit)
 
 """
 __Multi Gaussian Expansion Benefits__

@@ -124,8 +124,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 """
 Lets look at the tracer`s image, this is the image we'll be simulating.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 Pass the simulator a tracer, which creates the image which is simulated as an imaging dataset.
@@ -135,8 +134,7 @@ dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 """
 Plot the simulated `Imaging` dataset before outputting it to fits.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Output__
@@ -155,15 +153,12 @@ __Visualize__
 
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.subplot_dataset()
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 __Tracer json__
@@ -220,14 +215,9 @@ image_no_subhalo = tracer_no_subhalo.image_2d_from(grid=grid)
 
 subhalo_residual_image = image - image_no_subhalo
 
-mat_plot = aplt.MatPlot2D(
-    output=aplt.Output(
-        path=dataset_path, filename="subhalo_residual_image", format="png"
-    )
 )
 
-array_plotter = aplt.Array2DPlotter(array=subhalo_residual_image, mat_plot_2d=mat_plot)
-array_plotter.figure_2d()
+aplt.plot_array(array=subhalo_residual_image, title="", output_path=dataset_path, output_format="png")
 
 """
 __No Lens Light__
@@ -259,15 +249,12 @@ dataset.output_to_fits(
     overwrite=True,
 )
 
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.subplot_dataset()
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 The dataset can be viewed in the folder `autolens_workspace/imaging/dark_matter_subhalo`.

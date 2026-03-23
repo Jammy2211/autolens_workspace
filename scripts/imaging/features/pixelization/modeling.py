@@ -144,8 +144,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -162,8 +161,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -183,8 +181,7 @@ dataset = dataset.apply_over_sampling(
     over_sample_size_pixelization=4,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mesh Shape__
@@ -396,13 +393,9 @@ The end of this example provides a detailed description of all result options fo
 """
 print(result.max_log_likelihood_instance)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=result.grids.lp
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 plotter = aplt.NestPlotter(samples=result.samples)
 plotter.corner_anesthetic()
@@ -467,8 +460,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We do not explictly fit this data, for the sake of brevity, however if your data has these nearby galaxies you should

@@ -86,8 +86,8 @@ for dataset_list, tracer_list in zip(dataset_gen, tracer_gen):
     fit = al.FitImaging(dataset=dataset, tracer=tracer)
     tracer = fit.tracer_linear_light_profiles_to_light_profiles
 
-    tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-    tracer_plotter.figures_2d(convergence=True, potential=True)
+    aplt.plot_array(array=tracer.convergence_2d_from(grid=grid), title="Convergence")
+    aplt.plot_array(array=tracer.potential_2d_from(grid=grid), title="Potential")
 
 """
 __Einstein Mass Example__

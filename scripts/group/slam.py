@@ -172,8 +172,6 @@ If any code in this script is unclear, refer to the `guides/modeling/slam_start_
 #
 # dataset = dataset.apply_mask(mask=mask)
 #
-# dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-# dataset_plotter.subplot_dataset()
 #
 #
 # """

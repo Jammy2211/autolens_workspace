@@ -94,8 +94,7 @@ source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 fit = perform_fit_with_source_galaxy(dataset=dataset, source_galaxy=source_galaxy)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Regularization__
@@ -116,8 +115,7 @@ no_regularization_fit = perform_fit_with_source_galaxy(
     dataset=dataset, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=no_regularization_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=no_regularization_fit)
 
 """
 So, what is happening here? Why does reducing the `coefficient` do this to our source reconstruction? First, we need
@@ -138,16 +136,12 @@ Why do we need to regularize our solution? We just saw why, if we do not apply t
 values located at the exterior regions of the source reconstruction above are. If the inversions's sole aim is to 
 maximize the log likelihood, it can do this by fitting *everything* accurately, including the noise.
 
-If we change the `vmax` and `vmin` variables of the `Plotter`'s `CMap` such that the color-map is restricted to a 
+If we change the `vmax` and `vmin` variables of the plotting function's `CMap` such that the color-map is restricted to a 
 narrower range of values, we can see that even without regularization we are still reconstructing the actual source 
 galaxy.
 """
-mat_plot = aplt.MatPlot2D(cmap=aplt.Cmap(vmax=0.5, vmin=-0.5))
 
-inversion_plotter = aplt.InversionPlotter(
-    inversion=no_regularization_fit.inversion, mat_plot_2d=mat_plot
-)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 Over-fitting is why regularization is necessary. Solutions like this will completely ruin our attempts to model a 
@@ -166,13 +160,9 @@ high_regularization_fit = perform_fit_with_source_galaxy(
     dataset=dataset, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=high_regularization_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=high_regularization_fit)
 
-inversion_plotter = aplt.InversionPlotter(
-    inversion=high_regularization_fit.inversion, mat_plot_2d=mat_plot
-)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 The figure above shows that we completely remove over-fitting. However, we now fit the image data less accurately,
@@ -259,8 +249,7 @@ print(3988.0716851250163)
 print("New Bayesian Evidence:")
 print(fit.log_evidence)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
  2) Can you think of any other ways we might increase the Bayesian evidence even further? In future tutorials we will 

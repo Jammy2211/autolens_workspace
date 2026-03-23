@@ -2,19 +2,27 @@
 Plots: Start Here
 =================
 
-This example illustrates the API for plotting, including how to customize the appearance of figures and subplots.
+This example introduces the new plotting API in PyAutoLens.
+
+The old API (removed) used `*Plotter` classes (e.g. `ImagingPlotter`, `TracerPlotter`) together with
+`MatPlot2D` and `Visuals2D` helper objects. These have all been removed.
+
+The new API uses standalone functions:
+
+ - `aplt.plot_array()` — plot any 2D array.
+ - `aplt.plot_grid()` — plot a 2D grid of (y,x) coordinates.
+ - `aplt.subplot_tracer()`, `aplt.subplot_fit_imaging()`, etc. — multi-panel subplots for standard objects.
 
 __Contents__
 
-- **Dataset**: Load an example image used to illustrate plotting.
-- **Figures**: Plot the image using a `Plotter` object.
-- **Customization With MatPlot**: Customize the appearance of the figure using a `MatPlot` object.
-- **Configs**: Customize the appearance of figures using the config files.
-- **Subplots**: Plot multiple images using subplots and customize their appearance.
-- **Visuals**: Add visuals to the figure, such as a mask or light profile centres.
-- **Customize Visuals With Config**: Customize the appearance of visuals using the config files.
-- **Searches**: Visualize the results of a search using a `Plotter` object.
-- **Adding Plotter Objects Together**: Add `MatPlot` and `Visuals` objects together to customize the appearance of figures.
+- **Dataset**: Load objects used to illustrate plotting.
+- **plot_array**: The fundamental function for 2D visualization.
+- **plot_grid**: Plot a Grid2D of coordinates.
+- **Customization**: Pass title, colormap, use_log10, output_path, output_format directly.
+- **Config Defaults**: Adjust defaults via config files.
+- **Overlays**: Use `lines=` and `positions=` to add overlays.
+- **subplot_* Functions**: Multi-panel subplots for standard objects.
+- **What Is Gone**: MatPlot2D, Visuals2D, and all *Plotter classes removed.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -32,170 +40,189 @@ import autolens.plot as aplt
 """
 __Dataset__
 
-First, lets load an example image of of a strong lens as an `Array2D`.
+Load an example imaging dataset and set up objects used throughout this example.
 """
 dataset_name = "simple__no_lens_light"
 dataset_path = Path("dataset") / "imaging" / dataset_name
 data_path = dataset_path / "data.fits"
 data = al.Array2D.from_fits(file_path=data_path, hdu=0, pixel_scales=0.1)
 
-"""
-__Figures__
+grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-We now pass the array to an `Array2DPlotter` and call the `figure` method.
-
-The `autolens.workspace.*.plot.plotters` illustrates every `Plotter` object, for 
-example `ImagingPlotter`, `LightProfilePlotter`, etc.
-"""
-array_plotter = aplt.Array2DPlotter(array=data)
-array_plotter.figure_2d()
-
-"""
-__Customization With MatPlot__
-
-You can customize a number of matplotlib setup options using a `MatPlot` object, which 
-wraps the `matplotlib` methods used to display the image.
-
-(For example, the `Figure` class wraps the `matplotlib` method `plt.figure()`, whereas the `YTicks` class wraps
-`plt.yticks`).
-
-The `autolens.workspace.*.plot.mat_wrap` illustrates every `MatPlot` object, for 
-example `Figure`, `YTicks`, etc.
-"""
-mat_plot = aplt.MatPlot2D(
-    figure=aplt.Figure(figsize=(7, 7)),
-    yticks=aplt.YTicks(fontsize=8),
-    xticks=aplt.XTicks(fontsize=8),
-    title=aplt.Title(fontsize=12),
-    ylabel=aplt.YLabel(fontsize=6),
-    xlabel=aplt.XLabel(fontsize=6),
+lens_galaxy = al.Galaxy(
+    redshift=0.5,
+    mass=al.mp.Isothermal(centre=(0.0, 0.0), einstein_radius=1.6, ell_comps=(0.2, 0.2)),
 )
 
-array_plotter = aplt.Array2DPlotter(array=data, mat_plot_2d=mat_plot)
-array_plotter.figure_2d()
-
-"""
-__Log10__
-
-Many of the quantities we plot are often clearer in log10 space, for example the image, convergence and potential of a
-tracer.
-
-For all `Plotter` objects, the `use_log10` input can be set to `True` to plot these quantities in log10 space.
-"""
-array_plotter = aplt.Array2DPlotter(
-    array=data, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
-)
-array_plotter.figure_2d()
-
-"""
-__Configs__
-
-All matplotlib options can be customized via the config files, such that those values are used every time.
-
-Checkout the `mat_wrap.yaml`, `mat_wrap_1d.yaml` and `mat_wrap_2d.yaml` files 
-in `autolens_workspace/config/visualize/mat_wrap`.
-
-All default matplotlib values are here. There are a lot of entries, so lets focus on whats important for displaying 
-figures:
-
- - mat_wrap.yaml -> Figure -> figure: -> figsize
- - mat_wrap.yaml -> YLabel -> figure: -> fontsize
- - mat_wrap.yaml -> XLabel -> figure: -> fontsize
- - mat_wrap.yaml -> TickParams -> figure: -> labelsize
- - mat_wrap.yaml -> YTicks -> figure: -> labelsize
- - mat_wrap.yaml -> XTicks -> figure: -> labelsize
-
-__Subplots__
-
-In addition to plotting individual `figures`, **PyAutoLens** can also plot `subplots` which are again customized via
-the `mat_plot` objects.
-
-__Visuals__
-
-Visuals can be added to any figure, using standard quantities.
-
-For example, we can plot a mask on the image above using a `Visuals2D` object.
-
-The `visuals` example illustrates every `Visuals` object, for example `MaskScatter`, `LightProfileCentreScatter`, etc.
-"""
-mask = al.Mask2D.circular_annular(
-    shape_native=data.shape_native,
-    pixel_scales=data.pixel_scales,
-    inner_radius=0.3,
-    outer_radius=3.0,
+source_galaxy = al.Galaxy(
+    redshift=1.0,
+    bulge=al.lp.SersicCoreSph(
+        centre=(0.1, 0.1), intensity=0.3, effective_radius=1.0, sersic_index=2.5
+    ),
 )
 
-visuals = aplt.Visuals2D(mask=mask)
-
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 """
-__Customize Visuals With Config__
+__plot_array__
 
-The default options used are provided in the `config/visualize/include.yaml` config file, which you should
-checkout now.
+The fundamental plotting function is `aplt.plot_array()`, which displays any 2D `Array2D`.
 
-For example, you'll see the `mask` is set to `True` by default, which is why it appeared in the figure above. You can
-therefore customize the default appearance of figures by editing this config file.
-
-__Searches__
-
-Model-fits using a non-linear search (e.g. Nautilus, Emcee) produce search-specific visualization.
-
-The `searches` example illustrates how to perform this visualization for every search (e.g.
-`NestPlotter`.
-
-__Adding Plotter Objects Together__
-
-The `MatPlot` objects can be added together. 
-
-This is useful when we want to perform multiple visualizations which share the same base settings, but have
-individually tailored settings:
+We can plot the raw data array loaded from a .fits file.
 """
-mat_plot_base = aplt.MatPlot2D(
-    yticks=aplt.YTicks(fontsize=18),
-    xticks=aplt.XTicks(fontsize=18),
-    ylabel=aplt.YLabel(ylabel=""),
-    xlabel=aplt.XLabel(xlabel=""),
+aplt.plot_array(array=data, title="Data")
+
+"""
+We can also plot quantities computed from a tracer, such as its image, convergence and potential.
+"""
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Tracer Image")
+aplt.plot_array(array=tracer.convergence_2d_from(grid=grid), title="Convergence")
+aplt.plot_array(array=tracer.potential_2d_from(grid=grid), title="Potential")
+
+"""
+__plot_grid__
+
+The `aplt.plot_grid()` function displays a 2D grid of (y,x) coordinates.
+
+This is useful for visualizing image-plane and source-plane grids.
+"""
+aplt.plot_grid(grid=grid, title="Uniform Grid")
+
+traced_grid = tracer.traced_grid_2d_list_from(grid=grid)[1]
+aplt.plot_grid(grid=traced_grid, title="Source-Plane Grid")
+
+"""
+__Customization__
+
+Each plotting function accepts direct keyword arguments for customization:
+
+ - `title`: The figure title string.
+ - `colormap`: The matplotlib colormap name (e.g. "jet", "hot", "gray").
+ - `use_log10`: If True, the colormap is plotted in log10 scale.
+ - `output_path`: Directory path to save the figure on disk.
+ - `output_format`: Format of the saved file, e.g. "png" or "pdf".
+
+These replace the old `MatPlot2D` object entirely — there is no `MatPlot2D` anymore.
+"""
+aplt.plot_array(
+    array=tracer.image_2d_from(grid=grid),
+    title="Tracer Image (Log10)",
+    use_log10=True,
 )
 
-mat_plot = aplt.MatPlot2D(
-    title=aplt.Title(label="Example Figure 1"),
+aplt.plot_array(
+    array=tracer.image_2d_from(grid=grid),
+    title="Tracer Image (Jet Colormap)",
+    colormap="jet",
 )
 
-mat_plot = mat_plot + mat_plot_base
-
-array_plotter = aplt.Array2DPlotter(array=data, mat_plot_2d=mat_plot)
-array_plotter.figure_2d()
-
-mat_plot = aplt.MatPlot2D(
-    title=aplt.Title(label="Example Figure 2"),
+"""
+To save a figure to disk, pass `output_path` and `output_format`.
+"""
+aplt.plot_array(
+    array=data,
+    title="Data Saved to Disk",
+    output_path=Path("output"),
+    output_format="png",
 )
 
-mat_plot = mat_plot + mat_plot_base
+"""
+__Config Defaults__
 
-array_plotter = aplt.Array2DPlotter(array=data, mat_plot_2d=mat_plot)
-array_plotter.figure_2d()
+All default plotting values are configured via config files in:
 
-mat_plot = mat_plot + mat_plot_base
+  autolens_workspace/config/visualize/
 
+When no explicit keyword is passed to a plotting function the config value is used, allowing
+the default appearance to be controlled project-wide without changing code.
+"""
 
 """
-The `Visuals` objects can also be added together.
+__Overlays__
+
+Overlays are added to plots using the `lines=` and `positions=` keyword arguments:
+
+ - `lines=`: A list of `Grid2DIrregular` objects drawn as lines (e.g. critical curves, caustics).
+ - `positions=`: An `Grid2DIrregular` object drawn as scatter points (e.g. image positions).
+
+These replace the old `Visuals2D` object entirely — there is no `Visuals2D` anymore.
 """
-light_profile_centres = al.Grid2DIrregular(values=[(1.0, 0.0), (0.0, 1.0)])
+tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
+tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
 
-visuals_2d_0 = aplt.Visuals2D(mask=mask)
-visuals_2d_1 = aplt.Visuals2D(light_profile_centres=light_profile_centres)
-
-visuals = visuals_2d_0 + visuals_2d_1
-
-array_plotter = aplt.Array2DPlotter(
-    array=data, visuals_2d=visuals, mat_plot_2d=aplt.MatPlot2D()
+aplt.plot_array(
+    array=tracer.image_2d_from(grid=grid),
+    title="Image with Critical Curves",
+    lines=tangential_critical_curve_list,
 )
-array_plotter.figure_2d()
+
+source_image = tracer.image_2d_list_from(grid=grid)[1]
+aplt.plot_array(
+    array=source_image,
+    title="Source Plane with Caustics",
+    lines=tangential_caustic_list,
+)
+
+positions = al.Grid2DIrregular(values=[(1.0, 1.0), (2.0, 2.0), (-1.0, 0.5)])
+aplt.plot_array(
+    array=data,
+    title="Data with Positions",
+    positions=positions,
+)
 
 """
-Finish.
+__subplot_* Functions__
+
+For standard objects (datasets, tracers, fits), dedicated subplot functions produce
+multi-panel overviews automatically.
+
+These replace all the old `*Plotter` class `.subplot_*()` method calls.
+"""
+dataset = al.Imaging.from_fits(
+    data_path=dataset_path / "data.fits",
+    psf_path=dataset_path / "psf.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    pixel_scales=0.1,
+)
+
+aplt.subplot_imaging_dataset(dataset=dataset)
+
+aplt.subplot_tracer(tracer=tracer, grid=grid)
+
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid)
+
+mask = al.Mask2D.circular(
+    shape_native=dataset.shape_native,
+    pixel_scales=dataset.pixel_scales,
+    radius=3.0,
+)
+dataset = dataset.apply_mask(mask=mask)
+fit = al.FitImaging(dataset=dataset, tracer=tracer)
+
+aplt.subplot_fit_imaging(fit=fit)
+
+"""
+__What Is Gone__
+
+The following classes and objects have been removed from PyAutoLens and no longer exist:
+
+ - `aplt.MatPlot2D(...)` — replaced by direct kwargs on each plot function (title, colormap, use_log10, etc.).
+ - `aplt.Visuals2D(...)` — replaced by `lines=` and `positions=` kwargs.
+ - `aplt.ImagingPlotter(...)` — replaced by `aplt.subplot_imaging_dataset()` and `aplt.plot_array()`.
+ - `aplt.FitImagingPlotter(...)` — replaced by `aplt.subplot_fit_imaging()` and `aplt.plot_array()`.
+ - `aplt.TracerPlotter(...)` — replaced by `aplt.subplot_tracer()` and `aplt.plot_array()`.
+ - `aplt.InterferometerPlotter(...)` — replaced by `aplt.subplot_interferometer_dataset()`.
+ - `aplt.FitInterferometerPlotter(...)` — replaced by `aplt.subplot_fit_interferometer()`.
+ - `aplt.LightProfilePlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.MassProfilePlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.GalaxyPlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.GalaxiesPlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.Array2DPlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.Grid2DPlotter(...)` — replaced by `aplt.plot_grid()`.
+ - `aplt.InversionPlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.MapperPlotter(...)` — replaced by `aplt.plot_array()`.
+ - `aplt.MultiFigurePlotter(...)` — use matplotlib subplots directly.
+
+The search plotters (`aplt.NestPlotter`, `aplt.MCMCPlotter`, `aplt.MLEPlotter`) still exist
+and are unchanged — see `scripts/guides/plot/examples/searches.py`.
 """

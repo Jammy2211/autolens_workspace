@@ -356,8 +356,6 @@ Below, is an example of how to use the `Galaxy` objects to plot the source galax
 tracer = result.max_log_likelihood_tracer
 
 source = tracer.planes[1][0]
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=source, grid=dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Units and Cosmological Quantities__

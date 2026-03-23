@@ -56,10 +56,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model__
@@ -219,8 +216,7 @@ print(result_2.info)
 """
 And a plot of the image shows we get a good model again!
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result_2.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_2.max_log_likelihood_fit)
 
 """
 __Wrap Up__

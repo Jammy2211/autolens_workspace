@@ -155,15 +155,12 @@ __Visualize__
 
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.subplot_dataset()
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 __Tracer json__

@@ -113,8 +113,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -131,8 +130,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -152,8 +150,7 @@ dataset = dataset.apply_over_sampling(
     over_sample_size_pixelization=4,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mesh Shape__
@@ -228,14 +225,13 @@ fit = al.FitImaging(
 By plotting the fit, we see that the pixelized source does a good job at capturing the appearance of the source galaxy
 and fitting the data to roughly the noise level.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 Pixelizations have bespoke visualizations which show more details about the source-reconstruction, image-mesh
 and other quantities.
 
-These plots use an `InversionPlotter`, which gets its name from the internals of how pixelizations are performed in
+These plots use an `aplt.plot_array`, which gets its name from the internals of how pixelizations are performed in
 the source code, where the linear algebra process which computes the source pixel fluxes is called an inversion.
 
 The `subplot_mappings` overlays colored circles in the image and source planes that map to one another, thereby
@@ -252,7 +248,6 @@ for various calculations
 """
 inversion = fit.inversion
 
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.subplot_of_mapper(mapper_index=0)
 
 """
@@ -310,8 +305,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We do not explictly fit this data, for the sake of brevity, however if your data has these nearby galaxies you should
@@ -536,15 +530,10 @@ grid = grid.apply_over_sampling(over_sample_size=over_sample_size)
 #     tracer=tracer, grid=grid, interpolated_reconstruction=interpolated_reconstruction
 # )
 #
-# plotter = aplt.ImagingPlotter(dataset=dataset)
-# plotter.subplot_dataset()
 #
-# output = aplt.Output(path=".", filename="interpolated_reconstruction", format="png")
 #
-# plotter = aplt.ImagingPlotter(
-#     dataset=dataset, mat_plot_2d=aplt.MatPlot2D(output=output)
+#     dataset=dataset
 # )
-# plotter.subplot_dataset()
 
 """
 __Future Ideas / Contributions__

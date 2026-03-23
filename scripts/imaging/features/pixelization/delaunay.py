@@ -105,8 +105,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 positions = al.Grid2DIrregular(
     al.from_json(file_path=Path(dataset_path, "positions.json"))
@@ -212,8 +211,7 @@ fit = al.FitImaging(
 By plotting the fit, we see that the Delaunay source does a good job at capturing the appearance of the source galaxy
 using adaptive triangular pixels.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Source Science__
@@ -538,8 +536,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Settings AutoFit__
@@ -769,8 +766,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 mask_radius = 3.0
 
@@ -782,16 +778,14 @@ mask = al.Mask2D.circular(
 
 masked_dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=masked_dataset)
 
 masked_dataset = masked_dataset.apply_over_sampling(
     over_sample_size_lp=1,
     over_sample_size_pixelization=1,
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.pixelization)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=masked_dataset.grids.pixelization, title="")
 
 bulge = al.lp.Sersic(
     centre=(0.0, 0.0),
@@ -842,28 +836,20 @@ __Lens Light__
 """
 image = lens_galaxy.image_2d_from(grid=masked_dataset.grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=masked_dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 blurring_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grids.blurring)
 
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=lens_galaxy, grid=masked_dataset.grids.blurring
-)
-galaxy_plotter.figures_2d(image=True)
 
 convolved_image_2d = masked_dataset.psf.convolved_image_from(
     image=image, blurring_image=blurring_image_2d
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=convolved_image_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=convolved_image_2d, title="")
 
 
 lens_subtracted_image = masked_dataset.data - convolved_image_2d
 
-array_2d_plotter = aplt.Array2DPlotter(array=lens_subtracted_image)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=lens_subtracted_image, title="")
 
 """
 __Source Pixel Centre Calculation__
@@ -894,9 +880,7 @@ adapt_images = al.AdaptImages(
 """
 Plotting this grid shows a sparse grid of (y,x) coordinates within the mask, which will form our source pixel centres.
 """
-visuals = aplt.Visuals2D(grid=image_plane_mesh_grid)
-dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=masked_dataset.data, title="Data")
 
 """
 __Ray Tracing__
@@ -922,17 +906,14 @@ traced_grid_pixelization = tracer.traced_grid_2d_list_from(
 # This functions a bit weird - it returns a list of lists of ndarrays. Best not to worry about it for now!
 traced_mesh_grid = tracer_to_inversion.traced_mesh_grid_pg_list[-1][-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_pixelization, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid_pixelization, title="")
 
 """
 We have also ray-traced the coarse grid of image-pixel coordinates used to form the source pixelization's
 Delaunay mesh, which we can also plot.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=traced_mesh_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_mesh_grid, title="")
 
 """
 __Border Relocation__
@@ -953,13 +934,10 @@ relocated_mesh_grid = border_relocator.relocated_mesh_grid_from(
     grid=traced_grid_pixelization, mesh_grid=traced_mesh_grid
 )
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=relocated_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=relocated_grid, title="")
 
-grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=relocated_mesh_grid, title="")
 
 """
 __Delaunay Mesh__
@@ -985,13 +963,8 @@ mapper = al.Mapper(
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d()
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-)
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.figure_2d()
 
 """
@@ -1001,24 +974,14 @@ pix_indexes_for_sub_slim_index = mapper.pix_indexes_for_sub_slim_index
 
 print(pix_indexes_for_sub_slim_index[0:9])
 
-visuals = aplt.Visuals2D(indexes=[list(range(2050, 2090))])
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
 
 pix_indexes = [[200]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(indexes=indexes)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
 
@@ -1042,8 +1005,7 @@ print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=mapping_matrix[:, 200], mask=masked_dataset.mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 blurred_mapping_matrix = masked_dataset.psf.convolved_mapping_matrix_from(
     mapping_matrix=mapping_matrix, mask=masked_dataset.mask
@@ -1063,8 +1025,7 @@ print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=blurred_mapping_matrix[:, 200], mask=masked_dataset.mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 print(f"Mapping between image pixel 0 and source pixel 2 = {mapping_matrix[0, 2]}")
 
@@ -1099,15 +1060,13 @@ array_2d = al.Array2D(
     values=blurred_mapping_matrix[:, source_pixel_0], mask=masked_dataset.mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 array_2d = al.Array2D(
     values=blurred_mapping_matrix[:, source_pixel_1], mask=masked_dataset.mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 regularization_matrix = al.util.regularization.constant_regularization_matrix_from(
     coefficient=source_galaxy.pixelization.regularization.coefficient,
@@ -1124,7 +1083,6 @@ curvature_reg_matrix = np.add(curvature_matrix, regularization_matrix)
 
 reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 
 mapper_plotter.figure_2d(solution_vector=reconstruction)
 
@@ -1138,8 +1096,7 @@ mapped_reconstructed_operated_data = al.Array2D(
     values=mapped_reconstructed_operated_data, mask=mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=mapped_reconstructed_operated_data)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=mapped_reconstructed_operated_data, title="")
 
 """
 __Likelihood Function__
@@ -1156,8 +1113,7 @@ print(chi_squared)
 
 chi_squared_map = al.Array2D(values=chi_squared_map, mask=mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=chi_squared_map)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=chi_squared_map, title="")
 
 regularization_term = np.matmul(
     reconstruction.T, np.matmul(regularization_matrix, reconstruction)
@@ -1200,8 +1156,7 @@ fit = al.FitImaging(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 
 """

@@ -9,7 +9,7 @@ References
 
 This example uses functionality described fully in other examples in the `guides` package:
 
-- `guides/plot`: Using Plotter objects to plot and customize figures.
+- `guides/plot`: Using the plotting API (`aplt.plot_array`, `aplt.subplot_fit_imaging`, etc.) to visualize figures.
 - `guides/units`: The source code unit conventions (e.g. arc seconds for distances and how to convert to physical units).
 - `guides/data_structures`: The bespoke data structures used to store 1D and 2d arrays.
 """
@@ -47,12 +47,11 @@ dataset = al.Imaging.from_fits(
 )
 
 """
-The `ImagingPlotter` contains a subplot which plots all the key properties of the dataset simultaneously.
+The `aplt.subplot_imaging_dataset` contains a subplot which plots all the key properties of the dataset simultaneously.
 
 This includes the observed image data, RMS noise map, Point Spread Function and other information.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -78,9 +77,7 @@ dataset = dataset.apply_mask(mask=mask)
 We now plot the image with the mask applied, where the image automatically zooms around the mask to make the lensed 
 source appear bigger.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.set_title("Image Data With Mask Applied")
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Image Data With Mask Applied")
 
 """
 The mask is also used to compute a `Grid2D`, where the (y,x) arc-second coordinates are only computed in unmasked 
@@ -89,9 +86,7 @@ pixels within the masks' circle.
 As shown in the previous overview example, this grid will be used to perform lensing calculations when fitting the
 data below.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=dataset.grid)
-grid_plotter.set_title("Grid2D of Masked Dataset")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=dataset.grid, title="Grid2D of Masked Dataset")
 
 """
 __Fitting__
@@ -137,9 +132,7 @@ because its image has not been blurred with the telescope optics PSF, which the 
 [For those not familiar with Astronomy data, the PSF describes how the observed emission of the galaxy is blurred by
 the telescope optics when it is observed. It mimicks this blurring effect via a 2D convolution operation].
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=dataset.grid)
-tracer_plotter.set_title("Tracer  Image")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=dataset.grid), title="Tracer  Image")
 
 """
 We now use a `FitImaging` object to fit this tracer to the dataset. 
@@ -150,8 +143,7 @@ the fit`s model image (which is).
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.figures_2d(model_image=True)
+aplt.plot_array(array=fit.model_data, title="Model Image")
 
 """
 The fit does a lot more than just blur the tracer's image with the PSF, it also creates the following:
@@ -163,16 +155,16 @@ The fit does a lot more than just blur the tracer's image with the PSF, it also 
 For a good lens model where the model image and tracer are representative of the strong lens system the
 residuals, normalized residuals and chi-squareds are minimized:
 """
-fit_plotter.figures_2d(
-    residual_map=True, normalized_residual_map=True, chi_squared_map=True
-)
+aplt.plot_array(array=fit.residual_map, title="Residual Map")
+aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
+aplt.plot_array(array=fit.chi_squared_map, title="Chi Squared Map")
 
 """
 A subplot can be plotted which contains all of the above quantities, as well as other information contained in the
 tracer such as the source-plane image, a zoom in of the source-plane and a normalized residual map where the colorbar
 goes from 1.0 sigma to -1.0 sigma, to highlight regions where the fit is poor.
 """
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 The fit also provides us with a ``log_likelihood``, a single value quantifying how good the tracer fitted the dataset.
@@ -218,8 +210,7 @@ A new fit using this plane shows residuals, normalized residuals and chi-squared
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 We also note that its likelihood decreases.

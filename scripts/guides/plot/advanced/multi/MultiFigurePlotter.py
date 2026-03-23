@@ -1,25 +1,22 @@
 """
-Plots: MultiFigurePlotter
-=========================
+Plots: Multi Figure Plotter
+============================
 
-This example illustrates how to plot figures from different plotters on the same subplot, assuming that the same
-type of `Plotter` and figure is being plotted.
+This example shows how to plot the same figure from multiple datasets on a single subplot.
 
-An example of when to use this plotter would be when two different datasets (e.g. at different wavelengths) are loaded
-and visualized, and the images of each dataset are plotted on the same subplot side-by-side. This is the example we
-will use in this example script.
+The specific example loads multi-wavelength imaging datasets and plots the data image from
+each dataset side-by-side.
 
-This uses a `MultiFigurePlotter` object, which requires only a list of imaging datasets and `ImagingPlotter` objects
-to be passed to it. The `MultiFigurePlotter` object then plots the same figure from each `ImagingPlotter` on the same
-subplot.
+In the old API, this was done using a `MultiFigurePlotter` object with a list of `ImagingPlotter`
+objects. Both `MultiFigurePlotter` and `ImagingPlotter` have been removed.
 
-The script `MultiSubplot.py` illustrates a similar example, but a more general use-case where different figures
-from different plotters are plotted on the same subplot. This script offers a more concise way of plotting the same
-figures on the same subplot, but is less general.
+In the new API, we load each dataset and use matplotlib subplots directly.
+
+The dedicated `aplt.subplot_imaging_dataset()` function is also shown for single-dataset plots.
 
 __Start Here Notebook__
 
-If any code in this script is unclear, refer to the `plot/start_here.ipynb` notebook.
+If any code in this script is unclear, refer to `plot/start_here.ipynb`.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -30,6 +27,7 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import matplotlib.pyplot as plt
 from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
@@ -37,7 +35,7 @@ import autolens.plot as aplt
 """
 __Dataset__
 
-Load the multi-wavelength `lens_sersic` datasets, which we visualize in this example script.
+Load the multi-wavelength `lens_sersic` datasets.
 """
 waveband_list = ["g", "r"]
 
@@ -60,45 +58,48 @@ dataset_list = [
 ]
 
 """
-__Plot__
+__Single Dataset Subplots__
 
-Plot the subhplot of each `Imaging` dataset individually using an `ImagingPlotter` object.
+Plot the full subplot overview of each dataset using `aplt.subplot_imaging_dataset()`.
 """
 for dataset in dataset_list:
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
-__Multi Plot__
+__Multi Dataset Plot__
 
-We now pass the list of `ImagingPlotter` objects to a `MultiFigurePlotter` object, which we use to plot the 
-image of each dataset on the same subplot.
+Plot the data image from each dataset side-by-side on the same matplotlib figure.
+"""
+fig, axes = plt.subplots(1, len(dataset_list), figsize=(12, 5))
 
-The `MultiFigurePlotter` object uses the `subplot_of_figure` method to plot the same figure from each `ImagingPlotter`,
-with the inputs:
+for ax, dataset, waveband in zip(axes, dataset_list, waveband_list):
+    im = ax.imshow(dataset.data.native, origin="upper", cmap="gray")
+    ax.set_title(f"Data ({waveband}-band)", fontsize=12)
+    ax.axis("off")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
- - `func_name`: The name of the function used to plot the figure in the `ImagingPlotter` (e.g. `figures_2d`).
- - `figure_name`: The name of the figure plotted by the function (e.g. `image`).
+plt.suptitle("Multi-Wavelength Data", fontsize=14)
+plt.tight_layout()
+plt.show()
+plt.close()
 
 """
-imaging_plotter_list = [
-    aplt.ImagingPlotter(dataset=dataset) for dataset in dataset_list
-]
+__Multi Dataset Array Plot__
 
-multi_figure_plotter = aplt.MultiFigurePlotter(plotter_list=imaging_plotter_list)
-
-multi_figure_plotter.subplot_of_figure(func_name="figures_2d", figure_name="data")
+We can also call `aplt.plot_array()` for each dataset separately.
+"""
+for dataset, waveband in zip(dataset_list, waveband_list):
+    aplt.plot_array(array=dataset.data, title=f"Data ({waveband}-band)")
 
 """
 __Multi Fits__
 
-We can also output a list of figures to a single `.fits` file, where each image goes in each hdu extension as it is 
-called.
-
-This interface uses a specific method from autoconf called `hdu_list_for_output_from`, which takes a list of
-values and a list of extension names, and returns a `HDUList` object that can be written to a `.fits` file.
+We can also output a list of figures to a single `.fits` file, where each image goes in
+each HDU extension.
 """
 from autoconf.fitsable import hdu_list_for_output_from
+
+dataset = dataset_list[-1]
 
 image_list = [dataset.data, dataset.noise_map]
 
@@ -113,9 +114,8 @@ hdu_list.writeto("dataset.fits", overwrite=True)
 """
 __Wrap Up__
 
-In the simple example above, we used a `MultiFigurePlotter` to plot the same figure from each `ImagingPlotter` on
-the same `matplotlib` subplot. 
+The new API uses direct `aplt.plot_array()` calls and matplotlib subplots for combining
+multiple figures from different datasets or objects.
 
-This can be used for any figure plotted by any `Plotter` object, as long as the figure is plotted using the same
-function name and figure name.
+The old `MultiFigurePlotter` class and `ImagingPlotter` class have been removed.
 """

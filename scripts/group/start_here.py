@@ -105,8 +105,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Main Galaxies and Extra Galaxies__
@@ -169,8 +168,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model__
@@ -325,13 +323,9 @@ print(result.info)
 The result also contains the maximum likelihood lens model which can be used to plot the best-fit lensing information
 and fit to the data.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=result.grids.lp
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 The result object contains pretty much everything you need to do science with your own strong lens, but details

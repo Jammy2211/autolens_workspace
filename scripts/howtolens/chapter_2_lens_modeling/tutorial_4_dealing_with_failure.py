@@ -70,10 +70,7 @@ dataset = dataset.apply_mask(mask=mask)
 """
 When plotted, the lens light`s is clearly visible in the centre of the image.
 """
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Prior Tuning__
@@ -243,8 +240,7 @@ __Result__
 Bam! We get a good model, which corresponds to the global maxima. By giving our non-linear search a helping hand and 
 informing it of where to sample parameter space, we can increase the odds that we find the global maxima solution.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result_custom_priors.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_custom_priors.max_log_likelihood_fit)
 
 """
 __Discussion__
@@ -344,8 +340,7 @@ print("Search has finished run - you may now continue the notebook.")
 
 print(result_light_trace_mass.info)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_light_trace_mass.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_light_trace_mass.max_log_likelihood_fit)
 
 """
 __Result__
@@ -432,8 +427,7 @@ print("Search has finished run - you may now continue the notebook.")
 
 print(result_look_harder.info)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_look_harder.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_look_harder.max_log_likelihood_fit)
 
 """
 Let's list the advantages and disadvantages of simply adjusting the non-linear search:

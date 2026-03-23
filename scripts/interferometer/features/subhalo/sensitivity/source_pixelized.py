@@ -125,9 +125,6 @@
 # transform, which is the most efficient method for interferometer datasets containing ~1-10 million visibilities.
 # """
 # dataset = dataset.apply_settings(settings=settings_dataset)
-# dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-# dataset_plotter.subplot_dataset()
-# dataset_plotter.subplot_dirty_images()
 # """
 # __Settings AutoFit__
 #

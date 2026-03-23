@@ -89,15 +89,10 @@ fit = fit_via_source_galaxy_from(dataset=dataset, source_galaxy=source_magnifica
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    grid=mapper.image_plane_mesh_grid,
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.subplot_fit()
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 The fit looks just like it did in the previous tutorials (residuals in the centre due to a lack of source pixels). 
@@ -106,9 +101,7 @@ Lets quickly remind ourselves that the effective regularization weight of each s
 value of 3.3.
 """
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, regularization_weights=True
-)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion")
 
 """
 __Adaptive Regularization__
@@ -144,9 +137,7 @@ fit = fit_via_source_galaxy_from(
 )
 
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
-)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 As expected, we now have a variable regularization scheme. 
@@ -166,8 +157,7 @@ However, as shown below, we don't fit the source as well as the morphology based
 This is because although the adaptive regularization scheme improves the fit, the magnification based 
 mesh simply does not have sufficient resolution to resolve the source's cuspy central light.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __How does adaptive regularization work?__
@@ -242,19 +232,12 @@ fit = fit_via_source_galaxy_from(
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    grid=mapper.image_plane_mesh_grid,
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
-)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 print("Evidence using adaptive regularization. ", fit.log_evidence)
 

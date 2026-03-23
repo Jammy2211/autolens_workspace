@@ -137,8 +137,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()
 
 """
@@ -253,15 +252,14 @@ fit = al.FitInterferometer(
 By plotting the fit, we see that the pixelized source does a good job at capturing the appearance of the source galaxy
 and fitting the data to roughly the noise level.
 """
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 fit_plotter.subplot_fit_dirty_images()
 
 """
 Pixelizations have bespoke visualizations which show more details about the source-reconstruction, image-mesh
 and other quantities.
 
-These plots use an `InversionPlotter`, which gets its name from the internals of how pixelizations are performed in
+These plots use an `aplt.plot_array`, which gets its name from the internals of how pixelizations are performed in
 the source code, where the linear algebra process which computes the source pixel fluxes is called an inversion.
 
 The `subplot_mappings` overlays colored circles in the image and source planes that map to one another, thereby
@@ -278,7 +276,6 @@ for various calculations
 """
 inversion = fit.inversion
 
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
 inversion_plotter.subplot_of_mapper(mapper_index=0)
 
 """
@@ -499,12 +496,9 @@ simulator = al.SimulatorInterferometer(
 #     tracer=tracer, grid=grid, interpolated_reconstruction=interpolated_reconstruction
 # )
 #
-# plotter = aplt.InterferometerPlotter(dataset=dataset)
 #
-# output = aplt.Output(path=".", filename="interpolated_reconstruction", format="png")
 #
-# plotter = aplt.InterferometerPlotter(
-#     dataset=dataset, mat_plot_2d=aplt.MatPlot2D(output=output)
+#     dataset=dataset
 # )
 
 """

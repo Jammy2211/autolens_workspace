@@ -89,14 +89,9 @@ Lets have a quick look to make sure it has the same residuals we saw in tutorial
 """
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    grid=mapper.image_plane_mesh_grid,
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 __Adapt Image__
@@ -152,9 +147,8 @@ tracer = al.Tracer(galaxies=[lens_galaxy, galaxy_adapt])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 
 """
@@ -233,10 +227,7 @@ image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=0.
 weight_map = image_mesh.weight_map_from(adapt_data=adapt_image)
 weight_map = al.Array2D(values=weight_map, mask=mask)
 
-array_plotter = aplt.Array2DPlotter(
-    array=weight_map, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-array_plotter.figure_2d()
+aplt.plot_array(array=weight_map, title="")
 
 
 image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.0)
@@ -244,10 +235,7 @@ image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=5.
 weight_map = image_mesh.weight_map_from(adapt_data=adapt_image)
 weight_map = al.Array2D(values=weight_map, mask=mask)
 
-array_plotter = aplt.Array2DPlotter(
-    array=weight_map, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-array_plotter.figure_2d()
+aplt.plot_array(array=weight_map, title="")
 
 
 image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10.0)
@@ -255,10 +243,7 @@ image_mesh = al.image_mesh.Hilbert(pixels=500, weight_floor=0.0, weight_power=10
 weight_map = image_mesh.weight_map_from(adapt_data=adapt_image)
 weight_map = al.Array2D(values=weight_map, mask=mask)
 
-array_plotter = aplt.Array2DPlotter(
-    array=weight_map, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-array_plotter.figure_2d()
+aplt.plot_array(array=weight_map, title="")
 
 """
 When we increase the weight-power the brightest regions of the adapt-image become weighted higher relative to the 
@@ -295,8 +280,7 @@ adapt_images = al.AdaptImages(
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 So, what does the `weight_floor` do? Increasing the weight-power congregates pixels around the source. However, there 
@@ -327,10 +311,7 @@ source_weight_floor = al.Galaxy(
 weight_map = image_mesh.weight_map_from(adapt_data=adapt_image)
 weight_map = al.Array2D(values=weight_map, mask=mask)
 
-array_plotter = aplt.Array2DPlotter(
-    array=weight_map, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-array_plotter.figure_2d()
+aplt.plot_array(array=weight_map, title="")
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_weight_floor])
 
@@ -341,8 +322,7 @@ adapt_images = al.AdaptImages(
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 __Wrap Up__

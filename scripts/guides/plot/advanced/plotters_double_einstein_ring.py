@@ -2,23 +2,27 @@
 Plots: Plotters Double Einstein Ring
 ====================================
 
-This example illustrates the API for plotting using `Plotter` objects for double Einstein ring systems which have
+This example illustrates the plotting API for double Einstein ring systems, which have
 more than two planes at different redshifts.
+
+The new API uses:
+
+ - `aplt.plot_array()` — plot any 2D array.
+ - `aplt.subplot_fit_imaging()` — multi-panel fit overview.
+
+For pixelized source reconstructions, inversion quantities are accessed via `fit.inversion`
+and plotted with `aplt.plot_array()`.
 
 __Start Here Notebook__
 
-You should refer to the `plots/start_here.ipynb` notebook first for a description of how plotters work and the default
-behaviour of plotting visuals.
+Refer to `plots/start_here.ipynb` for an introduction to the new plotting API.
 
 __Contents__
 
-**Setup:** Set up all objects (e.g. grid, tracer, data) used to illustrate plotting.
-**Fit Imaging:** Plot the fit of a tracer to an imaging dataset for a double Einstein ring system.
-**Inversion:** Plot the inversion object which performs the linear algebra and other calculations which reconstruct the source galaxy for a double Einstein ring system.
-
-__Setup__
-
-To illustrate plotting, we require standard objects like a grid, tracer and dataset.
+- **Setup**: Set up all objects used to illustrate plotting.
+- **Fit Imaging**: Plot the fit of a tracer to an imaging dataset for a double Einstein ring.
+- **Per-Plane Images**: Plot per-plane model and subtracted images.
+- **Inversion**: Plot the pixelized source reconstruction.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -33,6 +37,11 @@ from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
+"""
+__Setup__
+
+Set up the double Einstein ring dataset and fit.
+"""
 dataset_name = "double_einstein_ring"
 dataset_path = Path("dataset") / "imaging" / dataset_name
 
@@ -83,7 +92,6 @@ source_galaxy_1 = al.Galaxy(
     ),
 )
 
-
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy_0, source_galaxy_1])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
@@ -91,57 +99,43 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 """
 __Fit Imaging__
 
-The `FitImaging` object is a base object which represents the fit of a model to an imaging dataset, including the
-residuals, chi-squared and model image.
-
-We now pass the FitImaging to an `FitImagingPlotter` and call various `figure_*` methods to plot different attributes.
+Plot individual fit attributes with `aplt.plot_array()`.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
+aplt.plot_array(array=fit.data, title="Data")
+aplt.plot_array(array=fit.noise_map, title="Noise Map")
+aplt.plot_array(array=fit.signal_to_noise_map, title="Signal-to-Noise Map")
+aplt.plot_array(array=fit.model_image, title="Model Image")
+aplt.plot_array(array=fit.residual_map, title="Residual Map")
+aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
+aplt.plot_array(array=fit.chi_squared_map, title="Chi-Squared Map")
 
-fit_plotter.set_mat_plots_for_subplot(is_for_subplot=False)
+"""
+__Per-Plane Images__
 
-fit_plotter.figures_2d(
-    data=True,
-    noise_map=True,
-    signal_to_noise_map=True,
-    model_image=True,
-    residual_map=True,
-    normalized_residual_map=True,
-    chi_squared_map=True,
+For a double Einstein ring (3-plane system), per-plane images are accessed via
+`model_images_of_planes_list`, which has one entry per plane.
+"""
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[0], title="Plane 0 Model Image"
+)
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1], title="Plane 1 Model Image"
+)
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[2], title="Plane 2 Model Image"
 )
 
 """
-It can plot of the model image of an input plane.
+__Full Subplot__
+
+A multi-panel subplot overview is produced with `aplt.subplot_fit_imaging()`.
 """
-fit_plotter.figures_2d_of_planes(plane_index=0, model_image=True)
-fit_plotter.figures_2d_of_planes(plane_index=1, model_image=True)
-fit_plotter.figures_2d_of_planes(model_image=True, plane_index=2)
+aplt.subplot_fit_imaging(fit=fit)
 
 """
-It can plot the image of a plane with all other model images subtracted.
-"""
-fit_plotter.figures_2d_of_planes(plane_index=0, subtracted_image=True)
-fit_plotter.figures_2d_of_planes(plane_index=1, subtracted_image=True)
-fit_plotter.figures_2d_of_planes(subtracted_image=True, plane_index=2)
+__Pixelized Source Reconstruction__
 
-"""
-It can also plot the plane-image of a plane, that is what the source galaxy looks like without lensing (e.g.
-for `plane_index=1` this is the source-plane image)
-"""
-fit_plotter.figures_2d_of_planes(plane_index=0)
-fit_plotter.figures_2d_of_planes(plane_index=1)
-fit_plotter.figures_2d_of_planes(plane_index=2)
-
-"""
-The `FitImagingPlotter` may also plot a subplot of these attributes.
-"""
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=0)
-fit_plotter.subplot_of_planes(plane_index=1)
-fit_plotter.subplot_of_planes(plane_index=2)
-
-"""
-We can also plot a `FitImaging` which uses a `Pixelization`.
+Now set up a double Einstein ring fit using pixelized source reconstructions.
 """
 source_galaxy_0 = al.Galaxy(
     redshift=1.0,
@@ -164,32 +158,29 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy_0, source_galaxy_1])
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
 """
-We can even extract an `InversionPlotter` (described below) from the `FitImagingPlotter` and use it to plot all of its usual methods, 
-which will now include the caustic and border.
+Plot the fit overview.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
+aplt.subplot_fit_imaging(fit=fit)
 
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
+"""
+The pixelized source reconstructions are accessed via the `inversion` property of the fit.
+
+For a double Einstein ring there are two reconstructions (one per source plane), indexed
+by their position in `fit.inversion.reconstruction_dict`.
+"""
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Plane 1 Model Image (Pixelized)",
 )
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=2)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[2],
+    title="Plane 2 Model Image (Pixelized)",
 )
 
 """
 __Inversion__
 
-The fit above has a property called an `inversion`, which contains all of the linear algebra, mesh calculations
-and other key quantities used to reconstruct a source galaxy using a pixelization.
-
-This has its own dedicated plotter, the `InversionPlotter`, which can be used to plot the inversion's attributes
-and properties in a similar way to the `FitImagingPlotter`.
-
-Converting a `Tracer` to an `Inversion` performs a number of steps, which are handled by the `TracerToInversion` class. 
-
-This class is where the data and tracer's galaxies are combined to fit the data via the inversion.
+The inversion is computed directly from a `Tracer` using `TracerToInversion`.
 """
 tracer_to_inversion = al.TracerToInversion(
     tracer=tracer,
@@ -199,31 +190,16 @@ tracer_to_inversion = al.TracerToInversion(
 inversion = tracer_to_inversion.inversion
 
 """
-We now pass the inversion to a `InversionPlotter` and call various `figure_*` methods to plot different attributes.
+Plot the reconstructed source for each pixelization index.
 """
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-
-"""
-An `Inversion` can have multiple mappers, which reconstruct multiple source galaxies at different redshifts and
-planes (e.g. double Einstein ring systems).
-
-To plot an individual source we must therefore specify the mapper index of the source we plot.
-"""
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstructed_operated_data=True, reconstruction=True
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Inversion Reconstruction (Plane 1)",
 )
-
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=1, reconstructed_operated_data=True, reconstruction=True
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[2],
+    title="Inversion Reconstruction (Plane 2)",
 )
-
-"""
-The `Inversion` attributes can also be plotted as a subplot.
-"""
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.subplot_of_mapper(mapper_index=0)
-inversion_plotter.subplot_of_mapper(mapper_index=1)
 
 """
 Finish.

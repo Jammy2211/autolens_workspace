@@ -40,8 +40,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -61,8 +60,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Source Values__
@@ -112,8 +110,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 By plotting the image of the tracer, we confirm it looks identical to the simulated dataset but does not have
 CCD imaging features such as noise or blurring from a PSF.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Source Flux__

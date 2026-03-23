@@ -188,8 +188,7 @@ tracer = al.Tracer(
 """
 Lets look at the tracer`s image, this is the image we'll be simulating.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Dataset__
@@ -202,8 +201,7 @@ dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 Lets plot the simulated `Imaging` dataset before we output it to fits.
 """
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=aplt.MatPlot2D())
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 Output the simulated dataset to the dataset path as .fits files.
@@ -220,11 +218,9 @@ __Visualize__
 
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.subplot_dataset()
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
 """
 __Tracer json__

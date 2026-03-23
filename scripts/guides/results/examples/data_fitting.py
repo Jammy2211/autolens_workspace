@@ -16,8 +16,8 @@ The only entries that needs changing are:
 
  - `ImagingAgg` -> `InterferometerAgg`.
  - `FitImagingAgg` -> `FitInterferometerAgg`.
- - `ImagingPlotter` -> `InterferometerPlotter`.
- - `FitImagingPlotter` -> `FitInterferometerPlotter`.
+ - `aplt.subplot_imaging_dataset` -> `aplt.subplot_interferometer_dataset`.
+ - `aplt.subplot_fit_imaging` -> `aplt.subplot_fit_interferometer`.
 
 Quantities specific to an interfometer, for example its uv-wavelengths real space mask, are accessed using the same API
 (e.g. `values("dataset.uv_wavelengths")` and `.values{"dataset.real_space_mask")).
@@ -92,8 +92,7 @@ for dataset_list in dataset_gen:
     # Only one `Analysis` so take first and only dataset.
     dataset = dataset_list[0]
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We now use the aggregator to load a generator containing the fit of the maximum log likelihood model (and therefore 
@@ -109,8 +108,7 @@ for fit_list in fit_gen:
     # Only one `Analysis` so take first and only dataset.
     fit = fit_list[0]
 
-    fit_plotter = aplt.FitImagingPlotter(fit=fit)
-    fit_plotter.subplot_fit()
+    aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Modification__
@@ -132,14 +130,13 @@ for fit_list in fit_gen:
     # Only one `Analysis` so take first and only dataset.
     fit = fit_list[0]
 
-    fit_plotter = aplt.FitImagingPlotter(fit=fit)
-    fit_plotter.subplot_fit()
+    aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Visualization Customization__
 
 The benefit of inspecting fits using the aggregator, rather than the files outputs to the hard-disk, is that we can 
-customize the plots using the `MatPlot1D` and `MatPlot2D` objects..
+customize the plots using the `plot_yx` and `plot_array`/`subplot_\*` objects..
 
 We create a new function to apply as a generator to do this. However, we use a convenience method available 
 in the aggregator package to set up the fit.
@@ -151,18 +148,8 @@ for fit_list in fit_gen:
     # Only one `Analysis` so take first and only dataset.
     fit = fit_list[0]
 
-    mat_plot = aplt.MatPlot2D(
-        figure=aplt.Figure(figsize=(12, 12)),
-        title=aplt.Title(label="Custom Image", fontsize=24),
-        yticks=aplt.YTicks(fontsize=24),
-        xticks=aplt.XTicks(fontsize=24),
-        cmap=aplt.Cmap(norm="log", vmax=1.0, vmin=1.0),
-        colorbar_tickparams=aplt.ColorbarTickParams(labelsize=20),
-        units=aplt.Units(in_kpc=True),
-    )
 
-    fit_plotter = aplt.FitImagingPlotter(fit=fit, mat_plot_2d=mat_plot)
-    fit_plotter.figures_2d(normalized_residual_map=True)
+    aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
 
 """
 Making this plot for a paper? You can output it to hard disk.
@@ -174,14 +161,6 @@ for fit_list in fit_gen:
     # Only one `Analysis` so take first and only dataset.
     fit = fit_list[0]
 
-    mat_plot = aplt.MatPlot2D(
-        title=aplt.Title(label="Hey"),
-        output=aplt.Output(
-            path=Path("output") / "path" / "of" / "file",
-            filename="publication",
-            format="png",
-        ),
-    )
 
 """
 __Errors (Random draws from PDF)__
@@ -205,8 +184,7 @@ for fit_list_gen in fit_gen:  # 1 Dataset so just one fit
         # Only one `Analysis` so take first and only dataset.
         fit = fit_list[0]
 
-    fit_plotter = aplt.FitImagingPlotter(fit=fit)
-    fit_plotter.subplot_fit()
+    aplt.subplot_fit_imaging(fit=fit)
 
 """
 Finished.

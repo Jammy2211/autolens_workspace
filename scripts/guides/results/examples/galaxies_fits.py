@@ -16,7 +16,7 @@ and therefore you should read these guides in detail first.
 
 __Plot Module__
 
-This example uses the plot module to plot the results, including `Plotter` objects that make
+This example uses the plot module to plot the results, including plotting function objects that make
 the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
 
 The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
@@ -126,8 +126,7 @@ As seen elsewhere in the workspace, the result contains a `max_log_likelihood_tr
 """
 tracer = result.max_log_likelihood_tracer
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=mask.derive_grid.all_false)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=tracer, grid=mask.derive_grid.all_false)
 
 """
 __Refitting__
@@ -146,8 +145,7 @@ tracer = al.Tracer(galaxies=instance.galaxies)
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 tracer = fit.tracer_linear_light_profiles_to_light_profiles
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=mask.derive_grid.all_false)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=tracer, grid=mask.derive_grid.all_false)
 
 """
 __Samples API__
@@ -173,8 +171,7 @@ bulge = tracer.galaxies.source.bulge
 bulge_image_2d = bulge.image_2d_from(grid=dataset.grid)
 print(bulge_image_2d.slim[0])
 
-bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=dataset.grid)
-bulge_plotter.figures_2d(image=True)
+aplt.plot_array(array=bulge.image_2d_from(grid=dataset.grid), title="Image")
 
 """
 In fact, if we create a `Tracer` from an instance (which is how `result.max_log_likelihood_tracer` is created) we
@@ -190,8 +187,7 @@ As seen elsewhere in the workspace, the result contains a `max_log_likelihood_fi
 """
 fit = result.max_log_likelihood_fit
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 
 """
@@ -210,8 +206,7 @@ tracer = al.Tracer(galaxies=instance.galaxies)
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 __Wrap Up__

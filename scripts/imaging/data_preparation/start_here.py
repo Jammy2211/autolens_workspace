@@ -45,8 +45,7 @@ dataset_path = Path("dataset") / "imaging" / "simple"
 
 data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.1)
 
-array_plotter = aplt.Array2DPlotter(array=data)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 This image conforms to **PyAutoLens** standards for the following reasons.
@@ -81,8 +80,7 @@ noise_map = al.Array2D.from_fits(
     file_path=dataset_path / "noise_map.fits", pixel_scales=0.1
 )
 
-array_plotter = aplt.Array2DPlotter(array=noise_map)
-array_plotter.figure_2d()
+aplt.plot_array(array=noise_map, title="")
 
 """
 This noise-map conforms to **PyAutoLens** standards for the following reasons:
@@ -126,8 +124,7 @@ psf = al.Convolver.from_fits(
     file_path=dataset_path / "psf.fits", hdu=0, pixel_scales=0.1
 )
 
-array_plotter = aplt.Array2DPlotter(array=psf.kernel)
-array_plotter.figure_2d()
+aplt.plot_array(array=psf.kernel, title="")
 
 """
 This psf conforms to **PyAutoLens** standards for the following reasons.

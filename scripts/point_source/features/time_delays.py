@@ -71,7 +71,6 @@ print(dataset.info)
 """
 We can also plot the positions of the `PointDataset`.
 """
-dataset_plotter = aplt.PointDatasetPlotter(dataset=dataset)
 dataset_plotter.subplot_dataset()
 
 """
@@ -80,10 +79,8 @@ the `modeling/start_here.ipynb` notebook, it is useful for visualizing the point
 """
 data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.05)
 
-visuals = aplt.Visuals2D(positions=dataset.positions)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 __Point Solver__

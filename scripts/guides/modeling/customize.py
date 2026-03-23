@@ -76,10 +76,8 @@ mask = al.Mask2D.circular_annular(
 
 dataset = dataset.apply_mask(mask=mask)  # <----- The custom mask is used here!
 
-visuals = aplt.Visuals2D(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We can also load the mask from a .fits file, which could have been produced in a way which is even more customized
@@ -97,10 +95,8 @@ mask = al.Mask2D.from_fits(
 
 dataset = dataset.apply_mask(mask=mask)  # <----- The custom mask is used here!
 
-visuals = aplt.Visuals2D(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -211,9 +207,7 @@ positions = al.Grid2DIrregular(
     al.from_json(file_path=Path(dataset_path, "positions.json"))
 )
 
-visuals = aplt.Visuals2D(mask=mask, positions=positions)
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 Alternatively, the positions can be specified manually in the modeling script script using the `Grid2DIrregular`object.
@@ -225,9 +219,7 @@ positions = al.Grid2DIrregular(
     [(0.4, 1.6), (1.58, -0.35), (-0.43, -1.59), (-1.45, 0.2)]
 )
 
-visuals = aplt.Visuals2D(mask=mask, positions=positions)
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 To use positions in lens modeling, we pass the `AnalysisImaging` object a `PositionsLH` object, which includes the 

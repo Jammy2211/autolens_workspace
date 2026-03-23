@@ -202,8 +202,7 @@ fit = al.FitInterferometer(
 By plotting the fit, we see that the Delaunay source does a good job at capturing the appearance of the source galaxy
 using adaptive triangular pixels.
 """
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 
 """
 __Model__
@@ -723,12 +722,10 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()
 
-grid_plotter = aplt.Grid2DPlotter(grid=dataset.grids.pixelization)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=dataset.grids.pixelization, title="")
 
 mass = al.mp.Isothermal(
     centre=(0.0, 0.0),
@@ -794,9 +791,6 @@ adapt_images = al.AdaptImages(
 """
 Plotting this grid shows a sparse grid of (y,x) coordinates within the mask, which will form our source pixel centres.
 """
-visuals = aplt.Visuals2D(grid=image_plane_mesh_grid)
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(dirty_image=True)
 
 """
 __Ray Tracing__
@@ -822,13 +816,10 @@ traced_grid_pixelization = tracer.traced_grid_2d_list_from(
 # This functions a bit weird - it returns a list of lists of ndarrays. Best not to worry about it for now!
 traced_mesh_grid = tracer_to_inversion.traced_mesh_grid_pg_list[-1][-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_pixelization, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid_pixelization, title="")
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_mesh_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_mesh_grid, title="")
 
 """
 __Border Relocation__
@@ -849,13 +840,10 @@ relocated_mesh_grid = border_relocator.relocated_mesh_grid_from(
     grid=traced_grid_pixelization, mesh_grid=traced_mesh_grid
 )
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=relocated_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=relocated_grid, title="")
 
-grid_plotter = aplt.Grid2DPlotter(grid=relocated_mesh_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=relocated_mesh_grid, title="")
 
 """
 __Delaunay Mesh__
@@ -881,13 +869,10 @@ mapper = al.Mapper(
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
-# mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 # mapper_plotter.figure_2d()
 #
-# visuals = aplt.Visuals2D(
 #     grid=mapper.source_plane_data_grid,
 # )
-# mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 # mapper_plotter.figure_2d()
 
 """
@@ -897,24 +882,14 @@ pix_indexes_for_sub_slim_index = mapper.pix_indexes_for_sub_slim_index
 
 print(pix_indexes_for_sub_slim_index[0:9])
 
-visuals = aplt.Visuals2D(indexes=[list(range(2050, 2090))])
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
 
 pix_indexes = [[200]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(indexes=indexes)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
 
@@ -938,8 +913,7 @@ print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=mapping_matrix[:, 200], mask=dataset.mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 transformed_mapping_matrix = dataset.transformer.transform_mapping_matrix(
     mapping_matrix=mapping_matrix
@@ -967,8 +941,7 @@ print(indexes_pix_200[0])
 
 visibilities = al.Visibilities(visibilities=transformed_mapping_matrix[:, 200])
 
-grid_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 print(f"Mapping between visibility 0 and Delaunay pixel 2 = {mapping_matrix[0, 2]}")
 
@@ -1017,15 +990,13 @@ visibilities = al.Visibilities(
     visibilities=transformed_mapping_matrix[:, source_pixel_0],
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 visibilities = al.Visibilities(
     visibilities=transformed_mapping_matrix[:, source_pixel_1],
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 regularization_matrix = al.util.regularization.constant_regularization_matrix_from(
     coefficient=source_galaxy.pixelization.regularization.coefficient,
@@ -1042,7 +1013,6 @@ curvature_reg_matrix = np.add(curvature_matrix, regularization_matrix)
 
 reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 
 mapper_plotter.figure_2d(solution_vector=reconstruction)
 
@@ -1057,8 +1027,7 @@ mapped_reconstructed_visibilities = al.Visibilities(
     visibilities=mapped_reconstructed_visibilities
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=mapped_reconstructed_visibilities.in_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=mapped_reconstructed_visibilities.in_grid, title="")
 
 
 """
@@ -1093,8 +1062,7 @@ print(chi_squared)
 
 chi_squared_map = al.Visibilities(visibilities=chi_squared_map)
 
-grid_plotter = aplt.Grid2DPlotter(grid=chi_squared_map.in_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=chi_squared_map.in_grid, title="")
 
 regularization_term = np.matmul(
     reconstruction.T, np.matmul(regularization_matrix, reconstruction)
@@ -1141,8 +1109,7 @@ fit = al.FitInterferometer(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 
 """
 __Lens Modeling__

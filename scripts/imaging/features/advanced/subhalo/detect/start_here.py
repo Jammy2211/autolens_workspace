@@ -136,8 +136,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Settings AutoFit__
@@ -428,16 +427,12 @@ __Visualization__
 
 There are DM subhalo specific visualization tools which can be used to inspect the results of DM subhalo detection.
 
-The `SubhaloPlotter` takes as input `FitImaging` objects of the no subhalo and with subhalo model-fits, which will
+The `aplt.subplot_detection_imaging` takes as input `FitImaging` objects of the no subhalo and with subhalo model-fits, which will
 allow us to plot their images alongside one another and therefore inspect how the residuals change when a DM
 subhalo is included in the model.
 
 We also input the `result_subhalo_grid_search`, which we will use below to show visualization of the grid search.
 """
-subhalo_plotter = al.subhalo.SubhaloPlotter(
-    fit_imaging_with_subhalo=result_with_subhalo.max_log_likelihood_fit,
-    fit_imaging_no_subhalo=result_no_subhalo.max_log_likelihood_fit,
-)
 
 """
 The following subplot compares the fits with and without a DM subhalo.
@@ -445,7 +440,7 @@ The following subplot compares the fits with and without a DM subhalo.
 It plots the normalized residuals, chi-squared map and source reconstructions of both fits alongside one another.
 The improvement to the fit that including a subhalo provides is therefore clearly visible.
 """
-subhalo_plotter.subplot_detection_fits()
+aplt.subplot_detection_fits(fit_imaging_no_subhalo=fit_no_subhalo, fit_imaging_with_subhalo=fit_imaging_with_subhalo)
 
 """
 __Grid Search Result__
@@ -473,10 +468,7 @@ print(log_evidence_array)
 We can plot this array to get a visualiuzation of where including a subhalo in the model increases the Bayesian
 evidence.
 """
-plotter = aplt.Array2DPlotter(
-    array=log_evidence_array,
-)
-plotter.figure_2d()
+aplt.plot_array(array=log_evidence_array, title="")
 
 """
 The grid search result also contained arrays with the inferred masses for each grid cell fit and the inferred
@@ -502,7 +494,7 @@ einstein_radius_array = result_subhalo_grid_search.attribute_grid(
 """
 __Grid Search Visualization__
 
-The `SubhaloPlotter` can also plot the results of the grid search, which provides spatial information on where in
+The `aplt.subplot_detection_imaging` can also plot the results of the grid search, which provides spatial information on where in
 the image plane including a DM subhalo provides a better fit to the data.
 
 The plot below shows the increase in `log_evidence` of each grid cell, laid over an image of the lensed source
@@ -511,22 +503,11 @@ so one can easily see which source features produce a DM subhalo detection.
 The input `remove_zeros` removes all grid-cells which have a log evidence value below zero, which provides more
 clarity in the figure where including a DM subhalo makes a difference to the Bayesian evidence.
 """
-subhalo_plotter = al.subhalo.SubhaloPlotter(
-    result=result_subhalo_grid_search,
-    fit_imaging_with_subhalo=result_with_subhalo.max_log_likelihood_fit,
-    fit_imaging_no_subhalo=result_no_subhalo.max_log_likelihood_fit,
-)
 
-subhalo_plotter.figure_figures_of_merit_grid(
-    use_log_evidences=True,
-    relative_to_value=result_no_subhalo.samples.log_evidence,
-    remove_zeros=True,
-)
 
 """
 A grid of inferred DM subhalo masses can be overlaid instead:
 """
-subhalo_plotter.figure_mass_grid()
 
 """
 A subplot of all these quantities can be plotted:

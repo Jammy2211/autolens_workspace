@@ -77,10 +77,7 @@ sersic_light_profile = al.lp.Exponential(
     centre=(0.3, 0.2), ell_comps=(0.2, 0.0), intensity=0.05, effective_radius=1.0
 )
 
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=sersic_light_profile, grid=grid
-)
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image")
 
 input(
     "\n"
@@ -103,10 +100,12 @@ isothermal_mass_profile = al.mp.Isothermal(
     centre=(0.0, 0.0), ell_comps=(0.1, 0.0), einstein_radius=1.6
 )
 
-mass_profile_plotter = aplt.MassProfilePlotter(
-    mass_profile=isothermal_mass_profile, grid=grid
-)
-mass_profile_plotter.figures_2d(deflections_y=True, deflections_x=True)
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_y = aa.Array2D(values=deflections.slim[:, 0], mask=grid.mask)
+aplt.plot_array(array=deflections_y, title="Deflections Y")
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_x = aa.Array2D(values=deflections.slim[:, 1], mask=grid.mask)
+aplt.plot_array(array=deflections_x, title="Deflections X")
 
 input(
     "\n"
@@ -126,8 +125,7 @@ lens_galaxy = al.Galaxy(redshift=0.5, mass=isothermal_mass_profile)
 source_galaxy = al.Galaxy(redshift=1.0, light=sersic_light_profile)
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 input(
     "\n"

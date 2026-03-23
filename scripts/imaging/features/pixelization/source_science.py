@@ -101,8 +101,7 @@ Note how the pixelized source reconstruction is performed on an irregular adapti
 which is denser in regions of high magnification. This non-uniform distribution of pixels means we need to be care
 when performing source science calculations, especially a quantity like the magnification which depends on area.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 All information about the pixelized source reconstruction is contained in the `Inversion` object, which can be
@@ -178,14 +177,11 @@ interpolated_reconstruction = al.Array2D.no_mask(
 By printing the interpolated array, we confirm it is a 2D array and can see the pixel values of the source 
 reconstruction.
 
-We also plot the interpolated source reconstruction using an `Array2DPlotter`.
+We also plot the interpolated source reconstruction using an `aplt.plot_array`.
 """
 print(interpolated_reconstruction.native)
 
-plotter = aplt.Array2DPlotter(
-    array=interpolated_reconstruction,
-)
-plotter.figure_2d()
+aplt.plot_array(array=interpolated_reconstruction, title="")
 
 """
 __Source Flux__
@@ -257,10 +253,7 @@ interpolated_noise_map = al.Array2D.no_mask(
     values=interpolated_noise_map_ndarray, pixel_scales=interpolation_grid.pixel_scales
 )
 
-plotter = aplt.Array2DPlotter(
-    array=interpolated_noise_map,
-)
-plotter.figure_2d()
+aplt.plot_array(array=interpolated_noise_map, title="")
 
 """
 __Magnification__
@@ -317,10 +310,7 @@ interpolated_reconstruction_masked = al.Array2D.no_mask(
     pixel_scales=interpolation_grid.pixel_scales,
 )
 
-plotter = aplt.Array2DPlotter(
-    array=interpolated_reconstruction_masked,
-)
-plotter.figure_2d()
+aplt.plot_array(array=interpolated_reconstruction_masked, title="")
 
 """
 __Magnification via Mesh__

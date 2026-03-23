@@ -121,21 +121,16 @@ mask = al.Mask2D.circular_annular(
 """
 Now lets plot the image and mask, so we can check that the mask includes the regions of the image we want.
 """
-visuals = aplt.Visuals2D(mask=mask)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Output the masked image to clearly show what parts of the source are included.
 """
 data = data.apply_mask(mask=mask)
 
-mat_plot = aplt.MatPlot2D(
-    output=aplt.Output(path=dataset_path, filename=f"data_masked", format="png")
 )
-array_plotter = aplt.Array2DPlotter(array=data, mat_plot_2d=mat_plot)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Now we`re happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits

@@ -54,6 +54,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 import autolens as al
+import autoarray as aa
 import autolens.plot as aplt
 
 """
@@ -72,8 +73,7 @@ grid = al.Grid2D.uniform(
     pixel_scales=0.05,  # The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid, title="")
 
 """
 __Light Profiles__
@@ -111,17 +111,14 @@ __Plotting__
 In-built plotting methods are provided for plotting objects and their properties, like the image of
 a light profile we just created.
 
-By using a `LightProfilePlotter` to plot the light profile's image, the figured is improved. 
+By using a `aplt.plot_array` to plot the light profile's image, the figured is improved. 
 
 Its axis units are scaled to arc-seconds, a color-bar is added, its given a descriptive labels, etc.
 
 The plot module is highly customizable and designed to make it straight forward to create clean and informative figures
 for fits to large datasets.
 """
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=sersic_light_profile, grid=grid
-)
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image")
 
 """
 __Mass Profiles__
@@ -147,15 +144,14 @@ The deflection angles are easily plotted using the **PyAutoLens** plot module.
 
 (Many other lensing quantities are also easily plotted, for example the `convergence` and `potential`).
 """
-mass_profile_plotter = aplt.MassProfilePlotter(
-    mass_profile=isothermal_mass_profile, grid=grid
-)
-mass_profile_plotter.figures_2d(
-    deflections_y=True,
-    deflections_x=True,
-    # convergence=True,
-    # potential=True
-)
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_y = aa.Array2D(values=deflections.slim[:, 0], mask=grid.mask)
+aplt.plot_array(array=deflections_y, title="Deflections Y")
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_x = aa.Array2D(values=deflections.slim[:, 1], mask=grid.mask)
+aplt.plot_array(array=deflections_x, title="Deflections X")
+aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title="Convergence")
+aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title="Potential")
 
 """
 __Galaxy__
@@ -188,13 +184,9 @@ source_light_profile = al.lp.Exponential(
 source_galaxy = al.Galaxy(redshift=1.0, light=source_light_profile)
 
 """
-The `GalaxyPlotter` object plots properties of the lens and source galaxies.
+The `aplt.plot_array` object plots properties of the lens and source galaxies.
 """
-lens_galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=grid)
-lens_galaxy_plotter.figures_2d(image=True, deflections_y=True, deflections_x=True)
 
-source_galaxy_plotter = aplt.GalaxyPlotter(galaxy=source_galaxy, grid=grid)
-source_galaxy_plotter.figures_2d(image=True)
 
 """
 One example of the plotter's customizability is the ability to plot the individual light profiles of the galaxy
@@ -216,8 +208,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy], cosmology=al.cosmo.Pla
 
 image = tracer.image_2d_from(grid=grid)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Units__
@@ -295,8 +286,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy_0, lens_galaxy_1, source_galaxy])
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Lens Modeling__

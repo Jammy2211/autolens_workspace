@@ -28,6 +28,7 @@ import numpy as np
 from pathlib import Path
 
 import autolens as al
+import autoarray as aa
 import autolens.plot as aplt
 
 """
@@ -49,10 +50,9 @@ dataset = al.Imaging.from_fits(
 """
 This guide uses in-built visualization tools for plotting. 
 
-For example, using the `ImagingPlotter` the imaging dataset we perform a likelihood evaluation on is plotted.
+For example, using the `aplt.subplot_imaging_dataset` the imaging dataset we perform a likelihood evaluation on is plotted.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -75,8 +75,7 @@ masked_dataset = dataset.apply_mask(mask=mask)
 """
 When we plot the masked imaging, only the circular masked region is shown.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=masked_dataset)
 
 """
 __Over Sampling__
@@ -101,8 +100,7 @@ Each (y,x) coordinate coordinates to the centre of each image-pixel in the datas
 used to perform ray-tracing and evaluate a light profile the intensity of the profile at the centre of each 
 image-pixel is computed, making it straight forward to compute the light profile's image to the image data.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.lp)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=masked_dataset.grids.lp, title="")
 
 print(
     f"(y,x) coordinates of first ten unmasked image-pixels {masked_dataset.grid[0:9]}"
@@ -138,8 +136,7 @@ transformed_grid = profile.transformed_to_reference_frame_grid_from(
     grid=masked_dataset.grids.lp
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=transformed_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=transformed_grid, title="")
 print(
     f"transformed coordinates of first ten unmasked image-pixels {transformed_grid[0:9]}"
 )
@@ -191,8 +188,7 @@ implicitly).
 """
 image_2d_bulge = bulge.image_2d_from(grid=masked_dataset.grid)
 
-bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=masked_dataset.grid)
-bulge_plotter.figures_2d(image=True)
+aplt.plot_array(array=bulge.image_2d_from(grid=masked_dataset.grid), title="Image")
 
 """
 __Lens Galaxy Mass__
@@ -237,8 +233,7 @@ mass = al.mp.Isothermal(
 
 shear = al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05)
 
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=masked_dataset.grid)
-mass_plotter.figures_2d(convergence=True)
+aplt.plot_array(array=mass.convergence_2d_from(grid=masked_dataset.grid), title="Convergence")
 
 """
 From each mass profile we can compute its deflection angles, which describe how due to gravitational lensing
@@ -250,8 +245,12 @@ $\vec{{\alpha}}_{\rm x,y} (\vec{x}) = \frac{1}{\pi} \int \frac{\vec{x} - \vec{x'
 """
 deflections_yx_2d = mass.deflections_yx_2d_from(grid=masked_dataset.grid)
 
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=masked_dataset.grid)
-mass_plotter.figures_2d(deflections_y=True, deflections_x=True)
+deflections = mass.deflections_yx_2d_from(grid=masked_dataset.grid)
+deflections_y = aa.Array2D(values=deflections.slim[:, 0], mask=masked_dataset.grid.mask)
+aplt.plot_array(array=deflections_y, title="Deflections Y")
+deflections = mass.deflections_yx_2d_from(grid=masked_dataset.grid)
+deflections_x = aa.Array2D(values=deflections.slim[:, 1], mask=masked_dataset.grid.mask)
+aplt.plot_array(array=deflections_x, title="Deflections X")
 
 """
 __Lens Galaxy__
@@ -292,8 +291,6 @@ This computes the `lens_image_2d` of each `LightProfile` and adds them together.
 """
 lens_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=masked_dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 To convolve the lens's 2D image with the imaging data's PSF, we need its `blurring_image`. This represents all flux 
@@ -304,10 +301,6 @@ actual mask whose light blurs into the image:
 """
 lens_blurring_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grids.blurring)
 
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=lens_galaxy, grid=masked_dataset.grids.blurring
-)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Ray Tracing__
@@ -333,19 +326,15 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 # A list of every grid (e.g. image-plane, source-plane) however we only need the source plane grid with index -1.
 traced_grid = tracer.traced_grid_2d_list_from(grid=masked_dataset.grid)[-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid, title="")
 
 traced_blurring_grid = tracer.traced_grid_2d_list_from(
     grid=masked_dataset.grids.blurring
 )[-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_blurring_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_blurring_grid, title="")
 
 """
 __Source Image__
@@ -354,13 +343,9 @@ We pass the traced grid and blurring grid of coordinates to the source galaxy to
 """
 source_image_2d = source_galaxy.image_2d_from(grid=traced_grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=traced_grid)
-galaxy_plotter.figures_2d(image=True)
 
 source_blurring_image_2d = source_galaxy.image_2d_from(grid=traced_blurring_grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=source_galaxy, grid=traced_blurring_grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Lens + Source Light Addition__
@@ -369,13 +354,11 @@ We add the lens and source galaxy images and blurring together, to create an ove
 """
 image = lens_image_2d + source_image_2d
 
-array_2d_plotter = aplt.Array2DPlotter(array=image)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=image, title="")
 
 blurring_image_2d = lens_blurring_image_2d + source_blurring_image_2d
 
-array_2d_plotter = aplt.Array2DPlotter(array=blurring_image_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=blurring_image_2d, title="")
 
 """
 __Convolution__
@@ -387,8 +370,7 @@ convolved_image_2d = masked_dataset.psf.convolved_image_from(
     image=image, blurring_image=blurring_image_2d
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=convolved_image_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=convolved_image_2d, title="")
 
 """
 __Likelihood Function__
@@ -433,8 +415,7 @@ The `chi_squared_map` indicates which regions of the image we did and did not fi
 """
 chi_squared_map = al.Array2D(values=chi_squared_map, mask=mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=chi_squared_map)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=chi_squared_map, title="")
 
 """
 __Noise Normalization Term__
@@ -468,8 +449,7 @@ fit = al.FitImaging(dataset=masked_dataset, tracer=tracer)
 fit_figure_of_merit = fit.figure_of_merit
 print(fit_figure_of_merit)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 
 """

@@ -250,15 +250,10 @@ class SimulateImaging:
             The tracer used to simulate the imaging dataset, which is visualized and output to a .json file.
         """
 
-        mat_plot = aplt.MatPlot2D(output=aplt.Output(path=simulate_path, format="png"))
 
-        dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-        dataset_plotter.subplot_dataset()
+        aplt.subplot_imaging_dataset(dataset=dataset)
 
-        tracer_plotter = aplt.TracerPlotter(
-            tracer=tracer, grid=dataset.grid, mat_plot_2d=mat_plot
-        )
-        tracer_plotter.subplot_lensed_images()
+        aplt.subplot_lensed_images(tracer=tracer, grid=dataset.grid, output_path=simulate_path, output_format="png")
 
         al.output_to_json(
             obj=tracer,

@@ -64,8 +64,6 @@
 #     settings=al.SettingsInterferometer(transformer_class=al.TransformerDFT)
 # )
 #
-# dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-# dataset_plotter.subplot_dataset()
 #
 #
 # """

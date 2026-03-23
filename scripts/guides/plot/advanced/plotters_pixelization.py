@@ -2,24 +2,28 @@
 Plots: Plotters Pixelization
 ============================
 
-This example illustrates the API for plotting using `Plotter` objects for pixelized source reconstructions.
+This example illustrates the plotting API for pixelized source reconstructions.
+
+The new API uses:
+
+ - `aplt.plot_array()` — plot any 2D array (including source reconstructions).
+ - `aplt.plot_grid()` — plot a grid of coordinates.
+ - `aplt.subplot_fit_imaging()` — multi-panel fit overview.
+ - `aplt.subplot_fit_interferometer()` — interferometer fit overview.
+
+Inversion and mapper quantities are accessed via `fit.inversion` and plotted with `aplt.plot_array()`.
 
 __Start Here Notebook__
 
-You should refer to the `plots/start_here.ipynb` notebook first for a description of how plotters work and the default
-behaviour of plotting visuals.
+Refer to `plots/start_here.ipynb` for an introduction to the new plotting API.
 
 __Contents__
 
-**Setup:** Set up all objects (e.g. grid, tracer, data) used to illustrate plotting.
-**Fit Imaging:** Plot the fit of a tracer to an imaging dataset for a source reconstruction using a pixelization.
-**Inversion:** Plot the inversion object which performs the linear algebra and other calculations which reconstruct the source galaxy.
-**Mapper:** Plot the mapper object which maps pixels from the image-plane of the data to its source plane pixelization via a lens model.
-**Fit Interferometer:** Plot the fit of a tracer to an interferometer dataset for a source reconstruction using a pixelization.
-
-__Setup__
-
-To illustrate plotting, we require standard objects like a grid, tracer and dataset.
+- **Setup**: Set up dataset, tracer and fit with a pixelized source.
+- **Fit Imaging**: Plot the fit and its pixelized source reconstruction.
+- **Inversion**: Plot the inversion reconstruction directly.
+- **Mapper Grids**: Plot the image-plane and source-plane mesh grids.
+- **Fit Interferometer**: Plot an interferometer fit with a pixelized source.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -34,6 +38,11 @@ from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
 
+"""
+__Setup__
+
+Set up the dataset and a fit with a pixelized source reconstruction.
+"""
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
 dataset_name = "lens_sersic"
@@ -87,94 +96,45 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 """
 __Fit Imaging__
 
-The `FitImaging` object is a base object which represents the fit of a model to an imaging dataset, including the
-residuals, chi-squared and model image.
-
-We plot the source-plane, which being pixelized, is represented by a `Pixelization` object and plotted as a 
-delunay mesh of triangles.
-
-The plot below zooms into the brightest pixel of the source-plane, which is useful for visualizing the key regions
-of the source that fit the data.
+Plot the multi-panel fit overview with `aplt.subplot_fit_imaging()`.
 """
-fit_plotter = aplt.FitImagingPlotter(
-    fit=fit,
-)
-fit_plotter.figures_2d_of_planes(
-    plane_index=1, plane_image=True, zoom_to_brightest=True
-)
+aplt.subplot_fit_imaging(fit=fit)
 
 """
-If we do not want the image to be zoomed, we can pass `zoom_to_brightest=False`. 
-
-This shows the full extent of the source-plane pixelization and may also include the caustics which the zoomed 
-image does not due to zooming inside of them. This can be useful for ensuring that the construction of the
-source-plane pixelization is reasonable.
+Plot individual fit attributes.
 """
-fit_plotter.figures_2d_of_planes(
-    plane_index=1, plane_image=True, zoom_to_brightest=False
-)
+aplt.plot_array(array=fit.data, title="Data")
+aplt.plot_array(array=fit.model_image, title="Model Image")
+aplt.plot_array(array=fit.residual_map, title="Residual Map")
+aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
+aplt.plot_array(array=fit.chi_squared_map, title="Chi-Squared Map")
 
 """
-An irregular mesh like the RectangularAdaptDensity or Voronoi can be plotted in two ways, using the irregular grid of cells or
-by interpolating the reconstructed source-plane image onto a uniform grid of pixels.
-
-By default, the irregular grid is plotted, but the interpolated image can be plotted by changing the
-`interpolate_to_uniform` input to `True`.
+The pixelized source reconstruction is accessed via `fit.model_images_of_planes_list[1]`,
+which is the reconstructed image of the source plane.
 """
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
-
-"""
-The mappings subplot shows the mappings between the image and source plane, by drawing circles around the brightest
-source pixels and showing how they map to the image-plane.
-"""
-fit_plotter.subplot_mappings_of_plane(plane_index=1)
-
-"""
-The image and source plane mesh grids, showing the centre of every source pixel in the image-plane and source-plane, 
-can be computed and plotted.
-"""
-mapper = fit.inversion.cls_list_from(cls=al.Mapper)[0]
-
-image_plane_mesh_grid = mapper.mask.derive_grid.unmasked
-
-visuals_2d = aplt.Visuals2D(mesh_grid=image_plane_mesh_grid)
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals_2d)
-fit_plotter.figures_2d_of_planes(plane_index=0, plane_image=True)
-
-source_plane_mesh_grid = tracer.traced_grid_2d_list_from(grid=image_plane_mesh_grid)[-1]
-visuals_2d = aplt.Visuals2D(mesh_grid=source_plane_mesh_grid)
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals_2d)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
-
-"""
-We can extract an `InversionPlotter` (described below) from the `FitImagingPlotter` and use it to plot all of its usual 
-methods, which will now include the critical curves, caustics and border.
-"""
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Source Plane Reconstruction",
 )
 
 """
 __Inversion__
 
-The fit above has a property called an `inversion`, which contains all of the linear algebra, mesh calculations
-and other key quantities used to reconstruct a source galaxy using a pixelization.
+The `inversion` property contains the linear algebra, mesh calculations and other key quantities
+used to reconstruct the source galaxy.
 
-This has its own dedicated plotter, the `InversionPlotter`, which can be used to plot the inversion's attributes
-and properties in a similar way to the `FitImagingPlotter`.
+The reconstruction is accessed via `fit.inversion.reconstruction`.
 """
 inversion = fit.inversion
 
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Inversion Reconstruction",
+)
 
 """
-An inversion can also be computed directly from a `Tracer` object, using the `TracerToInversion` class.
-
-The `FitImaging` object uses a `TracerToInversion` internally so the `inversion` objects are identical, but as a user
-knowing both APIs could be useful.
+An inversion can also be computed directly from a `Tracer` using `TracerToInversion`.
 """
 tracer_to_inversion = al.TracerToInversion(
     tracer=tracer,
@@ -183,131 +143,66 @@ tracer_to_inversion = al.TracerToInversion(
 
 inversion = tracer_to_inversion.inversion
 
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-
-"""
-An `Inversion` can have multiple mappers, which reconstruct multiple source galaxies at different redshifts and
-planes (e.g. double Einstein ring systems).
-
-To plot an individual source we must therefore specify the mapper index of the source we plot.
-"""
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0,
-    reconstructed_operated_data=True,
-    reconstruction=True,
-    reconstruction_noise_map=True,
-    regularization_weights=True,
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Inversion Reconstruction (via TracerToInversion)",
 )
 
 """
-The `Inversion` attributes can also be plotted as a subplot.
-"""
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.subplot_of_mapper(mapper_index=0)
+__Mapper Grids__
 
-"""
-The mappings subplot shows the mappings between the image and source plane, by drawing circles around the brightest
-source pixels and showing how they map to the image-plane.
-"""
-inversion_plotter.subplot_mappings(pixelization_index=0)
+The mapper maps pixels from the image-plane to the source-plane pixelization.
 
-"""
-The image and source plane mesh grids, showing the centre of every source pixel in the image-plane and source-plane, 
-can be computed and plotted.
+We can extract the image-plane and source-plane mesh grids and plot them as overlays.
 """
 mapper = inversion.cls_list_from(cls=al.Mapper)[0]
 
 image_plane_mesh_grid = mapper.mask.derive_grid.unmasked
-visuals_2d = aplt.Visuals2D(mesh_grid=image_plane_mesh_grid)
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, visuals_2d=visuals_2d)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
+
+aplt.plot_array(
+    array=fit.data,
+    title="Data with Image-Plane Mesh Grid",
+    positions=image_plane_mesh_grid,
+)
 
 source_plane_mesh_grid = tracer.traced_grid_2d_list_from(grid=image_plane_mesh_grid)[-1]
-visuals_2d = aplt.Visuals2D(mesh_grid=source_plane_mesh_grid)
-inversion_plotter = aplt.InversionPlotter(inversion=inversion, visuals_2d=visuals_2d)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+
+aplt.plot_grid(
+    grid=source_plane_mesh_grid,
+    title="Source-Plane Mesh Grid",
+)
 
 """
-__Mapper__
+__Mapper Galaxy Dict__
 
-The `Mapper` is a property of an inversion and maps pixels from the image-plane of the data to its source plane via 
-a lens model.
-
-We can extract a dictionary where every mapper in the plane is a key, paired with values that are each corresponding 
-galaxy containing that mapper. 
+The mapper galaxy dict maps each mapper to its corresponding galaxy.
 """
 mapper_galaxy_dict = tracer_to_inversion.mapper_galaxy_dict
 
-
-"""
-We only need the `Mapper`, which we can extract from this dictionary.
-"""
 mapper = list(mapper_galaxy_dict)[0]
 
 """
-We now pass the mapper to a `MapperPlotter` and call various `figure_*` methods to plot different attributes.
-"""
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
-mapper_plotter.figure_2d()
-
-"""
-The `Mapper` can also be plotted with a subplot of its original image.
-"""
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
-
-"""
-The Indexes of `Mapper` plots can be highlighted to show how certain image pixels map to the source plane.
-"""
-visuals = aplt.Visuals2D(indexes=[0, 1, 2, 3, 4])
-
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
-
-"""
-The index of source plane pixels can be mapped to the image-plane to show mappings of source to image pixels.
-
-The pixels, plotted in red, extended beyond the central square pixel of the source-plane grid. This is because
-the pairing of data pixels to source pixels is not one-to-one, as an interpolation scheme is used to map pixels
-which land near the edges of the source-pixel, but outside them, to that source pixel with a weight.
-"""
-pix_indexes = [[312, 318], [412]]
-
-indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
-
-visuals = aplt.Visuals2D(
-    indexes=indexes,
-)
-
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
-
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
-
-"""
-The image and source plane mesh grids, showing the centre of every source pixel in the image-plane and source-plane, 
-can be computed and plotted.
+Plot the image-plane mesh grid and source-plane mesh grid together.
 """
 image_plane_mesh_grid = mapper.mask.derive_grid.unmasked
 source_plane_mesh_grid = tracer.traced_grid_2d_list_from(grid=image_plane_mesh_grid)[-1]
 
-visuals_2d = aplt.Visuals2D(
-    grid=image_plane_mesh_grid, mesh_grid=source_plane_mesh_grid
+aplt.plot_array(
+    array=fit.data,
+    title="Data with Mesh Grid Overlay",
+    positions=image_plane_mesh_grid,
 )
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals_2d)
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_grid(
+    grid=source_plane_mesh_grid,
+    title="Source-Plane Mesh Grid",
+)
 
 """
 __Fit Interferometer__
 
-The `FitInterferometer` object is a base object which represents the fit of a model to an interferometer dataset,
-including the residuals, chi-squared and model image.
-
-We now create one which uses a pixelized source reconstruction.
+A fit to an interferometer dataset with a pixelized source is plotted with
+`aplt.subplot_fit_interferometer()`.
 """
 dataset_name = "simple"
 dataset_path = Path("dataset") / "interferometer" / dataset_name
@@ -344,62 +239,14 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 
-"""
-The visualization plottes the reconstructed source on the RectangularAdaptDensity mesh, and you'll have seen it zoomed in to
-its brightest pixels. 
-
-This is so the galaxy can be clearly seen and is the default behavior of the `InversionPlotter`, given the
-input `zoom_to_brightest=True`.
-"""
-fit_plotter = aplt.FitInterferometerPlotter(
-    fit=fit,
-)
-fit_plotter.figures_2d_of_planes(
-    plane_index=1, plane_image=True, zoom_to_brightest=True
-)
+aplt.subplot_fit_interferometer(fit=fit)
 
 """
-If we do not want the image to be zoomed, we can pass `zoom_to_brightest=False`.
-
-This shows the full extent of the source-plane pixelization and may also include the caustics which the zoomed
-image does not due to zooming inside of them. This can be useful for ensuring that the construction of the
-source-plane pixelization is reasonable.
+Plot the source-plane reconstruction.
 """
-fit_plotter.figures_2d_of_planes(
-    plane_index=1, plane_image=True, zoom_to_brightest=False
-)
-
-"""
-The mappings subplot shows the mappings between the image and source plane, by drawing circles around the brightest
-source pixels and showing how they map to the image-plane.
-"""
-fit_plotter.subplot_mappings_of_plane(plane_index=1)
-
-"""
-The image and source plane mesh grids, showing the centre of every source pixel in the image-plane and source-plane, 
-can be computed and plotted.
-"""
-mapper = fit.inversion.cls_list_from(cls=al.Mapper)[0]
-
-image_plane_mesh_grid = mapper.mask.derive_grid.unmasked
-visuals_2d = aplt.Visuals2D(mesh_grid=image_plane_mesh_grid)
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit, visuals_2d=visuals_2d)
-fit_plotter.figures_2d_of_planes(plane_index=0, plane_image=True)
-
-source_plane_mesh_grid = tracer.traced_grid_2d_list_from(grid=image_plane_mesh_grid)[-1]
-visuals_2d = aplt.Visuals2D(mesh_grid=source_plane_mesh_grid)
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit, visuals_2d=visuals_2d)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
-
-
-"""
-We can even extract an `InversionPlotter` from the `FitInterferometerPlotter` and use it to plot all of its usual 
-methods,which will now include the critical curves, caustics and border.
-"""
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, reconstruction=True, regularization_weights=True
+aplt.plot_array(
+    array=fit.model_images_of_planes_list[1],
+    title="Source Plane Reconstruction (Interferometer)",
 )
 
 """

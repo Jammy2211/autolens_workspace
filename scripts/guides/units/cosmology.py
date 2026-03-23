@@ -10,7 +10,7 @@ Mass or the effective radii of the galaxies in the lens model.
 
 __Plot Module__
 
-This example uses the plot module to plot the results, including `Plotter` objects that make
+This example uses the plot module to plot the results, including plotting function objects that make
 the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
 
 The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
@@ -100,17 +100,13 @@ image_plane_kpc_per_arcsec = cosmology.kpc_per_arcsec_from(redshift=lens.redshif
 
 units = aplt.Units(ticks_convert_factor=image_plane_kpc_per_arcsec, ticks_label=" kpc")
 
-mat_plot = aplt.MatPlot2D(units=units)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 units = aplt.Units(ticks_convert_factor=source_plane_kpc_per_arcsec, ticks_label=" kpc")
 
-mat_plot = aplt.MatPlot2D(units=units)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.figures_2d(source_plane=True)
+aplt.plot_array(array=tracer.traced_grid_2d_list_from(grid=grid)[-1], title="Source Plane")
 
 """
 __Einstein Radius__
@@ -215,10 +211,7 @@ units = aplt.Units(
     colorbar_convert_factor=exposure_time_seconds, colorbar_label=" seconds"
 )
 
-mat_plot = aplt.MatPlot2D(units=units)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=source, grid=grid, mat_plot_2d=mat_plot)
-galaxy_plotter.figures_2d(image=True)
 
 """
 The luminosity of a galaxy is the total amount of light it emits, which is computed by integrating the light profile.

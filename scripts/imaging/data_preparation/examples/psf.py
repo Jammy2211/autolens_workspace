@@ -59,8 +59,7 @@ psf = al.Convolver.from_fits(
     file_path=dataset_path / "psf.fits", hdu=0, pixel_scales=0.1
 )
 
-array_plotter = aplt.Array2DPlotter(array=psf.kernel)
-array_plotter.figure_2d()
+aplt.plot_array(array=psf.kernel, title="")
 
 """
 This psf conforms to **PyAutoLens** standards for the following reasons.
@@ -102,8 +101,7 @@ psf = al.Convolver.from_fits(
     file_path=dataset_path / "psf.fits", hdu=0, pixel_scales=0.1
 )
 
-array_plotter = aplt.Array2DPlotter(array=psf.kernel)
-array_plotter.figure_2d()
+aplt.plot_array(array=psf.kernel, title="")
 
 """
 We can resize a psf the same way that we resize an image.
@@ -115,8 +113,7 @@ trimmed_psf_kernel = al.preprocess.array_with_new_shape(
     array=psf.kernel, new_shape=(5, 5)
 )
 
-array_plotter = aplt.Array2DPlotter(array=trimmed_psf_kernel)
-array_plotter.figure_2d()
+aplt.plot_array(array=trimmed_psf_kernel, title="")
 
 """
 __PSF Dimensions__

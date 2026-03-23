@@ -63,8 +63,7 @@ interferometer = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-interferometer_plotter = aplt.InterferometerPlotter(dataset=interferometer)
-interferometer_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=interferometer)
 interferometer_plotter.subplot_dirty_images()
 
 """
@@ -84,8 +83,7 @@ imaging = al.Imaging.from_fits(
     pixel_scales=0.08,
 )
 
-imaging_plotter = aplt.ImagingPlotter(dataset=imaging)
-imaging_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=imaging)
 
 """
 __Imaging Masking__
@@ -102,8 +100,7 @@ mask = al.Mask2D.circular(
 
 imaging = imaging.apply_mask(mask=mask)
 
-imaging_plotter = aplt.ImagingPlotter(dataset=imaging)
-imaging_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=imaging)
 
 """
 __Analysis__
@@ -224,17 +221,11 @@ The search returns a result object, which includes:
 """
 print(result_list[0].max_log_likelihood_instance)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result_list[0].max_log_likelihood_tracer,
-    grid=real_space_mask.derive_grid.unmasked,
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result_list[0].max_log_likelihood_tracer, grid=real_space_mask.derive_grid.unmasked)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_list[0].max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_list[0].max_log_likelihood_fit)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=result_list[1].max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=result_list[1].max_log_likelihood_fit)
 fit_plotter.subplot_fit_dirty_images()
 
 plotter = aplt.NestPlotter(samples=result_list.samples)

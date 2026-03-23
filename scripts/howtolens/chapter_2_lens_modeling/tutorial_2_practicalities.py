@@ -79,8 +79,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -97,8 +96,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model__
@@ -360,8 +358,7 @@ the model fits the data.
 In this example, the fit to the data is excellent, with residuals near zero, as expected since the same model was 
 used both to simulate and fit the data.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 The Probability Density Functions (PDF's) of the results can be plotted using an in-built visualization 

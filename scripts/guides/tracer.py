@@ -13,7 +13,7 @@ briefly discusses visualization.
 
 __Plot Module__
 
-This example uses the plot module to plot the results, including `Plotter` objects that make
+This example uses the plot module to plot the results, including plotting function objects that make
 the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
 
 The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
@@ -61,6 +61,7 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import autolens as al
+import autoarray as aa
 import autolens.plot as aplt
 
 """
@@ -79,9 +80,7 @@ grid = al.Grid2D.uniform(
     pixel_scales=0.05,  # The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=grid)
-grid_plotter.set_title(label="Cartesian (y,x) Grid (arcsec)")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid, title=label="Cartesian (y,x)
 
 """
 __Light Profiles__
@@ -111,11 +110,7 @@ image = sersic_light_profile.image_2d_from(grid=grid)
 """
 The **PyAutoLens** plot module provides methods for plotting objects and their properties, like light profile's image.
 """
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=sersic_light_profile, grid=grid
-)
-light_profile_plotter.set_title(label="Image of Sersic Light Profile")
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title=label="Image of Sersic Light Profile")
 
 """
 __Mass Profiles__
@@ -137,17 +132,12 @@ Lets plot the isothermal mass profile's deflection angle map.
 The black curve on the figure is the tangential critical curve of the mass profile, if you do not know what this is
 don't worry about it for now!
 """
-mass_profile_plotter = aplt.MassProfilePlotter(
-    mass_profile=isothermal_mass_profile, grid=grid
-)
-mass_profile_plotter.set_title(label="Isothermal Deflection Angles (y)")
-mass_profile_plotter.figures_2d(
-    deflections_y=True,
-)
-mass_profile_plotter.set_title(label="Isothermal Deflection Angles (x)")
-mass_profile_plotter.figures_2d(
-    deflections_x=True,
-)
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_y = aa.Array2D(values=deflections.slim[:, 0], mask=grid.mask)
+aplt.plot_array(array=deflections_y, title="Deflections Y")
+deflections = isothermal_mass_profile.deflections_yx_2d_from(grid=grid)
+deflections_x = aa.Array2D(values=deflections.slim[:, 1], mask=grid.mask)
+aplt.plot_array(array=deflections_x, title="Deflections X")
 
 """
 There are many other lensing quantities which can be plotted, for example the convergence and gravitational
@@ -156,14 +146,8 @@ potential.
 If you are not familiar with gravitational lensing and therefore are unclear on what the convergence and potential 
 are, don't worry for now!
 """
-mass_profile_plotter.set_title(label="Isothermal Mass Convergence")
-mass_profile_plotter.figures_2d(
-    convergence=True,
-)
-mass_profile_plotter.set_title(label="Isothermal Mass Potential")
-mass_profile_plotter.figures_2d(
-    potential=True,
-)
+aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title=label="Isothermal Mass Convergence")
+aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title=label="Isothermal Mass Potential")
 
 """
 __Galaxies__
@@ -202,9 +186,7 @@ the source's appears as a multiply imaged and strongly lensed Einstein ring.
 """
 image = tracer.image_2d_from(grid=grid)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.set_title(label="Image of Strong Lens System")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Strong Lens System")
 
 """
 __Log10__
@@ -214,25 +196,19 @@ The light and masss distributions of galaxies are closer to a log10 distribution
 This means that when we plot an image of a light profile, its appearance is better highlighted when we take the
 logarithm of its values and plot it in log10 space.
 
-The `MatPlot2D` object has an input `use_log10`, which will do this automatically when we call the `figures_2d` method.
+The `plot_array`/`subplot_\*` object has an input `use_log10`, which will do this automatically when we call the `plot_array` method.
 Below, we can see that the image plotted now appears more clearly, with the outskirts of the light profile more visible.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=tracer,
-    grid=grid.mask.derive_grid.all_false,
-    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
-)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid.mask.derive_grid.all_false), title="Image")
 
 """
-The `TracerPlotter` includes the mass quantities we plotted previously, which can be plotted as a subplot 
+The `aplt.subplot_tracer` includes the mass quantities we plotted previously, which can be plotted as a subplot 
 that plots all these quantities simultaneously.
 
 The black and white lines in the source-plane image are the tangential and radial caustics of the mass, which again
 you do not need to worry about for now if you don't know what that is!
 """
-tracer_plotter.set_title(label=None)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=tracer, grid=grid.mask.derive_grid.all_false)
 
 """
 The tracer is composed of planes. The system above has two planes, an image-plane (at redshift=0.5) and a 
@@ -245,13 +221,9 @@ We can use the tracer`s `traced_grid_2d_list_from` method to calculate and plot 
 """
 traced_grid_list = tracer.traced_grid_2d_list_from(grid=grid)
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_list[0])
-grid_plotter.set_title(label="Image Plane Grid")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid_list[0], title=label="Image Plane Grid")
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_list[1])
-grid_plotter.set_title(label="Source Plane Grid")
-grid_plotter.figure_2d()  # Source-plane grid.
+aplt.plot_grid(grid=traced_grid_list[1], title=label="Source Plane Grid")
 
 """
 __Extending Objects__
@@ -316,9 +288,7 @@ This is what the lens looks like.
 
 Note how crazy the critical curves are!
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.set_title(label="Image of Complex Strong Lens")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Complex Strong Lens")
 
 
 """

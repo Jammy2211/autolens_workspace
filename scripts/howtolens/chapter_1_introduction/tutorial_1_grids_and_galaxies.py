@@ -93,9 +93,7 @@ grid = al.Grid2D.uniform(
 """
 We can visualize this grid as a uniform grid of dots, each representing a coordinate where the light is measured.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=grid)
-grid_plotter.set_title("Uniform Grid of Coordinates")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid, title="Uniform Grid of Coordinates")
 
 """
 Each coordinate in the grid corresponds to an arc-second position. Below, we print a few of these coordinates to see 
@@ -160,9 +158,7 @@ The grid is now centered around (0.3", 0.5"). We can plot the shifted grid to se
 *Exercise*: Try shifting the grid to a different center, for example (0.0", 0.0") or (2.0", 3.0"). Observe how the
 center of the grid changes when you adjust the `centre` variable.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=grid_shifted)
-grid_plotter.set_title("Grid Centered Around (0.3, 0.5)")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid_shifted, title="Grid Centered Around (0.3, 0.5)")
 
 """
 Next, we can rotate the grid by an angle `phi` (in degrees). The rotation is counter-clockwise from the positive x-axis.
@@ -194,9 +190,7 @@ The grid has now been rotated 60 degrees counter-clockwise. We can plot it to se
 *Exercise*: Try rotating the grid by a different angle, for example 30 degrees or 90 degrees. Observe how the grid
 changes when you adjust the `angle_degrees` variable.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=grid_rotated)
-grid_plotter.set_title("Grid Rotated 60 Degrees")
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid_rotated, title="Grid Rotated 60 Degrees")
 
 """
 Next, we convert the rotated grid to elliptical coordinates using:
@@ -306,13 +300,7 @@ This demonstrates how the geometry of the grid directly influences the appearanc
 *Exercise*: Try changing the values of `centre`, `ell_comps`, `effective_radius`, and `sersic_index` above. 
 Observe how these adjustments change the Sersic profile image.
 """
-array_plotter = aplt.Array2DPlotter(
-    array=al.Array2D(
-        values=sersic_image, mask=grid.mask
-    ),  # The `Array2D` object is discussed below.
-)
-array_plotter.set_title("Sersic Image")
-array_plotter.figure_2d()
+aplt.plot_array(array=al.Array2D(, title="Sersic Image")
 
 """
 Instead of manually handling these transformations, we can use `LightProfile` objects from the `light_profile` 
@@ -341,11 +329,7 @@ so the image will look different. However, the process is the same.
 """
 image = sersic_light_profile.image_2d_from(grid=grid)
 
-array_plotter = aplt.Array2DPlotter(
-    array=image,
-)
-array_plotter.set_title("Sersic Image via Light Profile")
-array_plotter.figure_2d()
+aplt.plot_array(array=image, title="Sersic Image via Light Profile")
 
 """
 The `image` is returned as an `Array2D` object. Similar to a `Grid2D`, it has two forms:
@@ -361,15 +345,11 @@ print("Intensity of pixel 1:")
 print(image.slim[1])
 
 """
-To visualize the light profile's image, we use a `LightProfilePlotter`.
+To visualize the light profile's image, we use `aplt.plot_array`.
 
 We provide it with the light profile and the grid, which are used to create and plot the image.
 """
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=sersic_light_profile, grid=grid
-)
-light_profile_plotter.set_title("Image via LightProfilePlotter")
-light_profile_plotter.figures_2d(image=True)
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image via Light Profile")
 
 """
 __One Dimension Projection__
@@ -435,260 +415,6 @@ plt.close()
 Since galaxy light distributions often cover a wide range of values, they are typically better visualized on a log10 
 scale. This approach helps highlight details in the faint outskirts of a light profile.
 
-The `MatPlot2D` object has a `use_log10` option that applies this transformation automatically. Below, you can see 
+The `plot_array`/`subplot_\*` object has a `use_log10` option that applies this transformation automatically. Below, you can see 
 that the image plotted in log10 space reveals more details.
-"""
-light_profile_plotter = aplt.LightProfilePlotter(
-    light_profile=sersic_light_profile,
-    grid=grid,
-    mat_plot_2d=aplt.MatPlot2D(use_log10=True),
-)
-light_profile_plotter.set_title("Sersic Image")
-light_profile_plotter.figures_2d(image=True)
-"""
-__Galaxies__
-
-Now, let's introduce `Galaxy` objects.
-
-A light profile represents a single feature of a galaxy, such as its bulge or disk. To model a complete galaxy, 
-we combine multiple `LightProfiles` into a `Galaxy` object. This allows us to create images that include different 
-components of a galaxy.
-
-In addition to light profiles, a `Galaxy` has a `redshift`, which indicates how far away it is from Earth. The redshift 
-is essential for performing unit conversions using cosmological calculations, such as converting arc-seconds into 
-kiloparsecs. (A kiloparsec is a distance unit in astronomy, equal to about 3.26 million light-years.)
-
-Let's start by creating a galaxy with two `Sersic` light profiles, which notationally we will consider to represent
-a bulge and disk component of the galaxy, the two most important structures seen in galaxies which drive the
-Hubble tuning fork classification shown at the beginning of this tutorial.
-"""
-bulge = al.lp.Sersic(
-    centre=(0.0, 0.0),
-    ell_comps=(0.0, 0.111111),
-    intensity=1.0,
-    effective_radius=1.0,
-    sersic_index=2.5,
-)
-
-disk = al.lp.Sersic(
-    centre=(0.0, 0.0),
-    ell_comps=(0.0, 0.3),
-    intensity=0.3,
-    effective_radius=3.0,
-    sersic_index=1.0,
-)
-
-galaxy = al.Galaxy(redshift=0.5, bulge=bulge, disk=disk)
-
-print(galaxy)
-
-"""
-We can pass a 2D grid to a light profile to compute its image using the `image_2d_from` method. 
-
-The same approach works for a `Galaxy` object:
-"""
-image = galaxy.image_2d_from(grid=grid)
-
-print("Intensity of `Grid2D` pixel 0:")
-print(image.native[0, 0])
-print("Intensity of `Grid2D` pixel 1:")
-print(image.native[0, 1])
-print("Intensity of `Grid2D` pixel 2:")
-print(image.native[0, 2])
-print("...")
-
-array_plotter = aplt.Array2DPlotter(
-    array=image,
-)
-array_plotter.set_title("Bulge+Disk Image via Galaxy")
-array_plotter.figure_2d()
-
-"""
-We can use a `GalaxyPlotter` to plot the galaxy's image, just like how we used `LightProfilePlotter` for a light 
-profile.
-"""
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy, grid=grid)
-galaxy_plotter.set_title("Galaxy Bulge+Disk Image")
-galaxy_plotter.figures_2d(image=True)
-
-"""
-The bulge dominates the center of the image, and is pretty much the only luminous emission we see can see on a linear
-scale. The disk's emission is present, but it is much fainter and spread over a larger area.
-
-We can confirm this using the `subplot_of_light_profiles` method, which plots each individual light profile separately.
-"""
-galaxy_plotter.set_title("Galaxy Bulge+Disk Subplot")
-galaxy_plotter.subplot_of_light_profiles(image=True)
-
-"""
-Because galaxy light distributions often follow a log10 pattern, plotting in log10 space helps reveal details in the 
-outskirts of the light profile, in this case the emission of the disk.
-
-This is especially helpful to separate the bulge and disk profiles, which have different intensities and sizes.
-"""
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=galaxy, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
-)
-galaxy_plotter.set_title("Galaxy Bulge+Disk Image")
-galaxy_plotter.figures_2d(image=True)
-
-"""
-Using the tools above, we can visualize each light profile's contribution in 1D.
-
-1D plots show the intensity of the light profile as a function of distance from the profile’s center. The bulge
-and disk profiles share the same `centre`, meaning that plotting them together shows how they overlap. If the
-`centre` of the profiles were different, they would still be plotted on top of each other, but as a user you
-would need to remember that the profiles are not aligned in 2D.
-"""
-grid_2d_projected = grid.grid_2d_radial_projected_from(
-    centre=galaxy.bulge.centre, angle=galaxy.bulge.angle()
-)
-bulge_image_1d = galaxy.bulge.image_2d_from(grid=grid_2d_projected)
-
-grid_2d_projected = grid.grid_2d_radial_projected_from(
-    centre=galaxy.disk.centre, angle=galaxy.disk.angle()
-)
-disk_image_1d = galaxy.disk.image_2d_from(grid=grid_2d_projected)
-
-plt.plot(grid_2d_projected[:, 1], bulge_image_1d, label="Bulge")
-plt.plot(grid_2d_projected[:, 1], disk_image_1d, label="Disk")
-plt.xlabel("Radius (arcseconds)")
-plt.ylabel("Luminosity")
-plt.legend()
-plt.show()
-plt.close()
-
-"""
-We can group multiple galaxies at the same redshift into a `Galaxies` object, which is created from a list of 
-individual galaxies.
-
-We create an additional galaxy and combine it with the original galaxy into a `Galaxies` object. This could
-represent two galaxies merging or interacting with each other, which is commonly seen in studies of galaxy evolution.
-"""
-extra_galaxy = al.Galaxy(
-    redshift=0.5,
-    bulge=al.lp.Sersic(
-        centre=(0.2, 0.3),
-        ell_comps=(0.0, 0.111111),
-        intensity=1.0,
-        effective_radius=1.0,
-        sersic_index=2.5,
-    ),
-)
-
-galaxies = al.Galaxies(galaxies=[galaxy, extra_galaxy])
-
-"""
-The `Galaxies` object has similar methods as those for light profiles and individual galaxies.
-
-For example, `image_2d_from` sums the images of all the galaxies.
-"""
-image = galaxies.image_2d_from(grid=grid)
-
-"""
-We can plot the combined image using a `GalaxiesPlotter`, just like with other plotters.
-"""
-galaxies_plotter = aplt.GalaxiesPlotter(galaxies=galaxies, grid=grid)
-galaxies_plotter.figures_2d(image=True)
-
-"""
-A subplot of each individual galaxy image can also be created.
-"""
-galaxies_plotter.subplot_galaxy_images()
-
-"""
-Because galaxy light distributions often follow a log10 pattern, plotting in log10 space helps reveal details in the 
-outskirts of the light profile.
-
-This is especially helpful when visualizing how multiple galaxies overlap.
-"""
-galaxies_plotter = aplt.GalaxiesPlotter(
-    galaxies=galaxies, grid=grid, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
-)
-galaxies_plotter.figures_2d(image=True)
-
-"""
-__Unit Conversion__
-
-Earlier, we mentioned that a galaxy’s `redshift` allows us to convert between arcseconds and kiloparsecs.
-
-A redshift measures how much a galaxy's light is stretched by the Universe's expansion. A higher redshift means the 
-galaxy is further away, and its light has been stretched more. By knowing a galaxy’s redshift, we can convert angular 
-distances (like arcseconds) to physical distances (like kiloparsecs).
-
-To perform this conversion, we use a cosmological model that describes the Universe's expansion. Below, we use 
-the `Planck15` cosmology, which is based on observations from the Planck satellite.
-"""
-cosmology = al.cosmo.Planck15()
-
-kpc_per_arcsec = cosmology.kpc_per_arcsec_from(redshift=galaxy.redshift)
-
-print("Kiloparsecs per Arcsecond:")
-print(kpc_per_arcsec)
-
-
-"""
-This `kpc_per_arcsec` can be used as a conversion factor between arcseconds and kiloparsecs when plotting images of
-galaxies.
-
-We compute this value and plot the image in converted units of kiloparsecs.
-
-This passes the plotting modules `Units` object a `ticks_convert_factor` and manually specified the new units of the
-plot ticks.
-"""
-units = aplt.Units(ticks_convert_factor=kpc_per_arcsec, ticks_label=" kpc")
-
-mat_plot = aplt.MatPlot2D(units=units)
-
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=galaxy, grid=grid, mat_plot_2d=mat_plot)
-galaxy_plotter.figures_2d(image=True)
-
-"""
-__Wrap Up__
-
-You've learnt the basic quantities used to study galaxy morphology. 
-
-Lets summarise what we've learnt:
-
-- **Grids**: We've learnt that a grid is a set of 2D coordinates that represent the positions where we measure the
-light of a galaxy. 
-
-- **Geometry**: We've learnt how to shift, rotate, and convert grids to elliptical coordinates.
-
-- **Light Profiles**: We've learnt that light profiles are mathematical functions that describe how a galaxy's light is
-distributed in space. We've used the `Sersic` profile to create images of galaxies.
-
-- **Galaxies**: We've learnt that galaxies are collections of light profiles that represent a galaxy's light. We've
-created galaxies with multiple light profiles and visualized their images.
-
-- **Unit Conversion**: We've learnt that by assuming redshifts for galaxies we can convert their quantities from
-arcseconds to kiloparsecs.
-
-__Advanced Topics__
-
-The following advanced topics are not important for a new user learning the software for the first time. However,
-once you are an expert user, the following guides and concepts are important for doing accurate galaxy morphology
-analysis, and thus may be things you want to commit to memory as future references.
-
-__Other Unit Conversion__
-
-Above, we used a redshift to convert between arcseconds and kiloparsecs. This is just one example of a unit conversion
-that can be performed using a galaxy's redshift.
-
-There are many other unit conversions that can be performed, such as converting the units of a galaxy's image from
-to what Astronomers call an AB magnitude system, which is a system used to measure the brightness of galaxies.
-
-The `autolens_workspace/*/guides/units` module contains many examples of unit conversions and how to use them,
-but they will not be covered in the *HowToLens* tutorials.
-
-__Over Sampling__
-
-Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated 
-on a higher resolution grid than the image data to ensure the calculation is accurate. 
-
-For a new user, the details of over-sampling are not important, therefore just be aware that all calculations use an
-adaptive over sampling scheme which high accuracy across all use cases.
-
-Once you are more experienced, you should read up on over-sampling in more detail via 
-the `autolens_workspace/*/guides/over_sampling.ipynb` notebook.
 """

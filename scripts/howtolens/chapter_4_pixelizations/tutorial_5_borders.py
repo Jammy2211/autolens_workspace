@@ -41,15 +41,14 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Borders__
 
 So, what is a border? In the image-plane, a border is the set of exterior pixels in a mask that are at its border.
 
-Lets plot the image with a circular circular and tell our `ImagingPlotter` to plot the border.
+Lets plot the image with a circular circular and tell our `aplt.subplot_imaging_dataset` to plot the border.
 """
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
@@ -60,10 +59,8 @@ dataset = dataset.apply_mask(mask=mask_circular)
 
 border = mask_circular.derive_grid.border
 
-visuals = aplt.Visuals2D(border=border)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 As you can see, for a circular mask the border *is* the edge of the mask (the ring of black dots we're used to 
@@ -83,11 +80,9 @@ dataset = dataset.apply_mask(mask=mask_annular)
 
 border = mask_annular.derive_grid.border
 
-visuals = aplt.Visuals2D(border=border)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
 
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 A border is therefore *only* the pixels at the exterior edge of a mask
@@ -139,10 +134,8 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 )
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
-visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 Everything looks fine, we get a reconstructed source on a visually appeasing source-plane grid. So, why are we so 
@@ -156,10 +149,8 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 )
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
-visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
-inversion_plotter = aplt.InversionPlotter(inversion=fit.inversion, visuals_2d=visuals)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 Woah, whats happened? There are lots of additional $(y,x)$ coordinates in the source-plane grid, some of which trace 
@@ -171,15 +162,7 @@ Lets quickly check this by plotting the indexes of these image-pixels.
 """
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    indexes=[986, 987, 988, 989, 990, 991],
-    grid=mapper.source_plane_data_grid,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=fit.inversion.linear_obj_list[0],
-    visuals_2d=visuals,
-)
 
 mapper_plotter.figure_2d()
 
@@ -191,8 +174,6 @@ Towards the centre of th elliptical isothermal mass profile, the density begins 
 extremely steep or 'cuspy'. This cuspy behaviour towards its centre can cause extremely large deflection angles to be 
 calculated:
 """
-tracer_plotter = aplt.TracerPlotter(tracer=fit.tracer, grid=fit.grids.pixelization)
-tracer_plotter.figures_2d(deflections_y=True, deflections_x=True)
 
 """
 Central image pixel can therefore be subjected to 'demagnification', whereby they trace to extremely large values in 
@@ -229,11 +210,9 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 )
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
-visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 This second point is a *huge* problem and it can introduce extremely dangerous systematics into our source 
@@ -251,20 +230,10 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 )
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
-visuals = aplt.Visuals2D(grid=mapper.source_plane_data_grid)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-    indexes=[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]],
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=fit.inversion.linear_obj_list[0],
-    visuals_2d=visuals,
-)
 mapper_plotter.figure_2d()
 
 """
@@ -310,10 +279,8 @@ dataset = dataset.apply_mask(mask=mask_circular)
 
 border = mask_circular.derive_grid.border
 
-visuals = aplt.Visuals2D(border=border)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We need to redefine our perform fit function, to use the x2 lens galaxy model.
@@ -375,13 +342,8 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 However, when we relocate them, we get a good-looking source-plane with a well defined border and edge, thus ensuring 
@@ -400,12 +362,7 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 Multi-galaxy modeling is rife for border effects and if you have multiple lens galaxies I heartily recommend you pay 
@@ -442,14 +399,9 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
@@ -469,14 +421,9 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 
 dataset = al.Imaging.from_fits(
@@ -503,14 +450,9 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 
 dataset = al.Imaging.from_fits(
@@ -538,14 +480,9 @@ border = mapper.source_plane_data_grid.over_sampled[
     dataset.grids.border_relocator.sub_border_slim
 ]
 
-visuals = aplt.Visuals2D(
-    border=border,
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
 
-fit_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
 
 """
 __Wrap Up__

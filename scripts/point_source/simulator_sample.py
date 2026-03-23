@@ -156,8 +156,7 @@ for sample_index in range(total_datasets):
     """
     tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-    tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-    tracer_plotter.figures_2d(image=True)
+    aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
     """
     __Positions__
@@ -222,8 +221,7 @@ for sample_index in range(total_datasets):
     """
     dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
     """
     __Output__
@@ -244,17 +242,13 @@ for sample_index in range(total_datasets):
 
     Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
     """
-    mat_plot = aplt.MatPlot2D(
-        output=aplt.Output(path=dataset_sample_path, format="png")
     )
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-    dataset_plotter.subplot_dataset()
-    dataset_plotter.figures_2d(data=True)
+    aplt.subplot_imaging_dataset(dataset=dataset)
+    aplt.plot_array(array=dataset.data, title="Data")
 
-    tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-    tracer_plotter.subplot_tracer()
-    tracer_plotter.subplot_galaxies_images()
+    aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_sample_path, output_format="png")
+    aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_sample_path, output_format="png")
 
     """
     __Tracer json__

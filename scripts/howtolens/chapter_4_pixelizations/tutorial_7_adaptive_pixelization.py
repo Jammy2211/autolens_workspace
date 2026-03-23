@@ -47,10 +47,7 @@ mask = al.Mask2D.circular(
     radius=3.0,
 )
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 The lines of code below do everything we're used to, that is, setup an image, mask it, trace it via a tracer, 
@@ -83,9 +80,8 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 __Advantages and Disadvatanges__
@@ -100,12 +96,8 @@ So what is wrong with the grid? Well, lets think about the source reconstruction
 """
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 There is one clear problem, we are using only a small number of the total source pixels to reconstruct the source. The 
@@ -144,10 +136,8 @@ image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(mask=dataset.mask)
 """
 We can plot this grid over the image, to see that it is a coarse grid of (y,x) coordinates laid ove the image.
 """
-visuals = aplt.Visuals2D(grid=image_plane_mesh_grid, mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Data")
 
 """
 By passing a `Tracer` a source galaxy with the image-mesh and a `Delaunay` mesh object, contained in 
@@ -175,13 +165,8 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer, adapt_images=adapt_images)
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 A closer inspection of the pixelization shows the improvement. 
@@ -189,8 +174,7 @@ A closer inspection of the pixelization shows the improvement.
 We are using fewer pixels than the rectangular grid (400, instead of 1600) and reconstructing the source is far 
 greater detail!
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit, visuals_2d=visuals)
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 __Regularization__

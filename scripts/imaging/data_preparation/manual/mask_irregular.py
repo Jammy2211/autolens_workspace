@@ -64,13 +64,13 @@ blurring_gaussian = al.Convolver.from_gaussian(
 Blur the image with this Gaussian smoothing kernel and plot the resulting image.
 """
 blurred_image = blurring_gaussian.convolved_image_from(image=data, blurring_image=None)
-aplt.Array2DPlotter(array=blurred_image)
+aplt.plot_array(array=blurred_image, title="")
 
 """
 Now compute the absolute signal-to-noise map of this blurred image, given the noise-map of the observed dataset.
 """
 blurred_signal_to_noise_map = blurred_image / noise_map
-aplt.Array2DPlotter(array=blurred_signal_to_noise_map)
+aplt.plot_array(array=blurred_signal_to_noise_map, title="")
 
 """
 Now create the mask in 2ll pixels where the signal to noise is above some threshold value.
@@ -78,9 +78,7 @@ Now create the mask in 2ll pixels where the signal to noise is above some thresh
 mask = np.where(blurred_signal_to_noise_map.native > snr_cut, False, True)
 mask = al.Mask2D(mask=mask, pixel_scales=data.pixel_scales)
 
-visuals = aplt.Visuals2D(mask=mask)
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Now we`re happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits

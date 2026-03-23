@@ -104,12 +104,8 @@ We now have the `Result` object we will cover in this script.
 As a reminder, in the `modeling` scripts we use the `max_log_likelihood_tracer` and `max_log_likelihood_fit` to plot 
 the results of the fit.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false
-)
-tracer_plotter.subplot_tracer()
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false)
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 Results tutorials `tracer.py` and `fit.py` expand on the `max_log_likelihood_tracer` and `max_log_likelihood_fit`, 
@@ -212,10 +208,7 @@ print(mask.derive_grid.all_false)
 fit = al.FitImaging(dataset=dataset, tracer=max_lh_tracer)
 max_lh_tracer = fit.tracer_linear_light_profiles_to_light_profiles
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=max_lh_tracer, grid=mask.derive_grid.all_false
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=max_lh_tracer, grid=mask.derive_grid.all_false)
 
 """
 __Posterior / PDF__

@@ -195,8 +195,7 @@ Lets look at the tracer`s image, this is the image we'll be simulating.
 Close inspection of the images shows they are slightly offset by half a pixel from one another.
 """
 for tracer, grid in zip(tracer_list, grid_list):
-    tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-    tracer_plotter.figures_2d(image=True)
+    aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 Pass the simulator a tracer, which creates the image which is simulated as an imaging dataset.
@@ -210,8 +209,7 @@ dataset_list = [
 Plot the simulated `Imaging` dataset before outputting it to fits.
 """
 for dataset in dataset_list:
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Output__
@@ -232,31 +230,19 @@ __Visualize__
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
 for waveband, dataset in zip(waveband_list, dataset_list):
-    mat_plot = aplt.MatPlot2D(
-        output=aplt.Output(path=dataset_path, prefix=f"{waveband}_", format="png")
     )
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-    dataset_plotter.subplot_dataset()
-    dataset_plotter.figures_2d(data=True)
+    aplt.subplot_imaging_dataset(dataset=dataset)
+    aplt.plot_array(array=dataset.data, title="Data")
 
 for waveband, grid, tracer in zip(waveband_list, grid_list, tracer_list):
-    mat_plot = aplt.MatPlot2D(
-        output=aplt.Output(path=dataset_path, prefix=f"{waveband}_", format="png")
     )
 
-    tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-    tracer_plotter.subplot_tracer()
-    tracer_plotter.subplot_galaxies_images()
+    aplt.subplot_tracer(tracer=tracer, grid=grid)
+    aplt.subplot_galaxies_images(tracer=tracer, grid=grid)
 
-    mat_plot = aplt.MatPlot2D(
-        title=aplt.Title(label=f"Lens and Source {waveband}-band Images"),
-        output=aplt.Output(
-            path=dataset_path, filename=f"{waveband}_tracer_image", format="png"
-        ),
-    )
 
-    tracer_plotter.figures_2d(image=True)
+    aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Tracer json__

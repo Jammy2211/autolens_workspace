@@ -118,7 +118,7 @@ print(log_evidence_difference_dict)
 """
 From these, we can create the maximum likelihood instances of the lens model and corresponding `FitImaging` objects.
 
-These can then be passed to the `SubhaloPlotter` to visualize the results of the subhalo detection.
+These can then be passed to the `aplt.subplot_detection_imaging` to visualize the results of the subhalo detection.
 """
 fit_agg_no_subhalo = al.agg.FitImagingAgg(aggregator=agg_no_subhalo)
 fit_no_subhalo_gen = fit_agg_no_subhalo.max_log_likelihood_gen_from()
@@ -128,12 +128,8 @@ fit_agg_with_subhalo = al.agg.FitImagingAgg(aggregator=agg_with_subhalo)
 fit_with_subhalo_gen = fit_agg_with_subhalo.max_log_likelihood_gen_from()
 fit_with_subhalo = list(fit_with_subhalo_gen)[0]
 
-subhalo_plotter = al.subhalo.SubhaloPlotter(
-    fit_imaging_no_subhalo=fit_no_subhalo[0],
-    fit_imaging_with_subhalo=fit_with_subhalo[0],
-)
 
-subhalo_plotter.subplot_detection_fits()
+aplt.subplot_detection_fits(fit_imaging_no_subhalo=fit_no_subhalo, fit_imaging_with_subhalo=fit_imaging_with_subhalo)
 
 """
 __Grid Searches__
@@ -198,21 +194,10 @@ for agg_grid, fit_no_subhalo, fit_with_subhalo, samples_no_subhalo in zip(
         result=result_subhalo_grid_search
     )
 
-    subhalo_plotter = al.subhalo.SubhaloPlotter(
-        result=result_subhalo_grid_search,
-        fit_imaging_no_subhalo=fit_no_subhalo[0],
-        fit_imaging_with_subhalo=fit_with_subhalo[0],
-    )
 
-    subhalo_plotter.figure_figures_of_merit_grid(
-        use_log_evidences=True,
-        relative_to_value=samples.log_evidence,
-        remove_zeros=True,
-    )
 
-    subhalo_plotter.figure_mass_grid()
-    subhalo_plotter.subplot_detection_imaging()
-    subhalo_plotter.subplot_detection_fits()
+    aplt.subplot_detection_imaging(result=result_subhalo_grid_search, fit_imaging_with_subhalo=fit_imaging_with_subhalo)
+    aplt.subplot_detection_fits(fit_imaging_no_subhalo=fit_no_subhalo, fit_imaging_with_subhalo=fit_imaging_with_subhalo)
 
 
 """
@@ -238,5 +223,4 @@ for fit_list in fit_gen:
     # Only one `Analysis` so take first and only dataset.
     fit = fit_list[0]
 
-    fit_plotter = aplt.FitImagingPlotter(fit=fit)
-    fit_plotter.subplot_fit()
+    aplt.subplot_fit_imaging(fit=fit)

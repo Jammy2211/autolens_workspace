@@ -116,8 +116,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Centres__
@@ -132,14 +131,8 @@ extra_galaxies_centre_list = [(3.5, 2.5), (-4.4, -5.0)]
 """
 We can plot the centres over the strong lens dataset to check that they look like reasonable values.
 """
-visuals = aplt.Visuals2D(
-    light_profile_centres=al.Grid2DIrregular(values=extra_galaxies_centre_list)
-)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=visuals, mat_plot_2d=aplt.MatPlot2D(output=output)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Luminosities__

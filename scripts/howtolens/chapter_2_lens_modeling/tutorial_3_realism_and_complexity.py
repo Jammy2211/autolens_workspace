@@ -73,10 +73,7 @@ dataset = dataset.apply_mask(mask=mask)
 """
 When plotted, the lens light`s is clearly visible in the centre of the image.
 """
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model__
@@ -148,8 +145,7 @@ print(result.info)
 """
 And lets look at how well the model fits the imaging data, which as we are used to fits the data brilliantly!
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 __Global and Local Maxima__
@@ -212,8 +208,7 @@ print(result_local_maxima.info)
 """
 Lats look at the fit to the `Imaging` data, which is clearly worse than our original fit above.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result_local_maxima.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_local_maxima.max_log_likelihood_fit)
 
 """
 Finally, just to be sure we hit a local maxima, lets compare the maximum log likelihood values of the two results 

@@ -15,7 +15,7 @@ These data structures use the `slim` and `native` data representations API to ma
 
 __Plot Module__
 
-This example uses the plot module to plot the results, including `Plotter` objects that make
+This example uses the plot module to plot the results, including plotting function objects that make
 the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
 
 The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
@@ -114,10 +114,8 @@ First, lets make a uniform 100 x 100 grid of (y,x) coordinates and plot it.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-mat_plot = aplt.MatPlot2D(title=aplt.Title(label="Uniform 100 x 100 Grid2D"))
 
-grid_plotter = aplt.Grid2DPlotter(grid=grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=grid, title="")
 
 """
 __Native__

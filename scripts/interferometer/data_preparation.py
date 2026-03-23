@@ -56,8 +56,7 @@ Lets inspect an image which conforms to **PyAutoLens** standards:
 """
 visibilities = al.Visibilities.from_fits(file_path=dataset_path / "data.fits", hdu=0)
 
-array_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-array_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 """
 These visibilities conforms to **PyAutoLens** standards, because they come from a standard CASA data reduction
@@ -77,8 +76,7 @@ visibilities = al.VisibilitiesNoiseMap.from_fits(
     file_path=dataset_path / "noise_map.fits", hdu=0
 )
 
-array_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-array_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 """
 __UV Wavelengths__
@@ -95,8 +93,7 @@ uv_wavelengths = al.Grid2DIrregular.from_yx_1d(
     x=uv_wavelengths[:, 0] / 10**3.0,
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=uv_wavelengths)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=uv_wavelengths, title="")
 
 """
 These uv wavelengths conform to **PyAutoLens** standards, because they come from a standard CASA data reduction

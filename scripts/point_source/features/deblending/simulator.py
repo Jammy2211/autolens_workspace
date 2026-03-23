@@ -156,23 +156,15 @@ __Visualize (Point Source)__
 Visualize the `PointDataset` using identical code to the `start_here.ipynb` example.
 """
 mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
-mat_plot_2d = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-point_dataset_plotter = aplt.PointDatasetPlotter(
-    dataset=dataset, mat_plot_1d=mat_plot_1d, mat_plot_2d=mat_plot_2d
-)
 point_dataset_plotter.subplot_dataset()
 
 """
 Output subplots of the tracer's images, including the positions of the multiple images on the image.
 """
-visuals = aplt.Visuals2D(multiple_images=positions)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=tracer, grid=grid, mat_plot_2d=mat_plot_2d, visuals_2d=visuals
-)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 __Tracer json (Point Source)__
@@ -292,8 +284,7 @@ dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 """
 Plot the simulated `Imaging` dataset before outputting it to fits.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Output__
@@ -313,28 +304,18 @@ __Output__
 We now output the image of this strong lens to `.fits` which can be used for visualize when performing point-source 
 modeling and to `.png` for general inspection.
 """
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, mat_plot_2d=mat_plot)
-dataset_plotter.set_filename(filename="subplot_imaging")
-dataset_plotter.subplot_dataset()  #
-dataset_plotter.set_filename(filename="data")
-dataset_plotter.figures_2d(data=True)
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.plot_array(array=dataset.data, title="Data")
 
-visuals = aplt.Visuals2D(multiple_images=positions)
 
-mat_plot = aplt.MatPlot2D(
-    output=aplt.Output(path=dataset_path, filename="data", format="fits")
 )
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image", output_path=dataset_path, output_format="png")
 
-mat_plot = aplt.MatPlot2D(output=aplt.Output(path=dataset_path, format="png"))
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
 """
 __Tracer json__

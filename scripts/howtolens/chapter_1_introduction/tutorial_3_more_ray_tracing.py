@@ -106,15 +106,7 @@ tangential_critical_curve_list = mass_profile.tangential_critical_curve_list_fro
 )
 radial_critical_curves_list = mass_profile.radial_critical_curve_list_from(grid=grid)
 
-visuals = aplt.Visuals2D(
-    tangential_critical_curves=tangential_critical_curve_list,
-    radial_critical_curves=radial_critical_curves_list,
-)
 
-galaxies_plotter = aplt.GalaxiesPlotter(
-    galaxies=al.Galaxies(galaxies=[lens]), grid=grid, visuals_2d=visuals
-)
-galaxies_plotter.figures_2d(convergence=True)
 
 """
 __Caustics__
@@ -131,7 +123,7 @@ We again have to use a mass profile with a slope below 2.0 to ensure a radial cr
 caustic is formed. As above, the tangential critical curve is white and maps to the tangential caustic in the source-plane,
 which is also white. The radial critical curve is yellow and maps to the radial caustic, which is also yellow.
 
-We can plot both the tangential and radial critical curves and caustics using the `Visuals2D` object. The 
+We can plot both the tangential and radial critical curves and caustics using the `lines=`/`positions=` overlays object. The 
 critical curves are plotted only for the image-plane grid, whereas the caustic in the source plane.
 """
 sis_mass_profile = al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=1.6)
@@ -141,30 +133,20 @@ tracer = al.Tracer(galaxies=[lens, source])
 tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
 radial_critical_curves_list = tracer.radial_critical_curve_list_from(grid=grid)
 
-visuals = aplt.Visuals2D(
-    tangential_critical_curves=tangential_critical_curve_list,
-    radial_critical_curves=radial_critical_curves_list,
-)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, visuals_2d=visuals)
 
-tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=0)
-tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=1)
+aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[0], title="Plane 0 Grid")
+aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[1], title="Plane 1 Grid")
 
 tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
 radial_caustics_list = tracer.radial_caustic_list_from(grid=grid)
 
-visuals = aplt.Visuals2D(
-    tangential_caustics=tangential_caustic_list,
-    radial_caustics=radial_caustics_list,
-)
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, visuals_2d=visuals)
 
 """
 We can also plot the caustic on the source-plane image.
 """
-tracer_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=tracer.image_2d_list_from(grid=grid)[1], title="Plane 1 Image")
 
 """
 Caustics also mark the regions in the source-plane where the multiplicity of the strong lens changes. That is,
@@ -183,8 +165,7 @@ source = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens, source])
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d_of_planes(plane_index=1, plane_image=True)
+aplt.plot_array(array=tracer.image_2d_list_from(grid=grid)[1], title="Plane 1 Image")
 
 """
 __Units__
@@ -194,11 +175,9 @@ to set `in_kpc=True` and therefore plot the y and x axes in kiloparsecs.
 
 This conversion is performed automatically, using the galaxy redshifts and cosmology.
 """
-mat_plot = aplt.MatPlot2D(units=aplt.Units(in_kpc=True))
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.subplot_tracer()
-tracer_plotter.subplot_galaxies_images()
+aplt.subplot_tracer(tracer=tracer, grid=grid)
+aplt.subplot_galaxies_images(tracer=tracer, grid=grid)
 
 """
 If you're too familiar with Cosmology, it will be unclear how exactly we converted the distance units from 
@@ -277,43 +256,19 @@ print(lens_satellite)
 """
 Lets have a quick look at the appearance of our lens galaxy and its satellite.
 """
-mat_plot = aplt.MatPlot2D(title=aplt.Title(label="Lens Galaxy"))
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens, grid=grid, mat_plot_2d=mat_plot)
-galaxy_plotter.figures_2d(image=True)
 
-mat_plot = aplt.MatPlot2D(title=aplt.Title(label="Lens Satellite"))
 
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=lens_satellite, grid=grid, mat_plot_2d=mat_plot
-)
-galaxy_plotter.figures_2d(image=True)
 
 """
 And their deflection angles, noting that the satellite does not contribute as much to the deflections.
 """
-mat_plot = aplt.MatPlot2D(title=aplt.Title(label="Lens Galaxy Deflections (y)"))
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens, grid=grid, mat_plot_2d=mat_plot)
-galaxy_plotter.figures_2d(deflections_y=True)
 
-# NOTE: It would be annoying to have to reset the title for every plot using the following code:
+# NOTE: In the new API, pass title directly as a string:
+# title="Lens Galaxy Deflections (x)"
 
-# mat_plot = aplt.MatPlot2D(
-#     title=aplt.Title(label="Lens Galalxy Deflections (x)")
-# )
-# galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens, grid=grid, mat_plot_2d=mat_plot)
 
-# We can set the title more conveniently as follows:
-
-galaxy_plotter.set_title("Lens Galalxy Deflections (x)")
-galaxy_plotter.figures_2d(deflections_x=True)
-
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_satellite, grid=grid)
-galaxy_plotter.set_title("Lens Satellite Deflections (y)")
-galaxy_plotter.figures_2d(deflections_y=True)
-galaxy_plotter.set_title("Lens Satellite Deflections (x)")
-galaxy_plotter.figures_2d(deflections_x=True)
 
 """
 Now, lets make two source galaxies at redshift 1.0. Instead of using the name `light` for the light profiles, lets 
@@ -349,13 +304,7 @@ print(source_1)
 """
 Lets look at our source galaxies (before lensing)
 """
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=source_0, grid=grid, mat_plot_2d=mat_plot)
-galaxy_plotter.set_title("Source Galaxy 0")
-galaxy_plotter.figures_2d(image=True)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=source_1, grid=grid)
-galaxy_plotter.set_title("Source Galaxy 1")
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Multi Galaxy Ray Tracing__
@@ -390,24 +339,18 @@ We can now plot the tracer`s image, which now there are two galaxies in each pla
 This process is pretty much the same as we have single in previous tutorials when there is one galaxy per plane. We
 are simply summing the images and deflection angles of the galaxies before using them to perform ray-tracing.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.set_title("Image")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 As we did previously, we can plot the source plane grid to see how each coordinate was traced. 
 """
-tracer_plotter.set_title("Source-plane Grid2D")
-tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=1)
+aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[1], title="Plane 1 Grid")
 
 """
 We can zoom in on the source-plane to reveal the inner structure of the caustic.
 """
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-0.2, 0.2, -0.2, 0.2]))
 
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid, mat_plot_2d=mat_plot)
-tracer_plotter.set_title("Source-plane Grid2D")
-tracer_plotter.figures_2d_of_planes(plane_grid=True, plane_index=1)
+aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[1], title="Plane 1 Grid")
 
 """
 __Wrap Up__

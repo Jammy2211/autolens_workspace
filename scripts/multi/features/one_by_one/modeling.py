@@ -100,8 +100,7 @@ dataset_list = [
 ]
 
 for dataset in dataset_list:
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -127,8 +126,7 @@ dataset_list = [
 ]
 
 for dataset in dataset_list:
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Analysis__
@@ -207,13 +205,9 @@ print(result.max_log_likelihood_instance)
 """
 Plotting the result's tracer shows the source,
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=result.grids.lp
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 __Second Dataset Mass Model Fixed__

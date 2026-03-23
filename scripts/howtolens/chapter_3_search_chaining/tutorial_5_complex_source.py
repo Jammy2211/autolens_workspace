@@ -55,10 +55,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Paths__
@@ -290,9 +287,8 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 true_fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=true_fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=true_fit)
+aplt.subplot_fit_imaging_of_planes(fit=true_fit)
 
 """
 And indeed, we see an improved residual-map, chi-squared-map, and so forth.

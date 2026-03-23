@@ -72,13 +72,9 @@ a fast way to visualize the result.
 
 It also contains the maximum log likelihood tracer.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=mask.derive_grid.all_false)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 __Samples__

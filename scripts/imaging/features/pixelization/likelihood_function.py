@@ -66,10 +66,9 @@ dataset = al.Imaging.from_fits(
 """
 I will use in-built visualization tools for plotting. 
 
-For example, using the `ImagingPlotter` I can plot the imaging dataset we performed a likelihood evaluation on.
+For example, using the `aplt.subplot_imaging_dataset` I can plot the imaging dataset we performed a likelihood evaluation on.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -92,8 +91,7 @@ masked_dataset = dataset.apply_mask(mask=mask)
 """
 When we plot the masked imaging, only the circular masked region is shown.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=masked_dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=masked_dataset)
 
 """
 __Over Sampling__
@@ -126,8 +124,7 @@ does not).
 Each (y,x) coordinate coordinates to the centre of each image-pixel in the dataset, meaning that when this grid is
 used to construct a pixelization there is a straight forward mapping between the image data and pixelization pixels.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=masked_dataset.grids.pixelization)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=masked_dataset.grids.pixelization, title="")
 
 """
 __Mesh Shape__
@@ -200,8 +197,6 @@ This computes the `image` of each `LightProfile` and adds them together.
 """
 image = lens_galaxy.image_2d_from(grid=masked_dataset.grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=masked_dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 To convolve the lens's 2D image with the imaging data's PSF, we need its `blurring_image`. This represents all flux 
@@ -212,10 +207,6 @@ actual mask whose light blurs into the image:
 """
 blurring_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grids.blurring)
 
-galaxy_plotter = aplt.GalaxyPlotter(
-    galaxy=lens_galaxy, grid=masked_dataset.grids.blurring
-)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Lens Light Convolution + Subtraction__
@@ -226,16 +217,14 @@ convolved_image_2d = masked_dataset.psf.convolved_image_from(
     image=image, blurring_image=blurring_image_2d
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=convolved_image_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=convolved_image_2d, title="")
 
 """
 We can now subtract this image from the observed image to produce a `lens_subtracted_image`:
 """
 lens_subtracted_image = masked_dataset.data - convolved_image_2d
 
-array_2d_plotter = aplt.Array2DPlotter(array=lens_subtracted_image)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=lens_subtracted_image, title="")
 
 """
 __Ray Tracing__
@@ -269,10 +258,8 @@ traced_grid_pixelization = tracer.traced_grid_2d_list_from(
     grid=masked_dataset.grids.pixelization
 )[-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid_pixelization, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid_pixelization, title="")
 
 """
 __Border Relocation__
@@ -289,10 +276,8 @@ border_relocator = BorderRelocator(mask=masked_dataset.mask, sub_size=1)
 
 relocated_grid = border_relocator.relocated_grid_from(grid=traced_grid_pixelization)
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=relocated_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=relocated_grid, title="")
 
 """
 __Source Pixel Centre Calculation__
@@ -348,13 +333,8 @@ Plotting the RectangularUniform mesh shows that the source-plane and been discre
 Below, we plot the RectangularUniform mesh without the traced image-grid pixels (for clarity) and with them as black 
 dots in order to show how each set of image-pixels fall within a RectangularUniform pixel.
 """
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 mapper_plotter.figure_2d()
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-)
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.figure_2d()
 
 
@@ -387,12 +367,7 @@ This array can be used to visualize how an input list of image-pixel indexes map
 It also shows that image-pixel indexing begins from the top-left and goes rightwards and downwards, accounting for 
 all image-pixels which are not masked.
 """
-visuals = aplt.Visuals2D(indexes=[list(range(2050, 2090))])
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
 
 """
@@ -405,12 +380,7 @@ pix_indexes = [[200]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(indexes=indexes)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
 
@@ -505,8 +475,7 @@ print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=mapping_matrix[:, 200], mask=masked_dataset.mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 """
 __Blurred Mapping Matrix ($f$)__
@@ -547,8 +516,7 @@ print(indexes_source_pix_200[0])
 
 array_2d = al.Array2D(values=blurred_mapping_matrix[:, 200], mask=masked_dataset.mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 """
 In Warren & Dye 2003 (https://arxiv.org/abs/astro-ph/0302587) the `blurred_mapping_matrix` is denoted $f_{ij}$
@@ -650,15 +618,13 @@ array_2d = al.Array2D(
     values=blurred_mapping_matrix[:, source_pixel_0], mask=masked_dataset.mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 array_2d = al.Array2D(
     values=blurred_mapping_matrix[:, source_pixel_1], mask=masked_dataset.mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=array_2d)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=array_2d, title="")
 
 """
 The following chi-squared is minimized when we perform the inversion and reconstruct the source:
@@ -691,7 +657,6 @@ The source pixels have noisy and unsmooth values, and it is hard to make out if 
 In fact, the linear inversion is (over-)fitting noise in the image data, meaning this system of equations is 
 ill-posed. We need to apply some form of smoothing on the source reconstruction to avoid over fitting noise.
 """
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 
 mapper_plotter.figure_2d(solution_vector=reconstruction)
 
@@ -770,7 +735,6 @@ reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 By plotting this source reconstruction we can see that regularization has lead us to reconstruct a smoother source,
 which actually looks like a galaxy! This also implies we are not over-fitting the noise.
 """
-mapper_plotter = aplt.MapperPlotter(mapper=mapper)
 
 mapper_plotter.figure_2d(solution_vector=reconstruction)
 
@@ -790,8 +754,7 @@ mapped_reconstructed_operated_data = al.Array2D(
     values=mapped_reconstructed_operated_data, mask=mask
 )
 
-array_2d_plotter = aplt.Array2DPlotter(array=mapped_reconstructed_operated_data)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=mapped_reconstructed_operated_data, title="")
 
 """
 __Likelihood Function__
@@ -839,8 +802,7 @@ The `chi_squared_map` indicates which regions of the image we did and did not fi
 """
 chi_squared_map = al.Array2D(values=chi_squared_map, mask=mask)
 
-array_2d_plotter = aplt.Array2DPlotter(array=chi_squared_map)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=chi_squared_map, title="")
 
 
 """
@@ -943,8 +905,7 @@ fit = al.FitImaging(
 fit_log_evidence = fit.log_evidence
 print(fit_log_evidence)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 
 """

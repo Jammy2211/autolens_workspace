@@ -18,10 +18,10 @@ users.
 
 __Plotters__
 
-To produce images of the data `Plotter` objects are used, which are high-level wrappers of matplotlib
+To produce images of the data plotting function objects are used, which are high-level wrappers of matplotlib
 code which produce high quality visualization of strong lenses.
 
-The `PLotter` API is described in the script `autolens_workspace/*/guides/plot`.
+The plotting function API is described in the script `autolens_workspace/*/guides/plot`.
 
 __Simulation__
 
@@ -71,15 +71,14 @@ dataset = al.Imaging.from_fits(
 )
 
 """
-Use an `ImagingPlotter` the plot the data, including: 
+Use an `aplt.subplot_imaging_dataset` the plot the data, including: 
 
  - `data`: The image of the strong lens.
  - `noise_map`: The noise-map of the image, which quantifies the noise in every pixel as their RMS values.
  - `psf`: The point spread function of the image, which describes the blurring of the image by the telescope optics.
  - `signal_to_noise_map`: Quantifies the signal-to-noise in every pixel.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -105,8 +104,7 @@ lens and lensed source galaxies.
 The mask used to fit the data can be customized, as described in 
 the script `autolens_workspace/*/guides/modeling/customize`
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -143,8 +141,7 @@ values in the centre.
 Whilst you may not yet understand the details of over-sampling, you can at least track it visually in the plots
 and later learnt more about it in the `over_sampling.ipynb` guide.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model__
@@ -489,13 +486,9 @@ Checkout `autolens_workspace/*/guides/results` for a full description of analysi
 """
 print(result.max_log_likelihood_instance)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=result.grids.lp
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 It also contains information on the posterior as estimated by the non-linear search (in this example `Nautilus`). 

@@ -91,15 +91,12 @@ We first plot the mapper's pixelization, which is a grid of rectangular pixels i
 
 We plot this next to the image using the `subplot_image_and_mapper` method.
 """
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-)
 mapper_plotter.subplot_image_and_mapper(
     image=dataset.data,
 )
 
 """
-Using the `Visuals2D` object we are also going to highlight specific grid coordinates certain colors, such that we
+Using the `lines=`/`positions=` overlays object we are also going to highlight specific grid coordinates certain colors, such that we
 can see how they map from the image-plane to source-plane and visa versa.
 
 We do this by specifying their integer indexes, corresponding to the index of each data point in the image and source
@@ -111,14 +108,7 @@ indexes = [
     [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
 ]
 
-visuals = aplt.Visuals2D(
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 mapper_plotter.subplot_image_and_mapper(
     image=dataset.data,
 )
@@ -130,27 +120,11 @@ mapped pixels relate to the image and source-plane grids overall.
 This requires us to plot each image individually (e.g. not using `subplot_image_and_mapper`), so we can plot each
 grid via the visuals object and have them displayed clearly.
 """
-visuals = aplt.Visuals2D(
-    grid=mapper.image_plane_data_grid,
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.figure_2d_image(image=dataset.data)
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.figure_2d()
 
@@ -171,12 +145,7 @@ pix_indexes = [[312]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(indexes=indexes)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
@@ -190,14 +159,7 @@ pix_indexes = [[312, 318], [412]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
@@ -218,14 +180,7 @@ pix_indexes = [[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
@@ -240,8 +195,7 @@ mask = al.Mask2D.circular_annular(
 )
 
 dataset = dataset.apply_mask(mask=mask)
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Data")
 
 """
 To create the mapper, we need to set up the masked imaging's grid as the source-plane gird via the tracer.
@@ -263,25 +217,11 @@ mapper = al.Mapper(interpolator=interpolator)
 Lets plot it, including the image-plane grid and source-plane grid, which are now much smaller than before because
 the mask has removed the many image pixels at the edge of the image.
 """
-visuals = aplt.Visuals2D(
-    grid=mapper.image_plane_data_grid,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.figure_2d_image(image=dataset.data)
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.figure_2d()
 
@@ -299,14 +239,7 @@ pix_indexes = [[312], [314], [316], [318]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(
-    indexes=indexes,
-)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 

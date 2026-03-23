@@ -192,13 +192,9 @@ fit_flat = fit_with_Rectangular_from(
 
 mapper = fit_flat.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_flat, visuals_2d=visuals)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit_flat)
+aplt.subplot_fit_imaging_of_planes(fit=fit_flat)
 
 
 print(fit_flat.log_evidence)
@@ -215,13 +211,9 @@ fit_compact = fit_with_Rectangular_from(
 
 mapper = fit_compact.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_compact, visuals_2d=visuals)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit_compact)
+aplt.subplot_fit_imaging_of_planes(fit=fit_compact)
 
 print(fit_compact.log_evidence)
 
@@ -242,13 +234,9 @@ fit_super_compact = fit_with_Rectangular_from(
 
 mapper = fit_super_compact.inversion.cls_list_from(al.Mapper)[0]
 
-visuals = aplt.Visuals2D(
-    mesh_grid=mapper.source_plane_mesh_grid,
-)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit_super_compact, visuals_2d=visuals)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit_super_compact)
+aplt.subplot_fit_imaging_of_planes(fit=fit_super_compact)
 
 print(fit_super_compact.log_evidence)
 
@@ -287,15 +275,13 @@ whether it is reconstructing the bright central regions of the source or its fai
 
 To visualize this, we are going to plot the `regularization_weights`. 
 
-The `FitImagingPlotter` does not have a method that is able to plot this attribute of the `Inversion`. However, 
-the `FitImagingPlotter` has its own  `InversionPlotter` which we can use to make this plot. The benefit of using this 
-is that it inherits from the `FitImagingPlotter` properties like the caustics, so they appear on the figure (this 
-would not happen if we manually set up an `InversionPlotter` as we did in previous tutorials.
+The `aplt.subplot_fit_imaging` does not have a method that is able to plot this attribute of the `Inversion`. However, 
+the `aplt.subplot_fit_imaging` has its own  `aplt.plot_array` which we can use to make this plot. The benefit of using this 
+is that it inherits from the `aplt.subplot_fit_imaging` properties like the caustics, so they appear on the figure (this 
+would not happen if we manually set up an `aplt.plot_array` as we did in previous tutorials.
 """
 inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.figures_2d_of_pixelization(
-    pixelization_index=0, regularization_weights=True
-)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion")
 
 """
 As you can see, all pixels are regularized with our input regularization_coefficient value of 3.6.

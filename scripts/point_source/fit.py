@@ -76,8 +76,7 @@ We plot the image of our strongly lensed source galaxy.
 Clearly visible are four multiple images arranged in a cross configuration. The brightest pixels correspond to the 
 four (y, x) multiple image positions that our point source solver aims to identify.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer_extended, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer_extended.image_2d_from(grid=grid), title="Image")
 
 """
 __Point Source__
@@ -144,11 +143,7 @@ multiple images of strong lenses.
 """
 positions = solver.solve(tracer=tracer, source_plane_coordinate=(0.07, 0.07))
 
-grid_plotter = aplt.Grid2DPlotter(
-    grid=positions,
-    mat_plot_2d=aplt.MatPlot2D(grid_scatter=aplt.GridScatter(s=100, marker="*")),
-)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=positions, title="")
 
 """
 The plot above makes it difficult to directly compare the multiple image positions with the image of the strong lens itself.
@@ -156,12 +151,8 @@ The plot above makes it difficult to directly compare the multiple image positio
 To improve clarity, we overplot the multiple image positions on the strong lens image. This clearly shows that the 
 multiple images coincide with the centers of the brightest pixels of the lensed source galaxy.
 """
-visuals = aplt.Visuals2D(multiple_images=positions)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=tracer_extended, grid=grid, visuals_2d=visuals
-)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer_extended.image_2d_from(grid=grid), title="Image")
 
 """
 __Number of Solutions__
@@ -258,12 +249,8 @@ print(dataset.info)
 """
 The positions can be plotted over the observed image, to make sure they overlap with the multiple images we expect.
 """
-visuals = aplt.Visuals2D(positions=dataset.positions)
 
-tracer_plotter = aplt.TracerPlotter(
-    tracer=tracer_extended, grid=grid, visuals_2d=visuals
-)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer_extended.image_2d_from(grid=grid), title="Image")
 
 """
 __Name Pairing__

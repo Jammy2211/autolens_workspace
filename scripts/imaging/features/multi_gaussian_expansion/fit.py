@@ -123,8 +123,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -141,8 +140,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -157,8 +155,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     centre_list=[(0.0, 0.0)],
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Basis__
@@ -288,8 +285,7 @@ central residuals, which are due to the MGE not being a perfect fit to the lens 
 Given that there was no non-linear search to determine the optimal values of the Gaussians and the source galaxy
 was omitted entirely, this is a pretty good fit!
 """
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 """
 We can use the `BasisPlotter` to plot each individual Gaussian in the reconstructed basis.

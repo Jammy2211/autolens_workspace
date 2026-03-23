@@ -58,10 +58,7 @@ mask = al.Mask2D.circular_annular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 We can decrease the `inner_radius` to correct for this.
@@ -82,10 +79,7 @@ mask = al.Mask2D.circular_annular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Model + Analysis__
@@ -191,13 +185,11 @@ positions = al.Grid2DIrregular(
 )
 
 """
-To check the image-positions are accurate we can plot them using the `Visuals2D` object (they are the magenta dots on 
+To check the image-positions are accurate we can plot them using the `lines=`/`positions=` overlays object (they are the magenta dots on 
 the image).
 """
-visuals = aplt.Visuals2D(positions=positions)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 For the positions to be used in a model-fit, we create a `PositionsLH` object which we pass to 

@@ -63,12 +63,11 @@ dataset = al.Interferometer.from_fits(
 )
 
 """
-The `InterferometerPlotter` contains a subplot which plots all the key properties of the dataset simultaneously.
+The `aplt.subplot_interferometer_dataset` contains a subplot which plots all the key properties of the dataset simultaneously.
 
 This includes the observed visibility data, RMS noise map and other information.
 """
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 
 """
 Visibility data is in uv space, making it hard to interpret by eye.
@@ -126,8 +125,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 By plotting the image of the tracer, we confirm it looks identical to the simulated dataset but does not have
 CCD imaging features such as noise or blurring from a PSF.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Source Flux__

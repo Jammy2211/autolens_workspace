@@ -97,24 +97,13 @@ __Output__
 Now lets plot the image and positions,, so we can check that the positions overlap the brightest pixels in the
 lensed source.
 """
-visuals = aplt.Visuals2D(mass_profile_centres=positions)
 
-array_2d_plotter = aplt.Array2DPlotter(
-    array=data, visuals_2d=visuals, mat_plot_2d=aplt.MatPlot2D()
-)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Output this image of the positions to a .png file in the dataset folder for future reference.
 """
-array_2d_plotter = aplt.Array2DPlotter(
-    array=data,
-    visuals_2d=visuals,
-    mat_plot_2d=aplt.MatPlot2D(
-        output=aplt.Output(path=dataset_path, filename="positions", format="png")
-    ),
-)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Output the positions to a .json file in the dataset folder, so we can load them in modeling scripts.

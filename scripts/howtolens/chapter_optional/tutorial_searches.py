@@ -55,10 +55,7 @@ mask = al.Mask2D.circular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Nested Sampling__
@@ -138,8 +135,7 @@ result_slow = search.fit(model=model, analysis=analysis)
 """
 Lets check that we get a good model and fit to the data.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result_slow.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_slow.max_log_likelihood_fit)
 
 """
 We can use the result to tell us how many iterations Nautilus took to convergence on the solution.
@@ -172,8 +168,7 @@ print("Search has finished run - you may now continue the notebook.")
 """
 Lets check that this search, despite its faster sampling settings, still gives us the global maxima solution.
 """
-fit_plotter = aplt.FitImagingPlotter(fit=result_fast.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_fast.max_log_likelihood_fit)
 
 """
 And now lets confirm it uses significantly fewer iterations.
@@ -270,8 +265,7 @@ result_pso = search.fit(model=model, analysis=analysis)
 
 print("PySwarms has finished run - you may now continue the notebook.")
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_pso.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_pso.max_log_likelihood_fit)
 
 """
 In our experience, the parameter spaces fitted by lens models are too complex for `PySwarms` to be used without a lot
@@ -339,8 +333,7 @@ result_zeus = search.fit(model=model, analysis=analysis)
 
 print("Zeus has finished run - you may now continue the notebook.")
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_zeus.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_zeus.max_log_likelihood_fit)
 
 
 search = af.Emcee(
@@ -361,5 +354,4 @@ result_emcee = search.fit(model=model, analysis=analysis)
 
 print("The search has finished run - you may now continue the notebook.")
 
-fit_plotter = aplt.FitImagingPlotter(fit=result_emcee.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result_emcee.max_log_likelihood_fit)

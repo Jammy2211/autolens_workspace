@@ -1,21 +1,22 @@
 """
-Plots: MultiSubPlots
-====================
+Plots: Multi Subplots
+=====================
 
-This example illustrates how to plot different figures from different plotters on the same subplot, using the example
-of combining an `ImagingPlotter` and `FitImagingPlotter`.
+This example shows how to combine figures from different PyAutoLens objects onto a single
+matplotlib subplot.
 
-An example of when to use this plotter would be when a range of different figures are plotted on the same subplot,
-for example an image and its signal-to-nosie map, and the normalized residual-map of a fit to the image. This combined
-an `ImagingPLotter` and `FitImagingPlotter` and is the example used in this example script.
+In the old API, this was done using `open_subplot_figure()` / `close_subplot_figure()` methods
+on plotter objects. These methods no longer exist.
 
-The script `MultiFigurePlotter.py` illustrates a similar example, but plots the same figures from a single `Plotter`
-object on the same subplot. This script offers a more concise way of plotting the same figures on the same subplot, but
-does not have the flexibility of plotting different figures from different `Plotter` objects shown here.
+In the new API, we use matplotlib directly to create a subplot grid and call `aplt.plot_array()`
+or `aplt.subplot_*()` functions to fill each panel.
+
+The example below combines an imaging dataset's data and signal-to-noise map with a fit's
+normalized residual map and chi-squared map — the same combination shown in the old API example.
 
 __Start Here Notebook__
 
-If any code in this script is unclear, refer to the `plot/start_here.ipynb` notebook.
+If any code in this script is unclear, refer to `plot/start_here.ipynb`.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -26,6 +27,7 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
+import matplotlib.pyplot as plt
 from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
@@ -33,7 +35,7 @@ import autolens.plot as aplt
 """
 __Dataset__
 
-Load and plot the `lens_sersic` dataset, which we visualize in this example script.
+Load and mask the `lens_sersic` dataset.
 """
 dataset_name = "lens_sersic"
 dataset_path = Path("dataset") / "imaging" / dataset_name
@@ -45,11 +47,6 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-"""
-__Mask + Fit__
-
-We now mask the data and fit it with a `Tracer` to create a `FitImaging` object.
-"""
 mask_radius = 3.0
 
 mask = al.Mask2D.circular(
@@ -93,42 +90,45 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
 """
-We now pass the imaging to an `ImagingPlotter` and the fit to an `FitImagingPlotter`.
+__Multi Subplot__
+
+We create a 1x5 subplot using matplotlib, then fill each panel by calling `aplt.plot_array()`
+with `output_path` pointing to a temporary file and loading the result — or, more simply,
+by plotting each array into its own axes.
+
+The approach below uses matplotlib's `add_subplot` API directly. We set the current axes
+using `plt.sca()` before each call so that `aplt.plot_array()` draws into the correct panel.
+
+Note: `aplt.plot_array()` calls `plt.show()` or saves internally. For custom subplots,
+the simplest approach is to use `imshow()` directly on each matplotlib axes object.
 """
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
+arrays = [
+    (dataset.data, "Data"),
+    (dataset.signal_to_noise_map, "Signal-to-Noise Map"),
+    (fit.model_image, "Model Image"),
+    (fit.normalized_residual_map, "Normalized Residuals"),
+    (fit.chi_squared_map, "Chi-Squared Map"),
+]
+
+fig, axes = plt.subplots(1, 5, figsize=(18, 3))
+
+for ax, (array, title) in zip(axes, arrays):
+    im = ax.imshow(array.native, origin="upper", cmap="gray")
+    ax.set_title(title, fontsize=10)
+    ax.axis("off")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+plt.tight_layout()
+plt.savefig("subplot_multi.png", bbox_inches="tight")
+plt.show()
+plt.close()
 
 """
-We next pair the `MatPlot2D` objects of the two plotters, which ensures the figures plot on the same subplot.
-"""
-dataset_plotter.mat_plot_2d = fit_plotter.mat_plot_2d
+__Subplot with Dedicated subplot_* Functions__
 
+Alternatively, the dedicated `aplt.subplot_imaging_dataset()` and `aplt.subplot_fit_imaging()`
+functions produce complete multi-panel overviews automatically and are the preferred way to
+visualize these objects.
 """
-We next open the subplot figure, specifying: 
-
- - How many subplot figures will be on our image.
- - The shape of the subplot.
- - The figure size of the subplot. 
-"""
-dataset_plotter.open_subplot_figure(
-    number_subplots=5, subplot_shape=(1, 5), subplot_figsize=(18, 3)
-)
-
-"""
-We now call the `figures_2d` method of all the plots we want to be included on our subplot. These figures will appear
-sequencially in the subplot in the order we call them.
-"""
-dataset_plotter.figures_2d(data=True, signal_to_noise_map=True)
-fit_plotter.figures_2d(
-    model_image=True, normalized_residual_map=True, chi_squared_map=True
-)
-
-"""
-This outputs the figure, which in this example goes to your display as we did not specify a file format.
-"""
-dataset_plotter.mat_plot_2d.output.subplot_to_figure(auto_filename="subplot")
-
-"""
-Close the subplot figure, in case we were to make another subplot.
-"""
-dataset_plotter.close_subplot_figure()
+aplt.subplot_imaging_dataset(dataset=dataset)
+aplt.subplot_fit_imaging(fit=fit)

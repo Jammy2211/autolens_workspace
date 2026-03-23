@@ -138,8 +138,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()  # quick look at dirty image / PSF
 
 """
@@ -250,13 +249,8 @@ print(result.info)
 The result also contains the maximum likelihood lens model which can be used to plot the best-fit lensing information
 and fit to the data.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer,
-    grid=result.grids.lp,  # model evaluation grid
-)
-tracer_plotter.subplot_tracer()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=result.max_log_likelihood_fit)
 fit_plotter.subplot_fit()  # residuals, chi^2, dirty image, etc.
 
 """
@@ -331,8 +325,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 Plotting the tracer’s image gives us a “perfect” view of the strong lens system, before
 adding telescope effects.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 The image can be saved to .fits for later use.
@@ -372,9 +365,7 @@ simulator = al.SimulatorInterferometer(
 
 dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.figures_2d(dirty_image=True)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()
 
 # Save simulated visibilities/uv-wavelengths/noise to FITS (same format as real)
@@ -424,7 +415,6 @@ for sample_index in range(total_datasets):
 
     dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 
-    dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
     dataset_plotter.subplot_dirty_images()
 
 

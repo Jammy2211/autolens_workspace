@@ -107,7 +107,6 @@ dataset = al.PointDataset(
 print("Point Dataset Info:")
 print(dataset.info)
 
-dataset_plotter = aplt.PointDatasetPlotter(dataset=dataset)
 dataset_plotter.subplot_dataset()
 
 """
@@ -139,10 +138,8 @@ lensed source's multiple images.
 """
 data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.05)
 
-visuals = aplt.Visuals2D(positions=dataset.positions)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 __Point Solver__
@@ -291,13 +288,8 @@ print(result.info)
 The result also contains the maximum likelihood lens model which can be used to plot the best-fit lensing information
 and fit to the data.
 """
-tracer_plotter = aplt.TracerPlotter(
-    tracer=result.max_log_likelihood_tracer, grid=result.grid
-)
-tracer_plotter.subplot_tracer()
-
-fit_plotter = aplt.FitPointDatasetPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grid)
+aplt.subplot_fit_point(fit=result.max_log_likelihood_fit)
 
 """
 The result object contains pretty much everything you need to do science with your own strong lens, but details
@@ -468,8 +460,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 Plotting the tracer’s image gives us a “perfect” view of the strong lens system, before
 adding telescope effects.
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 The image can be saved to .fits for later use.
@@ -529,9 +520,6 @@ dataset = al.PointDataset(
     time_delays_noise_map=time_delays_noise_map,
 )
 
-point_dataset_plotter = aplt.PointDatasetPlotter(
-    dataset=dataset,
-)
 point_dataset_plotter.subplot_dataset()
 
 dataset_path = Path("dataset") / "point_source" / "simulated_lens"

@@ -52,8 +52,7 @@ dataset_path = Path("dataset", "imaging", "simple")
 
 data = al.Array2D.from_fits(file_path=dataset_path / "data.fits", pixel_scales=0.1)
 
-array_plotter = aplt.Array2DPlotter(array=data)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 This image conforms to **PyAutoLens** standards for the following reasons.
@@ -111,8 +110,7 @@ data_counts = al.preprocess.array_eps_to_counts(
 By plotting the image in counts, we can see that the flux values are now much higher values (e.g. ~1000 or above)
 compared to the data in electrons per second (e.g. ~1 or below).
 """
-array_plotter = aplt.Array2DPlotter(array=data_counts)
-array_plotter.figure_2d()
+aplt.plot_array(array=data_counts, title="")
 
 """
 It is therefore straightforward to convert an image to electrons per second from counts.
@@ -121,8 +119,7 @@ data_eps = al.preprocess.array_counts_to_eps(
     array_counts=data_counts, exposure_time_map=exposure_time_map
 )
 
-array_plotter = aplt.Array2DPlotter(array=data_eps)
-array_plotter.figure_2d()
+aplt.plot_array(array=data_eps, title="")
 
 """
 If the effective exposure-time map is output as part of the data reduction, you can use this to convert the image to 
@@ -140,7 +137,6 @@ format.]
 #     array_counts=data_counts, exposure_time_map=exposure_time_map
 # )
 #
-# array_plotter = aplt.Array2DPlotter(array=data_eps)
 # array_plotter.figure_2d()
 
 """
@@ -151,15 +147,13 @@ data_in_adus = al.preprocess.array_eps_to_adus(
     array_eps=data, gain=4.0, exposure_time_map=exposure_time_map
 )
 
-array_plotter = aplt.Array2DPlotter(array=data_in_adus)
-array_plotter.figure_2d()
+aplt.plot_array(array=data_in_adus, title="")
 
 data_eps = al.preprocess.array_adus_to_eps(
     array_adus=data_in_adus, gain=4.0, exposure_time_map=exposure_time_map
 )
 
-array_plotter = aplt.Array2DPlotter(array=data_eps)
-array_plotter.figure_2d()
+aplt.plot_array(array=data_eps, title="")
 
 """
 In `autolens_workspace/*/data_preparation/noise_map.py` we show that a noise-map must also be in units of 
@@ -177,8 +171,7 @@ data_large_stamp_trimmed = al.preprocess.array_with_new_shape(
     array=data, new_shape=(130, 130)
 )
 
-array_plotter = aplt.Array2DPlotter(array=data_large_stamp_trimmed)
-array_plotter.figure_2d()
+aplt.plot_array(array=data_large_stamp_trimmed, title="")
 
 """
 Stamps can also be too small, if the mask you input to the analysis is larger than the postage stamp extends.

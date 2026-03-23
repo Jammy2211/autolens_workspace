@@ -106,8 +106,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.1,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Mask__
@@ -123,8 +122,7 @@ mask = al.Mask2D.circular_annular(
 
 dataset = dataset.apply_mask(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Over Sampling__
@@ -141,8 +139,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 
 dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Positive Negative Solver__
@@ -371,13 +368,9 @@ Checkout `autolens_workspace/*/guides/results` for a full description of analysi
 """
 print(result.max_log_likelihood_instance)
 
-galaxies_plotter = aplt.GalaxiesPlotter(
-    galaxies=result.max_log_likelihood_galaxies, grid=result.grids.lp
-)
 galaxies_plotter.subplot()
 
-fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 plotter = aplt.NestPlotter(samples=result.samples)
 plotter.corner_anesthetic()
@@ -460,8 +453,7 @@ fit = al.FitImaging(
     settings=al.Settings(use_positive_only_solver=False),
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_imaging(fit=fit)
 
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
 

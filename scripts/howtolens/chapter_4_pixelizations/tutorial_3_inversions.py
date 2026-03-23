@@ -52,10 +52,8 @@ mask = al.Mask2D.circular_annular(
     outer_radius=2.8,
 )
 
-visuals = aplt.Visuals2D(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Data")
 
 """
 We now create the masked source-plane grid via the tracer, as we did in the previous tutorial.
@@ -95,11 +93,7 @@ mapper = al.Mapper(
     regularization=al.reg.Constant(coefficient=1.0),
 )
 
-visuals = aplt.Visuals2D(
-    grid=mapper.source_plane_data_grid,
-)
 
-mapper_plotter = aplt.MapperPlotter(mapper=mapper, visuals_2d=visuals)
 mapper_plotter.figure_2d()
 
 """
@@ -119,14 +113,12 @@ print(inversion.reconstruction)
 print(inversion.mapped_reconstructed_operated_data)
 
 """
-Both of these can be plotted using an `InversionPlotter`.
+Both of these can be plotted using an `aplt.plot_array`.
 
 It is possible for an inversion to have multiple `Mapper`'s, therefore for certain figures we specify the index 
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 There we have it, we have successfully reconstructed the source using a rectangular pixel-grid. Whilst this source 
@@ -145,8 +137,7 @@ dataset = al.Imaging.from_fits(
     pixel_scales=0.05,
 )
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Data")
 
 """
 This code is doing all the same as above (setup the mask, galaxy, tracers, mapper, inversion, etc.).
@@ -158,10 +149,8 @@ mask = al.Mask2D.circular_annular(
     outer_radius=3.2,
 )
 
-visuals = aplt.Visuals2D(mask=mask)
 
-dataset_plotter = aplt.ImagingPlotter(dataset=dataset, visuals_2d=visuals)
-dataset_plotter.figures_2d(data=True)
+aplt.plot_array(array=dataset.data, title="Data")
 
 dataset = dataset.apply_mask(mask=mask)
 
@@ -191,9 +180,7 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 """
 Now lets plot the complex source reconstruction.
 """
-inversion_plotter = aplt.InversionPlotter(inversion=inversion)
-inversion_plotter.figures_2d(reconstructed_operated_data=True)
-inversion_plotter.figures_2d_of_pixelization(pixelization_index=0, reconstruction=True)
+aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
 Pretty great, huh? If you ran the complex source pipeline in chapter 3, you'll remember that getting a model image 
@@ -210,12 +197,7 @@ pix_indexes = [[445], [285], [313], [132], [11]]
 
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
-visuals = aplt.Visuals2D(indexes=indexes)
 
-mapper_plotter = aplt.MapperPlotter(
-    mapper=mapper,
-    visuals_2d=visuals,
-)
 mapper_plotter.subplot_image_and_mapper(image=dataset.data)
 
 """
@@ -264,9 +246,8 @@ We see some pretty good looking residuals, we must be fitting the lensed source 
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 __Positive Only Solver__

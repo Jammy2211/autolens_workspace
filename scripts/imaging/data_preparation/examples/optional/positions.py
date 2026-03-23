@@ -76,10 +76,8 @@ positions = al.Grid2DIrregular(
 """
 Now lets plot the image and positions, so we can check that the positions overlap different regions of the source.
 """
-visuals = aplt.Visuals2D(positions=positions)
 
-array_plotter = aplt.Array2DPlotter(array=data, visuals_2d=visuals)
-array_plotter.figure_2d()
+aplt.plot_array(array=data, title="")
 
 """
 Now we`re happy with the positions, lets output them to the dataset folder of the lens, so that we can load them from a

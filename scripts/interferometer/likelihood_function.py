@@ -28,6 +28,7 @@ import numpy as np
 from pathlib import Path
 
 import autolens as al
+import autoarray as aa
 import autolens.plot as aplt
 
 """
@@ -66,7 +67,7 @@ dataset = al.Interferometer.from_fits(
 """
 This guide uses in-built visualization tools for plotting. 
 
-For example, using the `InterferometerPlotter` the dataset we perform a likelihood evaluation on is plotted.
+For example, using the `aplt.subplot_interferometer_dataset` the dataset we perform a likelihood evaluation on is plotted.
 
 The `subplot_dataset` displays the visibilities in the uv-plane, which are the raw data of the interferometer
 dataset. These are what will ultimately be directly fitted in the Fourier space.
@@ -76,8 +77,7 @@ using an inverse Fourier transform to convert these to real-space. These dirty i
 visualization of the dirty images are often used in radio interferometry to show the data in a way that is more
 interpretable to the human eye.
 """
-dataset_plotter = aplt.InterferometerPlotter(dataset=dataset)
-dataset_plotter.subplot_dataset()
+aplt.subplot_interferometer_dataset(dataset=dataset)
 dataset_plotter.subplot_dirty_images()
 
 """
@@ -103,8 +103,7 @@ Each (y,x) coordinate coordinates to the centre of each image-pixel in the datas
 used to evaluate a light profile the intensity of the profile at the centre of each image-pixel is computed, making
 it straight forward to compute the light profile's image to the image data.
 """
-grid_plotter = aplt.Grid2DPlotter(grid=dataset.grids.lp)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=dataset.grids.lp, title="")
 
 print(f"(y,x) coordinates of first ten unmasked image-pixels {dataset.grid[0:9]}")
 
@@ -138,8 +137,7 @@ transformed_grid = profile.transformed_to_reference_frame_grid_from(
     grid=dataset.grids.lp
 )
 
-grid_plotter = aplt.Grid2DPlotter(grid=transformed_grid)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=transformed_grid, title="")
 print(
     f"transformed coordinates of first ten unmasked image-pixels {transformed_grid[0:9]}"
 )
@@ -194,8 +192,7 @@ implicitly).
 """
 image_2d_bulge = bulge.image_2d_from(grid=dataset.grid)
 
-bulge_plotter = aplt.LightProfilePlotter(light_profile=bulge, grid=dataset.grid)
-bulge_plotter.figures_2d(image=True)
+aplt.plot_array(array=bulge.image_2d_from(grid=dataset.grid), title="Image")
 
 """
 __Lens Galaxy Mass__
@@ -240,8 +237,7 @@ mass = al.mp.Isothermal(
 
 shear = al.mp.ExternalShear(gamma_1=0.05, gamma_2=0.05)
 
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=dataset.grid)
-mass_plotter.figures_2d(convergence=True)
+aplt.plot_array(array=mass.convergence_2d_from(grid=dataset.grid), title="Convergence")
 
 """
 From each mass profile we can compute its deflection angles, which describe how due to gravitational lensing
@@ -253,8 +249,12 @@ $\vec{{\alpha}}_{\rm x,y} (\vec{x}) = \frac{1}{\pi} \int \frac{\vec{x} - \vec{x'
 """
 deflections_yx_2d = mass.deflections_yx_2d_from(grid=dataset.grid)
 
-mass_plotter = aplt.MassProfilePlotter(mass_profile=mass, grid=dataset.grid)
-mass_plotter.figures_2d(deflections_y=True, deflections_x=True)
+deflections = mass.deflections_yx_2d_from(grid=dataset.grid)
+deflections_y = aa.Array2D(values=deflections.slim[:, 0], mask=dataset.grid.mask)
+aplt.plot_array(array=deflections_y, title="Deflections Y")
+deflections = mass.deflections_yx_2d_from(grid=dataset.grid)
+deflections_x = aa.Array2D(values=deflections.slim[:, 1], mask=dataset.grid.mask)
+aplt.plot_array(array=deflections_x, title="Deflections X")
 
 """
 __Lens Galaxy__
@@ -295,8 +295,6 @@ This computes the `lens_image_2d` of each `LightProfile` and adds them together.
 """
 lens_image_2d = lens_galaxy.image_2d_from(grid=dataset.grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=dataset.grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Ray Tracing__
@@ -322,10 +320,8 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 # A list of every grid (e.g. image-plane, source-plane) however we only need the source plane grid with index -1.
 traced_grid = tracer.traced_grid_2d_list_from(grid=dataset.grid)[-1]
 
-mat_plot = aplt.MatPlot2D(axis=aplt.Axis(extent=[-1.5, 1.5, -1.5, 1.5]))
 
-grid_plotter = aplt.Grid2DPlotter(grid=traced_grid, mat_plot_2d=mat_plot)
-grid_plotter.figure_2d()
+aplt.plot_grid(grid=traced_grid, title="")
 
 """
 __Source Image__
@@ -334,8 +330,6 @@ We pass the traced grid of coordinates to the source galaxy to evaluate its 2D i
 """
 source_image_2d = source_galaxy.image_2d_from(grid=traced_grid)
 
-galaxy_plotter = aplt.GalaxyPlotter(galaxy=lens_galaxy, grid=traced_grid)
-galaxy_plotter.figures_2d(image=True)
 
 """
 __Lens + Source Light Addition__
@@ -344,8 +338,7 @@ We add the lens and source galaxy images together, to create an overall image of
 """
 image = lens_image_2d + source_image_2d
 
-array_2d_plotter = aplt.Array2DPlotter(array=image)
-array_2d_plotter.figure_2d()
+aplt.plot_array(array=image, title="")
 
 """
 If you are familiar with imaging data, you may have seen that a `blurring_image` of pixels surrounding the mask,
@@ -372,8 +365,7 @@ uv-plane coordinate.
 If you are not familiar with interferometer data and the uv-plane, you will need to read up on interferometry to
 fully understand how this likelihood function works.
 """
-grid_2d_plotter = aplt.Grid2DPlotter(grid=visibilities.in_grid)
-grid_2d_plotter.figure_2d()
+aplt.plot_grid(grid=visibilities.in_grid, title="")
 
 
 """
@@ -419,8 +411,7 @@ The `chi_squared_map` indicates which regions of the image we did and did not fi
 """
 chi_squared_map = al.Visibilities(visibilities=chi_squared_map)
 
-grid_2d_plotter = aplt.Grid2DPlotter(grid=chi_squared_map.in_grid)
-grid_2d_plotter.figure_2d()
+aplt.plot_grid(grid=chi_squared_map.in_grid, title="")
 
 """
 __Noise Normalization Term__
@@ -454,8 +445,7 @@ fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 fit_figure_of_merit = fit.figure_of_merit
 print(fit_figure_of_merit)
 
-fit_plotter = aplt.FitInterferometerPlotter(fit=fit)
-fit_plotter.subplot_fit()
+aplt.subplot_fit_interferometer(fit=fit)
 
 
 """

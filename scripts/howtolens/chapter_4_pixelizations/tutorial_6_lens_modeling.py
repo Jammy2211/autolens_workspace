@@ -52,10 +52,7 @@ mask = al.Mask2D.circular(
     radius=2.5,
 )
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 This function fits the imaging data with a tracer, returning a `FitImaging` object.
@@ -116,9 +113,8 @@ fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 What happened!? This incorrect mass-model provides a really good fit to the image! The residuals and chi-squared-map 
@@ -154,9 +150,8 @@ correct_fit = perform_fit_with_lens__source_galaxy(
     dataset=dataset, lens_galaxy=lens_galaxy, source_galaxy=source_galaxy
 )
 
-fit_plotter = aplt.FitImagingPlotter(fit=correct_fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=correct_fit)
+aplt.subplot_fit_imaging_of_planes(fit=correct_fit)
 
 print("Bayesian Evidence of Incorrect Fit:")
 print(fit.log_evidence)
@@ -206,13 +201,9 @@ mask = al.Mask2D.circular(
     radius=2.5,
 )
 
-dataset_plotter = aplt.ImagingPlotter(
-    dataset=dataset, visuals_2d=aplt.Visuals2D(mask=mask)
-)
-dataset_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 When fitting such an image we now want to include the lens's light in the analysis. Lets update our mask to be 
@@ -256,9 +247,8 @@ inversion. When we plot the image, a new panel on the sub-plot appears showing t
 """
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 Of course if the lens subtraction is rubbish so is our fit. We can therefore be sure that our lens model will want to 
@@ -281,9 +271,8 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 
-fit_plotter = aplt.FitImagingPlotter(fit=fit)
-fit_plotter.subplot_fit()
-fit_plotter.subplot_of_planes(plane_index=1)
+aplt.subplot_fit_imaging(fit=fit)
+aplt.subplot_fit_imaging_of_planes(fit=fit)
 
 """
 __Wrap Up__

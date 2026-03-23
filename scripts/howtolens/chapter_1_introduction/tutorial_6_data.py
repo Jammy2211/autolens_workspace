@@ -86,9 +86,7 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 Lets look at the tracer's image, which is the image we'll be simulating.
 
 """
-tracer_plotter = aplt.TracerPlotter(tracer=tracer, grid=grid)
-tracer_plotter.set_title("Tracer Image Before Simulating")
-tracer_plotter.figures_2d(image=True)
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Tracer Image Before Simulating")
 
 """
 __Optics Blurring__
@@ -113,20 +111,14 @@ We can visualize the PSF to better understand how it will blur the galaxy's imag
 image that represents the spreading out of light from a single point source. This kernel will be used to blur the 
 entire tracer image when we perform the convolution.
 """
-array_plotter = aplt.Array2DPlotter(array=psf.kernel)
-array_plotter.set_title("PSF 2D Kernel")
-array_plotter.figure_2d()
+aplt.plot_array(array=psf.kernel, title="PSF 2D Kernel")
 
 """
 The PSF is often more informative when plotted on a log10 scale. This approach allows us to clearly observe values 
 in its tail, which are much smaller than the central peak yet critical for many scientific analyses. The tail 
 values may significantly affect the spread and detail captured in the data.
 """
-array_plotter = aplt.Array2DPlotter(
-    array=psf.kernel, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
-)
-array_plotter.set_title("PSF 2D Kernel")
-array_plotter.figure_2d()
+aplt.plot_array(array=psf.kernel, title="PSF 2D Kernel")
 
 """
 Next, we'll manually perform a 2D convolution of the PSF with the image of the galaxy. This convolution simulates the 
@@ -158,13 +150,9 @@ blurred_image = convolved_image.trimmed_after_convolution_from(
 We can now plot the original and the blurred images side by side. This allows us to clearly see how the PSF 
 convolution affects the appearance of the galaxy, making the image appear softer and less sharp.
 """
-array_plotter = aplt.Array2DPlotter(array=image)
-array_plotter.set_title("Tracer Image Before PSF")
-array_plotter.figure_2d()
+aplt.plot_array(array=image, title="Tracer Image Before PSF")
 
-array_plotter.set_title("Tracer Image After PSF")
-array_plotter = aplt.Array2DPlotter(array=blurred_image)
-array_plotter.figure_2d()
+aplt.plot_array(array=blurred_image, title="")
 
 
 """
@@ -209,11 +197,7 @@ blurred_image_with_poisson_noise = (
 """
 Here is what the blurred image with Poisson noise looks like.
 """
-array_plotter = aplt.Array2DPlotter(
-    array=al.Array2D(values=blurred_image_with_poisson_noise, mask=grid.mask),
-)
-array_plotter.set_title("Image With Poisson Noise")
-array_plotter.figure_2d()
+aplt.plot_array(array=al.Array2D(values=blurred_image_with_poisson_noise, title="Image With Poisson Noise")
 
 """
 It is challenging to see the Poisson noise directly in the image above, as it is often subtle. To make the noise more 
@@ -226,11 +210,7 @@ we simulate the image.
 """
 poisson_noise_realization = blurred_image_with_poisson_noise - blurred_image
 
-array_plotter = aplt.Array2DPlotter(
-    array=al.Array2D(values=poisson_noise_realization, mask=grid.mask)
-)
-array_plotter.set_title("Poisson Noise Realization")
-array_plotter.figure_2d()
+aplt.plot_array(array=al.Array2D(values=poisson_noise_realization, title="Poisson Noise Realization")
 
 """
 __Background Sky__
@@ -268,22 +248,14 @@ blurred_image_with_sky_poisson_noise = (
 )
 
 # Visualize the image with background sky and Poisson noise.
-array_plotter = aplt.Array2DPlotter(
-    array=al.Array2D(values=blurred_image_with_sky_poisson_noise, mask=grid.mask),
-)
-array_plotter.set_title("Image With Background Sky")
-array_plotter.figure_2d()
+aplt.plot_array(array=al.Array2D(values=blurred_image_with_sky_poisson_noise, title="Image With Background Sky")
 
 # Create a noise map showing the differences between the blurred image with and without noise.
 poisson_noise_realization = (
     blurred_image_with_sky_poisson_noise - blurred_image_with_sky
 )
 
-array_plotter = aplt.Array2DPlotter(
-    array=al.Array2D(values=poisson_noise_realization, mask=grid.mask)
-)
-array_plotter.set_title("Poisson Noise Realization")
-array_plotter.figure_2d()
+aplt.plot_array(array=al.Array2D(values=poisson_noise_realization, title="Poisson Noise Realization")
 
 """
 __Simulator__
@@ -305,9 +277,7 @@ By plotting the `data` from the dataset, we can see that it matches the image we
 the effects of PSF blurring, Poisson noise, and noise from the background sky. This image is a realistic 
 approximation of what a telescope like the Hubble Space Telescope would capture.
 """
-dataset_plotter = aplt.Array2DPlotter(array=dataset.data)
-dataset_plotter.set_title("Simulated Imaging Data")
-dataset_plotter.figure_2d()
+aplt.plot_array(array=dataset.data, title="Simulated Imaging Data")
 
 """
 The dataset also includes the `psf` (Point Spread Function) used to blur the strong lens image.
@@ -316,11 +286,7 @@ For actual telescope data, the PSF is determined during data processing and is p
 It's crucial for accurately deconvolving the PSF from the strong lens image, allowing us to recover the true properties 
 of the strong lens. We'll explore this further in the next tutorial.
 """
-array_plotter = aplt.Array2DPlotter(
-    array=dataset.psf.kernel, mat_plot_2d=aplt.MatPlot2D(use_log10=True)
-)
-array_plotter.set_title("Simulated PSF")
-array_plotter.figure_2d()
+aplt.plot_array(array=dataset.psf.kernel, title="Simulated PSF")
 
 """
 The dataset includes a `noise_map`, which represents the Root Mean Square (RMS) standard deviation of the noise 
@@ -334,9 +300,7 @@ using the numpy random module. These noise values are theoretical and cannot be 
 In contrast, the `noise_map` is our best estimate of the noise present in the image, derived from the data itself 
 and used in the fitting process.
 """
-array_plotter = aplt.Array2DPlotter(array=dataset.noise_map)
-array_plotter.set_title("Simulated Noise Map")
-array_plotter.figure_2d()
+aplt.plot_array(array=dataset.noise_map, title="Simulated Noise Map")
 
 """
 The `signal-to-noise_map` shows the ratio of the signal in each pixel to the noise level in that pixel. It is 
@@ -349,14 +313,10 @@ In general, a signal-to-noise ratio greater than 3 indicates that the signal is 
 noise. For our datasets, the signal-to-noise ratio peaks at ~70, meaning we can trust the signal detected in the
 image.
 """
-array_plotter = aplt.Array2DPlotter(
-    array=dataset.signal_to_noise_map,
-)
-array_plotter.set_title("Signal-To-Noise Map")
-array_plotter.figure_2d()
+aplt.plot_array(array=dataset.signal_to_noise_map, title="Signal-To-Noise Map")
 
 """
-The `ImagingPlotter` object can display all of these components together, making it a powerful tool for visualizing 
+The `aplt.subplot_imaging_dataset` object can display all of these components together, making it a powerful tool for visualizing 
 simulated imaging data.
 
 It also shows the Data and PSF on a logarithmic (log10) scale, which helps highlight the faint details in these 
@@ -364,11 +324,10 @@ components.
 
 The "Over Sampling" plots on the bottom of the figures display advanced features that can be ignored for now.
 """
-imaging_plotter = aplt.ImagingPlotter(dataset=dataset)
 imaging_plotter.set_title(
     None
 )  # Disable input title so subplot uses correct title for each sub-figure.
-imaging_plotter.subplot_dataset()
+aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
 __Output__

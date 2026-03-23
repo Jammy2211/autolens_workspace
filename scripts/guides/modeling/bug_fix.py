@@ -65,8 +65,7 @@ def fit():
         pixel_scales=0.1,
     )
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
     """
     __Mask__
@@ -81,8 +80,7 @@ def fit():
 
     dataset = dataset.apply_mask(mask=mask)
 
-    dataset_plotter = aplt.ImagingPlotter(dataset=dataset)
-    dataset_plotter.subplot_dataset()
+    aplt.subplot_imaging_dataset(dataset=dataset)
 
     """
     __Over Sampling__
@@ -158,13 +156,9 @@ def fit():
 
     print(result.max_log_likelihood_instance)
 
-    tracer_plotter = aplt.TracerPlotter(
-        tracer=result.max_log_likelihood_tracer, grid=result.grids.lp
-    )
-    tracer_plotter.subplot_tracer()
+    aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-    fit_plotter = aplt.FitImagingPlotter(fit=result.max_log_likelihood_fit)
-    fit_plotter.subplot_fit()
+    aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
     plotter = aplt.NestPlotter(samples=result.samples)
     plotter.corner_anesthetic()
