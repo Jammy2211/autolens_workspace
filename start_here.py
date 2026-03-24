@@ -184,15 +184,10 @@ source_light_profile = al.lp.Exponential(
 source_galaxy = al.Galaxy(redshift=1.0, light=source_light_profile)
 
 """
-The `aplt.plot_array` object plots properties of the lens and source galaxies.
+The `aplt.plot_array` function plots properties of the lens and source galaxies.
 """
-
-
-"""
-One example of the plotter's customizability is the ability to plot the individual light profiles of the galaxy
-on a subplot.
-"""
-lens_galaxy_plotter.subplot_of_light_profiles(image=True)
+aplt.plot_array(array=lens_galaxy.image_2d_from(grid=grid), title="Lens Galaxy Image")
+aplt.plot_array(array=source_galaxy.image_2d_from(grid=grid), title="Source Galaxy Image")
 
 """
 __Tracer__
