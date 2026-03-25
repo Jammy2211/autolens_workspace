@@ -1,6 +1,6 @@
 """
-Plots: Plotters Pixelization
-============================
+Plots: Pixelization
+===================
 
 This example illustrates the plotting API for pixelized source reconstructions.
 

@@ -13,15 +13,6 @@ whereas the source-plane coordinates must be stored in 1D (because after lensing
 These data structures use the `slim` and `native` data representations API to make it simple to map quantities from
 1D dimensions to their native dimensions.
 
-__Plot Module__
-
-This example uses the plot module to plot the results, including plotting function objects that make
-the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
-
-The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
-This includes detailed guides on how to customize every aspect of the figures, which can easily be combined with the
-code outlined in this tutorial.
-
 __Units__
 
 In this example, all quantities use the source code's internal unit coordinates, with spatial coordinates in

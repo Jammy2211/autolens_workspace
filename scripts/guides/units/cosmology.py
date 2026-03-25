@@ -8,15 +8,6 @@ electrons per second, dimensionless mass units) to physical units (e.g. kilopars
 This is used on a variety of important lens model cosmological quantities for example the lens's Einstein radius and
 Mass or the effective radii of the galaxies in the lens model.
 
-__Plot Module__
-
-This example uses the plot module to plot the results, including plotting function objects that make
-the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
-
-The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
-This includes detailed guides on how to customize every aspect of the figures, which can easily be combined with the
-code outlined in this tutorial.
-
 __Errors__
 
 To produce errors on unit converted quantities, you`ll may need to perform marginalization over samples of these

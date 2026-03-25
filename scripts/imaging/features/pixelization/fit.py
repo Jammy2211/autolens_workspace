@@ -97,6 +97,7 @@ from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
+from autoarray.inversion.plot.inversion_plots import subplot_of_mapper, subplot_mappings
 
 """
 __Dataset__
@@ -231,24 +232,15 @@ aplt.subplot_fit_imaging(fit=fit)
 Pixelizations have bespoke visualizations which show more details about the source-reconstruction, image-mesh
 and other quantities.
 
-These plots use an `aplt.plot_array`, which gets its name from the internals of how pixelizations are performed in
-the source code, where the linear algebra process which computes the source pixel fluxes is called an inversion.
-
-The `subplot_mappings` overlays colored circles in the image and source planes that map to one another, thereby
-allowing one to assess how the mass model ray-traces image-pixels and therefore to assess how the source reconstruction
-maps to the image.
-"""
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
-inversion_plotter.subplot_of_mapper(mapper_index=0)
-inversion_plotter.subplot_mappings(pixelization_index=0)
-
-"""
-The inversion can be extracted directly from the fit the perform these plots, which we also use below
-for various calculations
+The `subplot_of_mapper` function produces a comprehensive diagnostic subplot for the inversion. The
+`subplot_mappings` overlays colored circles in the image and source planes that map to one another, thereby
+allowing one to assess how the mass model ray-traces image-pixels and therefore to assess how the source
+reconstruction maps to the image.
 """
 inversion = fit.inversion
 
-inversion_plotter.subplot_of_mapper(mapper_index=0)
+subplot_of_mapper(inversion=inversion, mapper_index=0)
+subplot_mappings(inversion=inversion, pixelization_index=0)
 
 """
 __Source Science (Magnification, Flux and More)__

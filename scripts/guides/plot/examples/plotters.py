@@ -4,8 +4,8 @@ Plots: Plotters
 
 This example illustrates the new plotting API for all key PyAutoLens objects.
 
-The old API used dedicated `*Plotter` classes (e.g. `TracerPlotter`, `ImagingPlotter`,
-`FitImagingPlotter`, `LightProfilePlotter`, `MassProfilePlotter`, etc.). These have all been removed.
+The old API used dedicated `*Plotter` classes (e.g. `Tracer`, `Imaging`,
+`FitImaging`, `LightProfile`, `MassProfilePlotter`, etc.). These have all been removed.
 
 The new API uses:
 

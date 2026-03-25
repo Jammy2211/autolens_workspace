@@ -107,6 +107,7 @@ from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
+from autogalaxy.profiles.plot.basis_plots import subplot_image as subplot_basis_image
 
 """
 __Dataset__
@@ -203,13 +204,12 @@ __Gaussians__
 The `Basis` is composed of many Gaussians, each with different sizes (the `sigma` value) and therefore capturing
 emission on different scales.
 
-These Gaussians are visualized below using a `BasisPlotter`, which shows that the Gaussians expand in size as the
+These Gaussians are visualized below using `subplot_basis_image`, which shows that the Gaussians expand in size as the
 sigma value increases, in log10 increments.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-basis_plotter = aplt.BasisPlotter(basis=bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=bulge, grid=grid)
 
 """
 __Linear Light Profiles__
@@ -288,14 +288,13 @@ was omitted entirely, this is a pretty good fit!
 aplt.subplot_fit_imaging(fit=fit)
 
 """
-We can use the `BasisPlotter` to plot each individual Gaussian in the reconstructed basis.
+We can use `subplot_basis_image` to plot each individual Gaussian in the reconstructed basis.
 
 This plot shows each Gaussian has a unique positive `intensity` that was solved for via linear algebra.
 """
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
 
-basis_plotter = aplt.BasisPlotter(basis=tracer.galaxies[0].bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=tracer.galaxies[0].bulge, grid=grid)
 
 """
 __Intensities__

@@ -89,6 +89,7 @@ from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
+from autogalaxy.profiles.plot.basis_plots import subplot_image as subplot_basis_image
 
 """
 __Dataset__
@@ -407,8 +408,7 @@ bulge = al.lp_basis.Basis(profile_list=shapelets_bulge_list)
 
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-basis_plotter = aplt.BasisPlotter(basis=bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=bulge, grid=grid)
 
 """
 __Cartesian Shapelets__
@@ -457,8 +457,7 @@ aplt.subplot_fit_imaging(fit=fit)
 
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
 
-basis_plotter = aplt.BasisPlotter(basis=tracer.galaxies[1].bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=tracer.galaxies[1].bulge, grid=grid)
 
 """
 __Model__

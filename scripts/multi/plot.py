@@ -7,8 +7,8 @@ This example shows how to plot the same figure from multiple datasets on a singl
 The specific example loads multi-wavelength imaging datasets and plots the data image from
 each dataset side-by-side.
 
-In the old API, this was done using a `MultiFigurePlotter` object with a list of `ImagingPlotter`
-objects. Both `MultiFigurePlotter` and `ImagingPlotter` have been removed.
+In the old API, this was done using a `MultiFigurePlotter` object with a list of `Imaging`
+objects. Both `MultiFigurePlotter` and `Imaging` have been removed.
 
 In the new API, we load each dataset and use matplotlib subplots directly.
 
@@ -116,6 +116,4 @@ __Wrap Up__
 
 The new API uses direct `aplt.plot_array()` calls and matplotlib subplots for combining
 multiple figures from different datasets or objects.
-
-The old `MultiFigurePlotter` class and `ImagingPlotter` class have been removed.
 """

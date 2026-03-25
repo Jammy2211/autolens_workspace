@@ -4,7 +4,7 @@ Plots: Start Here
 
 This example introduces the new plotting API in PyAutoLens.
 
-The old API (removed) used `*Plotter` classes (e.g. `ImagingPlotter`, `TracerPlotter`) together with
+The old API (removed) used `*Plotter` classes (e.g. `Imaging`, `Tracer`) together with
 `MatPlot2D` and `Visuals2D` helper objects. These have all been removed.
 
 The new API uses standalone functions:
@@ -202,27 +202,6 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 aplt.subplot_fit_imaging(fit=fit)
 
 """
-__What Is Gone__
-
-The following classes and objects have been removed from PyAutoLens and no longer exist:
-
- - `aplt.MatPlot2D(...)` — replaced by direct kwargs on each plot function (title, colormap, use_log10, etc.).
- - `aplt.Visuals2D(...)` — replaced by `lines=` and `positions=` kwargs.
- - `aplt.ImagingPlotter(...)` — replaced by `aplt.subplot_imaging_dataset()` and `aplt.plot_array()`.
- - `aplt.FitImagingPlotter(...)` — replaced by `aplt.subplot_fit_imaging()` and `aplt.plot_array()`.
- - `aplt.TracerPlotter(...)` — replaced by `aplt.subplot_tracer()` and `aplt.plot_array()`.
- - `aplt.InterferometerPlotter(...)` — replaced by `aplt.subplot_interferometer_dataset()`.
- - `aplt.FitInterferometerPlotter(...)` — replaced by `aplt.subplot_fit_interferometer()`.
- - `aplt.LightProfilePlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.MassProfilePlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.GalaxyPlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.GalaxiesPlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.Array2DPlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.Grid2DPlotter(...)` — replaced by `aplt.plot_grid()`.
- - `aplt.InversionPlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.MapperPlotter(...)` — replaced by `aplt.plot_array()`.
- - `aplt.MultiFigurePlotter(...)` — use matplotlib subplots directly.
-
 The search plotters (`aplt.NestPlotter`, `aplt.MCMCPlotter`, `aplt.MLEPlotter`) still exist
 and are unchanged — see `scripts/guides/plot/examples/searches.py`.
 """

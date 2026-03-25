@@ -30,13 +30,6 @@ This script fits a `PointDataset` dataset of a 'cluster-scale' strong lens where
 The point-source dataset used in this example consists of the positions of every lensed source's multiple images
 (their fluxes are not used).
 
-__Plotters__
-
-To produce images of the data plotting function objects are used, which are high-level wrappers of matplotlib
-code which produce high quality visualization of strong lenses.
-
-The plotting function API is described in the script `autolens_workspace/*/guides/plot`.
-
 __Simulation__
 
 This script fits a simulated cluster dataset of a strong lens, which is produced in the

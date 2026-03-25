@@ -1,6 +1,6 @@
 """
-Plots: Plotters Double Einstein Ring
-====================================
+Plots: Double Einstein Ring
+===========================
 
 This example illustrates the plotting API for double Einstein ring systems, which have
 more than two planes at different redshifts.

@@ -23,6 +23,7 @@ import numpy as np
 from pathlib import Path
 import autolens as al
 import autolens.plot as aplt
+from autogalaxy.profiles.plot.basis_plots import subplot_image as subplot_basis_image
 
 
 """
@@ -155,8 +156,7 @@ grid_basis_plot = al.Grid2D.uniform(
     pixel_scales=0.1,
 )
 
-basis_plotter = aplt.BasisPlotter(basis=tracer.galaxies[1].bulge, grid=grid_basis_plot)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=tracer.galaxies[1].bulge, grid=grid_basis_plot)
 
 
 """

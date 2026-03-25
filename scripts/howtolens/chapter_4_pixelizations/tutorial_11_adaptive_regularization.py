@@ -100,7 +100,6 @@ The fit looks just like it did in the previous tutorials (residuals in the centr
 Lets quickly remind ourselves that the effective regularization weight of each source pixel is our input coefficient 
 value of 3.3.
 """
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
 aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion")
 
 """
@@ -136,7 +135,6 @@ fit = fit_via_source_galaxy_from(
     adapt_images=adapt_images,
 )
 
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
 aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 """
@@ -236,7 +234,6 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 aplt.subplot_fit_imaging(fit=fit)
 
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
 aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
 
 print("Evidence using adaptive regularization. ", fit.log_evidence)

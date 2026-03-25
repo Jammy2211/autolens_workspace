@@ -29,15 +29,6 @@ in the central regions of the image, 4x4 further out and 1x1 beyond that.
 cored light profiles for the source are used which can be evaluated accurate without over-sampling.
 
 This guide will explain why these choices were made for the default over-sampling behaviour.
-
-__Plot Module__
-
-This example uses the plot module to plot the results, including plotting function objects that make
-the figures and `MatPlot` objects that wrap matplotlib to customize the figures.
-
-The visualization API is straightforward but is explained in the `autolens_workspace/*/plot` package in full.
-This includes detailed guides on how to customize every aspect of the figures, which can easily be combined with the
-code outlined in this tutorial.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

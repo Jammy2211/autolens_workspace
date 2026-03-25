@@ -89,6 +89,7 @@ from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
+from autogalaxy.profiles.plot.basis_plots import subplot_image as subplot_basis_image
 
 """
 __Dataset__
@@ -200,12 +201,11 @@ emission on different scales, with low coefficients corresponding to smooth feat
 corresponding to more variable wave-like features. The size of the coefficients is determined by the input 
 parameter `beta`, where larger values correspond to larger coefficients and therefore larger shapelets.
 
-These coefficients are visualized below using a `BasisPlotter`.
+These coefficients are visualized below using `subplot_basis_image`.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-basis_plotter = aplt.BasisPlotter(basis=bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=bulge, grid=grid)
 
 """
 __Linear Light Profiles__
@@ -326,14 +326,13 @@ source galaxy's light.
 aplt.subplot_fit_imaging(fit=fit)
 
 """
-We can use the `BasisPlotter` to plot each individual shapelet in the reconstructed basis.
+We can use `subplot_basis_image` to plot each individual shapelet in the reconstructed basis.
 
 This plot shows each shapelet has a unique `intensity` that was solved for via linear algebra.
 """
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
 
-basis_plotter = aplt.BasisPlotter(basis=tracer.galaxies[1].bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=tracer.galaxies[1].bulge, grid=grid)
 
 """
 __Intensities__
@@ -399,8 +398,7 @@ bulge = al.lp_basis.Basis(profile_list=shapelets_bulge_list)
 
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.05)
 
-basis_plotter = aplt.BasisPlotter(basis=bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=bulge, grid=grid)
 
 """
 For fitting, we again use the linear light profile version of the Cartesian shapelets, which solves for the
@@ -450,8 +448,7 @@ aplt.subplot_fit_imaging(fit=fit)
 
 tracer = fit.model_obj_linear_light_profiles_to_light_profiles
 
-basis_plotter = aplt.BasisPlotter(basis=tracer.galaxies[1].bulge, grid=grid)
-basis_plotter.subplot_image()
+subplot_basis_image(basis=tracer.galaxies[1].bulge, grid=grid)
 
 """
 __Wrap Up__

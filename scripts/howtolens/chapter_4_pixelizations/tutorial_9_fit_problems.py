@@ -280,7 +280,6 @@ the `aplt.subplot_fit_imaging` has its own  `aplt.plot_array` which we can use t
 is that it inherits from the `aplt.subplot_fit_imaging` properties like the caustics, so they appear on the figure (this 
 would not happen if we manually set up an `aplt.plot_array` as we did in previous tutorials.
 """
-inversion_plotter = fit_plotter.inversion_plotter_of_plane(plane_index=1)
 aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion")
 
 """
