@@ -10,5 +10,5 @@ Files
 
 - ``multi``: Plotting multiple subplots or lines on 1D figures.
 - ``publicaiton``: Examples of how to format figures for scientific publications.
-- ``plotters_pixelization``: Plotters for pixelized source inversions.
-- ``plotters_double_einstein_ring``: Plotters for double Einstein ring lens models.
+- ``plotters_pixelization``: Plots for pixelized source inversions.
+- ``plotters_double_einstein_ring``: Plots for double Einstein ring lens models.

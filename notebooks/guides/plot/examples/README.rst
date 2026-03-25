@@ -9,6 +9,6 @@ Files
 -----
 
 - ``mat_plot``: Objects which wrap Matplotlib functions which customize a figure's appearance.
-- ``plotters``: Plotters which plot specific **PyAutoGalaxy** objects (e.g. ``TracerPlotter``).
+- ``plotters``: Plot specific **PyAutoLens** objects (e.g. ``Tracer``).
 - ``searches``: Visualization tools for the results of a non-linear search (e.g. ``NestPlotter``).
 - ``visuals``: Include visuals on a plot (e.g. a critical curve on an image).
