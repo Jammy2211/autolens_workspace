@@ -60,28 +60,18 @@ reconstruction of the source's light than fits using light profiles.
 
 This example therefore using a pixelized source and the corresponding SLaM pipelines.
 
-The `subhalo/detection/examples` folder contains an example using light profile sources, if you have a use-case where
-using light profile source is feasible (e.g. fitting simple simulated datasets).
-
 __Model__
 
-Using a SOURCE LP PIPELINE, LIGHT LP PIPELINE, MASS TOTAL PIPELINE and SUBHALO PIPELINE this SLaM script
-fits `Imaging` of a strong lens system, where in the final model:
+Using a SOURCE LP PIPELINE, SOURCE PIX PIPELINE, LIGHT LP PIPELINE, MASS TOTAL PIPELINE and SUBHALO PIPELINE this
+SLaM script fits `Imaging` of a strong lens system, where in the final model:
 
  - The lens galaxy's light is an MGE bulge.
- - The lens galaxy's total mass distribution is an `Isothermal`.
- - A dark matter subhalo near The lens galaxy mass is included as a`NFWMCRLudlowSph`.
+ - The lens galaxy's total mass distribution is an `PowerLaw`.
+ - A dark matter subhalo near the lens galaxy mass is included as a `NFWMCRLudlowSph`.
  - The source galaxy is an `Inversion`.
 
-This uses the SLaM pipelines:
-
- `source_lp`
- `source_pix`
- `light_lp`
- `mass_total`
- `subhalo/detection`
-
-Check them out for a full description of the analysis!
+Each SLaM pipeline is implemented as a Python function below, with a documentation string above each function
+describing the pipeline in detail. The full pipeline is run at the bottom of the script.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -92,18 +82,523 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-import os
-import sys
 from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
 
 """
-__Dataset + Masking__ 
+__SOURCE LP PIPELINE__
+
+Identical to `slam_start_here.py`, except:
+
+ - The lens galaxy's MGE uses 30 Gaussians (instead of 20) to better capture complex lens light morphology.
+ - The source galaxy's MGE uses `gaussian_per_basis=1` (instead of 2) for a simpler source model.
+"""
+def source_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    redshift_lens: float,
+    redshift_source: float,
+    n_batch: int = 50,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=30,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=1,
+        centre_prior_is_uniform=False,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=lens_bulge,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                bulge=source_bulge,
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_lp[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 1__
+
+Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+"""
+def source_pix_1(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    mesh_init,
+    regularization_init,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_lp_result
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+        use_jax=True,
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=source_lp_result.model.galaxies.lens.mass,
+        mass_result=source_lp_result.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+    shear = source_lp_result.model.galaxies.lens.shear
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=mass,
+                shear=shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh_init,
+                    regularization=regularization_init,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 2__
+
+Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+
+Note that between SOURCE PIX PIPELINE 1 and this search, the calling section applies adaptive over-sampling to
+the dataset using the pixelized source reconstruction from search 1. This improves the accuracy of the
+pixelization by ensuring the over-sampling is adapted to the source morphology.
+"""
+def source_pix_2(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    source_pix_result_1: af.Result,
+    mesh,
+    regularization,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        use_jax=True,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=source_pix_result_1.instance.galaxies.lens.mass,
+                shear=source_pix_result_1.instance.galaxies.lens.shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh,
+                    regularization=regularization,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__LIGHT LP PIPELINE__
+
+Identical to `slam_start_here.py`, except:
+
+ - The lens galaxy's MGE uses 30 Gaussians (consistent with SOURCE LP PIPELINE).
+ - `use_jax=True` is passed to the analysis for faster computation.
+"""
+def light_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        use_jax=True,
+    )
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=30,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source = al.util.chaining.source_custom_model_from(
+        result=source_result_for_source, source_is_model=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=lens_bulge,
+                disk=None,
+                mass=source_result_for_lens.instance.galaxies.lens.mass,
+                shear=source_result_for_lens.instance.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="light[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    light_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_result_for_source.positions_likelihood_from(
+                factor=3.0, minimum_threshold=0.2
+            )
+        ],
+        use_jax=True,
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_result_for_lens.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    bulge = light_result.instance.galaxies.lens.bulge
+    disk = light_result.instance.galaxies.lens.disk
+
+    source = al.util.chaining.source_from(result=source_result_for_source)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=bulge,
+                disk=disk,
+                mass=mass,
+                shear=source_result_for_lens.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SUBHALO PIPELINE (no subhalo)__
+
+The first search of the SUBHALO PIPELINE refits the lens model from the MASS TOTAL PIPELINE without a DM subhalo.
+This establishes a Bayesian evidence baseline for model comparison with the fits that include a subhalo.
+"""
+def subhalo_no_subhalo(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_pix_result_1: af.Result,
+    mass_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            mass_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    source = al.util.chaining.source_from(result=mass_result)
+    lens = mass_result.model.galaxies.lens
+
+    model = af.Collection(
+        galaxies=af.Collection(lens=lens, source=source),
+    )
+
+    search = af.Nautilus(
+        name="subhalo[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SUBHALO PIPELINE (grid search)__
+
+The second search of the SUBHALO PIPELINE performs a [number_of_steps x number_of_steps] grid search of
+non-linear searches. Each grid cell includes a DM subhalo whose (y,x) centre is confined to a small 2D section
+of the image plane via uniform priors.
+
+This grid search maps out where in the image plane including a DM subhalo provides a better fit to the data.
+"""
+def subhalo_grid_search(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_pix_result_1: af.Result,
+    mass_result: af.Result,
+    subhalo_no_subhalo_result: af.Result,
+    subhalo_mass: af.Model,
+    grid_dimension_arcsec: float = 3.0,
+    number_of_steps: int = 2,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            mass_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    subhalo = af.Model(al.Galaxy, mass=subhalo_mass)
+
+    subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
+    subhalo.mass.centre_0 = af.UniformPrior(
+        lower_limit=-grid_dimension_arcsec, upper_limit=grid_dimension_arcsec
+    )
+    subhalo.mass.centre_1 = af.UniformPrior(
+        lower_limit=-grid_dimension_arcsec, upper_limit=grid_dimension_arcsec
+    )
+
+    subhalo.redshift = subhalo_no_subhalo_result.instance.galaxies.lens.redshift
+    subhalo.mass.redshift_object = subhalo_no_subhalo_result.instance.galaxies.lens.redshift
+    subhalo.mass.redshift_source = subhalo_no_subhalo_result.instance.galaxies.source.redshift
+
+    lens = mass_result.model.galaxies.lens
+    source = al.util.chaining.source_from(result=mass_result)
+
+    model = af.Collection(
+        galaxies=af.Collection(lens=lens, subhalo=subhalo, source=source),
+    )
+
+    search = af.Nautilus(
+        name="subhalo[2]_[search_lens_plane]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    subhalo_grid_search = af.SearchGridSearch(
+        search=search,
+        number_of_steps=number_of_steps,
+    )
+
+    return subhalo_grid_search.fit(
+        model=model,
+        analysis=analysis,
+        grid_priors=[
+            model.galaxies.subhalo.mass.centre_1,
+            model.galaxies.subhalo.mass.centre_0,
+        ],
+        info=settings_search.info,
+    )
+
+
+"""
+__SUBHALO PIPELINE (refine)__
+
+The third search of the SUBHALO PIPELINE refits the lens model including a DM subhalo, initializing the
+subhalo centre from the highest log evidence grid cell of the grid search.
+
+The Bayesian evidence from this fit is compared to the no-subhalo fit to determine whether a DM subhalo
+was detected.
+"""
+def subhalo_refine(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_pix_result_1: af.Result,
+    mass_result: af.Result,
+    subhalo_no_subhalo_result: af.Result,
+    subhalo_grid_search_result: af.Result,
+    subhalo_mass: af.Model,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            mass_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    subhalo = af.Model(
+        al.Galaxy,
+        redshift=subhalo_no_subhalo_result.instance.galaxies.lens.redshift,
+        mass=subhalo_mass,
+    )
+
+    subhalo.redshift = subhalo_no_subhalo_result.instance.galaxies.lens.redshift
+    subhalo.mass.redshift_object = subhalo_no_subhalo_result.instance.galaxies.lens.redshift
+    subhalo.mass.mass_at_200 = af.LogUniformPrior(lower_limit=1.0e6, upper_limit=1.0e11)
+    subhalo.mass.centre = subhalo_grid_search_result.model_centred_absolute(
+        a=1.0
+    ).galaxies.subhalo.mass.centre
+
+    subhalo.redshift = subhalo_grid_search_result.model.galaxies.subhalo.redshift
+    subhalo.mass.redshift_object = subhalo.redshift
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=subhalo_grid_search_result.model.galaxies.lens,
+            subhalo=subhalo,
+            source=subhalo_grid_search_result.model.galaxies.source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="subhalo[3]_[single_plane_refine]",
+        **settings_search.search_dict,
+        n_live=600,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__Dataset + Masking__
 
 Load, plot and mask the `Imaging` data.
 """
@@ -158,41 +653,6 @@ The redshifts of the lens and source galaxies.
 redshift_lens = 0.5
 redshift_source = 1.0
 
-
-"""
-__SOURCE LP PIPELINE__
-
-This is the standard SOURCE LP PIPELINE described in the `slam_start_here` example.
-"""
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=30,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-source_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=1,
-    centre_prior_is_uniform=False,
-)
-
-source_lp_result = slam_pipeline.source_lp.run(
-    settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    source_bulge=source_bulge,
-    mass_centre=(0.0, 0.0),
-    redshift_lens=redshift_lens,
-    redshift_source=redshift_source,
-)
-
 """
 __Mesh Shape__
 
@@ -201,30 +661,26 @@ As discussed in the `features/pixelization/modeling` example, the mesh shape is 
 mesh_pixels_yx = 28
 mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
-
 """
-__SOURCE PIX PIPELINE__
+__SLaM Pipeline__
 
-This is the standard SOURCE PIX PIPELINE described in the `slam_start_here` example.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
+
+Between SOURCE PIX PIPELINE 1 and 2, adaptive over-sampling is applied to the dataset using the pixelized source
+reconstruction from search 1. This improves the pixelization accuracy in search 2 and all subsequent pipelines.
 """
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_lp_result
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-    use_jax=True,
-)
-
-source_pix_result_1 = slam_pipeline.source_pix.run_1(
+source_lp_result = source_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
+    redshift_lens=redshift_lens,
+    redshift_source=redshift_source,
+)
+
+source_pix_result_1 = source_pix_1(
+    settings_search=settings_search,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     mesh_init=af.Model(al.mesh.RectangularAdaptDensity, shape=mesh_shape),
     regularization_init=al.reg.Adapt,
@@ -241,141 +697,66 @@ over_sampling = al.util.over_sample.over_sample_size_via_adapt_from(
     noise_map=dataset.noise_map,
 )
 
-dataset = dataset.apply_over_sampling(
-    over_sample_size_pixelization=over_sampling,
-)
+dataset = dataset.apply_over_sampling(over_sample_size_pixelization=over_sampling)
 
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    use_jax=True,
-)
-
-source_pix_result_2 = slam_pipeline.source_pix.run_2(
+source_pix_result_2 = source_pix_2(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     mesh=af.Model(al.mesh.RectangularAdaptImage, shape=mesh_shape),
     regularization=al.reg.Adapt,
 )
 
-"""
-__LIGHT LP PIPELINE__
-
-This is the standard LIGHT LP PIPELINE described in the `slam_start_here` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    use_jax=True,
-)
-
-bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=30,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-
-light_result = slam_pipeline.light_lp.run(
+light_result = light_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
-    lens_bulge=bulge,
-    lens_disk=None,
 )
 
-"""
-__MASS TOTAL PIPELINE__
-
-This is the standard MASS TOTAL PIPELINE described in the `slam_start_here` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-    use_jax=True,
-)
-
-mass_result = slam_pipeline.mass_total.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
-    mass=af.Model(al.mp.PowerLaw),
 )
 
-"""
-__SUBHALO PIPELINE (single plane detection)__
-
-The SUBHALO PIPELINE (single plane detection) consists of the following searches:
- 
- 1) Refit the lens and source model, to refine the model evidence for comparing to the models fitted which include a 
- subhalo. This uses the same model as fitted in the MASS TOTAL PIPELINE. 
- 2) Performs a grid-search of non-linear searches to attempt to detect a dark matter subhalo. 
- 3) If there is a successful detection a final search is performed to refine its parameters.
- 
-For this modeling script the SUBHALO PIPELINE customizes:
-
- - The [number_of_steps x number_of_steps] size of the grid-search, as well as the dimensions it spans in arc-seconds.
- - The `number_of_cores` used for the gridsearch, where `number_of_cores > 1` performs the model-fits in parallel using
- the Python multiprocessing module.
- 
-A full description of the SUBHALO PIPELINE can be found in the SLaM pipeline itself, which is located at 
-`autolens_workspace/slam/subhalo/detection.py`. You should read this now.
-"""
-analysis = al.AnalysisImaging(
+result_no_subhalo = subhalo_no_subhalo(
+    settings_search=settings_search,
     dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        mass_result.positions_likelihood_from(
-            factor=3.0,
-            minimum_threshold=0.2,
-        )
-    ],
-)
-
-result_no_subhalo = slam_pipeline.subhalo.detection.run_1_no_subhalo(
-    settings_search=settings_search,
-    analysis=analysis,
+    source_pix_result_1=source_pix_result_1,
     mass_result=mass_result,
 )
 
-result_subhalo_grid_search = slam_pipeline.subhalo.detection.run_2_grid_search(
+result_subhalo_grid_search = subhalo_grid_search(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    source_pix_result_1=source_pix_result_1,
     mass_result=mass_result,
-    subhalo_result_1=result_no_subhalo,
+    subhalo_no_subhalo_result=result_no_subhalo,
     subhalo_mass=af.Model(al.mp.NFWMCRLudlowSph),
     grid_dimension_arcsec=3.0,
     number_of_steps=2,
 )
 
-result_with_subhalo = slam_pipeline.subhalo.detection.run_3_subhalo(
+result_with_subhalo = subhalo_refine(
     settings_search=settings_search,
-    analysis=analysis,
-    subhalo_result_1=result_no_subhalo,
-    subhalo_grid_search_result_2=result_subhalo_grid_search,
+    dataset=dataset,
+    source_pix_result_1=source_pix_result_1,
+    mass_result=mass_result,
+    subhalo_no_subhalo_result=result_no_subhalo,
+    subhalo_grid_search_result=result_subhalo_grid_search,
     subhalo_mass=af.Model(al.mp.NFWMCRLudlowSph),
 )
 
 """
 __Bayesian Evidence__
 
-To determine if a DM subhalo was detected by the pipeline, we can compare the log of the  Bayesian evidences of the 
-model-fits performed with and without a subhalo. 
+To determine if a DM subhalo was detected by the pipeline, we can compare the log of the Bayesian evidences of the
+model-fits performed with and without a subhalo.
 
 The following scale describes how different log evidence increases correspond to difference detection significances:
 
@@ -386,7 +767,7 @@ The following scale describes how different log evidence increases correspond to
  - Log evidence increase between 10 and 20: Strong evidence, consider it a detection.
  - Log evidence increase > 20: Very strong evidence, definitive detection.
 
-Lets inspect the log evidence ncrease for the model-fit performed in this example:
+Lets inspect the log evidence increase for the model-fit performed in this example:
 """
 evidence_no_subhalo = result_no_subhalo.samples.log_evidence
 evidence_with_subhalo = result_with_subhalo.samples.log_evidence
@@ -400,20 +781,13 @@ __Log Likelihood__
 
 Different metrics can be used to inspect whether a DM subhalo was detected.
 
-The Bayesian evidence is the most rigorous because it penalizes models based on their complexity. If a model is more
-complex (e.g. it can fit the data in more ways) than another model, the evidence will decrease. The Bayesian evidence
-therefore favours simpler models over more complex models, unless the more complex model provides a much better fit to
-the data. This is called the Occam's Razor principle.
+The Bayesian evidence is the most rigorous because it penalizes models based on their complexity. An alternative
+goodness of fit is the `log_likelihood`, which is directly related to the residuals of the model or the chi-squared
+value.
 
-An alternative goodness of fit is the `log_likelihood`. This is directly related to the residuals of the model or
-the chi-squared value. The log likelihood does not change when a model is made more or less complex, and as such it 
-will nearly always favour the more complex model because this must provide a better fit to the data one way or another.
-
-The benefit of the log likelihood is it is a straight forward value indicating how well a model fitted the data. It
-can provide useful sanity checks, for example the `log_likelihood` of the lens model without a subhalo must always be
-less than the model with a subhalo (because the model with a subhalo can simple reduce its mass and recover the model
-without a subhalo). If this is not the case, something must have gone wrong with one of the model-fits, for example
-the non-linear search failed to find the highest likelihood regions of parameter space.
+The benefit of the log likelihood is it is a straight forward value indicating how well a model fitted the data.
+The `log_likelihood` of the lens model without a subhalo must always be less than the model with a subhalo. If
+this is not the case, something must have gone wrong with one of the model-fits.
 """
 log_likelihood_no_subhalo = result_no_subhalo.samples.log_likelihood
 log_likelihood_with_subhalo = result_with_subhalo.samples.log_likelihood
@@ -423,40 +797,18 @@ log_likelihood_increase = log_likelihood_with_subhalo - log_likelihood_no_subhal
 print("Log Likelihood Increase: ", log_likelihood_increase)
 
 """
-__Visualization__
-
-There are DM subhalo specific visualization tools which can be used to inspect the results of DM subhalo detection.
-
-The `aplt.subplot_detection_imaging` takes as input `FitImaging` objects of the no subhalo and with subhalo model-fits, which will
-allow us to plot their images alongside one another and therefore inspect how the residuals change when a DM
-subhalo is included in the model.
-
-We also input the `result_subhalo_grid_search`, which we will use below to show visualization of the grid search.
-"""
-
-"""
-The following subplot compares the fits with and without a DM subhalo.
-
-It plots the normalized residuals, chi-squared map and source reconstructions of both fits alongside one another.
-The improvement to the fit that including a subhalo provides is therefore clearly visible.
-"""
-aplt.subplot_detection_fits(fit_imaging_no_subhalo=fit_no_subhalo, fit_imaging_with_subhalo=fit_imaging_with_subhalo)
-
-"""
 __Grid Search Result__
 
 The grid search results have attributes which can be used to inspect the results of the DM subhalo grid-search.
 
-For example, we can produce a 2D array of the log evidence values computed for each grid cell of the grid-search.
-
-We compute these values relative to the `log_evidence` of the model-fit which did not include a subhalo, such that
-positive values indicate that including a subhalo increases the Bayesian evidence.
+For example, we can produce a 2D array of the log evidence values computed for each grid cell of the grid-search,
+computed relative to the `log_evidence` of the model-fit which did not include a subhalo.
 """
-result_subhalo_grid_search = al.subhalo.SubhaloGridSearchResult(
+subhalo_grid_search_result = al.subhalo.SubhaloGridSearchResult(
     result=result_subhalo_grid_search
 )
 
-log_evidence_array = result_subhalo_grid_search.figure_of_merit_array(
+log_evidence_array = subhalo_grid_search_result.figure_of_merit_array(
     use_log_evidences=True,
     relative_to_value=result_no_subhalo.samples.log_evidence,
 )
@@ -464,58 +816,20 @@ log_evidence_array = result_subhalo_grid_search.figure_of_merit_array(
 print("Log Evidence Array: \n")
 print(log_evidence_array)
 
-"""
-We can plot this array to get a visualiuzation of where including a subhalo in the model increases the Bayesian
-evidence.
-"""
 aplt.plot_array(array=log_evidence_array, title="")
 
-"""
-The grid search result also contained arrays with the inferred masses for each grid cell fit and the inferred
-DM subhalo centres.
-"""
-mass_array = result_subhalo_grid_search.subhalo_mass_array
+mass_array = subhalo_grid_search_result.subhalo_mass_array
 
 print("Mass Array: \n")
 print(mass_array)
 
-subhalo_centres_grid = result_subhalo_grid_search.subhalo_centres_grid
+subhalo_centres_grid = subhalo_grid_search_result.subhalo_centres_grid
 
 print("Subhalo Centres Grid: \n")
 print(subhalo_centres_grid)
 
-"""
-An array with the inferred parameters for any lens model parameter can be computed as follows:
-"""
-einstein_radius_array = result_subhalo_grid_search.attribute_grid(
+einstein_radius_array = subhalo_grid_search_result.attribute_grid(
     "galaxies.lens.mass.einstein_radius"
-)
-
-"""
-__Grid Search Visualization__
-
-The `aplt.subplot_detection_imaging` can also plot the results of the grid search, which provides spatial information on where in
-the image plane including a DM subhalo provides a better fit to the data.
-
-The plot below shows the increase in `log_evidence` of each grid cell, laid over an image of the lensed source
-so one can easily see which source features produce a DM subhalo detection.
-
-The input `remove_zeros` removes all grid-cells which have a log evidence value below zero, which provides more
-clarity in the figure where including a DM subhalo makes a difference to the Bayesian evidence.
-"""
-
-
-"""
-A grid of inferred DM subhalo masses can be overlaid instead:
-"""
-
-"""
-A subplot of all these quantities can be plotted:
-"""
-subhalo_plotter.subplot_detection_imaging(
-    use_log_evidences=True,
-    relative_to_value=result_no_subhalo.samples.log_evidence,
-    remove_zeros=True,
 )
 
 """

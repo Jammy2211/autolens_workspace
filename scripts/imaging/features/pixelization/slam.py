@@ -9,7 +9,12 @@ guide before working through this example.
 
 Because the SLaM pipelines are designed around pixelized source modeling, the example `slam_start_here` fully
 describes all design choices and modeling decisions made in this script. This script therefore does not repeat
-that documentation, therefore `slam_start_here` should be read first.
+that documentation, and `slam_start_here` should be read first.
+
+The differences from `slam_start_here` are:
+
+ - The SOURCE PIX PIPELINE 2 uses `AdaptSplit` regularization instead of `Adapt`.
+ - The LIGHT LP PIPELINE and MASS TOTAL PIPELINE use `use_jax=True` in their analyses.
 
 __Prerequisites__
 
@@ -31,19 +36,323 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-import numpy as np
-import os
-import sys
 from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
 
 """
-__Dataset__ 
+__SOURCE LP PIPELINE__
+
+Identical to `slam_start_here.py`.
+"""
+def source_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    redshift_lens: float,
+    redshift_source: float,
+    n_batch: int = 50,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=lens_bulge,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                bulge=source_bulge,
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_lp[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 1__
+
+Identical to `slam_start_here.py`.
+"""
+def source_pix_1(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    mesh_init,
+    regularization_init,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_lp_result
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=source_lp_result.model.galaxies.lens.mass,
+        mass_result=source_lp_result.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+    shear = source_lp_result.model.galaxies.lens.shear
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=mass,
+                shear=shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh_init,
+                    regularization=regularization_init,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 2__
+
+Identical to `slam_start_here.py`, except `AdaptSplit` regularization is used instead of `Adapt`.
+
+`AdaptSplit` splits the regularization into two components: one for the source and one for the image, enabling
+more flexible regularization that better adapts to the pixelization mesh.
+"""
+def source_pix_2(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    source_pix_result_1: af.Result,
+    mesh,
+    regularization,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        use_jax=True,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=source_pix_result_1.instance.galaxies.lens.mass,
+                shear=source_pix_result_1.instance.galaxies.lens.shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh,
+                    regularization=regularization,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__LIGHT LP PIPELINE__
+
+Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+"""
+def light_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        use_jax=True,
+    )
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source = al.util.chaining.source_custom_model_from(
+        result=source_result_for_source, source_is_model=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=lens_bulge,
+                disk=None,
+                mass=source_result_for_lens.instance.galaxies.lens.mass,
+                shear=source_result_for_lens.instance.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="light[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    light_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_result_for_source.positions_likelihood_from(
+                factor=3.0, minimum_threshold=0.2
+            )
+        ],
+        use_jax=True,
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_result_for_lens.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    bulge = light_result.instance.galaxies.lens.bulge
+    disk = light_result.instance.galaxies.lens.disk
+
+    source = al.util.chaining.source_from(result=source_result_for_source)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=bulge,
+                disk=disk,
+                mass=mass,
+                shear=source_result_for_lens.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
@@ -98,42 +407,6 @@ The redshifts of the lens and source galaxies.
 redshift_lens = 0.5
 redshift_source = 1.0
 
-
-"""
-__SOURCE LP PIPELINE__
-
-The SOURCE LP PIPELINE is identical to the `slam_start_here.ipynb` example.
-"""
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-# Lens Light
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-# Source Light
-
-source_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
-)
-
-source_lp_result = slam_pipeline.source_lp.run(
-    settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    source_bulge=source_bulge,
-    mass_centre=(0.0, 0.0),
-    redshift_lens=redshift_lens,
-    redshift_source=redshift_source,
-)
-
 """
 __Mesh Shape__
 
@@ -143,106 +416,50 @@ mesh_pixels_yx = 28
 mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
 """
-__SOURCE PIX PIPELINE__
+__SLaM Pipeline__
 
-The SOURCE PIX PIPELINE is identical to the `slam_start_here.ipynb` example.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
 """
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_lp_result
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-)
-
-source_pix_result_1 = slam_pipeline.source_pix.run_1(
+source_lp_result = source_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
+    redshift_lens=redshift_lens,
+    redshift_source=redshift_source,
+)
+
+source_pix_result_1 = source_pix_1(
+    settings_search=settings_search,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     mesh_init=af.Model(al.mesh.RectangularAdaptDensity, shape=mesh_shape),
     regularization_init=al.reg.Adapt,
 )
 
-"""
-__SOURCE PIX PIPELINE 2__
-
-The SOURCE PIX PIPELINE 2 is identical to the `slam_start_here.ipynb` example.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    use_jax=True,
-)
-
-source_pix_result_2 = slam_pipeline.source_pix.run_2(
+source_pix_result_2 = source_pix_2(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     mesh=af.Model(al.mesh.RectangularAdaptImage, shape=mesh_shape),
     regularization=al.reg.AdaptSplit,
 )
 
-"""
-__LIGHT LP PIPELINE__
-
-The LIGHT LP PIPELINE is setup identically to the `slam_start_here.ipynb` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    use_jax=True,
-)
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-light_result = slam_pipeline.light_lp.run(
+light_result = light_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
 )
 
-"""
-__MASS TOTAL PIPELINE__
-
-The MASS TOTAL PIPELINE is identical to the `slam_start_here.ipynb` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-    use_jax=True,
-)
-
-mass_result = slam_pipeline.mass_total.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
-    mass=af.Model(al.mp.PowerLaw),
 )
 
 """

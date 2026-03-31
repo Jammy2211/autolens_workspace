@@ -71,7 +71,7 @@ grid = al.Grid2D.uniform(
     pixel_scales=0.05,  # The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
 
-aplt.plot_grid(grid=grid, title=label="Cartesian (y,x)
+aplt.plot_grid(grid=grid, title="Cartesian (y,x) Grid of Coordinates")
 
 """
 __Light Profiles__
@@ -101,7 +101,7 @@ image = sersic_light_profile.image_2d_from(grid=grid)
 """
 The **PyAutoLens** plot module provides methods for plotting objects and their properties, like light profile's image.
 """
-aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title=label="Image of Sersic Light Profile")
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image of Sersic Light Profile")
 
 """
 __Mass Profiles__
@@ -137,8 +137,8 @@ potential.
 If you are not familiar with gravitational lensing and therefore are unclear on what the convergence and potential 
 are, don't worry for now!
 """
-aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title=label="Isothermal Mass Convergence")
-aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title=label="Isothermal Mass Potential")
+aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title="Isothermal Mass Convergence")
+aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title="Isothermal Mass Potential")
 
 """
 __Galaxies__
@@ -177,7 +177,7 @@ the source's appears as a multiply imaged and strongly lensed Einstein ring.
 """
 image = tracer.image_2d_from(grid=grid)
 
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Strong Lens System")
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image of Strong Lens System")
 
 """
 __Log10__
@@ -212,9 +212,9 @@ We can use the tracer`s `traced_grid_2d_list_from` method to calculate and plot 
 """
 traced_grid_list = tracer.traced_grid_2d_list_from(grid=grid)
 
-aplt.plot_grid(grid=traced_grid_list[0], title=label="Image Plane Grid")
+aplt.plot_grid(grid=traced_grid_list[0], title="Image Plane Grid")
 
-aplt.plot_grid(grid=traced_grid_list[1], title=label="Source Plane Grid")
+aplt.plot_grid(grid=traced_grid_list[1], title="Source Plane Grid")
 
 """
 __Extending Objects__
@@ -279,7 +279,7 @@ This is what the lens looks like.
 
 Note how crazy the critical curves are!
 """
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Complex Strong Lens")
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image of Complex Strong Lens")
 
 
 """

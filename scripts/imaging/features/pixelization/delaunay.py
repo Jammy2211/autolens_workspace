@@ -501,11 +501,359 @@ complexity can be reliably fitted.
 These pipelines are built around the use of adaptive features -- for example the Source pipeline comes first so that
 these features are set up robustly before more complex lens light and mass models are fitted.
 """
-import os
-import sys
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
+"""
+__SOURCE LP PIPELINE__
+
+Identical to `slam_start_here.py`.
+"""
+def source_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    redshift_lens: float,
+    redshift_source: float,
+    n_batch: int = 50,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=lens_bulge,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                bulge=source_bulge,
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_lp[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 1__
+
+Identical to `slam_start_here.py`, except the source pixelization uses a Delaunay mesh.
+
+The `source_pix_1` search uses an `Overlay` image-mesh to place the initial Delaunay mesh pixels, with
+additional edge points added around the mask boundary to ensure full coverage.
+"""
+def source_pix_1(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_lp_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_lp_result
+    )
+
+    image_mesh = al.image_mesh.Overlay(shape=(26, 26))
+
+    image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
+        mask=dataset.mask,
+    )
+
+    edge_pixels_total = 30
+
+    image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
+        image_plane_mesh_grid=image_plane_mesh_grid,
+        centre=dataset.mask.mask_centre,
+        radius=mask_radius + dataset.mask.pixel_scale / 2.0,
+        n_points=edge_pixels_total,
+    )
+
+    adapt_images = al.AdaptImages(
+        galaxy_name_image_dict=galaxy_image_name_dict,
+        galaxy_name_image_plane_mesh_grid_dict={
+            "('galaxies', 'source')": image_plane_mesh_grid
+        },
+    )
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=source_lp_result.model.galaxies.lens.mass,
+        mass_result=source_lp_result.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+    shear = source_lp_result.model.galaxies.lens.shear
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=mass,
+                shear=shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=al.mesh.Delaunay(
+                        pixels=image_plane_mesh_grid.shape[0],
+                        zeroed_pixels=edge_pixels_total,
+                    ),
+                    regularization=al.reg.AdaptSplit,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 2__
+
+Identical to `slam_start_here.py`, except the source pixelization uses a Delaunay mesh.
+
+The `source_pix_2` search uses a `Hilbert` image-mesh to place the final Delaunay mesh pixels, which adapts
+the mesh to the source morphology using the high-quality adapt images from search 1.
+"""
+def source_pix_2(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_lp_result: af.Result,
+    source_pix_result_1: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    image_mesh = al.image_mesh.Hilbert(pixels=1000, weight_power=3.5, weight_floor=0.01)
+
+    image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
+        mask=dataset.mask, adapt_data=galaxy_image_name_dict["('galaxies', 'source')"]
+    )
+
+    edge_pixels_total = 30
+
+    image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
+        image_plane_mesh_grid=image_plane_mesh_grid,
+        centre=dataset.mask.mask_centre,
+        radius=mask_radius + dataset.mask.pixel_scale / 2.0,
+        n_points=edge_pixels_total,
+    )
+
+    adapt_images = al.AdaptImages(
+        galaxy_name_image_dict=galaxy_image_name_dict,
+        galaxy_name_image_plane_mesh_grid_dict={
+            "('galaxies', 'source')": image_plane_mesh_grid
+        },
+    )
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=source_pix_result_1.instance.galaxies.lens.mass,
+                shear=source_pix_result_1.instance.galaxies.lens.shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=al.mesh.Delaunay(
+                        pixels=image_plane_mesh_grid.shape[0],
+                        zeroed_pixels=edge_pixels_total,
+                    ),
+                    regularization=al.reg.AdaptSplit,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__LIGHT LP PIPELINE__
+
+Identical to `slam_start_here.py`.
+"""
+def light_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+    )
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source = al.util.chaining.source_custom_model_from(
+        result=source_result_for_source, source_is_model=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=lens_bulge,
+                disk=None,
+                mass=source_result_for_lens.instance.galaxies.lens.mass,
+                shear=source_result_for_lens.instance.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="light[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+Identical to `slam_start_here.py`.
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    light_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_result_for_source.positions_likelihood_from(
+                factor=3.0, minimum_threshold=0.2
+            )
+        ],
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_result_for_lens.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    bulge = light_result.instance.galaxies.lens.bulge
+    disk = light_result.instance.galaxies.lens.disk
+
+    source = al.util.chaining.source_from(result=source_result_for_source)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=bulge,
+                disk=disk,
+                mass=mass,
+                shear=source_result_for_lens.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
 
 dataset_name = "simple"
 dataset_path = Path("dataset") / "imaging" / dataset_name
@@ -559,189 +907,49 @@ The redshifts of the lens and source galaxies.
 redshift_lens = 0.5
 redshift_source = 1.0
 
-
 """
-__SOURCE LP PIPELINE__
+__SLaM Pipeline__
 
-The SOURCE LP PIPELINE is identical to the `slam_start_here.ipynb` example.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
 """
-analysis = al.AnalysisImaging(dataset=dataset)
-
-# Lens Light
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-# Source Light
-
-source_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
-)
-
-source_lp_result = slam_pipeline.source_lp.run(
+source_lp_result = source_lp(
     settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    source_bulge=source_bulge,
-    mass_centre=(0.0, 0.0),
+    dataset=dataset,
+    mask_radius=mask_radius,
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
 )
 
-
-"""
-__SOURCE PIX PIPELINE__
-
-The SOURCE PIX PIPELINE is identical to the `slam_start_here.ipynb` example but with
-Delaunay-specific setup.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_lp_result
-)
-
-image_mesh = al.image_mesh.Overlay(shape=(26, 26))
-
-image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
-    mask=dataset.mask,
-)
-
-edge_pixels_total = 30
-
-image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
-    image_plane_mesh_grid=image_plane_mesh_grid,
-    centre=mask.mask_centre,
-    radius=mask_radius + mask.pixel_scale / 2.0,
-    n_points=edge_pixels_total,
-)
-
-adapt_images = al.AdaptImages(
-    galaxy_name_image_dict=galaxy_image_name_dict,
-    galaxy_name_image_plane_mesh_grid_dict={
-        "('galaxies', 'source')": image_plane_mesh_grid
-    },
-)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-)
-
-source_pix_result_1 = slam_pipeline.source_pix.run_1(
+source_pix_result_1 = source_pix_1(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_lp_result=source_lp_result,
-    mesh_init=al.mesh.Delaunay(
-        pixels=image_plane_mesh_grid.shape[0], zeroed_pixels=edge_pixels_total
-    ),
-    regularization_init=al.reg.AdaptSplit,
 )
 
-"""
-__SOURCE PIX PIPELINE 2__
-
-The SOURCE PIX PIPELINE 2 is identical to the `slam_start_here.ipynb` example.
-
-This sets up the Hilbert image-mesh for the second source pixelization using the same 
-code as earlier in this example.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1
-)
-
-image_mesh = al.image_mesh.Hilbert(pixels=1000, weight_power=3.5, weight_floor=0.01)
-
-image_plane_mesh_grid = image_mesh.image_plane_mesh_grid_from(
-    mask=dataset.mask, adapt_data=galaxy_image_name_dict["('galaxies', 'source')"]
-)
-
-edge_pixels_total = 30
-
-image_plane_mesh_grid = al.image_mesh.append_with_circle_edge_points(
-    image_plane_mesh_grid=image_plane_mesh_grid,
-    centre=mask.mask_centre,
-    radius=mask_radius + mask.pixel_scale / 2.0,
-    n_points=edge_pixels_total,
-)
-
-adapt_images = al.AdaptImages(
-    galaxy_name_image_dict=galaxy_image_name_dict,
-    galaxy_name_image_plane_mesh_grid_dict={
-        "('galaxies', 'source')": image_plane_mesh_grid
-    },
-)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-)
-
-source_pix_result_2 = slam_pipeline.source_pix.run_2(
+source_pix_result_2 = source_pix_2(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
-    mesh=al.mesh.Delaunay(
-        pixels=image_plane_mesh_grid.shape[0], zeroed_pixels=edge_pixels_total
-    ),
-    regularization=al.reg.AdaptSplit,
 )
 
-"""
-__LIGHT LP PIPELINE__
-
-The LIGHT LP PIPELINE is setup identically to the `slam_start_here.ipynb` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-)
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-light_result = slam_pipeline.light_lp.run(
+light_result = light_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
 )
 
-"""
-__MASS TOTAL PIPELINE__
-
-The MASS TOTAL PIPELINE is identical to the `slam_start_here.ipynb` example.
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-)
-
-mass_result = slam_pipeline.mass_total.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
-    mass=af.Model(al.mp.PowerLaw),
 )
 
 """
