@@ -68,18 +68,194 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-import os
-import sys
 from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
+"""
+__SOURCE PIX PIPELINE 1__
+
+Unlike `slam_start_here.py`, this pipeline does not use a `source_lp` pipeline before the pixelized source
+pipeline. This is because fitting light profiles to interferometer datasets with many visibilities is slow.
+
+The search therefore uses a `Constant` regularization (not adaptive) as there is no adapt image available.
+"""
+def source_pix_1(
+    settings_search: af.SettingsSearch,
+    dataset,
+    redshift_lens: float,
+    redshift_source: float,
+    positions_likelihood,
+    mesh_shape,
+    settings,
+    n_batch: int = 20,
+) -> af.Result:
+    analysis = al.AnalysisInterferometer(
+        dataset=dataset,
+        positions_likelihood_list=[positions_likelihood],
+        settings=settings,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=None,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=af.Model(al.mesh.RectangularAdaptDensity, shape=mesh_shape),
+                    regularization=al.reg.Constant,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
 
 """
-__Dataset + Masking__ 
+__SOURCE PIX PIPELINE 2__
+
+Identical to `slam_start_here.py`, using adapt images from `source_pix_result_1` to improve the source
+pixelization and regularization.
+
+Note that the LIGHT LP PIPELINE from `slam_start_here.py` is omitted here, as interferometer data does not
+contain lens light emission.
+"""
+def source_pix_2(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_pix_result_1: af.Result,
+    mesh_shape,
+    settings,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1, use_model_images=True
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisInterferometer(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        settings=settings,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_pix_result_1.instance.galaxies.lens.redshift,
+                bulge=source_pix_result_1.instance.galaxies.lens.bulge,
+                disk=source_pix_result_1.instance.galaxies.lens.disk,
+                mass=source_pix_result_1.instance.galaxies.lens.mass,
+                shear=source_pix_result_1.instance.galaxies.lens.shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_pix_result_1.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=af.Model(al.mesh.RectangularAdaptImage, shape=mesh_shape),
+                    regularization=al.reg.Adapt,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+Identical to `slam_start_here.py`, except no lens light model is included as interferometer data does not
+contain lens light emission.
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_pix_result_1: af.Result,
+    source_pix_result_2: af.Result,
+    settings,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1, use_model_images=True
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisInterferometer(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_pix_result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+        settings=settings,
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_pix_result_1.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    source = al.util.chaining.source_from(result=source_pix_result_2)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_pix_result_1.instance.galaxies.lens.redshift,
+                bulge=None,
+                disk=None,
+                mass=mass,
+                shear=source_pix_result_1.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__Dataset + Masking__
 
 Load the `Interferometer` data, define the visibility and real-space masks.
 """
@@ -133,10 +309,10 @@ dataset = dataset.apply_sparse_operator(
 )
 
 """
-__Poisition Likelihood__
+__Position Likelihood__
 
-Load the multiple image positions used for the position likelihood, which resamles bad mass 
-models and prevent demagnified solutions being inferred.
+Load the multiple image positions used for the position likelihood, which resamples bad mass
+models and prevents demagnified solutions being inferred.
 """
 positions = al.Grid2DIrregular(
     al.from_json(file_path=Path(dataset_path, "positions.json"))
@@ -147,7 +323,7 @@ positions_likelihood = al.PositionsLH(positions=positions, threshold=0.3)
 """
 __Settings__
 
-Disable the default position only linear algebra solver so the source reconstruction can have 
+Disable the default position only linear algebra solver so the source reconstruction can have
 negative pixel values.
 """
 settings = al.Settings(use_positive_only_solver=False)
@@ -159,19 +335,6 @@ The settings of autofit, which controls the output paths, parallelization, datab
 """
 settings_search = af.SettingsSearch(
     path_prefix=Path("interferometer") / "slam",
-    unique_tag=dataset_name,
-    info=None,
-    session=None,
-)
-
-
-"""
-__Settings AutoFit__
-
-The settings of autofit, which controls the output paths, parallelization, database use, etc.
-"""
-settings_search = af.SettingsSearch(
-    path_prefix=Path("interferometer", "slam"),
     unique_tag=dataset_name,
     info=None,
     session=None,
@@ -194,80 +357,35 @@ mesh_pixels_yx = 28
 mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
 """
-__SOURCE PIX PIPELINE__
+__SLaM Pipeline__
 
-The SOURCE PIX PIPELINE is identical to the `slam_start_here.ipynb` example.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
 """
-analysis = al.AnalysisInterferometer(
+source_pix_result_1 = source_pix_1(
+    settings_search=settings_search,
     dataset=dataset,
-    positions_likelihood_list=[positions_likelihood],
+    redshift_lens=redshift_lens,
+    redshift_source=redshift_source,
+    positions_likelihood=positions_likelihood,
+    mesh_shape=mesh_shape,
     settings=settings,
 )
 
-source_pix_result_1 = slam_pipeline.source_pix.run_1__bypass_lp(
+source_pix_result_2 = source_pix_2(
     settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=None,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    mesh_init=af.Model(al.mesh.RectangularAdaptDensity, shape=mesh_shape),
-    regularization_init=al.reg.Constant,
-)
-
-"""
-__SOURCE PIX PIPELINE 2__
-
-The SOURCE PIX PIPELINE 2 is identical to the `slam_start_here.ipynb` example.
-
-Note that the LIGHT PIPELINE follows the SOURCE PIX PIPELINE in the `slam_start_here.ipynb` example is not included
-in this script, given the lens light is not present in the data.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1, use_model_images=True
-)
-
-adapt_images = al.AdaptImages(
-    galaxy_name_image_dict=galaxy_image_name_dict,
-)
-
-analysis = al.AnalysisInterferometer(
     dataset=dataset,
-    adapt_images=adapt_images,
-    settings=settings,
-)
-
-source_pix_result_2 = slam_pipeline.source_pix.run_2(
-    settings_search=settings_search,
-    analysis=analysis,
-    source_lp_result=source_pix_result_1,
     source_pix_result_1=source_pix_result_1,
-    mesh=af.Model(al.mesh.RectangularAdaptImage, shape=mesh_shape),
-    regularization=al.reg.Adapt,
-)
-
-"""
-__MASS TOTAL PIPELINE__
-
-The MASS TOTAL PIPELINE is again identical to the `slam_start_here.ipynb` example, noting that the `light_result` is
-now passed in as None to omit the lens light from the model.
-"""
-analysis = al.AnalysisInterferometer(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_pix_result_1.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
+    mesh_shape=mesh_shape,
     settings=settings,
 )
 
-mass_result = slam_pipeline.mass_total.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
-    source_result_for_lens=source_pix_result_1,
-    source_result_for_source=source_pix_result_2,
-    light_result=None,
-    mass=af.Model(al.mp.PowerLaw),
+    dataset=dataset,
+    source_pix_result_1=source_pix_result_1,
+    source_pix_result_2=source_pix_result_2,
+    settings=settings,
 )
 
 """

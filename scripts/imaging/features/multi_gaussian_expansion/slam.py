@@ -3,7 +3,7 @@ Multi Gaussian Expansion: SLaM
 ==============================
 
 This script provides an example of the Source, (Lens) Light, and Mass (SLaM) pipelines for fitting a
-lens model where the source is a modeled using a Multi Gaussian Expansion (MGE).
+lens model where the source is modeled using a Multi Gaussian Expansion (MGE).
 
 A full overview of SLaM is provided in `guides/modeling/slam_start_here`. You should read that
 guide before working through this example.
@@ -31,13 +31,9 @@ lens system, where in the final model:
  - The lens galaxy's total mass distribution is an `PowerLaw`.
  - The source galaxy's light is an MGE.
 
-This modeling script uses the SLaM pipelines:
+__Start Here Notebook__
 
- `source_lp`
- `light_lp`
- `mass_total`
-
-Check them out for a detailed description of the analysis!
+If any code in this script is unclear, refer to the `slam_start_here` notebook.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -48,18 +44,183 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # %cd $workspace_path
 # print(f"Working Directory has been set to `{workspace_path}`")
 
-import os
-import sys
 from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
 
 """
-__Dataset__ 
+__SOURCE LP PIPELINE__
+
+Identical to `slam_start_here.py` with `gaussian_per_basis=1` for both the lens and source MGE models.
+
+Because the source is parametric (an MGE), the SOURCE PIX PIPELINE is skipped. The LIGHT LP and MASS TOTAL
+pipelines use `source_lp_result` directly as both the lens and source initialization result.
+"""
+def source_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    redshift_lens: float,
+    redshift_source: float,
+    n_batch: int = 50,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=1,
+        centre_prior_is_uniform=True,
+    )
+
+    source_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=1,
+        centre_prior_is_uniform=False,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=lens_bulge,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                bulge=source_bulge,
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_lp[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__LIGHT LP PIPELINE__
+
+Identical to `slam_start_here.py`, except:
+
+ - `source_result_for_lens` and `source_result_for_source` are both set to `source_lp_result`, because
+   there is no SOURCE PIX PIPELINE for an MGE source.
+ - The analysis does not use adapt images (not required for a parametric MGE source).
+"""
+def light_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_lp_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=1,
+        centre_prior_is_uniform=True,
+    )
+
+    source = al.util.chaining.source_custom_model_from(
+        result=source_lp_result, source_is_model=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=lens_bulge,
+                disk=None,
+                mass=source_lp_result.instance.galaxies.lens.mass,
+                shear=source_lp_result.instance.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="light[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+Identical to `slam_start_here.py`, except:
+
+ - `source_result_for_lens` and `source_result_for_source` are both set to `source_lp_result`, because
+   there is no SOURCE PIX PIPELINE for an MGE source.
+ - The analysis does not use adapt images or positions likelihood (not required for a parametric MGE source).
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    light_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_lp_result.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    bulge = light_result.instance.galaxies.lens.bulge
+    disk = light_result.instance.galaxies.lens.disk
+
+    source = al.util.chaining.source_from(result=source_lp_result)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=bulge,
+                disk=disk,
+                mass=mass,
+                shear=source_lp_result.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
@@ -114,83 +275,32 @@ The redshifts of the lens and source galaxies.
 redshift_lens = 0.5
 redshift_source = 1.0
 
-
 """
-__SOURCE LP PIPELINE__
+__SLaM Pipeline__
 
-The SOURCE LP PIPELINE is identical to the `slam_start_here.ipynb` example.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
 """
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=1,
-    centre_prior_is_uniform=True,
-)
-
-source_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=1,
-    centre_prior_is_uniform=False,
-)
-
-source_lp_result = slam_pipeline.source_lp.run(
+source_lp_result = source_lp(
     settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    source_bulge=source_bulge,
-    mass_centre=(0.0, 0.0),
+    dataset=dataset,
+    mask_radius=mask_radius,
     redshift_lens=redshift_lens,
     redshift_source=redshift_source,
 )
 
-"""
-Compared to the `slam_start_here` example, this SLaM pipeline skips the SOURCE PIX PIPELINE because the MGE
-is a parametric profile.
-
-__LIGHT LP PIPELINE__
-
-The LIGHT LP PIPELINE is setup identically to the `slam_start_here.ipynb` example, however because 
-`source_result_for_source` uses an MGE model, the source light model is now an MGE instead of a pixelization.
-"""
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-bulge = al.model_util.mge_model_from(
+light_result = light_lp(
+    settings_search=settings_search,
+    dataset=dataset,
     mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=1,
-    centre_prior_is_uniform=True,
+    source_lp_result=source_lp_result,
 )
 
-light_results = slam_pipeline.light_lp.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
-    source_result_for_lens=source_lp_result,
-    source_result_for_source=source_lp_result,
-    lens_bulge=bulge,
-    lens_disk=None,
-)
-
-"""
-__MASS TOTAL PIPELINE__
-
-The MASS TOTAL PIPELINE is again identical to the `slam_start_here.ipynb` example, noting again that the
-`source_result_for_source` uses an MGE model.
-"""
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-mass_results = slam_pipeline.mass_total.run(
-    settings_search=settings_search,
-    analysis=analysis,
-    source_result_for_lens=source_lp_result,
-    source_result_for_source=source_lp_result,
-    light_result=light_results,
-    mass=af.Model(al.mp.PowerLaw),
+    dataset=dataset,
+    source_lp_result=source_lp_result,
+    light_result=light_result,
 )
 
 """

@@ -71,7 +71,7 @@ grid = al.Grid2D.uniform(
     pixel_scales=0.05,  # The pixel-scale describes the conversion from pixel units to arc-seconds.
 )
 
-aplt.plot_grid(grid=grid, title=label="Cartesian (y,x)
+aplt.plot_grid(grid=grid, title="Cartesian (y,x) Grid of Coordinates")
 
 """
 __Light Profiles__
@@ -101,7 +101,7 @@ image = sersic_light_profile.image_2d_from(grid=grid)
 """
 The **PyAutoLens** plot module provides methods for plotting objects and their properties, like light profile's image.
 """
-aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title=label="Image of Sersic Light Profile")
+aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image of Sersic Light Profile")
 
 """
 __Mass Profiles__
@@ -137,8 +137,8 @@ potential.
 If you are not familiar with gravitational lensing and therefore are unclear on what the convergence and potential 
 are, don't worry for now!
 """
-aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title=label="Isothermal Mass Convergence")
-aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title=label="Isothermal Mass Potential")
+aplt.plot_array(array=isothermal_mass_profile.convergence_2d_from(grid=grid), title="Isothermal Mass Convergence")
+aplt.plot_array(array=isothermal_mass_profile.potential_2d_from(grid=grid), title="Isothermal Mass Potential")
 
 """
 __Galaxies__
@@ -177,7 +177,7 @@ the source's appears as a multiply imaged and strongly lensed Einstein ring.
 """
 image = tracer.image_2d_from(grid=grid)
 
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Strong Lens System")
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image of Strong Lens System")
 
 """
 __Log10__
@@ -212,9 +212,9 @@ We can use the tracer`s `traced_grid_2d_list_from` method to calculate and plot 
 """
 traced_grid_list = tracer.traced_grid_2d_list_from(grid=grid)
 
-aplt.plot_grid(grid=traced_grid_list[0], title=label="Image Plane Grid")
+aplt.plot_grid(grid=traced_grid_list[0], title="Image Plane Grid")
 
-aplt.plot_grid(grid=traced_grid_list[1], title=label="Source Plane Grid")
+aplt.plot_grid(grid=traced_grid_list[1], title="Source Plane Grid")
 
 """
 __Extending Objects__
@@ -279,7 +279,7 @@ This is what the lens looks like.
 
 Note how crazy the critical curves are!
 """
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title=label="Image of Complex Strong Lens")
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image of Complex Strong Lens")
 
 
 """
@@ -402,8 +402,10 @@ formalism may not recognise what these quantities are -- don't worry about it fo
 """
 potential_2d = tracer.potential_2d_from(grid=grid)
 
-tangential_eigen_value = tracer.tangential_eigen_value_from(grid=grid)
-radial_eigen_value = tracer.radial_eigen_value_from(grid=grid)
+lens_calc = al.LensCalc.from_tracer(tracer)
+
+tangential_eigen_value = lens_calc.tangential_eigen_value_from(grid=grid)
+radial_eigen_value = lens_calc.radial_eigen_value_from(grid=grid)
 
 
 """
@@ -414,7 +416,7 @@ If you are studying a strongly lensed source galaxy and want to know how much th
 magnification below is not of too much use too you. In the result tutorial `galaxies.py` we explain how the 
 magnification of the source can be quantified.
 """
-magnification_2d = tracer.magnification_2d_from(grid=grid)
+magnification_2d = lens_calc.magnification_2d_from(grid=grid)
 
 """
 __Vector Quantities__
@@ -449,7 +451,7 @@ __Other Vector Lensing Quantities__
 
 The tracer has other vector lensing quantities, which use the same interface described above.
 """
-shear_yx_2d = tracer.shear_yx_2d_via_hessian_from(grid=grid)
+shear_yx_2d = lens_calc.shear_yx_2d_via_hessian_from(grid=grid)
 
 """
 __Other Quantities__
@@ -460,13 +462,13 @@ A full description of each can be found in the docstring of the source code of e
 
    https://github.com/Jammy2211/PyAutoGalaxy/blob/main/autogalaxy/operate/deflections.py
 """
-tangential_critical_curve = tracer.tangential_critical_curve_list_from(grid=grid)
+tangential_critical_curve = lens_calc.tangential_critical_curve_list_from(grid=grid)
 
-radial_critical_curve = tracer.radial_critical_curve_list_from(grid=grid)
+radial_critical_curve = lens_calc.radial_critical_curve_list_from(grid=grid)
 
-tangential_caustic = tracer.tangential_caustic_list_from(grid=grid)
+tangential_caustic = lens_calc.tangential_caustic_list_from(grid=grid)
 
-radial_caustic = tracer.radial_caustic_list_from(grid=grid)
+radial_caustic = lens_calc.radial_caustic_list_from(grid=grid)
 
 tracer = al.Tracer(
     galaxies=[lens_galaxy_0, lens_galaxy_1]
@@ -477,7 +479,7 @@ time_delay = tracer.time_delays_from(grid=grid)
 ### You should be able to comment this out and it work fine ###
 
 # area_within_tangential_critical_curve = (
-#     tracer.tangential_critical_curve_area_list_from(grid=grid)
+#     lens_calc.tangential_critical_curve_area_list_from(grid=grid)
 # )
 #
 # einstein_radius = tracer.einstein_radius_from(grid=grid)

@@ -98,7 +98,6 @@ __Output__
 
 Output to a .png file for easy inspection.
 """
-)
 aplt.plot_array(array=data, title="")
 
 """

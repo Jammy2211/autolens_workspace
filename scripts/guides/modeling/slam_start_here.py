@@ -38,7 +38,7 @@ Each pipeline targets a specific part of the lens model:
    stable mesh and regularization parameters.
 
 2. **Light Pipeline**:
-   Models the lens galaxy’s light using the fixed source model from step 1. Accurate subtraction
+   Models the lens galaxy's light using the fixed source model from step 1. Accurate subtraction
    of lens light is essential for robust mass modeling.
 
 3. **Mass Pipeline**:
@@ -49,7 +49,7 @@ Each pipeline targets a specific part of the lens model:
 The SLaM workflow is flexible—you can swap MGE light profiles for other light models if desired. Models set up in
 earlier pipelines guide those used in later ones. For example, if the Source Pipeline uses a `RectangularAdaptDensity`
 mesh, the same mesh type is carried into later pipelines for consistency.
-"
+
 __Design Choices__
 
 The structure of the SLaM pipelines is driven by the requirements of **adaptive pixelized source modeling**,
@@ -70,7 +70,7 @@ Below are the key design considerations that determine the ordering of SLaM pipe
   SLaM automatically determines these positions from the results of the Source Light Profile Pipeline.
 
 - **Adapt Images**
-  Advanced pixelizations use lens-light-subtracted “adapt images” to adapt the source pixelization mesh and
+  Advanced pixelizations use lens-light-subtracted "adapt images" to adapt the source pixelization mesh and
   regularization to the unlensed source morphology. These are only set once a sufficiently accurate source model
   is available from earlier stages in the Source Pipeline.
 
@@ -78,7 +78,7 @@ Below are the key design considerations that determine the ordering of SLaM pipe
   Accurate lens-light subtraction is required before fitting complex mass models, especially for mass models
   fitting stellar and dark matter components simultanoeusly. Pixelized source modeling enables reliable
   deblending of the lens and source, so the lens light model is refined after the adaptive pixelized source is
-  accuratel but before fitting more complex mass models.
+  accurate but before fitting more complex mass models.
 
 - **Mass Model Last**
   The most flexible and complex mass models are fit only after high-quality source and lens-light models
@@ -90,18 +90,15 @@ robustness and efficiency at each stage.
 __This Script__
 
 Using a SOURCE LP PIPELINE, SOURCE PIX PIPELINE, LIGHT LP PIPELINE and TOTAL MASS PIPELINE this SLaM modeling
-script  fits `Imaging` dataset  of a strong lens system where in the final model:
+script fits `Imaging` dataset of a strong lens system where in the final model:
 
  - The lens galaxy's light is a bulge with Multiple Gaussian Expansion (MGE) light profile.
  - The lens galaxy's total mass distribution is an `PowerLaw` plus an `ExternalShear`.
  - The source galaxy's light is a `Pixelization`.
 
-This modeling script uses the following SLaM pipelines found in the `autolens_workspace/slam_pipeline` package:
-
- `source_lp`
- `source_pix`
- `light_lp`
- `mass_total`
+Each SLaM pipeline is implemented as a Python function below (e.g. `source_lp`, `source_pix_1`), with a
+documentation string above each function describing the pipeline in detail. The full pipeline is run at the
+bottom of the script.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -113,18 +110,380 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 # print(f"Working Directory has been set to `{workspace_path}`")
 
 import numpy as np
-import os
-import sys
 from pathlib import Path
 import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-sys.path.insert(0, os.getcwd())
-import slam_pipeline
 
 """
-__Dataset__ 
+__SOURCE LP PIPELINE__
+
+The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in
+this example:
+
+ - Models the lens galaxy's light as an MGE with 2 x 20 Gaussians.
+ - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
+ - Models the source galaxy's light as an MGE with 1 x 20 Gaussians.
+
+The mass and source models from this search initialize the SOURCE PIX PIPELINE searches that follow.
+"""
+def source_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    redshift_lens: float,
+    redshift_source: float,
+    n_batch: int = 50,
+) -> af.Result:
+    analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=lens_bulge,
+                disk=None,
+                mass=af.Model(al.mp.Isothermal),
+                shear=af.Model(al.mp.ExternalShear),
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=redshift_source,
+                bulge=source_bulge,
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_lp[1]",
+        **settings_search.search_dict,
+        n_live=200,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 1__
+
+The SOURCE PIX PIPELINE uses two searches to initialize a robust pixelized model of the source galaxy.
+This pixelization adapts its resolution to the source morphology, assigning more pixels to brighter,
+more detailed regions.
+
+To build an adaptive pixelization, we require an **adapt image**: a lens-light-subtracted image in
+which only the lensed source emission remains. This image determines how both the mesh density and
+regularization weights adapt to the source structure.
+
+The SOURCE LP Pipeline does not provide a sufficiently accurate source model for computing this adapt
+image (e.g., the true source may be more complex than a simple light profile). Therefore, the first
+search of the SOURCE PIX PIPELINE fits a model using a pixelization whose purpose is to generate a
+high-quality adapt image used in search 2.
+
+__Positions__
+
+Image positions are used to prevent unphysical source reconstructions (see `features/pixelization` for
+details). Rather than being input manually, they are computed automatically from the SOURCE LP result.
+This is a key automation feature of SLaM.
+
+__Adapt Images__
+
+An adapt image is computed from the SOURCE LP result and passed to the analysis. This provides an initial
+estimate of the source morphology for the `Adapt` regularization scheme, even though the MGE source model
+may not fully capture the source structure. Search 2 improves upon this using a pixelized adapt image.
+"""
+def source_pix_1(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    mesh_init,
+    regularization_init,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_lp_result
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
+        ],
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=source_lp_result.model.galaxies.lens.mass,
+        mass_result=source_lp_result.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+    shear = source_lp_result.model.galaxies.lens.shear
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=mass,
+                shear=shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh_init,
+                    regularization=regularization_init,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__SOURCE PIX PIPELINE 2__
+
+The second search of the SOURCE PIX PIPELINE fits the final pixelized source model using the improved
+adapt images computed from search 1's pixelized source reconstruction.
+
+The `RectangularAdaptImage` mesh and `Adapt` regularization adapt the source pixels and regularization
+weights to the source's morphology using the high-quality adapt images from search 1.
+"""
+def source_pix_2(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_lp_result: af.Result,
+    source_pix_result_1: af.Result,
+    mesh,
+    regularization,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_pix_result_1
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        use_jax=True,
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.lens.redshift,
+                bulge=source_lp_result.instance.galaxies.lens.bulge,
+                disk=source_lp_result.instance.galaxies.lens.disk,
+                mass=source_pix_result_1.instance.galaxies.lens.mass,
+                shear=source_pix_result_1.instance.galaxies.lens.shear,
+            ),
+            source=af.Model(
+                al.Galaxy,
+                redshift=source_lp_result.instance.galaxies.source.redshift,
+                pixelization=af.Model(
+                    al.Pixelization,
+                    mesh=mesh,
+                    regularization=regularization,
+                ),
+            ),
+        ),
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__LIGHT LP PIPELINE__
+
+The LIGHT LP PIPELINE uses one search to fit a complex lens light model to a high level of accuracy, with
+the lens mass model and source light model fixed to the maximum log likelihood result of the SOURCE PIX
+PIPELINE.
+
+In this example:
+
+ - The lens galaxy's light is a MGE with 2 x 20 Gaussians.
+ - Uses an `Isothermal` mass model with `ExternalShear` for the lens's total mass distribution [fixed from
+   SOURCE PIX PIPELINE].
+ - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
+
+This search aims to produce an accurate model of the lens galaxy's light, which may not have been possible
+in the SOURCE PIPELINE as the mass and source models were not yet precisely estimated. The adapt images
+from SOURCE PIX PIPELINE search 1 are reused, providing a stable basis for the lens-light subtraction.
+"""
+def light_lp(
+    settings_search: af.SettingsSearch,
+    dataset,
+    mask_radius: float,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+    )
+
+    lens_bulge = al.model_util.mge_model_from(
+        mask_radius=mask_radius,
+        total_gaussians=20,
+        gaussian_per_basis=2,
+        centre_prior_is_uniform=True,
+    )
+
+    source = al.util.chaining.source_custom_model_from(
+        result=source_result_for_source, source_is_model=False
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=lens_bulge,
+                disk=None,
+                mass=source_result_for_lens.instance.galaxies.lens.mass,
+                shear=source_result_for_lens.instance.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="light[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__MASS TOTAL PIPELINE__
+
+The MASS TOTAL PIPELINE uses one search to fit a complex lens mass model to a high level of accuracy,
+using the lens mass model and source model of the SOURCE PIX PIPELINE to initialize model priors, and the
+lens light model of the LIGHT LP PIPELINE.
+
+In this example:
+
+ - Uses a linear MGE bulge [fixed from LIGHT LP PIPELINE].
+ - Uses a `PowerLaw` model for the lens's total mass distribution [priors initialized from SOURCE PIX
+   PIPELINE].
+ - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
+
+__Positions__
+
+Positions are computed from the SOURCE PIX PIPELINE search 2 result, which provides more precise multiple
+image positions than the SOURCE LP PIPELINE (as the pixelized source gives a better source-plane
+reconstruction).
+"""
+def mass_total(
+    settings_search: af.SettingsSearch,
+    dataset,
+    source_result_for_lens: af.Result,
+    source_result_for_source: af.Result,
+    light_result: af.Result,
+    n_batch: int = 20,
+) -> af.Result:
+    # Total mass model for the lens galaxy.
+    mass = af.Model(al.mp.PowerLaw)
+
+    galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
+        result=source_result_for_lens
+    )
+
+    adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
+
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+        positions_likelihood_list=[
+            source_result_for_source.positions_likelihood_from(
+                factor=3.0, minimum_threshold=0.2
+            )
+        ],
+    )
+
+    mass = al.util.chaining.mass_from(
+        mass=mass,
+        mass_result=source_result_for_lens.model.galaxies.lens.mass,
+        unfix_mass_centre=True,
+    )
+
+    bulge = light_result.instance.galaxies.lens.bulge
+    disk = light_result.instance.galaxies.lens.disk
+
+    source = al.util.chaining.source_from(result=source_result_for_source)
+
+    model = af.Collection(
+        galaxies=af.Collection(
+            lens=af.Model(
+                al.Galaxy,
+                redshift=source_result_for_lens.instance.galaxies.lens.redshift,
+                bulge=bulge,
+                disk=disk,
+                mass=mass,
+                shear=source_result_for_lens.model.galaxies.lens.shear,
+            ),
+            source=source,
+        ),
+    )
+
+    search = af.Nautilus(
+        name="mass_total[1]",
+        **settings_search.search_dict,
+        n_live=150,
+        n_batch=n_batch,
+    )
+
+    return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+
+"""
+__Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
@@ -179,53 +538,6 @@ The redshifts of the lens and source galaxies.
 redshift_lens = 0.5
 redshift_source = 1.0
 
-
-"""
-__SOURCE LP PIPELINE__
-
-The SOURCE LP PIPELINE uses one search to initialize a robust model for the source galaxy's light, which in 
-this example:
-
- - The lens galaxy's light is a MGE with 2 x 30 Gaussian [6 parameters]
-
- - Uses an `Isothermal` model for the lens's total mass distribution with an `ExternalShear`.
- 
- - The source galaxy's light is a MGE with 1 x 30 Gaussian [4 parameters]
-
- __Settings__:
-
- - Mass Centre: Fix the mass profile centre to (0.0, 0.0) (this assumption will be relaxed in the MASS TOTAL PIPELINE).
-"""
-analysis = al.AnalysisImaging(dataset=dataset, use_jax=True)
-
-# Lens Light
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-# Source Light
-
-source_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius, total_gaussians=20, centre_prior_is_uniform=False
-)
-
-source_lp_result = slam_pipeline.source_lp.run(
-    settings_search=settings_search,
-    analysis=analysis,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
-    mass=af.Model(al.mp.Isothermal),
-    shear=af.Model(al.mp.ExternalShear),
-    source_bulge=source_bulge,
-    mass_centre=(0.0, 0.0),
-    redshift_lens=redshift_lens,
-    redshift_source=redshift_source,
-)
-
 """
 __Mesh Shape__
 
@@ -235,185 +547,50 @@ mesh_pixels_yx = 28
 mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
 """
-__SOURCE PIX PIPELINE__
+__SLaM Pipeline__
 
-The SOURCE PIX PIPELINE uses two searches to initialize a robust pixelized model of the source galaxy.
-This pixelization adapts its resolution to the source morphology, assigning more pixels to brighter,
-more detailed regions.
-
-To build an adaptive pixelization, we require an **adapt image**: a lens-light-subtracted image in
-which only the lensed source emission remains. This image determines how both the mesh density and
-regularization weights adapt to the source structure.
-
-The SOURCE LP Pipeline does not provide a sufficiently accurate source model for computing this adapt
-image (e.g., the true source may be more complex than a simple light profile). Therefore, the first
-step of the SOURCE PIX PIPELINE fits a new model using a pixelization, whose purpose is to generate
-a high-quality adapt image.
-
-This first search of the SOURCE PIX PIPELINE fits the following model:
-
-- The lens galaxy light is modeled using MGE light profiles [parameters fixed to result of SOURCE LP PIPELINE].
-
-- The lens galaxy mass is modeled using a total mass distribution [model initialized from the results of the SOURCE LP PIPELINE].
-
-- The source galaxy's light is a pixelization using a `RectangularAdaptDensity` mesh and `AdaptSplit` regularization scheme 
-  [parameters of regularization free to vary].
-
-This search improves the lens mass model by modeling the source using a pixelization and computes the adapt
-images that are used in search 2.
-
-The `AdaptSplit` regularization adapt the source regularization weights to the source's morphology. We 
-therefore set up the adapt image using the result from SOURCE LP PIPELINE. This image is not always perfect, but it
-will be improved upon in search 2 and is good enough for computing the initial lens model in search 1.
-
-__Positions__
-
-In the pixelization examples, the importance of using multiple image positions to prevent unphysical source
-reconstructions was discussed. 
-
-This uses a `positions_likelihood` to ensure the lens model map the multiple images to within a threshold of one 
-another in the source plane, else a penalty is added to the likelihood.
-
-These examples required the user to manually input these positions. 
-
-In SLaM, we automate this by computing the positions from the results of the SOURCE LP PIPELINE, which we can see
-below come from the `source_lp_result` object.
+The code below calls the full SLaM PIPELINE. See the documentation string above each Python function for
+a description of each pipeline step.
 """
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_lp_result
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_lp_result.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-)
-
-source_pix_result_1 = slam_pipeline.source_pix.run_1(
+source_lp_result = source_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
+    redshift_lens=redshift_lens,
+    redshift_source=redshift_source,
+)
+
+source_pix_result_1 = source_pix_1(
+    settings_search=settings_search,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     mesh_init=af.Model(al.mesh.RectangularAdaptDensity, shape=mesh_shape),
     regularization_init=al.reg.Adapt,
 )
 
-"""
-__SOURCE PIX PIPELINE 2__
-
-Search 2 of the SOURCE PIX PIPELINE fits a lens model where:
-
-- The lens galaxy light is modeled using MGE light profiles [parameters fixed to result of SOURCE LP PIPELINE].
-
-- The lens galaxy mass is modeled using a total mass distribution [parameters fixed to result of search 1].
-
-- The source galaxy's light is the input final mesh and regularization.
-
-- The source galaxy's light is a pixelization using a `RectangularAdaptImage` mesh and `AdaptSplit` regularization scheme 
-  [parameters of regularization free to vary].
-
-The `RectangularAdaptImage` mesh and `Adapt` regularization adapt the source pixels and regularization weights
-to the source's morphology. We therefore set up the adapt image using the result from SOURCE PIX PIPELINE search 1.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    use_jax=True,
-)
-
-source_pix_result_2 = slam_pipeline.source_pix.run_2(
+source_pix_result_2 = source_pix_2(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_lp_result=source_lp_result,
     source_pix_result_1=source_pix_result_1,
     mesh=af.Model(al.mesh.RectangularAdaptImage, shape=mesh_shape),
     regularization=al.reg.Adapt,
 )
 
-"""
-__LIGHT LP PIPELINE__
-
-The LIGHT LP PIPELINE uses one search to fit a complex lens light model to a high level of accuracy, using the
-lens mass model and source light model fixed to the maximum log likelihood result of the SOURCE LP PIPELINE.
-In this example it:
-
- - The lens galaxy's light is a MGE with 2 x 30 Gaussian [6 parameters] [6 Free Parameters].
-
- - Uses an `Isothermal` mass model with `ExternalShear` for the lens's total mass distribution [fixed from SOURCE PIX PIPELINE].
-
- - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
-
- - Carries the lens redshift and source redshift of the SOURCE PIPELINE through to the MASS PIPELINE [fixed values].   
-"""
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-)
-
-lens_bulge = al.model_util.mge_model_from(
-    mask_radius=mask_radius,
-    total_gaussians=20,
-    gaussian_per_basis=2,
-    centre_prior_is_uniform=True,
-)
-
-light_result = slam_pipeline.light_lp.run(
+light_result = light_lp(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
+    mask_radius=mask_radius,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
-    lens_bulge=lens_bulge,
-    lens_disk=None,
 )
 
-"""
-__MASS TOTAL PIPELINE__
-
-The MASS TOTAL PIPELINE uses one search to fits a complex lens mass model to a high level of accuracy, 
-using the lens mass model and source model of the SOURCE PIX PIPELINE to initialize the model priors and the lens 
-light model of the LIGHT LP PIPELINE. 
-
-In this example it:
-
- - Uses a linear Multi Gaussian Expansion bulge [fixed from LIGHT LP PIPELINE].
-
- - Uses an `PowerLaw` model for the lens's total mass distribution [priors initialized from SOURCE 
- LIGHT PROFILE PIPELINE + centre unfixed from (0.0, 0.0)].
-
- - Uses a `Pixelization` for the source's light [fixed from SOURCE PIX PIPELINE].
-
- - Carries the lens redshift and source redshift of the SOURCE PIPELINE through to the MASS TOTAL PIPELINE.
-"""
-galaxy_image_name_dict = al.galaxy_name_image_dict_via_result_from(
-    result=source_pix_result_1
-)
-
-adapt_images = al.AdaptImages(galaxy_name_image_dict=galaxy_image_name_dict)
-
-analysis = al.AnalysisImaging(
-    dataset=dataset,
-    adapt_images=adapt_images,
-    positions_likelihood_list=[
-        source_pix_result_2.positions_likelihood_from(factor=3.0, minimum_threshold=0.2)
-    ],
-)
-
-mass_result = slam_pipeline.mass_total.run(
+mass_result = mass_total(
     settings_search=settings_search,
-    analysis=analysis,
+    dataset=dataset,
     source_result_for_lens=source_pix_result_1,
     source_result_for_source=source_pix_result_2,
     light_result=light_result,
-    mass=af.Model(al.mp.PowerLaw),
 )
 
 """

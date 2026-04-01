@@ -202,7 +202,7 @@ bright surface brightnesses, often because they fit residuals from the lens ligh
 For a rectangular mesh, the source code computes edge pixels internally using the known
 pixels at the edge of the mesh. 
 """
-mesh_pixels_yx = 28
+mesh_pixels_yx = 8
 mesh_shape = (mesh_pixels_yx, mesh_pixels_yx)
 
 """
