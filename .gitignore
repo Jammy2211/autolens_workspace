@@ -1,3 +1,4 @@
 root.log
 .idea/
 
+__pycache__/
