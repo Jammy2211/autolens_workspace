@@ -402,8 +402,10 @@ formalism may not recognise what these quantities are -- don't worry about it fo
 """
 potential_2d = tracer.potential_2d_from(grid=grid)
 
-tangential_eigen_value = tracer.tangential_eigen_value_from(grid=grid)
-radial_eigen_value = tracer.radial_eigen_value_from(grid=grid)
+lens_calc = al.LensCalc.from_tracer(tracer)
+
+tangential_eigen_value = lens_calc.tangential_eigen_value_from(grid=grid)
+radial_eigen_value = lens_calc.radial_eigen_value_from(grid=grid)
 
 
 """
@@ -414,7 +416,7 @@ If you are studying a strongly lensed source galaxy and want to know how much th
 magnification below is not of too much use too you. In the result tutorial `galaxies.py` we explain how the 
 magnification of the source can be quantified.
 """
-magnification_2d = tracer.magnification_2d_from(grid=grid)
+magnification_2d = lens_calc.magnification_2d_from(grid=grid)
 
 """
 __Vector Quantities__
@@ -449,7 +451,7 @@ __Other Vector Lensing Quantities__
 
 The tracer has other vector lensing quantities, which use the same interface described above.
 """
-shear_yx_2d = tracer.shear_yx_2d_via_hessian_from(grid=grid)
+shear_yx_2d = lens_calc.shear_yx_2d_via_hessian_from(grid=grid)
 
 """
 __Other Quantities__
@@ -460,13 +462,13 @@ A full description of each can be found in the docstring of the source code of e
 
    https://github.com/Jammy2211/PyAutoGalaxy/blob/main/autogalaxy/operate/deflections.py
 """
-tangential_critical_curve = tracer.tangential_critical_curve_list_from(grid=grid)
+tangential_critical_curve = lens_calc.tangential_critical_curve_list_from(grid=grid)
 
-radial_critical_curve = tracer.radial_critical_curve_list_from(grid=grid)
+radial_critical_curve = lens_calc.radial_critical_curve_list_from(grid=grid)
 
-tangential_caustic = tracer.tangential_caustic_list_from(grid=grid)
+tangential_caustic = lens_calc.tangential_caustic_list_from(grid=grid)
 
-radial_caustic = tracer.radial_caustic_list_from(grid=grid)
+radial_caustic = lens_calc.radial_caustic_list_from(grid=grid)
 
 tracer = al.Tracer(
     galaxies=[lens_galaxy_0, lens_galaxy_1]
@@ -477,7 +479,7 @@ time_delay = tracer.time_delays_from(grid=grid)
 ### You should be able to comment this out and it work fine ###
 
 # area_within_tangential_critical_curve = (
-#     tracer.tangential_critical_curve_area_list_from(grid=grid)
+#     lens_calc.tangential_critical_curve_area_list_from(grid=grid)
 # )
 #
 # einstein_radius = tracer.einstein_radius_from(grid=grid)

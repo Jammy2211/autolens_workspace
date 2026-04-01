@@ -151,7 +151,7 @@ def source_lp(
 """
 __SOURCE PIX PIPELINE 1__
 
-Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+Identical to `slam_start_here.py`.
 """
 def source_pix_1(
     settings_search: af.SettingsSearch,
@@ -218,7 +218,7 @@ def source_pix_1(
 """
 __SOURCE PIX PIPELINE 2__
 
-Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+Identical to `slam_start_here.py`.
 
 Note that between SOURCE PIX PIPELINE 1 and this search, the calling section applies adaptive over-sampling to
 the dataset using the pixelized source reconstruction from search 1. This improves the accuracy of the
@@ -343,7 +343,7 @@ def light_lp(
 """
 __MASS TOTAL PIPELINE__
 
-Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+Identical to `slam_start_here.py`.
 """
 def mass_total(
     settings_search: af.SettingsSearch,

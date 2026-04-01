@@ -30,6 +30,14 @@ python scripts/imaging/modeling/start_here.py
 PYAUTOFIT_TEST_MODE=1 python scripts/imaging/modeling/start_here.py
 ```
 
+**Codex / sandboxed runs**: when running from Codex or any restricted environment, set writable cache directories so `numba` and `matplotlib` do not fail on unwritable home or source-tree paths:
+
+```bash
+NUMBA_CACHE_DIR=/tmp/numba_cache MPLCONFIGDIR=/tmp/matplotlib python scripts/imaging/modeling/start_here.py
+```
+
+This workspace is often imported from `/mnt/c/...` and Codex may not be able to write to module `__pycache__` directories or `/home/jammy/.cache`, which can cause import-time `numba` caching failures without this override.
+
 ## Core API Patterns
 
 **Imports** (standard across all scripts):
@@ -66,6 +74,17 @@ This converts every `.py` file in `scripts/` to a `.ipynb` in `notebooks/` by:
 3. Restoring commented Jupyter magic commands (e.g. `# %matplotlib` → `%matplotlib`)
 
 Use the `/generate_and_merge` skill to build notebooks, commit, push, raise a PR, and merge into `main`.
+
+## SLaM Pipelines
+
+SLaM (Source, Light and Mass) pipelines are advanced automated modeling workflows found under
+`scripts/*/features/slam/`, `scripts/interferometer/features/*/slam.py`, `scripts/group/slam.py`
+and `scripts/guides/modeling/slam_start_here.py`.
+
+When working on any SLaM pipeline script, read `scripts/guides/modeling/slam_start_here.py`
+first. It is the canonical reference for pipeline structure, inline function signatures,
+docstring style, model-building patterns, and the `"""__SLaM Pipeline__"""` calling section.
+All other SLaM scripts are documented relative to it ("Identical to `slam_start_here.py`, except...").
 
 ## Related Repos
 

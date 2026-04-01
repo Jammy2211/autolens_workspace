@@ -4,7 +4,7 @@
     "arguments": {
         "values": {
             "type": "list",
-            "values": [[1.0, 3.5], [-2.0, -3.5]]
+            "values": []
         }
     }
 }

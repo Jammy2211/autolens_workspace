@@ -226,7 +226,7 @@ def source_pix_2(
 """
 __LIGHT LP PIPELINE__
 
-Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+Identical to `slam_start_here.py`.
 """
 def light_lp(
     settings_search: af.SettingsSearch,
@@ -286,7 +286,7 @@ def light_lp(
 """
 __MASS TOTAL PIPELINE__
 
-Identical to `slam_start_here.py`, except `use_jax=True` is passed to the analysis for faster computation.
+Identical to `slam_start_here.py`.
 """
 def mass_total(
     settings_search: af.SettingsSearch,
