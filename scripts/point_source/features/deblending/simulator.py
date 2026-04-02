@@ -155,9 +155,7 @@ __Visualize (Point Source)__
 
 Visualize the `PointDataset` using identical code to the `start_here.ipynb` example.
 """
-mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
-
-point_dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(dataset=dataset, output_path=dataset_path, output_format="png")
 
 """
 Output subplots of the tracer's images, including the positions of the multiple images on the image.
@@ -307,9 +305,6 @@ modeling and to `.png` for general inspection.
 
 aplt.subplot_imaging_dataset(dataset=dataset)
 aplt.plot_array(array=dataset.data, title="Data")
-
-
-)
 
 aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image", output_path=dataset_path, output_format="png")
 

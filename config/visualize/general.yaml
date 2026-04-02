@@ -40,5 +40,5 @@ colorbar:
   fraction: 0.047                 # Fraction of original axes to use for the colorbar.
   pad: 0.01                       # Padding between colorbar and axes.
   labelrotation: 90               # Rotation of colorbar tick labels in degrees.
-  labelsize: 18                   # Font size of colorbar tick labels for single-panel figures.
-  labelsize_subplot: 18           # Font size of colorbar tick labels for subplot panels.
+  labelsize: 16                   # Font size of colorbar tick labels for single-panel figures.
+  labelsize_subplot: 16           # Font size of colorbar tick labels for subplot panels.

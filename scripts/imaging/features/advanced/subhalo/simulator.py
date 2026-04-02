@@ -215,8 +215,6 @@ image_no_subhalo = tracer_no_subhalo.image_2d_from(grid=grid)
 
 subhalo_residual_image = image - image_no_subhalo
 
-)
-
 aplt.plot_array(array=subhalo_residual_image, title="", output_path=dataset_path, output_format="png")
 
 """

@@ -135,7 +135,7 @@ def source_lp_0(
         )
 
     # --- extra lens galaxy light models ---
-    extra_lens_light_list = []
+    extra_light_models = []
     for centre in extra_lens_centres:
         bulge = al.model_util.mge_model_from(
             mask_radius=mask_radius,
@@ -144,14 +144,14 @@ def source_lp_0(
             centre=(centre[0], centre[1]),
             ell_comps_prior_is_uniform=True,
         )
-        extra_lens_light_list.append(
+        extra_light_models.append(
             af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge)
         )
 
-    extra_galaxies = af.Collection(extra_lens_light_list) if extra_lens_light_list else None
+    extra_galaxies = af.Collection(extra_light_models) if extra_light_models else None
 
     # --- scaling galaxy light models ---
-    scaling_light_list = []
+    scaling_light_models = []
     for centre in scaling_lens_centres:
         bulge = al.model_util.mge_model_from(
             mask_radius=mask_radius,
@@ -160,11 +160,13 @@ def source_lp_0(
             centre=(centre[0], centre[1]),
             ell_comps_prior_is_uniform=True,
         )
-        scaling_light_list.append(
+        scaling_light_models.append(
             af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge)
         )
 
-    scaling_galaxies = af.Collection(scaling_light_list) if scaling_light_list else None
+    scaling_galaxies = (
+        af.Collection(scaling_light_models) if scaling_light_models else None
+    )
 
     n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
     n_scaling = len(scaling_galaxies) if scaling_galaxies is not None else 0
@@ -267,7 +269,7 @@ def source_lp_1(
 
     # --- extra lens galaxy models (light fixed, mass bounded by luminosity) ---
     # Tracer order: [lens_0..lens_{n_main-1}, extra_0..extra_{n_extra-1}, scaling_0..]
-    extra_lens_fixed_list = []
+    extra_mass_models = []
     for i in range(n_extra):
         lp0_extra = source_lp_result_0.instance.extra_galaxies[i]
 
@@ -285,17 +287,17 @@ def source_lp_1(
             upper_limit=min(5 * 0.5 * total_luminosity**0.6, 5.0),
         )
 
-        extra_lens_fixed_list.append(
+        extra_mass_models.append(
             af.Model(al.Galaxy, redshift=redshift_lens, bulge=lp0_extra.bulge, mass=mass)
         )
 
-    extra_galaxies = af.Collection(extra_lens_fixed_list) if extra_lens_fixed_list else None
+    extra_galaxies = af.Collection(extra_mass_models) if extra_mass_models else None
 
     # --- scaling lens galaxy models (light fixed, shared luminosity scaling relation) ---
     scaling_factor = af.UniformPrior(lower_limit=0.0, upper_limit=0.5)
     scaling_relation = af.UniformPrior(lower_limit=0.0, upper_limit=2.0)
 
-    scaling_lens_fixed_list = []
+    scaling_mass_models = []
     for i in range(n_scaling):
         lp0_scaling = source_lp_result_0.instance.scaling_galaxies[i]
 
@@ -310,14 +312,14 @@ def source_lp_1(
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
         mass.einstein_radius = scaling_factor * total_luminosity**scaling_relation
 
-        scaling_lens_fixed_list.append(
+        scaling_mass_models.append(
             af.Model(
                 al.Galaxy, redshift=redshift_lens, bulge=lp0_scaling.bulge, mass=mass
             )
         )
 
     scaling_galaxies = (
-        af.Collection(scaling_lens_fixed_list) if scaling_lens_fixed_list else None
+        af.Collection(scaling_mass_models) if scaling_mass_models else None
     )
 
     lens_dict = {f"lens_{i}": m for i, m in enumerate(lens_full_models)}
@@ -642,7 +644,7 @@ def light_lp(
         lens_bulge_list.append(bulge)
 
     # --- extra lens galaxy light models (free MGE, mass fixed from source_pix[1]) ---
-    extra_lens_light_list = []
+    extra_light_models = []
     for i in range(n_extra):
         pix1_extra = source_pix_result_1.instance.extra_galaxies[i]
         bulge = al.model_util.mge_model_from(
@@ -651,11 +653,11 @@ def light_lp(
             centre_prior_is_uniform=True,
             centre=pix1_extra.mass.centre,
         )
-        extra_lens_light_list.append(
+        extra_light_models.append(
             af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge, mass=pix1_extra.mass)
         )
 
-    extra_galaxies = af.Collection(extra_lens_light_list) if extra_lens_light_list else None
+    extra_galaxies = af.Collection(extra_light_models) if extra_light_models else None
 
     source = al.util.chaining.source_custom_model_from(
         result=source_pix_result_2, source_is_model=False
@@ -730,7 +732,7 @@ def mass_total(
     )
 
     # --- extra galaxies: fixed light, free mass ---
-    extra_lens_mass_free_list = []
+    extra_mass_models = []
     for i in range(n_extra):
         light_extra = light_result.instance.extra_galaxies[i]
 
@@ -748,19 +750,19 @@ def mass_total(
             upper_limit=min(5 * 0.5 * total_luminosity**0.6, 5.0),
         )
 
-        extra_lens_mass_free_list.append(
+        extra_mass_models.append(
             af.Model(al.Galaxy, redshift=redshift_lens, bulge=light_extra.bulge, mass=mass)
         )
 
     extra_galaxies = (
-        af.Collection(extra_lens_mass_free_list) if extra_lens_mass_free_list else None
+        af.Collection(extra_mass_models) if extra_mass_models else None
     )
 
     # --- scaling galaxies: fixed light, free shared scaling relation ---
     scaling_factor = af.UniformPrior(lower_limit=0.0, upper_limit=0.5)
     scaling_relation = af.UniformPrior(lower_limit=0.0, upper_limit=2.0)
 
-    scaling_mass_free_list = []
+    scaling_mass_models = []
     for i in range(n_scaling):
         light_scaling = light_result.instance.scaling_galaxies[i]
 
@@ -775,14 +777,14 @@ def mass_total(
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
         mass.einstein_radius = scaling_factor * total_luminosity**scaling_relation
 
-        scaling_mass_free_list.append(
+        scaling_mass_models.append(
             af.Model(
                 al.Galaxy, redshift=redshift_lens, bulge=light_scaling.bulge, mass=mass
             )
         )
 
     scaling_galaxies = (
-        af.Collection(scaling_mass_free_list) if scaling_mass_free_list else None
+        af.Collection(scaling_mass_models) if scaling_mass_models else None
     )
 
     analysis = al.AnalysisImaging(

@@ -2,6 +2,39 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
+        "time_delays": null,
+        "name": "point_0",
+        "fluxes": null,
+        "positions": {
+            "type": "instance",
+            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+            "arguments": {
+                "values": {
+                    "type": "ndarray",
+                    "array": [
+                        [
+                            -1.0442299305519571,
+                            -1.0209940970388578
+                        ],
+                        [
+                            0.4738428687056737,
+                            1.7207635015318146
+                        ],
+                        [
+                            1.554479090939232,
+                            0.5315555720759485
+                        ],
+                        [
+                            1.197282122758028,
+                            1.1171562384659313
+                        ]
+                    ],
+                    "dtype": "float64"
+                }
+            }
+        },
+        "time_delays_noise_map": null,
+        "fluxes_noise_map": null,
         "positions_noise_map": {
             "type": "instance",
             "class_path": "autoarray.structures.arrays.irregular.ArrayIrregular",
@@ -17,39 +50,6 @@
                     "dtype": "float64"
                 }
             }
-        },
-        "positions": {
-            "type": "instance",
-            "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
-            "arguments": {
-                "values": {
-                    "type": "ndarray",
-                    "array": [
-                        [
-                            -1.0178310895694729,
-                            -1.0483418404086384
-                        ],
-                        [
-                            0.4885436978734347,
-                            1.5941415496842637
-                        ],
-                        [
-                            1.5417314181795698,
-                            0.3598790640347075
-                        ],
-                        [
-                            1.1401037960522769,
-                            1.2057082968222583
-                        ]
-                    ],
-                    "dtype": "float64"
-                }
-            }
-        },
-        "fluxes": null,
-        "time_delays_noise_map": null,
-        "fluxes_noise_map": null,
-        "name": "point_0",
-        "time_delays": null
+        }
     }
 }

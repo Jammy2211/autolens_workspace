@@ -242,8 +242,6 @@ for sample_index in range(total_datasets):
 
     Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
     """
-    )
-
     aplt.subplot_imaging_dataset(dataset=dataset)
     aplt.plot_array(array=dataset.data, title="Data")
 

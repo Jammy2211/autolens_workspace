@@ -173,11 +173,6 @@ modeling and to `.png` for general inspection.
 
 aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
-)
-
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
-
-
 aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 
@@ -222,11 +217,12 @@ __Visualize__
 
 Output a subplot of the simulated point source dictionary and the tracer's quantities to the dataset path as .png files.
 """
-mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
-
-point_dataset_plotter.subplot_dataset()
-
-point_dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(
+    dataset=dataset_0, output_path=dataset_path, output_format="png"
+)
+aplt.subplot_point_dataset(
+    dataset=dataset_1, output_path=dataset_path, output_format="png"
+)
 
 aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
