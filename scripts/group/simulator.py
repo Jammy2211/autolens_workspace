@@ -3,14 +3,27 @@ Simulator: Group
 ================
 
 This script simulates an example strong lens on the 'group' scale, where there is a single primary lens galaxy
-and two smaller galaxies nearby, whose mass contributes significantly to the ray-tracing and is therefore included in
-the strong lens model.
+and two smaller extra galaxies nearby, whose mass contributes significantly to the ray-tracing and is therefore
+included in the strong lens model.
 
 This script simulates `Imaging` of a 'group-scale' strong lens where:
 
- - The group consists of three lens galaxies whose ligth distributions are `SersicSph` profiles and
- total mass distributions are `IsothermalSph` profiles.
- - A single source galaxy is observed whose `LightProfile` is an `Sersic`.
+ - The group consists of one main lens galaxy and two extra galaxies whose light distributions are `SersicSph`
+ profiles and total mass distributions are `IsothermalSph` profiles.
+ - A single source galaxy is observed whose `LightProfile` is a `SersicCore`.
+
+__Main Lens Galaxies vs Extra Galaxies__
+
+For group-scale lens modeling, galaxies are organized into two categories:
+
+ - `main_lens_galaxies`: The primary lens galaxies that dominate the light and mass of the system. These are
+   modeled individually with unique parametric light and mass profiles.
+
+ - `extra_galaxies`: Companion galaxies near the lens system that contribute to lensing but are modeled with
+   more restrictive assumptions (e.g. fixed centres, scaling relations).
+
+Centres for each category are saved to separate JSON files (`main_lens_centres.json` and
+`extra_galaxies_centres.json`) so that the modeling scripts can load them directly.
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
@@ -39,7 +52,7 @@ dataset_type = "group"
 dataset_name = "simple"
 
 """
-The path where the dataset will be output. 
+The path where the dataset will be output.
 
 In this example, this is: `/autolens_workspace/dataset/group/simple`
 """
@@ -48,7 +61,7 @@ dataset_path = Path("dataset", dataset_type, dataset_name)
 """
 __Grid__
 
-Define the 2d grid of (y,x) coordinates that the lens and source galaxy images are evaluated and therefore simulated 
+Define the 2d grid of (y,x) coordinates that the lens and source galaxy images are evaluated and therefore simulated
 on, via the inputs:
 
  - `shape_native`: The (y_pixels, x_pixels) 2D shape of the grid defining the shape of the data that is simulated.
@@ -60,36 +73,45 @@ grid = al.Grid2D.uniform(
 )
 
 """
+__Galaxy Centres__
+
+Define the centres of the main lens galaxies and extra galaxies. These are used for over-sampling and are also
+output to JSON files so that the modeling scripts can load them.
+"""
+main_lens_centres = [(0.0, 0.0)]
+extra_galaxies_centres = [(3.5, 2.5), (-4.4, -5.0)]
+
+"""
 __Over Sampling__
 
-Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated 
-on a higher resolution grid than the image data to ensure the calculation is accurate. 
+Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated
+on a higher resolution grid than the image data to ensure the calculation is accurate.
 
-For lensing calculations, the high magnification regions of a lensed source galaxy require especially high levels of 
+For lensing calculations, the high magnification regions of a lensed source galaxy require especially high levels of
 over sampling to ensure the lensed images are evaluated accurately.
 
-Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated 
-on a higher resolution grid than the image data to ensure the calculation is accurate. 
+Over sampling is a numerical technique where the images of light profiles and galaxies are evaluated
+on a higher resolution grid than the image data to ensure the calculation is accurate.
 
-An adaptive oversampling scheme is implemented, evaluating the central regions at (0.0", 0.0") of the light profile at a 
-resolution of 32x32, transitioning to 8x8 in intermediate areas, and 2x2 in the outskirts. This ensures precise and 
+An adaptive oversampling scheme is implemented, evaluating the central regions at (0.0", 0.0") of the light profile at a
+resolution of 32x32, transitioning to 8x8 in intermediate areas, and 2x2 in the outskirts. This ensures precise and
 accurate image simulation while focusing computational resources on the bright regions that demand higher oversampling.
 
-This adaptive over sampling is also applied at the centre of every over galaxy in the group.
+This adaptive over sampling is also applied at the centre of every other galaxy in the group.
 
-An adaptive oversampling grid cannot be defined for the lensed source because its light appears in different regions of 
-the image plane for each dataset. For this reason, most workspace examples utilize cored light profiles for the 
-source galaxy. Cored light profiles change gradually in their central regions, allowing accurate evaluation without 
+An adaptive oversampling grid cannot be defined for the lensed source because its light appears in different regions of
+the image plane for each dataset. For this reason, most workspace examples utilize cored light profiles for the
+source galaxy. Cored light profiles change gradually in their central regions, allowing accurate evaluation without
 requiring oversampling.
 
-Once you are more experienced, you should read up on over-sampling in more detail via 
+Once you are more experienced, you should read up on over-sampling in more detail via
 the `autolens_workspace/*/guides/over_sampling.ipynb` notebook.
 """
 over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
     grid=grid,
     sub_size_list=[32, 8, 2],
     radial_list=[0.3, 0.6],
-    centre_list=[(0.0, 0.0), (3.5, 2.5), (-4.4, -5.0)],
+    centre_list=main_lens_centres + extra_galaxies_centres,
 )
 
 grid = grid.apply_over_sampling(over_sample_size=over_sample_size)
@@ -113,30 +135,15 @@ simulator = al.SimulatorImaging(
 )
 
 """
-__Main Galaxies and Extra Galaxies__
+__Main Lens Galaxies__
 
-For a group-scale lens, we designate there to be two types of lens galaxies in the system:
+The main lens galaxy is at the origin (0.0, 0.0). It has a spherical Sersic light profile and an isothermal
+mass profile.
 
- - `main_galaxies`: The main lens galaxies which likely make up the majority of light and mass in the lens system.
- These are modeled individually with a unique name for each, with their light and mass distributions modeled using 
- parametric models.
- 
- - `extra_galaxies`: The extra galaxies which are nearby the lens system and contribute to the lensing of the source
-  galaxy. These are modeled with a more restrictive model, for example with their centres fixed to the observed
-  centre of light and their mass distributions modeled using a scaling relation. These are grouped into a single 
-  `extra_galaxies` collection.
-  
-In this simple example group scale lens, there is one main lens galaxy and two extra galaxies. 
-
-__Ray Tracing__
-
-Setup the mass models of the main lens galaxy (`Isothermal` and `ExternalShear1), source 
-galaxy (`SersicCore` and `Point`) and two extra galaxies using the `IsothermalSph` model and the source galaxy light 
-using an elliptical `Sersic`.
+In the list-based API used by the group modeling scripts, main lens galaxies are stored in a list called
+`main_lens_galaxies`, where each galaxy is referred to as `lens_0`, `lens_1`, etc.
 """
-# Main Lens:
-
-lens_galaxy = al.Galaxy(
+lens_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(0.0, 0.0), intensity=0.7, effective_radius=2.0, sersic_index=4.0
@@ -144,9 +151,17 @@ lens_galaxy = al.Galaxy(
     mass=al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=4.0),
 )
 
-# Extra Galaxies
+main_lens_galaxies = [lens_0]
 
-extra_lens_galaxy_0 = al.Galaxy(
+"""
+__Extra Galaxies__
+
+The two extra galaxies are companion galaxies near the lens system. They have spherical Sersic light profiles
+and isothermal mass profiles, with centres offset from the origin.
+
+In the list-based API, extra galaxies are stored in a list called `extra_galaxies`.
+"""
+extra_galaxy_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(3.5, 2.5), intensity=0.9, effective_radius=0.8, sersic_index=3.0
@@ -154,7 +169,7 @@ extra_lens_galaxy_0 = al.Galaxy(
     mass=al.mp.IsothermalSph(centre=(3.5, 2.5), einstein_radius=0.8),
 )
 
-extra_lens_galaxy_1 = al.Galaxy(
+extra_galaxy_1 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(-4.4, -5.0), intensity=0.9, effective_radius=0.8, sersic_index=3.0
@@ -162,10 +177,14 @@ extra_lens_galaxy_1 = al.Galaxy(
     mass=al.mp.IsothermalSph(centre=(-4.4, -5.0), einstein_radius=1.0),
 )
 
-extra_galaxies = [extra_lens_galaxy_0, extra_lens_galaxy_1]
+extra_galaxies = [extra_galaxy_0, extra_galaxy_1]
 
-# Source:
+"""
+__Source Galaxy__
 
+The source galaxy whose lensed images we simulate. It uses a cored Sersic profile so that adaptive over-sampling
+is not required for the source.
+"""
 source_galaxy = al.Galaxy(
     redshift=1.0,
     bulge=al.lp.SersicCore(
@@ -179,10 +198,14 @@ source_galaxy = al.Galaxy(
 
 
 """
-Use these galaxies to setup a tracer, which will generate the image for the simulated `Imaging` dataset.
+__Ray Tracing__
+
+Use all galaxies to setup a tracer, which will generate the image for the simulated `Imaging` dataset.
+
+The tracer combines main lens galaxies, extra galaxies and the source galaxy.
 """
 tracer = al.Tracer(
-    galaxies=[lens_galaxy, extra_lens_galaxy_0, extra_lens_galaxy_1, source_galaxy]
+    galaxies=main_lens_galaxies + extra_galaxies + [source_galaxy]
 )
 
 """
@@ -226,13 +249,29 @@ aplt.plot_array(array=dataset.data, title="Data")
 __Tracer json__
 
 Save the `Tracer` in the dataset folder as a .json file, ensuring the true light profiles, mass profiles and galaxies
-are safely stored and available to check how the dataset was simulated in the future. 
+are safely stored and available to check how the dataset was simulated in the future.
 
 This can be loaded via the method `tracer = al.from_json()`.
 """
 al.output_to_json(
     obj=tracer,
     file_path=Path(dataset_path, "tracer.json"),
+)
+
+"""
+__Centre JSON Files__
+
+Save the centres of the main lens galaxies and extra galaxies as JSON files. These are loaded by the group
+modeling scripts to set up the lens model (e.g. fixing centres of extra galaxies, defining scaling relations).
+"""
+al.output_to_json(
+    obj=al.Grid2DIrregular(main_lens_centres),
+    file_path=Path(dataset_path, "main_lens_centres.json"),
+)
+
+al.output_to_json(
+    obj=al.Grid2DIrregular(extra_galaxies_centres),
+    file_path=Path(dataset_path, "extra_galaxies_centres.json"),
 )
 
 """

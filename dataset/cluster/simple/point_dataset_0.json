@@ -2,6 +2,7 @@
     "type": "instance",
     "class_path": "autolens.point.dataset.PointDataset",
     "arguments": {
+        "fluxes_noise_map": null,
         "positions": {
             "type": "instance",
             "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
@@ -18,10 +19,6 @@
                 }
             }
         },
-        "time_delays_noise_map": null,
-        "time_delays": null,
-        "fluxes_noise_map": null,
-        "fluxes": null,
         "name": "point_0",
         "positions_noise_map": {
             "type": "instance",
@@ -35,6 +32,9 @@
                     "dtype": "float64"
                 }
             }
-        }
+        },
+        "time_delays": null,
+        "fluxes": null,
+        "time_delays_noise_map": null
     }
 }

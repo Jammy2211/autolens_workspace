@@ -147,8 +147,9 @@ Overlays are added to plots using the `lines=` and `positions=` keyword argument
 
 These replace the old `Visuals2D` object entirely — there is no `Visuals2D` anymore.
 """
-tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
-tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
+lens_calc = al.LensCalc.from_tracer(tracer=tracer)
+tangential_critical_curve_list = lens_calc.tangential_critical_curve_list_from(grid=grid)
+tangential_caustic_list = lens_calc.tangential_caustic_list_from(grid=grid)
 
 aplt.plot_array(
     array=tracer.image_2d_from(grid=grid),

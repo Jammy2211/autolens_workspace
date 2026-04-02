@@ -344,9 +344,9 @@ __Visualize__
 
 Output a subplot of the simulated point source dataset as a .png file.
 """
-mat_plot_1d = aplt.MatPlot1D(output=aplt.Output(path=dataset_path, format="png"))
-
-point_dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(
+    dataset=dataset_list[0], output_path=dataset_path, output_format="png"
+)
 
 """
 Output subplots of the tracer's images, including the positions of the multiple images on the image.

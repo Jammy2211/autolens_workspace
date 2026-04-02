@@ -132,8 +132,7 @@ dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 """
 Lets plot the simulated interferometer dataset before we output it to fits.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Output__
@@ -153,8 +152,9 @@ __Visualize__
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
 
-aplt.subplot_interferometer_dataset(dataset=dataset, output_path=dataset_path, output_format="png")
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(
+    dataset=dataset, output_path=dataset_path, output_format="png"
+)
 
 aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
