@@ -29,3 +29,16 @@ units:
   cb_unit: $\,\,\mathrm{e^{-}}\,\mathrm{s^{-1}}$ # The string or latex unit label used for the colorbar of the image, for example electrons per second.
   scaled_symbol: '"'                    # The symbol used when plotting spatial coordinates computed via the pixel_scale (e.g. for Astronomy data this is arc-seconds).
   unscaled_symbol: pix                  # The symbol used when plotting spatial coordinates in unscaled pixel units.
+colormap: autoarray               # Default colormap for 2D plots. Use any matplotlib name to override (e.g. jet, viridis).
+ticks:
+  extent_factor_2d: 0.75          # Fraction of half-extent used for 2D tick positions (< 1.0 pulls ticks inward from edges).
+  number_of_ticks_2d: 3           # Number of ticks on each spatial axis of 2D plots.
+contour:
+  total_contours: 10              # Number of contour levels drawn over log10 (and explicit linear) plots.
+  include_values: false           # Whether to label each contour line with its value.
+colorbar:
+  fraction: 0.047                 # Fraction of original axes to use for the colorbar.
+  pad: 0.01                       # Padding between colorbar and axes.
+  labelrotation: 90               # Rotation of colorbar tick labels in degrees.
+  labelsize: 18                   # Font size of colorbar tick labels for single-panel figures.
+  labelsize_subplot: 18           # Font size of colorbar tick labels for subplot panels.
