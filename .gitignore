@@ -4,4 +4,5 @@ root.log
 __pycache__/
 
 output/
+dataset/
 notebooks/plot/
