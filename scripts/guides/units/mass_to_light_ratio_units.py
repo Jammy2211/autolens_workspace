@@ -66,7 +66,7 @@ class mass_profile(al.mp.Sersic):
         Calculate the apparent magnitude of an object with a given absolute magnitude and on a certain redshift
         """
         distance = self.cosmo.luminosity_distance(self.redshift) * 1e6
-        return mag + 5 * np.log10(distance.value / 10)
+        return mag + 5 * np.log10(float(distance) / 10)
 
     def mag2counts(self, mag, zero_mag=25.23):
         """

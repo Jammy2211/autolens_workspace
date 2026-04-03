@@ -838,8 +838,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 aplt.plot_grid(grid=dataset.grids.pixelization, title="")
 
@@ -999,7 +998,8 @@ pix_indexes_for_sub_slim_index = mapper.pix_indexes_for_sub_slim_index
 print(pix_indexes_for_sub_slim_index[0:9])
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
+aplt.plot_array(array=dataset.dirty_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 pix_indexes = [[200]]
 
@@ -1007,7 +1007,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
+aplt.plot_array(array=dataset.dirty_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
@@ -1130,7 +1131,7 @@ curvature_reg_matrix = np.add(curvature_matrix, regularization_matrix)
 reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 mapped_reconstructed_visibilities = (
     al.util.inversion_interferometer.mapped_reconstructed_visibilities_from(

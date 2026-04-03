@@ -63,8 +63,7 @@ interferometer = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=interferometer)
-interferometer_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=interferometer)
 
 """
 __Imaging Dataset__
@@ -226,7 +225,7 @@ aplt.subplot_tracer(tracer=result_list[0].max_log_likelihood_tracer, grid=real_s
 aplt.subplot_fit_imaging(fit=result_list[0].max_log_likelihood_fit)
 
 aplt.subplot_fit_interferometer(fit=result_list[1].max_log_likelihood_fit)
-fit_plotter.subplot_fit_dirty_images()
+aplt.subplot_fit_dirty_images(fit=result_list[1].max_log_likelihood_fit)
 
 plotter = aplt.NestPlotter(samples=result_list.samples)
 plotter.corner_anesthetic()

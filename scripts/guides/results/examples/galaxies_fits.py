@@ -157,7 +157,7 @@ tracer = al.Tracer(galaxies=instance.galaxies)
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
 tracer = fit.tracer_linear_light_profiles_to_light_profiles
 
-bulge = tracer.galaxies.source.bulge
+bulge = tracer.galaxies[-1].bulge
 
 bulge_image_2d = bulge.image_2d_from(grid=dataset.grid)
 print(bulge_image_2d.slim[0])
@@ -169,7 +169,7 @@ In fact, if we create a `Tracer` from an instance (which is how `result.max_log_
 can choose whether to access its attributes using each API: 
 """
 tracer = result.max_log_likelihood_tracer
-print(tracer.galaxies.source.bulge)
+print(tracer.galaxies[-1].bulge)
 
 """
 __Max Likelihood Fit__

@@ -411,7 +411,8 @@ we could fit this source-only image again with an independent pipeline. For grou
 image has the light of all lens galaxies (main and extra) removed.
 """
 lens_subtracted_image = fit.subtracted_images_of_planes_list[1]
-lens_subtracted_image.output_to_fits(
+aplt.fits_array(
+    array=lens_subtracted_image,
     file_path=dataset_path / "lens_subtracted_data.fits", overwrite=True
 )
 

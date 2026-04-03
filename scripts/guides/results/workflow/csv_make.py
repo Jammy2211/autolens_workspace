@@ -25,7 +25,7 @@ The only entries that needs changing are:
 
  - `ImagingAgg` -> `InterferometerAgg`.
  - `FitImagingAgg` -> `FitInterferometerAgg`.
- - `aplt.subplot_imaging_dataset` -> `aplt.subplot_interferometer_dataset`.
+ - `aplt.subplot_imaging_dataset` -> `aplt.subplot_interferometer_dirty_images`.
  - `aplt.subplot_fit_imaging` -> `aplt.subplot_fit_interferometer`.
 
 Quantities specific to an interfometer, for example its uv-wavelengths real space mask, are accessed using the same API
@@ -162,9 +162,11 @@ for i in range(2):
             instance = model.instance_from_vector(vector=parameters)
 
             if hasattr(instance.galaxies.lens, "shear"):
+                import jax.numpy as jnp
                 magnitude, angle = al.convert.shear_magnitude_and_angle_from(
                     gamma_1=instance.galaxies.lens.shear.gamma_1,
                     gamma_2=instance.galaxies.lens.shear.gamma_2,
+                    xp=jnp,
                 )
 
             return (magnitude, angle)

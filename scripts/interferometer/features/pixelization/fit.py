@@ -138,8 +138,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Sparse Operators__
@@ -254,7 +253,7 @@ By plotting the fit, we see that the pixelized source does a good job at capturi
 and fitting the data to roughly the noise level.
 """
 aplt.subplot_fit_interferometer(fit=fit)
-fit_plotter.subplot_fit_dirty_images()
+aplt.subplot_fit_dirty_images(fit=fit)
 
 """
 Pixelizations have bespoke visualizations which show more details about the source-reconstruction, image-mesh

@@ -43,6 +43,8 @@ dataset = al.Imaging.from_fits(
 
 aplt.subplot_imaging_dataset(dataset=dataset)
 
+dataset_unmasked = dataset
+
 """
 __Borders__
 
@@ -127,7 +129,7 @@ pixelization = al.Pixelization(
 source_galaxy = al.Galaxy(redshift=1.0, pixelization=pixelization)
 
 fit = perform_fit_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked,
     source_galaxy=source_galaxy,
     mask=mask_annular,
     settings=al.Settings(use_border_relocator=False),
@@ -135,14 +137,14 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
-Everything looks fine, we get a reconstructed source on a visually appeasing source-plane grid. So, why are we so 
+Everything looks fine, we get a reconstructed source on a visually appeasing source-plane grid. So, why are we so
 worried about borders? Lets see what happens if we use a circular mask instead.
 """
 fit = perform_fit_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked,
     source_galaxy=source_galaxy,
     mask=mask_circular,
     settings=al.Settings(use_border_relocator=False),
@@ -150,7 +152,7 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 Woah, whats happened? There are lots of additional $(y,x)$ coordinates in the source-plane grid, some of which trace 
@@ -164,7 +166,7 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 So, why is this happening? What is the mass profile physically doing to create these source plane coordinates at 
@@ -199,11 +201,11 @@ demagnified pixels just like the other pixels in the image-pixel. There are two 
 Lets quickly use a large circular mask to confirm that these pixels exist when we don't mask them.
 """
 mask_circular_large = al.Mask2D.circular(
-    shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales, radius=4.0
+    shape_native=dataset_unmasked.shape_native, pixel_scales=dataset_unmasked.pixel_scales, radius=4.0
 )
 
 fit = perform_fit_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked,
     source_galaxy=source_galaxy,
     mask=mask_circular,
     settings=al.Settings(use_border_relocator=False),
@@ -212,18 +214,18 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
-This second point is a *huge* problem and it can introduce extremely dangerous systematics into our source 
-reconstruction and lens models. 
+This second point is a *huge* problem and it can introduce extremely dangerous systematics into our source
+reconstruction and lens models.
 
-Borders are the solution to this problem. We simply take the mask's` border in the image-plane that we showed above, 
-trace it to the source-plane and relocate all traced image-pixels pixels outside this source-plane border to its edge. 
+Borders are the solution to this problem. We simply take the mask's` border in the image-plane that we showed above,
+trace it to the source-plane and relocate all traced image-pixels pixels outside this source-plane border to its edge.
 Lets take a look:
 """
 fit = perform_fit_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked,
     source_galaxy=source_galaxy,
     mask=mask_circular,
     settings=al.Settings(use_border_relocator=True),
@@ -231,10 +233,10 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 This successfully addresses both of the issues above! However, you might be thinking, isn't that a bit of a hack? Its 
@@ -269,6 +271,8 @@ dataset = al.Imaging.from_fits(
 We again must define a mask around this image, lets start with a 2.8" mask. we'll use larger masks to illustrate the
 effects of the border in a moment.
 """
+dataset_unmasked_x2 = dataset
+
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
     pixel_scales=dataset.pixel_scales,
@@ -330,7 +334,7 @@ Now, lets fit this image using the input model and perform the source reconstruc
 we get many demagnified image pixels which trace well beyond our source-plane border if we don't relocate them!
 """
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked_x2,
     source_galaxy=source_galaxy,
     mask=mask_circular,
     settings=al.Settings(use_border_relocator=False),
@@ -339,18 +343,18 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
-However, when we relocate them, we get a good-looking source-plane with a well defined border and edge, thus ensuring 
+However, when we relocate them, we get a good-looking source-plane with a well defined border and edge, thus ensuring
 our analysis will be free of systematic biases.
 """
 fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
-    dataset=dataset,
+    dataset=dataset_unmasked_x2,
     source_galaxy=source_galaxy,
     mask=mask_circular,
     settings=al.Settings(use_border_relocator=True),
@@ -359,10 +363,10 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
 Multi-galaxy modeling is rife for border effects and if you have multiple lens galaxies I heartily recommend you pay 
@@ -396,12 +400,12 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 mask_circular = al.Mask2D.circular(
     shape_native=dataset.shape_native,
@@ -418,12 +422,12 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 
 dataset = al.Imaging.from_fits(
@@ -447,12 +451,12 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 
 dataset = al.Imaging.from_fits(
@@ -477,12 +481,12 @@ fit = perform_fit_x2_lenses_with_source_galaxy_mask_and_border(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 border = mapper.source_plane_data_grid.over_sampled[
-    dataset.grids.border_relocator.sub_border_slim
+    fit.dataset.grids.border_relocator.sub_border_slim
 ]
 
 
 
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
 __Wrap Up__

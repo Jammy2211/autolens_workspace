@@ -91,9 +91,8 @@ We first plot the mapper's pixelization, which is a grid of rectangular pixels i
 
 We plot this next to the image using the `subplot_image_and_mapper` method.
 """
-mapper_plotter.subplot_image_and_mapper(
-    image=dataset.data,
-)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 Using the `lines=`/`positions=` overlays object we are also going to highlight specific grid coordinates certain colors, such that we
@@ -109,9 +108,8 @@ indexes = [
 ]
 
 
-mapper_plotter.subplot_image_and_mapper(
-    image=dataset.data,
-)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 It can help to plot the image-plane grid and source-plane grid over each image, in order to see how the
@@ -122,11 +120,11 @@ grid via the visuals object and have them displayed clearly.
 """
 
 
-mapper_plotter.figure_2d_image(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image")
 
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 We can now make these mappings appear the other way round. That is, we can input a source-pixel index (of our 
@@ -147,7 +145,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 There we have it, multiple imaging in all its glory. 
@@ -161,7 +160,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 Okay, so I think we can agree, mapper's map things! More specifically, they map source-plane pixels to multiple pixels 
@@ -182,7 +182,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 Lets use an annular `Mask2D`, which will capture the ring-like shape of the lensed source galaxy.
@@ -219,11 +220,11 @@ the mask has removed the many image pixels at the edge of the image.
 """
 
 
-mapper_plotter.figure_2d_image(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image")
 
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 First, look how much closer we are to the source-plane (The axis sizes have decreased from ~ -2.5" -> 2.5" to 
@@ -241,7 +242,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Wrap Up__

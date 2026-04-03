@@ -654,7 +654,8 @@ class SimulateImagingPixelized:
             file_path=os.path.join(simulate_path, "tracer.json"),
         )
 
-        dataset.output_to_fits(
+        aplt.fits_imaging(
+    dataset=dataset,
             data_path=os.path.join(simulate_path, "data.fits"),
             psf_path=os.path.join(simulate_path, "psf.fits"),
             noise_map_path=os.path.join(simulate_path, "noise_map.fits"),

@@ -67,7 +67,7 @@ dataset = al.Interferometer.from_fits(
 """
 This guide uses in-built visualization tools for plotting. 
 
-For example, using the `aplt.subplot_interferometer_dataset` the dataset we perform a likelihood evaluation on is plotted.
+For example, using the `aplt.subplot_interferometer_dirty_images` the dataset we perform a likelihood evaluation on is plotted.
 
 The `subplot_dataset` displays the visibilities in the uv-plane, which are the raw data of the interferometer
 dataset. These are what will ultimately be directly fitted in the Fourier space.
@@ -77,8 +77,7 @@ using an inverse Fourier transform to convert these to real-space. These dirty i
 visualization of the dirty images are often used in radio interferometry to show the data in a way that is more
 interpretable to the human eye.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Over Sampling__

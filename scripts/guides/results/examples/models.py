@@ -109,15 +109,15 @@ for dataset_list, tracer_list in zip(dataset_gen, tracer_gen):
     # Only one `Analysis` so take first and only tracer.
     tracer = tracer_list[0]
 
-    einstein_mass = tracer.galaxies.lens.einstein_mass_angular_from(grid=grid)
+    einstein_mass = tracer.galaxies[0].einstein_mass_angular_from(grid=grid)
     print("Einstein Mass (angular units) = ", einstein_mass)
 
     cosmology = al.cosmo.Planck15()
 
     critical_surface_density = (
         cosmology.critical_surface_density_between_redshifts_from(
-            redshift_0=tracer.galaxies.lens.redshift,
-            redshift_1=tracer.galaxies.source.redshift,
+            redshift_0=tracer.galaxies[0].redshift,
+            redshift_1=tracer.galaxies[-1].redshift,
         )
     )
 
@@ -170,7 +170,7 @@ for tracer_gen, weight_gen in zip(tracer_list_gen, weight_list_gen):
         tracer = tracer_list[0]
 
         axis_ratio = al.convert.axis_ratio_from(
-            ell_comps=tracer.galaxies.lens.mass.ell_comps
+            ell_comps=tracer.galaxies[0].mass.ell_comps
         )
 
         axis_ratio_list.append(axis_ratio)
@@ -207,7 +207,7 @@ for tracer_gen in tracer_list_gen:
         tracer = tracer_list[0]
 
         axis_ratio = al.convert.axis_ratio_from(
-            ell_comps=tracer.galaxies.lens.mass.ell_comps
+            ell_comps=tracer.galaxies[0].mass.ell_comps
         )
 
         axis_ratio_list.append(axis_ratio)

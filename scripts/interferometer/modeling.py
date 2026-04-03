@@ -81,8 +81,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Over Sampling__
@@ -433,7 +432,7 @@ print(result.max_log_likelihood_instance)
 aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=real_space_mask.derive_grid.unmasked)
 
 aplt.subplot_fit_interferometer(fit=result.max_log_likelihood_fit)
-fit_plotter.subplot_fit_dirty_images()
+aplt.subplot_fit_dirty_images(fit=fit)
 
 """
 The result contains the full posterior information of our non-linear search, including all parameter samples, 

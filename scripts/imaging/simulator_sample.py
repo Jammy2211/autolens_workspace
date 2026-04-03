@@ -196,7 +196,8 @@ for sample_index in range(total_datasets):
 
     This uses the updated `dataset_path_sample` which outputs this sample lens to a unique folder.
     """
-    dataset.output_to_fits(
+    aplt.fits_imaging(
+    dataset=dataset,
         data_path=Path(dataset_sample_path, "data.fits"),
         psf_path=Path(dataset_sample_path, "psf.fits"),
         noise_map_path=Path(dataset_sample_path, "noise_map.fits"),

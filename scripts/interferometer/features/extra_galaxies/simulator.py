@@ -163,15 +163,15 @@ dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 """
 Plot the simulated `Interferometer` dataset before outputting it to fits.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Output__
 
 Output the simulated dataset to the dataset path as .fits files.
 """
-dataset.output_to_fits(
+aplt.fits_interferometer(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     noise_map_path=dataset_path / "noise_map.fits",
     uv_wavelengths_path=dataset_path / "uv_wavelengths.fits",
@@ -184,8 +184,7 @@ __Visualize__
 Output a subplot of the simulated dataset, the image and the tracer's quantities to the dataset path as .png files.
 """
 
-aplt.subplot_interferometer_dataset(dataset=dataset, output_path=dataset_path, output_format="png")
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset, output_path=dataset_path, output_format="png")
 
 aplt.subplot_tracer(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")
 aplt.subplot_galaxies_images(tracer=tracer, grid=grid, output_path=dataset_path, output_format="png")

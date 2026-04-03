@@ -141,7 +141,7 @@ narrower range of values, we can see that even without regularization we are sti
 galaxy.
 """
 
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 Over-fitting is why regularization is necessary. Solutions like this will completely ruin our attempts to model a 
@@ -162,7 +162,7 @@ high_regularization_fit = perform_fit_with_source_galaxy(
 
 aplt.subplot_fit_imaging(fit=high_regularization_fit)
 
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 The figure above shows that we completely remove over-fitting. However, we now fit the image data less accurately,

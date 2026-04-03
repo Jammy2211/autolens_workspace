@@ -177,7 +177,7 @@ These quantities can be calculated using `*_from` methods and are returned as `A
 """
 convergence = sis_mass_profile.convergence_2d_from(grid=image_plane_grid)
 potential_2d = sis_mass_profile.potential_2d_from(grid=image_plane_grid)
-magnification_2d = sis_mass_profile.magnification_2d_from(grid=image_plane_grid)
+magnification_2d = al.LensCalc.from_mass_obj(mass_obj=sis_mass_profile).magnification_2d_from(grid=image_plane_grid)
 
 """
 The same plotter API can be used to visualize these properties:

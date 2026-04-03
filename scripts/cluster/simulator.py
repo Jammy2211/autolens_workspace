@@ -409,7 +409,8 @@ imaging_path = dataset_path / "imaging"
 
 aplt.subplot_imaging_dataset(dataset=imaging)
 
-imaging.output_to_fits(
+aplt.fits_imaging(
+    dataset=imaging,
     data_path=dataset_path / "data.fits",
     psf_path=dataset_path / "psf.fits",
     noise_map_path=dataset_path / "noise_map.fits",

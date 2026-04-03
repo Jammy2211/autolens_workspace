@@ -183,7 +183,7 @@ bulge_image_2d = tracer.planes[0][0].bulge.image_2d_from(grid=grid)
 """
 The `aplt.plot_array` makes it straight forward to extract and plot an individual light profile component.
 """
-aplt.plot_array(array=tracer.planes.image_2d_from(grid=grid), title="Image")
+aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
 """
 __Log10__

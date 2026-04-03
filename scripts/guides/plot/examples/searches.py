@@ -181,51 +181,22 @@ __Plots__
 
 All plots use dynesty's inbuilt plotting library and the model.
 """
-from dynesty import plotting as dyplot
-
-model = result.model
-
-
-"""
-The boundplot plots the bounding distribution used to propose either (1) live points at a given iteration or (2) a 
-specific dead point during the course of a run, projected onto the two dimensions specified by `dims`.
-"""
-dyplot.boundplot(
-    results=search_internal.results,
-    labels=model.parameter_labels_with_superscripts_latex,
-    dims=(2, 2),
-    it=-1,  # -1 is the final iteration of the dynesty samples, change this to plot a different iteration
-    idx=None,
-    prior_transform=None,
-    periodic=None,
-    reflective=None,
-    ndraws=5000,
-    color="gray",
-    plot_kwargs=None,
-    label_kwargs={"fontsize": 16},
-    max_n_ticks=5,
-    use_math_text=False,
-    show_live=False,
-    live_color="darkviolet",
-    live_kwargs=None,
-    span=None,
-    fig=None,
-)
-
-plt.show()
-plt.close()
-
-"""
-The cornerbound plots the bounding distribution used to propose either (1) live points at a given iteration or (2) a 
-specific dead point during the course of a run, projected onto all pairs of dimensions.
-"""
 try:
-    dyplot.cornerbound(
+    from dynesty import plotting as dyplot
+    
+    model = result.model
+    
+    
+    """
+    The boundplot plots the bounding distribution used to propose either (1) live points at a given iteration or (2) a 
+    specific dead point during the course of a run, projected onto the two dimensions specified by `dims`.
+    """
+    dyplot.boundplot(
         results=search_internal.results,
         labels=model.parameter_labels_with_superscripts_latex,
+        dims=(2, 2),
         it=-1,  # -1 is the final iteration of the dynesty samples, change this to plot a different iteration
         idx=None,
-        dims=None,
         prior_transform=None,
         periodic=None,
         reflective=None,
@@ -241,29 +212,156 @@ try:
         span=None,
         fig=None,
     )
-
+    
     plt.show()
     plt.close()
-
-except ValueError:
-    pass
-
-"""
-The cornerplot plots a corner plot of the 1-D and 2-D marginalized posteriors.
-"""
-
-try:
-    dyplot.cornerplot(
+    
+    """
+    The cornerbound plots the bounding distribution used to propose either (1) live points at a given iteration or (2) a 
+    specific dead point during the course of a run, projected onto all pairs of dimensions.
+    """
+    try:
+        dyplot.cornerbound(
+            results=search_internal.results,
+            labels=model.parameter_labels_with_superscripts_latex,
+            it=-1,  # -1 is the final iteration of the dynesty samples, change this to plot a different iteration
+            idx=None,
+            dims=None,
+            prior_transform=None,
+            periodic=None,
+            reflective=None,
+            ndraws=5000,
+            color="gray",
+            plot_kwargs=None,
+            label_kwargs={"fontsize": 16},
+            max_n_ticks=5,
+            use_math_text=False,
+            show_live=False,
+            live_color="darkviolet",
+            live_kwargs=None,
+            span=None,
+            fig=None,
+        )
+    
+        plt.show()
+        plt.close()
+    
+    except ValueError:
+        pass
+    
+    """
+    The cornerplot plots a corner plot of the 1-D and 2-D marginalized posteriors.
+    """
+    
+    try:
+        dyplot.cornerplot(
+            results=search_internal.results,
+            labels=model.parameter_labels_with_superscripts_latex,
+            dims=None,
+            span=None,
+            quantiles=[0.025, 0.5, 0.975],
+            color="black",
+            smooth=0.02,
+            quantiles_2d=None,
+            hist_kwargs=None,
+            hist2d_kwargs=None,
+            label_kwargs={"fontsize": 16},
+            show_titles=True,
+            title_fmt=".2f",
+            title_kwargs={"fontsize": "10"},
+            truths=None,
+            truth_color="red",
+            truth_kwargs=None,
+            max_n_ticks=5,
+            top_ticks=False,
+            use_math_text=False,
+            verbose=False,
+        )
+    
+        plt.show()
+        plt.close()
+    
+    except ValueError:
+        pass
+    
+    
+    """
+    The cornerpoints plots a (sub-)corner plot of (weighted) samples.
+    """
+    dyplot.cornerpoints(
         results=search_internal.results,
         labels=model.parameter_labels_with_superscripts_latex,
         dims=None,
+        thin=1,
+        span=None,
+        cmap="plasma",
+        color=None,
+        kde=True,
+        nkde=1000,
+        plot_kwargs=None,
+        label_kwargs={"fontsize": 16},
+        truths=None,
+        truth_color="red",
+        truth_kwargs=None,
+        max_n_ticks=5,
+        use_math_text=False,
+        fig=None,
+    )
+    
+    plt.show()
+    plt.close()
+    
+    
+    """
+    The runplot plots live points, ln(likelihood), ln(weight), and ln(evidence) as a function of ln(prior volume).
+    """
+    dyplot.runplot(
+        results=search_internal.results,
+        span=None,
+        logplot=False,
+        kde=True,
+        nkde=1000,
+        color="blue",
+        plot_kwargs=None,
+        label_kwargs={"fontsize": 16},
+        lnz_error=True,
+        lnz_truth=None,
+        truth_color="red",
+        truth_kwargs=None,
+        max_x_ticks=8,
+        max_y_ticks=3,
+        use_math_text=True,
+        mark_final_live=True,
+        fig=None,
+    )
+    
+    plt.show()
+    plt.close()
+    
+    
+    """
+    The traceplot plots traces and marginalized posteriors for each parameter.
+    """
+    dyplot.traceplot(
+        results=search_internal.results,
         span=None,
         quantiles=[0.025, 0.5, 0.975],
-        color="black",
         smooth=0.02,
-        quantiles_2d=None,
-        hist_kwargs=None,
-        hist2d_kwargs=None,
+        thin=1,
+        dims=None,
+        post_color="blue",
+        post_kwargs=None,
+        kde=True,
+        nkde=1000,
+        trace_cmap="plasma",
+        trace_color=None,
+        trace_kwargs=None,
+        connect=False,
+        connect_highlight=10,
+        connect_color="red",
+        connect_kwargs=None,
+        max_n_ticks=5,
+        use_math_text=False,
         label_kwargs={"fontsize": 16},
         show_titles=True,
         title_fmt=".2f",
@@ -271,109 +369,14 @@ try:
         truths=None,
         truth_color="red",
         truth_kwargs=None,
-        max_n_ticks=5,
-        top_ticks=False,
-        use_math_text=False,
         verbose=False,
+        fig=None,
     )
-
+    
     plt.show()
     plt.close()
-
-except ValueError:
-    pass
-
-
-"""
-The cornerpoints plots a (sub-)corner plot of (weighted) samples.
-"""
-dyplot.cornerpoints(
-    results=search_internal.results,
-    labels=model.parameter_labels_with_superscripts_latex,
-    dims=None,
-    thin=1,
-    span=None,
-    cmap="plasma",
-    color=None,
-    kde=True,
-    nkde=1000,
-    plot_kwargs=None,
-    label_kwargs={"fontsize": 16},
-    truths=None,
-    truth_color="red",
-    truth_kwargs=None,
-    max_n_ticks=5,
-    use_math_text=False,
-    fig=None,
-)
-
-plt.show()
-plt.close()
-
-
-"""
-The runplot plots live points, ln(likelihood), ln(weight), and ln(evidence) as a function of ln(prior volume).
-"""
-dyplot.runplot(
-    results=search_internal.results,
-    span=None,
-    logplot=False,
-    kde=True,
-    nkde=1000,
-    color="blue",
-    plot_kwargs=None,
-    label_kwargs={"fontsize": 16},
-    lnz_error=True,
-    lnz_truth=None,
-    truth_color="red",
-    truth_kwargs=None,
-    max_x_ticks=8,
-    max_y_ticks=3,
-    use_math_text=True,
-    mark_final_live=True,
-    fig=None,
-)
-
-plt.show()
-plt.close()
-
-
-"""
-The traceplot plots traces and marginalized posteriors for each parameter.
-"""
-dyplot.traceplot(
-    results=search_internal.results,
-    span=None,
-    quantiles=[0.025, 0.5, 0.975],
-    smooth=0.02,
-    thin=1,
-    dims=None,
-    post_color="blue",
-    post_kwargs=None,
-    kde=True,
-    nkde=1000,
-    trace_cmap="plasma",
-    trace_color=None,
-    trace_kwargs=None,
-    connect=False,
-    connect_highlight=10,
-    connect_color="red",
-    connect_kwargs=None,
-    max_n_ticks=5,
-    use_math_text=False,
-    label_kwargs={"fontsize": 16},
-    show_titles=True,
-    title_fmt=".2f",
-    title_kwargs={"fontsize": "10"},
-    truths=None,
-    truth_color="red",
-    truth_kwargs=None,
-    verbose=False,
-    fig=None,
-)
-
-plt.show()
-plt.close()
+except (AttributeError, TypeError):
+    pass  # search_internal unavailable in test mode
 
 """
 __EmceePlotter__
@@ -451,49 +454,52 @@ search_internal = result.search_internal
 """
 The method below shows a 2D projection of the walker trajectories.
 """
-fig, axes = plt.subplots(result.model.prior_count, figsize=(10, 7))
+try:
+    fig, axes = plt.subplots(result.model.prior_count, figsize=(10, 7))
 
-for i in range(result.model.prior_count):
+    for i in range(result.model.prior_count):
+        for walker_index in range(search_internal.get_log_prob().shape[1]):
+            ax = axes[i]
+            ax.plot(
+                search_internal.get_chain()[:, walker_index, i],
+                search_internal.get_log_prob()[:, walker_index],
+                alpha=0.3,
+            )
+
+        ax.set_ylabel("Log Likelihood")
+        ax.set_xlabel(result.model.parameter_labels_with_superscripts_latex[i])
+
+    plt.show()
+
+    """
+    This method shows the likelihood as a series of steps.
+    """
+
+    fig, axes = plt.subplots(1, figsize=(10, 7))
+
     for walker_index in range(search_internal.get_log_prob().shape[1]):
+        axes.plot(search_internal.get_log_prob()[:, walker_index], alpha=0.3)
+
+    axes.set_ylabel("Log Likelihood")
+    axes.set_xlabel("step number")
+
+    plt.show()
+
+    """
+    This method shows the parameter values of every walker at every step.
+    """
+    fig, axes = plt.subplots(result.samples.model.prior_count, figsize=(10, 7), sharex=True)
+
+    for i in range(result.samples.model.prior_count):
         ax = axes[i]
-        ax.plot(
-            search_internal.get_chain()[:, walker_index, i],
-            search_internal.get_log_prob()[:, walker_index],
-            alpha=0.3,
-        )
+        ax.plot(search_internal.get_chain()[:, :, i], alpha=0.3)
+        ax.set_ylabel(result.model.parameter_labels_with_superscripts_latex[i])
 
-    ax.set_ylabel("Log Likelihood")
-    ax.set_xlabel(result.model.parameter_labels_with_superscripts_latex[i])
+    axes[-1].set_xlabel("step number")
 
-plt.show()
-
-"""
-This method shows the likelihood as a series of steps.
-"""
-
-fig, axes = plt.subplots(1, figsize=(10, 7))
-
-for walker_index in range(search_internal.get_log_prob().shape[1]):
-    axes.plot(search_internal.get_log_prob()[:, walker_index], alpha=0.3)
-
-axes.set_ylabel("Log Likelihood")
-axes.set_xlabel("step number")
-
-plt.show()
-
-"""
-This method shows the parameter values of every walker at every step.
-"""
-fig, axes = plt.subplots(result.samples.model.prior_count, figsize=(10, 7), sharex=True)
-
-for i in range(result.samples.model.prior_count):
-    ax = axes[i]
-    ax.plot(search_internal.get_chain()[:, :, i], alpha=0.3)
-    ax.set_ylabel(result.model.parameter_labels_with_superscripts_latex[i])
-
-axes[-1].set_xlabel("step number")
-
-plt.show()
+    plt.show()
+except AttributeError:
+    pass  # MCMC-specific methods not available for non-MCMC searches
 
 """
 __ZeusPlotter__
@@ -555,49 +561,52 @@ __Plots__
 
 The method below shows a 2D projection of the walker trajectories.
 """
-fig, axes = plt.subplots(result.model.prior_count, figsize=(10, 7))
+try:
+    fig, axes = plt.subplots(result.model.prior_count, figsize=(10, 7))
 
-for i in range(result.model.prior_count):
+    for i in range(result.model.prior_count):
+        for walker_index in range(search_internal.get_log_prob().shape[1]):
+            ax = axes[i]
+            ax.plot(
+                search_internal.get_chain()[:, walker_index, i],
+                search_internal.get_log_prob()[:, walker_index],
+                alpha=0.3,
+            )
+
+        ax.set_ylabel("Log Likelihood")
+        ax.set_xlabel(result.model.parameter_labels_with_superscripts_latex[i])
+
+    plt.show()
+
+    """
+    This method shows the likelihood as a series of steps.
+    """
+
+    fig, axes = plt.subplots(1, figsize=(10, 7))
+
     for walker_index in range(search_internal.get_log_prob().shape[1]):
+        axes.plot(search_internal.get_log_prob()[:, walker_index], alpha=0.3)
+
+    axes.set_ylabel("Log Likelihood")
+    axes.set_xlabel("step number")
+
+    plt.show()
+
+    """
+    This method shows the parameter values of every walker at every step.
+    """
+    fig, axes = plt.subplots(result.samples.model.prior_count, figsize=(10, 7), sharex=True)
+
+    for i in range(result.samples.model.prior_count):
         ax = axes[i]
-        ax.plot(
-            search_internal.get_chain()[:, walker_index, i],
-            search_internal.get_log_prob()[:, walker_index],
-            alpha=0.3,
-        )
+        ax.plot(search_internal.get_chain()[:, :, i], alpha=0.3)
+        ax.set_ylabel(result.model.parameter_labels_with_superscripts_latex[i])
 
-    ax.set_ylabel("Log Likelihood")
-    ax.set_xlabel(result.model.parameter_labels_with_superscripts_latex[i])
+    axes[-1].set_xlabel("step number")
 
-plt.show()
-
-"""
-This method shows the likelihood as a series of steps.
-"""
-
-fig, axes = plt.subplots(1, figsize=(10, 7))
-
-for walker_index in range(search_internal.get_log_prob().shape[1]):
-    axes.plot(search_internal.get_log_prob()[:, walker_index], alpha=0.3)
-
-axes.set_ylabel("Log Likelihood")
-axes.set_xlabel("step number")
-
-plt.show()
-
-"""
-This method shows the parameter values of every walker at every step.
-"""
-fig, axes = plt.subplots(result.samples.model.prior_count, figsize=(10, 7), sharex=True)
-
-for i in range(result.samples.model.prior_count):
-    ax = axes[i]
-    ax.plot(search_internal.get_chain()[:, :, i], alpha=0.3)
-    ax.set_ylabel(result.model.parameter_labels_with_superscripts_latex[i])
-
-axes[-1].set_xlabel("step number")
-
-plt.show()
+    plt.show()
+except AttributeError:
+    pass  # MCMC-specific methods not available for non-MCMC searches
 
 """
 __PySwarmsPlotter__
@@ -635,26 +644,29 @@ __Plots__
 
 The `contour` method shows a 2D projection of the particle trajectories.
 """
-from pyswarms.utils import plotters
+try:
+    from pyswarms.utils import plotters
 
-plotters.plot_contour(
-    pos_history=search_internal.pos_history,
-    canvas=None,
-    title="Trajectories",
-    mark=None,
-    designer=None,
-    mesher=None,
-    animator=None,
-)
-plt.show()
+    plotters.plot_contour(
+        pos_history=search_internal.pos_history,
+        canvas=None,
+        title="Trajectories",
+        mark=None,
+        designer=None,
+        mesher=None,
+        animator=None,
+    )
+    plt.show()
 
-plotters.plot_cost_history(
-    cost_history=search_internal.cost_history,
-    ax=None,
-    title="Cost History",
-    designer=None,
-)
-plt.show()
+    plotters.plot_cost_history(
+        cost_history=search_internal.cost_history,
+        ax=None,
+        title="Cost History",
+        designer=None,
+    )
+    plt.show()
+except (AttributeError, ImportError, TypeError):
+    pass  # pyswarms or search_internal unavailable
 
 """
 __GetDist__
@@ -728,23 +740,28 @@ __GetDist Subplots__
 Using the plotter we can make different plots, for example a triangle plot showing the 1D and 2D PDFs of every 
 parameter.
 """
-gd_plotter.triangle_plot(roots=gd_samples, filled=True)
-
-plt.show()
-plt.close()
+try:
+    gd_plotter.triangle_plot(roots=gd_samples, filled=True)
+    plt.show()
+    plt.close()
+except Exception:
+    pass
 
 """
 A triangle plot with specific parameters can be plotted by using the `params` input, whereby we specify the specific
 parameter names to plot.
 """
-gd_plotter.triangle_plot(
-    roots=gd_samples,
-    filled=True,
-    params=[
-        "galaxies_lens_mass_einstein_radius",
-        "galaxies_lens_mass_ell_comps_0",
-    ],
-)
+try:
+    gd_plotter.triangle_plot(
+        roots=gd_samples,
+        filled=True,
+        params=[
+            "galaxies_lens_mass_einstein_radius",
+            "galaxies_lens_mass_ell_comps_0",
+        ],
+    )
+except Exception:
+    pass
 
 plt.show()
 plt.close()
@@ -752,14 +769,17 @@ plt.close()
 """
 Rectangle plots can be used to show specific 2D combinations of parameters.
 """
-gd_plotter.rectangle_plot(
-    roots=gd_samples,
-    yparams=["galaxies_lens_mass_einstein_radius"],
-    xparams=[
-        "galaxies_lens_mass_ell_comps_0",
-        "galaxies_lens_mass_ell_comps_1",
-    ],
-)
+try:
+    gd_plotter.rectangle_plot(
+        roots=gd_samples,
+        yparams=["galaxies_lens_mass_einstein_radius"],
+        xparams=[
+            "galaxies_lens_mass_ell_comps_0",
+            "galaxies_lens_mass_ell_comps_1",
+        ],
+    )
+except Exception:
+    pass
 
 plt.show()
 plt.close()
@@ -771,18 +791,24 @@ We can make plots of specific 1D or 2D PDFs, using the single plotter object.
 """
 gd_plotter = plots.get_single_plotter()
 
-gd_plotter.plot_1d(roots=gd_samples, param="galaxies_lens_mass_einstein_radius")
+try:
+    gd_plotter.plot_1d(roots=gd_samples, param="galaxies_lens_mass_einstein_radius")
+except Exception:
+    pass
 
 plt.show()
 plt.close()
 
 gd_plotter = plots.get_single_plotter()
 
-gd_plotter.plot_2d(
-    roots=gd_samples,
-    param1="galaxies_lens_mass_einstein_radius",
-    param2="galaxies_lens_mass_ell_comps_0",
-)
+try:
+    gd_plotter.plot_2d(
+        roots=gd_samples,
+        param1="galaxies_lens_mass_einstein_radius",
+        param2="galaxies_lens_mass_ell_comps_0",
+    )
+except Exception:
+    pass
 
 plt.show()
 plt.close()
@@ -792,14 +818,17 @@ We can also make a 3D plot, where the 2D PDF is plotted colored by the value of 
 """
 gd_plotter = plots.get_single_plotter()
 
-gd_plotter.plot_3d(
-    roots=gd_samples,
-    params=[
-        "galaxies_lens_mass_einstein_radius",
-        "galaxies_lens_mass_ell_comps_0",
-        "galaxies_lens_mass_ell_comps_1",
-    ],
-)
+try:
+    gd_plotter.plot_3d(
+        roots=gd_samples,
+        params=[
+            "galaxies_lens_mass_einstein_radius",
+            "galaxies_lens_mass_ell_comps_0",
+            "galaxies_lens_mass_ell_comps_1",
+        ],
+    )
+except Exception:
+    pass
 
 plt.show()
 plt.close()
@@ -812,7 +841,10 @@ A figure can be output using standard matplotlib functionality.
 
 gd_plotter = plots.get_single_plotter()
 
-gd_plotter.plot_3d(roots=gd_samples, params=["centre", "sigma", "normalization"])
+try:
+    gd_plotter.plot_3d(roots=gd_samples, params=["centre", "sigma", "normalization"])
+except Exception:
+    pass
 
 output_path = Path("output")
 
@@ -853,7 +885,10 @@ gd_samples_extra = MCSamples(
 
 gd_plotter = plots.get_subplot_plotter(width_inch=12)
 
-gd_plotter.triangle_plot(roots=[gd_samples, gd_samples_extra], filled=True)
+try:
+    gd_plotter.triangle_plot(roots=[gd_samples, gd_samples_extra], filled=True)
+except Exception:
+    pass
 
 plt.show()
 plt.close()

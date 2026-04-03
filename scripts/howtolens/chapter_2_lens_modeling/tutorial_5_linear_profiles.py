@@ -193,8 +193,8 @@ of the order of the galaxies in the tracer, and therefore which galaxy index cor
 
 We can therefore use the model composition API to access these values.
 """
-print(tracer.galaxies.lens.bulge.intensity)
-print(tracer.galaxies.source.bulge.intensity)
+print(tracer.galaxies[0].bulge.intensity)
+print(tracer.galaxies[-1].bulge.intensity)
 
 """
 The `Tracer` contained in the `max_log_likelihood_fit` also has the solved for `intensity` values:
@@ -203,8 +203,8 @@ fit = result_linear_light_profile.max_log_likelihood_fit
 
 tracer = fit.tracer
 
-print(tracer.galaxies.lens.bulge.intensity)
-print(tracer.galaxies.source.bulge.intensity)
+print(tracer.galaxies[0].bulge.intensity)
+print(tracer.galaxies[-1].bulge.intensity)
 
 """
 __Visualization__
@@ -437,7 +437,7 @@ This means we can use them directly to perform the visualization below.
 """
 print(result_basis.max_log_likelihood_instance)
 
-tracer_plotter.subplot()
+aplt.subplot_tracer(tracer=tracer, grid=dataset.grid)
 
 aplt.subplot_fit_imaging(fit=result_basis.max_log_likelihood_fit)
 

@@ -104,7 +104,7 @@ Plot individual fit attributes with `aplt.plot_array()`.
 aplt.plot_array(array=fit.data, title="Data")
 aplt.plot_array(array=fit.noise_map, title="Noise Map")
 aplt.plot_array(array=fit.signal_to_noise_map, title="Signal-to-Noise Map")
-aplt.plot_array(array=fit.model_image, title="Model Image")
+aplt.plot_array(array=fit.model_data, title="Model Image")
 aplt.plot_array(array=fit.residual_map, title="Residual Map")
 aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
 aplt.plot_array(array=fit.chi_squared_map, title="Chi-Squared Map")

@@ -103,7 +103,8 @@ aplt.plot_array(array=data, title="")
 """
 Output the extra galaxies mask, which will be load and used before a model fit.
 """
-mask.output_to_fits(
+aplt.fits_array(
+    array=mask,
     file_path=Path(dataset_path, "mask_extra_galaxies.fits"), overwrite=True
 )
 

@@ -51,7 +51,7 @@ data = al.Array2D(
     values=np.nan_to_num(data, nan=0.0, posinf=0.0, neginf=0.0), mask=data.mask
 )
 
-cmap = aplt.Cmap(cmap="jet", norm="log", vmin=1.0e-3, vmax=np.max(data) / 3.0)
+cmap = "jet"
 
 """
 __Mask__
@@ -105,6 +105,7 @@ aplt.plot_array(array=data, title="")
 """
 Output the extra galaxies mask, which will be load and used before a model fit.
 """
-mask.output_to_fits(
+aplt.fits_array(
+    array=mask,
     file_path=Path(dataset_path, "mask_extra_galaxies.fits"), overwrite=True
 )
