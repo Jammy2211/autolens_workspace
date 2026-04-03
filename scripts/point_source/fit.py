@@ -393,7 +393,7 @@ calculated.
 Below, we compute the magnification for every multiple image coordinate, which will then be used to simulate their 
 fluxes.
 """
-magnifications = tracer.magnification_2d_via_hessian_from(grid=positions)
+magnifications = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions)
 
 """
 To simulate the fluxes, we assume the source galaxy point-source has a total flux of 1.0.

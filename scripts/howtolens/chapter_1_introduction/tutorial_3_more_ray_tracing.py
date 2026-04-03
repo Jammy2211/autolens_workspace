@@ -101,10 +101,10 @@ mass_profile = al.mp.PowerLawSph(centre=(0.0, 0.0), einstein_radius=1.6, slope=1
 
 lens = al.Galaxy(redshift=0.5, mass=mass_profile)
 
-tangential_critical_curve_list = mass_profile.tangential_critical_curve_list_from(
+tangential_critical_curve_list = al.LensCalc.from_mass_obj(mass_obj=mass_profile).tangential_critical_curve_list_from(
     grid=grid
 )
-radial_critical_curves_list = mass_profile.radial_critical_curve_list_from(grid=grid)
+radial_critical_curves_list = al.LensCalc.from_mass_obj(mass_obj=mass_profile).radial_critical_curve_list_from(grid=grid)
 
 
 
@@ -130,16 +130,16 @@ sis_mass_profile = al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=1.6)
 
 tracer = al.Tracer(galaxies=[lens, source])
 
-tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
-radial_critical_curves_list = tracer.radial_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = al.LensCalc.from_tracer(tracer=tracer).tangential_critical_curve_list_from(grid=grid)
+radial_critical_curves_list = al.LensCalc.from_tracer(tracer=tracer).radial_critical_curve_list_from(grid=grid)
 
 
 
 aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[0], title="Plane 0 Grid")
 aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[1], title="Plane 1 Grid")
 
-tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
-radial_caustics_list = tracer.radial_caustic_list_from(grid=grid)
+tangential_caustic_list = al.LensCalc.from_tracer(tracer=tracer).tangential_caustic_list_from(grid=grid)
+radial_caustics_list = al.LensCalc.from_tracer(tracer=tracer).radial_caustic_list_from(grid=grid)
 
 
 

@@ -148,11 +148,17 @@ unnecessary cost far from the lens. Over sampling is also applied to the extra g
 mask_radius = 3.7
 
 mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native,
-    pixel_scales=dataset.pixel_scales,
+    shape_native=data.shape_native,
+    pixel_scales=data.pixel_scales,
     radius=mask_radius,
 )
 
+dataset = al.Imaging.from_fits(
+    data_path=dataset_path / "data.fits",
+    noise_map_path=dataset_path / "noise_map.fits",
+    psf_path=dataset_path / "psf.fits",
+    pixel_scales=0.05,
+)
 dataset = dataset.apply_mask(mask=mask)
 
 # Over sampling is important for accurate lens modeling, but details are omitted

@@ -89,15 +89,13 @@ plot ticks.
 lens = tracer.planes[0][0]
 image_plane_kpc_per_arcsec = cosmology.kpc_per_arcsec_from(redshift=lens.redshift)
 
-units = aplt.Units(ticks_convert_factor=image_plane_kpc_per_arcsec, ticks_label=" kpc")
 
 
 aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Image")
 
-units = aplt.Units(ticks_convert_factor=source_plane_kpc_per_arcsec, ticks_label=" kpc")
 
 
-aplt.plot_array(array=tracer.traced_grid_2d_list_from(grid=grid)[-1], title="Source Plane")
+aplt.plot_grid(grid=tracer.traced_grid_2d_list_from(grid=grid)[-1], title="Source Plane")
 
 """
 __Einstein Radius__
@@ -117,7 +115,8 @@ that we use to model our data.
 Lets print the Einstein Radius, which is returned in the default internal **PyAutoLens** units of arc-seconds.
 """
 grid = al.Grid2D.uniform(shape_native=(100, 100), pixel_scales=0.1)
-einstein_radius = tracer.einstein_radius_from(grid=grid)
+lens_calc = al.LensCalc.from_tracer(tracer=tracer)
+einstein_radius = lens_calc.einstein_radius_from(grid=grid)
 
 print("Einstein Radius (arcsec) = ", einstein_radius)
 
@@ -133,9 +132,8 @@ print("Einstein Radius (kpc) = ", einstein_radius_kpc)
 """
 We can also compute the Einstein radius of individual planes, galaxies and mass profiles.
 """
-print(tracer.planes[0].einstein_radius_from(grid=grid))
-print(tracer.planes[0][0].einstein_radius_from(grid=grid))
-print(tracer.planes[0][0].mass.einstein_radius_from(grid=grid))
+print(al.LensCalc.from_mass_obj(mass_obj=tracer.planes[0][0]).einstein_radius_from(grid=grid))
+print(al.LensCalc.from_mass_obj(mass_obj=tracer.planes[0][0].mass).einstein_radius_from(grid=grid))
 
 """
 __Einstein Mass__
@@ -147,7 +145,7 @@ masses) one must assume redsfhits for the lens and source galaxies.
 
 The mass in angular units is given by: `pi * einstein_radius (arcsec) ** 2.0`
 """
-einstein_mass = tracer.einstein_mass_angular_from(grid=grid)
+einstein_mass = lens_calc.einstein_mass_angular_from(grid=grid)
 print("Einstein Mass (angular) = ", einstein_mass)
 
 """
@@ -169,9 +167,8 @@ print("Einstein Mass (solMass) = ", "{:.4e}".format(einstein_mass_solar_mass))
 """
 We can compute Einstein masses of individual components:
 """
-print(tracer.planes[0].einstein_mass_angular_from(grid=grid))
-print(tracer.planes[0][0].einstein_mass_angular_from(grid=grid))
-print(tracer.planes[0][0].mass.einstein_mass_angular_from(grid=grid))
+print(al.LensCalc.from_mass_obj(mass_obj=tracer.planes[0][0]).einstein_mass_angular_from(grid=grid))
+print(al.LensCalc.from_mass_obj(mass_obj=tracer.planes[0][0].mass).einstein_mass_angular_from(grid=grid))
 
 """
 In principle, the Einstein Mass of a `Tracer` should be readily accessible in a `Tracer` object, given this contains
@@ -198,9 +195,6 @@ Note that this input `ticks_convert_factor_values` is the same input parameter u
 convergence to physical units.
 """
 exposure_time_seconds = 2000.0
-units = aplt.Units(
-    colorbar_convert_factor=exposure_time_seconds, colorbar_label=" seconds"
-)
 
 
 
@@ -238,9 +232,6 @@ critical_surface_density = cosmology.critical_surface_density_between_redshifts_
     redshift_0=tracer.planes[0].redshift, redshift_1=tracer.planes[1].redshift
 )
 
-units = aplt.Units(
-    colorbar_convert_factor=critical_surface_density, colorbar_label=" $MSun kpc^-2$"
-)
 convergence = tracer.convergence_2d_from(grid=grid)
 
 """

@@ -306,7 +306,7 @@ another galaxy not associated with the strong lens system.
 This GUI below provides the tool you need to produce such a mask for your own data, if necessary, with which you can
 then use the `apply_noise_scaling` function.
 """
-cmap = aplt.Cmap(cmap="jet", norm="log", vmin=1.0e-3, vmax=np.max(dataset.data) / 3.0)
+cmap = "jet"
 
 try:
     scribbler = al.Scribbler(
@@ -320,7 +320,8 @@ try:
 
     data = dataset.data.apply_mask(mask=mask)
 
-    mask.output_to_fits(
+    aplt.fits_array(
+    array=mask,
         file_path=dataset_path / "mask_extra_galaxies.fits",
         overwrite=True,
     )
@@ -469,7 +470,8 @@ aplt.subplot_imaging_dataset(dataset=dataset)
 
 dataset_path = Path("dataset") / "imaging" / "simulated_lens"
 
-dataset.output_to_fits(
+aplt.fits_imaging(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     psf_path=dataset_path / "psf.fits",
     noise_map_path=dataset_path / "noise_map.fits",

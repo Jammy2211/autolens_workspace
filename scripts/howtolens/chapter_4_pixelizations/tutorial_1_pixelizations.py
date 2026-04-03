@@ -82,7 +82,7 @@ print(type(mapper))
 """
 By plotting our mapper, we now see our `Pixelization`. 
 """
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 However, the `Mapper` does contain lots of interesting information about our `Pixelization`, for example its 
@@ -100,7 +100,7 @@ print("etc.")
 We can plot these centre on our grid, to make it look slightly less boring!
 """
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 The `Mapper` also has the (source-plane) grid that we passed when we set it up. Lets check they`re the same.
@@ -117,10 +117,10 @@ print("etc.")
 We can over-lay this grid on the figure, which is starting to look a bit less boring now!
 """
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 Finally, the mapper`s `mesh_grid` has lots of information about the pixelization, for example, the arc-second 

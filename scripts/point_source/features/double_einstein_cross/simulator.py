@@ -141,8 +141,8 @@ positions_1_with_noise = al.Grid2DIrregular(
 """
 Use the positions to compute the magnification of the `Tracer` at every position.
 """
-magnifications_0 = tracer.magnification_2d_via_hessian_from(grid=positions_0)
-magnifications_1 = tracer.magnification_2d_via_hessian_from(grid=positions_1)
+magnifications_0 = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions_0)
+magnifications_1 = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions_1)
 
 """
 We can now compute the observed fluxes of the `Point`, give we know how much each is magnified.

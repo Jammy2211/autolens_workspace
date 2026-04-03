@@ -84,4 +84,4 @@ aplt.plot_array(array=data, title="")
 Now we`re happy with the mask, lets output it to the dataset folder of the lens, so that we can load it from a .fits
 file in our pipelines!
 """
-mask.output_to_fits(file_path=Path(dataset_path, "mask.fits"), overwrite=True)
+aplt.fits_array(array=mask, file_path=Path(dataset_path, "mask.fits"), overwrite=True)

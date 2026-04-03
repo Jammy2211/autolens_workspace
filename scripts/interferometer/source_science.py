@@ -63,11 +63,11 @@ dataset = al.Interferometer.from_fits(
 )
 
 """
-The `aplt.subplot_interferometer_dataset` contains a subplot which plots all the key properties of the dataset simultaneously.
+The `aplt.subplot_interferometer_dirty_images` contains a subplot which plots all the key properties of the dataset simultaneously.
 
 This includes the observed visibility data, RMS noise map and other information.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 Visibility data is in uv space, making it hard to interpret by eye.
@@ -75,7 +75,6 @@ Visibility data is in uv space, making it hard to interpret by eye.
 The dirty images of the interferometer dataset can plotted, which use the transformer of the interferometer 
 to map the visibilities, noise-map or other quantity to a real-space image.
 """
-dataset_plotter.subplot_dirty_images()
 
 """
 __Source Values__

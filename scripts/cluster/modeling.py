@@ -119,7 +119,9 @@ aplt.plot_array(array=data, title="")
 """
 We can also just plot the positions, omitting the image.
 """
-aplt.plot_grid(grid=positions_list, title="")
+import numpy as np
+for positions in positions_list:
+    aplt.plot_grid(grid=al.Grid2DIrregular(np.atleast_2d(positions)), title="")
 
 """
 __Centres__
@@ -304,8 +306,9 @@ source_galaxies_dict = {}
 
 for i, positions in enumerate(positions_list):
 
-    positions_centre_y = np.mean(positions, axis=0)
-    positions_centre_x = np.mean(positions, axis=1)
+    positions_array = np.atleast_2d(positions)
+    positions_centre_y = np.mean(positions_array[:, 0])
+    positions_centre_x = np.mean(positions_array[:, 1])
 
     point = af.Model(al.ps.Point)
     point.centre_0 = af.GaussianPrior(mean=positions_centre_y, sigma=3.0)
@@ -453,7 +456,7 @@ analysis_factor_list = []
 
 for analysis in analysis_list:
 
-    analysis_factor = af.AnalysisFactor(prior_model=model_analysis, analysis=analysis)
+    analysis_factor = af.AnalysisFactor(prior_model=model, analysis=analysis)
 
     analysis_factor_list.append(analysis_factor)
 

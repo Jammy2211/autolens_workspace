@@ -238,7 +238,8 @@ __Output__
 Output each simulated dataset to the dataset path as .fits files, with a tag describing its color.
 """
 for waveband, dataset in zip(waveband_list, dataset_list):
-    dataset.output_to_fits(
+    aplt.fits_imaging(
+    dataset=dataset,
         data_path=Path(dataset_path) / f"{waveband}_data.fits",
         psf_path=Path(dataset_path) / f"{waveband}_psf.fits",
         noise_map_path=Path(dataset_path) / f"{waveband}_noise_map.fits",

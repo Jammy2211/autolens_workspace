@@ -108,7 +108,7 @@ dataset = al.Interferometer.from_fits(
 """
 This guide uses in-built visualization tools for plotting. 
 
-For example, using the `aplt.subplot_interferometer_dataset` the dataset we perform a likelihood evaluation on is plotted.
+For example, using the `aplt.subplot_interferometer_dirty_images` the dataset we perform a likelihood evaluation on is plotted.
 
 The `subplot_dataset` displays the visibilities in the uv-plane, which are the raw data of the interferometer
 dataset. These are what will ultimately be directly fitted in the Fourier space.
@@ -118,8 +118,7 @@ using an inverse Fourier transform to convert these to real-space. These dirty i
 visualization of the dirty images are often used in radio interferometry to show the data in a way that is more
 interpretable to the human eye.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Over Sampling__
@@ -292,9 +291,9 @@ likelihood step).
 Below, we plot the rectangular mesh without the traced image-grid pixels (for clarity) and with them as 
 black dots in order to show how each set of image-pixels fall within a source pixel.
 """
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 The `Mapper` contains:
@@ -325,7 +324,8 @@ It also shows that image-pixel indexing begins from the top-left and goes rightw
 all image-pixels which are not masked.
 """
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
+aplt.plot_array(array=dataset.dirty_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 The reverse mappings of source-pixels to image-pixels can also be used.
@@ -339,7 +339,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.dirty_image)
+aplt.plot_array(array=dataset.dirty_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Interpolation__
@@ -650,7 +651,7 @@ In fact, the linear inversion is (over-)fitting noise in the image data, meaning
 ill-posed. We need to apply some form of smoothing on the reconstruction to avoid over fitting noise.
 """
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Regularization Matrix (H)__
@@ -730,7 +731,7 @@ source galaxy, which actually looks like the star forming clumps in the imaging 
 This also implies we are not over-fitting the noise.
 """
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Visibilities Reconstruction__

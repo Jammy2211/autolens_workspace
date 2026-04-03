@@ -92,7 +92,7 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 
 aplt.subplot_fit_imaging(fit=fit)
-aplt.plot_array(array=fit.model_images_of_planes_list[1], title="Plane 1 Image")
+aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 """
 The fit looks just like it did in the previous tutorials (residuals in the centre due to a lack of source pixels). 
@@ -100,7 +100,7 @@ The fit looks just like it did in the previous tutorials (residuals in the centr
 Lets quickly remind ourselves that the effective regularization weight of each source pixel is our input coefficient 
 value of 3.3.
 """
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion")
 
 """
 __Adaptive Regularization__
@@ -135,7 +135,7 @@ fit = fit_via_source_galaxy_from(
     adapt_images=adapt_images,
 )
 
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 As expected, we now have a variable regularization scheme. 
@@ -234,7 +234,7 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 aplt.subplot_fit_imaging(fit=fit)
 
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 print("Evidence using adaptive regularization. ", fit.log_evidence)
 

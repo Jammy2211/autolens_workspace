@@ -77,7 +77,7 @@ print(dataset.data.native[0, 0])
 print("Value of first pixel in noise map:")
 print(dataset.noise_map.native[0, 0])
 print("Value of first pixel in PSF:")
-print(dataset.psf.native[0, 0])
+print(dataset.psf.kernel.native[0, 0])
 
 aplt.subplot_imaging_dataset(dataset=dataset)
 

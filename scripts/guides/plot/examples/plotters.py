@@ -14,7 +14,7 @@ The new API uses:
  - `aplt.subplot_imaging_dataset(dataset)` — multi-panel dataset overview.
  - `aplt.subplot_tracer(tracer, grid)` — multi-panel tracer overview.
  - `aplt.subplot_fit_imaging(fit)` — multi-panel fit overview.
- - `aplt.subplot_interferometer_dataset(dataset)` — interferometer dataset overview.
+ - `aplt.subplot_interferometer_dirty_images(dataset)` — interferometer dataset overview.
  - `aplt.subplot_fit_interferometer(fit)` — interferometer fit overview.
  - `aplt.subplot_galaxies_images(tracer, grid)` — per-plane images.
  - `aplt.subplot_fit_point(fit)` — point source fit overview.
@@ -153,7 +153,8 @@ aplt.plot_array(
     array=aa.Array2D(values=deflections_yx.slim[:, 1], mask=grid.mask),
     title="Deflections X",
 )
-aplt.plot_array(array=tracer.magnification_2d_from(grid=grid), title="Magnification")
+lens_calc = al.LensCalc.from_tracer(tracer=tracer)
+aplt.plot_array(array=lens_calc.magnification_2d_from(grid=grid), title="Magnification")
 
 """
 A multi-panel subplot of the tracer is produced with `aplt.subplot_tracer()`.
@@ -180,7 +181,7 @@ An `Imaging` dataset's data, noise-map and PSF are plotted individually with `ap
 """
 aplt.plot_array(array=dataset.data, title="Data")
 aplt.plot_array(array=dataset.noise_map, title="Noise Map")
-aplt.plot_array(array=dataset.psf, title="PSF")
+aplt.plot_array(array=dataset.psf.kernel, title="PSF")
 
 """
 A multi-panel subplot of the dataset is produced with `aplt.subplot_imaging_dataset()`.
@@ -196,7 +197,7 @@ with `aplt.plot_array()`.
 aplt.plot_array(array=fit.data, title="Data")
 aplt.plot_array(array=fit.noise_map, title="Noise Map")
 aplt.plot_array(array=fit.signal_to_noise_map, title="Signal-to-Noise Map")
-aplt.plot_array(array=fit.model_image, title="Model Image")
+aplt.plot_array(array=fit.model_data, title="Model Image")
 aplt.plot_array(array=fit.residual_map, title="Residual Map")
 aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
 aplt.plot_array(array=fit.chi_squared_map, title="Chi-Squared Map")
@@ -300,10 +301,10 @@ dataset = al.Interferometer.from_fits(
     noise_map_path=dataset_path / "noise_map.fits",
     uv_wavelengths_path=dataset_path / "uv_wavelengths.fits",
     real_space_mask=real_space_mask,
-    transformer_class=al.TransformerNUFFT,
+    transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 lens_galaxy = al.Galaxy(
     redshift=0.5,

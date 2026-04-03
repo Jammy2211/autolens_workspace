@@ -39,7 +39,7 @@ The only entries that needs changing are:
 
  - `ImagingAgg` -> `InterferometerAgg`.
  - `FitImagingAgg` -> `FitInterferometerAgg`.
- - `aplt.subplot_imaging_dataset` -> `aplt.subplot_interferometer_dataset`.
+ - `aplt.subplot_imaging_dataset` -> `aplt.subplot_interferometer_dirty_images`.
  - `aplt.subplot_fit_imaging` -> `aplt.subplot_fit_interferometer`.
 
 Quantities specific to an interfometer, for example its uv-wavelengths real space mask, are accessed using the same API

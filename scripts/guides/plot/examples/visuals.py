@@ -66,6 +66,8 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
+lens_calc = al.LensCalc.from_tracer(tracer=tracer)
+
 lens_galaxy_1 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.Sersic(
@@ -90,6 +92,8 @@ tracer_x2 = al.Tracer(
     galaxies=[lens_galaxy, lens_galaxy_1, source_galaxy, source_galaxy_1]
 )
 
+lens_calc_x2 = al.LensCalc.from_tracer(tracer=tracer_x2)
+
 dataset_path = Path("dataset") / "imaging" / "slacs1430+4105"
 data_path = dataset_path / "data.fits"
 data = al.Array2D.from_fits(file_path=data_path, hdu=0, pixel_scales=0.03)
@@ -102,7 +106,7 @@ Critical curves are plotted as lines over the image using the `lines=` keyword a
 `tangential_critical_curve_list_from` returns a list of `Grid2DIrregular` objects, one per
 tangential critical curve. Pass this list directly to `lines=`.
 """
-tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = lens_calc.tangential_critical_curve_list_from(grid=grid)
 
 image = tracer.image_2d_from(grid=grid)
 
@@ -116,7 +120,7 @@ aplt.plot_array(
 Radial critical curves can be overlaid in the same way. Combine both lists with `+` to
 overlay tangential and radial critical curves together.
 """
-radial_critical_curve_list = tracer.radial_critical_curve_list_from(grid=grid)
+radial_critical_curve_list = lens_calc.radial_critical_curve_list_from(grid=grid)
 
 aplt.plot_array(
     array=image,
@@ -130,8 +134,8 @@ __Multiple Critical Curves__
 If a `Tracer` has multiple lens galaxies it may have multiple tangential and radial critical
 curves. These are all contained in the returned lists and plotted together.
 """
-tangential_critical_curve_list = tracer_x2.tangential_critical_curve_list_from(grid=grid)
-radial_critical_curve_list = tracer_x2.radial_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = lens_calc_x2.tangential_critical_curve_list_from(grid=grid)
+radial_critical_curve_list = lens_calc_x2.radial_critical_curve_list_from(grid=grid)
 
 image_x2 = tracer_x2.image_2d_from(grid=grid)
 
@@ -147,8 +151,8 @@ __Caustics__
 Caustics are the critical curves mapped to the source plane. They are plotted over the
 source-plane image using `lines=`.
 """
-tangential_caustic_list = tracer.tangential_caustic_list_from(grid=grid)
-radial_caustic_list = tracer.radial_caustic_list_from(grid=grid)
+tangential_caustic_list = lens_calc.tangential_caustic_list_from(grid=grid)
+radial_caustic_list = lens_calc.radial_caustic_list_from(grid=grid)
 
 source_image = tracer.image_2d_list_from(grid=grid)[1]
 
@@ -171,7 +175,9 @@ The multiple image positions of a lensed source can be plotted using `positions=
 
 `positions=` accepts an `al.Grid2DIrregular` object.
 """
-solver = al.PointSolver(grid=grid)
+solver = al.PointSolver.for_grid(
+    grid=grid, pixel_scale_precision=0.001, magnification_threshold=0.1
+)
 multiple_images = solver.solve(
     tracer=tracer, source_plane_coordinate=source_galaxy.bulge.centre
 )
@@ -244,6 +250,8 @@ __Combined Overlays__
 
 `lines=` and `positions=` can be used together on the same plot.
 """
+tangential_critical_curve_list = lens_calc.tangential_critical_curve_list_from(grid=grid)
+
 aplt.plot_array(
     array=image,
     title="Image with Critical Curves and Multiple Images",

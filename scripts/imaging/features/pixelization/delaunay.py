@@ -1171,9 +1171,9 @@ mapper = al.Mapper(
     image_plane_mesh_grid=image_plane_mesh_grid,
 )
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Interpolation__
@@ -1183,7 +1183,8 @@ pix_indexes_for_sub_slim_index = mapper.pix_indexes_for_sub_slim_index
 print(pix_indexes_for_sub_slim_index[0:9])
 
 
-mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
+aplt.plot_array(array=lens_subtracted_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 pix_indexes = [[200]]
 
@@ -1191,7 +1192,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
+aplt.plot_array(array=lens_subtracted_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 mapping_matrix = al.util.mapper.mapping_matrix_from(
     pix_indexes_for_sub_slim_index=pix_indexes_for_sub_slim_index,
@@ -1292,7 +1294,7 @@ curvature_reg_matrix = np.add(curvature_matrix, regularization_matrix)
 reconstruction = np.linalg.solve(curvature_reg_matrix, data_vector)
 
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 mapped_reconstructed_operated_data = (
     al.util.inversion.mapped_reconstructed_data_via_mapping_matrix_from(

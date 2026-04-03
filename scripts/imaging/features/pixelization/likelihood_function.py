@@ -333,9 +333,9 @@ Plotting the RectangularUniform mesh shows that the source-plane and been discre
 Below, we plot the RectangularUniform mesh without the traced image-grid pixels (for clarity) and with them as black 
 dots in order to show how each set of image-pixels fall within a RectangularUniform pixel.
 """
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 
 """
@@ -368,7 +368,8 @@ It also shows that image-pixel indexing begins from the top-left and goes rightw
 all image-pixels which are not masked.
 """
 
-mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
+aplt.plot_array(array=lens_subtracted_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 The reverse mappings of source-pixels to image-pixels can also be used.
@@ -382,7 +383,8 @@ indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
 
-mapper_plotter.subplot_image_and_mapper(image=lens_subtracted_image)
+aplt.plot_array(array=lens_subtracted_image, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Interpolation__
@@ -658,7 +660,7 @@ In fact, the linear inversion is (over-)fitting noise in the image data, meaning
 ill-posed. We need to apply some form of smoothing on the source reconstruction to avoid over fitting noise.
 """
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Regularization Matrix (H)__
@@ -736,7 +738,7 @@ By plotting this source reconstruction we can see that regularization has lead u
 which actually looks like a galaxy! This also implies we are not over-fitting the noise.
 """
 
-mapper_plotter.figure_2d(solution_vector=reconstruction)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Image Reconstruction__

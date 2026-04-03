@@ -64,7 +64,7 @@ We now plot the grid, over laying a uniform grid of pixels to illustrate the are
 want light profile intensities to be computed.
 """
 
-grid_plotter.figure_2d(plot_grid_lines=True)
+aplt.plot_grid(grid=grid_sub_1, title="Grid (No Over-Sampling)")
 
 """
 We now create and plot a uniform grid which does over-sample the pixels, by inputting `over_sample_size=2`.
@@ -106,7 +106,7 @@ intensity within each pixel if there is a significant gradient in intensity with
 In the code below, it is the input `plot_over_sampled_grid=True` which ensures we plot the over sampled grid.
 """
 
-grid_plotter.figure_2d(plot_grid_lines=True, plot_over_sampled_grid=True)
+aplt.plot_grid(grid=grid_sub_2, title="Over-Sampled Grid")
 
 """
 __Numerics__
@@ -258,7 +258,7 @@ grid_adaptive = al.Grid2D.no_mask(
 )
 
 
-grid_plotter.figure_2d(plot_grid_lines=True, plot_over_sampled_grid=True)
+aplt.plot_grid(grid=grid_adaptive, title="Over-Sampled Grid")
 
 print(over_sample_size)
 
@@ -281,7 +281,7 @@ over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
 grid_adaptive = al.Grid2D(values=grid, mask=mask, over_sample_size=over_sample_size)
 
 
-grid_plotter.figure_2d(plot_grid_lines=True, plot_over_sampled_grid=True)
+aplt.plot_grid(grid=grid, title="Over-Sampled Grid")
 
 """
 We can compare this adaptive grid to the grid with over sampling of 32 x 32 to confine it produces low amounts

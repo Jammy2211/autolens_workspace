@@ -71,7 +71,7 @@ print(dataset.info)
 """
 We can also plot the positions and fluxes of the `PointDataset`.
 """
-dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(dataset=dataset)
 
 """
 We next load an image of the dataset and plot the point source data over it, because as described in 

@@ -104,7 +104,7 @@ aplt.subplot_fit_imaging(fit=fit)
 Plot individual fit attributes.
 """
 aplt.plot_array(array=fit.data, title="Data")
-aplt.plot_array(array=fit.model_image, title="Model Image")
+aplt.plot_array(array=fit.model_data, title="Model Image")
 aplt.plot_array(array=fit.residual_map, title="Residual Map")
 aplt.plot_array(array=fit.normalized_residual_map, title="Normalized Residual Map")
 aplt.plot_array(array=fit.chi_squared_map, title="Chi-Squared Map")
@@ -242,11 +242,11 @@ fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 aplt.subplot_fit_interferometer(fit=fit)
 
 """
-Plot the source-plane reconstruction.
+Plot the dirty model image (the model image in real space for an interferometer fit).
 """
 aplt.plot_array(
-    array=fit.model_images_of_planes_list[1],
-    title="Source Plane Reconstruction (Interferometer)",
+    array=fit.dirty_model_image,
+    title="Dirty Model Image (Interferometer)",
 )
 
 """

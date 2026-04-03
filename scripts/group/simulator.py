@@ -229,7 +229,8 @@ aplt.subplot_imaging_dataset(dataset=dataset)
 """
 Output the simulated dataset to the dataset path as .fits files.
 """
-dataset.output_to_fits(
+aplt.fits_imaging(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     psf_path=dataset_path / "psf.fits",
     noise_map_path=dataset_path / "noise_map.fits",

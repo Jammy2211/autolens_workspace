@@ -37,6 +37,7 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
 import numpy as np
 from pathlib import Path
+import autoarray as aa
 import autolens as al
 import autolens.plot as aplt
 
@@ -197,7 +198,7 @@ blurred_image_with_poisson_noise = (
 """
 Here is what the blurred image with Poisson noise looks like.
 """
-aplt.plot_array(array=al.Array2D(values=blurred_image_with_poisson_noise, title="Image With Poisson Noise")
+aplt.plot_array(array=aa.Array2D(values=blurred_image_with_poisson_noise, mask=blurred_image.mask), title="Image With Poisson Noise")
 
 """
 It is challenging to see the Poisson noise directly in the image above, as it is often subtle. To make the noise more 
@@ -210,7 +211,7 @@ we simulate the image.
 """
 poisson_noise_realization = blurred_image_with_poisson_noise - blurred_image
 
-aplt.plot_array(array=al.Array2D(values=poisson_noise_realization, title="Poisson Noise Realization")
+aplt.plot_array(array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask), title="Poisson Noise Realization")
 
 """
 __Background Sky__
@@ -248,14 +249,14 @@ blurred_image_with_sky_poisson_noise = (
 )
 
 # Visualize the image with background sky and Poisson noise.
-aplt.plot_array(array=al.Array2D(values=blurred_image_with_sky_poisson_noise, title="Image With Background Sky")
+aplt.plot_array(array=aa.Array2D(values=blurred_image_with_sky_poisson_noise, mask=blurred_image.mask), title="Image With Background Sky")
 
 # Create a noise map showing the differences between the blurred image with and without noise.
 poisson_noise_realization = (
     blurred_image_with_sky_poisson_noise - blurred_image_with_sky
 )
 
-aplt.plot_array(array=al.Array2D(values=poisson_noise_realization, title="Poisson Noise Realization")
+aplt.plot_array(array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask), title="Poisson Noise Realization")
 
 """
 __Simulator__
@@ -324,9 +325,6 @@ components.
 
 The "Over Sampling" plots on the bottom of the figures display advanced features that can be ignored for now.
 """
-imaging_plotter.set_title(
-    None
-)  # Disable input title so subplot uses correct title for each sub-figure.
 aplt.subplot_imaging_dataset(dataset=dataset)
 
 """
@@ -344,7 +342,8 @@ The files are named `data.fits`, `noise_map.fits`, and `psf.fits`, and will be u
 dataset_path = Path("dataset") / "imaging" / "howtolens"
 print("Dataset Path: ", dataset_path)
 
-dataset.output_to_fits(
+aplt.fits_imaging(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     noise_map_path=dataset_path / "noise_map.fits",
     psf_path=dataset_path / "psf.fits",

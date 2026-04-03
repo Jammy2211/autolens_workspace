@@ -86,7 +86,6 @@ __Output__
 
 Save this as a .png image in the dataset folder for easy inspection later.
 """
-)
 
 aplt.plot_array(array=data, title="")
 

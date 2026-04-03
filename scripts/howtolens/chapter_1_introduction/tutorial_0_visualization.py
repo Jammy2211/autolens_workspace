@@ -121,7 +121,7 @@ source_galaxy = al.Galaxy(
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-tangential_critical_curve_list = tracer.tangential_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = al.LensCalc.from_tracer(tracer=tracer).tangential_critical_curve_list_from(grid=grid)
 
 aplt.plot_array(
     array=tracer.image_2d_from(grid=grid),

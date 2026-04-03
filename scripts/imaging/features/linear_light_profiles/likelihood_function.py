@@ -206,6 +206,7 @@ which uses the image-plane grid and lens galaxy bulge.
 lp_linear_func_lens = al.LightProfileLinearObjFuncList(
     grid=masked_dataset.grids.lp,
     blurring_grid=masked_dataset.grids.blurring,
+    psf=masked_dataset.psf,
     light_profile_list=[tracer.galaxies[0].bulge],
     regularization=None,
 )

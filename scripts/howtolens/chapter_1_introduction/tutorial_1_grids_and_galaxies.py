@@ -61,6 +61,7 @@ from autoconf import jax_wrapper  # Sets JAX environment before other imports
 import matplotlib.pyplot as plt
 import numpy as np
 
+import autoarray as aa
 import autolens as al
 import autolens.plot as aplt
 
@@ -300,7 +301,7 @@ This demonstrates how the geometry of the grid directly influences the appearanc
 *Exercise*: Try changing the values of `centre`, `ell_comps`, `effective_radius`, and `sersic_index` above. 
 Observe how these adjustments change the Sersic profile image.
 """
-aplt.plot_array(array=al.Array2D(, title="Sersic Image")
+aplt.plot_array(array=aa.Array2D(values=sersic_image, mask=grid.mask), title="Sersic Image")
 
 """
 Instead of manually handling these transformations, we can use `LightProfile` objects from the `light_profile` 

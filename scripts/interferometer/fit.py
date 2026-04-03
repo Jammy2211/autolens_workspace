@@ -66,11 +66,11 @@ dataset = al.Interferometer.from_fits(
 )
 
 """
-The `aplt.subplot_interferometer_dataset` contains a subplot which plots all the key properties of the dataset simultaneously.
+The `aplt.subplot_interferometer_dirty_images` contains a subplot which plots all the key properties of the dataset simultaneously.
 
 This includes the observed visibility data, RMS noise map and other information.
 """
-aplt.subplot_interferometer_dataset(dataset=dataset)
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 Visibility data is in uv space, making it hard to interpret by eye.
@@ -78,7 +78,6 @@ Visibility data is in uv space, making it hard to interpret by eye.
 The dirty images of the interferometer dataset can plotted, which use the transformer of the interferometer 
 to map the visibilities, noise-map or other quantity to a real-space image.
 """
-dataset_plotter.subplot_dirty_images()
 
 """
 __Fitting__
@@ -169,7 +168,7 @@ aplt.subplot_fit_interferometer(fit=fit)
 Once again, dirty images are often easier to interpret, so we can plot a subplot of the dirty images of the data, model
 data, residuals and chi-squared.
 """
-fit_plotter.subplot_fit_dirty_images()
+aplt.subplot_fit_dirty_images(fit=fit)
 
 """
 The fit also provides us with a ``log_likelihood``, a single value quantifying how good the tracer fitted the dataset.
@@ -216,7 +215,7 @@ A new fit using this plane shows residuals, normalized residuals and chi-squared
 fit = al.FitInterferometer(dataset=dataset, tracer=tracer)
 
 aplt.subplot_fit_interferometer(fit=fit)
-fit_plotter.subplot_fit_dirty_images()
+aplt.subplot_fit_dirty_images(fit=fit)
 
 """
 We also note that its likelihood decreases.
@@ -307,7 +306,7 @@ A dictionary which maps the model images of each galaxy is also available.
 These are not the dirty images, but instead the images of each galaxy that come from the tracer object
 (e.g. simply evaluating the tracer's image on the interferometer's real-space grid).
 """
-print(fit.galaxy_model_image_dict[source_galaxy].slim)
+print(fit.galaxy_image_dict[source_galaxy].slim)
 
 """
 __Outputting Results__
@@ -317,8 +316,9 @@ You may wish to output certain results to .fits files for later inspection.
 For example, one could output the lens light subtracted image of the lensed source galaxy to a .fits file such that
 we could fit this source-only image again with an independent pipeline.
 """
-source_model_image = fit.galaxy_model_image_dict[source_galaxy]
-source_model_image.output_to_fits(
+source_model_image = fit.galaxy_image_dict[source_galaxy]
+aplt.fits_array(
+    array=source_model_image,
     file_path=dataset_path / "source_model_image.fits", overwrite=True
 )
 

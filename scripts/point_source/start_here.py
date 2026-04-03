@@ -107,7 +107,7 @@ dataset = al.PointDataset(
 print("Point Dataset Info:")
 print(dataset.info)
 
-dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(dataset=dataset)
 
 """
 We can also load the dataset from the workspace `datasset` folder, which means the image we
@@ -493,7 +493,7 @@ positions = solver.solve(
     tracer=tracer, source_plane_coordinate=source_galaxy.point_0.centre
 )
 
-magnifications = tracer.magnification_2d_via_hessian_from(grid=positions)
+magnifications = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions)
 
 time_delays = tracer.time_delays_from(grid=positions)
 
@@ -520,7 +520,7 @@ dataset = al.PointDataset(
     time_delays_noise_map=time_delays_noise_map,
 )
 
-point_dataset_plotter.subplot_dataset()
+aplt.subplot_point_dataset(dataset=dataset)
 
 dataset_path = Path("dataset") / "point_source" / "simulated_lens"
 
@@ -567,7 +567,7 @@ for sample_index in range(total_datasets):
     positions = solver.solve(
         tracer=tracer, source_plane_coordinate=source_galaxy.point_0.centre
     )
-    magnifications = tracer.magnification_2d_via_hessian_from(grid=positions)
+    magnifications = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions)
     time_delays = tracer.time_delays_from(grid=positions)
 
     flux = 1.0

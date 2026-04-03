@@ -94,7 +94,7 @@ mapper = al.Mapper(
 )
 
 
-mapper_plotter.figure_2d()
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 __Pixelization__
@@ -118,7 +118,7 @@ Both of these can be plotted using an `aplt.plot_array`.
 It is possible for an inversion to have multiple `Mapper`'s, therefore for certain figures we specify the index 
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 There we have it, we have successfully reconstructed the source using a rectangular pixel-grid. Whilst this source 
@@ -180,7 +180,7 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 """
 Now lets plot the complex source reconstruction.
 """
-aplt.plot_array(array=fit.inversion.reconstruction, title="Inversion Reconstruction")
+aplt.plot_array(array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
 
 """
 Pretty great, huh? If you ran the complex source pipeline in chapter 3, you'll remember that getting a model image 
@@ -198,7 +198,8 @@ pix_indexes = [[445], [285], [313], [132], [11]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-mapper_plotter.subplot_image_and_mapper(image=dataset.data)
+aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
 These mappings are known before the inversion reconstructs the source galaxy, which means before this inversion is

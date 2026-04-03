@@ -210,7 +210,8 @@ Output the simulated dataset to the dataset path as .fits files.
 If you are unfamiliar with .fits files, this is the standard file format of astronomical data and you can open 
 them using the software ds9 (https://sites.google.com/cfa.harvard.edu/saoimageds9/home).
 """
-dataset.output_to_fits(
+aplt.fits_imaging(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     psf_path=dataset_path / "psf.fits",
     noise_map_path=dataset_path / "noise_map.fits",

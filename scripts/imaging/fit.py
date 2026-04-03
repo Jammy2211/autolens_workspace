@@ -340,7 +340,8 @@ For example, one could output the lens light subtracted image of the lensed sour
 we could fit this source-only image again with an independent pipeline.
 """
 lens_subtracted_image = fit.subtracted_images_of_planes_list[1]
-lens_subtracted_image.output_to_fits(
+aplt.fits_array(
+    array=lens_subtracted_image,
     file_path=dataset_path / "lens_subtracted_data.fits", overwrite=True
 )
 

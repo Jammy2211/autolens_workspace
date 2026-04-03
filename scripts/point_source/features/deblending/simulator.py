@@ -111,7 +111,7 @@ __Fluxes__
 
 Use the positions to compute the magnification of the `Tracer` at every position.
 """
-magnifications = tracer.magnification_2d_via_hessian_from(grid=positions)
+magnifications = al.LensCalc.from_tracer(tracer=tracer).magnification_2d_via_hessian_from(grid=positions)
 
 """
 We can now compute the observed fluxes of the `Point`, give we know how much each is magnified.
@@ -289,7 +289,8 @@ __Output__
 
 Output the simulated dataset to the dataset path as .fits files.
 """
-dataset.output_to_fits(
+aplt.fits_imaging(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     psf_path=dataset_path / "psf.fits",
     noise_map_path=dataset_path / "noise_map.fits",

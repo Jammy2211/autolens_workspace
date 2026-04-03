@@ -138,8 +138,7 @@ dataset = al.Interferometer.from_fits(
     transformer_class=al.TransformerDFT,
 )
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()  # quick look at dirty image / PSF
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 """
 __Model__
@@ -251,7 +250,7 @@ and fit to the data.
 """
 aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.lp)
 
-fit_plotter.subplot_fit()  # residuals, chi^2, dirty image, etc.
+aplt.subplot_fit_interferometer(fit=result.max_log_likelihood_fit)
 
 """
 The result object contains pretty much everything you need to do science with your own strong lens, but details
@@ -365,14 +364,14 @@ simulator = al.SimulatorInterferometer(
 
 dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 
-aplt.subplot_interferometer_dataset(dataset=dataset)
-dataset_plotter.subplot_dirty_images()
+aplt.subplot_interferometer_dirty_images(dataset=dataset)
 
 # Save simulated visibilities/uv-wavelengths/noise to FITS (same format as real)
 
 dataset_path = Path("dataset") / "interferometer" / "simulated_lens"
 
-dataset.output_to_fits(
+aplt.fits_interferometer(
+    dataset=dataset,
     data_path=dataset_path / "data.fits",
     noise_map_path=dataset_path / "noise_map.fits",
     uv_wavelengths_path=dataset_path / "uv_wavelengths.fits",
@@ -415,7 +414,6 @@ for sample_index in range(total_datasets):
 
     dataset = simulator.via_tracer_from(tracer=tracer, grid=grid)
 
-    dataset_plotter.subplot_dirty_images()
 
 
 """

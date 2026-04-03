@@ -1,0 +1,10 @@
+{
+    "type": "instance",
+    "class_path": "autoarray.structures.grids.irregular_2d.Grid2DIrregular",
+    "arguments": {
+        "values": {
+            "type": "list",
+            "values": []
+        }
+    }
+}
