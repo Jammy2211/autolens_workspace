@@ -95,6 +95,7 @@ def source_lp(
                 al.Galaxy,
                 redshift=redshift_source,
                 bulge=source_bulge,
+                disk=None,
             ),
         ),
     )

@@ -96,7 +96,6 @@ import autofit as af
 import autolens as al
 import autolens.plot as aplt
 
-output = aplt.Output(path=".", format="png")
 
 """
 __Dataset__

@@ -369,7 +369,7 @@ Checkout `autolens_workspace/*/guides/results` for a full description of analysi
 """
 print(result.max_log_likelihood_instance)
 
-aplt.subplot_galaxies_images(tracer=tracer, grid=grid)
+aplt.subplot_galaxies_images(tracer=result.max_log_likelihood_tracer, grid=dataset.grid)
 
 aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 

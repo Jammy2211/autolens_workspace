@@ -20,24 +20,24 @@
                                     "values": [
                                         {
                                             "type": "ndarray",
-                                            "array": -0.13006087645587297,
+                                            "array": -0.14464792343645883,
                                             "dtype": "float64"
                                         },
                                         {
                                             "type": "ndarray",
-                                            "array": 0.09031208494815664,
+                                            "array": 0.07529539595402227,
                                             "dtype": "float64"
                                         }
                                     ]
                                 },
-                                "einstein_radius": 1.57750026271622,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
                                         0.0,
                                         0.0
                                     ]
-                                }
+                                },
+                                "einstein_radius": 1.29107546222587
                             }
                         }
                     }
@@ -58,12 +58,12 @@
                                     "values": [
                                         {
                                             "type": "ndarray",
-                                            "array": -0.007015825372474923,
+                                            "array": -0.12901134471790573,
                                             "dtype": "float64"
                                         },
                                         {
                                             "type": "ndarray",
-                                            "array": -0.08948373889506507,
+                                            "array": 0.03274611680942156,
                                             "dtype": "float64"
                                         }
                                     ]

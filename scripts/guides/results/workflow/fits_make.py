@@ -177,9 +177,11 @@ for i in range(2):
             instance = model.instance_from_vector(vector=parameters)
 
             if hasattr(instance.galaxies.lens, "shear"):
+                import jax.numpy as jnp
                 magnitude, angle = al.convert.shear_magnitude_and_angle_from(
                     gamma_1=instance.galaxies.lens.shear.gamma_1,
                     gamma_2=instance.galaxies.lens.shear.gamma_2,
+                    xp=jnp,
                 )
 
             return (magnitude, angle)

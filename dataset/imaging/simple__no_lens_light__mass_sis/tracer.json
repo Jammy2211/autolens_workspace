@@ -2,6 +2,11 @@
     "type": "instance",
     "class_path": "autolens.lens.tracer.Tracer",
     "arguments": {
+        "cosmology": {
+            "type": "instance",
+            "class_path": "autogalaxy.cosmology.model.Planck15",
+            "arguments": {}
+        },
         "galaxies": {
             "type": "list",
             "values": [
@@ -37,28 +42,23 @@
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCoreSph",
                             "arguments": {
-                                "alpha": 3.0,
-                                "radius_break": 0.025,
                                 "effective_radius": 0.2,
+                                "radius_break": 0.025,
+                                "alpha": 3.0,
                                 "intensity": 0.2,
+                                "gamma": 0.25,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
                                         0.0,
                                         0.0
                                     ]
-                                },
-                                "gamma": 0.25
+                                }
                             }
                         }
                     }
                 }
             ]
-        },
-        "cosmology": {
-            "type": "instance",
-            "class_path": "autogalaxy.cosmology.model.Planck15",
-            "arguments": {}
         }
     }
 }

@@ -198,7 +198,7 @@ time delay and the physical time delay is proportional to the Hubble constant.
 We therefore create a Cosmology as a `Model` object in order to make the cosmological parameter Omega_m a free 
 parameter.
 """
-cosmology = af.Model(al.cosmo.FlatwCDMWrap)
+cosmology = af.Model(al.cosmo.FlatLambdaCDM)
 
 """
 By default, all parameters of a cosmology model are initialized as fixed values based on the Planck18 cosmology.

@@ -292,8 +292,8 @@ of the order of the galaxies in the tracer, and therefore which galaxy index cor
 
 We can therefore use the model composition API to access these values.
 """
-print(tracer.galaxies.lens.bulge.intensity)
-print(tracer.galaxies.source.bulge.intensity)
+print(tracer.galaxies[0].bulge.intensity)
+print(tracer.galaxies[-1].bulge.intensity)
 
 """
 The `Tracer` contained in the `max_log_likelihood_fit` also has the solved for `intensity` values:
@@ -302,8 +302,8 @@ fit = result.max_log_likelihood_fit
 
 tracer = fit.tracer
 
-print(tracer.galaxies.lens.bulge.intensity)
-print(tracer.galaxies.source.bulge.intensity)
+print(tracer.galaxies[0].bulge.intensity)
+print(tracer.galaxies[-1].bulge.intensity)
 
 """
 __Visualization__

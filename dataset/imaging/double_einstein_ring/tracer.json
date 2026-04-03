@@ -9,19 +9,15 @@
                     "type": "instance",
                     "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
                     "arguments": {
-                        "label": null,
                         "redshift": 0.5,
+                        "label": null,
                         "bulge": {
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.sersic.Sersic",
                             "arguments": {
-                                "ell_comps": {
-                                    "type": "tuple",
-                                    "values": [
-                                        0.05263157894736841,
-                                        3.2227547345982974e-18
-                                    ]
-                                },
+                                "sersic_index": 4.0,
+                                "intensity": 1.0,
+                                "effective_radius": 0.8,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -29,22 +25,19 @@
                                         0.0
                                     ]
                                 },
-                                "intensity": 1.0,
-                                "effective_radius": 0.8,
-                                "sersic_index": 4.0
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.05263157894736841,
+                                        3.2227547345982974e-18
+                                    ]
+                                }
                             }
                         },
                         "mass": {
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.mass.total.isothermal.Isothermal",
                             "arguments": {
-                                "ell_comps": {
-                                    "type": "tuple",
-                                    "values": [
-                                        0.05263157894736841,
-                                        3.2227547345982974e-18
-                                    ]
-                                },
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -52,7 +45,14 @@
                                         0.0
                                     ]
                                 },
-                                "einstein_radius": 1.5
+                                "einstein_radius": 1.5,
+                                "ell_comps": {
+                                    "type": "tuple",
+                                    "values": [
+                                        0.05263157894736841,
+                                        3.2227547345982974e-18
+                                    ]
+                                }
                             }
                         }
                     }
@@ -61,12 +61,16 @@
                     "type": "instance",
                     "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
                     "arguments": {
-                        "label": null,
                         "redshift": 1.0,
+                        "label": null,
                         "bulge": {
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCoreSph",
                             "arguments": {
+                                "radius_break": 0.01,
+                                "intensity": 1.2,
+                                "effective_radius": 0.1,
+                                "alpha": 3.0,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -74,11 +78,7 @@
                                         -0.15
                                     ]
                                 },
-                                "radius_break": 0.01,
-                                "intensity": 1.2,
-                                "effective_radius": 0.1,
-                                "gamma": 0.25,
-                                "alpha": 3.0
+                                "gamma": 0.25
                             }
                         },
                         "mass": {
@@ -101,12 +101,16 @@
                     "type": "instance",
                     "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
                     "arguments": {
-                        "label": null,
                         "redshift": 2.0,
+                        "label": null,
                         "bulge": {
                             "type": "instance",
                             "class_path": "autogalaxy.profiles.light.standard.exponential_core.ExponentialCoreSph",
                             "arguments": {
+                                "radius_break": 0.01,
+                                "intensity": 0.6,
+                                "effective_radius": 0.07,
+                                "alpha": 3.0,
                                 "centre": {
                                     "type": "tuple",
                                     "values": [
@@ -114,11 +118,7 @@
                                         0.45
                                     ]
                                 },
-                                "radius_break": 0.01,
-                                "intensity": 0.6,
-                                "effective_radius": 0.07,
-                                "gamma": 0.25,
-                                "alpha": 3.0
+                                "gamma": 0.25
                             }
                         }
                     }
