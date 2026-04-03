@@ -2,3 +2,6 @@ root.log
 .idea/
 
 __pycache__/
+
+output/
+notebooks/plot/
