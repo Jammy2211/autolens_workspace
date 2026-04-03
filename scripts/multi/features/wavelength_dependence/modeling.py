@@ -255,8 +255,7 @@ The `Samples` object still has the dimensions of the overall non-linear search (
 Therefore, the samples is identical in every result object.
 """
 for result in result_list:
-    plotter = aplt.NestPlotter(samples=result.samples)
-    plotter.corner_anesthetic()
+    aplt.corner_anesthetic(samples=result.samples)
 
 """
 Checkout `autolens_workspace/*/guides/results` for a full description of analysing results.

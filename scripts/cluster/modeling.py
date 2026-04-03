@@ -588,8 +588,7 @@ parameter `n`). These mappings ate specified in the `config/notation.yaml` file 
 The superscripts of labels correspond to the name each component was given in the model (e.g. for the `Isothermal`
 mass its name `mass` defined when making the `Model` above is used).
 """
-plotter = aplt.NestPlotter(samples=result_list[0].samples)
-plotter.corner_anesthetic()
+aplt.corner_anesthetic(samples=result_list[0].samples)
 
 """
 This script gives a concise overview of the basic cluster modeling API, fitting one the simplest lens models possible.

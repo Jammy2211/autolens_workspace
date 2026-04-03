@@ -331,8 +331,7 @@ aplt.subplot_tracer(tracer=result.max_log_likelihood_tracer, grid=result.grids.l
 
 aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
-plotter = aplt.NestPlotter(samples=result.samples)
-plotter.corner_anesthetic()
+aplt.corner_anesthetic(samples=result.samples)
 
 """
 __Source MGE__

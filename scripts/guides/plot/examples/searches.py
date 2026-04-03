@@ -12,10 +12,10 @@ behaviour of plotting visuals.
 __Contents__
 
 - **Setup:** Sets up a dataset and model which we will perform quick model-fits to for illustration.
-- **DynestyPlotter:**: Plots results of the nested sampling method Dynesty.
-- **MCMCPlotter:**: Plots results of an Emcee fit (e.g. cornerplot).
-- **PySwarmsPlotter:**: Plots results of a PySwarms fit (e.g. contour).
-- **ZeusPlotter:**: Plots results of a Zeus fit (e.g. cornerplot).
+- **Nested Sampling Plots:**: Plots results of the nested sampling method Dynesty.
+- **MCMC Plots (Emcee):**: Plots results of an Emcee fit (e.g. cornerplot).
+- **MLE Plots (PySwarms):**: Plots results of a PySwarms fit (e.g. contour).
+- **MCMC Plots (Zeus):**: Plots results of a Zeus fit (e.g. cornerplot).
 - **GetDist:**: Plot results of any MCMC / nested sampler non-linear search using the library GetDist.
 
 __Setup__
@@ -129,17 +129,16 @@ we:
 There are other `_kwargs` inputs we pass as None, you should check out the Dynesty docs if you need to customize your
 figure.
 """
-plotter = aplt.NestPlotter(samples=result.samples)
+"""
+The `corner_anesthetic` function produces a triangle of 1D and 2D PDF's of every parameter using the library `anesthetic`.
+"""
+aplt.corner_anesthetic(samples=result.samples)
 
 """
-The `corner_anesthetic` method produces a triangle of 1D and 2D PDF's of every parameter using the library `anesthetic`.
+The `corner_cornerpy` function produces a triangle of 1D and 2D PDF's of every parameter using the library `corner.py`.
 """
-plotter.corner_anesthetic()
-
-"""
-The `corner_cornerpy` method produces a triangle of 1D and 2D PDF's of every parameter using the library `corner.py`.
-"""
-plotter.corner_cornerpy(
+aplt.corner_cornerpy(
+    samples=result.samples,
     dims=None,
     span=None,
     quantiles=[0.025, 0.5, 0.975],
@@ -381,27 +380,25 @@ except (AttributeError, TypeError):
 """
 __EmceePlotter__
 
-We now pass the samples to a `MCMCPlotter` which will allow us to use emcee's in-built plotting libraries to 
-make figures.
+We now use the MCMC plotting functions to visualize emcee's results.
 
-The emcee readthedocs describes fully all of the methods used below 
+The emcee readthedocs describes fully all of the methods used below
 
  - https://emcee.readthedocs.io/en/stable/user/sampler/
- 
- The plotter wraps the `corner` method of the library `corner.py` to make corner plots of the PDF:
+
+ The `corner_cornerpy` function wraps the library `corner.py` to make corner plots of the PDF:
 
 - https://corner.readthedocs.io/en/latest/index.html
- 
-In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are 
+
+In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are
 described in the API docs.
 """
-plotter = aplt.MCMCPlotter(samples=result.samples)
-
 
 """
-The `corner` method produces a triangle of 1D and 2D PDF's of every parameter in the model fit.
+The `corner_cornerpy` function produces a triangle of 1D and 2D PDF's of every parameter in the model fit.
 """
-plotter.corner_cornerpy(
+aplt.corner_cornerpy(
+    samples=result.samples,
     bins=20,
     range=None,
     color="k",
@@ -504,27 +501,26 @@ except AttributeError:
 """
 __ZeusPlotter__
 
-We now pass the samples to a `ZeusPlotter` which will allow us to use Nautilus's in-built plotting libraries to 
-make figures.
+We now use the MCMC plotting functions to visualize Zeus's results.
 
-The zeus readthedocs describes fully all of the methods used below 
+The zeus readthedocs describes fully all of the methods used below
 
  - https://zeus-mcmc.readthedocs.io/en/latest/api/plotting.html#cornerplot
  - https://zeus-mcmc.readthedocs.io/en/latest/notebooks/normal_distribution.html
- 
- The plotter wraps the `corner` method of the library `corner.py` to make corner plots of the PDF:
+
+ The `corner_cornerpy` function wraps the library `corner.py` to make corner plots of the PDF:
 
 - https://corner.readthedocs.io/en/latest/index.html
- 
-In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are 
+
+In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are
 described in the API docs.
 """
-plotter = aplt.MCMCPlotter(samples=result.samples)
 
 """
-The `corner` method produces a triangle of 1D and 2D PDF's of every parameter in the model fit.
+The `corner_cornerpy` function produces a triangle of 1D and 2D PDF's of every parameter in the model fit.
 """
-plotter.corner_cornerpy(
+aplt.corner_cornerpy(
+    samples=result.samples,
     weight_list=None,
     levels=None,
     span=None,
@@ -611,17 +607,15 @@ except AttributeError:
 """
 __PySwarmsPlotter__
 
-We now pass the samples to a `MLEPlotter` which will allow us to use pyswarms's in-built plotting libraries to 
-make figures.
+We now use the MLE plotting functions to visualize pyswarms's results.
 
-The pyswarms readthedocs describes fully all of the methods used below 
+The pyswarms readthedocs describes fully all of the methods used below
 
  - https://pyswarms.readthedocs.io/en/latest/api/pyswarms.utils.plotters.html
- 
-In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are 
+
+In all the examples below, we use the `kwargs` of this function to pass in any of the input parameters that are
 described in the API docs.
 """
-plotter = aplt.MLEPlotter(samples=result.samples)
 
 """
 __Search Specific Visualization__

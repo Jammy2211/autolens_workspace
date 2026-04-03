@@ -160,8 +160,7 @@ def fit():
 
     aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
-    plotter = aplt.NestPlotter(samples=result.samples)
-    plotter.corner_anesthetic()
+    aplt.corner_anesthetic(samples=result.samples)
 
 
 """

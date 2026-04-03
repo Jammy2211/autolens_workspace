@@ -555,8 +555,7 @@ It also contains information on the posterior as estimated by the non-linear sea
 
 Below, we make a corner plot of the "Probability Density Function" of every parameter in the model-fit.
 """
-plotter = aplt.NestPlotter(samples=result.samples)
-plotter.corner_anesthetic()
+aplt.corner_anesthetic(samples=result.samples)
 
 """
 Checkout `autolens_workspace/*/guides/results` for a full description of analysing results.

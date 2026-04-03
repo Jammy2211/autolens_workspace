@@ -203,6 +203,6 @@ fit = al.FitImaging(dataset=dataset, tracer=tracer)
 aplt.subplot_fit_imaging(fit=fit)
 
 """
-The search plotters (`aplt.NestPlotter`, `aplt.MCMCPlotter`, `aplt.MLEPlotter`) still exist
-and are unchanged — see `scripts/guides/plot/examples/searches.py`.
+The search plotting functions (`aplt.corner_anesthetic`, `aplt.corner_cornerpy`, etc.) provide
+visualization of non-linear search results -- see `scripts/guides/plot/examples/searches.py`.
 """

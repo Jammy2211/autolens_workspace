@@ -362,7 +362,7 @@ aplt.subplot_fit_imaging(fit=result.max_log_likelihood_fit)
 
 """
 The Probability Density Functions (PDF's) of the results can be plotted using an in-built visualization 
-library, which is wrapped via the `NestPlotter` object.
+library, which is wrapped via the `corner_anesthetic` function.
 
 The PDF shows the 1D and 2D probabilities estimated for every parameter after the model-fit. The two dimensional 
 figures can show the degeneracies between different parameters, for example how increasing the intensity $I$ of the
@@ -376,8 +376,7 @@ parameter `n`). These mappings ate specified in the `config/notation.yaml` file 
 The superscripts of labels correspond to the name each component was given in the model (e.g. for the `Isothermal`
 mass its name `mass` defined when making the `Model` above is used).
 """
-plotter = aplt.NestPlotter(samples=result.samples)
-plotter.corner_anesthetic()
+aplt.corner_anesthetic(samples=result.samples)
 
 """
 __Other Practicalities__
