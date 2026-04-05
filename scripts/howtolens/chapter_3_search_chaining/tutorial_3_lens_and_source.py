@@ -22,6 +22,14 @@ in this tutorial, using a pipeline composed of a modest 3 searches:
 Of course, given that we do not care for the errors in searches 1 and 2, we will set up our non-linear search to
 perform sampling as fast as possible!
 
+__Contents__
+
+**Dated Tutorial:** This example tutorial was written ~4 years ago, when **PyAutoLens** was in its infancy and had a.
+**Initial Setup:** we'll use strong lensing data, where.
+**Paths:** All three searches will use the same `path_prefix`, so we write it here to avoid repetition.
+**Notes:** We use linear light profiles througout this script, given that the model is quite complex and this.
+**Wrap Up:** Summary of the script and next steps.
+
 __Dated Tutorial__
 
 This example tutorial was written ~4 years ago, when **PyAutoLens** was in its infancy and had a number of limitations:

@@ -17,142 +17,23 @@ This tutorial will focus on these practical aspects of model-fitting, including:
 
 __Contents__
 
-This tutorial is split into the following sections:
-
- **PyAutoFit:** The parent package of PyAutoGalaxy, which handles practicalities of model-fitting.
- **Initial Setup:** Load the dataset we'll fit a model to using a non-linear search.
- **Mask:** Apply a mask to the dataset.
- **Model:** Introduce the model we will fit to the data.
- **Search:** Setup the non-linear search, Nautilus, used to fit the model to the data.
- **Search Settings:** Discuss the settings of the non-linear search, including the number of live points.
- **Number Of Cores:** Discuss how to use multiple cores to fit models faster in parallel.
- **Parallel Script:** Running the model-fit in parallel if a bug occurs in a Jupiter notebook.
- **Iterations Per Update:** How often the non-linear search outputs the current results to hard-disk.
- **Analysis:** Create the Analysis object which contains the `log_likelihood_function` that the non-linear search calls.
- **Model-Fit:** Fit the model to the data.
- **Result:** Print the results of the model-fit to the terminal.
- **Output Folder:** Inspect the output folder where results are stored.
- **Unique Identifier:** Discussion of the unique identifier of the model-fit which names the folder in the output directory.
- **Output Folder Contents:** What is output to the output folder (model results, visualization, etc.).
- **Result:** Plot the best-fit model to the data.
-"""
-
-from autoconf import jax_wrapper  # Sets JAX environment before other imports
-
-# %matplotlib inline
-# from pyprojroot import here
-# workspace_path = str(here())
-# %cd $workspace_path
-# print(f"Working Directory has been set to `{workspace_path}`")
-
-from pathlib import Path
-import autolens as al
-import autolens.plot as aplt
-
-"""
-__PyAutoFit__
-
-Modeling uses the probabilistic programming language
-[PyAutoFit](https://github.com/rhayes777/PyAutoFit), an open-source project that allows complex model
-fitting techniques to be straightforwardly integrated into scientific modeling software. 
-
-The majority of tools that make model-fitting practical are provided by PyAutoFit, for example it handles
-all output of the non-linear search to hard-disk, the visualization of results and the estimation of run-times.
-"""
-import autofit as af
-
-"""
-__Initial Setup__
-
-Lets first load the `Imaging` dataset we'll fit a model with using a non-linear search. 
-
-This is the same dataset we fitted in the previous tutorial, and we'll repeat the same fit, as we simply want
-to illustrate the practicalities of model-fitting in this tutorial.
-"""
-dataset_name = "simple__no_lens_light__mass_sis"
-dataset_path = Path("dataset") / "imaging" / dataset_name
-
-"""
-__Dataset Auto-Simulation__
-
-If the dataset does not already exist on your system, it will be created by running the corresponding
-simulator script. This ensures that all example scripts can be run without manually simulating data first.
-"""
-if not dataset_path.exists():
-    import subprocess
-    import sys
-    subprocess.run(
-        [sys.executable, "scripts/howtolens/simulator/no_lens_light__mass_sis.py"],
-        check=True,
-    )
-
-dataset = al.Imaging.from_fits(
-    data_path=dataset_path / "data.fits",
-    noise_map_path=dataset_path / "noise_map.fits",
-    psf_path=dataset_path / "psf.fits",
-    pixel_scales=0.1,
-)
-
-aplt.subplot_imaging_dataset(dataset=dataset)
-
-"""
-__Mask__
-
-The non-linear fit also needs a `Mask2D`, lets use a 3.0" circle.
-"""
-mask_radius = 3.0
-
-mask = al.Mask2D.circular(
-    shape_native=dataset.shape_native,
-    pixel_scales=dataset.pixel_scales,
-    radius=mask_radius,
-)
-
-dataset = dataset.apply_mask(mask=mask)
-
-aplt.subplot_imaging_dataset(dataset=dataset)
-
-"""
-__Model__
-
-We compose the model using the same API as the previous tutorial.
-
-This model is the same as the previous tutorial, an `Isothermal` sphereical mass profile representing the lens
-galaxy and a `ExponentialCoreSph` light profile representing the source galaxy.
-"""
-# Lens:
-
-mass = af.Model(al.mp.IsothermalSph)
-
-lens = af.Model(al.Galaxy, redshift=0.5, mass=mass)
-
-# Source:
-
-bulge = af.Model(al.lp_linear.ExponentialCoreSph)
-
-source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
-
-# Overall Lens Model:
-
-model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
-
-print(model.info)
-
-
-"""
-__Search__
-
-To fit the model, we now create the non-linear search object, selecting the nested sampling algorithm, Nautilus, 
-as recommended in the previous tutorial.
-
-We set up the `Nautilus` object with these parameters:
-
-- **`path_prefix`**: specifies the output directory, here set to `autolens_workspace/output/howtogalaxy/chapter_2`.
-  
-- **`name`**: gives the search a descriptive name, which creates the full output path 
-as `autolens_workspace/output/howtogalaxy/chapter_2/tutorial_2_practicalities`.
-
-- **`n_live`**: controls the number of live points Nautilus uses to sample parameter space.
+**PyAutoFit:** Modeling uses the probabilistic programming language.
+**Initial Setup:** Lets first load the `Imaging` dataset we'll fit a model with using a non-linear search.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Model:** Compose the lens model fitted to the data.
+**Search:** Configure the non-linear search used to fit the model.
+**Search Settings:** Nautilus samples parameter space by placing "live points" representing different galaxy models.
+**Iterations Per Update:** Every N iterations, the non-linear search outputs the current results to the folder.
+**Analysis:** Create the Analysis object that defines how the model is fitted to the data.
+**VRAM Use:** When running AutoLens with JAX on a GPU, the analysis must fit within the GPU’s available VRAM.
+**Run Times:** Profiling the expected run time of the model-fit.
+**Result Info:** A concise readable summary of the results is given by printing its `info` attribute.
+**Output Folder:** Now checkout the `autolens_workspace/output` folder.
+**Unique Identifier:** In the output folder, you will note that results are in a folder which is a collection of random.
+**Output Folder Contents:** Now this is running you should checkout the `autolens_workspace/output` folder.
+**Result:** Overview of the results of the model-fit.
+**Other Practicalities:** The following are examples of other practicalities which I will document fully in this example.
+**Wrap Up:** Summary of the script and next steps.
 
 __Search Settings__
 

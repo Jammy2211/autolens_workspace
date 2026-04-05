@@ -10,6 +10,13 @@ We will also discuss other types of non-linear searches, such as MCMC and optimi
 modeling. So far, we have no found any of these alternatives to give anywhere near as robust and efficient results as
 Nautilus, and we recommend users use Nautilus unless they are particularly interested in investigating different
 model-fitting techniques.
+
+__Contents__
+
+**Nested Sampling:** Lets first perform the model-fit using Nautilus, but look at different parameters that control how.
+**Optimizers:** Nested sampling algorithms like Nautilus provides the errors on all of the model parameters, by.
+**MCMC:** For users familiar with Markov Chain Monte Carlo (MCMC) non-linear samplers, PyAutoFit supports the.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

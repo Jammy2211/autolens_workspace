@@ -14,6 +14,15 @@ fitting them simultaneously.
 Up to now, I've put a focus on an analysis being general. The script we write in this example is going to be the
 opposite, specific to the image we're modeling. Fitting multiple lens galaxies is really difficult and writing a
 pipeline that we can generalize to many lenses isn't currently possible.
+
+__Contents__
+
+**Initial Setup:** we'll use new strong lensing data, where.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Paths:** All four searches will use the same `path_prefix`, so we write it here to avoid repetition.
+**Search Chaining Approach:** Looking at the image, there are two blobs of light corresponding to the two lens galaxies.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

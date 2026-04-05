@@ -30,6 +30,16 @@ Here is an overview of what we'll cover in this tutorial:
 - **Bad Fits**: Demonstrate how even small deviations from the true parameters can significantly impact the fit.
 - **Model Fitting**: Perform a basic model fit on a simple dataset, adjusting the model parameters to improve the
   fit quality.
+
+__Contents__
+
+**Dataset & Mask:** Standard set up of the dataset and mask that is fitted.
+**Masked Grid:** In tutorials 1 and 2, we emphasized that the `Grid2D` object is crucial for evaluating a lens's.
+**Fitting:** Fit the lens model to the dataset and inspect the results.
+**Incorrect Fit:** In the previous section, we successfully created and fitted a lens model to the image data.
+**Model Fitting:** In the previous sections, we used the true model to fit the data, which resulted in a high log.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 import numpy as np

@@ -11,6 +11,15 @@ In this example, we'll explore how far we get fitting a complex source using a p
 an exercise in diminishing returns. Each light profile we add to our source model brings with it an extra 5-7,
 parameters. If there are 4 components, or multiple galaxies, we are quickly entering the somewhat nasty regime of
 30-40+ parameters in our non-linear search. Even with a pipeline, that is a lot of parameters to fit!
+
+__Contents__
+
+**Initial Setup:** we'll use new strong lensing data, where.
+**Paths:** All four searches will use the same `path_prefix`, so we write it here to avoid repetition.
+**Search Chaining Approach:** The source is clearly complex, with more than 4 peaks of light.
+**Run Times:** Profiling the expected run time of the model-fit.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

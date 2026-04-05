@@ -4,6 +4,16 @@ Tutorial 7: Results
 
 In the previous tutorials, each search returned a `Result` object, which we used to plot the maximum log likelihood
 fit each model-fit. In this tutorial, we'll take a look at the result object in a little more detail.
+
+__Contents__
+
+**Initial Setup:** Lets use the model-fit performed in tutorial 1 to get a `Result` object.
+**Tracer & Fit:** In the previous tutorials, we saw that this result contains the maximum log likelihood fit, which.
+**Samples:** The result contains a lot more information about the model-fit.
+**Workspace:** We are not going into any more detail on the result variable in this tutorial, or in the.
+**Database:** Once a search has completed running, we have a set of results on our hard disk which we can.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

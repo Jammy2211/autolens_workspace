@@ -9,6 +9,18 @@ initialize the priors of a more complex lens model that was fitted by the second
 However, the results were passed between searches were passed manually. I explicitly wrote out every result as a prior
 containing the values inferred in the first search. **PyAutoLens** has an API for passing priors in a more generalized
 way, which is the topic of this tutorial.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Model:** Compose the lens model fitted to the data.
+**Search:** Configure the non-linear search used to fit the model.
+**Prior Passing:** We are now going to use the prior passing API to pass these results, in a way which does not.
+**Result:** Overview of the results of the model-fit.
+**Wrap Up:** Summary of the script and next steps.
+**Detailed Explanation Of Prior Passing:** To end, I provide a detailed overview of how prior passing works and illustrate tools that can be.
+**EXAMPLE:** Lets go through an example using a real parameter.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

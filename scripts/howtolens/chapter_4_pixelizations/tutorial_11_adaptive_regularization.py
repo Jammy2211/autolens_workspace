@@ -9,6 +9,14 @@ source's surface brightness.
 This raises the same question as before, how do we adapt our regularization scheme to the source before we've
 reconstructed it? Just like in the last tutorial, we'll use a model image of a strongly lensed source from a previous
 model that we've begun calling the `adapt-image`.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Convenience Function:** We are going to fit the image using a magnification based grid.
+**Adaptive Regularization:** Lets now look at adaptive regularization in action, by setting up a adapt-image and using the.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
