@@ -17,6 +17,16 @@ In the previous tutorial, when we inferred a local maxima we knew that we had do
 we do not know the true lens model and it may be unclear if the solution we infered is a global or local maxima. The
 methods we learn in this tutorial are therefore equally important for verifying that a solution that looks like a
 global maxima solution is in indeed the global maxima.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Prior Tuning:** First, we will try to assist our non-linear search by tuning our priors.
+**Run Time:** Profiling the expected run time of the model-fit.
+**Result:** Overview of the results of the model-fit.
+**Discussion:** By tuning our priors to the specific lens model we are fitting, we increase the chances of finding.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

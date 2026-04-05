@@ -9,6 +9,15 @@ In the previous two tutorials, we introduced:
 
 However, non of this has actually helped us fit strong lens data or reconstruct the source galaxy. This is the subject
 of this tutorial, where the process of reconstructing the source's light on the pixelization is called an `Inversion`.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Pixelization:** Finally, we can now use the `Mapper` to reconstruct the source via an `Inversion`.
+**Positive Only Solver:** Ensuring positive-only solutions for linear light profile intensities.
+**Wrap Up:** Summary of the script and next steps.
+**Detailed Explanation:** If you are interested in a more detailed description of how inversions work, then checkout the file.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

@@ -22,6 +22,25 @@ reducing the complexity of parameter space and making the fit faster and more ac
 This tutorial will then show how many linear light profiles can be combined into a `Basis`, which comes from the term
 'basis function'. By combining many linear light profiles models can be composed which are able to fit complex galaxy
 structures (e.g. asymmetries, twists) with just N=6-8 non-linear parameters.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Linear Light Profiles:** We use a variant of a light profile discussed called a "linear light profile", which is accessed.
+**Run Time:** Profiling the expected run time of the model-fit.
+**Result:** Overview of the results of the model-fit.
+**Intensities:** The intensities of linear light profiles are not a part of the model parameterization and therefore.
+**Visualization:** Linear light profiles and objects containing them (e.g.
+**Basis:** We can use many linear light profiles to build a `Basis`.
+**Model Fit:** Perform the model-fit using the search and analysis.
+**Source MGE:** We now compose a second `Basis` of 15 Gaussians to represent the source galaxy.
+**Multi Gaussian Expansion Benefits:** Fitting a galaxy's light with a superposition of Gaussians is called a Multi-Gaussian Expansion.
+**Disadvantage of Basis Functions:** For many science cases, the MGE can also be a less intuitive model to interpret than a Sersic.
+**Positive Only Solver:** Ensuring positive-only solutions for linear light profile intensities.
+**Other Basis Functions:** In addition to the Gaussians used in this example, there is another basis function implemented in.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

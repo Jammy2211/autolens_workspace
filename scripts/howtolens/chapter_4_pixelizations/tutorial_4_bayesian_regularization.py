@@ -11,6 +11,16 @@ So far, we have:
 The explanation of *how* an inversion works has so far been overly simplified. You'll have noted the regularization
 inputs which we have not so far discussed. This will be the topic of this tutorial, and where inversions become more
 conceptually challenging!
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Convenience Function:** we're going to perform a lot of fits using an `Inversion` this tutorial.
+**Pixelization:** Okay, so lets look at our fit from the previous tutorial in more detail.
+**Regularization:** The source reconstruction looks excellent!
+**Bayesian Evidence:** For inversions, we therefore need a different goodness-of-fit measure to choose the appropriate.
+**Detailed Description:** Below, I provide a more detailed discussion of the Bayesian evidence.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
