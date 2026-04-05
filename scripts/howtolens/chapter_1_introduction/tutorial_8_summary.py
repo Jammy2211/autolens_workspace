@@ -122,9 +122,15 @@ profiles, mass profiles, galaxies and planes to extract different pieces of info
 example, we made our source-galaxy above with two light profiles, a `bulge` and `disk`. We can plot the lensed image of 
 each component individually, now that we know how to break-up the different components of the tracer.
 """
-aplt.plot_array(array=tracer.planes[1][0].bulge.image_2d_from(grid=source_plane_grid), title="Bulge Image")
+aplt.plot_array(
+    array=tracer.planes[1][0].bulge.image_2d_from(grid=source_plane_grid),
+    title="Bulge Image",
+)
 
-aplt.plot_array(array=tracer.planes[1][0].disk.image_2d_from(grid=source_plane_grid), title="Disk Image")
+aplt.plot_array(
+    array=tracer.planes[1][0].disk.image_2d_from(grid=source_plane_grid),
+    title="Disk Image",
+)
 
 """
 __Visualization__
@@ -137,8 +143,12 @@ full API reference of every plotting option in **PyAutoLens**, allowing you to c
 figures of strong lenses with minimal effort!
 """
 
-tangential_critical_curve_list = al.LensCalc.from_tracer(tracer=tracer).tangential_critical_curve_list_from(grid=grid)
-radial_critical_curve_list = al.LensCalc.from_tracer(tracer=tracer).radial_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = al.LensCalc.from_tracer(
+    tracer=tracer
+).tangential_critical_curve_list_from(grid=grid)
+radial_critical_curve_list = al.LensCalc.from_tracer(
+    tracer=tracer
+).radial_critical_curve_list_from(grid=grid)
 
 
 aplt.plot_array(
