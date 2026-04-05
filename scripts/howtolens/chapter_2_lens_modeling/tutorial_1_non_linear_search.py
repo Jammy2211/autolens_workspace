@@ -44,24 +44,19 @@ In this tutorial, we will use a non-linear search to fit a lens model to simulat
 
 __Contents__
 
-This tutorial is split into the following sections:
-
-- **Parameter Space**: Introduce the concept of a "parameter space" and how it relates to model-fitting.
-- **Non-Linear Search**: Introduce the concept of a "non-linear search" and how it fits models to data.
-- **Search Types**: Introduce the maximum likelihood estimator (MLE), Markov Chain Monte Carlo (MCMC) and nested sampling search algorithms used in this tutorial.
-- **Deeper Background**: Provide links to resources that more thoroughly describe the statistical principles that underpin non-linear searches.
-- **Data**: Load and plot the strong lens dataset we'll fit.
-- **Model**: Introduce the lens model we'll fit to the data.
-- **Priors**: Introduce priors and how they are used to define the parameter space and guide the non-linear search.
-- **Analysis**: Introduce the `Analysis` class, which contains the `log_likelihood_function` used to fit the model to the data.
-- **Searches**: An overview of the searches used in this tutorial.
-- **Maximum Likelihood Estimation (MLE)**: Perform a model-fit using the MLE search.
-- **Markov Chain Monte Carlo (MCMC)**: Perform a model-fit using the MCMC search.
-- **Nested Sampling**: Perform a model-fit using the nested sampling search.
-- **Result**: The result of the model-fit, including the maximum likelihood model.
-- **Samples**: The samples of the non-linear search, used to compute parameter estimates and uncertainties.
-- **Customizing Searches**: How to customize the settings of the non-linear search.
-- **Wrap Up**: A summary of the concepts introduced in this tutorial.
+**Overview:** In this tutorial, we will use a non-linear search to fit a lens model to simulated imaging of.
+**Parameter Space:** In mathematics, a function is defined by its parameters, which map inputs to outputs.
+**Search Types:** There are different types of non-linear searches, each of which explores parameter space in a.
+**Deeper Background:** **The descriptions of how searches work in this example are simplfied and phoenomenological and do.
+**PyAutoFit:** Modeling uses the probabilistic programming language.
+**Initial Setup:** Let's first load the `Imaging` dataset, which we will use to fit a model with a non-linear search.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Model:** Compose the lens model fitted to the data.
+**Priors:** When we examine the `.info` of our model, we notice that each parameter (like `centre`.
+**Analysis:** Create the Analysis object that defines how the model is fitted to the data.
+**Searches:** To perform a non-linear search, we create an instance of a `NonLinearSearch` object.
+**Nested Sampling:** **Nested Sampling** is an advanced method for model-fitting that excels in handling complex models.
+**Wrap Up:** Summary of the script and next steps.
 
 __Parameter Space__
 

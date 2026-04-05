@@ -48,6 +48,14 @@ Here is an overview of what we'll cover in this tutorial:
 
 The imports below are required to run the HowToLens tutorials in a Jupiter notebook. They also import the
 `autolens` package and the `autolens.plot` module which are used throughout the tutorials.
+
+__Contents__
+
+**Grids:** A `Grid2D` is a set of two-dimensional $(y,x)$ coordinates that represent points in space where we.
+**Geometry:** The above grid is centered on the origin (0.0", 0.0").
+**Light Profiles:** Galaxies are collections of stars, gas, dust, and other astronomical objects that emit light.
+**One Dimension Projection:** We often want to calculative 1D quantities of a light profile, for example to plot how its light.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

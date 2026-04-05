@@ -25,6 +25,17 @@ Here is an overview of what we'll cover in this tutorial:
 - **Poisson Noise:** We'll add Poisson noise to the image, simulating the randomness in the photon-to-electron conversion process on the CCD.
 - **Background Sky:** We'll add a background sky to the image, simulating the light from the sky that adds noise to the image.
 - **Simulator:** We'll use the `SimulatorImaging` object to simulate imaging data that includes all these effects.
+
+__Contents__
+
+**Initial Setup:** To create our simulated strong lens image, we first need a 2D grid.
+**Optics Blurring:** All images captured using CCDs (like those on the Hubble Space Telescope or Euclid) experience some.
+**Poisson Noise:** In addition to the blurring caused by telescope optics, we also need to consider Poisson noise when.
+**Background Sky:** The final effect we will consider when simulating imaging data is the background sky.
+**Simulator:** The `SimulatorImaging` object lets us create simulated imaging data while including the effects of.
+**Output:** We will now save these simulated data to `.fits` files, the standard format used by astronomers for.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

@@ -22,6 +22,18 @@ deflection angles of their mass profiles are summed when performing lensing calc
 ray tracing.
 
 The `Tracer` fully accounts for this.
+
+__Contents__
+
+**Initial Setup:** To begin, lets setup the grid we'll ray-trace using.
+**Concise Code:** Lets set up the tracer used in the previous tutorial.
+**Critical Curves:** To end, we can finally explain what the black lines that have appeared on many of the plots.
+**Caustics:** In the previous tutorial, we plotted the critical curves of the mass profile on the image-plane.
+**Units:** Lets plot the lensing quantities again.
+**More Complexity:** We now make a lens with some attributes we didn`t in the last tutorial.
+**Multi Galaxy Ray Tracing:** Now lets pass our 4 galaxies to a `Tracer`, which means the following will occur.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

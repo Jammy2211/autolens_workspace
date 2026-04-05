@@ -21,6 +21,17 @@ previous tutorials and in future exercises, we will fit even more complex models
 
 Therefore, take note, as we make our lens model more realistic, we also make its parameter space more complex, this is
 an important concept to keep in mind for the remainder of this chapter!
+
+__Contents__
+
+**Initial Setup:** we'll use new strong lensing data, where.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Model:** Compose the lens model fitted to the data.
+**Run Time:** Profiling the expected run time of the model-fit.
+**Result:** Overview of the results of the model-fit.
+**Global and Local Maxima:** Up to now, all our non-linear searches have successfully found lens models that provide visibly.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

@@ -8,6 +8,13 @@ increase its size so as to cover every source-plane coordinate.
 
 In this tutorial, we will consider how the size of the pixelization grid is chosen and introduce the concept of a
 border.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Borders:** So, what is a border?
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

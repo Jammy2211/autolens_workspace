@@ -8,6 +8,11 @@ This tutorial is not necesary for using PyAutoLens or doing strong lens analysis
 written yet!
 
 Tutorial 8 summary is written and you should check that out instead!
+
+__Contents__
+
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

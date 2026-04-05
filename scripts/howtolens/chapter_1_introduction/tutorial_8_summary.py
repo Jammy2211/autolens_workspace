@@ -15,6 +15,16 @@ In this chapter, we have learnt that:
 
 In this summary, we'll go over all the different Python objects introduced throughout this chapter and consider how
 they come together as one.
+
+__Contents__
+
+**Start:** Below, we do all the steps we have learned this chapter, making profiles, galaxies, a tracer, etc.
+**Object Composition:** Lets now consider how all of the objects we've covered throughout this chapter (`LightProfile`'s.
+**Visualization:** Furthermore, using the `MatPLot2D` and `lines=`/`positions=` overlays objects we can visualize any.
+**Code Design:** To end, I want to quickly talk about the **PyAutoLens** code-design and structure, which was really.
+**Source Code:** If you do enjoy code, variables, functions, and parameters, you may want to dig deeper into the.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

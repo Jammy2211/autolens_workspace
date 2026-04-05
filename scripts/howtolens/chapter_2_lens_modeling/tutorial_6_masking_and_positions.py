@@ -5,6 +5,17 @@ Tutorial 6: Masking and Positions
 We have learnt everything we need to know about non-linear searches to model a strong lens and infer a good lens
 model solution. Now, lets consider masking in more detail, something we have not given much consideration previously.
 We'll also learn a neat trick to improve the speed and accuracy of a non-linear search.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as tutorials 1 & 2, where.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Run Time:** Profiling the expected run time of the model-fit.
+**Search:** Configure the non-linear search used to fit the model.
+**Discussion:** So, we can choose the mask we use in a model-fit.
+**Positions Thresholding:** We can manually specify a set of image-plane (y,x) coordinates corresponding to the multiple images.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

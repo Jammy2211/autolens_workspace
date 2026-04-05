@@ -8,6 +8,14 @@ does, why it was called a mapper and whether it was mapping anything at all!
 Therefore, in this tutorial, we'll cover mappers in more detail.
 
 WARNING: THHIS TUTORIAL VISUALS ARE SLIGHTLY BUGGY CURRENTLY AND WILL BE FIXED IN THE FUTURE.
+
+__Contents__
+
+**Initial Setup:** we'll use new strong lensing data, where.
+**Mappers:** We now setup a `Pixelization` and use it to create a `Mapper` via the tracer`s source-plane grid.
+**Mask:** Define the 2D mask applied to the dataset for the model-fit.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

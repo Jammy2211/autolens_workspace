@@ -13,6 +13,15 @@ interesting scientific questions!
 
 However, inversion do have some short comings that we need to be aware of before we use them for lens modeling. That`s
 what we cover in this tutorial.
+
+__Contents__
+
+**Initial Setup:** We'll use the same strong lensing data as the previous tutorial, where.
+**Unphysical Solutions:** The code below illustrates a systematic set of solutions called demagnified solutions, which.
+**Brief Description:** To see the short-comings of an inversion, we begin by performing a fit where the lens galaxy has an.
+**Light Profiles:** We can also model strong lenses using light profiles and an inversion at the same time.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

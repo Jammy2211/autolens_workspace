@@ -6,6 +6,13 @@ In the previous chapters, we used light profiles to model the light of a strong 
 profile was an analytic description of how the luminosity varies as a function of radius. In this chapter, we are
 instead going to reconstruct the source's light on a pixel-grid, and in this tutorial we will learn how to create
 a source-plane pixelization.
+
+__Contents__
+
+**Initial Setup:** Lets setup a lensed source-plane grid, using a lens galaxy and tracer.
+**Mesh:** Next, lets set up a `Mesh` using the `mesh` module.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports

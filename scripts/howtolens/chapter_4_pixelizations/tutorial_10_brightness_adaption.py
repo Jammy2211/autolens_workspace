@@ -15,6 +15,16 @@ us where in the image our source is located, thus informing us of where we need 
 This tutorial goes into the details of how this works. We'll use the same compact source galaxy as the previous
 tutorial and begin by fitting it with a magnification based pixelization. This will produce a model image which can
 then be used an adapt image.
+
+__Contents__
+
+**Initial Setup:** we'll use the same strong lensing data as the previous tutorial, where.
+**Adapt Image:** We can use this fit to set up our adapt image.
+**Adaption:** Now lets take a look at brightness based adaption in action.
+**Hilbert:** So how does the `adapt_image` adapt the pixelization to the source's brightness?
+**Weight Map:** We now have a sense of how our `Hilbert` image-mesh is computed, so lets look at how we create the.
+**Wrap Up:** Summary of the script and next steps.
+
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
