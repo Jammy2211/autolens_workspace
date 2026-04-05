@@ -309,7 +309,9 @@ This demonstrates how the geometry of the grid directly influences the appearanc
 *Exercise*: Try changing the values of `centre`, `ell_comps`, `effective_radius`, and `sersic_index` above. 
 Observe how these adjustments change the Sersic profile image.
 """
-aplt.plot_array(array=aa.Array2D(values=sersic_image, mask=grid.mask), title="Sersic Image")
+aplt.plot_array(
+    array=aa.Array2D(values=sersic_image, mask=grid.mask), title="Sersic Image"
+)
 
 """
 Instead of manually handling these transformations, we can use `LightProfile` objects from the `light_profile` 
@@ -358,7 +360,9 @@ To visualize the light profile's image, we use `aplt.plot_array`.
 
 We provide it with the light profile and the grid, which are used to create and plot the image.
 """
-aplt.plot_array(array=sersic_light_profile.image_2d_from(grid=grid), title="Image via Light Profile")
+aplt.plot_array(
+    array=sersic_light_profile.image_2d_from(grid=grid), title="Image via Light Profile"
+)
 
 """
 __One Dimension Projection__

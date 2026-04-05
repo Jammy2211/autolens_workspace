@@ -52,6 +52,7 @@ simulator script. This ensures that all example scripts can be run without manua
 if not dataset_path.exists():
     import subprocess
     import sys
+
     subprocess.run(
         [sys.executable, "scripts/imaging/features/no_lens_light/simulator.py"],
         check=True,
@@ -112,7 +113,6 @@ fit = fit_via_source_galaxy_from(dataset=dataset, source_galaxy=source_magnifica
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 
-
 aplt.subplot_fit_imaging(fit=fit)
 aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
@@ -122,7 +122,9 @@ The fit looks just like it did in the previous tutorials (residuals in the centr
 Lets quickly remind ourselves that the effective regularization weight of each source pixel is our input coefficient 
 value of 3.3.
 """
-aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion")
+aplt.plot_array(
+    array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion"
+)
 
 """
 __Adaptive Regularization__
@@ -157,7 +159,10 @@ fit = fit_via_source_galaxy_from(
     adapt_images=adapt_images,
 )
 
-aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
+aplt.plot_array(
+    array=fit.inversion.mapped_reconstructed_operated_data,
+    title="Inversion Reconstruction",
+)
 
 """
 As expected, we now have a variable regularization scheme. 
@@ -253,10 +258,12 @@ fit = fit_via_source_galaxy_from(
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
 
-
 aplt.subplot_fit_imaging(fit=fit)
 
-aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
+aplt.plot_array(
+    array=fit.inversion.mapped_reconstructed_operated_data,
+    title="Inversion Reconstruction",
+)
 
 print("Evidence using adaptive regularization. ", fit.log_evidence)
 

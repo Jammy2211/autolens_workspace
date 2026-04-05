@@ -51,6 +51,7 @@ simulator script. This ensures that all example scripts can be run without manua
 if not dataset_path.exists():
     import subprocess
     import sys
+
     subprocess.run(
         [sys.executable, "scripts/imaging/features/no_lens_light/simulator.py"],
         check=True,
@@ -113,7 +114,9 @@ We first plot the mapper's pixelization, which is a grid of rectangular pixels i
 
 We plot this next to the image using the `subplot_image_and_mapper` method.
 """
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -130,7 +133,9 @@ indexes = [
 ]
 
 
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -143,7 +148,6 @@ grid via the visuals object and have them displayed clearly.
 
 
 aplt.plot_array(array=dataset.data, title="Image")
-
 
 
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
@@ -166,8 +170,9 @@ pix_indexes = [[312]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -181,8 +186,9 @@ pix_indexes = [[312, 318], [412]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -203,8 +209,9 @@ pix_indexes = [[0, 1, 2, 3, 4, 5, 6, 7], [620, 621, 622, 623, 624]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -245,7 +252,6 @@ the mask has removed the many image pixels at the edge of the image.
 aplt.plot_array(array=dataset.data, title="Image")
 
 
-
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
@@ -263,8 +269,9 @@ pix_indexes = [[312], [314], [316], [318]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """

@@ -98,7 +98,9 @@ tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 Lets look at the tracer's image, which is the image we'll be simulating.
 
 """
-aplt.plot_array(array=tracer.image_2d_from(grid=grid), title="Tracer Image Before Simulating")
+aplt.plot_array(
+    array=tracer.image_2d_from(grid=grid), title="Tracer Image Before Simulating"
+)
 
 """
 __Optics Blurring__
@@ -209,7 +211,10 @@ blurred_image_with_poisson_noise = (
 """
 Here is what the blurred image with Poisson noise looks like.
 """
-aplt.plot_array(array=aa.Array2D(values=blurred_image_with_poisson_noise, mask=blurred_image.mask), title="Image With Poisson Noise")
+aplt.plot_array(
+    array=aa.Array2D(values=blurred_image_with_poisson_noise, mask=blurred_image.mask),
+    title="Image With Poisson Noise",
+)
 
 """
 It is challenging to see the Poisson noise directly in the image above, as it is often subtle. To make the noise more 
@@ -222,7 +227,10 @@ we simulate the image.
 """
 poisson_noise_realization = blurred_image_with_poisson_noise - blurred_image
 
-aplt.plot_array(array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask), title="Poisson Noise Realization")
+aplt.plot_array(
+    array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask),
+    title="Poisson Noise Realization",
+)
 
 """
 __Background Sky__
@@ -260,14 +268,22 @@ blurred_image_with_sky_poisson_noise = (
 )
 
 # Visualize the image with background sky and Poisson noise.
-aplt.plot_array(array=aa.Array2D(values=blurred_image_with_sky_poisson_noise, mask=blurred_image.mask), title="Image With Background Sky")
+aplt.plot_array(
+    array=aa.Array2D(
+        values=blurred_image_with_sky_poisson_noise, mask=blurred_image.mask
+    ),
+    title="Image With Background Sky",
+)
 
 # Create a noise map showing the differences between the blurred image with and without noise.
 poisson_noise_realization = (
     blurred_image_with_sky_poisson_noise - blurred_image_with_sky
 )
 
-aplt.plot_array(array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask), title="Poisson Noise Realization")
+aplt.plot_array(
+    array=aa.Array2D(values=poisson_noise_realization, mask=blurred_image.mask),
+    title="Poisson Noise Realization",
+)
 
 """
 __Simulator__

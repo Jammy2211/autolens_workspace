@@ -37,42 +37,43 @@ __Contents__
 
 __Search Settings__
 
-Nautilus samples parameter space by placing "live points" representing different galaxy models. Each point has an 
-associated `log_likelihood` that reflects how well it fits the data. By mapping where high-likelihood solutions are 
+Nautilus samples parameter space by placing "live points" representing different galaxy models. Each point has an
+associated `log_likelihood` that reflects how well it fits the data. By mapping where high-likelihood solutions are
 located, it can focus on searching those regions.
 
-The main setting to balance is the **number of live points**. More live points allow Nautilus to map parameter space 
-more thoroughly, increasing accuracy but also runtime. Fewer live points reduce run-time but may make the search less 
+The main setting to balance is the **number of live points**. More live points allow Nautilus to map parameter space
+more thoroughly, increasing accuracy but also runtime. Fewer live points reduce run-time but may make the search less
 reliable, possibly getting stuck in local maxima.
 
-The ideal number of live points depends on model complexity. More parameters generally require more live points, but 
-the default of 200 is sufficient for most lens models. Lower values can still yield reliable results, particularly 
-for simpler models. For this example (7 parameters), we reduce the live points to 100 to speed up runtime without 
+The ideal number of live points depends on model complexity. More parameters generally require more live points, but
+the default of 200 is sufficient for most lens models. Lower values can still yield reliable results, particularly
+for simpler models. For this example (7 parameters), we reduce the live points to 100 to speed up runtime without
 compromising accuracy.
 
-Tuning non-linear search settings (e.g., the number of live points) to match model complexity is essential. We aim 
-for enough live points to ensure accurate results (i.e., finding a global maximum) but not so many that runtime 
+Tuning non-linear search settings (e.g., the number of live points) to match model complexity is essential. We aim
+for enough live points to ensure accurate results (i.e., finding a global maximum) but not so many that runtime
 is excessive.
 
-In practice, the optimal number of live points is often found through trial and error, guided by summary statistics 
-on how well the search is performing, which we’ll cover below. For this single Sersic model with a linear light 
+In practice, the optimal number of live points is often found through trial and error, guided by summary statistics
+on how well the search is performing, which we’ll cover below. For this single Sersic model with a linear light
 profile, 80 live points is sufficient to achieve reliable results.
 
 __Iterations Per Update__
 
 Every N iterations, the non-linear search outputs the current results to the folder `autolens_workspace/output`,
-which includes producing visualization. 
+which includes producing visualization.
 
-Depending on how long it takes for the model to be fitted to the data (see discussion about run times below), 
+Depending on how long it takes for the model to be fitted to the data (see discussion about run times below),
 this can take up a large fraction of the run-time of the non-linear search.
 
 For this fit, the fit is very fast, thus we set a high value of `iterations_per_quick_update=10000` to ensure these updates
-so not slow down the overall speed of the model-fit. 
+so not slow down the overall speed of the model-fit.
 
 **If the iteration per update is too low, the model-fit may be significantly slowed down by the time it takes to
 output results and visualization frequently to hard-disk. If your fit is consistent displaying a log saying that it
 is outputting results, try increasing this value to ensure the model-fit runs efficiently.**
 """
+
 search = af.Nautilus(
     path_prefix=Path("howtolens") / "chapter_2",
     name="tutorial_2_practicalities",

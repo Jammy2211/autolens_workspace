@@ -183,13 +183,20 @@ These quantities can be calculated using `*_from` methods and are returned as `A
 """
 convergence = sis_mass_profile.convergence_2d_from(grid=image_plane_grid)
 potential_2d = sis_mass_profile.potential_2d_from(grid=image_plane_grid)
-magnification_2d = al.LensCalc.from_mass_obj(mass_obj=sis_mass_profile).magnification_2d_from(grid=image_plane_grid)
+magnification_2d = al.LensCalc.from_mass_obj(
+    mass_obj=sis_mass_profile
+).magnification_2d_from(grid=image_plane_grid)
 
 """
 The same plotter API can be used to visualize these properties:
 """
-aplt.plot_array(array=sis_mass_profile.convergence_2d_from(grid=image_plane_grid), title="Convergence")
-aplt.plot_array(array=sis_mass_profile.potential_2d_from(grid=image_plane_grid), title="Potential")
+aplt.plot_array(
+    array=sis_mass_profile.convergence_2d_from(grid=image_plane_grid),
+    title="Convergence",
+)
+aplt.plot_array(
+    array=sis_mass_profile.potential_2d_from(grid=image_plane_grid), title="Potential"
+)
 
 """
 One-dimensional plots can also be made using the same projection technique as in the previous tutorial:

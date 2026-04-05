@@ -50,6 +50,7 @@ simulator script. This ensures that all example scripts can be run without manua
 if not dataset_path.exists():
     import subprocess
     import sys
+
     subprocess.run(
         [sys.executable, "scripts/imaging/features/no_lens_light/simulator.py"],
         check=True,
@@ -102,7 +103,6 @@ mask_annular = al.Mask2D.circular_annular(
 dataset = dataset.apply_mask(mask=mask_annular)
 
 border = mask_annular.derive_grid.border
-
 
 
 aplt.subplot_imaging_dataset(dataset=dataset)
@@ -173,7 +173,10 @@ fit = perform_fit_with_source_galaxy_mask_and_border(
 
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 
-aplt.plot_array(array=fit.inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
+aplt.plot_array(
+    array=fit.inversion.mapped_reconstructed_operated_data,
+    title="Inversion Reconstruction",
+)
 
 """
 Woah, whats happened? There are lots of additional $(y,x)$ coordinates in the source-plane grid, some of which trace 
@@ -184,7 +187,6 @@ centre).
 Lets quickly check this by plotting the indexes of these image-pixels.
 """
 mapper = fit.inversion.cls_list_from(al.Mapper)[0]
-
 
 
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
@@ -222,7 +224,9 @@ demagnified pixels just like the other pixels in the image-pixel. There are two 
 Lets quickly use a large circular mask to confirm that these pixels exist when we don't mask them.
 """
 mask_circular_large = al.Mask2D.circular(
-    shape_native=dataset_unmasked.shape_native, pixel_scales=dataset_unmasked.pixel_scales, radius=4.0
+    shape_native=dataset_unmasked.shape_native,
+    pixel_scales=dataset_unmasked.pixel_scales,
+    radius=4.0,
 )
 
 fit = perform_fit_with_source_galaxy_mask_and_border(
@@ -425,7 +429,6 @@ border = mapper.source_plane_data_grid.over_sampled[
 ]
 
 
-
 aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 mask_circular = al.Mask2D.circular(
@@ -445,7 +448,6 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 border = mapper.source_plane_data_grid.over_sampled[
     fit.dataset.grids.border_relocator.sub_border_slim
 ]
-
 
 
 aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
@@ -476,7 +478,6 @@ border = mapper.source_plane_data_grid.over_sampled[
 ]
 
 
-
 aplt.plot_array(array=fit.model_data, title="Plane 1 Image")
 
 
@@ -504,7 +505,6 @@ mapper = fit.inversion.cls_list_from(al.Mapper)[0]
 border = mapper.source_plane_data_grid.over_sampled[
     fit.dataset.grids.border_relocator.sub_border_slim
 ]
-
 
 
 aplt.plot_array(array=fit.model_data, title="Plane 1 Image")

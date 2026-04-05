@@ -291,7 +291,10 @@ the `aplt.subplot_fit_imaging` has its own  `aplt.plot_array` which we can use t
 is that it inherits from the `aplt.subplot_fit_imaging` properties like the caustics, so they appear on the figure (this 
 would not happen if we manually set up an `aplt.plot_array` as we did in previous tutorials.
 """
-aplt.plot_array(array=fit_super_compact.inversion.mapped_reconstructed_operated_data, title="Inversion")
+aplt.plot_array(
+    array=fit_super_compact.inversion.mapped_reconstructed_operated_data,
+    title="Inversion",
+)
 
 """
 As you can see, all pixels are regularized with our input regularization_coefficient value of 3.6.

@@ -70,6 +70,7 @@ simulator script. This ensures that all example scripts can be run without manua
 if not dataset_path.exists():
     import subprocess
     import sys
+
     subprocess.run(
         [sys.executable, "scripts/howtolens/simulator/no_lens_light__mass_sis.py"],
         check=True,
@@ -274,7 +275,9 @@ previous tutorials. The difference now is that we use the dataset's `grid`, whic
 we defined earlier. This means that the tracer image is only evaluated in the unmasked region, skipping calculations 
 in masked regions.
 """
-aplt.plot_array(array=tracer.image_2d_from(grid=dataset.grid), title="Tracer Image To Be Fitted")
+aplt.plot_array(
+    array=tracer.image_2d_from(grid=dataset.grid), title="Tracer Image To Be Fitted"
+)
 
 """
 Now, we proceed to fit the image by passing both the `Imaging` and `Tracer` objects to a `FitImaging` object. 

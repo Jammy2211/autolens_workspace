@@ -126,12 +126,16 @@ lens_galaxy = al.Galaxy(
 
 source_galaxy = al.Galaxy(
     redshift=1.0,
-    bulge=al.lp.SersicCoreSph(centre=(0.0, 0.0), intensity=1.0, effective_radius=0.5, sersic_index=2.0),
+    bulge=al.lp.SersicCoreSph(
+        centre=(0.0, 0.0), intensity=1.0, effective_radius=0.5, sersic_index=2.0
+    ),
 )
 
 tracer = al.Tracer(galaxies=[lens_galaxy, source_galaxy])
 
-tangential_critical_curve_list = al.LensCalc.from_tracer(tracer=tracer).tangential_critical_curve_list_from(grid=grid)
+tangential_critical_curve_list = al.LensCalc.from_tracer(
+    tracer=tracer
+).tangential_critical_curve_list_from(grid=grid)
 
 aplt.plot_array(
     array=tracer.image_2d_from(grid=grid),

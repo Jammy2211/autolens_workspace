@@ -53,6 +53,7 @@ simulator script. This ensures that all example scripts can be run without manua
 if not dataset_path.exists():
     import subprocess
     import sys
+
     subprocess.run(
         [sys.executable, "scripts/imaging/features/no_lens_light/simulator.py"],
         check=True,
@@ -141,7 +142,9 @@ Both of these can be plotted using an `aplt.plot_array`.
 It is possible for an inversion to have multiple `Mapper`'s, therefore for certain figures we specify the index 
 of the mapper we wish to plot. In this case, because we only have one mapper we specify the index 0.
 """
-aplt.plot_array(array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
+aplt.plot_array(
+    array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction"
+)
 
 """
 There we have it, we have successfully reconstructed the source using a rectangular pixel-grid. Whilst this source 
@@ -203,7 +206,9 @@ inversion = al.Inversion(dataset=dataset, linear_obj_list=[mapper])
 """
 Now lets plot the complex source reconstruction.
 """
-aplt.plot_array(array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction")
+aplt.plot_array(
+    array=inversion.mapped_reconstructed_operated_data, title="Inversion Reconstruction"
+)
 
 """
 Pretty great, huh? If you ran the complex source pipeline in chapter 3, you'll remember that getting a model image 
@@ -221,7 +226,9 @@ pix_indexes = [[445], [285], [313], [132], [11]]
 indexes = mapper.slim_indexes_for_pix_indexes(pix_indexes=pix_indexes)
 
 
-aplt.plot_array(array=dataset.data, title="Image", positions=mapper.image_plane_data_grid)
+aplt.plot_array(
+    array=dataset.data, title="Image", positions=mapper.image_plane_data_grid
+)
 aplt.plot_grid(grid=mapper.source_plane_mesh_grid, title="Source-Plane Mesh Grid")
 
 """
