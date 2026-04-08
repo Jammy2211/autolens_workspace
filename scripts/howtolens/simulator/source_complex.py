@@ -51,7 +51,7 @@ __Dataset Paths__
 The `dataset_type` describes the type of data being simulated and `dataset_name` gives it a descriptive name. 
 """
 dataset_type = "imaging"
-dataset_name = "source_complex_padded"
+dataset_name = "source_complex"
 dataset_path = Path("dataset", dataset_type, dataset_name)
 
 """
