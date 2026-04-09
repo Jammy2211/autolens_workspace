@@ -35,11 +35,7 @@ If any code in this script is unclear, refer to the `simulators/start_here.ipynb
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
-# %matplotlib inline
-# from pyprojroot import here
-# workspace_path = str(here())
-# %cd $workspace_path
-# print(f"Working Directory has been set to `{workspace_path}`")
+# from autoconf import setup_notebook; setup_notebook()
 
 from pathlib import Path
 import autolens as al
@@ -51,7 +47,7 @@ __Dataset Paths__
 The `dataset_type` describes the type of data being simulated and `dataset_name` gives it a descriptive name. 
 """
 dataset_type = "imaging"
-dataset_name = "source_complex_padded"
+dataset_name = "source_complex"
 dataset_path = Path("dataset", dataset_type, dataset_name)
 
 """

@@ -18,11 +18,7 @@ If any code in this script is unclear, refer to the `modeling/start_here.ipynb` 
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
-# %matplotlib inline
-# from pyprojroot import here
-# workspace_path = str(here())
-# %cd $workspace_path
-# print(f"Working Directory has been set to `{workspace_path}`")
+# from autoconf import setup_notebook; setup_notebook()
 
 from pathlib import Path
 import autofit as af
@@ -113,11 +109,19 @@ To create the .fits file of a mask, we use a GUI tool which is described in the 
 
  `autolens_workspace/*/imaging/data_preparation/gui/mask.py`
 """
-mask = al.Mask2D.from_fits(
-    file_path=Path(dataset_path, "mask_gui.fits"),
-    hdu=0,
-    pixel_scales=dataset.pixel_scales,
-)
+try:
+    mask = al.Mask2D.from_fits(
+        file_path=Path(dataset_path, "mask_gui.fits"),
+        hdu=0,
+        pixel_scales=dataset.pixel_scales,
+    )
+except FileNotFoundError:
+    mask = al.Mask2D.circular_annular(
+        shape_native=dataset.shape_native,
+        pixel_scales=dataset.pixel_scales,
+        inner_radius=0.5,
+        outer_radius=2.5,
+    )
 
 dataset = dataset.apply_mask(mask=mask)  # <----- The custom mask is used here!
 

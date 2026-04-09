@@ -38,10 +38,7 @@ __Start Here Notebook__
 If any code in this script is unclear, refer to the `simulators/start_here.ipynb` notebook.
 """
 
-# from pyprojroot import here
-# workspace_path = str(here())
-# %cd $workspace_path
-# print(f"Working Directory has been set to `{workspace_path}`")
+# from autoconf import setup_notebook; setup_notebook()
 
 from pathlib import Path
 import autolens as al
