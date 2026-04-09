@@ -209,7 +209,8 @@ retains non-zero values in the central unmasked regions.
 print("Example masked pixel in the image's native representation at its edge:")
 print(dataset.data.native[0, 0])
 print("Example unmasked pixel in the image's native representation at its center:")
-print(dataset.data.native[48, 48])
+centre = tuple(s // 2 for s in dataset.data.shape_native)
+print(dataset.data.native[centre])
 
 """
 __Masked Grid__
