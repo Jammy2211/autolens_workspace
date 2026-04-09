@@ -14,7 +14,7 @@ model-fitting techniques.
 __Contents__
 
 **Nested Sampling:** Lets first perform the model-fit using Nautilus, but look at different parameters that control how.
-**Optimizers:** Nested sampling algorithms like Nautilus provides the errors on all of the model parameters, by.
+**Optimizers:** There are a class of non-linear searches called optimizers, which seek to optimize the log likelihood.
 **MCMC:** For users familiar with Markov Chain Monte Carlo (MCMC) non-linear samplers, PyAutoFit supports the.
 
 """
@@ -205,94 +205,24 @@ and do not provide high likelihood fits to the data, but takes many extra iterat
 error estimates (perhaps this is our final lens model fit before we publish the results in a paper), these extra
 iterations are acceptable. 
 
-However, we often don't care about the errors. For example, in the previous tutorial when chaining searches, the only 
+However, we often don't care about the errors. For example, in the previous tutorial when chaining searches, the only
 result we used from the fit performed in the first search was the maximum log likelihood model, omitting the errors
 entirely! Its seems wasteful to use a nested sampling algorithm like Nautilus to map out the entirity of parameter
-space when we don't use this information! 
+space when we don't use this information!
 
-There are a class of non-linear searches called `optimizers`, which seek to optimize just one thing, the log 
-likelihood. They want to find the model that maximizes the log likelihood, with no regard for the errors, thus not 
-wasting time mapping out in intricate detail every facet of parameter space. Lets see how much faster we can find a 
-good fit to the lens data using an optimizer.
+There are a class of non-linear searches called `optimizers`, which seek to optimize just one thing, the log
+likelihood. They want to find the model that maximizes the log likelihood, with no regard for the errors, thus not
+wasting time mapping out in intricate detail every facet of parameter space.
 
-we'll use the `Particle Swarm Optimizer` PySwarms. Conceptually this works quite similar to Nautilus, it has a set of 
-points in parameter space (called `particles`) and it uses their likelihoods to determine where it thinks the higher
-likelihood regions of parameter space are. 
-
-Unlike Nautilus, this algorithm requires us to specify how many iterations it should perform to find the global 
-maxima solutions. Here, an iteration is the number of samples performed by every particle, so the total number of
-iterations is n_particles * iters. Lets try a total of 50000 iterations, a factor 10 less than our Nautilus runs above. 
-
-In our experience, pyswarms is ineffective at initializing a lens model and therefore needs a the initial swarm of
-particles to surround the highest likelihood lens models. We set this starting point up below by manually inputting 
-`GaussianPriors` on every parameter, where the centre of these priors is near the true values of the simulated lens data.
-
-Given this need for a robust starting point, PySwarms is only suited to model-fits where we have this information. It may
-therefore be useful when performing lens modeling search chaining (see HowToLens chapter 3). However, even in such
-circumstances, we have found that is often unrealible and often infers a local maxima.
-"""
-lens_bulge = af.Model(al.lp.Sersic)
-lens_bulge.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
-lens_bulge.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-lens_bulge.ell_comps.ell_comps_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
-lens_bulge.ell_comps.ell_comps_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-lens_bulge.intensity = af.GaussianPrior(mean=1.0, sigma=0.3)
-lens_bulge.effective_radius = af.GaussianPrior(mean=0.8, sigma=0.2)
-lens_bulge.sersic_index = af.GaussianPrior(mean=4.0, sigma=1.0)
-
-mass = af.Model(al.mp.Isothermal)
-mass.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.1)
-mass.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-mass.ell_comps.ell_comps_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
-mass.ell_comps.ell_comps_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-mass.einstein_radius = af.GaussianPrior(mean=1.4, sigma=0.4)
-
-shear = af.Model(al.mp.ExternalShear)
-shear.gamma_1 = af.GaussianPrior(mean=0.0, sigma=0.1)
-shear.gamma_2 = af.GaussianPrior(mean=0.0, sigma=0.1)
-
-bulge = af.Model(al.lp.Sersic)
-bulge.centre.centre_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
-bulge.centre.centre_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-bulge.ell_comps.ell_comps_0 = af.GaussianPrior(mean=0.0, sigma=0.3)
-bulge.ell_comps.ell_comps_1 = af.GaussianPrior(mean=0.0, sigma=0.3)
-bulge.intensity = af.GaussianPrior(mean=0.3, sigma=0.3)
-bulge.effective_radius = af.GaussianPrior(mean=0.2, sigma=0.2)
-bulge.sersic_index = af.GaussianPrior(mean=1.0, sigma=1.0)
-
-lens = af.Model(al.Galaxy, redshift=0.5, mass=mass, shear=shear)
-source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
-
-model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
-
-search = af.PySwarmsLocal(
-    path_prefix=Path("howtolens", "chapter_optional"),
-    name="tutorial_searches_pso",
-    unique_tag=dataset_name,
-    n_particles=50,
-    iters=1000,
-)
-
-print(
-    "The non-linear search has begun running - checkout the workspace/output"
-    "  folder for live output of the results, images and lens model."
-    "  This Jupyter notebook cell with progress once search has completed - this could take some time!"
-)
-
-result_pso = search.fit(model=model, analysis=analysis)
-
-print("PySwarms has finished run - you may now continue the notebook.")
-
-aplt.subplot_fit_imaging(fit=result_pso.max_log_likelihood_fit)
-
-"""
-In our experience, the parameter spaces fitted by lens models are too complex for `PySwarms` to be used without a lot
-of user attention and care and careful setting up of the initialization priors, as shown above.
+PyAutoFit supports the LBFGS optimizer (from scipy), which can be used as an alternative to nested sampling when
+only the maximum likelihood model is needed. However, optimizers generally need a good starting point to work well,
+and in our experience the parameter spaces fitted by lens models are often too complex for optimizers without careful
+setup of initialization priors.
 
 __MCMC__
 
 For users familiar with Markov Chain Monte Carlo (MCMC) non-linear samplers, PyAutoFit supports the non-linear
-searches `Emcee` and `Zeus`. Like PySwarms, these also need a good starting point, and are generally less effective at 
+searches `Emcee` and `Zeus`. These also need a good starting point, and are generally less effective at
 lens modeling than Nautilus. 
 
 I've included an example runs of Emcee and Zeus below, where the model is set up using `UniformPriors` to give

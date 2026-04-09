@@ -2,13 +2,13 @@
 Simulator: Group
 ================
 
-This script simulates an example strong lens on the 'group' scale, where there is a single primary lens galaxy
+This script simulates an example strong lens on the 'group' scale, where there are two primary lens galaxies
 and two smaller extra galaxies nearby, whose mass contributes significantly to the ray-tracing and is therefore
 included in the strong lens model.
 
 This script simulates `Imaging` of a 'group-scale' strong lens where:
 
- - The group consists of one main lens galaxy and two extra galaxies whose light distributions are `SersicSph`
+ - The group consists of two main lens galaxies and two extra galaxies whose light distributions are `SersicSph`
  profiles and total mass distributions are `IsothermalSph` profiles.
  - A single source galaxy is observed whose `LightProfile` is a `SersicCore`.
 
@@ -80,7 +80,7 @@ on, via the inputs:
  - `pixel_scales`: The arc-second to pixel conversion factor of the grid and data.
 """
 grid = al.Grid2D.uniform(
-    shape_native=(250, 250),
+    shape_native=(300, 300),
     pixel_scales=0.1,
 )
 
@@ -90,7 +90,7 @@ __Galaxy Centres__
 Define the centres of the main lens galaxies and extra galaxies. These are used for over-sampling and are also
 output to JSON files so that the modeling scripts can load them.
 """
-main_lens_centres = [(0.0, 0.0)]
+main_lens_centres = [(0.0, 0.0), (1.0, 5.0)]
 extra_galaxies_centres = [(3.5, 2.5), (-4.4, -5.0)]
 
 """
@@ -149,8 +149,8 @@ simulator = al.SimulatorImaging(
 """
 __Main Lens Galaxies__
 
-The main lens galaxy is at the origin (0.0, 0.0). It has a spherical Sersic light profile and an isothermal
-mass profile.
+The two main lens galaxies dominate the light and mass of the group. They have spherical Sersic light profiles
+and isothermal mass profiles.
 
 In the list-based API used by the group modeling scripts, main lens galaxies are stored in a list called
 `main_lens_galaxies`, where each galaxy is referred to as `lens_0`, `lens_1`, etc.
@@ -163,7 +163,15 @@ lens_0 = al.Galaxy(
     mass=al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=4.0),
 )
 
-main_lens_galaxies = [lens_0]
+lens_1 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lp.SersicSph(
+        centre=(1.0, 5.0), intensity=0.5, effective_radius=1.2, sersic_index=3.5
+    ),
+    mass=al.mp.IsothermalSph(centre=(1.0, 5.0), einstein_radius=2.0),
+)
+
+main_lens_galaxies = [lens_0, lens_1]
 
 """
 __Extra Galaxies__

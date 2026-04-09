@@ -2,9 +2,9 @@
 Group: Modeling
 ===============
 
-This script models an example strong lens on the 'group' scale, which typically have one or more "main" lens galaxies
-and smaller extra galaxies nearby, whose light may blur with the source light and whose mass contributes significantly
-to the ray-tracing, meaning both are therefore included in the strong lens model.
+This script models an example strong lens on the 'group' scale, which has two main lens galaxies
+and two smaller extra galaxies nearby, whose light may blur with the source light and whose mass contributes
+significantly to the ray-tracing, meaning both are therefore included in the strong lens model.
 
 This example uses a list-based model composition API, where:
 
@@ -66,8 +66,8 @@ __Example__
 
 This script fits an `Imaging` dataset of a 'group-scale' strong lens where
 
- - There is a main lens galaxy whose lens galaxy's light is an MGE.
- - There is a main lens galaxy whose total mass distribution is an `Isothermal` and `ExternalShear`.
+ - There are two main lens galaxies whose light is modeled with MGE profiles and whose total mass distributions
+   are `Isothermal` profiles (with `ExternalShear` on the first).
  - There are two extra lens galaxies whose light models are `SersicSph` profiles and total mass distributions
    are `IsothermalSph` models.
  - The source galaxy's light is an MGE.
@@ -181,7 +181,7 @@ For a group-scale lens, we designate there to be two types of lens galaxies in t
   centre of light and their mass distributions modeled using a scaling relation. These are grouped into a single
   `extra_galaxies` collection. Their centres are loaded from the `extra_galaxies_centres.json` file.
 
-In this simple example group scale lens, there is one main lens galaxy and two extra galaxies.
+In this example group scale lens, there are two main lens galaxies and two extra galaxies.
 
 __Centres__
 
@@ -220,16 +220,17 @@ __Model__
 
 We compose a lens model where:
 
-  - The main lens galaxy's light is a `Sersic` light profile [7 parameters].
+ - Each main lens galaxy's light is a `Sersic` light profile [7 parameters each].
 
- - The main lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
+ - The first main lens galaxy's total mass distribution is an `Isothermal` and `ExternalShear` [7 parameters].
+   The second main lens galaxy has an `Isothermal` mass [5 parameters].
 
  - There are two extra lens galaxies with linear `SersicSph` light and `IsothermalSph` total mass distributions, with
    centres fixed to the observed centres of light [8 parameters].
 
  - The source galaxy's light is a point `SersicCore` [6 parameters].
 
-The number of free parameters and therefore the dimensionality of non-linear parameter space is N=28.
+The number of free parameters and therefore the dimensionality of non-linear parameter space is N=40.
 
 __Model Composition (List-Based API)__
 
