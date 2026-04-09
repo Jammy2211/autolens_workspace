@@ -185,17 +185,36 @@ provides an excellent balance of being fast to fit, flexible enough to capture c
 providing accurate fits to the vast majority of strong lenses. For group scale lenses, the MGE allows us to fit
 the light of all lens galaxies without increasing the number of free parameters in the model.
 
-__List-Based Model Composition__
+__Single Lens Galaxy (Illustration)__
+
+For a single lens galaxy — the case covered in the `imaging/start_here` example — the model composition is
+straightforward. One creates a single `af.Model(al.Galaxy, ...)` for the lens and another for the source:
+
+.. code-block:: python
+
+    lens = af.Model(al.Galaxy, redshift=0.5, bulge=bulge, mass=mass, shear=shear)
+    source = af.Model(al.Galaxy, redshift=1.0, bulge=bulge)
+
+    model = af.Collection(galaxies=af.Collection(lens=lens, source=source))
+
+This works well for galaxy-scale lenses with a single dominant deflector. However, group-scale lenses have multiple
+main lens galaxies whose mass all contributes significantly to the lensing. We therefore need a model composition
+API that scales to any number of lens galaxies.
+
+__List-Based Model Composition (Group Scale)__
 
 For group-scale lenses, we compose the model using a list-based API. Each main lens galaxy is created in a loop
-over the main lens galaxy centres, and stored in a dictionary as `lens_0`, `lens_1`, etc. This API scales naturally
-to groups with any number of main lens galaxies.
+over the main lens galaxy centres loaded from the JSON file, and stored in a dictionary as `lens_0`, `lens_1`, etc.
+This API scales naturally to groups with any number of main lens galaxies — adding a new galaxy simply means adding
+its centre to the JSON file.
 
 Only the first lens galaxy (`lens_0`) carries an `ExternalShear`, as the group system has one overall external shear.
 
 The MGE model composition API is quite long and technical, so we simply load the MGE models for the lens and source
-below via a utility function `mge_model_from` which hides the API to make the code in this introduction example ready
+below via a utility function `mge_model_from` which hides the API to make the code in this introduction example easy
 to read. We then use the PyAutoLens Model API to compose the overall lens model.
+
+In this example, the JSON file contains two main lens galaxy centres, so the loop creates `lens_0` and `lens_1`.
 """
 # Main Lens Galaxies:
 
@@ -243,9 +262,10 @@ model = af.Collection(galaxies=af.Collection(**lens_dict))
 
 """
 We can print the model to show the parameters that the model is composed of, which shows many of the MGE's fixed
-parameter values the API above hided the composition of.
+parameter values the API above hid the composition of.
 
-Note how each lens galaxy is listed as `lens_0`, `lens_1`, etc., reflecting the list-based API.
+Note how both main lens galaxies appear as `lens_0` and `lens_1`, reflecting the list-based API. Only `lens_0`
+carries an `ExternalShear`.
 """
 print(model.info)
 
@@ -384,8 +404,12 @@ A few things to note, with full details on data preparation provided in the main
 
 __Wrap Up__
 
-This script has shown how to model CCD imaging data of group-scale strong lenses, using the list-based model
-composition API where each main lens galaxy is created in a loop and stored as `lens_0`, `lens_1`, etc.
+This script has shown how to model CCD imaging data of a group-scale strong lens with two main lens galaxies,
+using the list-based model composition API where each main lens galaxy is created in a loop and stored as
+`lens_0`, `lens_1`, etc. This same API extends to groups with any number of main lens galaxies.
+
+In practice, many group lenses also contain extra galaxies and scaling galaxies whose mass contributes to the
+lensing. These are described in the `group/modeling` and `group/slam` examples.
 
 Details of the **PyAutoLens** API and how lens modeling works were omitted for simplicity, but everything you need to
 know is described throughout the main workspace documentation. You should check it out, but maybe you want to try and

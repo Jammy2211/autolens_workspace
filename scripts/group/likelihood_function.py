@@ -2,8 +2,8 @@
 __Log Likelihood Function: Group__
 
 This script provides a step-by-step guide of the `log_likelihood_function` which is used to fit `Imaging` data of
-a group-scale strong lens, where there are multiple lens galaxies whose mass profiles all contribute to the
-ray-tracing of the source galaxy.
+a group-scale strong lens, where there are two main lens galaxies and two extra galaxies whose mass profiles all
+contribute to the ray-tracing of the source galaxy.
 
 This script has the following aims:
 
@@ -170,17 +170,25 @@ Where:
  - $n$ is the ``sersic_index``, which via $k$ controls the steepness of the inner profile.
  - $R$ is the `effective_radius`, which defines the arc-second radius of a circle containing half the light.
 
-__Main Lens Galaxy__
+__Main Lens Galaxies__
 
-The main lens galaxy is at the centre of the group. It has a spherical Sersic light profile and a spherical
-isothermal mass profile.
+The two main lens galaxies dominate the light and mass of the group. They each have spherical Sersic light profiles
+and spherical isothermal mass profiles.
 """
-lens_galaxy = al.Galaxy(
+lens_galaxy_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(0.0, 0.0), intensity=0.7, effective_radius=2.0, sersic_index=4.0
     ),
     mass=al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=4.0),
+)
+
+lens_galaxy_1 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lp.SersicSph(
+        centre=(1.0, 5.0), intensity=0.5, effective_radius=1.2, sersic_index=3.5
+    ),
+    mass=al.mp.IsothermalSph(centre=(1.0, 5.0), einstein_radius=2.0),
 )
 
 """
@@ -226,9 +234,13 @@ source_galaxy = al.Galaxy(
 """
 Using the masked 2D grid defined above, we can calculate and plot images of each galaxy's light profile.
 """
-image_2d_lens = lens_galaxy.image_2d_from(grid=masked_dataset.grid)
+image_2d_lens_0 = lens_galaxy_0.image_2d_from(grid=masked_dataset.grid)
 
-aplt.plot_array(array=image_2d_lens, title="Main Lens Galaxy Image")
+aplt.plot_array(array=image_2d_lens_0, title="Main Lens Galaxy 0 Image")
+
+image_2d_lens_1 = lens_galaxy_1.image_2d_from(grid=masked_dataset.grid)
+
+aplt.plot_array(array=image_2d_lens_1, title="Main Lens Galaxy 1 Image")
 
 image_2d_extra_0 = extra_galaxy_0.image_2d_from(grid=masked_dataset.grid)
 
@@ -246,11 +258,12 @@ Compute a 2D image of each lens galaxy's light and sum them together.
 For group-scale lenses, the total lens light is the sum of the images of ALL lens galaxies (main + extra). This is
 a key difference from galaxy-scale lensing where there is typically only one lens galaxy.
 """
-lens_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grid)
+lens_0_image_2d = lens_galaxy_0.image_2d_from(grid=masked_dataset.grid)
+lens_1_image_2d = lens_galaxy_1.image_2d_from(grid=masked_dataset.grid)
 extra_0_image_2d = extra_galaxy_0.image_2d_from(grid=masked_dataset.grid)
 extra_1_image_2d = extra_galaxy_1.image_2d_from(grid=masked_dataset.grid)
 
-total_lens_image_2d = lens_image_2d + extra_0_image_2d + extra_1_image_2d
+total_lens_image_2d = lens_0_image_2d + lens_1_image_2d + extra_0_image_2d + extra_1_image_2d
 
 aplt.plot_array(array=total_lens_image_2d, title="Total Lens Light (All Galaxies)")
 
@@ -260,7 +273,8 @@ values not within the mask, which are close enough to it that their flux blurs i
 
 We compute blurring images for ALL lens galaxies and sum them.
 """
-lens_blurring_image_2d = lens_galaxy.image_2d_from(grid=masked_dataset.grids.blurring)
+lens_0_blurring_image_2d = lens_galaxy_0.image_2d_from(grid=masked_dataset.grids.blurring)
+lens_1_blurring_image_2d = lens_galaxy_1.image_2d_from(grid=masked_dataset.grids.blurring)
 extra_0_blurring_image_2d = extra_galaxy_0.image_2d_from(
     grid=masked_dataset.grids.blurring
 )
@@ -269,7 +283,7 @@ extra_1_blurring_image_2d = extra_galaxy_1.image_2d_from(
 )
 
 total_lens_blurring_image_2d = (
-    lens_blurring_image_2d + extra_0_blurring_image_2d + extra_1_blurring_image_2d
+    lens_0_blurring_image_2d + lens_1_blurring_image_2d + extra_0_blurring_image_2d + extra_1_blurring_image_2d
 )
 
 """
@@ -297,7 +311,8 @@ image-pixels are ray-traced to the source plane:
 
 $\\vec{{\\alpha}}_{\\rm x,y} (\\vec{x}) = \\frac{1}{\\pi} \\int \\frac{\\vec{x} - \\vec{x'}}{\\left | \\vec{x} - \\vec{x'} \\right |^2} \\kappa(\\vec{x'}) d\\vec{x'} \\, ,$
 """
-deflections_lens = lens_galaxy.deflections_yx_2d_from(grid=masked_dataset.grid)
+deflections_lens_0 = lens_galaxy_0.deflections_yx_2d_from(grid=masked_dataset.grid)
+deflections_lens_1 = lens_galaxy_1.deflections_yx_2d_from(grid=masked_dataset.grid)
 deflections_extra_0 = extra_galaxy_0.deflections_yx_2d_from(grid=masked_dataset.grid)
 deflections_extra_1 = extra_galaxy_1.deflections_yx_2d_from(grid=masked_dataset.grid)
 
@@ -311,7 +326,7 @@ source-plane coordinate $\\beta$ using the summed deflection angles $\\alpha$ of
 
 For group-scale lensing, the total deflection angle $\\alpha$ is the sum of deflection angles from ALL galaxies:
 
- $\\alpha_{\\rm total} = \\alpha_{\\rm lens} + \\alpha_{\\rm extra\\_0} + \\alpha_{\\rm extra\\_1}$
+ $\\alpha_{\\rm total} = \\alpha_{\\rm lens\\_0} + \\alpha_{\\rm lens\\_1} + \\alpha_{\\rm extra\\_0} + \\alpha_{\\rm extra\\_1}$
 
 This is the fundamental reason why getting the mass of extra galaxies right matters: each galaxy's mass profile
 contributes to the total deflection, and errors in any of them lead to incorrect source-plane coordinates.
@@ -319,7 +334,7 @@ contributes to the total deflection, and errors in any of them lead to incorrect
 The `Tracer` object handles this automatically by including all galaxies when computing ray-traced coordinates.
 """
 tracer = al.Tracer(
-    galaxies=[lens_galaxy, extra_galaxy_0, extra_galaxy_1, source_galaxy]
+    galaxies=[lens_galaxy_0, lens_galaxy_1, extra_galaxy_0, extra_galaxy_1, source_galaxy]
 )
 
 # A list of every grid (e.g. image-plane, source-plane) however we only need the source plane grid with index -1.
@@ -471,10 +486,11 @@ We have presented a visual step-by-step guide to the group-scale parametric like
 
 The key differences from galaxy-scale lensing are:
 
- - Multiple lens galaxies (main + extra) each contribute light profiles whose images are summed together.
+ - Multiple lens galaxies (two main + two extra in this example) each contribute light profiles whose images
+   are summed together.
  - Multiple mass profiles from ALL galaxies contribute to the deflection angles, and the total deflection
-   is the sum of deflections from every galaxy.
- - Getting the mass of extra galaxies right is important because their deflection angles affect the
+   is the sum of deflections from every galaxy in the group.
+ - Getting the mass of every galaxy right is important because their deflection angles affect the
    source-plane coordinates and therefore the quality of the source reconstruction.
  - The `FitImaging` and `Tracer` objects handle all of this automatically for an arbitrary number of galaxies.
 """

@@ -6,7 +6,7 @@ This guide shows how to fit data using the `FitImaging` object for group-scale s
 and interpreting its results.
 
 A group-scale lens differs from a galaxy-scale lens in that there are multiple lens galaxies contributing to the
-lensing. In this example, there is a single main lens galaxy and two extra galaxies nearby whose mass contributes
+lensing. In this example, there are two main lens galaxies and two extra galaxies nearby whose mass contributes
 significantly to the ray-tracing and must therefore be included in the model.
 
 References
@@ -135,7 +135,7 @@ __Galaxy Centres__
 For group-scale lenses we load the centres of the main lens galaxies and extra galaxies from JSON files. These
 centres are used during modeling to fix or constrain the positions of the galaxies.
 
-The main lens galaxy is at (0.0, 0.0) and the two extra galaxies are at (3.5, 2.5) and (-4.4, -5.0).
+The two main lens galaxies are at (0.0, 0.0) and (1.0, 5.0), and the two extra galaxies are at (3.5, 2.5) and (-4.4, -5.0).
 """
 main_lens_centres = al.from_json(file_path=dataset_path / "main_lens_centres.json")
 extra_galaxies_centres = al.from_json(
@@ -154,16 +154,24 @@ and galaxies.
 The combination of light and mass profiles below is the same as those used to generate the simulated
 dataset we loaded above.
 
-For a group-scale lens, we have multiple lens galaxies: a main lens galaxy and extra galaxies. The fit
+For a group-scale lens, we have multiple lens galaxies: two main lens galaxies and two extra galaxies. The fit
 handles all of these galaxies simultaneously, computing the combined deflection field from all mass
 profiles to ray-trace the source galaxy light.
 """
-lens_galaxy = al.Galaxy(
+lens_galaxy_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(0.0, 0.0), intensity=0.7, effective_radius=2.0, sersic_index=4.0
     ),
     mass=al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=4.0),
+)
+
+lens_galaxy_1 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lp.SersicSph(
+        centre=(1.0, 5.0), intensity=0.5, effective_radius=1.2, sersic_index=3.5
+    ),
+    mass=al.mp.IsothermalSph(centre=(1.0, 5.0), einstein_radius=2.0),
 )
 
 extra_galaxy_0 = al.Galaxy(
@@ -194,7 +202,7 @@ source_galaxy = al.Galaxy(
 )
 
 tracer = al.Tracer(
-    galaxies=[lens_galaxy, extra_galaxy_0, extra_galaxy_1, source_galaxy]
+    galaxies=[lens_galaxy_0, lens_galaxy_1, extra_galaxy_0, extra_galaxy_1, source_galaxy]
 )
 
 """
@@ -257,16 +265,24 @@ __Bad Fit__
 A bad lens model will show features in the residual-map and chi-squared map.
 
 We can produce such an image by creating a tracer with different lens and source galaxies. In the example below, we
-change the centre of the main lens galaxy's mass from (0.0, 0.0) to (0.2, 0.2), which leads to residuals appearing
-in the fit. For a group-scale lens, even a small offset in the main lens mass centre can produce significant
-residuals because the main lens dominates the total deflection field.
+change the centre of the first main lens galaxy's mass from (0.0, 0.0) to (0.2, 0.2), which leads to residuals
+appearing in the fit. For a group-scale lens, even a small offset in a main lens mass centre can produce significant
+residuals because the main lenses dominate the total deflection field.
 """
-lens_galaxy = al.Galaxy(
+lens_galaxy_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(0.0, 0.0), intensity=0.7, effective_radius=2.0, sersic_index=4.0
     ),
     mass=al.mp.IsothermalSph(centre=(0.2, 0.2), einstein_radius=4.0),
+)
+
+lens_galaxy_1 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lp.SersicSph(
+        centre=(1.0, 5.0), intensity=0.5, effective_radius=1.2, sersic_index=3.5
+    ),
+    mass=al.mp.IsothermalSph(centre=(1.0, 5.0), einstein_radius=2.0),
 )
 
 extra_galaxy_0 = al.Galaxy(
@@ -297,7 +313,7 @@ source_galaxy = al.Galaxy(
 )
 
 tracer = al.Tracer(
-    galaxies=[lens_galaxy, extra_galaxy_0, extra_galaxy_1, source_galaxy]
+    galaxies=[lens_galaxy_0, lens_galaxy_1, extra_galaxy_0, extra_galaxy_1, source_galaxy]
 )
 
 """
@@ -472,12 +488,20 @@ dataset = dataset.apply_over_sampling(over_sample_size_lp=over_sample_size)
 """
 Now we re-create the correct tracer and perform the fit with over-sampling applied.
 """
-lens_galaxy = al.Galaxy(
+lens_galaxy_0 = al.Galaxy(
     redshift=0.5,
     bulge=al.lp.SersicSph(
         centre=(0.0, 0.0), intensity=0.7, effective_radius=2.0, sersic_index=4.0
     ),
     mass=al.mp.IsothermalSph(centre=(0.0, 0.0), einstein_radius=4.0),
+)
+
+lens_galaxy_1 = al.Galaxy(
+    redshift=0.5,
+    bulge=al.lp.SersicSph(
+        centre=(1.0, 5.0), intensity=0.5, effective_radius=1.2, sersic_index=3.5
+    ),
+    mass=al.mp.IsothermalSph(centre=(1.0, 5.0), einstein_radius=2.0),
 )
 
 extra_galaxy_0 = al.Galaxy(
@@ -508,7 +532,7 @@ source_galaxy = al.Galaxy(
 )
 
 tracer = al.Tracer(
-    galaxies=[lens_galaxy, extra_galaxy_0, extra_galaxy_1, source_galaxy]
+    galaxies=[lens_galaxy_0, lens_galaxy_1, extra_galaxy_0, extra_galaxy_1, source_galaxy]
 )
 
 fit = al.FitImaging(dataset=dataset, tracer=tracer)
