@@ -18,29 +18,7 @@ __Contents__
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
 
-# %matplotlib inline
-
-from pathlib import Path
-import autolens as al
-import autolens.plot as aplt
-
-"""
-__Directories__
-
-**PyAutoLens assumes** the working directory is `autolens_workspace` on your hard-disk. This is so that it can:
-
- - Load configuration settings from config files in the `autolens_workspace/config` folder.
- - Load example data from the `autolens_workspace/dataset` folder.
- - Output the results of model fits to your hard-disk to the `autolens/output` folder.
-
-At the top of every tutorial notebook, you'll see the following cell. This cell uses the project `pyprojroot` to
-locate the path to the workspace on your computer and use it to set the working directory of the notebook.
-"""
-# %matplotlib inline
-# from pyprojroot import here
-# workspace_path = str(here())
-# %cd $workspace_path
-# print(f"Working Directory has been set to `{workspace_path}`")
+# from autoconf import setup_notebook; setup_notebook()
 
 """
 If the printed working directory does not match the workspace path on your computer, you can manually set it
