@@ -549,8 +549,7 @@ file loads back into a full Python object with a single line — much faster and
 For example, the maximum log likelihood `Tracer` is saved as a `.json` file and the tracer image-plane images as
 a `.fits` file:
 """
-# Replace <unique_hash> with the 32-char identifier for your fit.
-result_path = Path("output") / "imaging" / dataset_name / "modeling" / "<unique_hash>"
+result_path = search.paths.output_path  # Points at the fit's unique output folder.
 
 tracer = al.Tracer.from_json(file_path=result_path / "files" / "tracer.json")
 
