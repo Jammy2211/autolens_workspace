@@ -1,6 +1,6 @@
 imaging/start_here.py
 imaging/fit.py
-imaging/likelihood_function.py
+# imaging/likelihood_function.py  # disabled: committed dataset (100x100) clashes with PYAUTO_SMALL_DATASETS=1 — see admin_jammy/prompt/build/smoke_workspace_fixes.md
 imaging/source_science.py
 # imaging/modeling.py  # disabled: result.max_log_likelihood_instance fails in PYAUTO_TEST_MODE=2 (rhayes777/PyAutoFit#1179)
 interferometer/start_here.py
