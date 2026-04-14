@@ -53,6 +53,7 @@ __Contents__
 """
 
 from autoconf import jax_wrapper  # Sets JAX environment before other imports
+from autoconf.dictable import from_json
 
 from pathlib import Path
 
@@ -88,7 +89,7 @@ The `Tracer` contains every `Galaxy`, light profile and mass profile at their ma
 be used directly to compute convergence maps, deflection angles, source-plane images and more — exactly as if it
 had been returned by `search.fit()`.
 """
-tracer = al.Tracer.from_json(file_path=files_path / "tracer.json")
+tracer = from_json(file_path=files_path / "tracer.json")
 
 print(tracer)
 print(tracer.galaxies)
@@ -99,7 +100,7 @@ __Model__
 The fitted `af.Collection` model is saved to `files/model.json`. This is the *prior* model (with free parameters),
 not the max log likelihood instance — useful for inspecting the structure of what was fitted.
 """
-model = af.Collection.from_json(file_path=files_path / "model.json")
+model = from_json(file_path=files_path / "model.json")
 print(model.info)
 
 """

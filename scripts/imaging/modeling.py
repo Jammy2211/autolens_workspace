@@ -549,13 +549,16 @@ file loads back into a full Python object with a single line — much faster and
 For example, the maximum log likelihood `Tracer` is saved as a `.json` file and the tracer image-plane images as
 a `.fits` file:
 """
+from autoconf.dictable import from_json
+
 result_path = search.paths.output_path  # Points at the fit's unique output folder.
 
-tracer = al.Tracer.from_json(file_path=result_path / "files" / "tracer.json")
+if (result_path / "files" / "tracer.json").exists():
+    tracer = from_json(file_path=result_path / "files" / "tracer.json")
 
-tracer_fits = al.Array2D.from_fits(
-    file_path=result_path / "image" / "tracer.fits", hdu=0, pixel_scales=0.1
-)
+    tracer_fits = al.Array2D.from_fits(
+        file_path=result_path / "image" / "tracer.fits", hdu=0, pixel_scales=0.1
+    )
 
 """
 The output folder also contains `model.json`, `samples.csv`, `dataset.fits`, `fit.fits` and more. A full walkthrough
