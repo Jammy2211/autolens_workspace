@@ -71,12 +71,40 @@ CATALOGUE_URL = (
     "trainStarGalClass/TrainingData/abell2744_galaxies.fits"
 )
 
-if not catalogue_path.exists():
+
+def _download(url, path):
+    """
+    Fetch ``url`` to ``path`` with a bounded read timeout and two retries.
+
+    ``urlretrieve`` has no timeout, so a stalled server hangs the script until the
+    harness cap rather than failing (PyAutoHeart run 34099198772 burnt the whole
+    300 s smoke cap this way). The bytes are written only once the response is read
+    in full, so an interrupted attempt cannot leave a truncated file behind.
+    """
+    import socket
+    import time
+    import urllib.error
     import urllib.request
 
+    last_error = None
+
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(url, timeout=30) as response:
+                path.write_bytes(response.read())
+            return
+        except (urllib.error.URLError, TimeoutError, socket.timeout) as error:
+            last_error = error
+            if attempt < 2:
+                time.sleep(2.0 * (attempt + 1))
+
+    raise RuntimeError(f"Download failed after 3 attempts: {url}") from last_error
+
+
+if not catalogue_path.exists():
     dataset_path.mkdir(parents=True, exist_ok=True)
     print(f"Downloading A2744 catalogue from pyRRG (one-off, ~3 MB) ...")
-    urllib.request.urlretrieve(CATALOGUE_URL, catalogue_path)
+    _download(CATALOGUE_URL, catalogue_path)
 
 """
 __Catalogue Load & Projection__
