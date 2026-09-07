@@ -72,12 +72,42 @@ HIPS2FITS_URL = (
     "&width=200&height=200&fov=0.00333&projection=TAN&format=fits"
 )
 
-if not data_fits_path.exists():
+
+def _download(url, path):
+    """
+    Fetch ``url`` to ``path`` with a bounded read timeout and two retries.
+
+    ``urlretrieve`` has no timeout, so a stalled server hangs the script until the
+    harness cap rather than failing (PyAutoHeart run 34099198772 burnt the whole
+    300 s smoke cap this way). The bytes are written only once the response is read
+    in full, so an interrupted attempt cannot leave a truncated file behind.
+    """
+    import socket
+    import time
+    import urllib.error
     import urllib.request
 
+    last_error = None
+
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(url, timeout=30) as response:
+                path.write_bytes(response.read())
+            return
+        except (urllib.error.URLError, TimeoutError, socket.timeout) as error:
+            last_error = error
+            if attempt < 2:
+                time.sleep(2.0 * (attempt + 1))
+
+    raise RuntimeError(f"Download failed after 3 attempts: {url}") from last_error
+
+
+if not data_fits_path.exists():
     dataset_path.mkdir(parents=True, exist_ok=True)
     print("Downloading HST H-band image of RXJ1131 (one-off, ~160 kB) ...")
-    urllib.request.urlretrieve(HIPS2FITS_URL, data_fits_path)
+    # Bounded and retried, as in `cluster/start_here.py` and `cluster/lenstool/data.py`:
+    # a stalled hips2fits response must not hang the script (autolens_workspace#293).
+    _download(HIPS2FITS_URL, data_fits_path)
 
 pixel_scales = 0.06
 
